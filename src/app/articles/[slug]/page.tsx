@@ -1,0 +1,223 @@
+import { createClient } from '@/lib/supabase/server';
+import { generatePageMetadata } from '@/lib/seo';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { SPORT_META } from '@/lib/data';
+
+interface PageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+
+  const { data: article } = await supabase
+    .from('articles')
+    .select('*')
+    .eq('slug', slug)
+    .eq('status', 'published')
+    .single();
+
+  if (!article) {
+    return generatePageMetadata({ pageType: 'article-detail' });
+  }
+
+  return generatePageMetadata({
+    pageType: 'article-detail',
+    title: article.title,
+    description: article.excerpt || article.title,
+    slug: article.slug,
+  });
+}
+
+export default async function ArticleDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const supabase = await createClient();
+
+  const { data: article } = await supabase
+    .from('articles')
+    .select('*')
+    .eq('slug', slug)
+    .eq('status', 'published')
+    .single();
+
+  if (!article) {
+    notFound();
+  }
+
+  // Fetch related articles (same sport, different article)
+  const { data: relatedArticles } = await supabase
+    .from('articles')
+    .select('*')
+    .eq('sport_id', article.sport_id)
+    .eq('status', 'published')
+    .neq('id', article.id)
+    .order('created_at', { ascending: false })
+    .limit(3);
+
+  const renderMarkdown = (content: string) => {
+    return content
+      .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.*?)$/gm, '<h1>$1</h1>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/^/gm, '<p>')
+      .replace(/$/gm, '</p>');
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Hero */}
+      <div className="bg-gradient-to-r from-navy to-navy-mid py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center space-x-3 mb-4">
+            {article.sport_id && SPORT_META[article.sport_id as keyof typeof SPORT_META] && (
+              <span className="text-2xl">
+                {SPORT_META[article.sport_id as keyof typeof SPORT_META].emoji}
+              </span>
+            )}
+            <span className="text-sm font-medium text-gold uppercase">
+              {article.sport_id}
+            </span>
+          </div>
+          <h1 className="text-4xl font-bebas text-white mb-4">{article.title}</h1>
+          <div className="flex items-center justify-between text-gold text-sm">
+            <span>{article.author}</span>
+            <span>{new Date(article.created_at).toLocaleDateString()}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 py-12 grid grid-cols-3 gap-8">
+        {/* Main Content */}
+        <div className="col-span-2">
+          {/* Featured Image */}
+          {article.featured_image_url && (
+            <div className="mb-8 rounded-lg overflow-hidden border border-gray-200">
+              <img
+                src={article.featured_image_url}
+                alt={article.title}
+                className="w-full h-96 object-cover"
+              />
+            </div>
+          )}
+
+          {/* Article Content */}
+          <div className="prose prose-sm max-w-none mb-8">
+            <div
+              dangerouslySetInnerHTML={{
+                __html: renderMarkdown(article.content),
+              }}
+            />
+          </div>
+
+          {/* Tags */}
+          {article.tags && article.tags.length > 0 && (
+            <div className="py-6 border-t border-b border-gray-200 mb-8">
+              <p className="text-sm font-medium text-gray-700 mb-3">Tags:</p>
+              <div className="flex flex-wrap gap-2">
+                {article.tags.map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Social Sharing */}
+          <div className="py-6">
+            <p className="text-sm font-medium text-gray-700 mb-3">Share:</p>
+            <div className="flex gap-4">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=https://phillysportspack.com/articles/${article.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm font-medium"
+              >
+                Twitter
+              </a>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=https://phillysportspack.com/articles/${article.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+              >
+                Facebook
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="col-span-1">
+          {/* Article Info */}
+          <div className="bg-gray-50 rounded-lg p-6 mb-8">
+            <h3 className="font-bebas text-xl text-navy mb-4">About This Article</h3>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-gray-600">Author</p>
+                <p className="font-medium text-gray-900">{article.author}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Published</p>
+                <p className="font-medium text-gray-900">
+                  {new Date(article.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+              </div>
+              <div>
+                <p className="text-gray-600">Updated</p>
+                <p className="font-medium text-gray-900">
+                  {new Date(article.updated_at || article.created_at).toLocaleDateString(
+                    'en-US',
+                    {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    }
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Related Articles */}
+          {relatedArticles && relatedArticles.length > 0 && (
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h3 className="font-bebas text-xl text-navy mb-4">Related Articles</h3>
+              <div className="space-y-4">
+                {relatedArticles.map((related: any) => (
+                  <Link
+                    key={related.id}
+                    href={`/articles/${related.slug}`}
+                    className="block group"
+                  >
+                    <p className="text-sm font-medium text-navy group-hover:text-gold transition line-clamp-2">
+                      {related.title}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {new Date(related.created_at).toLocaleDateString()}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
