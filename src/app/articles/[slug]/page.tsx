@@ -3,7 +3,7 @@ import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { SPORT_META } from '@/lib/data';
+import { SPORT_META } from '@/lib/sports';
 
 interface PageProps {
   params: Promise<{

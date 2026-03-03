@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui';
-import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/data';
+import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
 
 export default function NewArticle() {
   const router = useRouter();

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { Button, Badge } from '@/components/ui';
-import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/data';
+import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
 
 interface Article {
   id: string;

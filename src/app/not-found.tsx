@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui';
-import { VALID_SPORTS, SPORT_META } from '@/lib/data';
+import { VALID_SPORTS, SPORT_META } from '@/lib/sports';
 
 export default function NotFound() {
   return (
