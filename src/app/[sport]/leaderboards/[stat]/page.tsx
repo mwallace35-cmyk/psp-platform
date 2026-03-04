@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getFootballLeaders, getBasketballLeaders } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import SortableTable from "@/components/ui/SortableTable";
+import LeaderboardTable from "@/components/ui/LeaderboardTable";
 import PSPPromo from "@/components/ads/PSPPromo";
 import type { Metadata } from "next";
 
@@ -98,70 +98,7 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
     new Set(leaders.map((row: any) => (row.schools as any)?.league || "").filter(Boolean))
   ).sort() as string[];
 
-  // Build columns for SortableTable
-  const columns: any[] = [
-    {
-      key: "rank",
-      label: "#",
-      align: "center",
-      sortable: false,
-      width: "w-12",
-    },
-    {
-      key: "playerName",
-      label: "Player",
-      sortable: true,
-      primary: true,
-      render: (value: string, row: any) => (
-        <div className="flex items-center gap-2">
-          {row.pro_team && <span className="text-gold">⭐</span>}
-          <Link
-            href={`/${sport}/players/${row.playerSlug}`}
-            className="font-medium text-sm hover:underline"
-            style={{ color: "var(--psp-navy)" }}
-          >
-            {value}
-          </Link>
-        </div>
-      ),
-    },
-    {
-      key: "schoolName",
-      label: "School",
-      sortable: true,
-      render: (value: string, row: any) => (
-        <Link
-          href={`/${sport}/schools/${row.schoolSlug}`}
-          className="hover:underline text-sm"
-          style={{ color: "var(--psp-gray-500)" }}
-        >
-          {value}
-        </Link>
-      ),
-    },
-    {
-      key: "seasonLabel",
-      label: "Season",
-      sortable: true,
-      hideOnMobile: true,
-    },
-  ];
-
-  // Add stat columns
-  if (statConfig) {
-    for (const col of statConfig.cols) {
-      columns.push({
-        key: col,
-        label: colLabels[col] || col,
-        align: "right",
-        sortable: true,
-        hideOnMobile: false,
-        render: (value: any) => value ?? "—",
-      });
-    }
-  }
-
-  // Transform leaders data for SortableTable
+  // Transform leaders data for LeaderboardTable
   const tableData = leaders.map((row: any, idx: number) => ({
     id: row.id,
     rank: idx + 1,
@@ -267,12 +204,11 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
         {/* Leaderboard table */}
         {tableData.length > 0 ? (
           <div className="my-8">
-            <SortableTable
-              columns={columns}
+            <LeaderboardTable
+              sport={sport}
+              statCols={statConfig?.cols || []}
+              colLabels={colLabels}
               data={tableData}
-              highlightTop3={true}
-              mobileCardMode={true}
-              emptyMessage="No leaderboard data available"
             />
           </div>
         ) : (
