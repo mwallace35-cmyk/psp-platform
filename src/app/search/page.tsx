@@ -40,7 +40,7 @@ export default async function SearchPage({
 
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl text-white tracking-wider mb-4" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="text-4xl text-white tracking-wider mb-4" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             Search
           </h1>
           <form action="/search" method="GET">
@@ -70,7 +70,7 @@ export default async function SearchPage({
               </p>
               {Object.entries(grouped).map(([type, items]) => (
                 <div key={type}>
-                  <h2 className="text-xl font-bold mb-3 flex items-center gap-2" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h2 className="text-xl font-bold mb-3 flex items-center gap-2" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
                     <span>{typeLabels[type]?.icon || "📋"}</span>
                     {typeLabels[type]?.label || type} ({items.length})
                   </h2>

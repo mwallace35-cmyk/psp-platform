@@ -140,7 +140,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             ) : (
               <div
                 className="flex-shrink-0 rounded-2xl flex items-center justify-center text-3xl"
-                style={{ width: 88, height: 88, background: "rgba(255,255,255,0.12)", fontFamily: "Bebas Neue, sans-serif", color: "#fff", letterSpacing: 2 }}
+                style={{ width: 88, height: 88, background: "rgba(255,255,255,0.12)", fontFamily: "Barlow Condensed, sans-serif", color: "#fff", letterSpacing: 2 }}
               >
                 {(school.short_name || school.name.charAt(0)).substring(0, 4)}
               </div>
@@ -149,12 +149,12 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             <div className="min-w-0">
               <h1
                 className="text-3xl md:text-5xl text-white mb-1 tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}
               >
                 {school.name}
               </h1>
               {school.mascot && (
-                <div className="text-lg md:text-xl mb-2" style={{ fontFamily: "Bebas Neue, sans-serif", color: "rgba(255,255,255,0.85)", letterSpacing: 1, textShadow: "0 1px 2px rgba(0,0,0,0.2)" }}>
+                <div className="text-lg md:text-xl mb-2" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "rgba(255,255,255,0.85)", letterSpacing: 1, textShadow: "0 1px 2px rgba(0,0,0,0.2)" }}>
                   {school.mascot}
                 </div>
               )}
@@ -216,7 +216,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                   {/* Sport Header */}
                   <div className="px-5 py-4 flex items-center gap-3" style={{ background: `linear-gradient(135deg, ${(SPORT_META as any)[sid]?.color || '#333'}22, transparent)`, borderBottom: "1px solid var(--g100)" }}>
                     <span className="text-2xl">{sportEmoji(sid)}</span>
-                    <h2 className="text-xl font-bold" style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}>
+                    <h2 className="text-xl font-bold" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}>
                       {sportName(sid)}
                     </h2>
                     {sTotalGames > 0 && (
@@ -474,7 +474,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               <div className="p-4 flex items-center gap-3" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}>
                 {school.logo_url && <img src={school.logo_url} alt="" width={40} height={40} style={{ objectFit: "contain", borderRadius: 6 }} />}
                 <div>
-                  <div className="text-white font-bold text-sm" style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: 1 }}>
+                  <div className="text-white font-bold text-sm" style={{ fontFamily: "Barlow Condensed, sans-serif", letterSpacing: 1 }}>
                     {school.short_name || school.name}
                   </div>
                   {school.mascot && <div className="text-white/80 text-xs">{school.mascot}</div>}
@@ -507,11 +507,11 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                     <div className="text-xs uppercase tracking-wider mb-2" style={{ color: "var(--g400)" }}>All-Time Scoring</div>
                     <div className="flex gap-4">
                       <div>
-                        <div className="text-lg font-bold" style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}>{allTimeRecord.pf.toLocaleString()}</div>
+                        <div className="text-lg font-bold" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}>{allTimeRecord.pf.toLocaleString()}</div>
                         <div className="text-xs" style={{ color: "var(--g400)" }}>Points For</div>
                       </div>
                       <div>
-                        <div className="text-lg font-bold" style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}>{allTimeRecord.pa.toLocaleString()}</div>
+                        <div className="text-lg font-bold" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}>{allTimeRecord.pa.toLocaleString()}</div>
                         <div className="text-xs" style={{ color: "var(--g400)" }}>Points Against</div>
                       </div>
                     </div>
@@ -599,7 +599,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
 function StatCard({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(4px)" }}>
-      <div className="text-2xl font-bold" style={{ fontFamily: "Bebas Neue, sans-serif", color: highlight ? "var(--psp-gold)" : "#fff" }}>
+      <div className="text-2xl font-bold" style={{ fontFamily: "Barlow Condensed, sans-serif", color: highlight ? "var(--psp-gold)" : "#fff" }}>
         {value}
       </div>
       <div className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>{label}</div>
@@ -610,7 +610,7 @@ function StatCard({ label, value, highlight }: { label: string; value: string; h
 function SectionCard({ title, count, children }: { title: string; count?: number; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4 flex items-center gap-2" style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}>
+      <h2 className="text-2xl font-bold mb-4 flex items-center gap-2" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}>
         {title}
         {count !== undefined && count > 0 && (
           <span className="text-sm font-normal px-2 py-0.5 rounded-full" style={{ background: "var(--g100)", color: "var(--g400)" }}>{count}</span>

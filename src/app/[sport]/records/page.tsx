@@ -41,7 +41,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
             <span>/</span>
             <span className="text-white">Records</span>
           </div>
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             {meta.name} Records
           </h1>
           <p className="text-sm text-gray-400 mt-2">All-time records and milestones</p>
@@ -54,7 +54,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
         {Object.keys(grouped).length > 0 ? (
           Object.entries(grouped).map(([category, recs], idx) => (
             <div key={category}>
-              <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+              <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
                 {category}
               </h2>
               <div className="overflow-x-auto">

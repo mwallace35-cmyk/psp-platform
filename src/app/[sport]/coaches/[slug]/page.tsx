@@ -70,7 +70,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
             <span>/</span>
             <span className="text-white">Coaches</span>
           </div>
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             {coach.name}
           </h1>
           <div className="flex flex-wrap gap-4 mt-4 text-sm">
@@ -85,7 +85,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
       <div className="max-w-7xl mx-auto px-4 py-8">
         {stints.length > 0 ? (
           <div>
-            <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+            <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
               Coaching Timeline
             </h2>
             <div className="space-y-4">

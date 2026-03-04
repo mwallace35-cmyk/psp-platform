@@ -691,7 +691,7 @@ export default function TeamDetailPage() {
             <div>
               <h1
                 className="text-4xl md:text-5xl text-white mb-2 tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif" }}
               >
                 {team.name}
               </h1>
@@ -707,25 +707,25 @@ export default function TeamDetailPage() {
           {/* Stat bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-2xl">
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
                 {team.currentRecord.wins}-{team.currentRecord.losses}
               </div>
               <div className="text-xs text-gray-400">Current Record</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
                 {winPct}%
               </div>
               <div className="text-xs text-gray-400">Win %</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
                 {team.championships}
               </div>
               <div className="text-xs text-gray-400">Championships</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold" style={{ color: pointDiff > 0 ? "#22c55e" : "#ef4444", fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="text-2xl font-bold" style={{ color: pointDiff > 0 ? "#22c55e" : "#ef4444", fontFamily: "Barlow Condensed, sans-serif" }}>
                 {pointDiff > 0 ? "+" : ""}{pointDiff}
               </div>
               <div className="text-xs text-gray-400">Point Diff</div>
@@ -767,7 +767,7 @@ export default function TeamDetailPage() {
                 <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6">
                   <h2
                     className="text-xl font-bold mb-4"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}
                   >
                     2024-25 Season Summary
                   </h2>
@@ -803,7 +803,7 @@ export default function TeamDetailPage() {
                 <div>
                   <h2
                     className="text-xl font-bold mb-4"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}
                   >
                     Latest News
                   </h2>
@@ -840,7 +840,7 @@ export default function TeamDetailPage() {
                 <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6">
                   <h2
                     className="text-xl font-bold mb-4"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}
                   >
                     Team Statistics
                   </h2>
@@ -889,7 +889,7 @@ export default function TeamDetailPage() {
                 <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6">
                   <h2
                     className="text-xl font-bold mb-4"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}
                   >
                     Statistical Leaders
                   </h2>
@@ -1097,7 +1097,7 @@ export default function TeamDetailPage() {
               <div className="text-center">
                 <div
                   className="text-4xl font-bold mb-2"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}
                 >
                   {team.currentRecord.wins}-{team.currentRecord.losses}
                 </div>

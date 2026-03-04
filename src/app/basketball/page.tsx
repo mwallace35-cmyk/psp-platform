@@ -580,7 +580,7 @@ export default function BasketballPage() {
         }
 
         .nc-body h3 {
-          font-family: 'Bebas Neue', sans-serif;
+          font-family: 'Barlow Condensed', sans-serif;
           font-size: 16px;
           line-height: 1.2;
           margin: 0 0 6px 0;
@@ -765,7 +765,7 @@ export default function BasketballPage() {
         }
 
         .pc-leader {
-          font-family: 'Bebas Neue', sans-serif;
+          font-family: 'Barlow Condensed', sans-serif;
           font-size: 18px;
           color: var(--text);
           margin-bottom: 4px;
@@ -822,7 +822,7 @@ export default function BasketballPage() {
         }
 
         .story-card h4 {
-          font-family: 'Bebas Neue', sans-serif;
+          font-family: 'Barlow Condensed', sans-serif;
           font-size: 16px;
           line-height: 1.2;
           margin: 0 0 6px 0;

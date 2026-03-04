@@ -19,7 +19,7 @@ export async function sendConfirmationEmail(email: string, token: string) {
     html: `
       <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: #0a1628; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-          <h1 style="color: #f0a500; font-size: 28px; margin: 0; font-family: 'Bebas Neue', Impact, sans-serif; letter-spacing: 2px;">
+          <h1 style="color: #f0a500; font-size: 28px; margin: 0; font-family: 'Barlow Condensed', Impact, sans-serif; letter-spacing: 2px;">
             PHILLYSPORTSPACK
           </h1>
         </div>

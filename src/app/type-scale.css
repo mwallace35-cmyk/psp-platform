@@ -1,6 +1,5 @@
-/* PSP Type Scale — Formalized March 2026 */
-/* Typography system for Philadelphia Sports Pack */
-/* Bebas Neue for display headings, DM Sans for all body and text */
+/* PSP Type Scale — ESPN Redesign March 2026 */
+/* Barlow Condensed for display/headlines, DM Sans for body */
 
 :root {
   --psp-navy: #0a1628;
@@ -8,155 +7,171 @@
   --psp-navy-mid: #0f2040;
   --psp-gray-dark: #374151;
   --psp-gray-light: #9ca3af;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
 }
 
-/* H1: Display heading — Bebas Neue, 48–64px (page titles only) */
+/* H1: Display heading — Barlow Condensed Bold, 48–64px (page titles only) */
 .psp-h1 {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 48px;
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
-  color: var(--psp-navy);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text, var(--psp-navy));
   margin: 0;
   padding: 0;
 }
 
 .psp-h1-lg {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display);
   font-size: 64px;
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
-  color: var(--psp-navy);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text, var(--psp-navy));
   margin: 0;
   padding: 0;
 }
 
-/* H2: Section heading — DM Sans Bold, 28px */
+/* H2: Section heading — Barlow Condensed SemiBold, 28px */
 .psp-h2 {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-size: 28px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--psp-navy);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text, var(--psp-navy));
   margin: 0;
   padding: 0;
 }
 
-/* H3: Subsection heading — DM Sans Bold, 22px */
+/* H3: Subsection heading — Barlow Condensed SemiBold, 22px */
 .psp-h3 {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: var(--text, var(--psp-navy));
+  margin: 0;
+  padding: 0;
+}
+
+/* H4: Minor heading — DM Sans Bold, 18px */
+.psp-h4 {
+  font-family: var(--font-body);
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.3;
-  color: var(--psp-navy);
-  margin: 0;
-  padding: 0;
-}
-
-/* H4: Minor heading — DM Sans SemiBold, 18px */
-.psp-h4 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.4;
-  color: var(--psp-navy);
+  color: var(--text, var(--psp-navy));
   margin: 0;
   padding: 0;
 }
 
 /* Body: Default text — DM Sans Regular, 16px */
 .psp-body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   font-weight: 400;
   line-height: 1.6;
-  color: var(--psp-gray-dark);
+  color: var(--text-secondary, var(--psp-gray-dark));
   margin: 0;
   padding: 0;
 }
 
 /* Small: Smaller body text — DM Sans Medium, 14px */
 .psp-small {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 500;
   line-height: 1.5;
-  color: var(--psp-gray-dark);
+  color: var(--text-secondary, var(--psp-gray-dark));
   margin: 0;
   padding: 0;
 }
 
 /* Caption: Helper text, labels — DM Sans SemiBold, 12px, uppercase */
 .psp-caption {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: var(--psp-gray-light);
+  color: var(--text-secondary, var(--psp-gray-light));
   margin: 0;
   padding: 0;
 }
 
 /* Micro: Tiny badge/tag text — DM Sans Bold, 10px, uppercase */
 .psp-micro {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--psp-gray-dark);
+  color: var(--text-secondary, var(--psp-gray-dark));
   margin: 0;
   padding: 0;
 }
+
+/* Stat number: Large stat display — Barlow Condensed ExtraBold */
+.psp-stat {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--text, var(--psp-navy));
+  margin: 0;
+  padding: 0;
+}
+.psp-stat-xl { font-size: 56px; }
+.psp-stat-lg { font-size: 40px; }
+.psp-stat-md { font-size: 28px; }
+.psp-stat-sm { font-size: 20px; }
 
 /* Responsive adjustments for mobile */
 @media (max-width: 768px) {
   .psp-h1 {
     font-size: 36px;
-    letter-spacing: 0.02em;
   }
-
   .psp-h1-lg {
     font-size: 48px;
-    letter-spacing: 0.02em;
   }
-
   .psp-h2 {
     font-size: 24px;
   }
-
   .psp-h3 {
     font-size: 20px;
   }
-
   .psp-h4 {
     font-size: 16px;
   }
-
   .psp-body {
     font-size: 15px;
   }
+  .psp-stat-xl { font-size: 44px; }
+  .psp-stat-lg { font-size: 32px; }
 }
 
-/* Responsive adjustments for small devices */
 @media (max-width: 480px) {
   .psp-h1 {
     font-size: 32px;
   }
-
   .psp-h1-lg {
     font-size: 40px;
   }
-
   .psp-h2 {
     font-size: 22px;
   }
-
   .psp-h3 {
     font-size: 18px;
   }
+  .psp-stat-xl { font-size: 36px; }
+  .psp-stat-lg { font-size: 28px; }
 }

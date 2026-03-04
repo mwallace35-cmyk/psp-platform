@@ -123,7 +123,7 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
               { label: statConfig?.label || stat },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider mt-4" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="text-4xl md:text-5xl text-white tracking-wider mt-4" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             {statConfig?.label || stat} Leaders
           </h1>
           <p className="text-sm text-gray-400 mt-2">Season-by-season statistical leaders</p>

@@ -115,7 +115,7 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
         marginBottom: 20,
         borderBottom: "3px solid #f0a500",
       }}>
-        <h1 style={{ fontSize: 32, fontFamily: "'Bebas Neue', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
+        <h1 style={{ fontSize: 32, fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
           Philly Recruiting Central
         </h1>
         <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "0 0 20px" }}>
@@ -136,7 +136,7 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
                 color: classYear === year ? "#0a1628" : "#fff",
                 fontWeight: 700,
                 fontSize: 14,
-                fontFamily: "'Bebas Neue', sans-serif",
+                fontFamily: "'Barlow Condensed', sans-serif",
                 letterSpacing: 1,
                 cursor: "pointer",
                 transition: ".15s",

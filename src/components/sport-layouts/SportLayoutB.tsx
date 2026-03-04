@@ -48,7 +48,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                   fontSize: 28,
                   fontWeight: 800,
                   color: "var(--psp-navy)",
-                  fontFamily: '"Bebas Neue", sans-serif',
+                  fontFamily: '"Barlow Condensed", sans-serif',
                   lineHeight: 1,
                 }}
               >

@@ -96,7 +96,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 13, color: "rgba(255,255,255,.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>
                 School Spotlight
               </div>
-              <h2 style={{ fontSize: 28, fontWeight: 800, fontFamily: '"Bebas Neue", sans-serif', marginBottom: 6 }}>
+              <h2 style={{ fontSize: 28, fontWeight: 800, fontFamily: '"Barlow Condensed", sans-serif', marginBottom: 6 }}>
                 {spotlightSchool.name}
               </h2>
               <div style={{ fontSize: 14, color: "rgba(255,255,255,.7)" }}>

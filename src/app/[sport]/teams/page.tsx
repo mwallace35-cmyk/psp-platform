@@ -72,7 +72,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
             <div>
               <h1
                 className="text-4xl md:text-5xl text-white tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif" }}
               >
                 {meta.name} Teams
               </h1>
@@ -96,7 +96,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                   className="text-2xl font-bold mb-4 pb-2 border-b-2"
                   style={{
                     color: "var(--psp-navy)",
-                    fontFamily: "Bebas Neue, sans-serif",
+                    fontFamily: "Barlow Condensed, sans-serif",
                     borderColor: LEAGUE_COLORS[league] || "var(--psp-gold)",
                   }}
                 >
@@ -122,7 +122,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                           <div>
                             <h3
                               className="text-lg font-bold group-hover:text-[var(--psp-gold)] transition-colors"
-                              style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                              style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}
                             >
                               {school.name}
                             </h3>

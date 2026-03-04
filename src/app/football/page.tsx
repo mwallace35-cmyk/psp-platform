@@ -190,7 +190,7 @@ export default async function FootballPage() {
             >
               <div style={{ background: "linear-gradient(180deg, rgba(22,163,74,.4) 0%, rgba(10,22,40,.95) 100%)", width: "100%", height: "100%", display: "flex", alignItems: "flex-end", padding: "20px" }}>
                 <div>
-                  <h2 style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 8, fontFamily: "'Bebas Neue', sans-serif" }}>
+                  <h2 style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 8, fontFamily: "'Barlow Condensed', sans-serif" }}>
                     St. Joseph's Prep Captures 9th State Championship
                   </h2>
                   <div style={{ fontSize: 14, color: "rgba(255,255,255,.8)" }}>
@@ -316,7 +316,7 @@ export default async function FootballPage() {
                   <div className="d" style={{ fontSize: 18 }}>▶</div>
                 </div>
                 <div className="evt-info">
-                  <h4 style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                  <h4 style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
                     {game.home} vs {game.away}
                   </h4>
                   <p style={{ color: FOOTBALL_COLOR, fontWeight: 600 }}>{game.time}</p>

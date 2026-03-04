@@ -143,7 +143,7 @@ export default function CoachesPage() {
                   <div style={{ background: "var(--psp-navy)", padding: 16, color: "#fff" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                       <span style={{ fontSize: 24 }}>{SPORT_EMOJIS[coach.sport] || "📋"}</span>
-                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif" }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif" }}>
                         {coach.name}
                       </h3>
                     </div>

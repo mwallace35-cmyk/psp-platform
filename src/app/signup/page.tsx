@@ -66,7 +66,7 @@ export default function SignupPage() {
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
         <div className="text-center mb-6">
           <Link href="/">
-            <h1 className="text-3xl font-bold tracking-wider" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
+            <h1 className="text-3xl font-bold tracking-wider" style={{ color: 'var(--psp-navy)', fontFamily: 'Barlow Condensed, sans-serif' }}>
               PhillySportsPack
             </h1>
           </Link>

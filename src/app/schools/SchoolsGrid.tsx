@@ -168,7 +168,7 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
                       flexShrink: 0,
                       fontSize: 16,
                       fontWeight: 700,
-                      fontFamily: "'Bebas Neue', sans-serif",
+                      fontFamily: "'Barlow Condensed', sans-serif",
                     }}>
                       {(school.short_name || school.name.charAt(0)).substring(0, 3)}
                     </div>
@@ -179,7 +179,7 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
                       margin: 0,
                       fontSize: 15,
                       fontWeight: 700,
-                      fontFamily: "'Bebas Neue', sans-serif",
+                      fontFamily: "'Barlow Condensed', sans-serif",
                       letterSpacing: '0.02em',
                       lineHeight: 1.2,
                       textShadow: '0 1px 2px rgba(0,0,0,0.3)',
@@ -227,7 +227,7 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
                   <div style={{ display: 'flex', gap: 16, paddingTop: 8, borderTop: '1px solid var(--g100)' }}>
                     <div>
                       <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Titles</div>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: school.championships_count > 0 ? 'var(--psp-gold)' : 'var(--g300)', fontFamily: "'Bebas Neue', sans-serif" }}>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: school.championships_count > 0 ? 'var(--psp-gold)' : 'var(--g300)', fontFamily: "'Barlow Condensed', sans-serif" }}>
                         {school.championships_count}
                       </div>
                     </div>

@@ -518,7 +518,7 @@ export default function NextLevelPage() {
                 >
                   <span style={{ fontSize: 24 }}>{athlete.emoji}</span>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif" }}>
+                    <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif" }}>
                       {athlete.name}
                     </h3>
                     {athlete.hallOfFame && (

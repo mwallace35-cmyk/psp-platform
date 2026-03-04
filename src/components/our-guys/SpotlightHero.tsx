@@ -68,7 +68,7 @@ export default function SpotlightHero({ alumni, latestPost }: SpotlightHeroProps
         </div>
 
         <div style={{ flex: 1, minWidth: 200 }}>
-          <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 4px", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5 }}>
+          <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 4px", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 0.5 }}>
             {alumni.person_name}
           </h2>
 

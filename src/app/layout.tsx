@@ -31,7 +31,7 @@ export default function RootLayout({
           }}
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
         {/* Google Analytics */}

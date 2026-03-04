@@ -91,7 +91,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             <div className="flex-1">
               <h1
                 className="text-4xl md:text-5xl text-white mb-2 tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif" }}
               >
                 {player.name}
               </h1>
@@ -136,7 +136,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 { label: "Pass Yards", value: footballTotals.passYards.toLocaleString() },
               ].map((s) => (
                 <div key={s.label} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                  <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>{s.value}</div>
+                  <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>{s.value}</div>
                   <div className="text-xs text-gray-400">{s.label}</div>
                 </div>
               ))}
@@ -152,7 +152,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 { label: "Rebounds", value: basketballTotals.rebounds },
               ].map((s) => (
                 <div key={s.label} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                  <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>{s.value}</div>
+                  <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>{s.value}</div>
                   <div className="text-xs text-gray-400">{s.label}</div>
                 </div>
               ))}
@@ -170,7 +170,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Season-by-season stats */}
             {sport === "football" && stats.length > 0 && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
                   Season-by-Season Stats
                 </h2>
                 <div className="overflow-x-auto">
@@ -226,7 +226,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {sport === "basketball" && stats.length > 0 && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
                   Season-by-Season Stats
                 </h2>
                 <div className="overflow-x-auto">
@@ -271,7 +271,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Awards */}
             {awards.length > 0 && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
                   Honors & Awards
                 </h2>
                 <div className="space-y-2">
@@ -298,7 +298,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Related: More from this school */}
             {player.schools && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
                   More from {(player as any).schools?.name}
                 </h2>
                 <p className="text-sm text-gray-500 mb-4">Explore other players from this school</p>

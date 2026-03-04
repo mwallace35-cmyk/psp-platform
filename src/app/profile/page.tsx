@@ -96,7 +96,7 @@ export default function ProfilePage() {
     <div className="max-w-2xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
+          <h1 className="text-3xl font-bold" style={{ color: 'var(--psp-navy)', fontFamily: 'Barlow Condensed, sans-serif' }}>
             Your Profile
           </h1>
           <p className="text-sm text-gray-500">{email}</p>

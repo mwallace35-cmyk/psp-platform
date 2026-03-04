@@ -84,7 +84,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <div className="flex-1">
               <h1
                 className="text-4xl md:text-5xl text-white mb-2 tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif" }}
               >
                 {school.name} — {season}
               </h1>
@@ -97,20 +97,20 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           {/* Season Stat Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl">
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
                 {wins}-{losses}{ties > 0 ? `-${ties}` : ""}
               </div>
               <div className="text-xs text-gray-400">Season Record</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
                 {winPctDisplay}
               </div>
               <div className="text-xs text-gray-400">Win %</div>
             </div>
             {teamSeason.points_for !== null && (
               <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
                   {teamSeason.points_for}
                 </div>
                 <div className="text-xs text-gray-400">Points For</div>
@@ -118,7 +118,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             )}
             {teamSeason.points_against !== null && (
               <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                <div className="text-2xl font-bold text-white" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
                   {teamSeason.points_against}
                 </div>
                 <div className="text-xs text-gray-400">Points Against</div>
@@ -163,7 +163,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Games Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             Schedule & Results
           </h2>
           {games.length > 0 ? (
@@ -235,7 +235,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Roster & Stats Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             Roster & Stats
           </h2>
           <p className="text-sm text-gray-400 mb-6">{roster.length} players on record</p>

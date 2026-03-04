@@ -112,7 +112,7 @@ export default function CompareSearch() {
 
   return (
     <div className="rounded-xl p-6 mb-8" style={{ background: 'var(--psp-navy)', border: '1px solid rgba(240, 165, 0, 0.2)' }}>
-      <h3 className="text-lg font-bold text-white mb-4" style={{ fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '0.05em' }}>
+      <h3 className="text-lg font-bold text-white mb-4" style={{ fontFamily: 'Barlow Condensed, sans-serif', letterSpacing: '0.05em' }}>
         Select Players to Compare
       </h3>
 
@@ -213,7 +213,7 @@ export default function CompareSearch() {
           background: selected.length >= 2 ? 'var(--psp-gold)' : 'rgba(255,255,255,0.1)',
           color: selected.length >= 2 ? 'var(--psp-navy)' : '#666',
           cursor: selected.length >= 2 ? 'pointer' : 'not-allowed',
-          fontFamily: 'Bebas Neue, sans-serif',
+          fontFamily: 'Barlow Condensed, sans-serif',
           letterSpacing: '0.1em',
           fontSize: '1rem',
         }}

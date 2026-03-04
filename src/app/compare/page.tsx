@@ -75,7 +75,7 @@ export default async function ComparePage({
 
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl text-white tracking-wider" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="text-4xl text-white tracking-wider" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             Compare Players
           </h1>
           <p className="text-sm text-gray-400 mt-2">

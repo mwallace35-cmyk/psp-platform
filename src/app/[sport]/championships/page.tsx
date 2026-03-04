@@ -50,7 +50,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{label: meta.name, href: `/${sport}`}, {label: "Championships"}]} />
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             {meta.name} Championships
           </h1>
           <p className="text-sm text-gray-400 mt-2">{championships.length} titles on record</p>
@@ -65,7 +65,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
           <div className="lg:col-span-2 space-y-8">
             {Object.entries(byLevel).map(([level, champs]) => (
               <div key={level}>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
                   {level} ({champs.length})
                 </h2>
                 <div className="overflow-x-auto">
@@ -115,7 +115,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
           {/* Sidebar — Dynasty tracker */}
           <div className="space-y-6">
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="text-xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+              <h3 className="text-xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
                 Dynasty Tracker
               </h3>
               <p className="text-xs mb-4" style={{ color: "var(--psp-gray-500)" }}>

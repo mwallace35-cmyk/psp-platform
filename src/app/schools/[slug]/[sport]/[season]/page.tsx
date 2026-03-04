@@ -105,7 +105,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             ) : (
               <div
                 className="flex-shrink-0 rounded-2xl flex items-center justify-center text-3xl"
-                style={{ width: 88, height: 88, background: "rgba(255,255,255,0.12)", fontFamily: "Bebas Neue, sans-serif", color: "#fff", letterSpacing: 2 }}
+                style={{ width: 88, height: 88, background: "rgba(255,255,255,0.12)", fontFamily: "Barlow Condensed, sans-serif", color: "#fff", letterSpacing: 2 }}
               >
                 {(school.short_name || school.name.charAt(0)).substring(0, 4)}
               </div>
@@ -114,12 +114,12 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <div className="min-w-0">
               <h1
                 className="text-3xl md:text-5xl text-white mb-1 tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}
               >
                 {school.name}
               </h1>
               <div className="flex flex-wrap items-center gap-3 mb-3">
-                <span className="text-lg" style={{ fontFamily: "Bebas Neue, sans-serif", color: "rgba(255,255,255,0.85)", letterSpacing: 1 }}>
+                <span className="text-lg" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "rgba(255,255,255,0.85)", letterSpacing: 1 }}>
                   {meta.emoji} {meta.name} — {season}
                 </span>
                 {school.mascot && (
@@ -133,12 +133,12 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               <div className="flex flex-wrap items-center gap-4">
                 <span
                   className="text-4xl md:text-6xl font-bold text-white"
-                  style={{ fontFamily: "Bebas Neue, sans-serif", textShadow: "0 2px 8px rgba(0,0,0,0.3)" }}
+                  style={{ fontFamily: "Barlow Condensed, sans-serif", textShadow: "0 2px 8px rgba(0,0,0,0.3)" }}
                 >
                   {record}
                 </span>
                 {winPct && (
-                  <span className="text-xl" style={{ color: "#f0a500", fontFamily: "Bebas Neue, sans-serif" }}>
+                  <span className="text-xl" style={{ color: "#f0a500", fontFamily: "Barlow Condensed, sans-serif" }}>
                     {winPct}%
                   </span>
                 )}
@@ -191,7 +191,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <section>
               <h2
                 className="text-lg font-bold uppercase tracking-wider mb-4"
-                style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}
               >
                 Championships Won
               </h2>
@@ -225,7 +225,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <section>
               <h2
                 className="text-lg font-bold uppercase tracking-wider mb-4"
-                style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}
               >
                 Schedule & Results
               </h2>
@@ -315,7 +315,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <section>
               <h2
                 className="text-lg font-bold uppercase tracking-wider mb-4"
-                style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}
               >
                 Player Stats
               </h2>
@@ -472,7 +472,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <section>
               <h2
                 className="text-lg font-bold uppercase tracking-wider mb-4"
-                style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}
               >
                 Awards & Honors
               </h2>
@@ -507,7 +507,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <section>
               <h2
                 className="text-lg font-bold uppercase tracking-wider mb-4"
-                style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--text)" }}
+                style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}
               >
                 Season Notes
               </h2>
@@ -528,7 +528,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             >
               <span className="text-2xl">{meta.emoji}</span>
               <div>
-                <div className="text-white font-bold text-sm" style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: 1 }}>
+                <div className="text-white font-bold text-sm" style={{ fontFamily: "Barlow Condensed, sans-serif", letterSpacing: 1 }}>
                   {season} Season
                 </div>
                 <div className="text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>

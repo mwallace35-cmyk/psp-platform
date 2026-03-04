@@ -66,7 +66,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
                     color: "#fff",
                     lineHeight: 1.15,
                     marginBottom: 8,
-                    fontFamily: '"Bebas Neue", sans-serif',
+                    fontFamily: '"Barlow Condensed", sans-serif',
                     maxWidth: 600,
                   }}
                 >

@@ -51,7 +51,7 @@ export default async function CommunityPage() {
       >
         <h1
           className="text-5xl md:text-6xl text-white tracking-wider mb-4"
-          style={{ fontFamily: 'Bebas Neue, sans-serif' }}
+          style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
         >
           PSP Community
         </h1>
@@ -86,7 +86,7 @@ export default async function CommunityPage() {
           <div className="lg:col-span-2">
             <h2
               className="text-3xl font-bold mb-6 tracking-wider"
-              style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}
+              style={{ color: 'var(--psp-navy)', fontFamily: 'Barlow Condensed, sans-serif' }}
             >
               Player of the Week History
             </h2>

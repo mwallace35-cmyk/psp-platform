@@ -36,7 +36,7 @@ export default async function RelatedArticles({ entityType, entityId }: RelatedA
     <div className="mt-8">
       <h3
         className="text-xl font-bold mb-4 tracking-wider"
-        style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}
+        style={{ color: 'var(--psp-navy)', fontFamily: 'Barlow Condensed, sans-serif' }}
       >
         Featured in Articles
       </h3>

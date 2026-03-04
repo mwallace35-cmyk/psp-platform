@@ -59,7 +59,7 @@ export default function AlumniCard({ person }: AlumniCardProps) {
         )}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
           <span style={{ fontSize: 20 }}>{leagueIcon || badge.icon}</span>
-          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5 }}>
+          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 0.5 }}>
             {person.person_name}
           </h3>
         </div>
