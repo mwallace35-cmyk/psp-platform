@@ -64,7 +64,7 @@ export async function getAllSchools() {
   try {
     const supabase = await createClient();
 
-    // Query schools with league info
+    // Query schools that have a league (filters out auto-generated opponent stubs)
     const { data: schools, error } = await supabase
       .from("schools")
       .select(`
@@ -72,6 +72,7 @@ export async function getAllSchools() {
         leagues(name, short_name)
       `)
       .is("deleted_at", null)
+      .not("league_id", "is", null)
       .order("name")
       .limit(500);
 
