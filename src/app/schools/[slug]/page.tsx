@@ -124,9 +124,8 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb
             items={[
-              { label: "Home", href: "/" },
               { label: "Schools", href: "/schools" },
-              { label: school.short_name || school.name },
+              { label: school.name },
             ]}
           />
 
@@ -290,7 +289,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                           {sportChamps.map((c: any) => (
                             <div key={c.id} className="flex items-center gap-3 px-3 py-2 rounded-lg" style={{ background: "var(--bg)", border: "1px solid var(--g100)" }}>
                               <span className="text-lg">🏆</span>
-                              <span className="font-medium text-sm" style={{ color: "var(--text)" }}>{c.seasons?.label}</span>
+                              <span className="font-medium text-sm" style={{ color: "var(--text)" }}>{c.seasons?.label || c.season_id || "Championship"}</span>
                               <span className="text-xs" style={{ color: "var(--g400)" }}>
                                 {c.level}{c.leagues?.name ? ` — ${c.leagues.name}` : ""}
                               </span>
