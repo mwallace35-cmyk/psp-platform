@@ -102,6 +102,7 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
             <Link
               key={school.id}
               href={`/football/schools/${school.slug}`}
+              /* TODO: Make sport-agnostic once /schools/[slug] route exists */
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <div

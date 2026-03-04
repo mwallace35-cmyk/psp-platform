@@ -64,19 +64,7 @@ export async function getAllSchools() {
   try {
     const supabase = await createClient();
 
-    // Get school IDs that have team_season data (filters out opponent stubs)
-    const { data: activeIds } = await supabase
-      .from("team_seasons")
-      .select("school_id");
-
-    const activeSchoolIds = [...new Set((activeIds ?? []).map((r: any) => r.school_id))];
-
-    if (activeSchoolIds.length === 0) {
-      console.log("[getAllSchools] No schools with team season data");
-      return [];
-    }
-
-    // Query only schools that have actual data
+    // Query schools with league assignments (filters out opponent stubs and junk entries)
     const { data: schools, error } = await supabase
       .from("schools")
       .select(`
@@ -84,9 +72,9 @@ export async function getAllSchools() {
         leagues(name, short_name)
       `)
       .is("deleted_at", null)
-      .in("id", activeSchoolIds)
+      .not("league_id", "is", null)
       .order("name")
-      .limit(500);
+      .limit(200);
 
     if (error) {
       console.error("[getAllSchools] Supabase error:", error.message, error.details, error.hint);
@@ -98,12 +86,12 @@ export async function getAllSchools() {
       return [];
     }
 
-    console.log(`[getAllSchools] Found ${schools.length} schools`);
-
-    // Count championships per school separately
+    // Count championships per school separately (avoids FK ambiguity)
+    const schoolIds = schools.map((s: any) => s.id);
     const { data: champs, error: champError } = await supabase
       .from("championships")
-      .select("school_id");
+      .select("school_id")
+      .in("school_id", schoolIds);
 
     if (champError) {
       console.error("[getAllSchools] Championships query error:", champError.message);
