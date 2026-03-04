@@ -63,20 +63,33 @@ export async function getSchoolsBySport(sportId: string, limit = 50) {
 export async function getAllSchools() {
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+
+    // Query schools with league info (no championships join to avoid FK ambiguity)
+    const { data: schools } = await supabase
       .from("schools")
       .select(`
         id, slug, name, short_name, city, state, mascot,
-        leagues(name, short_name),
-        championships(id)
+        leagues(name, short_name)
       `)
       .is("deleted_at", null)
       .order("name")
       .limit(500);
 
-    return (data ?? []).map((s: any) => ({
+    if (!schools || schools.length === 0) return [];
+
+    // Count championships per school separately
+    const { data: champs } = await supabase
+      .from("championships")
+      .select("school_id");
+
+    const champCounts = new Map<number, number>();
+    (champs ?? []).forEach((c: any) => {
+      champCounts.set(c.school_id, (champCounts.get(c.school_id) || 0) + 1);
+    });
+
+    return schools.map((s: any) => ({
       ...s,
-      championships_count: s.championships?.length ?? 0,
+      championships_count: champCounts.get(s.id) ?? 0,
     }));
   } catch {
     return [];
