@@ -341,33 +341,60 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             )}
 
             {/* Awards */}
-            {awards.length > 0 && (
-              <SectionCard title="Awards & Honors" count={awards.length}>
-                <div className="space-y-2">
-                  {awards.map((a: any, i: number) => (
-                    <div key={a.id || i} className="flex items-center gap-3 px-4 py-2 rounded-lg" style={{ background: "var(--card-bg)", border: "1px solid var(--g100)" }}>
-                      <span className="text-lg">🏅</span>
-                      <div className="flex-1">
-                        <span className="text-sm font-medium" style={{ color: "var(--text)" }}>
-                          {a.award_name || a.award_type || a.category || "Award"}
-                        </span>
-                        {a.position && (
-                          <span className="text-xs ml-1" style={{ color: "var(--g400)" }}>({a.position})</span>
-                        )}
-                        {a.players && (
-                          <Link href={`/${sport}/players/${a.players.slug}`} className="text-xs ml-2 hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
-                            {a.players.name}
-                          </Link>
-                        )}
-                        <span className="text-xs ml-2" style={{ color: "var(--g400)" }}>
-                          {a.seasons?.label}
-                        </span>
-                      </div>
+            {awards.length > 0 && (() => {
+              // Separate named (with player) and anonymous awards
+              const namedAwards = awards.filter((a: any) => a.players?.name);
+              const anonAwards = awards.filter((a: any) => !a.players?.name);
+              // Group anonymous by award_type
+              const anonGroups = new Map<string, number>();
+              anonAwards.forEach((a: any) => {
+                const key = a.award_name || a.award_type || a.category || "Award";
+                anonGroups.set(key, (anonGroups.get(key) || 0) + 1);
+              });
+              const formatType = (t: string) => t.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+              return (
+                <SectionCard title="Awards & Honors" count={awards.length}>
+                  {/* Summary badges for grouped anonymous awards */}
+                  {anonGroups.size > 0 && (
+                    <div className="flex flex-wrap gap-3 mb-4 px-4">
+                      {Array.from(anonGroups.entries()).map(([type, count]) => (
+                        <div key={type} className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: "var(--card-bg)", border: "1px solid var(--g100)" }}>
+                          <span className="text-lg">🏅</span>
+                          <span className="text-sm font-bold" style={{ color: "var(--psp-gold, #f0a500)" }}>{count}</span>
+                          <span className="text-sm font-medium" style={{ color: "var(--text)" }}>{formatType(type)} Selections</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </SectionCard>
-            )}
+                  )}
+                  {/* Individual named awards */}
+                  {namedAwards.length > 0 && (
+                    <div className="space-y-2">
+                      {namedAwards.map((a: any, i: number) => (
+                        <div key={a.id || i} className="flex items-center gap-3 px-4 py-2 rounded-lg" style={{ background: "var(--card-bg)", border: "1px solid var(--g100)" }}>
+                          <span className="text-lg">🏅</span>
+                          <div className="flex-1">
+                            <span className="text-sm font-medium" style={{ color: "var(--text)" }}>
+                              {formatType(a.award_name || a.award_type || a.category || "Award")}
+                            </span>
+                            {a.position && (
+                              <span className="text-xs ml-1" style={{ color: "var(--g400)" }}>({a.position})</span>
+                            )}
+                            <Link href={`/${sport}/players/${a.players.slug}`} className="text-xs ml-2 hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
+                              {a.players.name}
+                            </Link>
+                            {a.seasons?.label && (
+                              <span className="text-xs ml-2" style={{ color: "var(--g400)" }}>
+                                {a.seasons.label}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </SectionCard>
+              );
+            })()}
 
             {/* Season-by-season results */}
             {teamSeasons.length > 0 && (
