@@ -2,6 +2,7 @@ import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { searchAll } from "@/lib/data";
+import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -60,6 +61,7 @@ export default async function SearchPage({
       </section>
 
       <main className="flex-1 max-w-7xl mx-auto px-4 py-8">
+        <LeaderboardAd id="psp-search-banner" />
         {q.length >= 2 ? (
           results.length > 0 ? (
             <div className="space-y-8">
@@ -123,6 +125,7 @@ export default async function SearchPage({
             </div>
           </div>
         )}
+        <InContentAd id="psp-search-btm" />
       </main>
 
       <Footer />

@@ -10,10 +10,11 @@ interface Conflict {
   field_name: string;
   our_value: string | null;
   external_value: string | null;
-  source: string;
+  source_name: string;
   confidence: string;
+  severity: string;
   sport_id: string | null;
-  resolution_status: string;
+  status: string;
   resolved_value: string | null;
   resolved_by: string | null;
   resolved_at: string | null;
@@ -42,7 +43,7 @@ export default function ConflictManager() {
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {
-        query = query.eq("resolution_status", statusFilter);
+        query = query.eq("status", statusFilter);
       }
       if (sportFilter) {
         query = query.eq("sport_id", sportFilter);
@@ -85,7 +86,7 @@ export default function ConflictManager() {
     const { error } = await supabase
       .from("data_conflicts")
       .update({
-        resolution_status: "resolved",
+        status: "resolved",
         resolved_value: resolvedVal,
         resolved_by: "mike",
         resolved_at: new Date().toISOString(),
@@ -102,7 +103,7 @@ export default function ConflictManager() {
   }
 
   async function batchResolve(action: "accept_ours" | "accept_theirs") {
-    const pending = conflicts.filter((c) => c.resolution_status === "pending");
+    const pending = conflicts.filter((c) => c.status === "pending");
     if (pending.length === 0) return;
     if (!confirm(`Resolve all ${pending.length} pending conflicts by ${action === "accept_ours" ? "keeping our data" : "accepting external data"}?`)) return;
 
@@ -112,7 +113,7 @@ export default function ConflictManager() {
       await supabase
         .from("data_conflicts")
         .update({
-          resolution_status: "resolved",
+          status: "resolved",
           resolved_value: resolvedVal,
           resolved_by: "mike",
           resolved_at: new Date().toISOString(),
@@ -123,7 +124,7 @@ export default function ConflictManager() {
     fetchConflicts();
   }
 
-  const pendingCount = conflicts.filter((c) => c.resolution_status === "pending").length;
+  const pendingCount = conflicts.filter((c) => c.status === "pending").length;
 
   const severityColor = (confidence: string) => {
     switch (confidence?.toLowerCase()) {
@@ -227,7 +228,7 @@ export default function ConflictManager() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {conflict.resolution_status === "resolved" && (
+                  {conflict.status === "resolved" && (
                     <span className="admin-badge badge-success">Resolved</span>
                   )}
                   <span className="text-gray-400">{expandedId === conflict.id ? "▲" : "▼"}</span>
@@ -253,7 +254,7 @@ export default function ConflictManager() {
                       style={{ background: "#eff6ff" }}
                     >
                       <div className="text-xs font-medium mb-1 text-blue-600">
-                        External Value ({conflict.source})
+                        External Value ({conflict.source_name})
                       </div>
                       <div className="font-mono text-sm">
                         {conflict.external_value || "—"}
@@ -261,7 +262,7 @@ export default function ConflictManager() {
                     </div>
                   </div>
 
-                  {conflict.resolution_status === "pending" ? (
+                  {conflict.status === "pending" ? (
                     <div className="space-y-3">
                       <div>
                         <label className="block text-xs font-medium mb-1" style={{ color: "var(--psp-gray-500)" }}>

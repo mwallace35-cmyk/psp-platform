@@ -1,0 +1,80 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="footballGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a1628;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f2040;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="footballAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:0.9" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#footballGrad)"/>
+
+  <!-- Yard line marks -->
+  <g opacity="0.2" stroke="#22c55e" stroke-width="2">
+    <line x1="50" y1="0" x2="50" y2="300"/>
+    <line x1="100" y1="0" x2="100" y2="300"/>
+    <line x1="150" y1="0" x2="150" y2="300"/>
+    <line x1="250" y1="0" x2="250" y2="300"/>
+    <line x1="300" y1="0" x2="300" y2="300"/>
+    <line x1="350" y1="0" x2="350" y2="300"/>
+  </g>
+
+  <!-- Hash marks -->
+  <g opacity="0.15" stroke="#22c55e" stroke-width="1.5">
+    <line x1="0" y1="75" x2="400" y2="75"/>
+    <line x1="0" y1="150" x2="400" y2="150"/>
+    <line x1="0" y1="225" x2="400" y2="225"/>
+  </g>
+
+  <!-- Player legs -->
+  <g fill="#0a1628" opacity="0.9">
+    <path d="M 120 180 L 110 280 L 125 280 L 135 180 Z" stroke="#22c55e" stroke-width="1"/>
+    <path d="M 145 175 L 155 280 L 170 280 L 160 175 Z" stroke="#22c55e" stroke-width="1"/>
+  </g>
+
+  <!-- Player torso -->
+  <ellipse cx="130" cy="130" rx="28" ry="55" fill="#0f2040" stroke="#22c55e" stroke-width="1.5" opacity="0.95"/>
+
+  <!-- Player arms -->
+  <g fill="none" stroke="#0f2040" stroke-width="12" stroke-linecap="round">
+    <path d="M 105 120 Q 70 90 50 60" opacity="0.85"/>
+    <path d="M 155 115 Q 200 70 220 30" opacity="0.85"/>
+  </g>
+
+  <!-- Arm outlines -->
+  <g fill="none" stroke="#22c55e" stroke-width="2" opacity="0.6">
+    <path d="M 105 120 Q 70 90 50 60"/>
+    <path d="M 155 115 Q 200 70 220 30"/>
+  </g>
+
+  <!-- Player head -->
+  <circle cx="130" cy="70" r="18" fill="#0f2040" stroke="#22c55e" stroke-width="1.5" opacity="0.95"/>
+
+  <!-- Football ball -->
+  <g>
+    <ellipse cx="235" cy="25" rx="16" ry="10" fill="url(#footballAccent)" opacity="0.85" stroke="#22c55e" stroke-width="1"/>
+    <line x1="235" y1="15" x2="235" y2="35" stroke="#0a1628" stroke-width="1.5" opacity="0.6"/>
+  </g>
+
+  <!-- Football arc trajectory -->
+  <g fill="none" stroke="#22c55e" stroke-width="2" opacity="0.5" stroke-dasharray="4,4">
+    <path d="M 220 35 Q 280 20 300 80"/>
+  </g>
+
+  <!-- Dynamic motion lines -->
+  <g stroke="#22c55e" stroke-width="2" opacity="0.3" fill="none">
+    <path d="M 160 110 L 185 95"/>
+    <path d="M 165 130 L 195 120"/>
+    <path d="M 150 150 L 180 145"/>
+  </g>
+
+  <!-- Accent geometric shapes -->
+  <g fill="none" stroke="#22c55e" stroke-width="2" opacity="0.25">
+    <polygon points="280,200 320,180 340,240 300,260"/>
+    <circle cx="330" cy="220" r="25" fill="none"/>
+  </g>
+</svg>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats } from "@/lib/data";
+import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -82,6 +83,7 @@ export default async function ComparePage({
       </section>
 
       <main className="flex-1 max-w-7xl mx-auto px-4 py-8">
+        <LeaderboardAd id="psp-compare-banner" />
         {playersData.length >= 2 ? (
           <div className="overflow-x-auto">
             <table className="data-table">
@@ -136,6 +138,7 @@ export default async function ComparePage({
             </p>
           </div>
         )}
+        <InContentAd id="psp-compare-btm" />
       </main>
 
       <Footer />

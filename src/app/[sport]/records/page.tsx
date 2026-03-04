@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getRecordsBySport } from "@/lib/data";
+import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
@@ -47,9 +48,11 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
         </div>
       </section>
 
+      <LeaderboardAd id="psp-records-banner" />
+
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         {Object.keys(grouped).length > 0 ? (
-          Object.entries(grouped).map(([category, recs]) => (
+          Object.entries(grouped).map(([category, recs], idx) => (
             <div key={category}>
               <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
                 {category}
@@ -96,6 +99,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
                   </tbody>
                 </table>
               </div>
+              {idx > 0 && idx % 3 === 0 && <InContentAd id={`psp-records-mid-${idx}`} />}
             </div>
           ))
         ) : (

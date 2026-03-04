@@ -48,6 +48,14 @@ export default function DataBrowser() {
   const [hasChanges, setHasChanges] = useState(false);
   const [pendingChanges, setPendingChanges] = useState<Map<string, { row: number; col: string; oldVal: unknown; newVal: string }>>(new Map());
 
+  // Bulk operations state
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  const [showFindReplace, setShowFindReplace] = useState(false);
+  const [findReplaceField, setFindReplaceField] = useState("");
+  const [findValue, setFindValue] = useState("");
+  const [replaceValue, setReplaceValue] = useState("");
+  const [previewCount, setPreviewCount] = useState(0);
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -167,6 +175,115 @@ export default function DataBrowser() {
     URL.revokeObjectURL(url);
   }
 
+  function toggleSelectAll() {
+    if (selectedRows.size === data.length) {
+      setSelectedRows(new Set());
+    } else {
+      setSelectedRows(new Set(data.map((_, i) => i)));
+    }
+  }
+
+  function toggleSelectRow(rowIndex: number) {
+    const next = new Set(selectedRows);
+    if (next.has(rowIndex)) {
+      next.delete(rowIndex);
+    } else {
+      next.add(rowIndex);
+    }
+    setSelectedRows(next);
+  }
+
+  async function deleteSelected() {
+    if (selectedRows.size === 0) return;
+    if (!confirm(`Delete ${selectedRows.size} records? This sets deleted_at timestamp.`)) return;
+
+    const supabase = createClient();
+    let deletedCount = 0;
+
+    for (const rowIdx of selectedRows) {
+      const record = data[rowIdx];
+      const id = record.id;
+      const { error } = await supabase
+        .from(entity)
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", id as number);
+
+      if (!error) deletedCount++;
+    }
+
+    setSelectedRows(new Set());
+    alert(`Soft-deleted ${deletedCount} records.`);
+    fetchData();
+  }
+
+  async function setSportForSelected(sport: string) {
+    if (selectedRows.size === 0) return;
+    if (!sport) return;
+
+    const supabase = createClient();
+    let updatedCount = 0;
+
+    for (const rowIdx of selectedRows) {
+      const record = data[rowIdx];
+      const id = record.id;
+      const { error } = await supabase
+        .from(entity)
+        .update({ sport_id: sport })
+        .eq("id", id as number);
+
+      if (!error) updatedCount++;
+    }
+
+    setSelectedRows(new Set());
+    alert(`Updated ${updatedCount} records with sport: ${sport}`);
+    fetchData();
+  }
+
+  function updatePreviewCount() {
+    if (!findReplaceField || !findValue) {
+      setPreviewCount(0);
+      return;
+    }
+    const count = data.filter((row) => {
+      const cellVal = row[findReplaceField]?.toString() || "";
+      return cellVal.includes(findValue);
+    }).length;
+    setPreviewCount(count);
+  }
+
+  async function executeFindReplace() {
+    if (!findReplaceField || !findValue || previewCount === 0) return;
+    if (!confirm(`Replace ${previewCount} occurrences of "${findValue}" in ${findReplaceField}?`)) return;
+
+    const supabase = createClient();
+    let replacedCount = 0;
+
+    for (const row of data) {
+      const cellVal = row[findReplaceField]?.toString() || "";
+      if (cellVal.includes(findValue)) {
+        const newVal = cellVal.replace(new RegExp(findValue, "g"), replaceValue);
+        const { error } = await supabase
+          .from(entity)
+          .update({ [findReplaceField]: newVal })
+          .eq("id", row.id as number);
+
+        if (!error) replacedCount++;
+      }
+    }
+
+    setShowFindReplace(false);
+    setFindReplaceField("");
+    setFindValue("");
+    setReplaceValue("");
+    setPreviewCount(0);
+    alert(`Replaced ${replacedCount} values.`);
+    fetchData();
+  }
+
+  useEffect(() => {
+    updatePreviewCount();
+  }, [findReplaceField, findValue, data]);
+
   const columns = COLUMNS[entity];
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -233,6 +350,126 @@ export default function DataBrowser() {
         )}
       </div>
 
+      {/* Bulk Actions Toolbar */}
+      {selectedRows.size > 0 && (
+        <div
+          className="mb-4 p-4 rounded-lg flex items-center justify-between gap-4"
+          style={{ background: "var(--psp-navy)", color: "white" }}
+        >
+          <div className="flex items-center gap-3">
+            <span style={{ fontSize: 14, fontWeight: 600 }}>
+              {selectedRows.size} row{selectedRows.size !== 1 ? "s" : ""} selected
+            </span>
+          </div>
+          <div className="flex gap-2">
+            {entity !== "schools" && entity !== "players" && (
+              <select
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setSportForSelected(e.target.value);
+                    e.target.value = "";
+                  }
+                }}
+                className="filter-select text-sm"
+                defaultValue=""
+              >
+                <option value="">Set Sport...</option>
+                <option value="football">Football</option>
+                <option value="basketball">Basketball</option>
+                <option value="baseball">Baseball</option>
+                <option value="track-field">Track & Field</option>
+                <option value="lacrosse">Lacrosse</option>
+                <option value="wrestling">Wrestling</option>
+                <option value="soccer">Soccer</option>
+              </select>
+            )}
+            <button
+              onClick={() => setShowFindReplace(!showFindReplace)}
+              className="px-3 py-1 text-sm rounded"
+              style={{ background: "var(--psp-navy-mid)", color: "var(--psp-gold)" }}
+            >
+              Find & Replace
+            </button>
+            <button
+              onClick={deleteSelected}
+              className="px-3 py-1 text-sm rounded"
+              style={{ background: "#dc2626", color: "white" }}
+            >
+              Delete Selected
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Find & Replace Modal */}
+      {showFindReplace && (
+        <div
+          className="mb-4 p-4 rounded-lg"
+          style={{ background: "#f3f4f6", border: "1px solid var(--psp-gold)" }}
+        >
+          <div className="grid grid-cols-5 gap-3 items-end">
+            <div>
+              <label className="text-xs font-semibold">Field</label>
+              <select
+                value={findReplaceField}
+                onChange={(e) => setFindReplaceField(e.target.value)}
+                className="filter-select w-full text-sm mt-1"
+              >
+                <option value="">Choose field...</option>
+                {COLUMNS[entity].map((col) => (
+                  <option key={col} value={col}>
+                    {col}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-semibold">Find</label>
+              <input
+                type="text"
+                placeholder="Search text"
+                value={findValue}
+                onChange={(e) => setFindValue(e.target.value)}
+                className="filter-input w-full text-sm mt-1"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold">Replace</label>
+              <input
+                type="text"
+                placeholder="Replacement text"
+                value={replaceValue}
+                onChange={(e) => setReplaceValue(e.target.value)}
+                className="filter-input w-full text-sm mt-1"
+              />
+            </div>
+            <div className="text-center">
+              <div className="text-xs font-semibold text-gray-600">Preview</div>
+              <div style={{ color: "var(--psp-navy)", fontSize: 18, fontWeight: 700 }}>
+                {previewCount}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={executeFindReplace}
+                disabled={previewCount === 0}
+                className="px-3 py-1 text-sm rounded text-white disabled:opacity-40"
+                style={{ background: "var(--psp-navy)" }}
+              >
+                Execute
+              </button>
+              <button
+                onClick={() => setShowFindReplace(false)}
+                className="px-3 py-1 text-sm rounded"
+                style={{ background: "white", border: "1px solid #d1d5db" }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Data table */}
       <div className="admin-card overflow-x-auto">
         {loading ? (
@@ -247,6 +484,14 @@ export default function DataBrowser() {
           <table className="data-table">
             <thead>
               <tr>
+                <th style={{ width: 40 }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.size === data.length && data.length > 0}
+                    onChange={toggleSelectAll}
+                    style={{ cursor: "pointer" }}
+                  />
+                </th>
                 {columns.map((col) => (
                   <th key={col}>{col.replace(/_/g, " ")}</th>
                 ))}
@@ -254,7 +499,18 @@ export default function DataBrowser() {
             </thead>
             <tbody>
               {data.map((row, rowIndex) => (
-                <tr key={rowIndex}>
+                <tr
+                  key={rowIndex}
+                  style={selectedRows.has(rowIndex) ? { background: "var(--psp-gold)", opacity: 0.15 } : {}}
+                >
+                  <td style={{ width: 40 }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.has(rowIndex)}
+                      onChange={() => toggleSelectRow(rowIndex)}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </td>
                   {columns.map((col) => {
                     const isEditing = editingCell?.row === rowIndex && editingCell?.col === col;
                     const isPending = pendingChanges.has(`${rowIndex}-${col}`);

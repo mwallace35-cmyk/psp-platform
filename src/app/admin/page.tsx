@@ -18,8 +18,8 @@ async function getStats() {
       supabase.from("team_seasons").select("id", { count: "exact", head: true }),
       supabase.from("championships").select("id", { count: "exact", head: true }),
       supabase.from("awards").select("id", { count: "exact", head: true }),
-      supabase.from("player_seasons_football").select("id", { count: "exact", head: true }),
-      supabase.from("data_conflicts").select("id", { count: "exact", head: true }).eq("resolution_status", "pending"),
+      supabase.from("football_player_seasons").select("id", { count: "exact", head: true }),
+      supabase.from("data_conflicts").select("id", { count: "exact", head: true }).eq("status", "pending"),
     ]);
 
   return {
@@ -39,9 +39,20 @@ async function getSportBreakdown() {
   const sports = ["football", "basketball", "baseball", "track-field", "lacrosse", "wrestling", "soccer"];
   const breakdown = [];
 
+  const SPORT_STAT_TABLES: Record<string, string> = {
+    football: "football_player_seasons",
+    basketball: "basketball_player_seasons",
+    baseball: "baseball_player_seasons",
+  };
+
   for (const sport of sports) {
+    const statTable = SPORT_STAT_TABLES[sport];
+    const playerQuery = statTable
+      ? supabase.from(statTable).select("id", { count: "exact", head: true })
+      : supabase.from("player_seasons_misc").select("id", { count: "exact", head: true }).eq("sport_id", sport);
+
     const [players, teams, champs] = await Promise.all([
-      supabase.from("player_seasons_football").select("id", { count: "exact", head: true }).eq("sport_id", sport),
+      playerQuery,
       supabase.from("team_seasons").select("id", { count: "exact", head: true }).eq("sport_id", sport),
       supabase.from("championships").select("id", { count: "exact", head: true }).eq("sport_id", sport),
     ]);
@@ -210,6 +221,22 @@ export default async function AdminDashboard() {
           </h3>
           <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
             Review and resolve data discrepancies
+          </p>
+        </a>
+        <a href="/admin/corrections" className="admin-card hover:shadow-md transition-shadow">
+          <h3 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
+            ✏️ Community Corrections
+          </h3>
+          <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
+            Review community-submitted data corrections
+          </p>
+        </a>
+        <a href="/admin/articles/new" className="admin-card hover:shadow-md transition-shadow">
+          <h3 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
+            📝 New Article
+          </h3>
+          <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
+            Write a new article or AI-generate game recaps
           </p>
         </a>
       </div>

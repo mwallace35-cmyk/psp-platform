@@ -1,0 +1,27 @@
+<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .apple-circle-bg { fill: #0a1628; }
+      .apple-circle-border { fill: none; stroke: #f0a500; stroke-width: 2; }
+      .apple-text { font-family: 'Trebuchet MS', Arial, sans-serif; font-weight: 900; font-size: 100px; letter-spacing: -4px; text-anchor: middle; dominant-baseline: central; }
+      .apple-text-p { fill: #ffffff; }
+      .apple-text-s { fill: #f0a500; }
+    </style>
+  </defs>
+
+  <!-- Navy background circle with rounded corners for iOS -->
+  <circle cx="90" cy="90" r="85" class="apple-circle-bg"/>
+
+  <!-- Gold border -->
+  <circle cx="90" cy="90" r="85" class="apple-circle-border"/>
+
+  <!-- PSP monogram -->
+  <g>
+    <!-- P (white) -->
+    <text x="55" y="95" class="apple-text apple-text-p">P</text>
+    <!-- S (gold) -->
+    <text x="90" y="95" class="apple-text apple-text-s">S</text>
+    <!-- P (white) -->
+    <text x="125" y="95" class="apple-text apple-text-p">P</text>
+  </g>
+</svg>

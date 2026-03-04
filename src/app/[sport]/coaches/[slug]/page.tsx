@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
+import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
@@ -79,6 +80,8 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
         </div>
       </section>
 
+      <LeaderboardAd id="psp-coach-banner" />
+
       <div className="max-w-7xl mx-auto px-4 py-8">
         {stints.length > 0 ? (
           <div>
@@ -114,6 +117,8 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
                 </div>
               ))}
             </div>
+
+            <InContentAd id="psp-coach-mid" />
           </div>
         ) : (
           <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>

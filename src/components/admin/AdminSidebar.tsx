@@ -7,9 +7,16 @@ import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: "📊" },
+  { href: "/admin/articles", label: "Articles", icon: "📰" },
+  { href: "/admin/events", label: "Events", icon: "📅" },
+  { href: "/admin/potw", label: "Player of Week", icon: "⭐" },
   { href: "/admin/import", label: "Import", icon: "📥" },
   { href: "/admin/data", label: "Data Browser", icon: "🔍" },
+  { href: "/admin/comments", label: "Comments", icon: "💬" },
+  { href: "/admin/corrections", label: "Corrections", icon: "✏️" },
   { href: "/admin/conflicts", label: "Conflicts", icon: "⚠️" },
+  { href: "/admin/analytics", label: "Analytics", icon: "📈" },
+  { href: "/admin/sync", label: "Sync", icon: "🔄" },
   { href: "/admin/audit", label: "Audit Log", icon: "📋" },
 ];
 

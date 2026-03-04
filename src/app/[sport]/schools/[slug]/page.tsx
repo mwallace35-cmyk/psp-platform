@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships } from "@/lib/data";
+import { Breadcrumb } from "@/components/ui";
+import PSPPromo from "@/components/ads/PSPPromo";
+import CorrectionForm from "@/components/corrections/CorrectionForm";
+import RelatedArticles from "@/components/articles/RelatedArticles";
 import type { Metadata } from "next";
 
 export const revalidate = 86400; // ISR: daily
@@ -49,11 +53,12 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 60%, ${meta.color}22 100%)` }}
       >
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-            <Link href={`/${sport}`} className="hover:text-white transition-colors">{meta.name}</Link>
-            <span>/</span>
-            <span className="text-white">Schools</span>
-          </div>
+          <Breadcrumb items={[
+            { label: meta.name, href: `/${sport}` },
+            { label: "Schools" },
+            { label: school.name }
+          ]} />
+
           <div className="flex items-start gap-6">
             <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0"
@@ -113,6 +118,8 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         </div>
       </section>
 
+      <PSPPromo size="banner" variant={1} />
+
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
@@ -169,8 +176,16 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                     <tbody>
                       {teamSeasons.map((ts: any) => (
                         <tr key={ts.id}>
-                          <td className="font-medium" style={{ color: "var(--psp-navy)" }}>
-                            {ts.seasons?.label || "—"}
+                          <td className="font-medium">
+                            {ts.seasons?.label ? (
+                              <Link
+                                href={`/${sport}/teams/${slug}/${ts.seasons.label}`}
+                                className="hover:underline"
+                                style={{ color: "var(--psp-blue, #3b82f6)" }}
+                              >
+                                {ts.seasons.label}
+                              </Link>
+                            ) : "—"}
                           </td>
                           <td className="text-center">{ts.wins ?? "—"}</td>
                           <td className="text-center">{ts.losses ?? "—"}</td>
@@ -254,8 +269,25 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                 </Link>
               </div>
             </div>
+
+            {/* Notable Alumni */}
+            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
+              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+                Notable Alumni
+              </h3>
+              <p className="text-sm text-gray-400">Notable players from {school.name} coming soon.</p>
+            </div>
+
+            <RelatedArticles entityType="school" entityId={school.id} />
+
+            <PSPPromo size="sidebar" variant={2} />
           </div>
         </div>
+      </div>
+
+      {/* Correction Form */}
+      <div className="max-w-7xl mx-auto px-4 pb-4">
+        <CorrectionForm entityType="school" entityId={school.id} entityName={school.name} />
       </div>
 
       {/* JSON-LD */}

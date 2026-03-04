@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumb } from "@/components/ui";
+import PSPPromo from "@/components/ads/PSPPromo";
 import { isValidSport, SPORT_META, getChampionshipsBySport } from "@/lib/data";
 import type { Metadata } from "next";
 
@@ -47,17 +49,15 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
     <>
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-            <Link href={`/${sport}`} className="hover:text-white transition-colors">{meta.name}</Link>
-            <span>/</span>
-            <span className="text-white">Championships</span>
-          </div>
+          <Breadcrumb items={[{label: meta.name, href: `/${sport}`}, {label: "Championships"}]} />
           <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
             {meta.name} Championships
           </h1>
           <p className="text-sm text-gray-400 mt-2">{championships.length} titles on record</p>
         </div>
       </section>
+
+      <PSPPromo size="banner" variant={3} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -93,7 +93,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                           <td className="text-xs" style={{ color: "var(--psp-gray-500)" }}>{c.leagues?.name || "—"}</td>
                           <td className="text-sm">{c.score || "—"}</td>
                           <td className="text-xs" style={{ color: "var(--psp-gray-400)" }}>
-                            {(c as any).schools?.name || "—"}
+                            {(c as any).opponent?.name || "—"}
                           </td>
                         </tr>
                       ))}
@@ -143,6 +143,8 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                 ))}
               </div>
             </div>
+
+            <PSPPromo size="sidebar" variant={4} />
           </div>
         </div>
       </div>

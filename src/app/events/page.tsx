@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import { SPORT_META } from '@/lib/sports';
+import PSPPromo from '@/components/ads/PSPPromo';
 
 export const metadata: Metadata = generatePageMetadata({ pageType: 'events' });
 
@@ -57,6 +58,8 @@ export default async function EventsPage() {
           </p>
         </div>
       </div>
+
+      <PSPPromo size="banner" variant={1} />
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 py-12">
@@ -149,6 +152,7 @@ export default async function EventsPage() {
                 </div>
               </div>
             ))}
+          <PSPPromo size="banner" variant={4} />
           </div>
         )}
       </div>

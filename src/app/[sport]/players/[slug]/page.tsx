@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards } from "@/lib/data";
+import { Breadcrumb } from "@/components/ui";
+import PSPPromo from "@/components/ads/PSPPromo";
+import CorrectionForm from "@/components/corrections/CorrectionForm";
+import RelatedArticles from "@/components/articles/RelatedArticles";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
@@ -55,6 +59,14 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     assists: stats.reduce((sum: number, s: any) => sum + (s.assists || 0), 0),
   } : null;
 
+  // Determine which columns to show for football (hide all-zero columns)
+  const footballColumnVisibility = sport === "football" && stats.length > 0 ? {
+    pass_yards: stats.some((s: any) => s.pass_yards && s.pass_yards > 0),
+    pass_td: stats.some((s: any) => s.pass_td && s.pass_td > 0),
+    rec_yards: stats.some((s: any) => s.rec_yards && s.rec_yards > 0),
+    rec_td: stats.some((s: any) => s.rec_td && s.rec_td > 0),
+  } : null;
+
   return (
     <>
       {/* Player header */}
@@ -63,11 +75,12 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 60%, ${meta.color}22 100%)` }}
       >
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-            <Link href={`/${sport}`} className="hover:text-white transition-colors">{meta.name}</Link>
-            <span>/</span>
-            <span className="text-white">Players</span>
-          </div>
+          <Breadcrumb items={[
+            { label: meta.name, href: `/${sport}` },
+            { label: "Players" },
+            { label: player.name }
+          ]} />
+
           <div className="flex items-start gap-6">
             <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0"
@@ -75,7 +88,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             >
               👤
             </div>
-            <div>
+            <div className="flex-1">
               <h1
                 className="text-4xl md:text-5xl text-white mb-2 tracking-wider"
                 style={{ fontFamily: "Bebas Neue, sans-serif" }}
@@ -97,6 +110,16 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 {player.is_multi_sport && (
                   <span className="px-2 py-0.5 text-xs rounded-full" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
                     Multi-Sport
+                  </span>
+                )}
+                {player.pro_team && (
+                  <span className="px-2 py-0.5 text-xs rounded-full" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
+                    ⭐ Pro Athlete
+                  </span>
+                )}
+                {player.college && (
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-blue-600 text-white">
+                    🎓 College
                   </span>
                 )}
               </div>
@@ -138,6 +161,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         </div>
       </section>
 
+      <PSPPromo size="banner" variant={2} />
+
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
@@ -156,10 +181,10 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                         <th>School</th>
                         <th className="text-right">Rush Yds</th>
                         <th className="text-right">Rush TD</th>
-                        <th className="text-right">Pass Yds</th>
-                        <th className="text-right">Pass TD</th>
-                        <th className="text-right">Rec Yds</th>
-                        <th className="text-right">Rec TD</th>
+                        {footballColumnVisibility?.pass_yards && <th className="text-right">Pass Yds</th>}
+                        {footballColumnVisibility?.pass_td && <th className="text-right">Pass TD</th>}
+                        {footballColumnVisibility?.rec_yards && <th className="text-right">Rec Yds</th>}
+                        {footballColumnVisibility?.rec_td && <th className="text-right">Rec TD</th>}
                         <th className="text-right">Total TD</th>
                       </tr>
                     </thead>
@@ -174,10 +199,10 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                           </td>
                           <td className="text-right">{s.rush_yards || "—"}</td>
                           <td className="text-right">{s.rush_td || "—"}</td>
-                          <td className="text-right">{s.pass_yards || "—"}</td>
-                          <td className="text-right">{s.pass_td || "—"}</td>
-                          <td className="text-right">{s.rec_yards || "—"}</td>
-                          <td className="text-right">{s.rec_td || "—"}</td>
+                          {footballColumnVisibility?.pass_yards && <td className="text-right">{s.pass_yards || "—"}</td>}
+                          {footballColumnVisibility?.pass_td && <td className="text-right">{s.pass_td || "—"}</td>}
+                          {footballColumnVisibility?.rec_yards && <td className="text-right">{s.rec_yards || "—"}</td>}
+                          {footballColumnVisibility?.rec_td && <td className="text-right">{s.rec_td || "—"}</td>}
                           <td className="text-right font-bold">{s.total_td || "—"}</td>
                         </tr>
                       ))}
@@ -186,10 +211,10 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                           <td colSpan={2}>Career Totals</td>
                           <td className="text-right">{footballTotals.rushYards.toLocaleString()}</td>
                           <td className="text-right">{footballTotals.rushTd}</td>
-                          <td className="text-right">{footballTotals.passYards.toLocaleString()}</td>
-                          <td className="text-right">{footballTotals.passTd}</td>
-                          <td className="text-right">{footballTotals.recYards.toLocaleString()}</td>
-                          <td className="text-right">{footballTotals.recTd}</td>
+                          {footballColumnVisibility?.pass_yards && <td className="text-right">{footballTotals.passYards.toLocaleString()}</td>}
+                          {footballColumnVisibility?.pass_td && <td className="text-right">{footballTotals.passTd}</td>}
+                          {footballColumnVisibility?.rec_yards && <td className="text-right">{footballTotals.recYards.toLocaleString()}</td>}
+                          {footballColumnVisibility?.rec_td && <td className="text-right">{footballTotals.recTd}</td>}
                           <td className="text-right">{footballTotals.totalTd}</td>
                         </tr>
                       )}
@@ -269,6 +294,19 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 </div>
               </div>
             )}
+
+            {/* Related: More from this school */}
+            {player.schools && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                  More from {(player as any).schools?.name}
+                </h2>
+                <p className="text-sm text-gray-500 mb-4">Explore other players from this school</p>
+                <Link href={`/${sport}/schools/${(player as any).schools?.slug}`} className="inline-block px-6 py-3 rounded-lg font-medium" style={{ background: "var(--psp-navy)", color: "white" }}>
+                  View all {(player as any).schools?.name} players →
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -310,6 +348,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               </dl>
             </div>
 
+            <PSPPromo size="sidebar" variant={4} />
+
             {/* Pro/college info */}
             {(player.college || player.pro_team) && (
               <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
@@ -338,8 +378,17 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 </dl>
               </div>
             )}
+
+            <RelatedArticles entityType="player" entityId={player.id} />
+
+            <PSPPromo size="sidebar" variant={3} />
           </div>
         </div>
+      </div>
+
+      {/* Correction Form */}
+      <div className="max-w-7xl mx-auto px-4 pb-4">
+        <CorrectionForm entityType="player" entityId={player.id} entityName={player.name} />
       </div>
 
       {/* JSON-LD */}

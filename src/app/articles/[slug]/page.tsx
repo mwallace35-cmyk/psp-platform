@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SPORT_META } from '@/lib/sports';
+import AdPlaceholder, { LeaderboardAd } from '@/components/ads/AdPlaceholder';
+import CommentSection from '@/components/comments/CommentSection';
 
 interface PageProps {
   params: Promise<{
@@ -94,6 +96,8 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         </div>
       </div>
 
+      <LeaderboardAd id="psp-article-banner" />
+
       <div className="max-w-4xl mx-auto px-4 py-12 grid grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="col-span-2">
@@ -156,6 +160,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               </a>
             </div>
           </div>
+
+          {/* Comments */}
+          <CommentSection articleId={article.id} />
         </div>
 
         {/* Sidebar */}
@@ -193,6 +200,8 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               </div>
             </div>
           </div>
+
+          <AdPlaceholder size="sidebar-rect" id="psp-article-rail" />
 
           {/* Related Articles */}
           {relatedArticles && relatedArticles.length > 0 && (

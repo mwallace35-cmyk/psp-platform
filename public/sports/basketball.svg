@@ -1,0 +1,92 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="basketballGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a1628;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f2040;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="basketballAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:0.9" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#basketballGrad)"/>
+
+  <!-- Court lines -->
+  <g opacity="0.15" stroke="#f97316" stroke-width="2">
+    <rect x="30" y="30" width="340" height="240" fill="none"/>
+    <line x1="200" y1="30" x2="200" y2="270"/>
+    <circle cx="200" cy="150" r="40" fill="none"/>
+    <path d="M 160 30 L 160 70 L 240 70 L 240 30" fill="none"/>
+  </g>
+
+  <!-- Player legs -->
+  <g fill="#0a1628" opacity="0.9">
+    <path d="M 110 165 L 95 270 L 115 270 L 130 165 Z" stroke="#f97316" stroke-width="1"/>
+    <path d="M 140 160 L 145 270 L 165 270 L 155 160 Z" stroke="#f97316" stroke-width="1"/>
+  </g>
+
+  <!-- Player torso -->
+  <ellipse cx="122" cy="110" rx="25" ry="60" fill="#0f2040" stroke="#f97316" stroke-width="1.5" opacity="0.95"/>
+
+  <!-- Left arm (extended up) -->
+  <g fill="none" stroke="#0f2040" stroke-width="11" stroke-linecap="round">
+    <path d="M 100 95 Q 70 50 60 10" opacity="0.85"/>
+  </g>
+  <g fill="none" stroke="#f97316" stroke-width="2" opacity="0.6">
+    <path d="M 100 95 Q 70 50 60 10"/>
+  </g>
+
+  <!-- Right arm (guard position) -->
+  <g fill="none" stroke="#0f2040" stroke-width="11" stroke-linecap="round">
+    <path d="M 145 105 Q 180 80 210 60" opacity="0.85"/>
+  </g>
+  <g fill="none" stroke="#f97316" stroke-width="2" opacity="0.6">
+    <path d="M 145 105 Q 180 80 210 60"/>
+  </g>
+
+  <!-- Player head -->
+  <circle cx="122" cy="45" r="17" fill="#0f2040" stroke="#f97316" stroke-width="1.5" opacity="0.95"/>
+
+  <!-- Basketball -->
+  <circle cx="65" cy="5" r="14" fill="url(#basketballAccent)" opacity="0.9" stroke="#f97316" stroke-width="1.5"/>
+  <!-- Ball lines -->
+  <g stroke="#0a1628" stroke-width="1.2" opacity="0.6" fill="none">
+    <path d="M 65 -9 Q 70 0 65 12"/>
+    <path d="M 55 5 L 75 5"/>
+  </g>
+
+  <!-- Hoop rim arc -->
+  <g fill="none" stroke="#f97316" stroke-width="2.5" opacity="0.6">
+    <path d="M 230 120 Q 280 110 300 140"/>
+  </g>
+
+  <!-- Backboard accent -->
+  <g fill="none" stroke="#f97316" stroke-width="1.5" opacity="0.3">
+    <rect x="295" y="80" width="60" height="100"/>
+  </g>
+
+  <!-- Ball arc trajectory -->
+  <g fill="none" stroke="#f97316" stroke-width="2" opacity="0.45" stroke-dasharray="5,5">
+    <path d="M 65 20 Q 150 40 230 120"/>
+  </g>
+
+  <!-- Dynamic motion lines -->
+  <g stroke="#f97316" stroke-width="2" opacity="0.3" fill="none">
+    <path d="M 140 140 L 170 125"/>
+    <path d="M 130 170 L 165 160"/>
+    <path d="M 110 190 L 145 185"/>
+  </g>
+
+  <!-- Energy burst -->
+  <g fill="none" stroke="#f97316" stroke-width="2" opacity="0.25">
+    <circle cx="65" cy="5" r="22" fill="none"/>
+    <circle cx="65" cy="5" r="28" fill="none"/>
+  </g>
+
+  <!-- Geometric accent -->
+  <g fill="none" stroke="#f97316" stroke-width="2" opacity="0.2">
+    <polygon points="280,220 320,200 340,250 300,270"/>
+  </g>
+</svg>

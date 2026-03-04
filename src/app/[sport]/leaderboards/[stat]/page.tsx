@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getFootballLeaders, getBasketballLeaders } from "@/lib/data";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import SortableTable from "@/components/ui/SortableTable";
+import PSPPromo from "@/components/ads/PSPPromo";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -17,27 +20,52 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
-const FOOTBALL_STATS = [
+interface StatConfig {
+  key: string;
+  label: string;
+  cols: string[];
+  hasData?: boolean;
+}
+
+const FOOTBALL_STATS: StatConfig[] = [
   { key: "rushing", label: "Rushing", cols: ["rush_yards", "rush_carries", "rush_td", "rush_ypc"] },
   { key: "passing", label: "Passing", cols: ["pass_yards", "pass_comp", "pass_att", "pass_td", "pass_int"] },
   { key: "receiving", label: "Receiving", cols: ["rec_yards", "receptions", "rec_td"] },
   { key: "scoring", label: "Scoring", cols: ["total_td", "points"] },
 ];
 
-const BASKETBALL_STATS = [
-  { key: "scoring", label: "Scoring", cols: ["points", "ppg", "games_played"] },
-  { key: "ppg", label: "PPG", cols: ["ppg", "points", "games_played"] },
-  { key: "rebounds", label: "Rebounds", cols: ["rebounds", "rpg", "games_played"] },
-  { key: "assists", label: "Assists", cols: ["assists", "apg", "games_played"] },
+const BASKETBALL_STATS: StatConfig[] = [
+  { key: "scoring", label: "Scoring", cols: ["points", "ppg", "games_played"], hasData: true },
+  { key: "ppg", label: "PPG", cols: ["ppg", "points", "games_played"], hasData: true },
+  { key: "rebounds", label: "Rebounds", cols: ["rebounds", "rpg", "games_played"], hasData: false },
+  { key: "assists", label: "Assists", cols: ["assists", "apg", "games_played"], hasData: false },
 ];
+
+interface RawLeader {
+  id: string;
+  players?: {
+    name: string;
+    slug: string;
+    pro_team?: string | null;
+  };
+  schools?: {
+    name: string;
+    slug: string;
+  };
+  seasons?: {
+    label: string;
+    year_start: number;
+  };
+  [key: string]: any;
+}
 
 export default async function LeaderboardPage({ params }: { params: Promise<PageParams> }) {
   const { sport, stat } = await params;
   if (!isValidSport(sport)) notFound();
 
   const meta = SPORT_META[sport];
-  let leaders: any[] = [];
-  let statConfig: { key: string; label: string; cols: string[] } | undefined;
+  let leaders: RawLeader[] = [];
+  let statConfig: { key: string; label: string; cols: string[]; hasData?: boolean } | undefined;
 
   if (sport === "football") {
     statConfig = FOOTBALL_STATS.find(s => s.key === stat) || FOOTBALL_STATS[0];
@@ -57,17 +85,108 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
     ppg: "PPG", games_played: "GP", rebounds: "REB", rpg: "RPG", assists: "AST", apg: "APG",
   };
 
+  // Extract all unique seasons and schools for filtering
+  const uniqueSeasons = Array.from(
+    new Set(leaders.map((row: any) => row.seasons?.label).filter(Boolean))
+  ).sort().reverse();
+
+  const uniqueSchools = Array.from(
+    new Set(leaders.map((row: any) => row.schools?.name).filter(Boolean))
+  ).sort() as string[];
+
+  const uniqueLeagues = Array.from(
+    new Set(leaders.map((row: any) => (row.schools as any)?.league || "").filter(Boolean))
+  ).sort() as string[];
+
+  // Build columns for SortableTable
+  const columns: any[] = [
+    {
+      key: "rank",
+      label: "#",
+      align: "center",
+      sortable: false,
+      width: "w-12",
+    },
+    {
+      key: "playerName",
+      label: "Player",
+      sortable: true,
+      primary: true,
+      render: (value: string, row: any) => (
+        <div className="flex items-center gap-2">
+          {row.pro_team && <span className="text-gold">⭐</span>}
+          <Link
+            href={`/${sport}/players/${row.playerSlug}`}
+            className="font-medium text-sm hover:underline"
+            style={{ color: "var(--psp-navy)" }}
+          >
+            {value}
+          </Link>
+        </div>
+      ),
+    },
+    {
+      key: "schoolName",
+      label: "School",
+      sortable: true,
+      render: (value: string, row: any) => (
+        <Link
+          href={`/${sport}/schools/${row.schoolSlug}`}
+          className="hover:underline text-sm"
+          style={{ color: "var(--psp-gray-500)" }}
+        >
+          {value}
+        </Link>
+      ),
+    },
+    {
+      key: "seasonLabel",
+      label: "Season",
+      sortable: true,
+      hideOnMobile: true,
+    },
+  ];
+
+  // Add stat columns
+  if (statConfig) {
+    for (const col of statConfig.cols) {
+      columns.push({
+        key: col,
+        label: colLabels[col] || col,
+        align: "right",
+        sortable: true,
+        hideOnMobile: false,
+        render: (value: any) => value ?? "—",
+      });
+    }
+  }
+
+  // Transform leaders data for SortableTable
+  const tableData = leaders.map((row: any, idx: number) => ({
+    id: row.id,
+    rank: idx + 1,
+    playerName: row.players?.name || "Unknown",
+    playerSlug: row.players?.slug || "",
+    schoolName: row.schools?.name || "Unknown",
+    schoolSlug: row.schools?.slug || "",
+    seasonLabel: row.seasons?.label || "Unknown",
+    pro_team: row.players?.pro_team,
+    ...statConfig?.cols.reduce((acc: any, col) => ({ ...acc, [col]: row[col] }), {}),
+  }));
+
   return (
     <>
       {/* Header */}
       <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)` }}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-            <Link href={`/${sport}`} className="hover:text-white transition-colors">{meta.name}</Link>
-            <span>/</span>
-            <span className="text-white">Leaderboards</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <Breadcrumb
+            items={[
+              { label: meta.name, href: `/${sport}` },
+              { label: "Leaderboards" },
+              { label: statConfig?.label || stat },
+            ]}
+          />
+          <h1 className="text-4xl md:text-5xl text-white tracking-wider mt-4" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
             {statConfig?.label || stat} Leaders
           </h1>
           <p className="text-sm text-gray-400 mt-2">Season-by-season statistical leaders</p>
@@ -79,69 +198,123 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
         {availableStats.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-8">
             {availableStats.map((s) => (
-              <Link
-                key={s.key}
-                href={`/${sport}/leaderboards/${s.key}`}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  s.key === stat
-                    ? "text-white"
-                    : "bg-white border border-[var(--psp-gray-200)] hover:border-[var(--psp-gray-300)]"
-                }`}
-                style={s.key === stat ? { background: "var(--psp-navy)", color: "white" } : { color: "var(--psp-navy)" }}
-              >
-                {s.label}
-              </Link>
+              <div key={s.key} className="relative">
+                <Link
+                  href={`/${sport}/leaderboards/${s.key}`}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    s.key === stat
+                      ? "text-white"
+                      : "bg-white border border-[var(--psp-gray-200)] hover:border-[var(--psp-gray-300)]"
+                  }`}
+                  style={s.key === stat ? { background: "var(--psp-navy)", color: "white" } : { color: "var(--psp-navy)" }}
+                >
+                  {s.label}
+                </Link>
+                {s.hasData === false && (
+                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                    Coming Soon
+                  </span>
+                )}
+              </div>
             ))}
           </div>
         )}
 
+        {/* Filter dropdowns */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          <select
+            className="px-3 py-2 rounded border text-sm"
+            style={{ borderColor: "var(--psp-navy)", color: "var(--psp-navy)" }}
+            defaultValue=""
+          >
+            <option value="">All Seasons</option>
+            {uniqueSeasons.map((season) => (
+              <option key={season} value={season}>
+                {season}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="px-3 py-2 rounded border text-sm"
+            style={{ borderColor: "var(--psp-navy)", color: "var(--psp-navy)" }}
+            defaultValue=""
+          >
+            <option value="">All Leagues</option>
+            {uniqueLeagues.map((league) => (
+              <option key={league} value={league}>
+                {league}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="px-3 py-2 rounded border text-sm"
+            style={{ borderColor: "var(--psp-navy)", color: "var(--psp-navy)" }}
+            defaultValue=""
+          >
+            <option value="">All Schools</option>
+            {uniqueSchools.map((school) => (
+              <option key={school} value={school}>
+                {school}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <PSPPromo size="banner" variant={1} />
+
         {/* Leaderboard table */}
-        {leaders.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th className="w-12 text-center">#</th>
-                  <th>Player</th>
-                  <th>School</th>
-                  <th>Season</th>
-                  {statConfig?.cols.map((col) => (
-                    <th key={col} className="text-right">{colLabels[col] || col}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {leaders.map((row: any, idx: number) => (
-                  <tr key={row.id}>
-                    <td className="text-center font-bold text-sm" style={{ color: idx < 3 ? "var(--psp-gold)" : "var(--psp-gray-400)" }}>
-                      {idx + 1}
-                    </td>
-                    <td>
-                      <Link href={`/${sport}/players/${row.players?.slug}`} className="font-medium text-sm hover:underline" style={{ color: "var(--psp-navy)" }}>
-                        {row.players?.name}
-                      </Link>
-                    </td>
-                    <td className="text-xs">
-                      <Link href={`/${sport}/schools/${row.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gray-500)" }}>
-                        {row.schools?.name}
-                      </Link>
-                    </td>
-                    <td className="text-xs" style={{ color: "var(--psp-gray-400)" }}>{row.seasons?.label}</td>
-                    {statConfig?.cols.map((col) => (
-                      <td key={col} className="text-right font-medium">{row[col] ?? "—"}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {tableData.length > 0 ? (
+          <div className="my-8">
+            <SortableTable
+              columns={columns}
+              data={tableData}
+              highlightTop3={true}
+              mobileCardMode={true}
+              emptyMessage="No leaderboard data available"
+            />
           </div>
         ) : (
           <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
             <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>No leaderboard data yet</h3>
-            <p className="text-sm">Check back soon as data is being loaded.</p>
+            <h3 className="text-lg font-medium mb-4" style={{ color: "var(--psp-navy)" }}>
+              {statConfig?.label} data is being collected
+            </h3>
+            <p className="text-sm mb-6">
+              We're working on gathering {statConfig?.label.toLowerCase()} statistics. Check back soon!
+            </p>
+
+            {/* Links to available stats */}
+            {availableStats.filter(s => s.hasData !== false).length > 0 && (
+              <div className="bg-gray-50 rounded-lg p-6 inline-block">
+                <p className="text-sm font-medium mb-3" style={{ color: "var(--psp-navy)" }}>
+                  In the meantime, check out our available leaderboards:
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {availableStats
+                    .filter(s => s.hasData !== false)
+                    .map(s => (
+                      <Link
+                        key={s.key}
+                        href={`/${sport}/leaderboards/${s.key}`}
+                        className="px-3 py-2 rounded bg-white border text-sm hover:bg-gray-100 transition-colors"
+                        style={{
+                          borderColor: "var(--psp-navy)",
+                          color: "var(--psp-navy)",
+                          fontWeight: "500"
+                        }}
+                      >
+                        {s.label}
+                      </Link>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
+
+        <PSPPromo size="banner" variant={3} />
       </div>
 
       <script
@@ -152,10 +325,11 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
             "@type": "ItemList",
             name: `${meta.name} ${statConfig?.label || stat} Leaders`,
             url: `https://phillysportspack.com/${sport}/leaderboards/${stat}`,
-            numberOfItems: leaders.length,
+            numberOfItems: tableData.length,
           }),
         }}
       />
     </>
   );
 }
+

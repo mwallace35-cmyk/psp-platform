@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import "./type-scale.css";
 
 export const metadata: Metadata = {
   title: "PhillySportsPack.com",
   description:
     "Philadelphia high school sports data — football, basketball, baseball, and more.",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/apple-touch-icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -18,8 +23,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <Script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){try{var t=localStorage.getItem('psp-theme');if(t){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}})()
+            `,
+          }}
+        />
         <link
-          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
         {/* Google Analytics */}

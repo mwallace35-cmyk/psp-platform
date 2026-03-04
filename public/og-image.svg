@@ -1,0 +1,44 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .og-bg { fill: #0a1628; }
+      .og-circle-bg { fill: none; }
+      .og-circle-border { fill: none; stroke: #f0a500; stroke-width: 6; }
+      .og-text-p { fill: #ffffff; font-family: 'Trebuchet MS', Arial, sans-serif; font-weight: 900; font-size: 280px; letter-spacing: -12px; text-anchor: middle; dominant-baseline: central; }
+      .og-text-s { fill: #f0a500; font-family: 'Trebuchet MS', Arial, sans-serif; font-weight: 900; font-size: 280px; letter-spacing: -12px; text-anchor: middle; dominant-baseline: central; }
+      .og-subtitle { fill: #ffffff; font-family: 'DM Sans', Arial, sans-serif; font-size: 32px; font-weight: 600; letter-spacing: 1px; text-anchor: middle; }
+      .og-accent { fill: #f0a500; }
+    </style>
+  </defs>
+
+  <!-- Navy background -->
+  <rect width="1200" height="630" class="og-bg"/>
+
+  <!-- Subtle gradient overlay -->
+  <defs>
+    <linearGradient id="fadeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f2040;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#0a1628;stop-opacity:0" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#fadeGradient)"/>
+
+  <!-- Central circle border -->
+  <circle cx="600" cy="270" r="180" class="og-circle-border"/>
+
+  <!-- PSP monogram centered -->
+  <g transform="translate(600, 270)">
+    <!-- P (white) -->
+    <text x="-75" y="30" class="og-text-p">P</text>
+    <!-- S (gold) -->
+    <text x="0" y="30" class="og-text-s">S</text>
+    <!-- P (white) -->
+    <text x="75" y="30" class="og-text-p">P</text>
+  </g>
+
+  <!-- Gold accent line -->
+  <line x1="200" y1="480" x2="1000" y2="480" stroke="#f0a500" stroke-width="2"/>
+
+  <!-- Subtitle text -->
+  <text x="600" y="540" class="og-subtitle">PHILLYSPORTSPACK.COM</text>
+</svg>

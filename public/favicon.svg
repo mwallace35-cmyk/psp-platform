@@ -1,0 +1,27 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .favicon-circle { fill: #0a1628; }
+      .favicon-border { fill: none; stroke: #f0a500; stroke-width: 1; }
+      .favicon-text { font-family: 'Trebuchet MS', Arial, sans-serif; font-weight: 900; font-size: 36px; letter-spacing: -2px; text-anchor: middle; dominant-baseline: central; }
+      .favicon-p { fill: #ffffff; }
+      .favicon-s { fill: #f0a500; }
+    </style>
+  </defs>
+
+  <!-- Navy background circle -->
+  <circle cx="32" cy="32" r="30" class="favicon-circle"/>
+
+  <!-- Gold border ring -->
+  <circle cx="32" cy="32" r="30" class="favicon-border"/>
+
+  <!-- PSP monogram - simplified for small size -->
+  <g>
+    <!-- P (white) -->
+    <text x="20" y="34" class="favicon-text favicon-p">P</text>
+    <!-- S (gold) -->
+    <text x="32" y="34" class="favicon-text favicon-s">S</text>
+    <!-- P (white) -->
+    <text x="44" y="34" class="favicon-text favicon-p">P</text>
+  </g>
+</svg>

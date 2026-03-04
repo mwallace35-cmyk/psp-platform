@@ -1,0 +1,26 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .psp-circle { fill: #0a1628; }
+      .psp-border { fill: none; stroke: #f0a500; stroke-width: 3; }
+      .psp-text-p { fill: #ffffff; font-family: 'Bebas Neue', sans-serif; font-size: 220px; font-weight: 700; letter-spacing: -8px; }
+      .psp-text-s { fill: #f0a500; font-family: 'Bebas Neue', sans-serif; font-size: 220px; font-weight: 700; letter-spacing: -8px; }
+    </style>
+  </defs>
+
+  <!-- Navy background circle -->
+  <circle cx="256" cy="256" r="240" class="psp-circle"/>
+
+  <!-- Gold border ring -->
+  <circle cx="256" cy="256" r="240" class="psp-border"/>
+
+  <!-- PSP text group - centered -->
+  <g transform="translate(256, 256)">
+    <!-- P (white) -->
+    <text x="-80" y="75" class="psp-text-p">P</text>
+    <!-- S (gold) -->
+    <text x="-5" y="75" class="psp-text-s">S</text>
+    <!-- P (white) -->
+    <text x="65" y="75" class="psp-text-p">P</text>
+  </g>
+</svg>
