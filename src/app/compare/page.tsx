@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import CompareSearch from "@/components/ui/CompareSearch";
 import { getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats } from "@/lib/data";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
@@ -77,12 +79,15 @@ export default async function ComparePage({
             Compare Players
           </h1>
           <p className="text-sm text-gray-400 mt-2">
-            Add players via URL: /compare?players=slug1,slug2&sport=football
+            Search and select players to compare their career stats side by side.
           </p>
         </div>
       </section>
 
       <main className="flex-1 max-w-7xl mx-auto px-4 py-8">
+        <Suspense fallback={null}>
+          <CompareSearch />
+        </Suspense>
         <LeaderboardAd id="psp-compare-banner" />
         {playersData.length >= 2 ? (
           <div className="overflow-x-auto">
@@ -127,15 +132,9 @@ export default async function ComparePage({
             </table>
           </div>
         ) : (
-          <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
+          <div className="text-center py-12" style={{ color: "var(--psp-gray-400)" }}>
             <div className="text-4xl mb-4">⚖️</div>
-            <h3 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>
-              Compare Players Side by Side
-            </h3>
-            <p className="text-sm mb-6">Select 2-4 players to compare their career statistics.</p>
-            <p className="text-xs" style={{ color: "var(--psp-gray-400)" }}>
-              Example: <code className="bg-gray-100 px-2 py-1 rounded">/compare?players=player-slug-1,player-slug-2&sport=football</code>
-            </p>
+            <p className="text-sm">Use the search above to pick 2-4 players, then hit Compare.</p>
           </div>
         )}
         <InContentAd id="psp-compare-btm" />
