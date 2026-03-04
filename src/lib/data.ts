@@ -1028,6 +1028,21 @@ export async function getRecentCommitments(limit = 10) {
   }
 }
 
+export async function getRecentGamesBySport(sportId: string, limit = 20) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("games")
+      .select("*, seasons(label), home_school:schools!games_home_school_id_fkey(id, name, slug), away_school:schools!games_away_school_id_fkey(id, name, slug)")
+      .eq("sport_id", sportId)
+      .order("game_date", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
 export async function getTeamsWithRecords(sportId: string) {
   try {
     const supabase = await createClient();

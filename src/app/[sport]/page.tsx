@@ -1,24 +1,13 @@
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui";
-import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness } from "@/lib/data";
-import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher";
+import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getTeamsWithRecords, getRecentGamesBySport } from "@/lib/data";
+import SportHubDashboard from "@/components/sport-hub/SportHubDashboard";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
 
 type PageParams = { sport: string };
 
-const SPORT_COLORS: Record<string, string> = {
-  football: "var(--fb)",
-  basketball: "var(--bb)",
-  baseball: "var(--base)",
-  "track-field": "var(--track)",
-  lacrosse: "var(--lac)",
-  wrestling: "var(--wrest)",
-  soccer: "var(--soccer)",
-};
-
-// Raw hex colors for client components (CSS vars don't work in JS)
 const SPORT_COLORS_HEX: Record<string, string> = {
   football: "#16a34a",
   basketball: "#ea580c",
@@ -56,15 +45,16 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
   if (!isValidSport(sport)) notFound();
 
   const meta = SPORT_META[sport];
-  const sportColor = SPORT_COLORS[sport] || "var(--fb)";
   const sportColorHex = SPORT_COLORS_HEX[sport] || "#16a34a";
 
-  const [overview, champions, schools, featured, freshness] = await Promise.all([
+  const [overview, champions, schools, featured, freshness, standings, recentGames] = await Promise.all([
     getSportOverview(sport),
-    getRecentChampions(sport, 10),
-    getSchoolsBySport(sport, 30),
-    getFeaturedArticles(sport, 3),
+    getRecentChampions(sport, 20),
+    getSchoolsBySport(sport, 50),
+    getFeaturedArticles(sport, 5),
     getDataFreshness(sport),
+    getTeamsWithRecords(sport),
+    getRecentGamesBySport(sport, 20),
   ]);
 
   return (
@@ -72,22 +62,22 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       {/* Breadcrumb */}
       <Breadcrumb items={[{label: meta.name}]} />
 
-      {/* Sport Header */}
-      <div className="sport-hdr" style={{ borderBottomColor: sportColor }}>
-        <div className="sport-hdr-inner">
-          <span style={{ fontSize: 28 }}>{meta.emoji}</span>
-          <h1>{meta.name}</h1>
-          <div className="stat-pills">
-            <div className="pill"><strong>{overview.players.toLocaleString()}</strong> players</div>
-            <div className="pill"><strong>{overview.schools.toLocaleString()}</strong> schools</div>
-            <div className="pill"><strong>{overview.championships.toLocaleString()}</strong> titles</div>
-            <span className="db-tag"><span className="dot" /> Supabase</span>
+      {/* Sport Header Bar */}
+      <div className="sport-hub-header" style={{ "--sport-color": sportColorHex } as React.CSSProperties}>
+        <div className="shh-inner">
+          <span className="shh-emoji">{meta.emoji}</span>
+          <h1 className="shh-title">{meta.name}</h1>
+          <div className="shh-pills">
+            <div className="shh-pill"><strong>{overview.players.toLocaleString()}</strong> players</div>
+            <div className="shh-pill"><strong>{overview.schools.toLocaleString()}</strong> schools</div>
+            <div className="shh-pill"><strong>{overview.championships.toLocaleString()}</strong> titles</div>
+            <span className="db-tag"><span className="dot" /> Live</span>
           </div>
         </div>
       </div>
 
-      {/* Layout Switcher (Client Component) */}
-      <SportLayoutSwitcher
+      {/* ESPN Dashboard */}
+      <SportHubDashboard
         sport={sport}
         sportColor={sportColorHex}
         meta={meta}
@@ -96,6 +86,8 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         schools={schools}
         featured={featured}
         freshness={freshness}
+        standings={standings}
+        recentGames={recentGames}
       />
 
       {/* JSON-LD */}
