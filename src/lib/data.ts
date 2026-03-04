@@ -64,7 +64,19 @@ export async function getAllSchools() {
   try {
     const supabase = await createClient();
 
-    // Query schools that have a league (filters out auto-generated opponent stubs)
+    // Get school IDs that have team_season data (filters out opponent stubs)
+    const { data: activeIds } = await supabase
+      .from("team_seasons")
+      .select("school_id");
+
+    const activeSchoolIds = [...new Set((activeIds ?? []).map((r: any) => r.school_id))];
+
+    if (activeSchoolIds.length === 0) {
+      console.log("[getAllSchools] No schools with team season data");
+      return [];
+    }
+
+    // Query only schools that have actual data
     const { data: schools, error } = await supabase
       .from("schools")
       .select(`
@@ -72,7 +84,7 @@ export async function getAllSchools() {
         leagues(name, short_name)
       `)
       .is("deleted_at", null)
-      .not("league_id", "is", null)
+      .in("id", activeSchoolIds)
       .order("name")
       .limit(500);
 

@@ -14,14 +14,22 @@ export const metadata: Metadata = {
 export const revalidate = 3600; // ISR: revalidate every hour
 
 const LEAGUE_COLORS: Record<string, string> = {
+  // Match both short and full DB league names
   'Catholic League': '#f0a500',
-  'Public League': '#0a1628',
+  'Philadelphia Catholic League': '#f0a500',
+  'PCL': '#f0a500',
+  'Public League': '#1e3a5f',
+  'Philadelphia Public League': '#1e3a5f',
+  'PPL': '#1e3a5f',
   'Inter-Ac': '#16a34a',
+  'Inter-Academic League': '#16a34a',
+  'IA': '#16a34a',
   'Central League': '#ea580c',
   'Delaware Valley': '#0891b2',
   'Suburban One': '#7c3aed',
+  'SOL': '#7c3aed',
   'Ches-Mont': '#dc2626',
-  'Independent': '#999',
+  'Independent': '#6b7280',
 };
 
 export default async function SchoolsPage() {
