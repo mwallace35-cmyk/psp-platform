@@ -68,7 +68,7 @@ export async function getAllSchools() {
     const { data: schools, error } = await supabase
       .from("schools")
       .select(`
-        id, slug, name, short_name, city, state, mascot, league_id,
+        id, slug, name, short_name, city, state, mascot, league_id, colors, logo_url, address,
         leagues(name, short_name)
       `)
       .is("deleted_at", null)

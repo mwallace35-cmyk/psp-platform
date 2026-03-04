@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface School {
   id: number;
@@ -11,6 +12,9 @@ interface School {
   city?: string;
   state?: string;
   mascot?: string;
+  colors?: { primary?: string; secondary?: string } | null;
+  logo_url?: string | null;
+  address?: string | null;
   leagues?: { name: string; short_name?: string } | null;
   championships_count: number;
 }
@@ -43,7 +47,8 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
         (s) =>
           s.name.toLowerCase().includes(term) ||
           (s.city && s.city.toLowerCase().includes(term)) ||
-          (s.mascot && s.mascot.toLowerCase().includes(term))
+          (s.mascot && s.mascot.toLowerCase().includes(term)) ||
+          (s.short_name && s.short_name.toLowerCase().includes(term))
       );
     }
 
@@ -56,7 +61,7 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
       <div className="filter-bar" style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         <input
           type="text"
-          placeholder="Search schools or cities..."
+          placeholder="Search schools, cities, or mascots..."
           className="filter-input"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -89,45 +94,129 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
           gap: 12,
           marginBottom: 16,
         }}
       >
         {filtered.map((school) => {
           const leagueName = school.leagues?.name || 'Unknown';
-          const color = leagueColors[leagueName] || '#666';
+          const leagueColor = leagueColors[leagueName] || '#666';
+          const primaryColor = school.colors?.primary || leagueColor;
+          const secondaryColor = school.colors?.secondary || '#222';
 
           return (
             <Link
               key={school.id}
               href={`/football/schools/${school.slug}`}
-              /* TODO: Make sport-agnostic once /schools/[slug] route exists */
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <div
                 style={{
                   background: 'var(--card-bg)',
                   border: '1px solid var(--g100)',
-                  borderRadius: 6,
+                  borderRadius: 8,
                   overflow: 'hidden',
                   transition: 'box-shadow .15s, transform .15s',
                   cursor: 'pointer',
                 }}
                 className="school-card"
               >
-                {/* League color header */}
-                <div style={{ background: color, padding: '10px 14px', color: '#fff' }}>
-                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.02em' }}>
-                    {school.name}
-                  </h3>
+                {/* Header with school colors */}
+                <div
+                  style={{
+                    background: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 60%, ${secondaryColor} 100%)`,
+                    padding: '12px 14px',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    minHeight: 56,
+                  }}
+                >
+                  {/* Logo */}
+                  {school.logo_url ? (
+                    <div style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 6,
+                      background: 'rgba(255,255,255,0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      overflow: 'hidden',
+                    }}>
+                      <img
+                        src={school.logo_url}
+                        alt={`${school.name} logo`}
+                        width={34}
+                        height={34}
+                        style={{ objectFit: 'contain' }}
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <div style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 6,
+                      background: 'rgba(255,255,255,0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      fontSize: 16,
+                      fontWeight: 700,
+                      fontFamily: "'Bebas Neue', sans-serif",
+                    }}>
+                      {(school.short_name || school.name.charAt(0)).substring(0, 3)}
+                    </div>
+                  )}
+
+                  <div style={{ minWidth: 0 }}>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: 15,
+                      fontWeight: 700,
+                      fontFamily: "'Bebas Neue', sans-serif",
+                      letterSpacing: '0.02em',
+                      lineHeight: 1.2,
+                      textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}>
+                      {school.name}
+                    </h3>
+                    {school.mascot && (
+                      <div style={{
+                        fontSize: 11,
+                        opacity: 0.85,
+                        marginTop: 1,
+                        textShadow: '0 1px 1px rgba(0,0,0,0.2)',
+                      }}>
+                        {school.mascot}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Body */}
-                <div style={{ padding: '12px 14px' }}>
-                  <div style={{ fontSize: 11, color: 'var(--g400)', marginBottom: 4 }}>
-                    {leagueName}
+                <div style={{ padding: '10px 14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                    <div
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        background: leagueColor,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: 11, color: 'var(--g400)' }}>{leagueName}</span>
                   </div>
+
                   {school.city && (
                     <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8 }}>
                       {school.city}{school.state ? `, ${school.state}` : ''}
@@ -142,11 +231,12 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
                         {school.championships_count}
                       </div>
                     </div>
-                    {school.mascot && (
+                    {school.colors && (
                       <div>
-                        <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Mascot</div>
-                        <div style={{ fontSize: 12, color: 'var(--text)', marginTop: 2 }}>
-                          {school.mascot}
+                        <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Colors</div>
+                        <div style={{ display: 'flex', gap: 3, marginTop: 4 }}>
+                          <div style={{ width: 14, height: 14, borderRadius: 3, background: school.colors.primary || '#666', border: '1px solid var(--g200)' }} />
+                          <div style={{ width: 14, height: 14, borderRadius: 3, background: school.colors.secondary || '#999', border: '1px solid var(--g200)' }} />
                         </div>
                       </div>
                     )}
@@ -167,8 +257,8 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
 
       <style jsx>{`
         .school-card:hover {
-          box-shadow: 0 2px 12px rgba(0,0,0,.1);
-          transform: translateY(-1px);
+          box-shadow: 0 4px 16px rgba(0,0,0,.15);
+          transform: translateY(-2px);
         }
       `}</style>
     </>
