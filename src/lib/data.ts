@@ -64,23 +64,37 @@ export async function getAllSchools() {
   try {
     const supabase = await createClient();
 
-    // Query schools with league info (no championships join to avoid FK ambiguity)
-    const { data: schools } = await supabase
+    // Query schools with league info
+    const { data: schools, error } = await supabase
       .from("schools")
       .select(`
-        id, slug, name, short_name, city, state, mascot,
+        id, slug, name, short_name, city, state, mascot, league_id,
         leagues(name, short_name)
       `)
       .is("deleted_at", null)
       .order("name")
       .limit(500);
 
-    if (!schools || schools.length === 0) return [];
+    if (error) {
+      console.error("[getAllSchools] Supabase error:", error.message, error.details, error.hint);
+      return [];
+    }
+
+    if (!schools || schools.length === 0) {
+      console.log("[getAllSchools] No schools returned from query");
+      return [];
+    }
+
+    console.log(`[getAllSchools] Found ${schools.length} schools`);
 
     // Count championships per school separately
-    const { data: champs } = await supabase
+    const { data: champs, error: champError } = await supabase
       .from("championships")
       .select("school_id");
+
+    if (champError) {
+      console.error("[getAllSchools] Championships query error:", champError.message);
+    }
 
     const champCounts = new Map<number, number>();
     (champs ?? []).forEach((c: any) => {
@@ -91,7 +105,8 @@ export async function getAllSchools() {
       ...s,
       championships_count: champCounts.get(s.id) ?? 0,
     }));
-  } catch {
+  } catch (err) {
+    console.error("[getAllSchools] Exception:", err);
     return [];
   }
 }
