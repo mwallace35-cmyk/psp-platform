@@ -391,8 +391,14 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                             </thead>
                             <tbody>
                               {sportSeasons.map((ts: any) => (
-                                <tr key={ts.id}>
-                                  <td className="font-medium text-sm">{ts.seasons?.label || "—"}</td>
+                                <tr key={ts.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition">
+                                  <td className="font-medium text-sm">
+                                    {ts.seasons?.label ? (
+                                      <Link href={`/schools/${school.slug}/${sid}/${ts.seasons.label}`} className="hover:underline" style={{ color: "var(--link)" }}>
+                                        {ts.seasons.label}
+                                      </Link>
+                                    ) : "—"}
+                                  </td>
                                   <td className="text-center">{ts.wins ?? "—"}</td>
                                   <td className="text-center">{ts.losses ?? "—"}</td>
                                   <td className="text-center">{ts.ties ?? "—"}</td>

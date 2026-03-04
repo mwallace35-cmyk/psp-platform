@@ -834,7 +834,7 @@ export async function getTeamRosterBySeason(schoolId: number, sportId: string, s
     const orderCol = sportId === "football" ? "total_td" : sportId === "basketball" ? "points" : "created_at";
     const { data } = await supabase
       .from(table)
-      .select("*, players(id, name, slug)")
+      .select("*, players(id, name, slug, graduation_year, positions, college, pro_team)")
       .eq("school_id", schoolId)
       .eq("season_id", seasonId)
       .order(orderCol, { ascending: false, nullsFirst: false });
