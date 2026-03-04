@@ -3,68 +3,68 @@ export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import PSPPromo from "@/components/ads/PSPPromo";
 import NewsletterSignup from "@/components/newsletter/NewsletterSignup";
 import { createClient } from "@/lib/supabase/server";
 
-const HEADLINES = [
+/* ── Featured Hero ── */
+const FEATURED = {
+  sport: "Football",
+  sportColor: "var(--fb)",
+  tag: "Featured",
+  gradient: "linear-gradient(180deg,rgba(22,163,74,.3) 0%,rgba(10,22,40,.97) 100%)",
+  title: "St. Joseph's Prep Captures 9th State Championship",
+  desc: "QB Samaj Jones throws for 312 yards and 4 TDs as the Hawks dominate in the 6A title game.",
+  time: "2h ago",
+  href: "/schools/saint-josephs-prep",
+};
+
+/* ── Secondary Stories (2-col grid) ── */
+const STORIES = [
   {
-    sport: "Basketball",
-    sportColor: "var(--bb)",
-    tagBg: "#fff7ed",
-    icon: "🏀",
-    img: "/sports/basketball.svg",
+    sport: "Basketball", sportColor: "var(--bb)", icon: "🏀",
     gradient: "linear-gradient(135deg,var(--bb),#7c2d12)",
     title: "Imhotep Extends Historic Win Streak to 85 Games",
     desc: "The Panthers capture a 6th consecutive Public League title and remain unbeaten.",
-    time: "2h ago",
-    href: "/basketball/schools/imhotep-charter",
+    time: "2h ago", href: "/schools/imhotep-charter",
   },
   {
-    sport: "Football",
-    sportColor: "var(--fb)",
-    tagBg: "#f0fdf4",
-    icon: "🏈",
-    img: "/sports/football.svg",
+    sport: "Football", sportColor: "var(--fb)", icon: "🏈",
     gradient: "linear-gradient(135deg,var(--fb),#0f5132)",
-    title: "2025 PA All-State Selections: 11 Philly Players Earn Honors",
+    title: "2025 PA All-State Selections: 11 Philly Players",
     desc: "PA Football Writers Association releases full rosters across all classifications.",
-    time: "5h ago",
-    href: "/football",
+    time: "5h ago", href: "/football",
   },
   {
-    sport: "Baseball",
-    sportColor: "var(--base)",
-    tagBg: "#fef2f2",
-    icon: "⚾",
-    img: "/sports/baseball.svg",
+    sport: "Baseball", sportColor: "var(--base)", icon: "⚾",
     gradient: "linear-gradient(135deg,var(--base),#7f1d1d)",
     title: "Neumann-Goretti Repeats as PIAA State Champions",
     desc: "N-G captures back-to-back titles behind a dominant pitching staff.",
-    time: "1d ago",
-    href: "/baseball/schools/neumann-goretti",
+    time: "1d ago", href: "/schools/neumann-goretti",
   },
   {
-    sport: "Lacrosse",
-    sportColor: "var(--lac)",
-    tagBg: "#ecfeff",
-    icon: "🥍",
-    img: "/sports/lacrosse.svg",
+    sport: "Lacrosse", sportColor: "var(--lac)", icon: "🥍",
     gradient: "linear-gradient(135deg,var(--lac),#155e75)",
     title: "Conestoga Wins 4th PIAA State Title",
     desc: "The Pioneers beat Garnet Valley 12-8 in the state final.",
-    time: "2d ago",
-    href: "/lacrosse",
+    time: "2d ago", href: "/lacrosse",
   },
 ];
 
-const MORE_STORIES = [
-  { icon: "🤼", img: "/sports/wrestling.svg", sport: "Wrestling", color: "var(--wrest)", gradient: "linear-gradient(135deg,var(--wrest),#713f12)", title: "Malvern Prep Earns #5 National Ranking", desc: "2024 state champs continue their dominance." },
-  { icon: "🏃", img: "/sports/track.svg", sport: "Track", color: "var(--track)", gradient: "linear-gradient(135deg,var(--track),#4c1d95)", title: "West Catholic Takes PIAA 2A Girls Title", desc: "Complete results from the state championship meet." },
-  { icon: "🏈", img: "/sports/football.svg", sport: "Recruiting", color: "var(--fb)", gradient: "linear-gradient(135deg,#0a1628,#1a365d)", title: "Top 25 Philly Recruits: Class of 2027", desc: "D1 offers tracker and commitment updates." },
-  { icon: "⚽", img: "/sports/soccer.svg", sport: "Soccer", color: "var(--soccer)", gradient: "linear-gradient(135deg,var(--soccer),#064e3b)", title: "Catholic League Soccer Preview", desc: "Breaking down the contenders for the 2025 season." },
+/* ── Headlines List ── */
+const HEADLINES = [
+  { sport: "Wrestling", color: "var(--wrest)", title: "Malvern Prep earns #5 national ranking after state title", time: "3h ago", href: "/wrestling" },
+  { sport: "Track", color: "var(--track)", title: "West Catholic takes PIAA 2A girls team title", time: "5h ago", href: "/track-field" },
+  { sport: "Recruiting", color: "var(--fb)", title: "Top 25 Philly recruits: Class of 2027 rankings update", time: "8h ago", href: "/recruiting" },
+  { sport: "Soccer", color: "var(--soccer)", title: "Catholic League soccer preview: breaking down the contenders", time: "1d ago", href: "/soccer" },
+  { sport: "Basketball", color: "var(--bb)", title: "Father Judge wins first-ever PIAA state basketball title", time: "1d ago", href: "/schools/father-judge" },
+  { sport: "Football", color: "var(--fb)", title: "Archbishop Wood advances to 5A state semifinal", time: "2d ago", href: "/schools/archbishop-wood" },
+  { sport: "Baseball", color: "var(--base)", title: "La Salle three-peats with 2021 PIAA state crown", time: "2d ago", href: "/schools/la-salle-college-hs" },
+  { sport: "Lacrosse", color: "var(--lac)", title: "Haverford School captures 5th state lacrosse championship", time: "3d ago", href: "/schools/haverford-school" },
 ];
 
+/* ── Alumni ── */
 const ALUMNI = [
   { emoji: "🏀", name: "Kobe Bryant", team: "Lakers (HOF)", hs: "Lower Merion" },
   { emoji: "🏀", name: "Wilt Chamberlain", team: "Warriors (HOF)", hs: "Overbrook" },
@@ -74,6 +74,15 @@ const ALUMNI = [
   { emoji: "🏀", name: "Jalen Duren", team: "Pistons", hs: "Roman Catholic" },
   { emoji: "⚾", name: "Reggie Jackson", team: "Yankees (HOF)", hs: "Cheltenham" },
   { emoji: "🏈", name: "D'Andre Swift", team: "Bears", hs: "St. Joseph's Prep" },
+];
+
+/* ── Recent Scores (sidebar) ── */
+const SCORES = [
+  { home: "SJP", away: "Pitt CC", hs: 35, as: 21, status: "Final · FB", win: true },
+  { home: "N-G", away: "MCS", hs: 72, as: 58, status: "Final · BB", win: true },
+  { home: "Imhotep", away: "MLK", hs: 82, as: 59, status: "Final · BB", win: true },
+  { home: "Roman", away: "Judge", hs: 68, as: 61, status: "Final · BB", win: true },
+  { home: "La Salle", away: "Bonner", hs: 8, as: 2, status: "Final · BSB", win: true },
 ];
 
 async function getOverviewStats() {
@@ -104,59 +113,79 @@ export default async function HomePage() {
       <Header />
 
       <div className="espn-container" style={{ flex: 1 }}>
-        {/* Main Content */}
+        {/* ━━ MAIN CONTENT ━━ */}
         <main>
-          {/* Hero Card */}
-          <div className="hero-card">
-            <div className="hero-tag">Featured</div>
-            <div
-              className="hero-img"
-              style={{
-                background: "linear-gradient(180deg,#1a365d 0%,rgba(10,22,40,.95) 100%)",
-              }}
-            >
-              <div>
-                <h2>St. Joseph&apos;s Prep Captures 9th State Championship</h2>
-                <div className="hero-sub">
-                  QB Samaj Jones throws for 312 yards and 4 TDs as the Hawks dominate in the 6A title game
+          {/* Featured Hero Card */}
+          <Link href={FEATURED.href} style={{ textDecoration: "none" }}>
+            <div className="card-featured fade-in">
+              <div className="card-img" style={{ background: FEATURED.gradient, height: 300 }}>
+                <div className="card-content">
+                  <div className="card-tag">{FEATURED.tag}</div>
+                  <h2>{FEATURED.title}</h2>
+                  <div className="card-meta">
+                    <span style={{ color: FEATURED.sportColor, fontWeight: 700, marginRight: 8 }}>{FEATURED.sport}</span>
+                    {FEATURED.desc}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
 
-          {/* Top Headlines */}
-          <div className="sec-head"><h2>Top Headlines</h2></div>
-          <div className="headline-list">
-            {HEADLINES.map((hl, i) => (
-              <Link key={i} href={hl.href} className="hl-item" style={{ textDecoration: "none", color: "inherit" }}>
-                <div className="hl-img" style={{ background: `${hl.gradient}, url(${hl.img}) center/cover`, backgroundBlendMode: "overlay" }}>
-                </div>
-                <div className="hl-text">
-                  <div className="hl-tag" style={{ background: hl.tagBg, color: hl.sportColor }}>
-                    {hl.sport}
+          {/* Top Stories — 2-col grid */}
+          <div className="sec-head" style={{ marginTop: 20 }}>
+            <h2>Top Stories</h2>
+            <Link href="/articles" className="more">All News &#8594;</Link>
+          </div>
+          <div className="stories">
+            {STORIES.map((s, i) => (
+              <Link key={i} href={s.href} style={{ textDecoration: "none", color: "inherit" }}>
+                <div className={`card-secondary fade-in fade-in-delay-${Math.min(i + 1, 3)}`}>
+                  <div className="card-img" style={{ background: s.gradient, height: 140, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40 }}>
+                    {s.icon}
                   </div>
-                  <h3>{hl.title}</h3>
-                  <p>{hl.desc}</p>
-                  <div className="meta">{hl.time}</div>
+                  <div className="card-body">
+                    <div className="card-tag" style={{ background: s.sportColor }}>{s.sport}</div>
+                    <h3>{s.title}</h3>
+                    <p>{s.desc}</p>
+                    <div className="card-meta">{s.time}</div>
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
 
-          {/* Billboard Ad */}
+          {/* Billboard Promo */}
           <PSPPromo size="billboard" variant={2} />
 
-          {/* More Coverage */}
-          <div className="sec-head"><h2>More Coverage</h2></div>
-          <div className="stories">
-            {MORE_STORIES.map((story, i) => (
-              <div key={i} className="story">
-                <div className="s-img" style={{ background: `${story.gradient}, url(${story.img}) center/cover`, backgroundBlendMode: "overlay" }}>
+          {/* Headlines List */}
+          <div className="sec-head"><h2>Headlines</h2></div>
+          <div style={{ marginBottom: 20 }}>
+            {HEADLINES.map((hl, i) => (
+              <Link key={i} href={hl.href} style={{ textDecoration: "none", color: "inherit" }}>
+                <div className="card-headline">
+                  <span className="hl-dot" style={{ background: hl.color }} />
+                  <h4>{hl.title}</h4>
+                  <span className="hl-time">{hl.time}</span>
                 </div>
-                <div className="s-body">
-                  <div className="s-tag" style={{ color: story.color }}>{story.sport}</div>
-                  <h4>{story.title}</h4>
-                  <p>{story.desc}</p>
+              </Link>
+            ))}
+          </div>
+
+          {/* Video Section Placeholder */}
+          <div className="sec-head"><h2>Watch</h2></div>
+          <div className="stories" style={{ marginBottom: 20 }}>
+            {[
+              { title: "SJP State Championship Highlights", duration: "4:32", gradient: "linear-gradient(135deg,#16a34a,#0a1628)" },
+              { title: "Imhotep's 85-Game Win Streak", duration: "3:15", gradient: "linear-gradient(135deg,#ea580c,#0a1628)" },
+            ].map((v, i) => (
+              <div key={i} className="card-secondary card-video" style={{ position: "relative" }}>
+                <div className="card-img" style={{ background: v.gradient, height: 140 }}>
+                  <div className="play-btn" />
+                  <div className="duration">{v.duration}</div>
+                </div>
+                <div className="card-body">
+                  <h3 style={{ fontSize: 15 }}>{v.title}</h3>
+                  <p>Coming soon</p>
                 </div>
               </div>
             ))}
@@ -165,11 +194,11 @@ export default async function HomePage() {
           {/* Alumni Strip */}
           <div className="sec-head">
             <h2>Philly Pro Alumni</h2>
-            <Link href="/search" className="more">All 72 Athletes &#8594;</Link>
+            <Link href="/our-guys" className="more">All 72 Athletes &#8594;</Link>
           </div>
           <div className="alumni-strip">
             {ALUMNI.map((a, i) => (
-              <div key={i} className="a-card">
+              <div key={i} className="a-card hover-lift">
                 <div className="a-emoji">{a.emoji}</div>
                 <div className="a-name">{a.name}</div>
                 <div className="a-team">{a.team}</div>
@@ -179,8 +208,28 @@ export default async function HomePage() {
           </div>
         </main>
 
-        {/* Sidebar */}
+        {/* ━━ SIDEBAR ━━ */}
         <aside className="sidebar">
+          {/* Recent Scores */}
+          <div className="widget">
+            <div className="w-head">Recent Scores <span className="badge">Live</span></div>
+            <div className="w-body">
+              {SCORES.map((g, i) => (
+                <div key={i} className="w-row" style={{ flexDirection: "column", alignItems: "stretch", gap: 2, padding: "8px 14px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                    <span style={{ fontWeight: g.win ? 800 : 500, color: g.win ? "var(--text)" : "var(--g400)" }}>{g.home}</span>
+                    <span style={{ fontWeight: 800, color: g.win ? "var(--text)" : "var(--g400)" }}>{g.hs}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                    <span style={{ fontWeight: 500, color: "var(--g400)" }}>{g.away}</span>
+                    <span style={{ fontWeight: 500, color: "var(--g400)" }}>{g.as}</span>
+                  </div>
+                  <div style={{ fontSize: 9, color: "var(--psp-gold)", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".3px" }}>{g.status}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Database Stats */}
           <div className="widget">
             <div className="w-head">Database <span className="badge">Live</span></div>
@@ -217,7 +266,17 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Ad Space */}
+          {/* POTW Widget */}
+          <div className="widget">
+            <div className="w-head" style={{ background: "var(--psp-gold)", color: "#000" }}>🗳️ Player of the Week</div>
+            <div className="w-body" style={{ padding: "12px 14px", textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: "var(--text)" }}>Vote for this week&apos;s top performer!</div>
+              <Link href="/potw" className="btn-primary" style={{ display: "inline-block", fontSize: 12, padding: "6px 18px", textDecoration: "none" }}>
+                Vote Now →
+              </Link>
+            </div>
+          </div>
+
           <NewsletterSignup />
           <PSPPromo size="sidebar" variant={1} />
 
@@ -225,11 +284,12 @@ export default async function HomePage() {
           <div className="widget">
             <div className="w-head">Quick Links</div>
             <div className="w-body">
-              <Link href="/search" className="w-link">&#8594; Player of the Week</Link>
-              <Link href="/search" className="w-link">&#8594; Hall of Fame</Link>
-              <Link href="/search" className="w-link">&#8594; Archive (2000-2025)</Link>
-              <Link href="/search" className="w-link">&#8594; Recruiting</Link>
+              <Link href="/potw" className="w-link">&#8594; Player of the Week</Link>
+              <Link href="/our-guys" className="w-link">&#8594; Our Guys / Pro Alumni</Link>
+              <Link href="/schools" className="w-link">&#8594; All Schools</Link>
+              <Link href="/recruiting" className="w-link">&#8594; Recruiting</Link>
               <Link href="/compare" className="w-link">&#8594; Compare Players</Link>
+              <Link href="/glossary" className="w-link">&#8594; Stats Glossary</Link>
             </div>
           </div>
 
@@ -247,10 +307,13 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
+
+          <PSPPromo size="sidebar" variant={4} />
         </aside>
       </div>
 
       <Footer />
+      <MobileBottomNav />
     </div>
   );
 }
