@@ -300,7 +300,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                               {p.name}
                             </Link>
                           </td>
-                          <td className="text-xs text-gray-500">{p.position || "—"}</td>
+                          <td className="text-xs text-gray-500">{(Array.isArray(p.positions) ? p.positions.join(", ") : p.positions) || "—"}</td>
                           <td className="text-xs text-gray-500">
                             {p.years?.length > 0 ? (
                               p.years.length > 2
@@ -349,8 +349,11 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                       <span className="text-lg">🏅</span>
                       <div className="flex-1">
                         <span className="text-sm font-medium" style={{ color: "var(--text)" }}>
-                          {a.award_name || a.category}
+                          {a.award_name || a.award_type || a.category || "Award"}
                         </span>
+                        {a.position && (
+                          <span className="text-xs ml-1" style={{ color: "var(--g400)" }}>({a.position})</span>
+                        )}
                         {a.players && (
                           <Link href={`/${sport}/players/${a.players.slug}`} className="text-xs ml-2 hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
                             {a.players.name}

@@ -180,7 +180,7 @@ export async function getSchoolPlayers(schoolId: number, sportId: string, limit 
 
     const { data } = await supabase
       .from(table)
-      .select("*, players!inner(id, name, slug, class_year, position, college, pro_team), seasons(label, year_start)")
+      .select("*, players!inner(id, name, slug, graduation_year, positions, college, pro_team), seasons(label, year_start)")
       .eq("school_id", schoolId)
       .order("created_at", { ascending: false })
       .limit(200);
