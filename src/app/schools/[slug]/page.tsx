@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getSchoolBySlug,
@@ -10,12 +9,11 @@ import {
   SPORT_META,
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
-import PSPPromo from "@/components/ads/PSPPromo";
 import CorrectionForm from "@/components/corrections/CorrectionForm";
-import RelatedArticles from "@/components/articles/RelatedArticles";
+import SchoolProfileTabs from "@/components/school/SchoolProfileTabs";
 import type { Metadata } from "next";
 
-export const revalidate = 86400; // ISR: daily
+export const revalidate = 86400;
 
 type PageParams = { slug: string };
 
@@ -43,7 +41,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
     getSchoolAllRecentGames(school.id),
   ]);
 
-  // Compute all-time record across all sports
+  // Compute all-time record
   const allTimeRecord = teamSeasons.reduce(
     (acc: { w: number; l: number; t: number; pf: number; pa: number }, ts: any) => ({
       w: acc.w + (ts.wins || 0),
@@ -57,517 +55,145 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   const totalGames = allTimeRecord.w + allTimeRecord.l + allTimeRecord.t;
   const winPct = totalGames > 0 ? ((allTimeRecord.w / totalGames) * 100).toFixed(1) : null;
 
-  // School colors
+  // Colors
   const colors = school.colors as { primary?: string; secondary?: string } | null;
   const primaryColor = colors?.primary || "#0a1628";
   const secondaryColor = colors?.secondary || "#222";
 
-  // Determine which sports this school participates in
+  // Active sports
   const sportSet = new Set<string>();
-  teamSeasons.forEach((ts: any) => {
-    if (ts.sport_id) sportSet.add(ts.sport_id);
-  });
-  championships.forEach((c: any) => {
-    if (c.sport_id) sportSet.add(c.sport_id);
-  });
+  teamSeasons.forEach((ts: any) => { if (ts.sport_id) sportSet.add(ts.sport_id); });
+  championships.forEach((c: any) => { if (c.sport_id) sportSet.add(c.sport_id); });
   const activeSports = Array.from(sportSet).sort();
 
-  // Group team seasons by sport
-  const seasonsBySport = new Map<string, any[]>();
-  teamSeasons.forEach((ts: any) => {
-    const sid = ts.sport_id || "other";
-    if (!seasonsBySport.has(sid)) seasonsBySport.set(sid, []);
-    seasonsBySport.get(sid)!.push(ts);
-  });
+  // Group data by sport
+  const gamesBySport: Record<string, any[]> = {};
+  const champsBySport: Record<string, any[]> = {};
+  const playersBySport: Record<string, any[]> = {};
+  const seasonsBySport: Record<string, any[]> = {};
 
-  // Group championships by sport
-  const champsBySport = new Map<string, any[]>();
-  championships.forEach((c: any) => {
-    const sid = c.sport_id || "other";
-    if (!champsBySport.has(sid)) champsBySport.set(sid, []);
-    champsBySport.get(sid)!.push(c);
-  });
-
-  // Group recent games by sport
-  const gamesBySport = new Map<string, any[]>();
   recentGames.forEach((g: any) => {
     const sid = g.sport_id || "other";
-    if (!gamesBySport.has(sid)) gamesBySport.set(sid, []);
-    gamesBySport.get(sid)!.push(g);
+    if (!gamesBySport[sid]) gamesBySport[sid] = [];
+    gamesBySport[sid].push(g);
   });
-
-  // Group players by sport
-  const playersBySport = new Map<string, any[]>();
+  championships.forEach((c: any) => {
+    const sid = c.sport_id || "other";
+    if (!champsBySport[sid]) champsBySport[sid] = [];
+    champsBySport[sid].push(c);
+  });
   players.forEach((p: any) => {
     const sid = p.sport || "other";
-    if (!playersBySport.has(sid)) playersBySport.set(sid, []);
-    playersBySport.get(sid)!.push(p);
+    if (!playersBySport[sid]) playersBySport[sid] = [];
+    playersBySport[sid].push(p);
+  });
+  teamSeasons.forEach((ts: any) => {
+    const sid = ts.sport_id || "other";
+    if (!seasonsBySport[sid]) seasonsBySport[sid] = [];
+    seasonsBySport[sid].push(ts);
   });
 
-  // Pro players
   const proPlayers = players.filter((p: any) => p.pro_team || p.college);
 
-  // Sport name helper
-  type SportKey = keyof typeof SPORT_META;
-  const sportName = (id: string) => (SPORT_META as any)[id]?.name || id.charAt(0).toUpperCase() + id.slice(1);
-  const sportEmoji = (id: string) => (SPORT_META as any)[id]?.emoji || "🏅";
+  // Sport meta for client
+  const sportMeta: Record<string, any> = {};
+  for (const sid of activeSports) {
+    sportMeta[sid] = (SPORT_META as any)[sid] || { name: sid, emoji: "🏅", color: "#666" };
+  }
 
   return (
     <>
-      {/* ═══════════════════════ HERO HEADER ═══════════════════════ */}
-      <section
-        className="py-10 md:py-14"
+      {/* Breadcrumb */}
+      <Breadcrumb items={[{ label: "Schools", href: "/schools" }, { label: school.name }]} />
+
+      {/* ═══════════════ ESPN TEAM BANNER ═══════════════ */}
+      <div
+        className="team-banner"
         style={{
-          background: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}cc 40%, ${secondaryColor}aa 100%)`,
+          background: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 50%, ${secondaryColor}aa 100%)`,
         }}
       >
-        <div className="max-w-7xl mx-auto px-4">
-          <Breadcrumb
-            items={[
-              { label: "Schools", href: "/schools" },
-              { label: school.name },
-            ]}
-          />
+        <div className="team-banner-inner">
+          {/* Logo / Monogram */}
+          {school.logo_url ? (
+            <div className="team-logo">
+              <img src={school.logo_url} alt={`${school.name} logo`} width={72} height={72} style={{ objectFit: "contain" }} />
+            </div>
+          ) : (
+            <div className="team-logo team-monogram">
+              {(school.short_name || school.name.charAt(0)).substring(0, 4)}
+            </div>
+          )}
 
-          <div className="flex items-start gap-5 mt-4">
-            {school.logo_url ? (
-              <div
-                className="flex-shrink-0 rounded-2xl overflow-hidden flex items-center justify-center"
-                style={{ width: 88, height: 88, background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)" }}
-              >
-                <img src={school.logo_url} alt={`${school.name} logo`} width={72} height={72} style={{ objectFit: "contain" }} />
-              </div>
-            ) : (
-              <div
-                className="flex-shrink-0 rounded-2xl flex items-center justify-center text-3xl"
-                style={{ width: 88, height: 88, background: "rgba(255,255,255,0.12)", fontFamily: "Barlow Condensed, sans-serif", color: "#fff", letterSpacing: 2 }}
-              >
-                {(school.short_name || school.name.charAt(0)).substring(0, 4)}
-              </div>
-            )}
-
-            <div className="min-w-0">
-              <h1
-                className="text-3xl md:text-5xl text-white mb-1 tracking-wider"
-                style={{ fontFamily: "Barlow Condensed, sans-serif", textShadow: "0 2px 4px rgba(0,0,0,0.3)" }}
-              >
-                {school.name}
-              </h1>
-              {school.mascot && (
-                <div className="text-lg md:text-xl mb-2" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "rgba(255,255,255,0.85)", letterSpacing: 1, textShadow: "0 1px 2px rgba(0,0,0,0.2)" }}>
-                  {school.mascot}
-                </div>
-              )}
-              <div className="flex flex-wrap gap-3 text-sm">
-                {school.leagues && (
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: "rgba(240,165,0,0.25)", color: "#f0a500" }}>
-                    {(school as any).leagues?.name}
-                  </span>
-                )}
-                <span className="text-white/70">{school.city}, {school.state}</span>
-                {activeSports.map(sid => (
-                  <span key={sid} className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: "rgba(255,255,255,0.15)", color: "#fff" }}>
-                    {sportEmoji(sid)} {sportName(sid)}
-                  </span>
-                ))}
-                {school.closed_year && (
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/30 text-red-300">
-                    Closed {school.closed_year}
-                  </span>
-                )}
-              </div>
+          {/* Team Info */}
+          <div className="team-info">
+            <h1>{school.name}</h1>
+            <div className="team-sub">
+              {school.mascot && <span>{school.mascot}</span>}
+              {school.leagues && <span className="team-league">{(school as any).leagues?.name}</span>}
+              <span>{school.city}, {school.state}</span>
+              {activeSports.map(sid => (
+                <span key={sid} className="team-sport-badge">
+                  {(SPORT_META as any)[sid]?.emoji || "🏅"} {(SPORT_META as any)[sid]?.name || sid}
+                </span>
+              ))}
             </div>
           </div>
 
-          {/* ═══ Stat Bar ═══ */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-8 max-w-3xl">
-            <StatCard label="All-Time Record" value={totalGames > 0 ? `${allTimeRecord.w}-${allTimeRecord.l}${allTimeRecord.t > 0 ? `-${allTimeRecord.t}` : ""}` : "—"} />
-            <StatCard label="Championships" value={String(championships.length)} highlight={championships.length > 0} />
-            <StatCard label="Sports" value={String(activeSports.length)} />
-            <StatCard label="Win %" value={winPct ? `${winPct}%` : "—"} highlight={Number(winPct) >= 60} />
-            <StatCard label="Players" value={String(players.length)} />
-          </div>
-        </div>
-      </section>
-
-      <PSPPromo size="banner" variant={1} />
-
-      {/* ═══════════════════════ MAIN CONTENT ═══════════════════════ */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* ═══ Left Column ═══ */}
-          <div className="lg:col-span-2 space-y-8">
-
-            {/* ═══ Per-Sport Sections ═══ */}
-            {activeSports.map(sid => {
-              const sportGames = gamesBySport.get(sid) || [];
-              const sportChamps = champsBySport.get(sid) || [];
-              const sportPlayers = playersBySport.get(sid) || [];
-              const sportSeasons = seasonsBySport.get(sid) || [];
-              const sportRecord = sportSeasons.reduce(
-                (acc: { w: number; l: number; t: number }, ts: any) => ({
-                  w: acc.w + (ts.wins || 0), l: acc.l + (ts.losses || 0), t: acc.t + (ts.ties || 0),
-                }), { w: 0, l: 0, t: 0 }
-              );
-              const sTotalGames = sportRecord.w + sportRecord.l + sportRecord.t;
-
-              return (
-                <div key={sid} className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--g100)" }}>
-                  {/* Sport Header */}
-                  <div className="px-5 py-4 flex items-center gap-3" style={{ background: `linear-gradient(135deg, ${(SPORT_META as any)[sid]?.color || '#333'}22, transparent)`, borderBottom: "1px solid var(--g100)" }}>
-                    <span className="text-2xl">{sportEmoji(sid)}</span>
-                    <h2 className="text-xl font-bold" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}>
-                      {sportName(sid)}
-                    </h2>
-                    {sTotalGames > 0 && (
-                      <span className="text-sm ml-auto" style={{ color: "var(--g400)" }}>
-                        {sportRecord.w}-{sportRecord.l}{sportRecord.t > 0 ? `-${sportRecord.t}` : ""} all-time
-                      </span>
-                    )}
-                    {sportChamps.length > 0 && (
-                      <span className="text-sm font-bold" style={{ color: "var(--psp-gold, #f0a500)" }}>
-                        🏆 {sportChamps.length}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="p-5 space-y-6" style={{ background: "var(--card-bg)" }}>
-                    {/* Recent Games */}
-                    {sportGames.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: "var(--g400)" }}>Recent Games</h3>
-                        <div className="overflow-x-auto">
-                          <table className="data-table w-full">
-                            <thead>
-                              <tr>
-                                <th>Date</th>
-                                <th>Opponent</th>
-                                <th className="text-center">Result</th>
-                                <th className="text-center">Score</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {sportGames.slice(0, 5).map((g: any) => {
-                                const isHome = g.home_school_id === school.id;
-                                const opp = isHome ? g.away_school : g.home_school;
-                                const ourScore = isHome ? g.home_score : g.away_score;
-                                const theirScore = isHome ? g.away_score : g.home_score;
-                                const won = ourScore != null && theirScore != null ? ourScore > theirScore : null;
-                                return (
-                                  <tr key={g.id}>
-                                    <td className="text-xs text-gray-500">{g.game_date ? new Date(g.game_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}</td>
-                                    <td className="text-sm">
-                                      <span className="text-xs text-gray-400 mr-1">{isHome ? "vs" : "@"}</span>
-                                      {opp ? (
-                                        <Link href={`/schools/${opp.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
-                                          {opp.name}
-                                        </Link>
-                                      ) : "—"}
-                                    </td>
-                                    <td className="text-center">
-                                      {won !== null && (
-                                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${won ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                                          {won ? "W" : "L"}
-                                        </span>
-                                      )}
-                                    </td>
-                                    <td className="text-center text-sm font-medium">{ourScore != null ? `${ourScore}-${theirScore}` : "—"}</td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Championships */}
-                    {sportChamps.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: "var(--g400)" }}>Championships</h3>
-                        <div className="space-y-2">
-                          {sportChamps.map((c: any) => (
-                            <div key={c.id} className="flex items-center gap-3 px-3 py-2 rounded-lg" style={{ background: "var(--bg)", border: "1px solid var(--g100)" }}>
-                              <span className="text-lg">🏆</span>
-                              <span className="font-medium text-sm" style={{ color: "var(--text)" }}>{c.seasons?.label || c.season_id || "Championship"}</span>
-                              <span className="text-xs" style={{ color: "var(--g400)" }}>
-                                {c.level}{c.leagues?.name ? ` — ${c.leagues.name}` : ""}
-                              </span>
-                              {c.score && <span className="text-xs" style={{ color: "var(--g300)" }}>({c.score})</span>}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Notable Players */}
-                    {sportPlayers.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: "var(--g400)" }}>Notable Players</h3>
-                        <div className="overflow-x-auto">
-                          <table className="data-table w-full">
-                            <thead>
-                              <tr>
-                                <th>Player</th>
-                                <th>Years</th>
-                                {sid === "football" && (
-                                  <>
-                                    <th className="text-right">Rush</th>
-                                    <th className="text-right">Pass</th>
-                                    <th className="text-right">TDs</th>
-                                  </>
-                                )}
-                                {sid === "basketball" && (
-                                  <>
-                                    <th className="text-right">Pts</th>
-                                    <th className="text-right">PPG</th>
-                                  </>
-                                )}
-                                <th>Next Level</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {sportPlayers.slice(0, 10).map((p: any) => (
-                                <tr key={p.id}>
-                                  <td className="font-medium">
-                                    <Link href={`/${sid}/players/${p.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
-                                      {p.name}
-                                    </Link>
-                                  </td>
-                                  <td className="text-xs text-gray-500">
-                                    {p.years?.length > 0 ? (p.years.length > 2 ? `${p.years[p.years.length - 1]}–${p.years[0]}` : p.years.join(", ")) : "—"}
-                                  </td>
-                                  {sid === "football" && (
-                                    <>
-                                      <td className="text-right text-sm">{p.total_stats.rush_yards || "—"}</td>
-                                      <td className="text-right text-sm">{p.total_stats.pass_yards || "—"}</td>
-                                      <td className="text-right text-sm font-bold" style={{ color: (p.total_stats.total_td || 0) > 10 ? "var(--psp-gold)" : "inherit" }}>
-                                        {p.total_stats.total_td || "—"}
-                                      </td>
-                                    </>
-                                  )}
-                                  {sid === "basketball" && (
-                                    <>
-                                      <td className="text-right text-sm">{p.total_stats.points?.toLocaleString() || "—"}</td>
-                                      <td className="text-right text-sm font-bold" style={{ color: (p.total_stats.ppg || 0) > 15 ? "var(--psp-gold)" : "inherit" }}>
-                                        {p.total_stats.ppg || "—"}
-                                      </td>
-                                    </>
-                                  )}
-                                  <td className="text-xs">
-                                    {p.pro_team ? (
-                                      <span className="px-1.5 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800 font-medium">{p.pro_team}</span>
-                                    ) : p.college ? (
-                                      <span className="text-gray-500">{p.college}</span>
-                                    ) : "—"}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Season-by-Season Results */}
-                    {sportSeasons.length > 0 && (
-                      <details className="group">
-                        <summary className="cursor-pointer text-sm font-bold uppercase tracking-wider mb-3 list-none flex items-center gap-2" style={{ color: "var(--g400)" }}>
-                          <span className="group-open:rotate-90 transition-transform">▶</span>
-                          Season-by-Season ({sportSeasons.length} seasons)
-                        </summary>
-                        <div className="overflow-x-auto mt-3">
-                          <table className="data-table w-full">
-                            <thead>
-                              <tr>
-                                <th>Season</th>
-                                <th className="text-center">W</th>
-                                <th className="text-center">L</th>
-                                <th className="text-center">T</th>
-                                <th className="text-center">PF</th>
-                                <th className="text-center">PA</th>
-                                <th>Playoff</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {sportSeasons.map((ts: any) => (
-                                <tr key={ts.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition">
-                                  <td className="font-medium text-sm">
-                                    {ts.seasons?.label ? (
-                                      <Link href={`/schools/${school.slug}/${sid}/${ts.seasons.label}`} className="hover:underline" style={{ color: "var(--link)" }}>
-                                        {ts.seasons.label}
-                                      </Link>
-                                    ) : "—"}
-                                  </td>
-                                  <td className="text-center">{ts.wins ?? "—"}</td>
-                                  <td className="text-center">{ts.losses ?? "—"}</td>
-                                  <td className="text-center">{ts.ties ?? "—"}</td>
-                                  <td className="text-center">{ts.points_for ?? "—"}</td>
-                                  <td className="text-center">{ts.points_against ?? "—"}</td>
-                                  <td className="text-xs">{ts.playoff_result || "—"}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </details>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* Awards */}
-            {awards.length > 0 && (() => {
-              const namedAwards = awards.filter((a: any) => a.players?.name);
-              const anonAwards = awards.filter((a: any) => !a.players?.name);
-              const anonGroups = new Map<string, number>();
-              anonAwards.forEach((a: any) => {
-                const key = a.award_name || a.award_type || a.category || "Award";
-                anonGroups.set(key, (anonGroups.get(key) || 0) + 1);
-              });
-              const formatType = (t: string) => t.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-              return (
-                <SectionCard title="Awards & Honors" count={awards.length}>
-                  {anonGroups.size > 0 && (
-                    <div className="flex flex-wrap gap-3 mb-4 px-4">
-                      {Array.from(anonGroups.entries()).map(([type, count]) => (
-                        <div key={type} className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: "var(--card-bg)", border: "1px solid var(--g100)" }}>
-                          <span className="text-lg">🏅</span>
-                          <span className="text-sm font-bold" style={{ color: "var(--psp-gold, #f0a500)" }}>{count}</span>
-                          <span className="text-sm font-medium" style={{ color: "var(--text)" }}>{formatType(type)} Selections</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {namedAwards.length > 0 && (
-                    <div className="space-y-2">
-                      {namedAwards.map((a: any, i: number) => (
-                        <div key={a.id || i} className="flex items-center gap-3 px-4 py-2 rounded-lg" style={{ background: "var(--card-bg)", border: "1px solid var(--g100)" }}>
-                          <span className="text-lg">🏅</span>
-                          <div className="flex-1">
-                            <span className="text-sm font-medium" style={{ color: "var(--text)" }}>
-                              {formatType(a.award_name || a.award_type || a.category || "Award")}
-                            </span>
-                            {a.players?.slug && (
-                              <Link href={`/football/players/${a.players.slug}`} className="text-xs ml-2 hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
-                                {a.players.name}
-                              </Link>
-                            )}
-                            {a.seasons?.label && (
-                              <span className="text-xs ml-2" style={{ color: "var(--g400)" }}>{a.seasons.label}</span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </SectionCard>
-              );
-            })()}
-          </div>
-
-          {/* ═══ Right Sidebar ═══ */}
-          <div className="space-y-6">
-            {/* School Info Card */}
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--g100)" }}>
-              <div className="p-4 flex items-center gap-3" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}>
-                {school.logo_url && <img src={school.logo_url} alt="" width={40} height={40} style={{ objectFit: "contain", borderRadius: 6 }} />}
-                <div>
-                  <div className="text-white font-bold text-sm" style={{ fontFamily: "Barlow Condensed, sans-serif", letterSpacing: 1 }}>
-                    {school.short_name || school.name}
-                  </div>
-                  {school.mascot && <div className="text-white/80 text-xs">{school.mascot}</div>}
-                </div>
-              </div>
-              <div className="p-4 space-y-3 text-sm" style={{ background: "var(--card-bg)" }}>
-                <InfoRow label="Location" value={`${school.city}, ${school.state}`} />
-                {school.leagues && <InfoRow label="League" value={(school as any).leagues?.name} />}
-                {school.mascot && <InfoRow label="Mascot" value={school.mascot} />}
-                {school.address && <InfoRow label="Address" value={school.address} />}
-                {school.founded_year && <InfoRow label="Founded" value={String(school.founded_year)} />}
-                {school.closed_year && <InfoRow label="Closed" value={String(school.closed_year)} />}
-                {colors && (
-                  <div className="flex justify-between items-center">
-                    <span style={{ color: "var(--g400)" }}>Colors</span>
-                    <div className="flex gap-1.5">
-                      {colors.primary && <div className="w-6 h-6 rounded" style={{ background: colors.primary, border: "1px solid var(--g200)" }} title={colors.primary} />}
-                      {colors.secondary && <div className="w-6 h-6 rounded" style={{ background: colors.secondary, border: "1px solid var(--g200)" }} title={colors.secondary} />}
-                    </div>
-                  </div>
-                )}
-                {school.website_url && (
-                  <div className="flex justify-between">
-                    <span style={{ color: "var(--g400)" }}>Website</span>
-                    <a href={school.website_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--psp-gold)" }}>Visit →</a>
-                  </div>
-                )}
-                {allTimeRecord.pf > 0 && (
-                  <div className="pt-3 mt-3" style={{ borderTop: "1px solid var(--g100)" }}>
-                    <div className="text-xs uppercase tracking-wider mb-2" style={{ color: "var(--g400)" }}>All-Time Scoring</div>
-                    <div className="flex gap-4">
-                      <div>
-                        <div className="text-lg font-bold" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}>{allTimeRecord.pf.toLocaleString()}</div>
-                        <div className="text-xs" style={{ color: "var(--g400)" }}>Points For</div>
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}>{allTimeRecord.pa.toLocaleString()}</div>
-                        <div className="text-xs" style={{ color: "var(--g400)" }}>Points Against</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+          {/* Stat Badges */}
+          <div className="team-stats">
+            <div className="team-stat">
+              <span className="ts-val">
+                {totalGames > 0 ? `${allTimeRecord.w}-${allTimeRecord.l}${allTimeRecord.t > 0 ? `-${allTimeRecord.t}` : ""}` : "—"}
+              </span>
+              <span className="ts-label">All-Time</span>
             </div>
-
-            {/* Next Level */}
-            {proPlayers.length > 0 && (
-              <div className="rounded-xl p-5" style={{ background: "var(--card-bg)", border: "1px solid var(--g100)" }}>
-                <h3 className="font-bold text-xs uppercase tracking-wider mb-3" style={{ color: "var(--g400)" }}>Next Level Alumni</h3>
-                <div className="space-y-2">
-                  {proPlayers.slice(0, 8).map((p: any) => (
-                    <div key={p.id} className="flex items-center gap-2">
-                      <span className="text-xs">{sportEmoji(p.sport)}</span>
-                      <Link href={`/${p.sport}/players/${p.slug}`} className="text-sm font-medium hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
-                        {p.name}
-                      </Link>
-                      <span className="text-xs" style={{ color: "var(--g400)" }}>→</span>
-                      <span className="text-xs" style={{ color: p.pro_team ? "var(--psp-gold)" : "var(--g400)" }}>{p.pro_team || p.college}</span>
-                    </div>
-                  ))}
-                  {proPlayers.length > 8 && <div className="text-xs pt-1" style={{ color: "var(--g400)" }}>+{proPlayers.length - 8} more</div>}
-                </div>
-              </div>
-            )}
-
-            {/* Quick Links */}
-            <div className="rounded-xl p-5" style={{ background: "var(--card-bg)", border: "1px solid var(--g100)" }}>
-              <h3 className="font-bold text-xs uppercase tracking-wider mb-3" style={{ color: "var(--g400)" }}>Quick Links</h3>
-              <div className="space-y-2">
-                <Link href={`/search?q=${encodeURIComponent(school.name)}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--text)" }}>
-                  🔍 Search {school.short_name || school.name} Players
-                </Link>
-                <Link href="/schools" className="block text-sm py-1 hover:underline" style={{ color: "var(--text)" }}>
-                  🏫 All Schools Directory
-                </Link>
-                {activeSports.map(sid => (
-                  <Link key={sid} href={`/${sid}/championships`} className="block text-sm py-1 hover:underline" style={{ color: "var(--text)" }}>
-                    🏆 {sportName(sid)} Championships
-                  </Link>
-                ))}
-              </div>
+            <div className="team-stat">
+              <span className="ts-val" style={{ color: championships.length > 0 ? "var(--psp-gold)" : undefined }}>
+                {championships.length}
+              </span>
+              <span className="ts-label">Titles</span>
             </div>
-
-            <RelatedArticles entityType="school" entityId={school.id} />
-            <PSPPromo size="sidebar" variant={2} />
+            <div className="team-stat">
+              <span className="ts-val">{winPct ? `${winPct}%` : "—"}</span>
+              <span className="ts-label">Win %</span>
+            </div>
+            <div className="team-stat">
+              <span className="ts-val">{players.length}</span>
+              <span className="ts-label">Players</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 pb-4">
+      {/* ═══════════════ TABS + CONTENT ═══════════════ */}
+      <SchoolProfileTabs
+        school={school}
+        activeSports={activeSports}
+        allTimeRecord={allTimeRecord}
+        winPct={winPct}
+        primaryColor={primaryColor}
+        sportName={(id: string) => (SPORT_META as any)[id]?.name || id.charAt(0).toUpperCase() + id.slice(1)}
+        sportEmoji={(id: string) => (SPORT_META as any)[id]?.emoji || "🏅"}
+        sportMeta={sportMeta}
+        gamesBySport={gamesBySport}
+        champsBySport={champsBySport}
+        playersBySport={playersBySport}
+        seasonsBySport={seasonsBySport}
+        awards={awards}
+        proPlayers={proPlayers}
+        championships={championships}
+        players={players}
+        teamSeasons={teamSeasons}
+        recentGames={recentGames}
+      />
+
+      {/* Correction Form */}
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 16px" }}>
         <CorrectionForm entityType="school" entityId={school.id} entityName={school.name} />
       </div>
 
+      {/* JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -591,41 +217,5 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         }}
       />
     </>
-  );
-}
-
-/* ─── Helper Components ─── */
-
-function StatCard({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
-  return (
-    <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(4px)" }}>
-      <div className="text-2xl font-bold" style={{ fontFamily: "Barlow Condensed, sans-serif", color: highlight ? "var(--psp-gold)" : "#fff" }}>
-        {value}
-      </div>
-      <div className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>{label}</div>
-    </div>
-  );
-}
-
-function SectionCard({ title, count, children }: { title: string; count?: number; children: React.ReactNode }) {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4 flex items-center gap-2" style={{ fontFamily: "Barlow Condensed, sans-serif", color: "var(--text)" }}>
-        {title}
-        {count !== undefined && count > 0 && (
-          <span className="text-sm font-normal px-2 py-0.5 rounded-full" style={{ background: "var(--g100)", color: "var(--g400)" }}>{count}</span>
-        )}
-      </h2>
-      {children}
-    </div>
-  );
-}
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between">
-      <span style={{ color: "var(--g400)" }}>{label}</span>
-      <span className="font-medium text-right" style={{ color: "var(--text)" }}>{value}</span>
-    </div>
   );
 }
