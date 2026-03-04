@@ -108,7 +108,7 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
           return (
             <Link
               key={school.id}
-              href={`/football/schools/${school.slug}`}
+              href={`/schools/${school.slug}`}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <div

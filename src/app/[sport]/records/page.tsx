@@ -86,7 +86,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
                         </td>
                         <td className="text-sm">
                           {rec.schools ? (
-                            <Link href={`/${sport}/schools/${rec.schools.slug}`} className="hover:underline" style={{ color: "var(--psp-gray-500)" }}>
+                            <Link href={`/schools/${rec.schools.slug}`} className="hover:underline" style={{ color: "var(--psp-gray-500)" }}>
                               {rec.schools.name}
                             </Link>
                           ) : rec.holder_school || "—"}

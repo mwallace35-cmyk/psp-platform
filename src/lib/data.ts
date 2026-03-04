@@ -266,6 +266,96 @@ export async function getSchoolRecentGames(schoolId: number, sportId: string, li
   }
 }
 
+// ─── Multi-sport school data (for /schools/[slug] page) ───
+
+export async function getSchoolAllTeamSeasons(schoolId: number) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("team_seasons")
+      .select("*, seasons(year_start, year_end, label), coaches(name, slug), sports:sport_id(name, slug)")
+      .eq("school_id", schoolId)
+      .order("created_at", { ascending: false });
+    return (data ?? []).sort((a: any, b: any) => {
+      const aYear = a.seasons?.year_start ?? 0;
+      const bYear = b.seasons?.year_start ?? 0;
+      return bYear - aYear;
+    });
+  } catch {
+    return [];
+  }
+}
+
+export async function getSchoolAllRecentGames(schoolId: number, limit = 15) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("games")
+      .select("*, seasons(label), sports:sport_id(name, slug), home_school:schools!games_home_school_id_fkey(id, name, slug), away_school:schools!games_away_school_id_fkey(id, name, slug)")
+      .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+      .order("game_date", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getSchoolAllPlayers(schoolId: number, limit = 30) {
+  const STAT_TABLES = ["football_player_seasons", "basketball_player_seasons", "baseball_player_seasons"] as const;
+  const SPORT_MAP: Record<string, string> = {
+    football_player_seasons: "football",
+    basketball_player_seasons: "basketball",
+    baseball_player_seasons: "baseball",
+  };
+  const allPlayers: any[] = [];
+
+  for (const table of STAT_TABLES) {
+    try {
+      const supabase = await createClient();
+      const { data } = await supabase
+        .from(table)
+        .select("*, players!inner(id, name, slug, graduation_year, positions, college, pro_team), seasons(label, year_start)")
+        .eq("school_id", schoolId)
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (!data) continue;
+
+      const sportId = SPORT_MAP[table];
+      const playerMap = new Map<number, any>();
+      for (const row of data as any[]) {
+        const pid = row.players?.id;
+        if (!pid) continue;
+        if (!playerMap.has(pid)) {
+          playerMap.set(pid, { ...row.players, sport: sportId, seasons_count: 0, years: [] as string[], total_stats: {} as any });
+        }
+        const p = playerMap.get(pid)!;
+        p.seasons_count++;
+        if (row.seasons?.label) p.years.push(row.seasons.label);
+        if (sportId === "football") {
+          p.total_stats.rush_yards = (p.total_stats.rush_yards || 0) + (row.rush_yards || 0);
+          p.total_stats.pass_yards = (p.total_stats.pass_yards || 0) + (row.pass_yards || 0);
+          p.total_stats.rec_yards = (p.total_stats.rec_yards || 0) + (row.rec_yards || 0);
+          p.total_stats.total_td = (p.total_stats.total_td || 0) + (row.total_td || 0);
+        } else if (sportId === "basketball") {
+          p.total_stats.points = (p.total_stats.points || 0) + (row.points || 0);
+          p.total_stats.games = (p.total_stats.games || 0) + (row.games_played || 0);
+          p.total_stats.ppg = p.total_stats.games > 0 ? +(p.total_stats.points / p.total_stats.games).toFixed(1) : 0;
+        }
+      }
+      allPlayers.push(...Array.from(playerMap.values()));
+    } catch { /* skip sport */ }
+  }
+
+  // Sort by total yards/points
+  allPlayers.sort((a, b) => {
+    const aVal = (a.total_stats.rush_yards || 0) + (a.total_stats.pass_yards || 0) + (a.total_stats.rec_yards || 0) + (a.total_stats.points || 0);
+    const bVal = (b.total_stats.rush_yards || 0) + (b.total_stats.pass_yards || 0) + (b.total_stats.rec_yards || 0) + (b.total_stats.points || 0);
+    return bVal - aVal;
+  });
+  return allPlayers.slice(0, limit);
+}
+
 export async function getPlayerBySlug(slug: string) {
   try {
     const supabase = await createClient();
@@ -485,7 +575,7 @@ export async function searchAll(query: string, limit = 30) {
         entity_id: s.id,
         display_name: s.name,
         context: [s.city, s.state].filter(Boolean).join(", "),
-        url_path: `/football/schools/${s.slug}`,
+        url_path: `/schools/${s.slug}`,
       });
     }
 

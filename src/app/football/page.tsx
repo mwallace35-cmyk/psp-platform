@@ -259,7 +259,7 @@ export default async function FootballPage() {
                   {STANDINGS_DATA.catholicLeague.map((row, idx) => (
                     <tr key={row.rank} style={{ background: idx < 2 ? "rgba(22,163,74,.05)" : "transparent" }}>
                       <td>
-                        <Link href={`/football/schools/${row.team.toLowerCase().replace(/\s+/g, "-")}`} className="team-link">
+                        <Link href={`/schools/${row.team.toLowerCase().replace(/\s+/g, "-")}`} className="team-link">
                           {row.team}
                         </Link>
                       </td>
@@ -290,7 +290,7 @@ export default async function FootballPage() {
                   {STANDINGS_DATA.publicLeague.map((row, idx) => (
                     <tr key={row.rank} style={{ background: idx === 0 ? "rgba(22,163,74,.05)" : "transparent" }}>
                       <td>
-                        <Link href={`/football/schools/${row.team.toLowerCase().replace(/\s+/g, "-")}`} className="team-link">
+                        <Link href={`/schools/${row.team.toLowerCase().replace(/\s+/g, "-")}`} className="team-link">
                           {row.team}
                         </Link>
                       </td>

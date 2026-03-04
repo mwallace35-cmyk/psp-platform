@@ -115,7 +115,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                     return (
                       <Link
                         key={school.id}
-                        href={`/${sport}/schools/${school.slug}`}
+                        href={`/schools/${school.slug}`}
                         className="group block bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-lg hover:border-[var(--psp-gold)] transition-all"
                       >
                         <div className="flex items-start justify-between mb-3">

@@ -13,11 +13,11 @@ interface SearchResult {
 }
 
 const POPULAR_SEARCHES: SearchResult[] = [
-  { type: "school", name: "St. Joseph's Prep", detail: "Catholic League", href: "/football/schools/saint-josephs-prep", icon: "🏫" },
-  { type: "school", name: "Roman Catholic", detail: "Catholic League", href: "/basketball/schools/roman-catholic", icon: "🏫" },
-  { type: "school", name: "Imhotep Charter", detail: "Public League", href: "/football/schools/imhotep-charter", icon: "🏫" },
-  { type: "school", name: "Neumann-Goretti", detail: "Catholic League", href: "/basketball/schools/neumann-goretti", icon: "🏫" },
-  { type: "school", name: "La Salle College HS", detail: "Catholic League", href: "/football/schools/la-salle-college-hs", icon: "🏫" },
+  { type: "school", name: "St. Joseph's Prep", detail: "Catholic League", href: "/schools/saint-josephs-prep", icon: "🏫" },
+  { type: "school", name: "Roman Catholic", detail: "Catholic League", href: "/schools/roman-catholic", icon: "🏫" },
+  { type: "school", name: "Imhotep Charter", detail: "Public League", href: "/schools/imhotep-charter", icon: "🏫" },
+  { type: "school", name: "Neumann-Goretti", detail: "Catholic League", href: "/schools/neumann-goretti", icon: "🏫" },
+  { type: "school", name: "La Salle College HS", detail: "Catholic League", href: "/schools/la-salle-college-hs", icon: "🏫" },
 ];
 
 const SPORT_COLORS: Record<string, string> = {

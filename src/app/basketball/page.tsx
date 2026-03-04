@@ -348,7 +348,7 @@ export default function BasketballPage() {
                 ).map((team) => (
                   <tr key={team.school}>
                     <td style={{ paddingLeft: 8 }}>
-                      <Link href={`/basketball/schools/${team.school.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <Link href={`/schools/${team.school.toLowerCase().replace(/\s+/g, '-')}`}>
                         <strong>{team.school}</strong>
                       </Link>
                     </td>

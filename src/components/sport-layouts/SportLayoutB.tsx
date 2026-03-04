@@ -107,7 +107,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                 <div key={school.id} className="rt-row">
                   <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
                   <div className="rt-info">
-                    <Link href={`/${sport}/schools/${school.slug}`} className="rname" style={{ color: "var(--link)" }}>
+                    <Link href={`/schools/${school.slug}`} className="rname" style={{ color: "var(--link)" }}>
                       {school.name}
                     </Link>
                     <div className="rsub">{school.city || "Philadelphia"}, {school.state || "PA"}</div>
@@ -138,7 +138,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                 <div key={champ.id} className="rt-row">
                   <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
                   <div className="rt-info">
-                    <Link href={`/${sport}/schools/${champ.schools?.slug}`} className="rname" style={{ color: "var(--link)" }}>
+                    <Link href={`/schools/${champ.schools?.slug}`} className="rname" style={{ color: "var(--link)" }}>
                       {champ.schools?.name}
                     </Link>
                     <div className="rsub">{champ.seasons?.label} &mdash; {champ.level}{champ.score ? ` (${champ.score})` : ""}</div>

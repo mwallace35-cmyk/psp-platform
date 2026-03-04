@@ -97,7 +97,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               </h1>
               <div className="flex flex-wrap gap-4 text-sm">
                 {player.schools && (
-                  <Link href={`/${sport}/schools/${(player as any).schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
+                  <Link href={`/schools/${(player as any).schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
                     {(player as any).schools?.name}
                   </Link>
                 )}
@@ -193,7 +193,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                         <tr key={s.id}>
                           <td className="font-medium whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>{s.seasons?.label}</td>
                           <td className="text-xs">
-                            <Link href={`/${sport}/schools/${s.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
+                            <Link href={`/schools/${s.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
                               {s.schools?.name}
                             </Link>
                           </td>
@@ -249,7 +249,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                         <tr key={s.id}>
                           <td className="font-medium whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>{s.seasons?.label}</td>
                           <td className="text-xs">
-                            <Link href={`/${sport}/schools/${s.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
+                            <Link href={`/schools/${s.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
                               {s.schools?.name}
                             </Link>
                           </td>
@@ -302,7 +302,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   More from {(player as any).schools?.name}
                 </h2>
                 <p className="text-sm text-gray-500 mb-4">Explore other players from this school</p>
-                <Link href={`/${sport}/schools/${(player as any).schools?.slug}`} className="inline-block px-6 py-3 rounded-lg font-medium" style={{ background: "var(--psp-navy)", color: "white" }}>
+                <Link href={`/schools/${(player as any).schools?.slug}`} className="inline-block px-6 py-3 rounded-lg font-medium" style={{ background: "var(--psp-navy)", color: "white" }}>
                   View all {(player as any).schools?.name} players →
                 </Link>
               </div>
@@ -321,7 +321,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   <div className="flex justify-between">
                     <dt style={{ color: "var(--psp-gray-500)" }}>School</dt>
                     <dd>
-                      <Link href={`/${sport}/schools/${(player as any).schools?.slug}`} className="font-medium hover:underline" style={{ color: "var(--psp-navy)" }}>
+                      <Link href={`/schools/${(player as any).schools?.slug}`} className="font-medium hover:underline" style={{ color: "var(--psp-navy)" }}>
                         {(player as any).schools?.name}
                       </Link>
                     </dd>

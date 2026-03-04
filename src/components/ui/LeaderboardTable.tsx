@@ -43,7 +43,7 @@ export default function LeaderboardTable({ sport, statCols, colLabels, data }: L
       sortable: true,
       render: (value: string, row: any) => (
         <Link
-          href={`/${sport}/schools/${row.schoolSlug}`}
+          href={`/schools/${row.schoolSlug}`}
           className="hover:underline text-sm"
           style={{ color: 'var(--psp-gray-500)' }}
         >

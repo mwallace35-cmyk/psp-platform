@@ -81,7 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const [sport, schoolSlugs] of Object.entries(sportSchools)) {
         for (const slug of schoolSlugs) {
           entries.push({
-            url: `${baseUrl}/${sport}/schools/${slug}`,
+            url: `${baseUrl}/schools/${slug}`,
             lastModified: new Date(),
             changeFrequency: "monthly",
             priority: 0.8,

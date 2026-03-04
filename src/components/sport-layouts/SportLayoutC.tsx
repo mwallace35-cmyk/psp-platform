@@ -65,7 +65,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
       <main>
         {/* Featured School Spotlight */}
         {spotlightSchool && (
-          <Link href={`/${sport}/schools/${spotlightSchool.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/schools/${spotlightSchool.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
             <div
               style={{
                 background: `linear-gradient(135deg, ${sportColor}dd, var(--psp-navy))`,
@@ -138,7 +138,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
                 {leagueSchools.map((school: any) => (
                   <Link
                     key={school.id}
-                    href={`/${sport}/schools/${school.slug}`}
+                    href={`/schools/${school.slug}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
                     <div
@@ -178,7 +178,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
                 <div key={champ.id} className="rt-row">
                   <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
                   <div className="rt-info">
-                    <Link href={`/${sport}/schools/${champ.schools?.slug}`} className="rname" style={{ color: "var(--link)" }}>
+                    <Link href={`/schools/${champ.schools?.slug}`} className="rname" style={{ color: "var(--link)" }}>
                       {champ.schools?.name}
                     </Link>
                     <div className="rsub">{champ.seasons?.label} &mdash; {champ.level}{champ.score ? ` (${champ.score})` : ""}</div>

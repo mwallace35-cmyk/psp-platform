@@ -19,13 +19,13 @@ const MORE_SPORTS = [
 ];
 
 const RECENT_SCORES = [
-  { home: "St. Joseph's Prep", away: "Pittsburgh CC", homeScore: 35, awayScore: 21, status: "Final · 6A State", homeWin: true, href: "/football/schools/saint-josephs-prep" },
-  { home: "Neumann-Goretti", away: "Math Civics Sci", homeScore: 72, awayScore: 58, status: "Final · 4A State", homeWin: true, href: "/basketball/schools/neumann-goretti" },
-  { home: "Imhotep Charter", away: "MLK", homeScore: 82, awayScore: 59, status: "Final · BBall", homeWin: true, href: "/basketball/schools/imhotep-charter" },
-  { home: "Roman Catholic", away: "Father Judge", homeScore: 68, awayScore: 61, status: "Final · PCL", homeWin: true, href: "/basketball/schools/roman-catholic" },
-  { home: "La Salle", away: "Bonner-Prendie", homeScore: 8, awayScore: 2, status: "Final · BSB", homeWin: true, href: "/baseball/schools/la-salle-college-hs" },
-  { home: "Malvern Prep", away: "Episcopal", homeScore: 6, awayScore: 4, status: "Final · LAX", homeWin: true, href: "/lacrosse/schools/malvern-prep" },
-  { home: "Arch. Wood", away: "O'Hara", homeScore: 28, awayScore: 14, status: "Final · FB", homeWin: true, href: "/football/schools/archbishop-wood" },
+  { home: "St. Joseph's Prep", away: "Pittsburgh CC", homeScore: 35, awayScore: 21, status: "Final · 6A State", homeWin: true, href: "/schools/saint-josephs-prep" },
+  { home: "Neumann-Goretti", away: "Math Civics Sci", homeScore: 72, awayScore: 58, status: "Final · 4A State", homeWin: true, href: "/schools/neumann-goretti" },
+  { home: "Imhotep Charter", away: "MLK", homeScore: 82, awayScore: 59, status: "Final · BBall", homeWin: true, href: "/schools/imhotep-charter" },
+  { home: "Roman Catholic", away: "Father Judge", homeScore: 68, awayScore: 61, status: "Final · PCL", homeWin: true, href: "/schools/roman-catholic" },
+  { home: "La Salle", away: "Bonner-Prendie", homeScore: 8, awayScore: 2, status: "Final · BSB", homeWin: true, href: "/schools/la-salle-college-hs" },
+  { home: "Malvern Prep", away: "Episcopal", homeScore: 6, awayScore: 4, status: "Final · LAX", homeWin: true, href: "/schools/malvern-prep" },
+  { home: "Arch. Wood", away: "O'Hara", homeScore: 28, awayScore: 14, status: "Final · FB", homeWin: true, href: "/schools/archbishop-wood" },
 ];
 
 export default function Header() {

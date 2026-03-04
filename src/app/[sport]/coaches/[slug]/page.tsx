@@ -98,7 +98,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
                     {meta.emoji}
                   </div>
                   <div className="flex-1">
-                    <Link href={`/${sport}/schools/${stint.schools?.slug}`} className="font-bold text-sm hover:underline" style={{ color: "var(--psp-navy)" }}>
+                    <Link href={`/schools/${stint.schools?.slug}`} className="font-bold text-sm hover:underline" style={{ color: "var(--psp-navy)" }}>
                       {stint.schools?.name}
                     </Link>
                     <div className="text-xs mt-1" style={{ color: "var(--psp-gray-500)" }}>

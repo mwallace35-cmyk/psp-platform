@@ -63,7 +63,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
       if (params.schoolName && params.sport && sportName) {
         title = `${params.schoolName} ${sportName} | ${SITE_NAME}`;
         description = `${params.schoolName} ${sportName} history, records, championships, and player profiles.`;
-        url = `${SITE_URL}/${params.sport}/schools/${params.slug}`;
+        url = `${SITE_URL}/schools/${params.slug}`;
         ogImage = `${SITE_URL}/og-schools/${params.slug}.png`;
       }
       break;

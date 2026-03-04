@@ -86,7 +86,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                             {c.seasons?.label || "—"}
                           </td>
                           <td>
-                            <Link href={`/${sport}/schools/${c.schools?.slug}`} className="font-medium text-sm hover:underline" style={{ color: "var(--psp-gold)" }}>
+                            <Link href={`/schools/${c.schools?.slug}`} className="font-medium text-sm hover:underline" style={{ color: "var(--psp-gold)" }}>
                               🏆 {c.schools?.name}
                             </Link>
                           </td>
@@ -134,7 +134,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                       {idx + 1}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <Link href={`/${sport}/schools/${d.slug}`} className="text-sm font-medium hover:underline truncate block" style={{ color: "var(--psp-navy)" }}>
+                      <Link href={`/schools/${d.slug}`} className="text-sm font-medium hover:underline truncate block" style={{ color: "var(--psp-navy)" }}>
                         {d.name}
                       </Link>
                     </div>

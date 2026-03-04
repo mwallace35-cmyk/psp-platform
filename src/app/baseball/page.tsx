@@ -387,7 +387,7 @@ export default async function BaseballPage() {
                     </div>
                     <div className="rt-info">
                       <Link
-                        href={`/baseball/schools/${champ.schools?.slug}`}
+                        href={`/schools/${champ.schools?.slug}`}
                         className="rname"
                         style={{ color: "var(--link)" }}
                       >
@@ -456,7 +456,7 @@ export default async function BaseballPage() {
                 {schools.map((school: any) => (
                   <Link
                     key={school.id}
-                    href={`/baseball/schools/${school.slug}`}
+                    href={`/schools/${school.slug}`}
                     style={{
                       display: "inline-block",
                       padding: "5px 12px",
