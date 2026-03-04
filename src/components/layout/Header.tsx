@@ -113,7 +113,7 @@ export default function Header() {
           </div>
 
           <div className="nav-right">
-            <Link href="/search" className="nav-link">Schools</Link>
+            <Link href="/schools" className="nav-link">Schools</Link>
             <Link href="/search" className="nav-link">Search</Link>
             <Link href="/signup" className="nav-link" style={{ color: 'var(--psp-gold)' }}>Sign Up</Link>
 

@@ -60,6 +60,29 @@ export async function getSchoolsBySport(sportId: string, limit = 50) {
   }
 }
 
+export async function getAllSchools() {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("schools")
+      .select(`
+        id, slug, name, short_name, city, state, mascot,
+        leagues(name, short_name),
+        championships(id)
+      `)
+      .is("deleted_at", null)
+      .order("name")
+      .limit(500);
+
+    return (data ?? []).map((s: any) => ({
+      ...s,
+      championships_count: s.championships?.length ?? 0,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getSchoolBySlug(slug: string) {
   try {
     const supabase = await createClient();
