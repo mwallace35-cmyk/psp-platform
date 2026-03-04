@@ -167,6 +167,105 @@ export async function getSchoolChampionships(schoolId: number, sportId?: string)
   }
 }
 
+export async function getSchoolPlayers(schoolId: number, sportId: string, limit = 20) {
+  try {
+    const supabase = await createClient();
+    const STAT_TABLES: Record<string, string> = {
+      football: "football_player_seasons",
+      basketball: "basketball_player_seasons",
+      baseball: "baseball_player_seasons",
+    };
+    const table = STAT_TABLES[sportId];
+    if (!table) return [];
+
+    const { data } = await supabase
+      .from(table)
+      .select("*, players!inner(id, name, slug, class_year, position, college, pro_team), seasons(label, year_start)")
+      .eq("school_id", schoolId)
+      .order("created_at", { ascending: false })
+      .limit(200);
+
+    if (!data) return [];
+
+    // Group by player, aggregate stats
+    const playerMap = new Map<number, any>();
+    for (const row of data as any[]) {
+      const pid = row.players?.id;
+      if (!pid) continue;
+      if (!playerMap.has(pid)) {
+        playerMap.set(pid, {
+          ...row.players,
+          seasons_count: 0,
+          years: [] as string[],
+          total_stats: {} as any,
+        });
+      }
+      const p = playerMap.get(pid)!;
+      p.seasons_count++;
+      if (row.seasons?.label) p.years.push(row.seasons.label);
+
+      // Accumulate key stats
+      if (sportId === "football") {
+        p.total_stats.rush_yards = (p.total_stats.rush_yards || 0) + (row.rush_yards || 0);
+        p.total_stats.pass_yards = (p.total_stats.pass_yards || 0) + (row.pass_yards || 0);
+        p.total_stats.rec_yards = (p.total_stats.rec_yards || 0) + (row.rec_yards || 0);
+        p.total_stats.total_td = (p.total_stats.total_td || 0) + (row.total_td || 0);
+      } else if (sportId === "basketball") {
+        p.total_stats.points = (p.total_stats.points || 0) + (row.points || 0);
+        p.total_stats.games = (p.total_stats.games || 0) + (row.games_played || 0);
+        p.total_stats.ppg = p.total_stats.games > 0 ? +(p.total_stats.points / p.total_stats.games).toFixed(1) : 0;
+      }
+    }
+
+    // Sort by most impressive stat
+    const players = Array.from(playerMap.values());
+    if (sportId === "football") {
+      players.sort((a, b) => {
+        const aTotal = (a.total_stats.rush_yards || 0) + (a.total_stats.pass_yards || 0) + (a.total_stats.rec_yards || 0);
+        const bTotal = (b.total_stats.rush_yards || 0) + (b.total_stats.pass_yards || 0) + (b.total_stats.rec_yards || 0);
+        return bTotal - aTotal;
+      });
+    } else if (sportId === "basketball") {
+      players.sort((a, b) => (b.total_stats.points || 0) - (a.total_stats.points || 0));
+    }
+
+    return players.slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+export async function getSchoolAwards(schoolId: number, sportId?: string) {
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from("awards")
+      .select("*, players(name, slug), seasons(label, year_start)")
+      .eq("school_id", schoolId);
+    if (sportId) query = query.eq("sport_id", sportId);
+    const { data } = await query.order("created_at", { ascending: false });
+    return (data ?? []).sort((a: any, b: any) => (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0));
+  } catch {
+    return [];
+  }
+}
+
+export async function getSchoolRecentGames(schoolId: number, sportId: string, limit = 10) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("games")
+      .select("*, seasons(label), home_school:schools!games_home_school_id_fkey(id, name, slug), away_school:schools!games_away_school_id_fkey(id, name, slug)")
+      .eq("sport_id", sportId)
+      .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+      .order("game_date", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
 export async function getPlayerBySlug(slug: string) {
   try {
     const supabase = await createClient();
