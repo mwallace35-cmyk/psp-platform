@@ -26,7 +26,12 @@ export async function GET(request: NextRequest) {
 
     // Filter to players who have stats in the requested sport
     const playerIds = players.map((p: any) => p.id);
-    const table = sport === "basketball" ? "basketball_player_seasons" : "football_player_seasons";
+    const SPORT_TABLES: Record<string, string> = {
+      football: "football_player_seasons",
+      basketball: "basketball_player_seasons",
+      baseball: "baseball_player_seasons",
+    };
+    const table = SPORT_TABLES[sport] || "football_player_seasons";
 
     const { data: statRows } = await supabase
       .from(table)

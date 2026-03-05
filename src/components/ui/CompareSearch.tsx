@@ -118,17 +118,21 @@ export default function CompareSearch() {
 
       {/* Sport selector */}
       <div className="flex gap-2 mb-4">
-        {['football', 'basketball'].map(s => (
+        {[
+          { id: 'football', label: '🏈 Football' },
+          { id: 'basketball', label: '🏀 Basketball' },
+          { id: 'baseball', label: '⚾ Baseball' },
+        ].map(s => (
           <button
-            key={s}
-            onClick={() => { setSport(s); setSelected([]); setResults([]); }}
+            key={s.id}
+            onClick={() => { setSport(s.id); setSelected([]); setResults([]); }}
             className="px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
             style={{
-              background: sport === s ? 'var(--psp-gold)' : 'rgba(255,255,255,0.1)',
-              color: sport === s ? 'var(--psp-navy)' : '#ccc',
+              background: sport === s.id ? 'var(--psp-gold)' : 'rgba(255,255,255,0.1)',
+              color: sport === s.id ? 'var(--psp-navy)' : '#ccc',
             }}
           >
-            {s === 'football' ? 'Football' : 'Basketball'}
+            {s.label}
           </button>
         ))}
       </div>
