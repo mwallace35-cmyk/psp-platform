@@ -177,29 +177,35 @@ export default function Header() {
             Recruiting
           </Link>
 
-          {/* Data & Tools Dropdown */}
+          {/* More Mega Menu */}
           <div className="nav-dd">
-            <div className="nav-link">Tools &#9662;</div>
-            <div className="espn-megamenu cols-2" style={{ minWidth: 360 }}>
+            <div className="nav-link">More &#9662;</div>
+            <div className="espn-megamenu cols-3">
               <div className="mega-col">
-                <div className="mega-col-head">Data</div>
-                <Link href="/search">🔍 Search</Link>
+                <div className="mega-col-head">Explore</div>
+                <Link href="/search">🔍 Search Database</Link>
                 <Link href="/compare">📊 Compare Players</Link>
+                <Link href="/schools">🏫 All Schools</Link>
                 <Link href="/glossary">📖 Stats Glossary</Link>
-                <Link href="/our-guys">🌟 Our Guys</Link>
               </div>
               <div className="mega-col">
-                <div className="mega-col-head">More</div>
-                <Link href="/recruiting">⭐ Recruiting</Link>
-                <Link href="/coaches">📋 Coaches</Link>
-                <Link href="/events">📅 Events</Link>
+                <div className="mega-col-head">Fan Zone</div>
+                <Link href="/potw">🗳️ Player of the Week</Link>
+                <Link href="/events">📅 Events & Camps</Link>
                 <Link href="/community">💬 Community</Link>
+                <Link href="/articles">📰 Articles</Link>
+              </div>
+              <div className="mega-featured">
+                <div className="mf-tag">Archive</div>
+                <div className="mf-img" style={{ background: "linear-gradient(135deg, var(--psp-gold) 0%, #0a1628 100%)" }} />
+                <h4>25 Years of Philly Sports</h4>
+                <p>Explore every season from 2000 to 2025 — scores, stats, champions.</p>
+                <Link href="/archive" style={{ color: "var(--psp-gold)", fontWeight: 700, fontSize: 13, marginTop: 6, display: "inline-block" }}>Browse Archive →</Link>
               </div>
             </div>
           </div>
 
           <div className="nav-right">
-            <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`}>Schools</Link>
             <button onClick={() => setSearchOpen(true)} className="nav-link" style={{ background: "none", border: "none", cursor: "pointer", color: "#fff" }}>🔍 Search</button>
             <Link href="/signup" className="nav-link" style={{ color: "var(--psp-gold)" }}>Sign Up</Link>
 
