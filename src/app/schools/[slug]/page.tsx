@@ -81,7 +81,14 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   const sportSet = new Set<string>();
   teamSeasons.forEach((ts: any) => { if (ts.sport_id) sportSet.add(ts.sport_id); });
   championships.forEach((c: any) => { if (c.sport_id) sportSet.add(c.sport_id); });
-  const activeSports = Array.from(sportSet).sort();
+  // Sort: Football → Basketball → Baseball first, then remaining alphabetically
+  const SPORT_PRIORITY: Record<string, number> = { football: 0, basketball: 1, baseball: 2 };
+  const activeSports = Array.from(sportSet).sort((a, b) => {
+    const pa = SPORT_PRIORITY[a] ?? 99;
+    const pb = SPORT_PRIORITY[b] ?? 99;
+    if (pa !== pb) return pa - pb;
+    return a.localeCompare(b);
+  });
 
   // Group data by sport
   const gamesBySport: Record<string, any[]> = {};

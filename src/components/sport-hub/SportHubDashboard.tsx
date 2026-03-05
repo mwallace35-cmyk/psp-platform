@@ -91,7 +91,7 @@ export default function SportHubDashboard({
         <Link href={`/${sport}/records`}>Records</Link>
         <Link href={`/search?sport=${sport}`}>Players</Link>
         <Link href="/compare">Compare</Link>
-        <Link href="/schools">Teams</Link>
+        <Link href={`/${sport}/teams`}>Teams</Link>
       </nav>
 
       {/* ════════ MAIN 2-COL LAYOUT ════════ */}
@@ -173,7 +173,7 @@ export default function SportHubDashboard({
                       return (
                         <div key={team.school?.id || i} className={`hub-lt-row ${i === 0 ? "hub-lt-first" : ""}`}>
                           <span className="hub-lt-team">
-                            <Link href={`/schools/${team.school?.slug || "#"}`}>{team.school?.name || "Unknown"}</Link>
+                            <Link href={`/schools/${team.school?.slug || "#"}/${sport}`}>{team.school?.name || "Unknown"}</Link>
                           </span>
                           <span className="hub-lt-stat">{team.totalWins}</span>
                           <span className="hub-lt-stat">{team.totalLosses}</span>
@@ -233,7 +233,7 @@ export default function SportHubDashboard({
               </div>
               <div className="hub-dynasty-grid">
                 {dynasties.map((d, i) => (
-                  <Link key={d.slug} href={`/schools/${d.slug}`} className="hub-dynasty-card hover-lift">
+                  <Link key={d.slug} href={`/schools/${d.slug}/${sport}`} className="hub-dynasty-card hover-lift">
                     <span className="hub-dyn-rank" style={i < 3 ? { background: sportColor } : undefined}>{i + 1}</span>
                     <span className="hub-dyn-name">{d.name}</span>
                     <span className="hub-dyn-count">{d.count} titles</span>
@@ -248,11 +248,11 @@ export default function SportHubDashboard({
             <div className="hub-schools-section">
               <div className="hub-sec-head">
                 <h3>{meta.name} Schools</h3>
-                <Link href="/schools" className="hub-more">All Schools →</Link>
+                <Link href={`/${sport}/teams`} className="hub-more">All Teams →</Link>
               </div>
               <div className="hub-school-grid">
                 {schools.slice(0, 12).map((school: any) => (
-                  <Link key={school.id} href={`/schools/${school.slug}`} className="hub-school-card hover-lift">
+                  <Link key={school.id} href={`/schools/${school.slug}/${sport}`} className="hub-school-card hover-lift">
                     <div className="hub-sc-name">{school.name}</div>
                     <div className="hub-sc-meta">
                       {school.city || "Philadelphia"} · {school.leagues?.name || ""}
@@ -261,8 +261,8 @@ export default function SportHubDashboard({
                 ))}
               </div>
               {schools.length > 12 && (
-                <Link href="/schools" className="hub-schools-more">
-                  View all {schools.length} schools →
+                <Link href={`/${sport}/teams`} className="hub-schools-more">
+                  View all {schools.length} teams →
                 </Link>
               )}
             </div>
@@ -324,11 +324,11 @@ export default function SportHubDashboard({
                     <div key={game.id || i} className="hub-score-row">
                       <div className="hub-sr-matchup">
                         <div className={homeWin ? "hub-sr-w" : ""}>
-                          <Link href={`/schools/${game.home_school?.slug || "#"}`}>{game.home_school?.short_name || game.home_school?.name || "Home"}</Link>
+                          <Link href={`/schools/${game.home_school?.slug || "#"}/${sport}`}>{game.home_school?.short_name || game.home_school?.name || "Home"}</Link>
                           <span>{game.home_score ?? "-"}</span>
                         </div>
                         <div className={!homeWin ? "hub-sr-w" : ""}>
-                          <Link href={`/schools/${game.away_school?.slug || "#"}`}>{game.away_school?.short_name || game.away_school?.name || "Away"}</Link>
+                          <Link href={`/schools/${game.away_school?.slug || "#"}/${sport}`}>{game.away_school?.short_name || game.away_school?.name || "Away"}</Link>
                           <span>{game.away_score ?? "-"}</span>
                         </div>
                       </div>
@@ -351,7 +351,7 @@ export default function SportHubDashboard({
               <Link href={`/${sport}/records`} className="hub-ql">→ Records</Link>
               <Link href={`/search?sport=${sport}`} className="hub-ql">→ Search Players</Link>
               <Link href="/compare" className="hub-ql">→ Compare Players</Link>
-              <Link href="/schools" className="hub-ql">→ All Schools</Link>
+              <Link href={`/${sport}/teams`} className="hub-ql">→ All Teams</Link>
             </div>
           </div>
 
@@ -365,7 +365,7 @@ export default function SportHubDashboard({
                 {champions.slice(0, 5).map((c: any, i: number) => (
                   <div key={c.id || i} className="hub-champ-row">
                     <span className="hub-cr-year">{c.seasons?.label || ""}</span>
-                    <Link href={`/schools/${c.schools?.slug || "#"}`} className="hub-cr-name">{c.schools?.name || "Unknown"}</Link>
+                    <Link href={`/schools/${c.schools?.slug || "#"}/${sport}`} className="hub-cr-name">{c.schools?.name || "Unknown"}</Link>
                     <span className="hub-cr-level">{c.level || ""}</span>
                   </div>
                 ))}

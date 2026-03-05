@@ -84,7 +84,7 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
         ]}
       />
 
-      {/* Team Banner */}
+      {/* Team Banner — MaxPreps Style */}
       <div
         style={{
           background: `linear-gradient(135deg, ${primaryColor} 0%, var(--psp-navy) 100%)`,
@@ -105,47 +105,63 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
               {meta.emoji}
             </div>
             <div style={{ flex: 1 }}>
-              <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 28, margin: 0, letterSpacing: 0.5 }}>
-                {school.name} {meta.name}
+              <div style={{ fontSize: 14, opacity: 0.8, fontWeight: 500, letterSpacing: 0.5 }}>
+                {school.name}{school.mascot ? ` ${school.mascot}` : ""}
+              </div>
+              <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 32, margin: "2px 0 0", letterSpacing: 0.5 }}>
+                Varsity {meta.name}
               </h1>
-              <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4 }}>
+              <div style={{ fontSize: 13, opacity: 0.75, marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
                 {school.leagues?.name && (
                   <span>{(school.leagues as any).name}</span>
                 )}
-                {school.city && <span> · {school.city}, {school.state || "PA"}</span>}
+                {school.city && <span>{school.city}, {school.state || "PA"}</span>}
                 {currentCoach && (
-                  <>
-                    {" · Coach: "}
+                  <span>
+                    Coach:{" "}
                     <Link
                       href={`/${sport}/coaches/${currentCoach.coaches?.slug}`}
                       style={{ color: "var(--psp-gold)", textDecoration: "none" }}
                     >
                       {currentCoach.coaches?.name}
                     </Link>
-                  </>
+                  </span>
                 )}
               </div>
             </div>
-            {/* Quick stats */}
+            {/* Quick stats — MaxPreps style */}
             {hasData && latestSeason && (
-              <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
                 <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 24, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                  <div style={{ fontSize: 10, opacity: 0.6, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 2 }}>Overall</div>
+                  <div style={{ fontSize: 26, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif" }}>
                     {latestSeason.wins}-{latestSeason.losses}{latestSeason.ties ? `-${latestSeason.ties}` : ""}
                   </div>
-                  <div style={{ fontSize: 10, opacity: 0.7 }}>Current</div>
                 </div>
+                {latestSeason.league_wins != null && (
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 10, opacity: 0.6, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 2 }}>Conference</div>
+                    <div style={{ fontSize: 26, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                      {latestSeason.league_wins}-{latestSeason.league_losses || 0}{latestSeason.league_ties ? `-${latestSeason.league_ties}` : ""}
+                      {latestSeason.league_finish && (
+                        <span style={{ fontSize: 12, fontWeight: 400, opacity: 0.7, marginLeft: 4 }}>
+                          ({latestSeason.league_finish})
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 24, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", color: "var(--psp-gold)" }}>
+                  <div style={{ fontSize: 10, opacity: 0.6, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 2 }}>Titles</div>
+                  <div style={{ fontSize: 26, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", color: "var(--psp-gold)" }}>
                     {allChamps.length}
                   </div>
-                  <div style={{ fontSize: 10, opacity: 0.7 }}>Titles</div>
                 </div>
                 <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 24, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                  <div style={{ fontSize: 10, opacity: 0.6, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 2 }}>Seasons</div>
+                  <div style={{ fontSize: 26, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif" }}>
                     {seasonLabels.length}
                   </div>
-                  <div style={{ fontSize: 10, opacity: 0.7 }}>Seasons</div>
                 </div>
               </div>
             )}
@@ -232,32 +248,44 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
                   </div>
                 )}
 
-                {/* Other Sports at [School] */}
-                <div className="widget" style={{ marginBottom: 16 }}>
-                  <div className="w-head">{school.short_name || school.name}</div>
-                  <div className="w-body">
+                <PSPPromo size="sidebar" variant={2} />
+
+                {/* Other Sports at [School] — compact */}
+                <div style={{
+                  marginBottom: 16, padding: "10px 12px",
+                  background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8,
+                }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", color: "var(--g400)", letterSpacing: 0.5, marginBottom: 6 }}>
+                    Other Sports at {school.short_name || school.name}
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                     {VALID_SPORTS.map((sid) => {
                       if (sid === sport) return null;
                       const sMeta = (SPORT_META as any)[sid];
                       if (!sMeta) return null;
                       const sportData = (activeSports as any[]).find((as: any) => as.sport_id === sid);
                       return (
-                        <Link key={sid} href={`/schools/${slug}/${sid}`} className="w-link" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span>{sMeta.emoji} {sMeta.name}</span>
-                          {sportData ? (
-                            <span style={{ fontSize: 11, color: "var(--g400)" }}>
-                              {sportData.wins}-{sportData.losses}
-                            </span>
-                          ) : (
-                            <span style={{ fontSize: 10, color: "var(--g300)" }}>—</span>
+                        <Link
+                          key={sid}
+                          href={`/schools/${slug}/${sid}`}
+                          style={{
+                            display: "inline-flex", alignItems: "center", gap: 4,
+                            padding: "4px 10px", borderRadius: 20,
+                            background: "var(--g50, rgba(0,0,0,0.03))", border: "1px solid var(--g100)",
+                            fontSize: 12, color: "var(--text)", textDecoration: "none",
+                            whiteSpace: "nowrap", transition: "background .15s",
+                          }}
+                        >
+                          <span>{sMeta.emoji}</span>
+                          <span>{sMeta.name}</span>
+                          {sportData && (
+                            <span style={{ fontSize: 10, color: "var(--g400)" }}>{sportData.wins}-{sportData.losses}</span>
                           )}
                         </Link>
                       );
                     })}
                   </div>
                 </div>
-
-                <PSPPromo size="sidebar" variant={2} />
               </aside>
             </div>
           </div>
