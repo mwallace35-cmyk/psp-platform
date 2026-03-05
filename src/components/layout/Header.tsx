@@ -173,6 +173,10 @@ export default function Header() {
             Our Guys
           </Link>
 
+          <Link href="/recruiting" className={`nav-link ${isActive("/recruiting") ? "active" : ""}`}>
+            Recruiting
+          </Link>
+
           {/* Data & Tools Dropdown */}
           <div className="nav-dd">
             <div className="nav-link">Tools &#9662;</div>
