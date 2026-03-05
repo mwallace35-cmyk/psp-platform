@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "../ui/ThemeToggle";
+import SearchOverlay from "../search/SearchOverlay";
 
 const MAIN_SPORTS = [
   { href: "/football", label: "Football", color: "var(--fb)", emoji: "🏈" },
@@ -53,6 +54,7 @@ const BASKETBALL_SCHOOLS = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
@@ -190,7 +192,7 @@ export default function Header() {
 
           <div className="nav-right">
             <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`}>Schools</Link>
-            <Link href="/search" className="nav-link">Search</Link>
+            <button onClick={() => setSearchOpen(true)} className="nav-link" style={{ background: "none", border: "none", cursor: "pointer", color: "#fff" }}>🔍 Search</button>
             <Link href="/signup" className="nav-link" style={{ color: "var(--psp-gold)" }}>Sign Up</Link>
 
             {/* Mobile hamburger */}
@@ -270,6 +272,7 @@ export default function Header() {
           </div>
         </>
       )}
+      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }
