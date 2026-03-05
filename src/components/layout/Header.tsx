@@ -169,6 +169,10 @@ export default function Header() {
             POTW
           </Link>
 
+          <Link href="/our-guys" className={`nav-link ${isActive("/our-guys") ? "active" : ""}`}>
+            Our Guys
+          </Link>
+
           {/* Data & Tools Dropdown */}
           <div className="nav-dd">
             <div className="nav-link">Tools &#9662;</div>
