@@ -173,8 +173,6 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         allTimeRecord={allTimeRecord}
         winPct={winPct}
         primaryColor={primaryColor}
-        sportName={(id: string) => (SPORT_META as any)[id]?.name || id.charAt(0).toUpperCase() + id.slice(1)}
-        sportEmoji={(id: string) => (SPORT_META as any)[id]?.emoji || "🏅"}
         sportMeta={sportMeta}
         gamesBySport={gamesBySport}
         champsBySport={champsBySport}

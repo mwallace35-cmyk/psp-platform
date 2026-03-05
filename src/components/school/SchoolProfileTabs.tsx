@@ -12,8 +12,6 @@ interface SchoolProfileTabsProps {
   allTimeRecord: { w: number; l: number; t: number; pf: number; pa: number };
   winPct: string | null;
   primaryColor: string;
-  sportName: (id: string) => string;
-  sportEmoji: (id: string) => string;
   sportMeta: Record<string, any>;
   // Grouped data
   gamesBySport: Record<string, any[]>;
@@ -37,9 +35,19 @@ const TABS: { key: TabKey; label: string; icon: string }[] = [
   { key: "news", label: "News", icon: "📰" },
 ];
 
+// Helper functions to replace server-side function props
+function getSportName(sportMeta: Record<string, any>, id: string): string {
+  return sportMeta[id]?.name || id.charAt(0).toUpperCase() + id.slice(1);
+}
+function getSportEmoji(sportMeta: Record<string, any>, id: string): string {
+  return sportMeta[id]?.emoji || "🏅";
+}
+
 export default function SchoolProfileTabs(props: SchoolProfileTabsProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const { school, primaryColor } = props;
+  const sportName = (id: string) => getSportName(props.sportMeta, id);
+  const sportEmoji = (id: string) => getSportEmoji(props.sportMeta, id);
 
   return (
     <>
@@ -94,7 +102,7 @@ export default function SchoolProfileTabs(props: SchoolProfileTabsProps) {
               <div className="w-body" style={{ padding: 0 }}>
                 {props.proPlayers.slice(0, 6).map((p: any) => (
                   <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", borderBottom: "1px solid var(--g100)", fontSize: 12 }}>
-                    <span>{props.sportEmoji(p.sport)}</span>
+                    <span>{getSportEmoji(props.sportMeta, p.sport)}</span>
                     <Link href={`/${p.sport}/players/${p.slug}`} style={{ fontWeight: 600, color: "var(--link)", textDecoration: "none", flex: 1 }}>{p.name}</Link>
                     <span style={{ fontSize: 11, color: p.pro_team ? "var(--psp-gold)" : "var(--g400)" }}>{p.pro_team || p.college}</span>
                   </div>
@@ -110,7 +118,7 @@ export default function SchoolProfileTabs(props: SchoolProfileTabsProps) {
               <Link href={`/search?q=${encodeURIComponent(school.name)}`} className="w-link">&#8594; Search Players</Link>
               <Link href="/schools" className="w-link">&#8594; All Schools</Link>
               {props.activeSports.map((sid: string) => (
-                <Link key={sid} href={`/${sid}`} className="w-link">&#8594; {props.sportName(sid)} Hub</Link>
+                <Link key={sid} href={`/${sid}`} className="w-link">&#8594; {getSportName(props.sportMeta, sid)} Hub</Link>
               ))}
             </div>
           </div>
@@ -124,7 +132,9 @@ export default function SchoolProfileTabs(props: SchoolProfileTabsProps) {
 
 /* ─── OVERVIEW TAB ─── */
 function OverviewTab(props: SchoolProfileTabsProps) {
-  const { school, activeSports, allTimeRecord, winPct, primaryColor, sportName, sportEmoji, gamesBySport, champsBySport, playersBySport, seasonsBySport, championships, awards } = props;
+  const { school, activeSports, allTimeRecord, winPct, primaryColor, sportMeta, gamesBySport, champsBySport, playersBySport, seasonsBySport, championships, awards } = props;
+  const sportName = (id: string) => getSportName(sportMeta, id);
+  const sportEmoji = (id: string) => getSportEmoji(sportMeta, id);
 
   return (
     <>
@@ -242,7 +252,9 @@ function OverviewTab(props: SchoolProfileTabsProps) {
 
 /* ─── SCHEDULE TAB ─── */
 function ScheduleTab(props: SchoolProfileTabsProps) {
-  const { school, activeSports, gamesBySport, sportName, sportEmoji } = props;
+  const { school, activeSports, gamesBySport, sportMeta } = props;
+  const sportName = (id: string) => getSportName(sportMeta, id);
+  const sportEmoji = (id: string) => getSportEmoji(sportMeta, id);
 
   return (
     <>
@@ -288,7 +300,9 @@ function ScheduleTab(props: SchoolProfileTabsProps) {
 
 /* ─── ROSTER TAB ─── */
 function RosterTab(props: SchoolProfileTabsProps) {
-  const { activeSports, playersBySport, sportName, sportEmoji, primaryColor } = props;
+  const { activeSports, playersBySport, sportMeta, primaryColor } = props;
+  const sportName = (id: string) => getSportName(sportMeta, id);
+  const sportEmoji = (id: string) => getSportEmoji(sportMeta, id);
 
   return (
     <>
@@ -338,7 +352,9 @@ function RosterTab(props: SchoolProfileTabsProps) {
 
 /* ─── STATS TAB ─── */
 function StatsTab(props: SchoolProfileTabsProps) {
-  const { school, activeSports, seasonsBySport, sportName, sportEmoji, primaryColor } = props;
+  const { school, activeSports, seasonsBySport, sportMeta, primaryColor } = props;
+  const sportName = (id: string) => getSportName(sportMeta, id);
+  const sportEmoji = (id: string) => getSportEmoji(sportMeta, id);
 
   return (
     <>
@@ -386,7 +402,9 @@ function StatsTab(props: SchoolProfileTabsProps) {
 
 /* ─── CHAMPIONSHIPS TAB ─── */
 function ChampionshipsTab(props: SchoolProfileTabsProps) {
-  const { championships, primaryColor, activeSports, champsBySport, sportName, sportEmoji } = props;
+  const { championships, primaryColor, activeSports, champsBySport, sportMeta } = props;
+  const sportName = (id: string) => getSportName(sportMeta, id);
+  const sportEmoji = (id: string) => getSportEmoji(sportMeta, id);
 
   if (championships.length === 0) {
     return (
