@@ -3155,3 +3155,54 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 [data-theme="dark"] .hub-sc-name {
   color: #fff;
 }
+
+/* ── Archive Tables ──────────────────── */
+.archive-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.archive-table thead tr {
+  background: var(--psp-navy);
+  color: #fff;
+}
+.archive-table th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.archive-table td {
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--psp-gray-200, #e2e8f0);
+}
+.archive-table tbody tr:hover {
+  background: var(--psp-gray-50, #f8fafc);
+}
+.archive-table tbody tr:nth-child(even) {
+  background: var(--psp-gray-50, #f8fafc);
+}
+.archive-table tbody tr:nth-child(even):hover {
+  background: var(--psp-gray-100, #f1f5f9);
+}
+[data-theme="dark"] .archive-table thead tr {
+  background: var(--psp-navy-mid);
+}
+[data-theme="dark"] .archive-table td {
+  border-bottom-color: rgba(255,255,255,.1);
+  color: var(--psp-gray-300);
+}
+[data-theme="dark"] .archive-table tbody tr:hover {
+  background: rgba(255,255,255,.05);
+}
+[data-theme="dark"] .archive-table tbody tr:nth-child(even) {
+  background: rgba(255,255,255,.03);
+}
+[data-theme="dark"] .archive-table tbody tr:nth-child(even):hover {
+  background: rgba(255,255,255,.05);
+}

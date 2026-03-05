@@ -66,26 +66,37 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     const lines = content.split('\n');
     const processedLines: string[] = [];
     let inTable = false;
+    let isFirstTableRow = false;
+
+    const isMarkdownHeading = (s: string) =>
+      /^#{1,3}\s/.test(s); // Only "# ", "## ", "### " — not "#-" footnote markers
 
     for (const line of lines) {
       const trimmed = line.trim();
       // Detect table rows (contain | separators with content)
-      if (trimmed.includes(' | ') && !trimmed.startsWith('#') && !trimmed.startsWith('---')) {
+      if (trimmed.includes(' | ') && !isMarkdownHeading(trimmed) && !trimmed.startsWith('---')) {
         if (!inTable) {
           processedLines.push('<table class="archive-table">');
           inTable = true;
+          isFirstTableRow = true;
         }
         const cells = trimmed.split(' | ').map(c => c.trim());
-        processedLines.push('<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>');
+        // First row is the header
+        if (isFirstTableRow) {
+          processedLines.push('<thead><tr>' + cells.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>');
+          isFirstTableRow = false;
+        } else {
+          processedLines.push('<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>');
+        }
       } else {
         if (inTable) {
-          processedLines.push('</table>');
+          processedLines.push('</tbody></table>');
           inTable = false;
         }
         processedLines.push(line);
       }
     }
-    if (inTable) processedLines.push('</table>');
+    if (inTable) processedLines.push('</tbody></table>');
 
     return processedLines.join('\n')
       .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
