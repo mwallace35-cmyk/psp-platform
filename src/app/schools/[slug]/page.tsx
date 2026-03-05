@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
 import {
   getSchoolBySlug,
   getSchoolAllTeamSeasons,
@@ -6,6 +7,8 @@ import {
   getSchoolAllPlayers,
   getSchoolAwards,
   getSchoolAllRecentGames,
+  getSchoolCoaches,
+  getActiveSportsBySchool,
   SPORT_META,
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
@@ -20,7 +23,6 @@ type PageParams = { slug: string };
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { slug } = await params;
   let school = await getSchoolBySlug(slug);
-  // Handle -hs suffix duplicates from MaxPreps import
   if (!school && slug.endsWith("-hs")) {
     school = await getSchoolBySlug(slug.replace(/-hs$/, ""));
   }
@@ -36,7 +38,6 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   const { slug } = await params;
   let school = await getSchoolBySlug(slug);
 
-  // Handle -hs suffix duplicates: redirect to canonical slug
   if (!school && slug.endsWith("-hs")) {
     const canonicalSlug = slug.replace(/-hs$/, "");
     const canonicalSchool = await getSchoolBySlug(canonicalSlug);
@@ -47,12 +48,14 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
 
   if (!school) notFound();
 
-  const [teamSeasons, championships, players, awards, recentGames] = await Promise.all([
+  const [teamSeasons, championships, players, awards, recentGames, coachingStints, activeSportsData] = await Promise.all([
     getSchoolAllTeamSeasons(school.id),
     getSchoolChampionships(school.id),
     getSchoolAllPlayers(school.id),
     getSchoolAwards(school.id),
     getSchoolAllRecentGames(school.id),
+    getSchoolCoaches(school.id),
+    getActiveSportsBySchool(school.id),
   ]);
 
   // Compute all-time record
@@ -115,12 +118,53 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
     sportMeta[sid] = (SPORT_META as any)[sid] || { name: sid, emoji: "🏅", color: "#666" };
   }
 
+  // Build sport cards data for the team pages section
+  const sportCardsData = activeSports.map((sid) => {
+    const meta = (SPORT_META as any)[sid] || { name: sid, emoji: "🏅", color: "#666" };
+    // Find most recent team season for this sport
+    const sportSeasons = seasonsBySport[sid] || [];
+    const latest = sportSeasons[0]; // already sorted desc
+    const sportChamps = champsBySport[sid] || [];
+    // Find active coach from coaching stints
+    const coachStint = (coachingStints as any[]).find(
+      (cs: any) => cs.sports?.id === sid && !cs.end_year
+    );
+    return {
+      sportId: sid,
+      name: meta.name,
+      emoji: meta.emoji,
+      color: meta.color,
+      latestRecord: latest ? `${latest.wins || 0}-${latest.losses || 0}${latest.ties ? `-${latest.ties}` : ""}` : null,
+      latestSeason: latest?.seasons?.label || null,
+      championships: sportChamps.length,
+      coach: coachStint?.coaches ? { name: coachStint.coaches.name, slug: coachStint.coaches.slug } : null,
+      coachSport: sid,
+    };
+  });
+
+  // Unique coaches from stints
+  const uniqueCoaches = new Map<number, any>();
+  (coachingStints as any[]).forEach((cs: any) => {
+    if (cs.coaches && !uniqueCoaches.has(cs.coaches.id)) {
+      uniqueCoaches.set(cs.coaches.id, {
+        ...cs.coaches,
+        sport: cs.sports?.name || cs.sport_id,
+        sportId: cs.sport_id,
+        role: cs.role,
+        startYear: cs.start_year,
+        endYear: cs.end_year,
+        record: `${cs.record_wins || 0}-${cs.record_losses || 0}${cs.record_ties ? `-${cs.record_ties}` : ""}`,
+        championships: cs.championships || 0,
+      });
+    }
+  });
+  const coaches = Array.from(uniqueCoaches.values());
+
   return (
     <>
-      {/* Breadcrumb */}
       <Breadcrumb items={[{ label: "Schools", href: "/schools" }, { label: school.name }]} />
 
-      {/* ═══════════════ ESPN TEAM BANNER ═══════════════ */}
+      {/* TEAM BANNER */}
       <div
         className="team-banner"
         style={{
@@ -128,7 +172,6 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         }}
       >
         <div className="team-banner-inner">
-          {/* Logo / Monogram */}
           {school.logo_url ? (
             <div className="team-logo">
               <img src={school.logo_url} alt={`${school.name} logo`} width={72} height={72} style={{ objectFit: "contain" }} />
@@ -139,7 +182,6 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             </div>
           )}
 
-          {/* Team Info */}
           <div className="team-info">
             <h1>{school.name}</h1>
             <div className="team-sub">
@@ -154,7 +196,6 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             </div>
           </div>
 
-          {/* Stat Badges */}
           <div className="team-stats">
             <div className="team-stat">
               <span className="ts-val">
@@ -180,7 +221,169 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         </div>
       </div>
 
-      {/* ═══════════════ TABS + CONTENT ═══════════════ */}
+      {/* SCHOOL INFO BAR */}
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 16px" }}>
+        <div style={{
+          display: "flex", flexWrap: "wrap", gap: 16, padding: "12px 16px",
+          background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8,
+          fontSize: 13, color: "var(--text)",
+        }}>
+          {(school as any).principal && (
+            <div><span style={{ color: "var(--g400)", fontSize: 11 }}>Principal:</span> {(school as any).principal}</div>
+          )}
+          {(school as any).athletic_director && (
+            <div>
+              <span style={{ color: "var(--g400)", fontSize: 11 }}>AD:</span> {(school as any).athletic_director}
+              {(school as any).athletic_director_email && (
+                <a href={`mailto:${(school as any).athletic_director_email}`} style={{ marginLeft: 4, color: "var(--psp-blue)", fontSize: 11 }}>
+                  (email)
+                </a>
+              )}
+            </div>
+          )}
+          {(school as any).phone && (
+            <div><span style={{ color: "var(--g400)", fontSize: 11 }}>Phone:</span> {(school as any).phone}</div>
+          )}
+          {(school as any).enrollment && (
+            <div><span style={{ color: "var(--g400)", fontSize: 11 }}>Enrollment:</span> {(school as any).enrollment.toLocaleString()}</div>
+          )}
+          {(school as any).school_type && (
+            <div>
+              <span style={{
+                fontSize: 11, padding: "2px 8px", borderRadius: 10,
+                background: "var(--g100)", color: "var(--text)", textTransform: "capitalize",
+              }}>
+                {(school as any).school_type}
+              </span>
+            </div>
+          )}
+          {school.website_url && (
+            <div>
+              <a href={school.website_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--psp-blue)", fontSize: 12 }}>
+                Website &#8599;
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* SPORT TEAM CARDS */}
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 16px" }}>
+        <h2 style={{ fontSize: 18, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, textTransform: "uppercase", marginBottom: 12, color: "var(--text)" }}>
+          Team Pages
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+          {sportCardsData.map((sc) => (
+            <Link
+              key={sc.sportId}
+              href={`/schools/${slug}/${sc.sportId}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <div style={{
+                background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8,
+                overflow: "hidden", transition: "transform .15s, box-shadow .15s", cursor: "pointer",
+              }}
+              className="school-card"
+              >
+                <div style={{
+                  padding: "10px 14px", background: sc.color, color: "#fff",
+                  display: "flex", alignItems: "center", gap: 8,
+                }}>
+                  <span style={{ fontSize: 22 }}>{sc.emoji}</span>
+                  <span style={{ fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16 }}>{sc.name}</span>
+                </div>
+                <div style={{ padding: "10px 14px" }}>
+                  {sc.latestRecord ? (
+                    <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", color: "var(--text)" }}>
+                      {sc.latestRecord}
+                      <span style={{ fontSize: 11, fontWeight: 400, color: "var(--g400)", marginLeft: 6 }}>{sc.latestSeason}</span>
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 13, color: "var(--g400)", fontStyle: "italic" }}>Historical data</div>
+                  )}
+                  {sc.coach && (
+                    <div style={{ fontSize: 12, color: "var(--g400)", marginTop: 4 }}>
+                      Coach: {sc.coach.name}
+                    </div>
+                  )}
+                  {sc.championships > 0 && (
+                    <div style={{ fontSize: 12, color: "var(--psp-gold)", marginTop: 2 }}>
+                      {sc.championships} championship{sc.championships !== 1 ? "s" : ""}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {/* Coming Soon cards for sports that might exist but have no data */}
+          {["football", "basketball", "baseball"].filter(s => !activeSports.includes(s)).map((sid) => {
+            const meta = (SPORT_META as any)[sid];
+            return (
+              <div key={sid} style={{
+                background: "var(--card-bg)", border: "1px dashed var(--g200)", borderRadius: 8,
+                overflow: "hidden", opacity: 0.6,
+              }}>
+                <div style={{
+                  padding: "10px 14px", background: "var(--g100)", color: "var(--g400)",
+                  display: "flex", alignItems: "center", gap: 8,
+                }}>
+                  <span style={{ fontSize: 22 }}>{meta?.emoji}</span>
+                  <span style={{ fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16 }}>{meta?.name}</span>
+                </div>
+                <div style={{ padding: "14px", textAlign: "center", color: "var(--g400)", fontSize: 13 }}>
+                  Coming Soon
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* COACHES SECTION */}
+      {coaches.length > 0 && (
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 16px" }}>
+          <h2 style={{ fontSize: 18, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, textTransform: "uppercase", marginBottom: 12, color: "var(--text)" }}>
+            Coaches
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 10 }}>
+            {coaches.map((coach: any) => (
+              <Link
+                key={coach.id}
+                href={`/${coach.sportId || "football"}/coaches/${coach.slug}`}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
+                  background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8,
+                  transition: "transform .15s", cursor: "pointer",
+                }}
+                className="school-card"
+                >
+                  <div style={{
+                    width: 36, height: 36, borderRadius: "50%", background: "var(--g100)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 14, fontWeight: 700, color: "var(--g400)", flexShrink: 0,
+                  }}>
+                    {coach.name?.charAt(0)}
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: "var(--text)" }}>{coach.name}</div>
+                    <div style={{ fontSize: 11, color: "var(--g400)" }}>
+                      {coach.sport} {coach.role === "head_coach" ? "Head Coach" : coach.role || ""} {coach.startYear ? `(${coach.startYear}${coach.endYear ? `-${coach.endYear}` : "-present"})` : ""}
+                    </div>
+                    {coach.record && coach.record !== "0-0" && (
+                      <div style={{ fontSize: 11, color: "var(--g300)" }}>Record: {coach.record}</div>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TABS + CONTENT */}
       <SchoolProfileTabs
         school={school}
         activeSports={activeSports}

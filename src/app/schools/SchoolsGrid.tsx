@@ -2,7 +2,16 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+
+const SPORT_EMOJI: Record<string, { emoji: string; name: string }> = {
+  football: { emoji: '🏈', name: 'Football' },
+  basketball: { emoji: '🏀', name: 'Basketball' },
+  baseball: { emoji: '⚾', name: 'Baseball' },
+  'track-field': { emoji: '🏃', name: 'Track' },
+  lacrosse: { emoji: '🥍', name: 'Lacrosse' },
+  wrestling: { emoji: '🤼', name: 'Wrestling' },
+  soccer: { emoji: '⚽', name: 'Soccer' },
+};
 
 interface School {
   id: number;
@@ -17,6 +26,11 @@ interface School {
   address?: string | null;
   leagues?: { name: string; short_name?: string } | null;
   championships_count: number;
+  active_sports?: string[];
+  principal?: string | null;
+  athletic_director?: string | null;
+  enrollment?: number | null;
+  school_type?: string | null;
 }
 
 interface League {
@@ -33,12 +47,29 @@ interface SchoolsGridProps {
 export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsGridProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLeague, setSelectedLeague] = useState('');
+  const [selectedSport, setSelectedSport] = useState('');
+
+  // Get all unique sports across all schools
+  const allSports = useMemo(() => {
+    const sportSet = new Set<string>();
+    schools.forEach((s) => {
+      (s.active_sports ?? []).forEach((sp) => sportSet.add(sp));
+    });
+    return Array.from(sportSet).sort((a, b) => {
+      const order = ['football', 'basketball', 'baseball', 'lacrosse', 'soccer', 'track-field', 'wrestling'];
+      return order.indexOf(a) - order.indexOf(b);
+    });
+  }, [schools]);
 
   const filtered = useMemo(() => {
     let result = schools;
 
     if (selectedLeague) {
       result = result.filter((s) => s.leagues?.name === selectedLeague);
+    }
+
+    if (selectedSport) {
+      result = result.filter((s) => (s.active_sports ?? []).includes(selectedSport));
     }
 
     if (searchTerm) {
@@ -53,11 +84,54 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
     }
 
     return result;
-  }, [schools, searchTerm, selectedLeague]);
+  }, [schools, searchTerm, selectedLeague, selectedSport]);
 
   return (
     <>
-      {/* Filters */}
+      {/* Sport Filter Pills */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+        <button
+          onClick={() => setSelectedSport('')}
+          style={{
+            padding: '6px 14px',
+            borderRadius: 20,
+            border: 'none',
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+            background: !selectedSport ? 'var(--psp-gold)' : 'var(--g100)',
+            color: !selectedSport ? '#0a1628' : 'var(--text)',
+            transition: 'all .15s',
+          }}
+        >
+          All Sports
+        </button>
+        {allSports.map((sport) => {
+          const meta = SPORT_EMOJI[sport];
+          const isActive = selectedSport === sport;
+          return (
+            <button
+              key={sport}
+              onClick={() => setSelectedSport(isActive ? '' : sport)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 20,
+                border: 'none',
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer',
+                background: isActive ? 'var(--psp-gold)' : 'var(--g100)',
+                color: isActive ? '#0a1628' : 'var(--text)',
+                transition: 'all .15s',
+              }}
+            >
+              {meta?.emoji} {meta?.name || sport}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Search + League Filter */}
       <div className="filter-bar" style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         <input
           type="text"
@@ -104,6 +178,7 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
           const leagueColor = leagueColors[leagueName] || '#666';
           const primaryColor = school.colors?.primary || leagueColor;
           const secondaryColor = school.colors?.secondary || '#222';
+          const sports = school.active_sports ?? [];
 
           return (
             <Link
@@ -134,68 +209,33 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
                     minHeight: 56,
                   }}
                 >
-                  {/* Logo */}
                   {school.logo_url ? (
                     <div style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 6,
-                      background: 'rgba(255,255,255,0.2)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      overflow: 'hidden',
+                      width: 40, height: 40, borderRadius: 6, background: 'rgba(255,255,255,0.2)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden',
                     }}>
-                      <img
-                        src={school.logo_url}
-                        alt={`${school.name} logo`}
-                        width={34}
-                        height={34}
-                        style={{ objectFit: 'contain' }}
-                        loading="lazy"
-                      />
+                      <img src={school.logo_url} alt={`${school.name} logo`} width={34} height={34} style={{ objectFit: 'contain' }} loading="lazy" />
                     </div>
                   ) : (
                     <div style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 6,
-                      background: 'rgba(255,255,255,0.15)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      fontSize: 16,
-                      fontWeight: 700,
-                      fontFamily: "'Barlow Condensed', sans-serif",
+                      width: 40, height: 40, borderRadius: 6, background: 'rgba(255,255,255,0.15)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      fontSize: 16, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif",
                     }}>
                       {(school.short_name || school.name.charAt(0)).substring(0, 3)}
                     </div>
                   )}
 
-                  <div style={{ minWidth: 0 }}>
+                  <div style={{ minWidth: 0, flex: 1 }}>
                     <h3 style={{
-                      margin: 0,
-                      fontSize: 15,
-                      fontWeight: 700,
-                      fontFamily: "'Barlow Condensed', sans-serif",
-                      letterSpacing: '0.02em',
-                      lineHeight: 1.2,
-                      textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
+                      margin: 0, fontSize: 15, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif",
+                      letterSpacing: '0.02em', lineHeight: 1.2, textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                     }}>
                       {school.name}
                     </h3>
                     {school.mascot && (
-                      <div style={{
-                        fontSize: 11,
-                        opacity: 0.85,
-                        marginTop: 1,
-                        textShadow: '0 1px 1px rgba(0,0,0,0.2)',
-                      }}>
+                      <div style={{ fontSize: 11, opacity: 0.85, marginTop: 1, textShadow: '0 1px 1px rgba(0,0,0,0.2)' }}>
                         {school.mascot}
                       </div>
                     )}
@@ -205,21 +245,43 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
                 {/* Body */}
                 <div style={{ padding: '10px 14px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                    <div
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        background: leagueColor,
-                        flexShrink: 0,
-                      }}
-                    />
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: leagueColor, flexShrink: 0 }} />
                     <span style={{ fontSize: 11, color: 'var(--g400)' }}>{leagueName}</span>
+                    {school.school_type && (
+                      <span style={{ fontSize: 10, color: 'var(--g300)', textTransform: 'capitalize', marginLeft: 'auto' }}>
+                        {school.school_type}
+                      </span>
+                    )}
                   </div>
 
                   {school.city && (
-                    <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8 }}>
+                    <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 6 }}>
                       {school.city}{school.state ? `, ${school.state}` : ''}
+                      {school.enrollment && <span style={{ color: 'var(--g400)', marginLeft: 6 }}>({school.enrollment.toLocaleString()} students)</span>}
+                    </div>
+                  )}
+
+                  {/* Sport badges */}
+                  {sports.length > 0 && (
+                    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 8 }}>
+                      {sports.map((sp) => {
+                        const meta = SPORT_EMOJI[sp];
+                        return (
+                          <span
+                            key={sp}
+                            title={meta?.name || sp}
+                            style={{
+                              fontSize: 14,
+                              lineHeight: 1,
+                              padding: '2px 4px',
+                              borderRadius: 4,
+                              background: 'var(--g50, rgba(0,0,0,0.05))',
+                            }}
+                          >
+                            {meta?.emoji || '🏅'}
+                          </span>
+                        );
+                      })}
                     </div>
                   )}
 
@@ -229,6 +291,12 @@ export default function SchoolsGrid({ schools, leagues, leagueColors }: SchoolsG
                       <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Titles</div>
                       <div style={{ fontSize: 16, fontWeight: 700, color: school.championships_count > 0 ? 'var(--psp-gold)' : 'var(--g300)', fontFamily: "'Barlow Condensed', sans-serif" }}>
                         {school.championships_count}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sports</div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', fontFamily: "'Barlow Condensed', sans-serif" }}>
+                        {sports.length}
                       </div>
                     </div>
                     {school.colors && (

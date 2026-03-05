@@ -69,6 +69,7 @@ export async function getAllSchools() {
       .from("schools")
       .select(`
         id, slug, name, short_name, city, state, mascot, league_id, colors, logo_url, address,
+        principal, athletic_director, athletic_director_email, phone, enrollment, school_type,
         leagues(name, short_name)
       `)
       .is("deleted_at", null)
@@ -102,9 +103,22 @@ export async function getAllSchools() {
       champCounts.set(c.school_id, (champCounts.get(c.school_id) || 0) + 1);
     });
 
+    // Get active sports per school (which sports they have team_seasons for)
+    const { data: sportEntries } = await supabase
+      .from("team_seasons")
+      .select("school_id, sport_id")
+      .in("school_id", schoolIds);
+
+    const sportsBySchool = new Map<number, Set<string>>();
+    (sportEntries ?? []).forEach((e: any) => {
+      if (!sportsBySchool.has(e.school_id)) sportsBySchool.set(e.school_id, new Set());
+      sportsBySchool.get(e.school_id)!.add(e.sport_id);
+    });
+
     return schools.map((s: any) => ({
       ...s,
       championships_count: champCounts.get(s.id) ?? 0,
+      active_sports: Array.from(sportsBySchool.get(s.id) ?? []),
     }));
   } catch (err) {
     console.error("[getAllSchools] Exception:", err);
@@ -667,6 +681,74 @@ export async function getTopSchoolsByChampionships(limit = 8) {
     return Array.from(counts.values()).sort((a, b) => b.count - a.count).slice(0, limit);
   } catch {
     return [];
+  }
+}
+
+// ============================================================================
+// SCHOOL OVERHAUL FUNCTIONS
+// ============================================================================
+
+export async function getSchoolCoaches(schoolId: number) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("coaching_stints")
+      .select("*, coaches!inner(id, name, slug, photo_url, is_active), sports(name, id)")
+      .eq("school_id", schoolId)
+      .order("start_year", { ascending: false });
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getActiveSportsBySchool(schoolId: number) {
+  try {
+    const supabase = await createClient();
+    // Get distinct sport_ids with the most recent season label
+    const { data } = await supabase
+      .from("team_seasons")
+      .select("sport_id, wins, losses, ties, coach_id, seasons(label, year_start), coaches:coach_id(name, slug)")
+      .eq("school_id", schoolId)
+      .order("created_at", { ascending: false });
+    if (!data) return [];
+
+    // Group by sport, keep only the most recent season per sport
+    const sportMap = new Map<string, any>();
+    for (const ts of data as any[]) {
+      if (!sportMap.has(ts.sport_id)) {
+        sportMap.set(ts.sport_id, ts);
+      }
+    }
+    return Array.from(sportMap.values());
+  } catch {
+    return [];
+  }
+}
+
+const CURRENT_SEASON_LABEL = "2024-25";
+
+export async function getCurrentTeamSeason(schoolId: number, sportSlug: string) {
+  try {
+    const supabase = await createClient();
+    // Get the current season ID
+    const { data: seasonData } = await supabase
+      .from("seasons")
+      .select("id")
+      .eq("label", CURRENT_SEASON_LABEL)
+      .single();
+    if (!seasonData) return null;
+
+    const { data } = await supabase
+      .from("team_seasons")
+      .select("*, seasons(id, year_start, year_end, label), coaches:coach_id(id, name, slug), schools(id, name, slug, city, state, league_id, mascot, colors, logo_url)")
+      .eq("school_id", schoolId)
+      .eq("sport_id", sportSlug)
+      .eq("season_id", seasonData.id)
+      .single();
+    return data;
+  } catch {
+    return null;
   }
 }
 
