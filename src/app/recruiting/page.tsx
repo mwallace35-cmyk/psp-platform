@@ -1,4 +1,6 @@
 import { Breadcrumb } from "@/components/ui";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { getRecruits, getRecentCommitments } from "@/lib/data";
 import RecruitingClient from "./RecruitingClient";
 import type { Metadata } from "next";
@@ -18,6 +20,7 @@ export default async function RecruitingPage() {
 
   return (
     <>
+      <Header />
       <Breadcrumb items={[{ label: "Recruiting" }]} />
 
       {/* Page Header Bar — matches sport hub style */}
@@ -34,6 +37,7 @@ export default async function RecruitingPage() {
       </div>
 
       <RecruitingClient recruits={recruits} commitments={commitments} />
+      <Footer />
     </>
   );
 }
