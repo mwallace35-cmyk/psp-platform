@@ -113,6 +113,28 @@ export default async function TeamHistoryPage({ params }: { params: Promise<Page
         <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20 }}>
           {/* MAIN */}
           <main>
+            {/* Team page callout — season dropdown handles history inline now */}
+            <div style={{
+              display: "flex", gap: 8, marginBottom: 16, alignItems: "center", flexWrap: "wrap",
+              padding: "12px 16px", background: "rgba(59, 130, 246, 0.08)", border: "1px solid rgba(59, 130, 246, 0.2)",
+              borderRadius: 8,
+            }}>
+              <span style={{ fontSize: 14 }}>💡</span>
+              <span style={{ fontSize: 13, color: "var(--text)", flex: 1 }}>
+                Use the <strong>season dropdown</strong> on the team page to browse any season&apos;s schedule, roster, and stats.
+              </span>
+              <Link
+                href={`/schools/${slug}/${sport}`}
+                style={{
+                  padding: "8px 16px", borderRadius: 6, background: meta.color,
+                  color: "#fff", fontWeight: 600, textDecoration: "none", fontSize: 13,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Go to Team Page →
+              </Link>
+            </div>
+
             {/* Back links */}
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
               <Link
@@ -122,7 +144,7 @@ export default async function TeamHistoryPage({ params }: { params: Promise<Page
                   color: "#fff", fontWeight: 600, textDecoration: "none", fontSize: 13,
                 }}
               >
-                Current Season
+                Team Page
               </Link>
               <Link
                 href={`/schools/${slug}`}

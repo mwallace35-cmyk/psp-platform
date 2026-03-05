@@ -267,74 +267,121 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         </div>
       </div>
 
-      {/* SPORT TEAM CARDS */}
+      {/* SPORT TEAM CARDS — Major Sports First */}
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 16px" }}>
         <h2 style={{ fontSize: 18, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, textTransform: "uppercase", marginBottom: 12, color: "var(--text)" }}>
           Team Pages
         </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
-          {sportCardsData.map((sc) => (
-            <Link
-              key={sc.sportId}
-              href={`/schools/${slug}/${sc.sportId}`}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <div style={{
-                background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8,
-                overflow: "hidden", transition: "transform .15s, box-shadow .15s", cursor: "pointer",
-              }}
-              className="school-card"
-              >
-                <div style={{
-                  padding: "10px 14px", background: sc.color, color: "#fff",
-                  display: "flex", alignItems: "center", gap: 8,
-                }}>
-                  <span style={{ fontSize: 22 }}>{sc.emoji}</span>
-                  <span style={{ fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16 }}>{sc.name}</span>
-                </div>
-                <div style={{ padding: "10px 14px" }}>
-                  {sc.latestRecord ? (
-                    <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", color: "var(--text)" }}>
-                      {sc.latestRecord}
-                      <span style={{ fontSize: 11, fontWeight: 400, color: "var(--g400)", marginLeft: 6 }}>{sc.latestSeason}</span>
-                    </div>
-                  ) : (
-                    <div style={{ fontSize: 13, color: "var(--g400)", fontStyle: "italic" }}>Historical data</div>
-                  )}
-                  {sc.coach && (
-                    <div style={{ fontSize: 12, color: "var(--g400)", marginTop: 4 }}>
-                      Coach: {sc.coach.name}
-                    </div>
-                  )}
-                  {sc.championships > 0 && (
-                    <div style={{ fontSize: 12, color: "var(--psp-gold)", marginTop: 2 }}>
-                      {sc.championships} championship{sc.championships !== 1 ? "s" : ""}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Link>
-          ))}
 
-          {/* Coming Soon cards for sports that might exist but have no data */}
-          {["football", "basketball", "baseball"].filter(s => !activeSports.includes(s)).map((sid) => {
-            const meta = (SPORT_META as any)[sid];
+        {/* Major Sports: Football, Basketball, Baseball — always shown */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12, marginBottom: 16 }}>
+          {(["football", "basketball", "baseball"] as const).map((sid) => {
+            const sc = sportCardsData.find((s) => s.sportId === sid);
+            const sMeta = (SPORT_META as any)[sid] || { name: sid, emoji: "🏅", color: "#666" };
+            const hasData = !!sc;
+
             return (
-              <div key={sid} style={{
-                background: "var(--card-bg)", border: "1px dashed var(--g200)", borderRadius: 8,
-                overflow: "hidden", opacity: 0.6,
-              }}>
-                <div style={{
-                  padding: "10px 14px", background: "var(--g100)", color: "var(--g400)",
-                  display: "flex", alignItems: "center", gap: 8,
-                }}>
-                  <span style={{ fontSize: 22 }}>{meta?.emoji}</span>
-                  <span style={{ fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16 }}>{meta?.name}</span>
+              <Link
+                key={sid}
+                href={`/schools/${slug}/${sid}`}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <div
+                  style={{
+                    background: "var(--card-bg)",
+                    border: hasData ? "1px solid var(--g100)" : "1px dashed var(--g200)",
+                    borderRadius: 8,
+                    overflow: "hidden",
+                    transition: "transform .15s, box-shadow .15s",
+                    cursor: "pointer",
+                    opacity: hasData ? 1 : 0.7,
+                    height: "100%",
+                  }}
+                  className="school-card"
+                >
+                  <div style={{
+                    padding: "12px 16px",
+                    background: hasData ? sMeta.color : "var(--g100)",
+                    color: hasData ? "#fff" : "var(--g400)",
+                    display: "flex", alignItems: "center", gap: 10,
+                  }}>
+                    <span style={{ fontSize: 26 }}>{sMeta.emoji}</span>
+                    <span style={{ fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 18 }}>{sMeta.name}</span>
+                  </div>
+                  <div style={{ padding: "12px 16px" }}>
+                    {sc?.latestRecord ? (
+                      <>
+                        <div style={{ fontSize: 24, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", color: "var(--text)" }}>
+                          {sc.latestRecord}
+                          <span style={{ fontSize: 11, fontWeight: 400, color: "var(--g400)", marginLeft: 6 }}>{sc.latestSeason}</span>
+                        </div>
+                        {sc.coach && (
+                          <div style={{ fontSize: 12, color: "var(--g400)", marginTop: 4 }}>
+                            Coach: {sc.coach.name}
+                          </div>
+                        )}
+                        {sc.championships > 0 && (
+                          <div style={{ fontSize: 12, color: "var(--psp-gold)", marginTop: 2 }}>
+                            {sc.championships} championship{sc.championships !== 1 ? "s" : ""}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div style={{ fontSize: 13, color: "var(--g400)", fontStyle: "italic", textAlign: "center", padding: "4px 0" }}>
+                        Coming Soon
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div style={{ padding: "14px", textAlign: "center", color: "var(--g400)", fontSize: 13 }}>
-                  Coming Soon
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Minor Sports: Track & Field, Lacrosse, Wrestling, Soccer */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
+          {(["track-field", "lacrosse", "wrestling", "soccer"] as const).map((sid) => {
+            const sc = sportCardsData.find((s) => s.sportId === sid);
+            const sMeta = (SPORT_META as any)[sid] || { name: sid, emoji: "🏅", color: "#666" };
+            const hasData = !!sc;
+
+            return (
+              <Link
+                key={sid}
+                href={`/schools/${slug}/${sid}`}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <div
+                  style={{
+                    background: "var(--card-bg)",
+                    border: hasData ? "1px solid var(--g100)" : "1px dashed var(--g200)",
+                    borderRadius: 8,
+                    overflow: "hidden",
+                    transition: "transform .15s",
+                    cursor: "pointer",
+                    opacity: hasData ? 1 : 0.6,
+                    display: "flex", alignItems: "center", gap: 10,
+                    padding: "10px 14px",
+                  }}
+                  className="school-card"
+                >
+                  <span style={{ fontSize: 20 }}>{sMeta.emoji}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, color: "var(--text)" }}>
+                      {sMeta.name}
+                    </div>
+                    {sc?.latestRecord ? (
+                      <div style={{ fontSize: 12, color: "var(--g400)" }}>
+                        {sc.latestRecord} {sc.latestSeason && `(${sc.latestSeason})`}
+                        {sc.championships > 0 && <span style={{ color: "var(--psp-gold)", marginLeft: 6 }}>{sc.championships}×🏆</span>}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 11, color: "var(--g400)", fontStyle: "italic" }}>Coming Soon</div>
+                    )}
+                  </div>
+                  <span style={{ fontSize: 11, color: "var(--g300)" }}>→</span>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

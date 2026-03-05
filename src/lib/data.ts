@@ -1251,3 +1251,106 @@ export async function getTeamsWithRecords(sportId: string) {
     return [];
   }
 }
+
+// ============================================================================
+// TEAM PAGE: LEAGUE RIVALS + TOP PROGRAMS
+// ============================================================================
+
+export async function getLeagueTeams(leagueId: number | null, sportId: string, excludeSchoolId?: number, limit = 8) {
+  try {
+    if (!leagueId) return [];
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("schools")
+      .select("id, name, slug, mascot, city, league_id, team_seasons!inner(wins, losses, ties, sport_id, season_id, seasons(label, year_start))")
+      .eq("league_id", leagueId)
+      .eq("team_seasons.sport_id", sportId)
+      .is("deleted_at", null)
+      .limit(limit + 1); // +1 to exclude self
+    if (!data) return [];
+    return data
+      .filter((s: any) => s.id !== excludeSchoolId)
+      .slice(0, limit)
+      .map((s: any) => {
+        // Get most recent team_season
+        const ts = (s.team_seasons || []).sort((a: any, b: any) => (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0));
+        const latest = ts[0];
+        return {
+          id: s.id, name: s.name, slug: s.slug, mascot: s.mascot, city: s.city,
+          latestRecord: latest ? `${latest.wins}-${latest.losses}${latest.ties ? `-${latest.ties}` : ""}` : null,
+          latestSeason: latest?.seasons?.label || null,
+        };
+      });
+  } catch {
+    return [];
+  }
+}
+
+export async function getTopProgramsBySport(sportId: string, excludeSchoolId?: number, limit = 6) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("championships")
+      .select("school_id, schools(id, name, slug, mascot, city)")
+      .eq("sport_id", sportId)
+      .is("deleted_at", null);
+    if (!data) return [];
+    // Count championships per school
+    const counts = new Map<number, { school: any; count: number }>();
+    for (const c of data as any[]) {
+      if (!c.schools || c.school_id === excludeSchoolId) continue;
+      const existing = counts.get(c.school_id);
+      if (existing) { existing.count++; }
+      else { counts.set(c.school_id, { school: c.schools, count: 1 }); }
+    }
+    return Array.from(counts.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit)
+      .map(({ school, count }) => ({
+        id: school.id, name: school.name, slug: school.slug,
+        mascot: school.mascot, city: school.city, championships: count,
+      }));
+  } catch {
+    return [];
+  }
+}
+
+export async function getAllTeamSeasonData(schoolId: number, sportId: string) {
+  try {
+    // Fetch all team_seasons with full details
+    const teamSeasons = await getSchoolTeamSeasons(schoolId, sportId);
+    if (!teamSeasons.length) return {};
+
+    // For each season, fetch games + roster + awards + championships in parallel
+    const result: Record<string, any> = {};
+    await Promise.all(
+      teamSeasons.map(async (ts: any) => {
+        const seasonId = ts.season_id;
+        const label = ts.seasons?.label;
+        if (!label || !seasonId) return;
+
+        const [games, roster, awards, champs] = await Promise.all([
+          getGamesByTeamSeason(schoolId, sportId, seasonId),
+          getTeamRosterBySeason(schoolId, sportId, seasonId),
+          getSchoolAwards(schoolId, sportId),
+          getSchoolChampionships(schoolId, sportId),
+        ]);
+
+        // Filter awards/champs to this specific season
+        const seasonAwards = awards.filter((a: any) => a.seasons?.label === label);
+        const seasonChamps = champs.filter((c: any) => c.seasons?.label === label);
+
+        result[label] = {
+          teamSeason: ts,
+          games,
+          roster,
+          awards: seasonAwards,
+          championships: seasonChamps,
+        };
+      })
+    );
+    return result;
+  } catch {
+    return {};
+  }
+}
