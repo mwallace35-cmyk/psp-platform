@@ -255,15 +255,16 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 <p className="font-medium text-gray-900">{article.author_name || article.author || 'PSP Staff'}</p>
               </div>
               <div>
-                <p className="text-gray-600">Published</p>
+                <p className="text-gray-600">{article.source_file ? 'Originally Published' : 'Published'}</p>
                 <p className="font-medium text-gray-900">
-                  {new Date(article.created_at).toLocaleDateString('en-US', {
+                  {new Date(article.published_at || article.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
                   })}
                 </p>
               </div>
+              {!article.source_file && (
               <div>
                 <p className="text-gray-600">Updated</p>
                 <p className="font-medium text-gray-900">
@@ -277,6 +278,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                   )}
                 </p>
               </div>
+              )}
             </div>
           </div>
 
