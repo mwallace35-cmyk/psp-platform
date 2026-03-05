@@ -4,6 +4,22 @@ import { createClient } from "@/lib/supabase/server";
 export { VALID_SPORTS, SPORT_META, isValidSport } from "@/lib/sports";
 export type { SportId } from "@/lib/sports";
 
+// Deduplicate game records: same date + same two teams + same scores = same game
+// Handles cases where the same game exists from both teams' schedule imports
+function dedupeGames(games: any[]): any[] {
+  const seen = new Set<string>();
+  return games.filter((game: any) => {
+    const idA = Math.min(game.home_school_id, game.away_school_id);
+    const idB = Math.max(game.home_school_id, game.away_school_id);
+    const scoreA = game.home_school_id === idA ? game.home_score : game.away_score;
+    const scoreB = game.home_school_id === idA ? game.away_score : game.home_score;
+    const key = `${game.game_date}|${idA}-${idB}|${scoreA}-${scoreB}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export async function getSportOverview(sportId: string) {
   try {
     const supabase = await createClient();
@@ -308,8 +324,8 @@ export async function getSchoolAllRecentGames(schoolId: number, limit = 15) {
       .select("*, seasons(label), sports:sport_id(name, slug), home_school:schools!games_home_school_id_fkey(id, name, slug), away_school:schools!games_away_school_id_fkey(id, name, slug)")
       .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
       .order("game_date", { ascending: false })
-      .limit(limit);
-    return data ?? [];
+      .limit(limit * 2);
+    return dedupeGames(data ?? []).slice(0, limit);
   } catch {
     return [];
   }
@@ -949,16 +965,7 @@ export async function getGamesByTeamSeason(schoolId: number, sportId: string, se
       .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
       .order("game_date", { ascending: true });
 
-    // Deduplicate: same date + same two teams + same scores = same game
-    const seen = new Set<string>();
-    const deduped = (data ?? []).filter((game: any) => {
-      const teams = [game.home_school_id, game.away_school_id].sort().join("-");
-      const key = `${game.game_date}|${teams}|${game.home_score}-${game.away_score}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    return deduped;
+    return dedupeGames(data ?? []);
   } catch {
     return [];
   }
@@ -1185,13 +1192,14 @@ export async function getRecentCommitments(limit = 10) {
 export async function getRecentGamesBySport(sportId: string, limit = 20) {
   try {
     const supabase = await createClient();
+    // Fetch extra to account for dedup removing duplicates
     const { data } = await supabase
       .from("games")
       .select("*, seasons(label), home_school:schools!games_home_school_id_fkey(id, name, slug), away_school:schools!games_away_school_id_fkey(id, name, slug)")
       .eq("sport_id", sportId)
       .order("game_date", { ascending: false })
-      .limit(limit);
-    return data ?? [];
+      .limit(limit * 2);
+    return dedupeGames(data ?? []).slice(0, limit);
   } catch {
     return [];
   }
@@ -1206,8 +1214,8 @@ export async function getRecentGamesAll(limit = 10) {
       .not("home_score", "is", null)
       .not("away_score", "is", null)
       .order("game_date", { ascending: false })
-      .limit(limit);
-    return data ?? [];
+      .limit(limit * 2);
+    return dedupeGames(data ?? []).slice(0, limit);
   } catch {
     return [];
   }
@@ -1277,7 +1285,7 @@ export async function getGamesBySportAndSeason(sportId: string, seasonLabel?: st
     }
 
     const { data } = await query.limit(500);
-    return data ?? [];
+    return dedupeGames(data ?? []);
   } catch {
     return [];
   }
