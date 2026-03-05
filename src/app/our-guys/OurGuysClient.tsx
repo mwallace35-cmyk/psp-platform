@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import AlumniCard from "@/components/our-guys/AlumniCard";
-import SocialFeed from "@/components/our-guys/SocialFeed";
-import SpotlightHero from "@/components/our-guys/SpotlightHero";
 import PSPPromo from "@/components/ads/PSPPromo";
 
 interface Alumni {
@@ -62,6 +61,11 @@ const FILTER_TABS = [
   { key: "coaching", label: "Coaching", icon: "📋" },
 ];
 
+const PLATFORM_ICONS: Record<string, { icon: string; label: string }> = {
+  twitter: { icon: "𝕏", label: "X" },
+  instagram: { icon: "📷", label: "IG" },
+};
+
 export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, counts }: OurGuysClientProps) {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -96,97 +100,70 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
     return counts[key as keyof Counts] || 0;
   };
 
-  // Find the latest social post for the featured alumni
-  const featuredPost = featuredAlumni
-    ? socialPosts.find(p => p.next_level_tracking?.person_name === featuredAlumni.person_name) || null
-    : null;
+  const LEVEL_LABELS: Record<string, string> = {
+    pro: "Professional", college: "Collegiate", coaching: "Coaching", staff: "Staff",
+  };
 
   return (
-    <>
-      {/* Hero Section */}
-      <div style={{
-        background: "linear-gradient(135deg, #0a1628 0%, #1e3a5f 100%)",
-        padding: "32px 20px 24px",
-        textAlign: "center",
-        color: "#fff",
-        marginBottom: 20,
-        borderBottom: "3px solid #f0a500",
-      }}>
-        <h1 style={{ fontSize: 32, fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
-          Our Guys
-        </h1>
-        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "0 0 20px" }}>
-          Where They Are Now — Philly Athletes Making It at the Next Level
-        </p>
+    <div className="hub-dashboard">
+      {/* ════════ SUB-NAV LINKS ════════ */}
+      <nav className="hub-subnav">
+        {FILTER_TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setFilter(tab.key)}
+            className={filter === tab.key ? "hub-subnav-active" : ""}
+            style={{
+              background: "none", border: "none", cursor: "pointer",
+              color: filter === tab.key ? "var(--psp-gold)" : "inherit",
+              fontWeight: filter === tab.key ? 700 : 500,
+              borderBottom: filter === tab.key ? "2px solid var(--psp-gold)" : "2px solid transparent",
+              padding: "8px 14px", fontSize: 13,
+              fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 0.5,
+            }}
+          >
+            {tab.icon} {tab.label} ({getCountForTab(tab.key)})
+          </button>
+        ))}
+      </nav>
 
-        {/* Count badges */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
-          {counts.nfl > 0 && (
-            <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 14px", fontSize: 12 }}>
-              <strong style={{ color: "#f0a500", fontSize: 18 }}>{counts.nfl}</strong>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>NFL</div>
-            </div>
-          )}
-          {counts.nba > 0 && (
-            <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 14px", fontSize: 12 }}>
-              <strong style={{ color: "#ea580c", fontSize: 18 }}>{counts.nba}</strong>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>NBA</div>
-            </div>
-          )}
-          {counts.mlb > 0 && (
-            <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 14px", fontSize: 12 }}>
-              <strong style={{ color: "#dc2626", fontSize: 18 }}>{counts.mlb}</strong>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>MLB</div>
-            </div>
-          )}
-          {counts.college > 0 && (
-            <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 14px", fontSize: 12 }}>
-              <strong style={{ color: "#16a34a", fontSize: 18 }}>{counts.college}</strong>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>College</div>
-            </div>
-          )}
-          {counts.coaching > 0 && (
-            <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 14px", fontSize: 12 }}>
-              <strong style={{ color: "#3b82f6", fontSize: 18 }}>{counts.coaching}</strong>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>Coaching</div>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* ════════ MAIN 2-COL LAYOUT ════════ */}
+      <div className="hub-body">
+        {/* ── LEFT: MAIN CONTENT ── */}
+        <div className="hub-main">
 
-      {/* Main layout */}
-      <div className="espn-container">
-        <main>
-          {/* Spotlight */}
-          <SpotlightHero alumni={featuredAlumni} latestPost={featuredPost} />
-
-          {/* Filter tabs */}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
-            {FILTER_TABS.map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setFilter(tab.key)}
+          {/* FEATURED SPOTLIGHT */}
+          {featuredAlumni ? (
+            <div className="hub-featured">
+              <div
+                className="hub-featured-img"
                 style={{
-                  padding: "6px 14px",
-                  borderRadius: 20,
-                  border: filter === tab.key ? "2px solid #f0a500" : "2px solid var(--g200)",
-                  background: filter === tab.key ? "#f0a500" : "var(--card)",
-                  color: filter === tab.key ? "#0a1628" : "var(--text)",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  transition: ".15s",
+                  background: "linear-gradient(135deg, #f0a500cc 0%, var(--psp-navy) 100%)",
                 }}
               >
-                {tab.icon} {tab.label}
-                <span style={{ marginLeft: 4, fontSize: 10, opacity: 0.7 }}>
-                  ({getCountForTab(tab.key)})
-                </span>
-              </button>
-            ))}
-          </div>
+                <span className="hub-featured-badge" style={{ background: "#f0a500" }}>SPOTLIGHT</span>
+                <div className="hub-featured-overlay">
+                  <h2>{featuredAlumni.person_name}</h2>
+                  <p>
+                    {LEVEL_LABELS[featuredAlumni.current_level] || featuredAlumni.current_level}
+                    {featuredAlumni.current_org ? ` — ${featuredAlumni.current_org}` : ""}
+                    {featuredAlumni.college ? ` · ${featuredAlumni.college}` : ""}
+                    {featuredAlumni.high_school_name ? ` · 🏫 ${featuredAlumni.high_school_name}` : ""}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="hub-featured-placeholder" style={{ background: "linear-gradient(135deg, #f0a50088, var(--psp-navy))" }}>
+              <div className="hub-fp-content">
+                <span style={{ fontSize: 48 }}>🌟</span>
+                <h2>Our Guys — Where They Are Now</h2>
+                <p>{counts.nfl} NFL · {counts.nba} NBA · {counts.mlb} MLB players from Philadelphia high schools</p>
+              </div>
+            </div>
+          )}
 
-          {/* Search */}
+          {/* SEARCH */}
           <div style={{ marginBottom: 16 }}>
             <input
               type="text"
@@ -194,26 +171,18 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
               value={search}
               onChange={e => setSearch(e.target.value)}
               style={{
-                width: "100%",
-                padding: "8px 12px",
-                borderRadius: 6,
-                border: "1px solid var(--g200)",
-                background: "var(--card)",
-                color: "var(--text)",
-                fontSize: 13,
+                width: "100%", padding: "10px 14px", borderRadius: 6,
+                border: "1px solid var(--g200)", background: "var(--card)",
+                color: "var(--text)", fontSize: 13, boxSizing: "border-box",
               }}
             />
           </div>
 
-          {/* Alumni grid */}
+          {/* ALUMNI GRID */}
           {filtered.length === 0 ? (
             <div style={{
-              padding: 40,
-              textAlign: "center",
-              color: "var(--g400)",
-              background: "var(--card)",
-              borderRadius: 8,
-              border: "1px solid var(--g100)",
+              padding: 40, textAlign: "center", color: "var(--g400)",
+              background: "var(--card)", borderRadius: 8, border: "1px solid var(--g100)",
             }}>
               <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
               <div style={{ fontSize: 14, fontWeight: 600 }}>No alumni found</div>
@@ -224,7 +193,7 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
           ) : (
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
               gap: 12,
             }}>
               {filtered.map(a => (
@@ -232,68 +201,92 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
               ))}
             </div>
           )}
-        </main>
 
-        {/* Sidebar */}
-        <aside>
+          <PSPPromo size="banner" variant={1} />
+
+        </div>
+
+        {/* ── RIGHT: SIDEBAR ── */}
+        <aside className="hub-sidebar">
+          {/* Pro Athletes Count */}
+          <div className="hub-widget">
+            <div className="hub-wh" style={{ background: "#f0a500" }}>🌟 Pro Athletes</div>
+            <div className="hub-wb">
+              <div className="hub-wr"><span>🏈 NFL</span><strong>{counts.nfl}</strong></div>
+              <div className="hub-wr"><span>🏀 NBA</span><strong>{counts.nba}</strong></div>
+              <div className="hub-wr"><span>⚾ MLB</span><strong>{counts.mlb}</strong></div>
+              <div className="hub-wr"><span>🎓 College</span><strong>{counts.college}</strong></div>
+              <div className="hub-wr"><span>📋 Coaching</span><strong>{counts.coaching}</strong></div>
+              <div className="hub-wr" style={{ fontWeight: 700, borderTop: "2px solid var(--g200)" }}>
+                <span>Total</span><strong style={{ color: "var(--psp-gold)" }}>{alumni.length}</strong>
+              </div>
+            </div>
+          </div>
+
           {/* Social Feed */}
-          <SocialFeed posts={socialPosts} />
+          {socialPosts.length > 0 ? (
+            <div className="hub-widget">
+              <div className="hub-wh">📱 Social Feed</div>
+              <div className="hub-wb hub-wb-tight">
+                {socialPosts.slice(0, 5).map(post => {
+                  const platform = PLATFORM_ICONS[post.platform] || PLATFORM_ICONS.twitter;
+                  return (
+                    <a key={post.id} href={post.post_url} target="_blank" rel="noopener noreferrer"
+                      style={{ display: "block", padding: "8px 14px", borderBottom: "1px solid var(--g100)", textDecoration: "none", color: "inherit" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                        <span style={{ fontSize: 12 }}>{platform.icon}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700 }}>{post.next_level_tracking?.person_name || "Unknown"}</span>
+                        <span style={{ fontSize: 9, color: "var(--g400)", marginLeft: "auto" }}>{platform.label}</span>
+                      </div>
+                      {post.caption_preview && (
+                        <p style={{ fontSize: 11, color: "var(--g500)", lineHeight: 1.4, margin: 0, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                          {post.caption_preview}
+                        </p>
+                      )}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="hub-widget">
+              <div className="hub-wh">📱 Social Feed</div>
+              <div className="hub-wb" style={{ padding: 16, textAlign: "center", color: "var(--g400)", fontSize: 12 }}>
+                Social posts will appear here once curated by admins.
+              </div>
+            </div>
+          )}
+
+          {/* Quick Links */}
+          <div className="hub-widget">
+            <div className="hub-wh">Quick Links</div>
+            <div className="hub-wb">
+              <Link href="/recruiting" className="hub-ql">→ Recruiting Central</Link>
+              <Link href="/coaches" className="hub-ql">→ Coaches Directory</Link>
+              <Link href="/search" className="hub-ql">→ Search Players</Link>
+              <Link href="/compare" className="hub-ql">→ Compare Players</Link>
+              <Link href="/community" className="hub-ql">→ Community</Link>
+            </div>
+          </div>
+
+          <PSPPromo size="sidebar" variant={3} />
 
           {/* Coaches Corner */}
-          <div className="widget" style={{ marginTop: 16 }}>
-            <div className="w-head">📋 Coaches Corner</div>
-            <div className="w-body" style={{ padding: 14 }}>
-              <p style={{ fontSize: 12, color: "var(--g500)", lineHeight: 1.5, margin: 0 }}>
+          <div className="hub-widget">
+            <div className="hub-wh" style={{ background: "#16a34a" }}>📋 Coaches Corner</div>
+            <div className="hub-wb" style={{ padding: 14 }}>
+              <p style={{ fontSize: 12, color: "var(--g500)", lineHeight: 1.5, margin: "0 0 10px" }}>
                 Former Philly players now coaching at the college and pro level.
               </p>
-              <a
-                href="/coaches"
-                style={{
-                  display: "inline-block",
-                  marginTop: 10,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "#3b82f6",
-                  textDecoration: "none",
-                }}
-              >
-                View Full Coaches Directory →
-              </a>
+              <Link href="/coaches" className="hub-widget-link">
+                Full Coaches Directory →
+              </Link>
             </div>
           </div>
 
-          {/* Quick links */}
-          <div className="widget" style={{ marginTop: 16 }}>
-            <div className="w-head">🔗 Quick Links</div>
-            <div className="w-body">
-              {[
-                { href: "/recruiting", label: "Recruiting Central", icon: "⭐" },
-                { href: "/search", label: "Search Players", icon: "🔍" },
-                { href: "/coaches", label: "Coaches Directory", icon: "📋" },
-              ].map(link => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  style={{
-                    display: "block",
-                    padding: "8px 14px",
-                    borderBottom: "1px solid var(--g100)",
-                    textDecoration: "none",
-                    color: "var(--text)",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    transition: ".1s",
-                  }}
-                >
-                  {link.icon} {link.label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <PSPPromo size="sidebar" />
+          <PSPPromo size="sidebar" variant={4} />
         </aside>
       </div>
-    </>
+    </div>
   );
 }

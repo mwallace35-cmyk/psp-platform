@@ -19,6 +19,20 @@ export default async function RecruitingPage() {
   return (
     <>
       <Breadcrumb items={[{ label: "Recruiting" }]} />
+
+      {/* Page Header Bar — matches sport hub style */}
+      <div className="sport-hub-header" style={{ "--sport-color": "#3b82f6" } as React.CSSProperties}>
+        <div className="shh-inner">
+          <span className="shh-emoji">⭐</span>
+          <h1 className="shh-title">Recruiting Central</h1>
+          <div className="shh-pills">
+            <div className="shh-pill"><strong>{recruits.length}</strong> recruits</div>
+            <div className="shh-pill"><strong>{commitments.length}</strong> committed</div>
+            <span className="db-tag"><span className="dot" /> Live</span>
+          </div>
+        </div>
+      </div>
+
       <RecruitingClient recruits={recruits} commitments={commitments} />
     </>
   );

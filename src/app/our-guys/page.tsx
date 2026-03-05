@@ -18,9 +18,27 @@ export default async function OurGuysPage() {
     getAlumniCounts(),
   ]);
 
+  const total = counts.nfl + counts.nba + counts.mlb + counts.college + counts.coaching;
+
   return (
     <>
       <Breadcrumb items={[{ label: "Our Guys" }]} />
+
+      {/* Page Header Bar — matches sport hub style */}
+      <div className="sport-hub-header" style={{ "--sport-color": "#f0a500" } as React.CSSProperties}>
+        <div className="shh-inner">
+          <span className="shh-emoji">🌟</span>
+          <h1 className="shh-title">Our Guys</h1>
+          <div className="shh-pills">
+            <div className="shh-pill"><strong>{counts.nfl}</strong> NFL</div>
+            <div className="shh-pill"><strong>{counts.nba}</strong> NBA</div>
+            <div className="shh-pill"><strong>{counts.mlb}</strong> MLB</div>
+            <div className="shh-pill"><strong>{total}</strong> total</div>
+            <span className="db-tag"><span className="dot" /> Live</span>
+          </div>
+        </div>
+      </div>
+
       <OurGuysClient
         alumni={alumni}
         socialPosts={socialPosts}

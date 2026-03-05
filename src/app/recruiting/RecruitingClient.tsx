@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import RecruitingBoard from "@/components/recruiting/RecruitingBoard";
-import CommitmentTracker from "@/components/recruiting/CommitmentTracker";
 import PSPPromo from "@/components/ads/PSPPromo";
 
 interface Recruit {
@@ -91,7 +91,6 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
       result = result.filter(r => (r.star_rating || 0) >= minStars);
     }
 
-    // Sort by star rating (desc), then composite (desc)
     result.sort((a, b) => {
       const starDiff = (b.star_rating || 0) - (a.star_rating || 0);
       if (starDiff !== 0) return starDiff;
@@ -105,75 +104,45 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
   const committedCount = recruits.filter(r => r.class_year === classYear && (r.status === "committed" || r.status === "signed")).length;
 
   return (
-    <>
-      {/* Hero */}
-      <div style={{
-        background: "linear-gradient(135deg, #0a1628 0%, #1e3a5f 100%)",
-        padding: "32px 20px 24px",
-        textAlign: "center",
-        color: "#fff",
-        marginBottom: 20,
-        borderBottom: "3px solid #f0a500",
-      }}>
-        <h1 style={{ fontSize: 32, fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
-          Philly Recruiting Central
-        </h1>
-        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "0 0 20px" }}>
-          Track the top recruits from Philadelphia area high schools
-        </p>
+    <div className="hub-dashboard">
+      {/* ════════ CLASS YEAR SUB-NAV ════════ */}
+      <nav className="hub-subnav">
+        {CLASS_YEARS.map(year => (
+          <button
+            key={year}
+            onClick={() => setClassYear(year)}
+            style={{
+              background: "none", border: "none", cursor: "pointer",
+              color: classYear === year ? "var(--psp-gold)" : "inherit",
+              fontWeight: classYear === year ? 700 : 500,
+              borderBottom: classYear === year ? "2px solid var(--psp-gold)" : "2px solid transparent",
+              padding: "8px 14px", fontSize: 13,
+              fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 0.5,
+            }}
+          >
+            Class of {year}
+          </button>
+        ))}
+        <span style={{
+          marginLeft: "auto", fontSize: 11, display: "flex", gap: 12, alignItems: "center",
+          color: "var(--g500)", padding: "8px 0",
+        }}>
+          <span><strong style={{ color: "var(--psp-gold)" }}>{filtered.length}</strong> total</span>
+          <span><strong style={{ color: "#16a34a" }}>{committedCount}</strong> committed</span>
+          <span><strong style={{ color: "var(--g400)" }}>{unsignedCount}</strong> unsigned</span>
+        </span>
+      </nav>
 
-        {/* Class year tabs */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
-          {CLASS_YEARS.map(year => (
-            <button
-              key={year}
-              onClick={() => setClassYear(year)}
-              style={{
-                padding: "8px 20px",
-                borderRadius: 20,
-                border: classYear === year ? "2px solid #f0a500" : "2px solid rgba(255,255,255,0.2)",
-                background: classYear === year ? "#f0a500" : "transparent",
-                color: classYear === year ? "#0a1628" : "#fff",
-                fontWeight: 700,
-                fontSize: 14,
-                fontFamily: "'Barlow Condensed', sans-serif",
-                letterSpacing: 1,
-                cursor: "pointer",
-                transition: ".15s",
-              }}
-            >
-              Class of {year}
-            </button>
-          ))}
-        </div>
+      {/* ════════ MAIN 2-COL LAYOUT ════════ */}
+      <div className="hub-body">
+        {/* ── LEFT: MAIN CONTENT ── */}
+        <div className="hub-main">
 
-        {/* Quick stats */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 16, fontSize: 12 }}>
-          <span>
-            <strong style={{ color: "#f0a500" }}>{filtered.length}</strong> total
-          </span>
-          <span>
-            <strong style={{ color: "#16a34a" }}>{committedCount}</strong> committed
-          </span>
-          <span>
-            <strong style={{ color: "rgba(255,255,255,0.7)" }}>{unsignedCount}</strong> unsigned
-          </span>
-        </div>
-      </div>
-
-      <div className="espn-container">
-        <main>
-          {/* Filter bar */}
+          {/* FILTER BAR */}
           <div style={{
-            display: "flex",
-            gap: 10,
-            flexWrap: "wrap",
-            marginBottom: 16,
-            padding: "10px 14px",
-            background: "var(--card)",
-            borderRadius: 8,
-            border: "1px solid var(--g100)",
-            alignItems: "center",
+            display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16,
+            padding: "10px 14px", background: "var(--card)", borderRadius: 8,
+            border: "1px solid var(--g100)", alignItems: "center",
           }}>
             <div>
               <label style={{ fontSize: 10, fontWeight: 700, color: "var(--g400)", display: "block", marginBottom: 2 }}>Sport</label>
@@ -202,18 +171,56 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
             </div>
           </div>
 
-          {/* Board */}
-          <RecruitingBoard recruits={filtered} sportColor="#f0a500" />
-        </main>
+          {/* RECRUITING BOARD */}
+          <RecruitingBoard recruits={filtered} sportColor="#3b82f6" />
 
-        <aside>
-          {/* Commitment tracker */}
-          <CommitmentTracker commitments={commitments} />
+          <PSPPromo size="banner" variant={1} />
+
+        </div>
+
+        {/* ── RIGHT: SIDEBAR ── */}
+        <aside className="hub-sidebar">
+          {/* Recent Commitments */}
+          <div className="hub-widget">
+            <div className="hub-wh" style={{ background: "#16a34a" }}>🎯 Recent Commitments</div>
+            <div className="hub-wb hub-wb-tight">
+              {commitments.length === 0 ? (
+                <div style={{ padding: 16, textAlign: "center", color: "var(--g400)", fontSize: 12 }}>
+                  No recent commitments to display.
+                </div>
+              ) : (
+                commitments.slice(0, 8).map(c => (
+                  <div key={c.id} style={{ padding: "8px 14px", borderBottom: "1px solid var(--g100)", fontSize: 12 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <strong>{c.player_name || "Unknown"}</strong>
+                      {c.star_rating && (
+                        <span style={{ fontSize: 10, color: "#f0a500" }}>{"★".repeat(c.star_rating)}</span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--g400)", marginTop: 2 }}>
+                      {c.school_name && <span>{c.school_name}</span>}
+                      {c.position && <span> · {c.position}</span>}
+                    </div>
+                    {c.committed_school && (
+                      <div style={{ fontSize: 11, color: "#16a34a", fontWeight: 600, marginTop: 2 }}>
+                        → {c.committed_school}
+                        {c.committed_date && (
+                          <span style={{ fontWeight: 400, color: "var(--g400)", marginLeft: 6 }}>
+                            {new Date(c.committed_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
 
           {/* Hot Board */}
-          <div className="widget" style={{ marginTop: 16 }}>
-            <div className="w-head">🔥 Hot Board (Top Unsigned)</div>
-            <div className="w-body">
+          <div className="hub-widget">
+            <div className="hub-wh" style={{ background: "#dc2626" }}>🔥 Hot Board (Top Unsigned)</div>
+            <div className="hub-wb hub-wb-tight">
               {recruits
                 .filter(r => r.class_year === classYear && r.status === "unsigned")
                 .sort((a, b) => (b.star_rating || 0) - (a.star_rating || 0))
@@ -222,7 +229,7 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
                   <div key={r.id} style={{ padding: "8px 14px", borderBottom: "1px solid var(--g100)", fontSize: 12 }}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span>
-                        <strong style={{ color: i < 3 ? "#f0a500" : "var(--text)" }}>{i + 1}.</strong>{" "}
+                        <strong style={{ color: i < 3 ? "#3b82f6" : "var(--text)" }}>{i + 1}.</strong>{" "}
                         {r.player_name || "Unknown"}
                       </span>
                       {r.star_rating && (
@@ -230,7 +237,7 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
                       )}
                     </div>
                     <div style={{ fontSize: 10, color: "var(--g400)" }}>
-                      {r.school_name} • {r.position}
+                      {r.school_name} · {r.position}
                     </div>
                   </div>
                 ))}
@@ -242,10 +249,23 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
             </div>
           </div>
 
-          {/* External resources */}
-          <div className="widget" style={{ marginTop: 16 }}>
-            <div className="w-head">🔗 Recruiting Resources</div>
-            <div className="w-body">
+          {/* Quick Links */}
+          <div className="hub-widget">
+            <div className="hub-wh">Quick Links</div>
+            <div className="hub-wb">
+              <Link href="/our-guys" className="hub-ql">→ Our Guys</Link>
+              <Link href="/search" className="hub-ql">→ Search Players</Link>
+              <Link href="/compare" className="hub-ql">→ Compare Players</Link>
+              <Link href="/coaches" className="hub-ql">→ Coaches Directory</Link>
+            </div>
+          </div>
+
+          <PSPPromo size="sidebar" variant={2} />
+
+          {/* External Resources */}
+          <div className="hub-widget">
+            <div className="hub-wh" style={{ background: "#3b82f6" }}>🔗 Recruiting Resources</div>
+            <div className="hub-wb hub-wb-tight">
               {[
                 { href: "https://247sports.com/Season/2026-Football/CompositeRecruitRankings/?InstitutionGroup=HighSchool&State=PA", label: "247Sports PA Rankings" },
                 { href: "https://www.on3.com/db/rankings/2026/football/high-school/pennsylvania/", label: "On3 PA Rankings" },
@@ -262,10 +282,10 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
             </div>
           </div>
 
-          <PSPPromo size="sidebar" />
+          <PSPPromo size="sidebar" variant={4} />
         </aside>
       </div>
-    </>
+    </div>
   );
 }
 
