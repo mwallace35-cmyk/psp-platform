@@ -1206,22 +1206,25 @@ export async function getRecentGamesAll(limit = 10) {
 export async function getSeasonsBySport(sportId: string) {
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    // Use RPC or a smarter query — get distinct season_ids from games, then look up seasons
+    // First get distinct season IDs (limit high to cover all)
+    const { data: gameSeasons } = await supabase
       .from("games")
-      .select("season_id, seasons(id, label, year_start, year_end)")
+      .select("season_id")
       .eq("sport_id", sportId)
       .not("home_score", "is", null)
-      .not("away_score", "is", null);
-    if (!data) return [];
-    // Deduplicate seasons
-    const seasonMap = new Map<number, any>();
-    for (const row of data) {
-      const s = (row as any).seasons;
-      if (s && !seasonMap.has(s.id)) {
-        seasonMap.set(s.id, { id: s.id, label: s.label, year_start: s.year_start, year_end: s.year_end });
-      }
-    }
-    return Array.from(seasonMap.values()).sort((a, b) => b.year_start - a.year_start);
+      .not("away_score", "is", null)
+      .limit(10000);
+    if (!gameSeasons || gameSeasons.length === 0) return [];
+    const uniqueSeasonIds = [...new Set(gameSeasons.map((g: any) => g.season_id))].filter(Boolean);
+    if (uniqueSeasonIds.length === 0) return [];
+    // Now fetch those seasons
+    const { data: seasons } = await supabase
+      .from("seasons")
+      .select("id, label, year_start, year_end")
+      .in("id", uniqueSeasonIds)
+      .order("year_start", { ascending: false });
+    return seasons ?? [];
   } catch {
     return [];
   }
