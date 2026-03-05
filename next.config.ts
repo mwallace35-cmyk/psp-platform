@@ -42,12 +42,12 @@ const nextConfig: NextConfig = {
       {
         source: "/archive",
         destination: "/archive/content",
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/archive/",
         destination: "/archive/content",
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/archive-:year/",
