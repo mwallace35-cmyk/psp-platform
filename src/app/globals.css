@@ -1584,3 +1584,267 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 [data-theme="dark"] .dynasty-name { color: #fff; }
 [data-theme="dark"] .score-mini { border-color: rgba(255,255,255,.06); }
 [data-theme="dark"] .score-team a { color: #fff; }
+
+/* ===== RESPONSIVE DATA TABLE (ESPN) ===== */
+
+/* ── Wrapper ──────────────────────────────────────────────── */
+.rdt-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--psp-gray-200);
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* ── Desktop table ────────────────────────────────────────── */
+.rdt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.rdt-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.rdt-table th {
+  background: var(--psp-navy);
+  color: #fff;
+  padding: 0.625rem 0.875rem;
+  font-weight: 700;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid var(--psp-gold);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.rdt-table th.rdt-sortable:hover {
+  background: #132244;
+}
+
+.rdt-th-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rdt-sort-arrow {
+  color: var(--psp-gold);
+  font-size: 0.625rem;
+}
+
+.rdt-sort-hint {
+  opacity: 0.35;
+  font-size: 0.625rem;
+  transition: opacity 0.15s;
+}
+
+.rdt-table th:hover .rdt-sort-hint { opacity: 0.7; }
+
+.rdt-table td {
+  padding: 0.5rem 0.875rem;
+  border-bottom: 1px solid var(--psp-gray-100);
+  transition: background 0.1s;
+}
+
+/* Zebra stripes */
+.rdt-table tbody tr:nth-child(even) td {
+  background: var(--psp-gray-50);
+}
+
+.rdt-table tbody tr:hover td {
+  background: rgba(240, 165, 0, 0.06);
+}
+
+/* Top / medal highlight rows */
+.rdt-row-top td {
+  font-weight: 600;
+}
+
+.rdt-row-medal-1 td {
+  background: rgba(240, 165, 0, 0.12) !important;
+  border-left: 3px solid var(--psp-gold);
+}
+
+.rdt-row-medal-2 td {
+  background: rgba(192, 192, 192, 0.10) !important;
+}
+
+.rdt-row-medal-3 td {
+  background: rgba(205, 127, 50, 0.08) !important;
+}
+
+/* ── Mobile cards ─────────────────────────────────────────── */
+.rdt-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rdt-card {
+  background: #fff;
+  border: 1px solid var(--psp-gray-200);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.rdt-card:active {
+  transform: scale(0.99);
+}
+
+.rdt-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--psp-navy);
+  color: #fff;
+}
+
+.rdt-card-rank {
+  font-size: 0.875rem;
+  font-weight: 800;
+  min-width: 28px;
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.rdt-card-primary {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.rdt-card-primary a {
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.rdt-card-primary a:hover {
+  text-decoration: underline;
+}
+
+.rdt-card-body {
+  padding: 8px 14px 12px;
+}
+
+.rdt-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--psp-gray-100);
+  font-size: 0.8125rem;
+}
+
+.rdt-card-row:last-child {
+  border-bottom: none;
+}
+
+.rdt-card-label {
+  color: var(--psp-gray-500);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.rdt-card-value {
+  font-weight: 600;
+  color: var(--psp-navy);
+}
+
+/* Medal cards */
+.rdt-card-top {
+  border-color: var(--rdt-accent, var(--psp-gold));
+}
+
+.rdt-card-medal-1 {
+  border-color: var(--psp-gold);
+  box-shadow: 0 0 0 1px var(--psp-gold), 0 2px 8px rgba(240,165,0,.15);
+}
+
+.rdt-card-medal-1 .rdt-card-head {
+  background: linear-gradient(135deg, var(--psp-navy) 0%, #1a2a48 100%);
+}
+
+.rdt-card-medal-2 {
+  border-color: #c0c0c0;
+}
+
+.rdt-card-medal-3 {
+  border-color: #cd7f32;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.rdt-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--psp-gray-400);
+}
+
+.rdt-empty-icon {
+  display: block;
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Dark mode ────────────────────────────────────────────── */
+[data-theme="dark"] .rdt-wrap {
+  background: var(--psp-navy);
+  border-color: rgba(255,255,255,.08);
+}
+
+[data-theme="dark"] .rdt-table th {
+  background: #0d1f3c;
+}
+
+[data-theme="dark"] .rdt-table th.rdt-sortable:hover {
+  background: #142a4e;
+}
+
+[data-theme="dark"] .rdt-table td {
+  border-color: rgba(255,255,255,.06);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .rdt-table tbody tr:nth-child(even) td {
+  background: rgba(255,255,255,.02);
+}
+
+[data-theme="dark"] .rdt-table tbody tr:hover td {
+  background: rgba(240,165,0,.08);
+}
+
+[data-theme="dark"] .rdt-row-medal-1 td {
+  background: rgba(240,165,0,.15) !important;
+}
+
+[data-theme="dark"] .rdt-card {
+  background: var(--psp-navy-mid);
+  border-color: rgba(255,255,255,.08);
+}
+
+[data-theme="dark"] .rdt-card-body {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .rdt-card-row {
+  border-color: rgba(255,255,255,.06);
+}
+
+[data-theme="dark"] .rdt-card-label {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .rdt-card-value {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .rdt-card-head {
+  background: #0d1f3c;
+}

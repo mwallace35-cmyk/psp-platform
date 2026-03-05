@@ -1,23 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import SortableTable from './SortableTable';
+import ResponsiveDataTable from './ResponsiveDataTable';
+import type { RDTColumn } from './ResponsiveDataTable';
 
 interface LeaderboardTableProps {
   sport: string;
   statCols: string[];
   colLabels: Record<string, string>;
   data: any[];
+  accentColor?: string;
 }
 
-export default function LeaderboardTable({ sport, statCols, colLabels, data }: LeaderboardTableProps) {
-  const columns: any[] = [
+export default function LeaderboardTable({ sport, statCols, colLabels, data, accentColor }: LeaderboardTableProps) {
+  const columns: RDTColumn[] = [
     {
       key: 'rank',
       label: '#',
       align: 'center',
       sortable: false,
-      width: 'w-12',
+      width: '48px',
+      hideOnMobile: true,
     },
     {
       key: 'playerName',
@@ -25,12 +28,12 @@ export default function LeaderboardTable({ sport, statCols, colLabels, data }: L
       sortable: true,
       primary: true,
       render: (value: string, row: any) => (
-        <div className="flex items-center gap-2">
-          {row.pro_team && <span className="text-gold">⭐</span>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          {row.pro_team && <span style={{ color: 'var(--psp-gold)' }}>⭐</span>}
           <Link
             href={`/${sport}/players/${row.playerSlug}`}
-            className="font-medium text-sm hover:underline"
-            style={{ color: 'var(--psp-navy)' }}
+            className="hover:underline"
+            style={{ color: 'var(--psp-navy)', fontWeight: 600, fontSize: '0.8125rem' }}
           >
             {value}
           </Link>
@@ -44,8 +47,8 @@ export default function LeaderboardTable({ sport, statCols, colLabels, data }: L
       render: (value: string, row: any) => (
         <Link
           href={`/schools/${row.schoolSlug}`}
-          className="hover:underline text-sm"
-          style={{ color: 'var(--psp-gray-500)' }}
+          className="hover:underline"
+          style={{ color: 'var(--psp-gray-500)', fontSize: '0.8125rem' }}
         >
           {value}
         </Link>
@@ -66,18 +69,24 @@ export default function LeaderboardTable({ sport, statCols, colLabels, data }: L
       label: colLabels[col] || col,
       align: 'right',
       sortable: true,
-      hideOnMobile: false,
-      render: (value: any) => value ?? '—',
+      render: (value: any) => (
+        <span style={{ fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", fontSize: '0.875rem' }}>
+          {value ?? '—'}
+        </span>
+      ),
     });
   }
 
   return (
-    <SortableTable
+    <ResponsiveDataTable
       columns={columns}
       data={data}
-      highlightTop3={true}
-      mobileCardMode={true}
+      highlightTop={3}
+      defaultSort={statCols[0]}
+      defaultDir="desc"
+      accentColor={accentColor}
       emptyMessage="No leaderboard data available"
+      emptyIcon="📊"
     />
   );
 }

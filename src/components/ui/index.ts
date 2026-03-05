@@ -13,3 +13,4 @@ export { default as AchievementBadge } from "./AchievementBadge";
 export { default as SparkLine } from "./SparkLine";
 export { default as WinLossBar } from "./WinLossBar";
 export { default as StatTooltip } from "./StatTooltip";
+export { default as ResponsiveDataTable } from "./ResponsiveDataTable";

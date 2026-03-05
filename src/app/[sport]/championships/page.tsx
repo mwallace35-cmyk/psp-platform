@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { isValidSport, SPORT_META, getChampionshipsBySport } from "@/lib/data";
+import ChampionshipsTable from "./ChampionshipsTable";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
@@ -25,7 +26,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
   const meta = SPORT_META[sport];
   const championships = await getChampionshipsBySport(sport);
 
-  // Dynasty analysis — count titles per school
+  // Dynasty analysis
   const dynastyMap: Record<string, { name: string; slug: string; count: number }> = {};
   for (const c of championships) {
     const schoolName = (c as any).schools?.name;
@@ -37,20 +38,28 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
   }
   const dynasties = Object.values(dynastyMap).sort((a, b) => b.count - a.count).slice(0, 10);
 
-  // Group by level
+  // Group by level and transform data
   const byLevel: Record<string, any[]> = {};
   for (const c of championships) {
     const lvl = c.level || "Other";
     if (!byLevel[lvl]) byLevel[lvl] = [];
-    byLevel[lvl].push(c);
+    byLevel[lvl].push({
+      id: c.id,
+      season: (c as any).seasons?.label || "—",
+      champion: (c as any).schools?.name || "Unknown",
+      championSlug: (c as any).schools?.slug,
+      league: (c as any).leagues?.name || "—",
+      score: c.score || "—",
+      opponent: (c as any).opponent?.name || "—",
+    });
   }
 
   return (
     <>
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
-          <Breadcrumb items={[{label: meta.name, href: `/${sport}`}, {label: "Championships"}]} />
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
+          <Breadcrumb items={[{ label: meta.name, href: `/${sport}` }, { label: "Championships" }]} />
+          <h1 className="text-4xl md:text-5xl text-white tracking-wider mt-4" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
             {meta.name} Championships
           </h1>
           <p className="text-sm text-gray-400 mt-2">{championships.length} titles on record</p>
@@ -62,44 +71,13 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-8">
-            {Object.entries(byLevel).map(([level, champs]) => (
+          <div className="lg:col-span-2 space-y-10">
+            {Object.entries(byLevel).map(([level, rows]) => (
               <div key={level}>
                 <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
-                  {level} ({champs.length})
+                  {level} ({rows.length})
                 </h2>
-                <div className="overflow-x-auto">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Season</th>
-                        <th>Champion</th>
-                        <th>League</th>
-                        <th>Score</th>
-                        <th>Opponent</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {champs.map((c: any) => (
-                        <tr key={c.id}>
-                          <td className="font-medium whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>
-                            {c.seasons?.label || "—"}
-                          </td>
-                          <td>
-                            <Link href={`/schools/${c.schools?.slug}`} className="font-medium text-sm hover:underline" style={{ color: "var(--psp-gold)" }}>
-                              🏆 {c.schools?.name}
-                            </Link>
-                          </td>
-                          <td className="text-xs" style={{ color: "var(--psp-gray-500)" }}>{c.leagues?.name || "—"}</td>
-                          <td className="text-sm">{c.score || "—"}</td>
-                          <td className="text-xs" style={{ color: "var(--psp-gray-400)" }}>
-                            {(c as any).opponent?.name || "—"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <ChampionshipsTable data={rows} />
               </div>
             ))}
 
@@ -114,31 +92,30 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
 
           {/* Sidebar — Dynasty tracker */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="text-xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
+            <div className="dynasty-bar">
+              <h3 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '1.25rem', fontWeight: 700, color: 'var(--psp-navy)', marginBottom: 4 }}>
                 Dynasty Tracker
               </h3>
-              <p className="text-xs mb-4" style={{ color: "var(--psp-gray-500)" }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--psp-gray-500)', marginBottom: 16 }}>
                 Most titles by school (all levels combined)
               </p>
-              <div className="space-y-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {dynasties.map((d, idx) => (
-                  <div key={d.name} className="flex items-center gap-3">
-                    <span
-                      className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                      style={{
-                        background: idx === 0 ? "var(--psp-gold)" : idx < 3 ? "var(--psp-navy)" : "var(--psp-gray-100)",
-                        color: idx < 3 ? (idx === 0 ? "var(--psp-navy)" : "white") : "var(--psp-gray-500)",
-                      }}
-                    >
+                  <div key={d.name} className="dynasty-item" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span className="dynasty-rank" style={{
+                      width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.75rem', fontWeight: 800, flexShrink: 0,
+                      background: idx === 0 ? 'var(--psp-gold)' : idx < 3 ? 'var(--psp-navy)' : 'var(--psp-gray-100)',
+                      color: idx < 3 ? (idx === 0 ? 'var(--psp-navy)' : '#fff') : 'var(--psp-gray-500)',
+                    }}>
                       {idx + 1}
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <Link href={`/schools/${d.slug}`} className="text-sm font-medium hover:underline truncate block" style={{ color: "var(--psp-navy)" }}>
-                        {d.name}
-                      </Link>
-                    </div>
-                    <span className="font-bold text-sm" style={{ color: "var(--psp-gold)" }}>{d.count}</span>
+                    <Link href={`/schools/${d.slug}`} className="dynasty-name hover:underline" style={{ flex: 1, fontSize: '0.875rem', fontWeight: 600, color: 'var(--psp-navy)' }}>
+                      {d.name}
+                    </Link>
+                    <span style={{ fontWeight: 800, fontSize: '0.875rem', color: 'var(--psp-gold)', fontFamily: "'Barlow Condensed', sans-serif" }}>
+                      {d.count}
+                    </span>
                   </div>
                 ))}
               </div>
