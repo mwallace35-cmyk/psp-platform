@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   getSchoolBySlug,
   getSchoolAllTeamSeasons,
@@ -19,7 +19,11 @@ type PageParams = { slug: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { slug } = await params;
-  const school = await getSchoolBySlug(slug);
+  let school = await getSchoolBySlug(slug);
+  // Handle -hs suffix duplicates from MaxPreps import
+  if (!school && slug.endsWith("-hs")) {
+    school = await getSchoolBySlug(slug.replace(/-hs$/, ""));
+  }
   if (!school) return {};
   const mascotStr = school.mascot ? ` ${school.mascot}` : "";
   return {
@@ -30,7 +34,17 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 
 export default async function SchoolProfilePage({ params }: { params: Promise<PageParams> }) {
   const { slug } = await params;
-  const school = await getSchoolBySlug(slug);
+  let school = await getSchoolBySlug(slug);
+
+  // Handle -hs suffix duplicates: redirect to canonical slug
+  if (!school && slug.endsWith("-hs")) {
+    const canonicalSlug = slug.replace(/-hs$/, "");
+    const canonicalSchool = await getSchoolBySlug(canonicalSlug);
+    if (canonicalSchool) {
+      redirect(`/schools/${canonicalSlug}`);
+    }
+  }
+
   if (!school) notFound();
 
   const [teamSeasons, championships, players, awards, recentGames] = await Promise.all([
