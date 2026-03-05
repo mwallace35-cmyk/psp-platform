@@ -698,6 +698,40 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   line-height: 1.4;
 }
 
+/* ===== MAXPREPS-STYLE DROPDOWN ===== */
+.mp-dropdown {
+  display: none;
+  position: absolute;
+  top: 44px;
+  left: 0;
+  background: var(--espn-dark);
+  border: 1px solid #333;
+  border-top: 3px solid var(--psp-gold);
+  min-width: 200px;
+  z-index: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,.6);
+  padding: 8px 0;
+}
+.nav-dd:hover .mp-dropdown { display: block; }
+.mp-dropdown a {
+  display: block;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #bbb;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.mp-dropdown a:hover {
+  background: rgba(240, 165, 0, 0.1);
+  color: #fff;
+}
+.mp-dropdown-sports a {
+  display: flex;
+  align-items: center;
+}
+
 /* ===== MOBILE BOTTOM NAV ===== */
 .mobile-bottom-nav {
   display: none;

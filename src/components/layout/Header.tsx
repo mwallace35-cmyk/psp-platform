@@ -35,23 +35,37 @@ const TICKER_PROMOS = [
   { icon: "📰", text: "<strong>New:</strong> 2025 All-City Teams", href: "/articles" },
 ];
 
-const FOOTBALL_SCHOOLS = [
-  { name: "St. Joseph's Prep", slug: "saint-josephs-prep" },
-  { name: "Imhotep Charter", slug: "imhotep-charter" },
-  { name: "La Salle", slug: "la-salle-college-hs" },
-  { name: "Arch. Wood", slug: "archbishop-wood" },
-  { name: "Roman Catholic", slug: "roman-catholic" },
-  { name: "Neumann-Goretti", slug: "neumann-goretti" },
-];
-
-const BASKETBALL_SCHOOLS = [
-  { name: "Neumann-Goretti", slug: "neumann-goretti" },
-  { name: "Roman Catholic", slug: "roman-catholic" },
-  { name: "Imhotep Charter", slug: "imhotep-charter" },
-  { name: "Father Judge", slug: "father-judge" },
-  { name: "La Salle", slug: "la-salle-college-hs" },
-  { name: "Arch. Wood", slug: "archbishop-wood" },
-];
+/* MaxPreps-style sport dropdown links — each sport gets the same structure */
+const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
+  football: [
+    { label: "Football Home", href: "/football" },
+    { label: "Schools", href: "/schools" },
+    { label: "Leaderboards", href: "/football/leaderboards/rushing_yards" },
+    { label: "Championships", href: "/football/championships" },
+    { label: "Records", href: "/football/records" },
+    { label: "Coaches", href: "/coaches" },
+    { label: "Compare Players", href: "/compare" },
+    { label: "Articles", href: "/articles" },
+  ],
+  basketball: [
+    { label: "Basketball Home", href: "/basketball" },
+    { label: "Schools", href: "/schools" },
+    { label: "Leaderboards", href: "/basketball/leaderboards/points" },
+    { label: "Championships", href: "/basketball/championships" },
+    { label: "Records", href: "/basketball/records" },
+    { label: "Coaches", href: "/coaches" },
+    { label: "Compare Players", href: "/compare" },
+    { label: "Articles", href: "/articles" },
+  ],
+  baseball: [
+    { label: "Baseball Home", href: "/baseball" },
+    { label: "Schools", href: "/schools" },
+    { label: "Championships", href: "/baseball/championships" },
+    { label: "Records", href: "/baseball/records" },
+    { label: "Coaches", href: "/coaches" },
+    { label: "Articles", href: "/articles" },
+  ],
+};
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -85,83 +99,54 @@ export default function Header() {
             Home
           </Link>
 
-          {/* Football Mega Menu */}
+          {/* Football Dropdown */}
           <div className="nav-dd">
             <Link href="/football" className={`nav-link ${isActive("/football") ? "active" : ""}`}>
               <span className="nav-dot" style={{ background: "var(--fb)" }} />
               Football &#9662;
             </Link>
-            <div className="espn-megamenu cols-3">
-              <div className="mega-col">
-                <div className="mega-col-head">Quick Links</div>
-                <Link href="/football">Overview</Link>
-                <Link href="/football/leaderboards/rushing_yards">Leaderboards</Link>
-                <Link href="/football/championships">Championships</Link>
-                <Link href="/football/records">Records</Link>
-                <Link href="/compare">Compare Players</Link>
-              </div>
-              <div className="mega-col">
-                <div className="mega-col-head">Top Schools</div>
-                {FOOTBALL_SCHOOLS.map((s) => (
-                  <Link key={s.slug} href={`/schools/${s.slug}`}>{s.name}</Link>
-                ))}
-                <Link href="/schools" style={{ color: "var(--psp-gold)", marginTop: 4 }}>All Schools →</Link>
-              </div>
-              <div className="mega-featured">
-                <div className="mf-tag">Featured</div>
-                <div className="mf-img" style={{ background: "linear-gradient(135deg, #16a34a 0%, #0a1628 100%)" }} />
-                <h4>SJP: 9× State Champions</h4>
-                <p>The Prep&apos;s dynasty continues as Philly&apos;s top football program.</p>
-              </div>
+            <div className="mp-dropdown">
+              {SPORT_DD_LINKS.football.map((link) => (
+                <Link key={link.href + link.label} href={link.href}>{link.label}</Link>
+              ))}
             </div>
           </div>
 
-          {/* Basketball Mega Menu */}
+          {/* Basketball Dropdown */}
           <div className="nav-dd">
             <Link href="/basketball" className={`nav-link ${isActive("/basketball") ? "active" : ""}`}>
               <span className="nav-dot" style={{ background: "var(--bb)" }} />
               Basketball &#9662;
             </Link>
-            <div className="espn-megamenu cols-3">
-              <div className="mega-col">
-                <div className="mega-col-head">Quick Links</div>
-                <Link href="/basketball">Overview</Link>
-                <Link href="/basketball/leaderboards/points">Leaderboards</Link>
-                <Link href="/basketball/championships">Championships</Link>
-                <Link href="/basketball/records">Records</Link>
-                <Link href="/compare">Compare Players</Link>
-              </div>
-              <div className="mega-col">
-                <div className="mega-col-head">Top Schools</div>
-                {BASKETBALL_SCHOOLS.map((s) => (
-                  <Link key={s.slug} href={`/schools/${s.slug}`}>{s.name}</Link>
-                ))}
-                <Link href="/schools" style={{ color: "var(--psp-gold)", marginTop: 4 }}>All Schools →</Link>
-              </div>
-              <div className="mega-featured">
-                <div className="mf-tag">Featured</div>
-                <div className="mf-img" style={{ background: "linear-gradient(135deg, #ea580c 0%, #0a1628 100%)" }} />
-                <h4>N-G: 10 State Titles</h4>
-                <p>Neumann-Goretti leads all Philly schools in PIAA basketball championships.</p>
-              </div>
+            <div className="mp-dropdown">
+              {SPORT_DD_LINKS.basketball.map((link) => (
+                <Link key={link.href + link.label} href={link.href}>{link.label}</Link>
+              ))}
             </div>
           </div>
 
-          {/* Baseball — simple link */}
-          <Link href="/baseball" className={`nav-link ${isActive("/baseball") ? "active" : ""}`}>
-            <span className="nav-dot" style={{ background: "var(--base)" }} />
-            Baseball
-          </Link>
+          {/* Baseball Dropdown */}
+          <div className="nav-dd">
+            <Link href="/baseball" className={`nav-link ${isActive("/baseball") ? "active" : ""}`}>
+              <span className="nav-dot" style={{ background: "var(--base)" }} />
+              Baseball &#9662;
+            </Link>
+            <div className="mp-dropdown">
+              {SPORT_DD_LINKS.baseball.map((link) => (
+                <Link key={link.href + link.label} href={link.href}>{link.label}</Link>
+              ))}
+            </div>
+          </div>
 
-          {/* More Sports Mega Menu */}
+          {/* More Sports Dropdown */}
           <div className="nav-dd">
             <div className="nav-link">More &#9662;</div>
-            <div className="espn-megamenu cols-4" style={{ minWidth: 520 }}>
+            <div className="mp-dropdown mp-dropdown-sports">
               {MORE_SPORTS.map((sport) => (
-                <div className="mega-col" key={sport.href} style={{ textAlign: "center", padding: "20px 12px" }}>
-                  <div style={{ fontSize: 28, marginBottom: 6 }}>{sport.emoji}</div>
-                  <Link href={sport.href} style={{ fontWeight: 700, fontSize: 14 }}>{sport.label}</Link>
-                </div>
+                <Link key={sport.href} href={sport.href}>
+                  <span style={{ marginRight: 8 }}>{sport.emoji}</span>
+                  {sport.label}
+                </Link>
               ))}
             </div>
           </div>
@@ -182,32 +167,18 @@ export default function Header() {
             Recruiting
           </Link>
 
-          {/* More Mega Menu */}
+          {/* More Dropdown */}
           <div className="nav-dd">
             <div className="nav-link">More &#9662;</div>
-            <div className="espn-megamenu cols-3">
-              <div className="mega-col">
-                <div className="mega-col-head">Explore</div>
-                <Link href="/search">🔍 Search Database</Link>
-                <Link href="/compare">📊 Compare Players</Link>
-                <Link href="/schools">🏫 All Schools</Link>
-                <Link href="/glossary">📖 Stats Glossary</Link>
-              </div>
-              <div className="mega-col">
-                <div className="mega-col-head">Fan Zone</div>
-                <Link href="/potw">🗳️ Player of the Week</Link>
-                <Link href="/gotw">🎯 Game of the Week</Link>
-                <Link href="/events">📅 Events & Camps</Link>
-                <Link href="/community">💬 Community</Link>
-                <Link href="/articles">📰 Articles</Link>
-              </div>
-              <div className="mega-featured">
-                <div className="mf-tag">Archive</div>
-                <div className="mf-img" style={{ background: "linear-gradient(135deg, var(--psp-gold) 0%, #0a1628 100%)" }} />
-                <h4>25 Years of Philly Sports</h4>
-                <p>Explore every season from 2000 to 2025 — scores, stats, champions.</p>
-                <Link href="/archive" style={{ color: "var(--psp-gold)", fontWeight: 700, fontSize: 13, marginTop: 6, display: "inline-block" }}>Browse Archive →</Link>
-              </div>
+            <div className="mp-dropdown">
+              <Link href="/search">Search Database</Link>
+              <Link href="/compare">Compare Players</Link>
+              <Link href="/schools">All Schools</Link>
+              <Link href="/coaches">Coaches</Link>
+              <Link href="/glossary">Stats Glossary</Link>
+              <Link href="/events">Events &amp; Camps</Link>
+              <Link href="/community">Community</Link>
+              <Link href="/archive">Archive</Link>
             </div>
           </div>
 
