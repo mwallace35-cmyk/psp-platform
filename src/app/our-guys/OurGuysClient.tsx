@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import AlumniCard from "@/components/our-guys/AlumniCard";
 import PSPPromo from "@/components/ads/PSPPromo";
 
 interface Alumni {
@@ -61,9 +60,10 @@ const FILTER_TABS = [
   { key: "coaching", label: "Coaching", icon: "📋" },
 ];
 
-const PLATFORM_ICONS: Record<string, { icon: string; label: string }> = {
-  twitter: { icon: "𝕏", label: "X" },
-  instagram: { icon: "📷", label: "IG" },
+const LEAGUE_META: Record<string, { color: string; emoji: string; label: string }> = {
+  NFL: { color: "#16a34a", emoji: "🏈", label: "NFL" },
+  NBA: { color: "#ea580c", emoji: "🏀", label: "NBA" },
+  MLB: { color: "#dc2626", emoji: "⚾", label: "MLB" },
 };
 
 export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, counts }: OurGuysClientProps) {
@@ -72,7 +72,6 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
 
   const filtered = useMemo(() => {
     let result = alumni;
-
     if (filter !== "all") {
       if (filter === "nfl") result = result.filter(a => a.pro_league === "NFL");
       else if (filter === "nba") result = result.filter(a => a.pro_league === "NBA");
@@ -80,7 +79,6 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
       else if (filter === "college") result = result.filter(a => a.current_level === "college");
       else if (filter === "coaching") result = result.filter(a => a.current_level === "coaching" || a.current_level === "staff");
     }
-
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(a =>
@@ -91,7 +89,6 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
         a.pro_team?.toLowerCase().includes(q)
       );
     }
-
     return result;
   }, [alumni, filter, search]);
 
@@ -100,18 +97,58 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
     return counts[key as keyof Counts] || 0;
   };
 
-  const LEVEL_LABELS: Record<string, string> = {
-    pro: "Professional", college: "Collegiate", coaching: "Coaching", staff: "Staff",
-  };
+  // Group alumni by league for pro athlete sections
+  const nflPlayers = alumni.filter(a => a.pro_league === "NFL");
+  const nbaPlayers = alumni.filter(a => a.pro_league === "NBA");
+  const mlbPlayers = alumni.filter(a => a.pro_league === "MLB");
+  const collegePlayers = alumni.filter(a => a.current_level === "college");
+  const coachingStaff = alumni.filter(a => a.current_level === "coaching" || a.current_level === "staff");
+
+  // Schools pipeline: count how many pros each school produced
+  const schoolCounts = new Map<string, { name: string; count: number; nfl: number; nba: number; mlb: number }>();
+  for (const a of alumni) {
+    if (!a.high_school_name) continue;
+    const name = a.high_school_name;
+    if (!schoolCounts.has(name)) schoolCounts.set(name, { name, count: 0, nfl: 0, nba: 0, mlb: 0 });
+    const sc = schoolCounts.get(name)!;
+    sc.count++;
+    if (a.pro_league === "NFL") sc.nfl++;
+    else if (a.pro_league === "NBA") sc.nba++;
+    else if (a.pro_league === "MLB") sc.mlb++;
+  }
+  const topSchools = Array.from(schoolCounts.values()).sort((a, b) => b.count - a.count).slice(0, 10);
 
   return (
     <div className="hub-dashboard">
-      {/* ════════ SUB-NAV LINKS ════════ */}
+      {/* ════════ HIGHLIGHTS TICKER (ESPN scores-strip style) ════════ */}
+      {alumni.length > 0 && (
+        <div className="hub-scores-strip">
+          <div className="hub-scores-inner">
+            {alumni.filter(a => a.pro_league).slice(0, 16).map((a) => {
+              const league = LEAGUE_META[a.pro_league || ""] || LEAGUE_META.NFL;
+              return (
+                <div key={a.id} className="hub-score-chip" style={{ "--sc": league.color } as React.CSSProperties}>
+                  <div className="hsc-team hsc-w">
+                    <span className="hsc-name">{a.person_name}</span>
+                    <span className="hsc-num" style={{ fontSize: 10 }}>{league.emoji}</span>
+                  </div>
+                  <div className="hsc-team">
+                    <span className="hsc-name">{a.current_org || a.pro_team || "—"}</span>
+                  </div>
+                  <div className="hsc-meta">{a.high_school_name || ""}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ════════ SUB-NAV ════════ */}
       <nav className="hub-subnav">
         {FILTER_TABS.map(tab => (
           <button
             key={tab.key}
-            onClick={() => setFilter(tab.key)}
+            onClick={() => { setFilter(tab.key); setSearch(""); }}
             className={filter === tab.key ? "hub-subnav-active" : ""}
             style={{
               background: "none", border: "none", cursor: "pointer",
@@ -132,38 +169,7 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
         {/* ── LEFT: MAIN CONTENT ── */}
         <div className="hub-main">
 
-          {/* FEATURED SPOTLIGHT */}
-          {featuredAlumni ? (
-            <div className="hub-featured">
-              <div
-                className="hub-featured-img"
-                style={{
-                  background: "linear-gradient(135deg, #f0a500cc 0%, var(--psp-navy) 100%)",
-                }}
-              >
-                <span className="hub-featured-badge" style={{ background: "#f0a500" }}>SPOTLIGHT</span>
-                <div className="hub-featured-overlay">
-                  <h2>{featuredAlumni.person_name}</h2>
-                  <p>
-                    {LEVEL_LABELS[featuredAlumni.current_level] || featuredAlumni.current_level}
-                    {featuredAlumni.current_org ? ` — ${featuredAlumni.current_org}` : ""}
-                    {featuredAlumni.college ? ` · ${featuredAlumni.college}` : ""}
-                    {featuredAlumni.high_school_name ? ` · 🏫 ${featuredAlumni.high_school_name}` : ""}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="hub-featured-placeholder" style={{ background: "linear-gradient(135deg, #f0a50088, var(--psp-navy))" }}>
-              <div className="hub-fp-content">
-                <span style={{ fontSize: 48 }}>🌟</span>
-                <h2>Our Guys — Where They Are Now</h2>
-                <p>{counts.nfl} NFL · {counts.nba} NBA · {counts.mlb} MLB players from Philadelphia high schools</p>
-              </div>
-            </div>
-          )}
-
-          {/* SEARCH */}
+          {/* SEARCH BAR */}
           <div style={{ marginBottom: 16 }}>
             <input
               type="text"
@@ -178,37 +184,184 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
             />
           </div>
 
-          {/* ALUMNI GRID */}
-          {filtered.length === 0 ? (
-            <div style={{
-              padding: 40, textAlign: "center", color: "var(--g400)",
-              background: "var(--card)", borderRadius: 8, border: "1px solid var(--g100)",
-            }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
-              <div style={{ fontSize: 14, fontWeight: 600 }}>No alumni found</div>
-              <div style={{ fontSize: 12, marginTop: 4 }}>
-                {search ? "Try a different search term." : "Alumni will appear here once added by admins."}
+          {/* FEATURED SPOTLIGHT */}
+          {filter === "all" && !search && featuredAlumni ? (
+            <div className="hub-featured">
+              <div
+                className="hub-featured-img"
+                style={{
+                  background: "linear-gradient(135deg, #f0a500cc 0%, var(--psp-navy) 100%)",
+                }}
+              >
+                <span className="hub-featured-badge" style={{ background: "#f0a500" }}>SPOTLIGHT</span>
+                <div className="hub-featured-overlay">
+                  <h2>{featuredAlumni.person_name}</h2>
+                  <p>
+                    {featuredAlumni.current_org || featuredAlumni.pro_team || ""}
+                    {featuredAlumni.college ? ` · ${featuredAlumni.college}` : ""}
+                    {featuredAlumni.high_school_name ? ` · 🏫 ${featuredAlumni.high_school_name}` : ""}
+                  </p>
+                </div>
               </div>
             </div>
-          ) : (
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-              gap: 12,
-            }}>
-              {filtered.map(a => (
-                <AlumniCard key={a.id} person={a as any} />
-              ))}
+          ) : filter === "all" && !search ? (
+            <div className="hub-featured-placeholder" style={{ background: "linear-gradient(135deg, #f0a50088, var(--psp-navy))" }}>
+              <div className="hub-fp-content">
+                <span style={{ fontSize: 48 }}>🌟</span>
+                <h2>Our Guys — Where They Are Now</h2>
+                <p>{counts.nfl} NFL · {counts.nba} NBA · {counts.mlb} MLB players from Philadelphia high schools</p>
+              </div>
+            </div>
+          ) : null}
+
+          {/* ── FILTERED VIEW: Alumni table ── */}
+          {(filter !== "all" || search) && (
+            <div>
+              {filtered.length === 0 ? (
+                <div style={{
+                  padding: 40, textAlign: "center", color: "var(--g400)",
+                  background: "var(--card)", borderRadius: 8, border: "1px solid var(--g100)",
+                }}>
+                  <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+                  <div style={{ fontSize: 14, fontWeight: 600 }}>No alumni found</div>
+                  <div style={{ fontSize: 12, marginTop: 4 }}>
+                    {search ? "Try a different search term." : "Alumni will appear here once added by admins."}
+                  </div>
+                </div>
+              ) : (
+                <div className="hub-performers">
+                  <div className="hub-perf-list">
+                    {filtered.map((a, i) => (
+                      <div key={a.id} className={`hub-perf-row ${i < 3 ? "hub-perf-top" : ""}`}>
+                        <span className="hub-perf-rank" style={i < 3 ? { background: "#f0a500", color: "#fff" } : undefined}>{i + 1}</span>
+                        <div className="hub-perf-info">
+                          <span className="hub-perf-name">{a.person_name}</span>
+                          <span className="hub-perf-school">{a.high_school_name || ""}{a.college ? ` → ${a.college}` : ""}</span>
+                        </div>
+                        <span className="hub-perf-stat">
+                          <strong>{a.current_org || a.pro_team || a.current_level}</strong>
+                          <span>{a.pro_league || a.current_role || ""}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          <PSPPromo size="banner" variant={1} />
+          {/* ── DEFAULT VIEW: League roster tables ── */}
+          {filter === "all" && !search && (
+            <>
+              {/* NFL ROSTER */}
+              {nflPlayers.length > 0 && (
+                <LeagueRosterSection
+                  league="NFL"
+                  color="#16a34a"
+                  emoji="🏈"
+                  players={nflPlayers}
+                  onViewAll={() => setFilter("nfl")}
+                />
+              )}
 
+              <PSPPromo size="banner" variant={1} />
+
+              {/* NBA ROSTER */}
+              {nbaPlayers.length > 0 && (
+                <LeagueRosterSection
+                  league="NBA"
+                  color="#ea580c"
+                  emoji="🏀"
+                  players={nbaPlayers}
+                  onViewAll={() => setFilter("nba")}
+                />
+              )}
+
+              {/* MLB ROSTER */}
+              {mlbPlayers.length > 0 && (
+                <LeagueRosterSection
+                  league="MLB"
+                  color="#dc2626"
+                  emoji="⚾"
+                  players={mlbPlayers}
+                  onViewAll={() => setFilter("mlb")}
+                />
+              )}
+
+              {/* SCHOOLS PIPELINE — dynasty-grid style */}
+              {topSchools.length > 0 && (
+                <div className="hub-dynasties">
+                  <div className="hub-sec-head">
+                    <h3>Pro Pipeline — Top Schools</h3>
+                    <Link href="/schools" className="hub-more">All Schools →</Link>
+                  </div>
+                  <div className="hub-dynasty-grid">
+                    {topSchools.map((s, i) => (
+                      <div key={s.name} className="hub-dynasty-card">
+                        <span className="hub-dyn-rank" style={i < 3 ? { background: "#f0a500" } : undefined}>{i + 1}</span>
+                        <span className="hub-dyn-name">{s.name}</span>
+                        <span className="hub-dyn-count">{s.count} pros</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* COLLEGE / COACHING quick lists */}
+              {collegePlayers.length > 0 && (
+                <div className="hub-performers">
+                  <div className="hub-sec-head">
+                    <h3>🎓 College Athletes</h3>
+                    <button onClick={() => setFilter("college")} className="hub-more" style={{ background: "none", border: "none", cursor: "pointer" }}>View All →</button>
+                  </div>
+                  <div className="hub-perf-list">
+                    {collegePlayers.slice(0, 5).map((a, i) => (
+                      <div key={a.id} className="hub-perf-row">
+                        <span className="hub-perf-rank">{i + 1}</span>
+                        <div className="hub-perf-info">
+                          <span className="hub-perf-name">{a.person_name}</span>
+                          <span className="hub-perf-school">{a.high_school_name || ""}</span>
+                        </div>
+                        <span className="hub-perf-stat">
+                          <strong>{a.current_org || "—"}</strong>
+                          <span>{a.current_role || "Athlete"}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {coachingStaff.length > 0 && (
+                <div className="hub-performers">
+                  <div className="hub-sec-head">
+                    <h3>📋 Coaching & Staff</h3>
+                    <button onClick={() => setFilter("coaching")} className="hub-more" style={{ background: "none", border: "none", cursor: "pointer" }}>View All →</button>
+                  </div>
+                  <div className="hub-perf-list">
+                    {coachingStaff.slice(0, 5).map((a, i) => (
+                      <div key={a.id} className="hub-perf-row">
+                        <span className="hub-perf-rank">{i + 1}</span>
+                        <div className="hub-perf-info">
+                          <span className="hub-perf-name">{a.person_name}</span>
+                          <span className="hub-perf-school">{a.high_school_name || ""}</span>
+                        </div>
+                        <span className="hub-perf-stat">
+                          <strong>{a.current_org || "—"}</strong>
+                          <span>{a.current_role || "Coach"}</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         {/* ── RIGHT: SIDEBAR ── */}
         <aside className="hub-sidebar">
-          {/* Pro Athletes Count */}
+          {/* Pro Athletes Breakdown */}
           <div className="hub-widget">
             <div className="hub-wh" style={{ background: "#f0a500" }}>🌟 Pro Athletes</div>
             <div className="hub-wb">
@@ -223,39 +376,41 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
             </div>
           </div>
 
-          {/* Social Feed */}
-          {socialPosts.length > 0 ? (
-            <div className="hub-widget">
-              <div className="hub-wh">📱 Social Feed</div>
-              <div className="hub-wb hub-wb-tight">
-                {socialPosts.slice(0, 5).map(post => {
-                  const platform = PLATFORM_ICONS[post.platform] || PLATFORM_ICONS.twitter;
-                  return (
-                    <a key={post.id} href={post.post_url} target="_blank" rel="noopener noreferrer"
-                      style={{ display: "block", padding: "8px 14px", borderBottom: "1px solid var(--g100)", textDecoration: "none", color: "inherit" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                        <span style={{ fontSize: 12 }}>{platform.icon}</span>
-                        <span style={{ fontSize: 11, fontWeight: 700 }}>{post.next_level_tracking?.person_name || "Unknown"}</span>
-                        <span style={{ fontSize: 9, color: "var(--g400)", marginLeft: "auto" }}>{platform.label}</span>
+          {/* Hall of Famers / Notable */}
+          <div className="hub-widget">
+            <div className="hub-wh" style={{ background: "#7c3aed" }}>👑 Hall of Famers</div>
+            <div className="hub-wb hub-wb-tight">
+              {alumni.filter(a => a.bio_note?.toLowerCase().includes("hall of fame")).length > 0 ? (
+                alumni.filter(a => a.bio_note?.toLowerCase().includes("hall of fame")).slice(0, 5).map(a => (
+                  <div key={a.id} style={{ padding: "8px 14px", borderBottom: "1px solid var(--g100)", fontSize: 12 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <strong>{a.person_name}</strong>
+                      <span style={{ color: "#f0a500", fontSize: 10 }}>{a.pro_league}</span>
+                    </div>
+                    <div style={{ fontSize: 10, color: "var(--g400)" }}>{a.high_school_name} → {a.current_org || a.pro_team}</div>
+                  </div>
+                ))
+              ) : (
+                <>
+                  {[
+                    { name: "Wilt Chamberlain", school: "Overbrook", team: "NBA", note: "2× NBA Champion" },
+                    { name: "Kobe Bryant", school: "Lower Merion", team: "NBA", note: "5× NBA Champion" },
+                    { name: "Mike Piazza", school: "Phoenixville", team: "MLB", note: "12× All-Star" },
+                    { name: "Reggie White", school: "Howard HS", team: "NFL", note: "2× NFL DPOY" },
+                    { name: "Earl Monroe", school: "Bartram", team: "NBA", note: "1973 NBA Champion" },
+                  ].map((h, i) => (
+                    <div key={i} style={{ padding: "8px 14px", borderBottom: "1px solid var(--g100)", fontSize: 12 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <strong>{h.name}</strong>
+                        <span style={{ color: "#f0a500", fontSize: 10 }}>{h.team}</span>
                       </div>
-                      {post.caption_preview && (
-                        <p style={{ fontSize: 11, color: "var(--g500)", lineHeight: 1.4, margin: 0, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
-                          {post.caption_preview}
-                        </p>
-                      )}
-                    </a>
-                  );
-                })}
-              </div>
+                      <div style={{ fontSize: 10, color: "var(--g400)" }}>{h.school} · {h.note}</div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
-          ) : (
-            <div className="hub-widget">
-              <div className="hub-wh">📱 Social Feed</div>
-              <div className="hub-wb" style={{ padding: 16, textAlign: "center", color: "var(--g400)", fontSize: 12 }}>
-                Social posts will appear here once curated by admins.
-              </div>
-            </div>
-          )}
+          </div>
 
           {/* Quick Links */}
           <div className="hub-widget">
@@ -271,22 +426,77 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
 
           <PSPPromo size="sidebar" variant={3} />
 
-          {/* Coaches Corner */}
-          <div className="hub-widget">
-            <div className="hub-wh" style={{ background: "#16a34a" }}>📋 Coaches Corner</div>
-            <div className="hub-wb" style={{ padding: 14 }}>
-              <p style={{ fontSize: 12, color: "var(--g500)", lineHeight: 1.5, margin: "0 0 10px" }}>
-                Former Philly players now coaching at the college and pro level.
-              </p>
-              <Link href="/coaches" className="hub-widget-link">
-                Full Coaches Directory →
-              </Link>
+          {/* Social Feed */}
+          {socialPosts.length > 0 && (
+            <div className="hub-widget">
+              <div className="hub-wh">📱 Social Feed</div>
+              <div className="hub-wb hub-wb-tight">
+                {socialPosts.slice(0, 5).map(post => (
+                  <a key={post.id} href={post.post_url} target="_blank" rel="noopener noreferrer"
+                    style={{ display: "block", padding: "8px 14px", borderBottom: "1px solid var(--g100)", textDecoration: "none", color: "inherit" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700 }}>{post.next_level_tracking?.person_name || "Unknown"}</span>
+                    </div>
+                    {post.caption_preview && (
+                      <p style={{ fontSize: 11, color: "var(--g500)", lineHeight: 1.4, margin: 0, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                        {post.caption_preview}
+                      </p>
+                    )}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <PSPPromo size="sidebar" variant={4} />
         </aside>
       </div>
+    </div>
+  );
+}
+
+/* ── League Roster Section Component ── */
+function LeagueRosterSection({
+  league, color, emoji, players, onViewAll,
+}: {
+  league: string; color: string; emoji: string;
+  players: Alumni[]; onViewAll: () => void;
+}) {
+  return (
+    <div className="hub-standings-section">
+      <div className="hub-sec-head">
+        <h3>{emoji} {league} Roster ({players.length})</h3>
+        <button onClick={onViewAll} className="hub-more" style={{ background: "none", border: "none", cursor: "pointer" }}>View All →</button>
+      </div>
+      <div className="hub-league-table" style={{ width: "100%" }}>
+        <div className="hub-lt-head" style={{ background: color }}>{league} Players from Philly</div>
+        <div className="hub-lt-hdr">
+          <span className="hub-lt-team">PLAYER</span>
+          <span className="hub-lt-stat" style={{ flex: "1.2" }}>TEAM</span>
+          <span className="hub-lt-stat" style={{ flex: "1.2" }}>SCHOOL</span>
+        </div>
+        {players.slice(0, 8).map((a, i) => (
+          <div key={a.id} className={`hub-lt-row ${i === 0 ? "hub-lt-first" : ""}`}>
+            <span className="hub-lt-team">{a.person_name}</span>
+            <span className="hub-lt-stat" style={{ flex: "1.2" }}>{a.current_org || a.pro_team || "—"}</span>
+            <span className="hub-lt-stat" style={{ flex: "1.2" }}>{a.high_school_name || "—"}</span>
+          </div>
+        ))}
+      </div>
+      {players.length > 8 && (
+        <button
+          onClick={onViewAll}
+          style={{
+            display: "block", width: "100%", padding: "10px", marginTop: 8,
+            background: "var(--card)", border: "1px solid var(--g100)", borderRadius: 6,
+            color: color, fontSize: 12, fontWeight: 700, cursor: "pointer",
+            textAlign: "center", fontFamily: "'Barlow Condensed', sans-serif",
+            letterSpacing: 0.5, textTransform: "uppercase",
+          }}
+        >
+          Show all {players.length} {league} players →
+        </button>
+      )}
     </div>
   );
 }

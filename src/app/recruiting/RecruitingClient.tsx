@@ -76,35 +76,63 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
 
   const filtered = useMemo(() => {
     let result = recruits;
-
     result = result.filter(r => r.class_year === classYear);
-
-    if (sport !== "all") {
-      result = result.filter(r => r.sport_id === sport);
-    }
-
-    if (status !== "all") {
-      result = result.filter(r => r.status === status);
-    }
-
-    if (minStars > 0) {
-      result = result.filter(r => (r.star_rating || 0) >= minStars);
-    }
-
+    if (sport !== "all") result = result.filter(r => r.sport_id === sport);
+    if (status !== "all") result = result.filter(r => r.status === status);
+    if (minStars > 0) result = result.filter(r => (r.star_rating || 0) >= minStars);
     result.sort((a, b) => {
       const starDiff = (b.star_rating || 0) - (a.star_rating || 0);
       if (starDiff !== 0) return starDiff;
       return (b.composite_rating || 0) - (a.composite_rating || 0);
     });
-
     return result;
   }, [recruits, classYear, sport, status, minStars]);
 
-  const unsignedCount = recruits.filter(r => r.class_year === classYear && r.status === "unsigned").length;
-  const committedCount = recruits.filter(r => r.class_year === classYear && (r.status === "committed" || r.status === "signed")).length;
+  const classRecruits = recruits.filter(r => r.class_year === classYear);
+  const unsignedCount = classRecruits.filter(r => r.status === "unsigned").length;
+  const committedCount = classRecruits.filter(r => r.status === "committed" || r.status === "signed").length;
+
+  // Top schools by recruit count
+  const schoolRecruitCounts = new Map<string, { name: string; count: number; stars: number }>();
+  for (const r of classRecruits) {
+    if (!r.school_name) continue;
+    if (!schoolRecruitCounts.has(r.school_name)) schoolRecruitCounts.set(r.school_name, { name: r.school_name, count: 0, stars: 0 });
+    const sc = schoolRecruitCounts.get(r.school_name)!;
+    sc.count++;
+    sc.stars += r.star_rating || 0;
+  }
+  const topRecruitingSchools = Array.from(schoolRecruitCounts.values()).sort((a, b) => b.count - a.count).slice(0, 8);
+
+  // Top unsigned recruits for the "Hot Board" performers list
+  const topUnsigned = classRecruits
+    .filter(r => r.status === "unsigned")
+    .sort((a, b) => (b.star_rating || 0) - (a.star_rating || 0) || (b.composite_rating || 0) - (a.composite_rating || 0))
+    .slice(0, 10);
 
   return (
     <div className="hub-dashboard">
+      {/* ════════ COMMITMENTS TICKER (ESPN scores-strip style) ════════ */}
+      {commitments.length > 0 && (
+        <div className="hub-scores-strip">
+          <div className="hub-scores-inner">
+            {commitments.map((c) => (
+              <div key={c.id} className="hub-score-chip" style={{ "--sc": "#16a34a" } as React.CSSProperties}>
+                <div className="hsc-team hsc-w">
+                  <span className="hsc-name">{c.player_name || "Unknown"}</span>
+                  <span className="hsc-num" style={{ fontSize: 10 }}>{"★".repeat(c.star_rating || 0)}</span>
+                </div>
+                <div className="hsc-team">
+                  <span className="hsc-name">→ {c.committed_school || "TBD"}</span>
+                </div>
+                <div className="hsc-meta">
+                  {c.school_name || ""}{c.position ? ` · ${c.position}` : ""}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ════════ CLASS YEAR SUB-NAV ════════ */}
       <nav className="hub-subnav">
         {CLASS_YEARS.map(year => (
@@ -127,7 +155,7 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
           marginLeft: "auto", fontSize: 11, display: "flex", gap: 12, alignItems: "center",
           color: "var(--g500)", padding: "8px 0",
         }}>
-          <span><strong style={{ color: "var(--psp-gold)" }}>{filtered.length}</strong> total</span>
+          <span><strong style={{ color: "var(--psp-gold)" }}>{classRecruits.length}</strong> total</span>
           <span><strong style={{ color: "#16a34a" }}>{committedCount}</strong> committed</span>
           <span><strong style={{ color: "var(--g400)" }}>{unsignedCount}</strong> unsigned</span>
         </span>
@@ -138,6 +166,33 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
         {/* ── LEFT: MAIN CONTENT ── */}
         <div className="hub-main">
 
+          {/* FEATURED TOP RECRUIT */}
+          {topUnsigned.length > 0 ? (
+            <div className="hub-featured">
+              <div className="hub-featured-img" style={{ background: "linear-gradient(135deg, #3b82f6cc 0%, var(--psp-navy) 100%)" }}>
+                <span className="hub-featured-badge" style={{ background: "#3b82f6" }}>TOP RECRUIT</span>
+                <div className="hub-featured-overlay">
+                  <h2>{topUnsigned[0].player_name || "Top Unsigned"}</h2>
+                  <p>
+                    {"★".repeat(topUnsigned[0].star_rating || 0)} ·{" "}
+                    {topUnsigned[0].position || ""} ·{" "}
+                    {topUnsigned[0].school_name || ""} ·{" "}
+                    Class of {topUnsigned[0].class_year}
+                    {topUnsigned[0].offers?.length ? ` · ${topUnsigned[0].offers.length} offers` : ""}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="hub-featured-placeholder" style={{ background: "linear-gradient(135deg, #3b82f688, var(--psp-navy))" }}>
+              <div className="hub-fp-content">
+                <span style={{ fontSize: 48 }}>⭐</span>
+                <h2>Philly Recruiting Central</h2>
+                <p>Track Philadelphia&apos;s top high school recruits — star ratings, commitments, offers, and more.</p>
+              </div>
+            </div>
+          )}
+
           {/* FILTER BAR */}
           <div style={{
             display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16,
@@ -147,17 +202,13 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
             <div>
               <label style={{ fontSize: 10, fontWeight: 700, color: "var(--g400)", display: "block", marginBottom: 2 }}>Sport</label>
               <select value={sport} onChange={e => setSport(e.target.value)} style={selectStyle}>
-                {SPORTS.map(s => (
-                  <option key={s.key} value={s.key}>{s.label}</option>
-                ))}
+                {SPORTS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
               </select>
             </div>
             <div>
               <label style={{ fontSize: 10, fontWeight: 700, color: "var(--g400)", display: "block", marginBottom: 2 }}>Status</label>
               <select value={status} onChange={e => setStatus(e.target.value)} style={selectStyle}>
-                {STATUS_FILTERS.map(s => (
-                  <option key={s.key} value={s.key}>{s.label}</option>
-                ))}
+                {STATUS_FILTERS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
               </select>
             </div>
             <div>
@@ -176,6 +227,48 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
 
           <PSPPromo size="banner" variant={1} />
 
+          {/* HOT BOARD — Performers-style ranking */}
+          {topUnsigned.length > 0 && (
+            <div className="hub-performers">
+              <div className="hub-sec-head">
+                <h3>🔥 Hot Board — Top Unsigned</h3>
+              </div>
+              <div className="hub-perf-list">
+                {topUnsigned.map((r, i) => (
+                  <div key={r.id} className={`hub-perf-row ${i < 3 ? "hub-perf-top" : ""}`}>
+                    <span className="hub-perf-rank" style={i < 3 ? { background: "#3b82f6", color: "#fff" } : undefined}>{i + 1}</span>
+                    <div className="hub-perf-info">
+                      <span className="hub-perf-name">{r.player_name || "Unknown"}</span>
+                      <span className="hub-perf-school">{r.school_name || ""} · {r.position || ""}</span>
+                    </div>
+                    <span className="hub-perf-stat">
+                      <strong style={{ color: "#f0a500" }}>{"★".repeat(r.star_rating || 0)}</strong>
+                      <span>{r.offers?.length ? `${r.offers.length} offers` : "—"}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TOP RECRUITING SCHOOLS — dynasty-grid style */}
+          {topRecruitingSchools.length > 0 && (
+            <div className="hub-dynasties">
+              <div className="hub-sec-head">
+                <h3>Top Recruiting Schools</h3>
+                <Link href="/schools" className="hub-more">All Schools →</Link>
+              </div>
+              <div className="hub-dynasty-grid">
+                {topRecruitingSchools.map((s, i) => (
+                  <div key={s.name} className="hub-dynasty-card">
+                    <span className="hub-dyn-rank" style={i < 3 ? { background: "#3b82f6" } : undefined}>{i + 1}</span>
+                    <span className="hub-dyn-name">{s.name}</span>
+                    <span className="hub-dyn-count">{s.count} recruits</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ── RIGHT: SIDEBAR ── */}
@@ -217,35 +310,16 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
             </div>
           </div>
 
-          {/* Hot Board */}
+          {/* Class Breakdown */}
           <div className="hub-widget">
-            <div className="hub-wh" style={{ background: "#dc2626" }}>🔥 Hot Board (Top Unsigned)</div>
-            <div className="hub-wb hub-wb-tight">
-              {recruits
-                .filter(r => r.class_year === classYear && r.status === "unsigned")
-                .sort((a, b) => (b.star_rating || 0) - (a.star_rating || 0))
-                .slice(0, 5)
-                .map((r, i) => (
-                  <div key={r.id} style={{ padding: "8px 14px", borderBottom: "1px solid var(--g100)", fontSize: 12 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>
-                        <strong style={{ color: i < 3 ? "#3b82f6" : "var(--text)" }}>{i + 1}.</strong>{" "}
-                        {r.player_name || "Unknown"}
-                      </span>
-                      {r.star_rating && (
-                        <span style={{ color: "#f0a500", fontSize: 10 }}>{"★".repeat(r.star_rating)}</span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: 10, color: "var(--g400)" }}>
-                      {r.school_name} · {r.position}
-                    </div>
-                  </div>
-                ))}
-              {recruits.filter(r => r.class_year === classYear && r.status === "unsigned").length === 0 && (
-                <div style={{ padding: 16, textAlign: "center", color: "var(--g400)", fontSize: 12 }}>
-                  No unsigned recruits for Class of {classYear}.
-                </div>
-              )}
+            <div className="hub-wh" style={{ background: "#3b82f6" }}>📊 Class of {classYear}</div>
+            <div className="hub-wb">
+              <div className="hub-wr"><span>Total Recruits</span><strong>{classRecruits.length}</strong></div>
+              <div className="hub-wr"><span style={{ color: "#16a34a" }}>Committed</span><strong style={{ color: "#16a34a" }}>{committedCount}</strong></div>
+              <div className="hub-wr"><span>Unsigned</span><strong>{unsignedCount}</strong></div>
+              <div className="hub-wr"><span>5-Star</span><strong>{classRecruits.filter(r => r.star_rating === 5).length}</strong></div>
+              <div className="hub-wr"><span>4-Star</span><strong>{classRecruits.filter(r => r.star_rating === 4).length}</strong></div>
+              <div className="hub-wr"><span>3-Star</span><strong>{classRecruits.filter(r => r.star_rating === 3).length}</strong></div>
             </div>
           </div>
 
@@ -270,6 +344,7 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
                 { href: "https://247sports.com/Season/2026-Football/CompositeRecruitRankings/?InstitutionGroup=HighSchool&State=PA", label: "247Sports PA Rankings" },
                 { href: "https://www.on3.com/db/rankings/2026/football/high-school/pennsylvania/", label: "On3 PA Rankings" },
                 { href: "https://www.maxpreps.com/pa/", label: "MaxPreps Pennsylvania" },
+                { href: "https://www.hudl.com", label: "Hudl Film" },
               ].map(link => (
                 <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer"
                   style={{
