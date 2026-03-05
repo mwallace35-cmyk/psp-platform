@@ -62,19 +62,58 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     .limit(3);
 
   const renderMarkdown = (content: string) => {
-    return content
+    // Handle pipe-separated table rows (from archive content)
+    const lines = content.split('\n');
+    const processedLines: string[] = [];
+    let inTable = false;
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      // Detect table rows (contain | separators with content)
+      if (trimmed.includes(' | ') && !trimmed.startsWith('#') && !trimmed.startsWith('---')) {
+        if (!inTable) {
+          processedLines.push('<table class="archive-table">');
+          inTable = true;
+        }
+        const cells = trimmed.split(' | ').map(c => c.trim());
+        processedLines.push('<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>');
+      } else {
+        if (inTable) {
+          processedLines.push('</table>');
+          inTable = false;
+        }
+        processedLines.push(line);
+      }
+    }
+    if (inTable) processedLines.push('</table>');
+
+    return processedLines.join('\n')
       .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
       .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
       .replace(/^# (.*?)$/gm, '<h1>$1</h1>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/^---$/gm, '<hr/>')
       .replace(/\n\n/g, '</p><p>')
-      .replace(/^/gm, '<p>')
-      .replace(/$/gm, '</p>');
+      .replace(/\n/g, '<br/>');
   };
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Archive Banner */}
+      {article.source_file && (
+        <div className="bg-gold/10 border-b border-gold/30 py-2 px-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <span className="text-sm text-navy font-medium">
+              🏛️ Archive Content — from the Ted Silary collection
+            </span>
+            <Link href="/archive/content" className="text-xs text-gold hover:text-gold/80 font-medium">
+              Browse Archive &rarr;
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Hero */}
       <div className="bg-gradient-to-r from-navy to-navy-mid py-8 px-4">
         <div className="max-w-2xl mx-auto">
@@ -85,13 +124,24 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               </span>
             )}
             <span className="text-sm font-medium text-gold uppercase">
-              {article.sport_id}
+              {article.sport_id || 'multi-sport'}
             </span>
+            {article.content_type && article.content_type !== 'article' && (
+              <span className="px-2 py-0.5 bg-white/20 rounded text-xs text-white">
+                {article.content_type === 'season-recap' ? '📅 Season Recap' :
+                 article.content_type === 'writer-profile' ? '✍️ Writer Profile' :
+                 article.content_type === 'editorial' ? '📝 Editorial' : article.content_type}
+              </span>
+            )}
           </div>
           <h1 className="text-4xl font-bebas text-white mb-4">{article.title}</h1>
           <div className="flex items-center justify-between text-gold text-sm">
-            <span>{article.author}</span>
-            <span>{new Date(article.created_at).toLocaleDateString()}</span>
+            <span>{article.author_name || article.author || 'PSP Staff'}</span>
+            <span>
+              {article.published_at
+                ? new Date(article.published_at).toLocaleDateString()
+                : new Date(article.created_at).toLocaleDateString()}
+            </span>
           </div>
         </div>
       </div>
@@ -116,7 +166,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           <div className="prose prose-sm max-w-none mb-8">
             <div
               dangerouslySetInnerHTML={{
-                __html: renderMarkdown(article.content),
+                __html: renderMarkdown(article.body || article.content || ''),
               }}
             />
           </div>
@@ -173,7 +223,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             <div className="space-y-3 text-sm">
               <div>
                 <p className="text-gray-600">Author</p>
-                <p className="font-medium text-gray-900">{article.author}</p>
+                <p className="font-medium text-gray-900">{article.author_name || article.author || 'PSP Staff'}</p>
               </div>
               <div>
                 <p className="text-gray-600">Published</p>
