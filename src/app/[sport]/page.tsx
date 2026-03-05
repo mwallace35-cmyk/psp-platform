@@ -4,7 +4,7 @@ import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getScho
 import SportHubDashboard from "@/components/sport-hub/SportHubDashboard";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 3600; // ISR: regenerate sport hub pages hourly
 
 type PageParams = { sport: string };
 
