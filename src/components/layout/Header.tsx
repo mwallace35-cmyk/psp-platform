@@ -13,6 +13,8 @@ const MAIN_SPORTS = [
 ];
 
 const MORE_SPORTS = [
+  { href: "/flag-football", label: "Flag Football", color: "#ec4899", emoji: "🏳️" },
+  { href: "/girls-basketball", label: "Girls Basketball", color: "#f59e0b", emoji: "🏀" },
   { href: "/track-field", label: "Track & Field", color: "var(--track)", emoji: "🏃" },
   { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)", emoji: "🥍" },
   { href: "/wrestling", label: "Wrestling", color: "var(--wrest)", emoji: "🤼" },

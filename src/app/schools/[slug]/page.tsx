@@ -345,9 +345,9 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
           })}
         </div>
 
-        {/* Minor Sports: Track & Field, Lacrosse, Wrestling, Soccer */}
+        {/* Minor Sports: Flag Football, Girls Basketball, Track & Field, Lacrosse, Wrestling, Soccer */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
-          {(["track-field", "lacrosse", "wrestling", "soccer"] as const).map((sid) => {
+          {(["flag-football", "girls-basketball", "track-field", "lacrosse", "wrestling", "soccer"] as const).map((sid) => {
             const sc = sportCardsData.find((s) => s.sportId === sid);
             const sMeta = (SPORT_META as any)[sid] || { name: sid, emoji: "🏅", color: "#666" };
             const hasData = !!sc;
