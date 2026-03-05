@@ -24,6 +24,7 @@ interface SchoolProfileTabsProps {
   players: any[];
   teamSeasons: any[];
   recentGames: any[];
+  articles?: any[];
 }
 
 const TABS: { key: TabKey; label: string; icon: string }[] = [
@@ -45,7 +46,7 @@ function getSportEmoji(sportMeta: Record<string, any>, id: string): string {
 
 export default function SchoolProfileTabs(props: SchoolProfileTabsProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
-  const { school, primaryColor } = props;
+  const { school, primaryColor, articles = [] } = props;
   const sportName = (id: string) => getSportName(props.sportMeta, id);
   const sportEmoji = (id: string) => getSportEmoji(props.sportMeta, id);
 
@@ -62,6 +63,11 @@ export default function SchoolProfileTabs(props: SchoolProfileTabsProps) {
             >
               <span className="stb-icon">{tab.icon}</span>
               {tab.label}
+              {tab.key === "news" && articles.length > 0 && (
+                <span style={{ marginLeft: 4, fontSize: 10, background: "var(--psp-gold)", color: "#0a1628", borderRadius: 10, padding: "1px 6px", fontWeight: 700 }}>
+                  {articles.length}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -75,7 +81,7 @@ export default function SchoolProfileTabs(props: SchoolProfileTabsProps) {
           {activeTab === "roster" && <RosterTab {...props} />}
           {activeTab === "stats" && <StatsTab {...props} />}
           {activeTab === "championships" && <ChampionshipsTab {...props} />}
-          {activeTab === "news" && <NewsTab school={school} />}
+          {activeTab === "news" && <NewsTab school={school} articles={articles} sportMeta={props.sportMeta} />}
         </main>
 
         {/* Sidebar */}
@@ -451,15 +457,82 @@ function ChampionshipsTab(props: SchoolProfileTabsProps) {
 }
 
 /* ─── NEWS TAB ─── */
-function NewsTab({ school }: { school: any }) {
+function NewsTab({ school, articles = [], sportMeta = {} }: { school: any; articles?: any[]; sportMeta?: Record<string, any> }) {
+  if (articles.length === 0) {
+    return (
+      <div style={{ padding: 40, textAlign: "center", color: "var(--g400)" }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>📰</div>
+        <h3 style={{ fontFamily: '"Barlow Condensed", sans-serif', fontSize: 22 }}>No Articles Yet</h3>
+        <p style={{ fontSize: 14, marginBottom: 16 }}>No archive articles have been linked to {school.name} yet.</p>
+        <Link href={`/search?q=${encodeURIComponent(school.name)}`} style={{ color: "var(--link)", fontWeight: 700 }}>
+          Search for {school.name} &#8594;
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: 40, textAlign: "center", color: "var(--g400)" }}>
-      <div style={{ fontSize: 48, marginBottom: 12 }}>📰</div>
-      <h3 style={{ fontFamily: '"Barlow Condensed", sans-serif', fontSize: 22 }}>School News</h3>
-      <p style={{ fontSize: 14, marginBottom: 16 }}>Articles related to {school.name} will appear here.</p>
-      <Link href={`/search?q=${encodeURIComponent(school.name)}`} style={{ color: "var(--link)", fontWeight: 700 }}>
-        Search for {school.name} Articles &#8594;
-      </Link>
-    </div>
+    <>
+      <div className="sec-head">
+        <h2>📰 Archive Articles ({articles.length})</h2>
+        <Link href="/archive/content" style={{ fontSize: 12, color: "var(--link)", fontWeight: 600 }}>
+          Browse Full Archive &#8594;
+        </Link>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 12 }}>
+        {articles.map((article: any) => {
+          const sportId = article.sport_id;
+          const meta = sportId ? sportMeta[sportId] : null;
+          const year = article.published_at ? new Date(article.published_at).getFullYear() : null;
+          const showYear = year && year >= 1950 && year <= 2024;
+
+          return (
+            <Link
+              key={article.id || article.slug}
+              href={`/articles/${article.slug}`}
+              style={{
+                display: "block",
+                background: "var(--card-bg)",
+                border: "1px solid var(--g100)",
+                borderRadius: 8,
+                overflow: "hidden",
+                textDecoration: "none",
+                transition: "transform 0.15s, box-shadow 0.15s",
+              }}
+              className="school-card"
+            >
+              {article.featured_image_url && (
+                <div style={{ height: 120, overflow: "hidden" }}>
+                  <img src={article.featured_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+              )}
+              <div style={{ padding: "12px 14px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                  {meta && <span style={{ fontSize: 14 }}>{meta.emoji}</span>}
+                  {showYear && (
+                    <span style={{ fontSize: 10, background: "var(--g100)", padding: "1px 6px", borderRadius: 4, color: "var(--g400)", fontWeight: 600 }}>
+                      {year}
+                    </span>
+                  )}
+                  {article.source_file && (
+                    <span style={{ fontSize: 10, background: "rgba(240,165,0,0.15)", padding: "1px 6px", borderRadius: 4, color: "var(--psp-gold)", fontWeight: 600 }}>
+                      Archive
+                    </span>
+                  )}
+                </div>
+                <h4 style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", lineHeight: 1.3, marginBottom: 4 }}>
+                  {article.title}
+                </h4>
+                {article.excerpt && (
+                  <p style={{ fontSize: 12, color: "var(--g400)", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    {article.excerpt}
+                  </p>
+                )}
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </>
   );
 }

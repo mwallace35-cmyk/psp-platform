@@ -9,6 +9,7 @@ import {
   getSchoolAllRecentGames,
   getSchoolCoaches,
   getActiveSportsBySchool,
+  getArticlesForEntity,
   SPORT_META,
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
@@ -48,7 +49,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
 
   if (!school) notFound();
 
-  const [teamSeasons, championships, players, awards, recentGames, coachingStints, activeSportsData] = await Promise.all([
+  const [teamSeasons, championships, players, awards, recentGames, coachingStints, activeSportsData, schoolArticles] = await Promise.all([
     getSchoolAllTeamSeasons(school.id),
     getSchoolChampionships(school.id),
     getSchoolAllPlayers(school.id),
@@ -56,6 +57,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
     getSchoolAllRecentGames(school.id),
     getSchoolCoaches(school.id),
     getActiveSportsBySchool(school.id),
+    getArticlesForEntity("school", school.id, 20),
   ]);
 
   // Compute all-time record
@@ -455,6 +457,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         players={players}
         teamSeasons={teamSeasons}
         recentGames={recentGames}
+        articles={schoolArticles}
       />
 
       {/* Correction Form */}

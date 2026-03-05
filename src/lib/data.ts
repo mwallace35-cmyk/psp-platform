@@ -831,6 +831,54 @@ export async function getArticlesForEntity(entityType: string, entityId: number,
   }
 }
 
+export async function searchArticles(query: string, limit = 20) {
+  try {
+    const supabase = await createClient();
+    const pattern = `%${query}%`;
+    const { data } = await supabase
+      .from("articles")
+      .select("id, slug, title, excerpt, sport_id, published_at, source_file")
+      .eq("status", "published")
+      .is("deleted_at", null)
+      .or(`title.ilike.${pattern},excerpt.ilike.${pattern}`)
+      .order("published_at", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getEntitiesForArticle(articleId: number) {
+  try {
+    const supabase = await createClient();
+    const { data: mentions } = await supabase
+      .from("article_mentions")
+      .select("entity_type, entity_id")
+      .eq("article_id", articleId);
+    if (!mentions?.length) return { schools: [], players: [] };
+
+    const schoolIds = mentions.filter(m => m.entity_type === "school").map(m => m.entity_id);
+    const playerIds = mentions.filter(m => m.entity_type === "player").map(m => m.entity_id);
+
+    const [schoolsRes, playersRes] = await Promise.all([
+      schoolIds.length > 0
+        ? supabase.from("schools").select("id, name, slug, city, state").in("id", schoolIds).is("deleted_at", null)
+        : { data: [] },
+      playerIds.length > 0
+        ? supabase.from("players").select("id, name, slug, sport_id").in("id", playerIds).is("deleted_at", null)
+        : { data: [] },
+    ]);
+
+    return {
+      schools: schoolsRes.data ?? [],
+      players: playersRes.data ?? [],
+    };
+  } catch {
+    return { schools: [], players: [] };
+  }
+}
+
 // ============================================================================
 // CROSS-SPORT ABSTRACTION (Blueprint Rec #6)
 // ============================================================================

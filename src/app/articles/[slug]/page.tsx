@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SPORT_META } from '@/lib/sports';
+import { getEntitiesForArticle } from '@/lib/data';
 import AdPlaceholder, { LeaderboardAd } from '@/components/ads/AdPlaceholder';
 import CommentSection from '@/components/comments/CommentSection';
 import Breadcrumb from '@/components/ui/Breadcrumb';
@@ -53,14 +54,17 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   }
 
   // Fetch related articles (same sport, different article)
-  const { data: relatedArticles } = await supabase
-    .from('articles')
-    .select('*')
-    .eq('sport_id', article.sport_id)
-    .eq('status', 'published')
-    .neq('id', article.id)
-    .order('created_at', { ascending: false })
-    .limit(3);
+  const [{ data: relatedArticles }, linkedEntities] = await Promise.all([
+    supabase
+      .from('articles')
+      .select('*')
+      .eq('sport_id', article.sport_id)
+      .eq('status', 'published')
+      .neq('id', article.id)
+      .order('created_at', { ascending: false })
+      .limit(3),
+    getEntitiesForArticle(article.id),
+  ]);
 
   const renderMarkdown = (content: string) => {
     // Handle pipe-separated table rows (from archive content)
@@ -306,6 +310,54 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               )}
             </div>
           </div>
+
+          {/* Linked Schools */}
+          {linkedEntities.schools.length > 0 && (
+            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
+              <h3 className="font-bebas text-xl text-navy mb-4">Schools in This Article</h3>
+              <div className="space-y-3">
+                {linkedEntities.schools.map((school: any) => (
+                  <Link
+                    key={school.id}
+                    href={`/schools/${school.slug}`}
+                    className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 transition group"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-navy flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                      {(school.name || '').charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-navy group-hover:text-gold transition">{school.name}</p>
+                      {school.city && <p className="text-xs text-gray-400">{school.city}, {school.state}</p>}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Linked Players */}
+          {linkedEntities.players.length > 0 && (
+            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
+              <h3 className="font-bebas text-xl text-navy mb-4">Players Mentioned</h3>
+              <div className="space-y-3">
+                {linkedEntities.players.map((player: any) => (
+                  <Link
+                    key={player.id}
+                    href={`/${player.sport_id || 'football'}/players/${player.slug}`}
+                    className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 transition group"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                      {(player.name || '').charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-navy group-hover:text-gold transition">{player.name}</p>
+                      {player.sport_id && <p className="text-xs text-gray-400">{SPORT_META[player.sport_id as keyof typeof SPORT_META]?.name || player.sport_id}</p>}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           <AdPlaceholder size="sidebar-rect" id="psp-article-rail" />
 

@@ -3,7 +3,7 @@ import HeaderWithScores from "@/components/layout/HeaderWithScores";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PSPPromo from "@/components/ads/PSPPromo";
-import { searchEntitiesServer, getDatabaseStats, getTopSchoolsByChampionships, SPORT_META, VALID_SPORTS } from "@/lib/data";
+import { searchEntitiesServer, searchArticles, getDatabaseStats, getTopSchoolsByChampionships, SPORT_META, VALID_SPORTS } from "@/lib/data";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -39,6 +39,7 @@ const typeLabels: Record<string, { label: string; icon: string; color: string }>
   player: { label: "Players", icon: "👤", color: "#16a34a" },
   coach: { label: "Coaches", icon: "🧑‍🏫", color: "#ea580c" },
   season: { label: "Seasons", icon: "📅", color: "#7c3aed" },
+  article: { label: "Articles", icon: "📰", color: "#f0a500" },
   other: { label: "Other", icon: "📋", color: "#6b7280" },
 };
 
@@ -59,12 +60,19 @@ export default async function SearchPage({
 }) {
   const { q = "", sport } = await searchParams;
   const hasQuery = q.length >= 2;
-  const results = hasQuery ? await searchEntitiesServer(q, sport || undefined) : [];
+  const [results, articleResults] = hasQuery
+    ? await Promise.all([searchEntitiesServer(q, sport || undefined), searchArticles(q, 10)])
+    : [[], []];
 
   // Filter by sport if provided
   const filteredResults = sport && VALID_SPORTS.includes(sport as any)
     ? results.filter((r: any) => !r.sport_id || r.sport_id === sport)
     : results;
+
+  // Filter articles by sport too
+  const filteredArticles = sport && VALID_SPORTS.includes(sport as any)
+    ? articleResults.filter((a: any) => !a.sport_id || a.sport_id === sport)
+    : articleResults;
 
   // Group results by entity type
   const grouped: Record<string, any[]> = {};
@@ -73,6 +81,19 @@ export default async function SearchPage({
     if (!grouped[type]) grouped[type] = [];
     grouped[type].push(r);
   }
+
+  // Add articles as their own group
+  if (filteredArticles.length > 0) {
+    grouped["article"] = filteredArticles.map((a: any) => ({
+      display_name: a.title,
+      url_path: `/articles/${a.slug}`,
+      sport_id: a.sport_id,
+      entity_type: "article",
+      context: a.source_file ? "Archive" : (a.excerpt ? a.excerpt.substring(0, 80) + "..." : ""),
+    }));
+  }
+
+  const allResultsCount = (filteredResults as any[]).length + filteredArticles.length;
 
   // Get data for empty state / sidebar
   const [dbStats, topSchools] = await Promise.all([
@@ -205,11 +226,11 @@ export default async function SearchPage({
       <div className="hub-body">
         <div className="hub-main">
           {hasQuery ? (
-            filteredResults.length > 0 ? (
+            allResultsCount > 0 ? (
               /* ──── RESULTS VIEW ──── */
               <div>
                 <div className="hub-sec-head">
-                  <h3>{filteredResults.length} result{filteredResults.length !== 1 ? "s" : ""} for &quot;{q}&quot;{sport ? ` in ${(SPORT_META as any)[sport]?.name || sport}` : ""}</h3>
+                  <h3>{allResultsCount} result{allResultsCount !== 1 ? "s" : ""} for &quot;{q}&quot;{sport ? ` in ${(SPORT_META as any)[sport]?.name || sport}` : ""}</h3>
                 </div>
 
                 {Object.entries(grouped).map(([type, items]) => {
