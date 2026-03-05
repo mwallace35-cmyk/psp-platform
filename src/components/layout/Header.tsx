@@ -39,7 +39,7 @@ const TICKER_PROMOS = [
 const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
   football: [
     { label: "Football Home", href: "/football" },
-    { label: "Schools", href: "/schools" },
+    { label: "Teams", href: "/football/teams" },
     { label: "Leaderboards", href: "/football/leaderboards/rushing_yards" },
     { label: "Championships", href: "/football/championships" },
     { label: "Records", href: "/football/records" },
@@ -49,7 +49,7 @@ const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
   ],
   basketball: [
     { label: "Basketball Home", href: "/basketball" },
-    { label: "Schools", href: "/schools" },
+    { label: "Teams", href: "/basketball/teams" },
     { label: "Leaderboards", href: "/basketball/leaderboards/points" },
     { label: "Championships", href: "/basketball/championships" },
     { label: "Records", href: "/basketball/records" },
@@ -59,7 +59,7 @@ const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
   ],
   baseball: [
     { label: "Baseball Home", href: "/baseball" },
-    { label: "Schools", href: "/schools" },
+    { label: "Teams", href: "/baseball/teams" },
     { label: "Championships", href: "/baseball/championships" },
     { label: "Records", href: "/baseball/records" },
     { label: "Coaches", href: "/coaches" },
