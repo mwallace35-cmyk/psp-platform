@@ -1206,23 +1206,34 @@ export async function getRecentGamesAll(limit = 10) {
 export async function getSeasonsBySport(sportId: string) {
   try {
     const supabase = await createClient();
-    // Use RPC or a smarter query — get distinct season_ids from games, then look up seasons
-    // First get distinct season IDs (limit high to cover all)
-    const { data: gameSeasons } = await supabase
-      .from("games")
-      .select("season_id")
-      .eq("sport_id", sportId)
-      .not("home_score", "is", null)
-      .not("away_score", "is", null)
-      .limit(10000);
-    if (!gameSeasons || gameSeasons.length === 0) return [];
-    const uniqueSeasonIds = [...new Set(gameSeasons.map((g: any) => g.season_id))].filter(Boolean);
-    if (uniqueSeasonIds.length === 0) return [];
-    // Now fetch those seasons
+    // Query seasons that have games with scores for this sport
+    // Use inner join via team_seasons which is smaller, or query games with pagination
+    // Approach: get all seasons, then for each check if games exist (but that's N+1)
+    // Better: use a raw SQL approach via RPC, or paginate games
+    // Simplest reliable approach: query games in batches to get all season_ids
+    const allSeasonIds = new Set<number>();
+    let offset = 0;
+    const batchSize = 1000;
+    while (true) {
+      const { data: batch } = await supabase
+        .from("games")
+        .select("season_id")
+        .eq("sport_id", sportId)
+        .not("home_score", "is", null)
+        .not("away_score", "is", null)
+        .range(offset, offset + batchSize - 1);
+      if (!batch || batch.length === 0) break;
+      for (const row of batch) {
+        if (row.season_id) allSeasonIds.add(row.season_id);
+      }
+      if (batch.length < batchSize) break;
+      offset += batchSize;
+    }
+    if (allSeasonIds.size === 0) return [];
     const { data: seasons } = await supabase
       .from("seasons")
       .select("id, label, year_start, year_end")
-      .in("id", uniqueSeasonIds)
+      .in("id", Array.from(allSeasonIds))
       .order("year_start", { ascending: false });
     return seasons ?? [];
   } catch {
