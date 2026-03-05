@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui";
-import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getTeamsWithRecords, getRecentGamesBySport } from "@/lib/data";
+import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getTeamsWithRecords, getRecentGamesBySport, getFootballLeaders, getBasketballLeaders } from "@/lib/data";
 import SportHubDashboard from "@/components/sport-hub/SportHubDashboard";
 import type { Metadata } from "next";
 
@@ -47,7 +47,14 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
   const meta = SPORT_META[sport];
   const sportColorHex = SPORT_COLORS_HEX[sport] || "#16a34a";
 
-  const [overview, champions, schools, featured, freshness, standings, recentGames] = await Promise.all([
+  // Fetch leaders based on sport
+  const leadersPromise = sport === "football"
+    ? getFootballLeaders("rushing", 10)
+    : sport === "basketball"
+    ? getBasketballLeaders("scoring", 10)
+    : Promise.resolve([]);
+
+  const [overview, champions, schools, featured, freshness, standings, recentGames, leaders] = await Promise.all([
     getSportOverview(sport),
     getRecentChampions(sport, 20),
     getSchoolsBySport(sport, 50),
@@ -55,6 +62,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     getDataFreshness(sport),
     getTeamsWithRecords(sport),
     getRecentGamesBySport(sport, 20),
+    leadersPromise,
   ]);
 
   return (
@@ -76,7 +84,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         </div>
       </div>
 
-      {/* ESPN Dashboard */}
+      {/* ESPN Dashboard — Single Scroll, No Tabs */}
       <SportHubDashboard
         sport={sport}
         sportColor={sportColorHex}
@@ -88,6 +96,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         freshness={freshness}
         standings={standings}
         recentGames={recentGames}
+        leaders={leaders}
       />
 
       {/* JSON-LD */}
