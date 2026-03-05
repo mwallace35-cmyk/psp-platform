@@ -1,13 +1,55 @@
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { searchAll } from "@/lib/data";
-import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PSPPromo from "@/components/ads/PSPPromo";
+import { searchAll, getDatabaseStats, getTopSchoolsByChampionships, SPORT_META } from "@/lib/data";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Search — PhillySportsPack",
-  description: "Search players, schools, coaches, and seasons in the Philadelphia high school sports database.",
+  title: "Search the Database — PhillySportsPack",
+  description: "Search 10,000+ players, 700+ schools, coaches, and 25 years of Philadelphia high school sports stats and records.",
+};
+
+export const revalidate = 3600;
+
+const POPULAR_SEARCHES = [
+  { label: "St. Joseph's Prep", q: "St. Joseph's Prep" },
+  { label: "Roman Catholic", q: "Roman Catholic" },
+  { label: "Neumann-Goretti", q: "Neumann-Goretti" },
+  { label: "Imhotep Charter", q: "Imhotep Charter" },
+  { label: "La Salle", q: "La Salle" },
+  { label: "Malvern Prep", q: "Malvern Prep" },
+  { label: "Father Judge", q: "Father Judge" },
+  { label: "Archbishop Wood", q: "Archbishop Wood" },
+];
+
+const SPORT_BROWSE = [
+  { sport: "football", emoji: "🏈", color: "#16a34a" },
+  { sport: "basketball", emoji: "🏀", color: "#ea580c" },
+  { sport: "baseball", emoji: "⚾", color: "#dc2626" },
+  { sport: "lacrosse", emoji: "🥍", color: "#0891b2" },
+  { sport: "track-field", emoji: "🏃", color: "#7c3aed" },
+  { sport: "wrestling", emoji: "🤼", color: "#ca8a04" },
+  { sport: "soccer", emoji: "⚽", color: "#059669" },
+];
+
+const typeLabels: Record<string, { label: string; icon: string; color: string }> = {
+  school: { label: "Schools", icon: "🏫", color: "#3b82f6" },
+  player: { label: "Players", icon: "👤", color: "#16a34a" },
+  coach: { label: "Coaches", icon: "🧑‍🏫", color: "#ea580c" },
+  season: { label: "Seasons", icon: "📅", color: "#7c3aed" },
+  other: { label: "Other", icon: "📋", color: "#6b7280" },
+};
+
+const sportEmoji: Record<string, string> = {
+  football: "🏈",
+  basketball: "🏀",
+  baseball: "⚾",
+  lacrosse: "🥍",
+  "track-field": "🏃",
+  wrestling: "🤼",
+  soccer: "⚽",
 };
 
 export default async function SearchPage({
@@ -16,7 +58,8 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string; sport?: string }>;
 }) {
   const { q = "", sport } = await searchParams;
-  const results = q.length >= 2 ? await searchAll(q) : [];
+  const hasQuery = q.length >= 2;
+  const results = hasQuery ? await searchAll(q) : [];
 
   // Group results by entity type
   const grouped: Record<string, any[]> = {};
@@ -26,107 +69,411 @@ export default async function SearchPage({
     grouped[type].push(r);
   }
 
-  const typeLabels: Record<string, { label: string; icon: string }> = {
-    school: { label: "Schools", icon: "🏫" },
-    player: { label: "Players", icon: "👤" },
-    coach: { label: "Coaches", icon: "🧑‍🏫" },
-    season: { label: "Seasons", icon: "📅" },
-    other: { label: "Other", icon: "📋" },
-  };
+  // Get data for empty state / sidebar
+  const [dbStats, topSchools] = await Promise.all([
+    getDatabaseStats(),
+    getTopSchoolsByChampionships(8),
+  ]);
+
+  const totalRecords = dbStats.players + dbStats.schools + dbStats.teamSeasons + dbStats.championships + dbStats.games;
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      <Breadcrumb items={[{ label: "Search Database" }]} />
 
-      <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl text-white tracking-wider mb-4" style={{ fontFamily: "Barlow Condensed, sans-serif" }}>
-            Search
-          </h1>
-          <form action="/search" method="GET">
-            <div className="flex gap-2 max-w-2xl">
+      {/* ════════ HERO SEARCH BAR ════════ */}
+      <div className="sport-hub-header" style={{ "--shh-color": "#3b82f6" } as React.CSSProperties}>
+        <div className="shh-inner">
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
+            <span style={{ fontSize: 28 }}>🔍</span>
+            <h1 style={{ fontFamily: "Barlow Condensed, sans-serif", fontSize: 28, fontWeight: 700, color: "#fff", letterSpacing: 1 }}>
+              Search the Database
+            </h1>
+          </div>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginBottom: 16 }}>
+            {totalRecords.toLocaleString()} records across {dbStats.schools.toLocaleString()} schools and {dbStats.players.toLocaleString()} players
+          </p>
+          <form action="/search" method="GET" style={{ maxWidth: 640 }}>
+            <div style={{ display: "flex", gap: 8 }}>
               <input
                 type="text"
                 name="q"
                 defaultValue={q}
                 placeholder="Search players, schools, coaches..."
-                className="flex-1 px-4 py-3 rounded-lg text-sm bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:bg-white/15 focus:border-[var(--psp-gold)] focus:outline-none"
+                autoComplete="off"
+                style={{
+                  flex: 1,
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  border: "2px solid rgba(255,255,255,0.15)",
+                  background: "rgba(255,255,255,0.08)",
+                  color: "#fff",
+                  fontSize: 15,
+                  outline: "none",
+                }}
               />
-              <button type="submit" className="btn-primary px-6 py-3">
-                Search
+              <button
+                type="submit"
+                style={{
+                  padding: "12px 28px",
+                  borderRadius: 8,
+                  background: "var(--psp-gold)",
+                  color: "#0a1628",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "Barlow Condensed, sans-serif",
+                  letterSpacing: 0.5,
+                }}
+              >
+                SEARCH
               </button>
             </div>
           </form>
         </div>
-      </section>
+      </div>
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 py-8">
-        <LeaderboardAd id="psp-search-banner" />
-        {q.length >= 2 ? (
-          results.length > 0 ? (
-            <div className="space-y-8">
-              <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
-                {results.length} result{results.length !== 1 ? "s" : ""} for &quot;<strong>{q}</strong>&quot;
-              </p>
-              {Object.entries(grouped).map(([type, items]) => (
-                <div key={type}>
-                  <h2 className="text-xl font-bold mb-3 flex items-center gap-2" style={{ color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
-                    <span>{typeLabels[type]?.icon || "📋"}</span>
-                    {typeLabels[type]?.label || type} ({items.length})
-                  </h2>
-                  <div className="space-y-2">
-                    {items.map((item: any, idx: number) => (
+      {/* ════════ SUB-NAV ════════ */}
+      <nav className="hub-subnav">
+        <Link href="/search">All Results</Link>
+        <Link href="/compare">Compare Players</Link>
+        <Link href="/glossary">Stats Glossary</Link>
+        <Link href="/schools">All Schools</Link>
+        <Link href="/archive">Archive</Link>
+      </nav>
+
+      {/* ════════ MAIN 2-COL LAYOUT ════════ */}
+      <div className="hub-body">
+        <div className="hub-main">
+          {hasQuery ? (
+            results.length > 0 ? (
+              /* ──── RESULTS VIEW ──── */
+              <div>
+                <div className="hub-sec-head">
+                  <h3>{results.length} result{results.length !== 1 ? "s" : ""} for &quot;{q}&quot;</h3>
+                </div>
+
+                {Object.entries(grouped).map(([type, items]) => {
+                  const meta = typeLabels[type] || typeLabels.other;
+                  return (
+                    <div key={type} style={{ marginBottom: 28 }}>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        padding: "8px 12px",
+                        background: meta.color,
+                        borderRadius: "6px 6px 0 0",
+                        color: "#fff",
+                        fontFamily: "Barlow Condensed, sans-serif",
+                        fontSize: 15,
+                        fontWeight: 600,
+                        letterSpacing: 0.5,
+                      }}>
+                        <span>{meta.icon}</span>
+                        {meta.label} ({items.length})
+                      </div>
+                      <div style={{ border: "1px solid var(--psp-gray-200)", borderTop: "none", borderRadius: "0 0 6px 6px", overflow: "hidden" }}>
+                        {items.map((item: any, idx: number) => (
+                          <Link
+                            key={idx}
+                            href={item.url_path || "#"}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              padding: "10px 14px",
+                              borderBottom: idx < items.length - 1 ? "1px solid var(--psp-gray-200)" : "none",
+                              textDecoration: "none",
+                              transition: "background 0.15s",
+                            }}
+                            className="search-result-row"
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              {item.sport && (
+                                <span style={{
+                                  fontSize: 16,
+                                  width: 28,
+                                  height: 28,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  borderRadius: 6,
+                                  background: "var(--psp-gray-100)",
+                                }}>
+                                  {sportEmoji[item.sport] || "📋"}
+                                </span>
+                              )}
+                              <div>
+                                <div style={{ fontWeight: 600, fontSize: 14, color: "var(--psp-navy)" }}>
+                                  {item.display_name}
+                                </div>
+                                {item.context && (
+                                  <div style={{ fontSize: 12, color: "var(--psp-gray-500)", marginTop: 1 }}>
+                                    {item.context}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <span style={{ fontSize: 12, color: "var(--psp-gray-400)" }}>→</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* ──── NO RESULTS ──── */
+              <div style={{ textAlign: "center", padding: "48px 20px" }}>
+                <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif", marginBottom: 8 }}>
+                  No results for &quot;{q}&quot;
+                </h3>
+                <p style={{ fontSize: 14, color: "var(--psp-gray-500)", marginBottom: 24 }}>
+                  Try a different search term or browse by sport below.
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
+                  {POPULAR_SEARCHES.slice(0, 4).map((s) => (
+                    <Link
+                      key={s.q}
+                      href={`/search?q=${encodeURIComponent(s.q)}`}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 20,
+                        border: "1px solid var(--psp-gray-200)",
+                        fontSize: 13,
+                        color: "var(--psp-navy)",
+                        textDecoration: "none",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {s.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )
+          ) : (
+            /* ──── EMPTY STATE: DISCOVERY ──── */
+            <div>
+              {/* Browse by Sport */}
+              <div className="hub-sec-head">
+                <h3>Browse by Sport</h3>
+                <Link href="/schools" className="hub-more">All Schools →</Link>
+              </div>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+                gap: 10,
+                marginBottom: 28,
+              }}>
+                {SPORT_BROWSE.map((s) => {
+                  const meta = SPORT_META[s.sport as keyof typeof SPORT_META];
+                  return (
+                    <Link
+                      key={s.sport}
+                      href={`/${s.sport}`}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        padding: "18px 12px",
+                        borderRadius: 10,
+                        background: `linear-gradient(135deg, ${s.color}18 0%, ${s.color}08 100%)`,
+                        border: `1px solid ${s.color}30`,
+                        textDecoration: "none",
+                        transition: "transform 0.15s, box-shadow 0.15s",
+                      }}
+                      className="sport-browse-card"
+                    >
+                      <span style={{ fontSize: 32, marginBottom: 6 }}>{s.emoji}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif", letterSpacing: 0.5 }}>
+                        {meta?.name || s.sport}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <PSPPromo size="banner" variant={2} />
+
+              {/* Popular Searches */}
+              <div style={{ marginTop: 28 }}>
+                <div className="hub-sec-head">
+                  <h3>Popular Searches</h3>
+                </div>
+                <div className="hub-performers">
+                  <div className="hub-perf-list">
+                    {POPULAR_SEARCHES.map((s, i) => (
                       <Link
-                        key={idx}
-                        href={item.url_path || "#"}
-                        className="block bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 hover:shadow-md transition-all"
+                        key={s.q}
+                        href={`/search?q=${encodeURIComponent(s.q)}`}
+                        className="hub-perf-row"
+                        style={{ textDecoration: "none" }}
                       >
-                        <div className="font-medium text-sm" style={{ color: "var(--psp-navy)" }}>
-                          {item.display_name}
-                        </div>
-                        {item.context && (
-                          <div className="text-xs mt-0.5" style={{ color: "var(--psp-gray-500)" }}>
-                            {item.context}
-                          </div>
-                        )}
+                        <span className="hp-rank" style={{ background: i < 3 ? "var(--psp-gold)" : undefined, color: i < 3 ? "#0a1628" : undefined }}>
+                          {i + 1}
+                        </span>
+                        <span className="hp-name">{s.label}</span>
+                        <span style={{ fontSize: 12, color: "var(--psp-gray-400)" }}>→</span>
                       </Link>
                     ))}
                   </div>
                 </div>
-              ))}
+              </div>
+
+              {/* Dynasty Tracker */}
+              {topSchools.length > 0 && (
+                <div style={{ marginTop: 28 }}>
+                  <div className="hub-sec-head">
+                    <h3>Top Programs by Championships</h3>
+                    <Link href="/football/championships" className="hub-more">All Championships →</Link>
+                  </div>
+                  <div className="hub-dynasties">
+                    <div className="hub-dynasty-grid">
+                      {topSchools.map((school, i) => (
+                        <Link
+                          key={school.slug}
+                          href={`/schools/${school.slug}`}
+                          className="hub-dyn-card"
+                          style={{ textDecoration: "none" }}
+                        >
+                          <span className="hdc-rank" style={{ background: i === 0 ? "var(--psp-gold)" : undefined, color: i === 0 ? "#0a1628" : undefined }}>
+                            #{i + 1}
+                          </span>
+                          <span className="hdc-name">{school.name}</span>
+                          <span className="hdc-val">{school.count} titles</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Tools */}
+              <div style={{ marginTop: 28 }}>
+                <div className="hub-sec-head">
+                  <h3>Data Tools</h3>
+                </div>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 10,
+                }}>
+                  {[
+                    { href: "/compare", icon: "📊", label: "Compare Players", desc: "Side-by-side stat comparison" },
+                    { href: "/glossary", icon: "📖", label: "Stats Glossary", desc: "Every stat abbreviation explained" },
+                    { href: "/football/leaderboards/rushing", icon: "🏆", label: "Leaderboards", desc: "All-time and seasonal leaders" },
+                    { href: "/archive", icon: "📚", label: "Archive", desc: "25 years of Philly sports" },
+                  ].map((tool) => (
+                    <Link
+                      key={tool.href}
+                      href={tool.href}
+                      style={{
+                        display: "flex",
+                        gap: 10,
+                        padding: "14px 14px",
+                        borderRadius: 8,
+                        border: "1px solid var(--psp-gray-200)",
+                        textDecoration: "none",
+                        transition: "box-shadow 0.15s",
+                      }}
+                      className="tool-card-link"
+                    >
+                      <span style={{ fontSize: 22 }}>{tool.icon}</span>
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
+                          {tool.label}
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--psp-gray-500)", marginTop: 2 }}>
+                          {tool.desc}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
-              <div className="text-4xl mb-4">🔍</div>
-              <h3 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>
-                No results found for &quot;{q}&quot;
-              </h3>
-              <p className="text-sm">Try a different search term or browse by sport.</p>
+          )}
+        </div>
+
+        {/* ── RIGHT: SIDEBAR ── */}
+        <aside className="hub-sidebar">
+          {/* Database Stats Widget */}
+          <div className="hub-widget">
+            <div className="hub-wh" style={{ background: "#3b82f6" }}>Database Stats</div>
+            <div className="hub-wb">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                {[
+                  { label: "Players", value: dbStats.players, icon: "👤" },
+                  { label: "Schools", value: dbStats.schools, icon: "🏫" },
+                  { label: "Seasons", value: dbStats.teamSeasons, icon: "📅" },
+                  { label: "Championships", value: dbStats.championships, icon: "🏆" },
+                  { label: "Games", value: dbStats.games, icon: "🎮" },
+                ].map((stat) => (
+                  <div key={stat.label} style={{ textAlign: "center", padding: "8px 0" }}>
+                    <div style={{ fontSize: 18 }}>{stat.icon}</div>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
+                      {stat.value.toLocaleString()}
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--psp-gray-500)", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          )
-        ) : (
-          <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
-            <div className="text-4xl mb-4">🔍</div>
-            <h3 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>
-              Search the Database
-            </h3>
-            <p className="text-sm">Enter at least 2 characters to search players, schools, and coaches.</p>
-            <div className="flex flex-wrap gap-2 justify-center mt-6">
-              {["St. Joseph's Prep", "Roman Catholic", "Neumann-Goretti", "Imhotep Charter"].map((term) => (
+          </div>
+
+          {/* Quick Links */}
+          <div className="hub-widget">
+            <div className="hub-wh">Quick Links</div>
+            <div className="hub-wb" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {[
+                { href: "/football/leaderboards/rushing", label: "🏈 Football Leaders" },
+                { href: "/basketball/leaderboards/scoring", label: "🏀 Basketball Leaders" },
+                { href: "/our-guys", label: "🌟 Our Guys (Pro Athletes)" },
+                { href: "/recruiting", label: "📋 Recruiting Board" },
+                { href: "/potw", label: "🗳️ Player of the Week" },
+                { href: "/articles", label: "📰 Latest Articles" },
+                { href: "/community", label: "💬 Community" },
+              ].map((link) => (
                 <Link
-                  key={term}
-                  href={`/search?q=${encodeURIComponent(term)}`}
-                  className="px-4 py-2 rounded-full text-sm border border-[var(--psp-gray-200)] hover:border-[var(--psp-gray-300)] transition-colors"
-                  style={{ color: "var(--psp-navy)" }}
+                  key={link.href}
+                  href={link.href}
+                  style={{ fontSize: 13, color: "var(--psp-navy)", textDecoration: "none", padding: "4px 0", borderBottom: "1px solid var(--psp-gray-100)" }}
                 >
-                  {term}
+                  {link.label}
                 </Link>
               ))}
             </div>
           </div>
-        )}
-        <InContentAd id="psp-search-btm" />
-      </main>
+
+          {/* Coverage Badge */}
+          <div className="hub-widget">
+            <div className="hub-wh" style={{ background: "var(--psp-gold)", color: "#0a1628" }}>Coverage</div>
+            <div className="hub-wb" style={{ textAlign: "center", padding: "16px 12px" }}>
+              <div style={{ fontSize: 36, fontWeight: 700, color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif" }}>
+                25
+              </div>
+              <div style={{ fontSize: 12, color: "var(--psp-gray-500)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
+                Years of Data
+              </div>
+              <div style={{ fontSize: 13, color: "var(--psp-gray-500)" }}>
+                2000 — 2025
+              </div>
+              <div style={{ fontSize: 12, color: "var(--psp-gray-400)", marginTop: 4 }}>
+                7 sports · All leagues
+              </div>
+            </div>
+          </div>
+
+          <PSPPromo size="sidebar" variant={3} />
+        </aside>
+      </div>
 
       <Footer />
     </div>

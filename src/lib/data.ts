@@ -566,6 +566,20 @@ export async function searchAll(query: string, limit = 30) {
         .limit(10),
     ]);
 
+    // Detect sport for each player by checking stat tables
+    const playerIds = (playersRes.data ?? []).map((p) => p.id);
+    const sportMap = new Map<number, string>();
+    if (playerIds.length > 0) {
+      const [fbRes, bbRes, bsbRes] = await Promise.all([
+        supabase.from("football_player_seasons").select("player_id").in("player_id", playerIds),
+        supabase.from("basketball_player_seasons").select("player_id").in("player_id", playerIds),
+        supabase.from("baseball_player_seasons").select("player_id").in("player_id", playerIds),
+      ]);
+      for (const r of fbRes.data ?? []) sportMap.set(r.player_id, "football");
+      for (const r of bbRes.data ?? []) if (!sportMap.has(r.player_id)) sportMap.set(r.player_id, "basketball");
+      for (const r of bsbRes.data ?? []) if (!sportMap.has(r.player_id)) sportMap.set(r.player_id, "baseball");
+    }
+
     const results: any[] = [];
 
     // Schools
@@ -579,15 +593,17 @@ export async function searchAll(query: string, limit = 30) {
       });
     }
 
-    // Players — detect their sport from stat tables
+    // Players — use detected sport for URL
     for (const p of playersRes.data ?? []) {
       const school = (p as any).schools;
+      const sport = sportMap.get(p.id) || "football";
       results.push({
         entity_type: "player",
         entity_id: p.id,
         display_name: p.name,
+        sport,
         context: [school?.name, p.college, p.pro_team].filter(Boolean).join(" · "),
-        url_path: `/football/players/${p.slug}`,
+        url_path: `/${sport}/players/${p.slug}`,
       });
     }
 
@@ -603,6 +619,52 @@ export async function searchAll(query: string, limit = 30) {
     }
 
     return results.slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+// Get database-wide counts for search page stats
+export async function getDatabaseStats() {
+  try {
+    const supabase = await createClient();
+    const [schools, players, teamSeasons, championships, games] = await Promise.all([
+      supabase.from("schools").select("id", { count: "exact", head: true }).is("deleted_at", null),
+      supabase.from("players").select("id", { count: "exact", head: true }).is("deleted_at", null),
+      supabase.from("team_seasons").select("id", { count: "exact", head: true }),
+      supabase.from("championships").select("id", { count: "exact", head: true }),
+      supabase.from("games").select("id", { count: "exact", head: true }),
+    ]);
+    return {
+      schools: schools.count ?? 0,
+      players: players.count ?? 0,
+      teamSeasons: teamSeasons.count ?? 0,
+      championships: championships.count ?? 0,
+      games: games.count ?? 0,
+    };
+  } catch {
+    return { schools: 0, players: 0, teamSeasons: 0, championships: 0, games: 0 };
+  }
+}
+
+// Get top schools by championship count
+export async function getTopSchoolsByChampionships(limit = 8) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("championships")
+      .select("school_id, schools(id, slug, name)")
+      .is("schools.deleted_at", null);
+    if (!data) return [];
+    const counts = new Map<string, { slug: string; name: string; count: number }>();
+    for (const row of data) {
+      const school = (row as any).schools;
+      if (!school) continue;
+      const key = school.slug;
+      if (!counts.has(key)) counts.set(key, { slug: school.slug, name: school.name, count: 0 });
+      counts.get(key)!.count++;
+    }
+    return Array.from(counts.values()).sort((a, b) => b.count - a.count).slice(0, limit);
   } catch {
     return [];
   }
