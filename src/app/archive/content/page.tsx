@@ -266,7 +266,7 @@ export default async function ArchiveContentPage({
                       {/* Excerpt */}
                       {article.excerpt && (
                         <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
-                          {article.excerpt}
+                          {article.excerpt.replace(/\s*\|\s*/g, ' — ').replace(/\s*\|$/g, '')}
                         </p>
                       )}
 

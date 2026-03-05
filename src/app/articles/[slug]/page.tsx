@@ -67,13 +67,23 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     const processedLines: string[] = [];
     let inTable = false;
     let isFirstTableRow = false;
+    let headerColCount = 0;
 
     const isMarkdownHeading = (s: string) =>
       /^#{1,3}\s/.test(s); // Only "# ", "## ", "### " — not "#-" footnote markers
 
     for (const line of lines) {
-      const trimmed = line.trim();
-      // Detect table rows (contain | separators with content)
+      let trimmed = line.trim();
+
+      // Strip trailing " |" from lines that aren't real table rows
+      // (e.g., "FIRST TEAM |" or "SECOND TEAM |")
+      if (trimmed.endsWith(' |') && !trimmed.includes(' | ')) {
+        trimmed = trimmed.slice(0, -2).trim();
+        processedLines.push(trimmed);
+        continue;
+      }
+
+      // Detect table rows (contain | separators with content on both sides)
       if (trimmed.includes(' | ') && !isMarkdownHeading(trimmed) && !trimmed.startsWith('---')) {
         if (!inTable) {
           processedLines.push('<table class="archive-table">');
@@ -81,19 +91,27 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           isFirstTableRow = true;
         }
         const cells = trimmed.split(' | ').map(c => c.trim());
-        // First row is the header
+
+        // First row is the header — establish column count
         if (isFirstTableRow) {
+          headerColCount = cells.length;
           processedLines.push('<thead><tr>' + cells.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>');
           isFirstTableRow = false;
         } else {
-          processedLines.push('<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>');
+          // Pad rows with fewer columns than header
+          const paddedCells = [...cells];
+          while (paddedCells.length < headerColCount) {
+            paddedCells.push('');
+          }
+          processedLines.push('<tr>' + paddedCells.slice(0, headerColCount).map(c => `<td>${c}</td>`).join('') + '</tr>');
         }
       } else {
         if (inTable) {
           processedLines.push('</tbody></table>');
           inTable = false;
+          headerColCount = 0;
         }
-        processedLines.push(line);
+        processedLines.push(trimmed || line);
       }
     }
     if (inTable) processedLines.push('</tbody></table>');
