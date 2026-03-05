@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  /* PSP Brand Colors — registered as Tailwind utilities */
+  --color-navy: #0a1628;
+  --color-navy-mid: #0f2040;
+  --color-navy-light: #1a2d4a;
+  --color-gold: #f0a500;
+  --color-gold-light: #f5c542;
+  --color-blue: #3b82f6;
+
+  /* Fonts */
+  --font-bebas: 'Bebas Neue', sans-serif;
+  --font-dm: 'DM Sans', sans-serif;
+}
+
 :root, [data-theme="light"] {
   /* PSP Brand Colors */
   --psp-navy: #0a1628;

@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { SPORT_META } from '@/lib/sports';
 import AdPlaceholder, { LeaderboardAd } from '@/components/ads/AdPlaceholder';
 import CommentSection from '@/components/comments/CommentSection';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 interface PageProps {
   params: Promise<{
@@ -144,9 +145,19 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       )}
 
       {/* Hero */}
-      <div className="bg-gradient-to-r from-navy to-navy-mid py-8 px-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center space-x-3 mb-4">
+      <div className="bg-gradient-to-r from-navy to-navy-mid py-6 px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Breadcrumbs */}
+          <Breadcrumb
+            items={[
+              ...(article.source_file
+                ? [{ label: 'Archive', href: '/archive/content' }]
+                : [{ label: 'Articles', href: '/articles' }]),
+              { label: article.title },
+            ]}
+            className="mb-4"
+          />
+          <div className="flex items-center space-x-3 mb-3">
             {article.sport_id && SPORT_META[article.sport_id as keyof typeof SPORT_META] && (
               <span className="text-2xl">
                 {SPORT_META[article.sport_id as keyof typeof SPORT_META].emoji}
@@ -163,7 +174,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               </span>
             )}
           </div>
-          <h1 className="text-4xl font-bebas text-white mb-4">{article.title}</h1>
+          <h1 className="text-4xl font-bebas text-white mb-2">{article.title}</h1>
           <div className="flex items-center justify-between text-gold text-sm">
             <span>{article.author_name || article.author || 'PSP Staff'}</span>
             <span>
@@ -177,12 +188,12 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
       <LeaderboardAd id="psp-article-banner" />
 
-      <div className="max-w-4xl mx-auto px-4 py-12 grid grid-cols-3 gap-8">
+      <div className="max-w-4xl mx-auto px-4 py-8 grid grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="col-span-2">
           {/* Featured Image */}
           {article.featured_image_url && (
-            <div className="mb-8 rounded-lg overflow-hidden border border-gray-200">
+            <div className="mb-6 rounded-lg overflow-hidden border border-gray-200">
               <img
                 src={article.featured_image_url}
                 alt={article.title}
@@ -192,7 +203,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           )}
 
           {/* Article Content */}
-          <div className="prose prose-sm max-w-none mb-8">
+          <div className="prose prose-sm max-w-none mb-6">
             <div
               dangerouslySetInnerHTML={{
                 __html: renderMarkdown(article.body || article.content || ''),
@@ -200,9 +211,23 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             />
           </div>
 
+          {/* Thin content notice for photo-only/stub archive pages */}
+          {article.source_file && (article.body || article.content || '').length < 200 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+              <p className="text-sm text-amber-800">
+                <strong>Limited content available.</strong> This archive page originally contained
+                images or media that are not available in the digital archive. The text above is all
+                that could be extracted from the original source.
+              </p>
+              <Link href="/archive/content" className="text-sm text-gold hover:text-gold/80 font-medium mt-2 inline-block">
+                Browse more archive content &rarr;
+              </Link>
+            </div>
+          )}
+
           {/* Tags */}
           {article.tags && article.tags.length > 0 && (
-            <div className="py-6 border-t border-b border-gray-200 mb-8">
+            <div className="py-4 border-t border-b border-gray-200 mb-6">
               <p className="text-sm font-medium text-gray-700 mb-3">Tags:</p>
               <div className="flex flex-wrap gap-2">
                 {article.tags.map((tag: string) => (
