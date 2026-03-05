@@ -40,9 +40,14 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/archive",
+        destination: "/archive/content",
+        permanent: false,
+      },
+      {
         source: "/archive/",
-        destination: "/football/championships",
-        permanent: true,
+        destination: "/archive/content",
+        permanent: false,
       },
       {
         source: "/archive-:year/",
