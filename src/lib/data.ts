@@ -948,7 +948,17 @@ export async function getGamesByTeamSeason(schoolId: number, sportId: string, se
       .eq("season_id", seasonId)
       .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
       .order("game_date", { ascending: true });
-    return data ?? [];
+
+    // Deduplicate: same date + same two teams + same scores = same game
+    const seen = new Set<string>();
+    const deduped = (data ?? []).filter((game: any) => {
+      const teams = [game.home_school_id, game.away_school_id].sort().join("-");
+      const key = `${game.game_date}|${teams}|${game.home_score}-${game.away_score}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return deduped;
   } catch {
     return [];
   }

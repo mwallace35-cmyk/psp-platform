@@ -77,11 +77,16 @@ export default function TeamPageTabs({
                 fontFamily: "'Barlow Condensed', sans-serif",
               }}
             >
-              {seasonLabels.map((label) => (
-                <option key={label} value={label} style={{ color: "#000" }}>
-                  {label}
-                </option>
-              ))}
+              {seasonLabels.map((label) => {
+                const sd = seasonsData[label];
+                const ts = sd?.teamSeason;
+                const record = ts ? `${ts.wins || 0}-${ts.losses || 0}${ts.ties ? `-${ts.ties}` : ""}` : "";
+                return (
+                  <option key={label} value={label} style={{ color: "#000" }}>
+                    {label}{record ? ` (${record})` : ""}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
@@ -180,6 +185,7 @@ function ScheduleTab({ data, schoolSlug, sportId, sportColor }: { data: SeasonDa
             <th style={{ padding: "8px 12px", textAlign: "center", fontWeight: 600, width: 60 }}>Result</th>
             <th style={{ padding: "8px 12px", textAlign: "center", fontWeight: 600, width: 70 }}>Score</th>
             <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 600 }}>Type</th>
+            <th style={{ padding: "8px 12px", textAlign: "center", fontWeight: 600, width: 40 }}></th>
           </tr>
         </thead>
         <tbody>
@@ -191,6 +197,7 @@ function ScheduleTab({ data, schoolSlug, sportId, sportColor }: { data: SeasonDa
             const won = ourScore != null && theirScore != null && ourScore > theirScore;
             const lost = ourScore != null && theirScore != null && ourScore < theirScore;
             const resultLabel = won ? "W" : lost ? "L" : ourScore === theirScore ? "T" : "—";
+            const hasScore = ourScore != null && theirScore != null;
 
             return (
               <tr key={game.id || i} style={{ borderBottom: "1px solid var(--g100)" }}>
@@ -228,6 +235,17 @@ function ScheduleTab({ data, schoolSlug, sportId, sportColor }: { data: SeasonDa
                   {game.game_type === "playoff" || game.playoff_round
                     ? game.playoff_round || "Playoff"
                     : game.game_type || "Regular"}
+                </td>
+                <td style={{ padding: "10px 4px", textAlign: "center" }}>
+                  {hasScore && game.id && (
+                    <Link
+                      href={`/${sportId}/games/${game.id}`}
+                      style={{ fontSize: 11, color: sportColor, textDecoration: "none", fontWeight: 600, whiteSpace: "nowrap" }}
+                      title="Box Score"
+                    >
+                      Box →
+                    </Link>
+                  )}
                 </td>
               </tr>
             );
@@ -289,7 +307,18 @@ function RosterTab({ data, sportId, sportColor }: { data: SeasonData; sportId: s
     }
   };
 
-  const columns = getColumns();
+  const allColumns = getColumns();
+
+  // Smart column hiding: only show stat columns that have at least one non-null value
+  const columns = allColumns.filter((col) => {
+    // Always show core columns
+    if (col.key === "name" || col.key === "positions" || col.key === "graduation_year") return true;
+    // For stat columns, check if ANY player has a non-null, non-zero value
+    if (col.key === "ppg") {
+      return data.roster.some((p: any) => (p.points ?? 0) > 0 && (p.games_played ?? 0) > 0);
+    }
+    return data.roster.some((p: any) => p[col.key] != null && p[col.key] !== 0);
+  });
 
   return (
     <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, overflow: "hidden" }}>
