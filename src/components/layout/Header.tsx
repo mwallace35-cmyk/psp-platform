@@ -40,32 +40,29 @@ const TICKER_PROMOS = [
 /* MaxPreps-style sport dropdown links — each sport gets the same structure */
 const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
   football: [
-    { label: "Football Home", href: "/football" },
+    { label: "News", href: "/articles?sport=football" },
     { label: "Teams", href: "/football/teams" },
     { label: "Leaderboards", href: "/football/leaderboards/rushing_yards" },
     { label: "Championships", href: "/football/championships" },
     { label: "Records", href: "/football/records" },
     { label: "Coaches", href: "/coaches" },
     { label: "Compare Players", href: "/compare" },
-    { label: "Articles", href: "/articles" },
   ],
   basketball: [
-    { label: "Basketball Home", href: "/basketball" },
+    { label: "News", href: "/articles?sport=basketball" },
     { label: "Teams", href: "/basketball/teams" },
     { label: "Leaderboards", href: "/basketball/leaderboards/points" },
     { label: "Championships", href: "/basketball/championships" },
     { label: "Records", href: "/basketball/records" },
     { label: "Coaches", href: "/coaches" },
     { label: "Compare Players", href: "/compare" },
-    { label: "Articles", href: "/articles" },
   ],
   baseball: [
-    { label: "Baseball Home", href: "/baseball" },
+    { label: "News", href: "/articles?sport=baseball" },
     { label: "Teams", href: "/baseball/teams" },
     { label: "Championships", href: "/baseball/championships" },
     { label: "Records", href: "/baseball/records" },
     { label: "Coaches", href: "/coaches" },
-    { label: "Articles", href: "/articles" },
   ],
 };
 
@@ -85,8 +82,6 @@ export default function Header() {
             PHILLY<span>SPORTS</span>PACK
           </Link>
           <div className="topbar-links" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <Link href="/articles">Articles</Link>
-            <Link href="/community">Community</Link>
             <Link href="/glossary">Glossary</Link>
             <span className="db-tag"><span className="dot" /> Live</span>
             <ThemeToggle />
