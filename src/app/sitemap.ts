@@ -135,6 +135,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Error fetching coaches for sitemap:", error);
   }
 
+  // Rivalries
+  entries.push({
+    url: `${baseUrl}/rivalries`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.8,
+  });
+
+  try {
+    const { data: rivalriesData } = await supabase
+      .from("rivalries")
+      .select("slug")
+      .order("slug");
+
+    if (rivalriesData) {
+      for (const rivalry of rivalriesData) {
+        entries.push({
+          url: `${baseUrl}/rivalries/${rivalry.slug}`,
+          lastModified: new Date(),
+          changeFrequency: "weekly",
+          priority: 0.7,
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching rivalries for sitemap:", error);
+  }
+
   // Public content pages
   entries.push(
     {

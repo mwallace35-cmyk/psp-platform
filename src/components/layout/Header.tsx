@@ -21,25 +21,11 @@ const MORE_SPORTS = [
   { href: "/soccer", label: "Soccer", color: "var(--soccer)", emoji: "⚽" },
 ];
 
-const RECENT_SCORES = [
-  { home: "St. Joseph's Prep", away: "Pittsburgh CC", homeScore: 35, awayScore: 21, status: "Final · 6A State", homeWin: true, href: "/schools/saint-josephs-prep" },
-  { home: "Neumann-Goretti", away: "Math Civics Sci", homeScore: 72, awayScore: 58, status: "Final · 4A State", homeWin: true, href: "/schools/neumann-goretti" },
-  { home: "Imhotep Charter", away: "MLK", homeScore: 82, awayScore: 59, status: "Final · BBall", homeWin: true, href: "/schools/imhotep-charter" },
-  { home: "Roman Catholic", away: "Father Judge", homeScore: 68, awayScore: 61, status: "Final · PCL", homeWin: true, href: "/schools/roman-catholic" },
-  { home: "La Salle", away: "Bonner-Prendie", homeScore: 8, awayScore: 2, status: "Final · BSB", homeWin: true, href: "/schools/la-salle-college-hs" },
-  { home: "Malvern Prep", away: "Episcopal", homeScore: 6, awayScore: 4, status: "Final · LAX", homeWin: true, href: "/schools/malvern-prep" },
-];
-
-const TICKER_PROMOS = [
-  { icon: "🎯", text: "<strong>GOTW:</strong> Vote Now", href: "/gotw" },
-  { icon: "🗳️", text: "<strong>POTW:</strong> Vote Now", href: "/potw" },
-  { icon: "📅", text: "<strong>Friday:</strong> SJP vs La Salle", href: "/events" },
-  { icon: "📰", text: "<strong>New:</strong> 2025 All-City Teams", href: "/articles" },
-];
 
 /* MaxPreps-style sport dropdown links — each sport gets the same structure */
 const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
   football: [
+    { label: "Scores", href: "/scores?sport=football" },
     { label: "News", href: "/football/news" },
     { label: "Teams", href: "/football/teams" },
     { label: "Leaderboards", href: "/football/leaderboards/rushing_yards" },
@@ -49,6 +35,7 @@ const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
     { label: "Compare Players", href: "/compare" },
   ],
   basketball: [
+    { label: "Scores", href: "/scores?sport=basketball" },
     { label: "News", href: "/basketball/news" },
     { label: "Teams", href: "/basketball/teams" },
     { label: "Leaderboards", href: "/basketball/leaderboards/points" },
@@ -58,6 +45,7 @@ const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
     { label: "Compare Players", href: "/compare" },
   ],
   baseball: [
+    { label: "Scores", href: "/scores?sport=baseball" },
     { label: "News", href: "/baseball/news" },
     { label: "Teams", href: "/baseball/teams" },
     { label: "Championships", href: "/baseball/championships" },
@@ -170,9 +158,11 @@ export default function Header() {
             <div className="espn-megamenu cols-2">
               <div className="mega-col">
                 <div className="mega-col-head">Explore</div>
+                <Link href="/scores">📊 Scores &amp; Box Scores</Link>
                 <Link href="/search">🔍 Search Database</Link>
                 <Link href="/compare">📊 Compare Players</Link>
                 <Link href="/schools">🏫 All Schools</Link>
+                <Link href="/rivalries">🔥 Rivalries</Link>
                 <Link href="/glossary">📖 Stats Glossary</Link>
                 <Link href="/archive">📁 Archive</Link>
               </div>
@@ -204,32 +194,6 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Score Strip — Mixed Content */}
-      <div className="scorestrip">
-        <div className="ss-label">Scores</div>
-        <div className="ss-scroll">
-          {RECENT_SCORES.map((game, i) => (
-            <Link key={i} href={game.href} className="ss-game" style={{ textDecoration: "none" }}>
-              <div className={`ss-team ${game.homeWin ? "winner" : ""}`}>
-                <span className="name">{game.home}</span>
-                <span className="score">{game.homeScore}</span>
-              </div>
-              <div className={`ss-team ${!game.homeWin ? "winner" : ""}`}>
-                <span className="name">{game.away}</span>
-                <span className="score">{game.awayScore}</span>
-              </div>
-              <div className="ss-status">{game.status}</div>
-            </Link>
-          ))}
-          {/* Mixed ticker items */}
-          {TICKER_PROMOS.map((promo, i) => (
-            <Link key={`promo-${i}`} href={promo.href} className="ss-promo" style={{ textDecoration: "none" }}>
-              <span className="ss-promo-icon">{promo.icon}</span>
-              <span className="ss-promo-text" dangerouslySetInnerHTML={{ __html: promo.text }} />
-            </Link>
-          ))}
-        </div>
-      </div>
 
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
@@ -265,6 +229,7 @@ export default function Header() {
             <Link href="/community" onClick={() => setMobileOpen(false)}>Community</Link>
             <Link href="/compare" onClick={() => setMobileOpen(false)}>Compare Players</Link>
             <Link href="/schools" onClick={() => setMobileOpen(false)}>All Schools</Link>
+            <Link href="/rivalries" onClick={() => setMobileOpen(false)}>Rivalries</Link>
             <Link href="/search" onClick={() => setMobileOpen(false)}>Search</Link>
           </div>
         </>

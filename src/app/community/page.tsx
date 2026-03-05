@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getDatabaseStats } from '@/lib/data';
 import Link from 'next/link';
 import { SPORT_META, type SportId } from '@/lib/sports';
-import Header from '@/components/layout/Header';
+import HeaderWithScores from '@/components/layout/HeaderWithScores';
 import Footer from '@/components/layout/Footer';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import PSPPromo from '@/components/ads/PSPPromo';
@@ -40,7 +40,7 @@ export default async function CommunityPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <HeaderWithScores />
       <Breadcrumb items={[{ label: 'Community' }]} />
 
       {/* ════════ HEADER BAR ════════ */}

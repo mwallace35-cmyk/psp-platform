@@ -722,6 +722,46 @@ export const recruitingProfiles = pgTable("recruiting_profiles", {
   starIdx: index("idx_recruiting_stars").on(table.starRating),
 }));
 
+// ============================================================================
+// SPRINT 1: RIVALRIES
+// ============================================================================
+
+export const rivalries = pgTable("rivalries", {
+  id: serial("id").primaryKey(),
+  schoolAId: integer("school_a_id").notNull().references(() => schools.id),
+  schoolBId: integer("school_b_id").notNull().references(() => schools.id),
+  sportId: varchar("sport_id", { length: 30 }).notNull().references(() => sports.id),
+  slug: varchar("slug", { length: 200 }).unique().notNull(),
+  displayName: varchar("display_name", { length: 200 }).notNull(),
+  subtitle: varchar("subtitle", { length: 300 }),
+  description: text("description"),
+  featured: boolean("featured").default(false),
+  regionId: varchar("region_id", { length: 50 }).references(() => regions.id).default("philadelphia"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  sportIdx: index("idx_rivalries_sport").on(table.sportId),
+  schoolsIdx: index("idx_rivalries_schools").on(table.schoolAId, table.schoolBId),
+  uniqueRivalry: unique().on(table.schoolAId, table.schoolBId, table.sportId),
+}));
+
+export const rivalryNotes = pgTable("rivalry_notes", {
+  id: serial("id").primaryKey(),
+  rivalryId: integer("rivalry_id").notNull().references(() => rivalries.id),
+  gameId: integer("game_id").references(() => games.id),
+  noteType: varchar("note_type", { length: 30 }).notNull().default("history"),
+  title: varchar("title", { length: 200 }),
+  content: text("content").notNull(),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  rivalryIdx: index("idx_rivalry_notes_rivalry").on(table.rivalryId),
+}));
+
+// ============================================================================
+// PRECOMPUTED CACHE
+// ============================================================================
+
 export const precomputedCache = pgTable("precomputed_cache", {
   id: serial("id").primaryKey(),
   cacheKey: varchar("cache_key", { length: 200 }).unique().notNull(),

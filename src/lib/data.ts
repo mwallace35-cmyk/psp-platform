@@ -1187,6 +1187,22 @@ export async function getRecentGamesBySport(sportId: string, limit = 20) {
   }
 }
 
+export async function getRecentGamesAll(limit = 10) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("games")
+      .select("id, sport_id, home_score, away_score, game_date, game_type, seasons(label), home_school:schools!games_home_school_id_fkey(id, name, short_name, slug), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug)")
+      .not("home_score", "is", null)
+      .not("away_score", "is", null)
+      .order("game_date", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
 export async function getTeamsWithRecords(sportId: string) {
   try {
     const supabase = await createClient();
@@ -1314,6 +1330,336 @@ export async function getTopProgramsBySport(sportId: string, excludeSchoolId?: n
     return [];
   }
 }
+
+// ============================================================================
+// SPRINT 1: GAME PAGE FUNCTIONS
+// ============================================================================
+
+export async function getGameById(gameId: number) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("games")
+      .select(`
+        *,
+        seasons(label, year_start, year_end),
+        home_school:schools!games_home_school_id_fkey(id, slug, name, short_name, city, mascot, logo_url, leagues(name, short_name)),
+        away_school:schools!games_away_school_id_fkey(id, slug, name, short_name, city, mascot, logo_url, leagues(name, short_name))
+      `)
+      .eq("id", gameId)
+      .single();
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export async function getGameBoxScore(gameId: number, sportId: string) {
+  try {
+    const supabase = await createClient();
+
+    if (sportId === "football") {
+      const { data } = await supabase
+        .from("football_game_stats")
+        .select(`
+          *,
+          players(id, slug, name, positions, graduation_year),
+          schools(id, slug, name, short_name)
+        `)
+        .eq("game_id", gameId)
+        .order("points", { ascending: false });
+      return data ?? [];
+    }
+
+    if (sportId === "basketball") {
+      const { data } = await supabase
+        .from("basketball_game_stats")
+        .select(`
+          *,
+          players(id, slug, name, positions, graduation_year),
+          schools(id, slug, name, short_name)
+        `)
+        .eq("game_id", gameId)
+        .order("points", { ascending: false });
+      return data ?? [];
+    }
+
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getRelatedGames(gameId: number, sportId: string, homeSchoolId: number, awaySchoolId: number, limit = 5) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("games")
+      .select(`
+        id, game_date, home_score, away_score, game_type,
+        seasons(label),
+        home_school:schools!games_home_school_id_fkey(id, slug, name, short_name),
+        away_school:schools!games_away_school_id_fkey(id, slug, name, short_name)
+      `)
+      .eq("sport_id", sportId)
+      .or(`and(home_school_id.eq.${homeSchoolId},away_school_id.eq.${awaySchoolId}),and(home_school_id.eq.${awaySchoolId},away_school_id.eq.${homeSchoolId})`)
+      .neq("id", gameId)
+      .order("game_date", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getGameArticle(gameId: number) {
+  try {
+    const supabase = await createClient();
+    // Check article_mentions for articles linked to this game
+    const { data } = await supabase
+      .from("article_mentions")
+      .select(`
+        articles(id, slug, title, excerpt, published_at, featured_image_url)
+      `)
+      .eq("entity_type", "game")
+      .eq("entity_id", gameId)
+      .limit(1)
+      .single();
+    return data?.articles ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getGamesWithBoxScores(sportId: string, limit = 50, offset = 0) {
+  try {
+    const supabase = await createClient();
+
+    const statTable = sportId === "football" ? "football_game_stats" : sportId === "basketball" ? "basketball_game_stats" : null;
+    if (!statTable) return [];
+
+    // Get game IDs that have box score data
+    const { data: statGameIds } = await supabase
+      .from(statTable)
+      .select("game_id")
+      .limit(5000);
+
+    if (!statGameIds?.length) return [];
+
+    const uniqueGameIds = [...new Set(statGameIds.map((s: any) => s.game_id))];
+
+    const { data } = await supabase
+      .from("games")
+      .select(`
+        id, game_date, home_score, away_score, game_type, playoff_round,
+        seasons(label),
+        home_school:schools!games_home_school_id_fkey(id, slug, name, short_name),
+        away_school:schools!games_away_school_id_fkey(id, slug, name, short_name)
+      `)
+      .eq("sport_id", sportId)
+      .in("id", uniqueGameIds.slice(offset, offset + limit))
+      .order("game_date", { ascending: false });
+
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// ============================================================================
+// SPRINT 1: RIVALRY FUNCTIONS
+// ============================================================================
+
+export async function getRivalryBySlug(slug: string) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("rivalries")
+      .select(`
+        *,
+        school_a:schools!rivalries_school_a_id_fkey(id, slug, name, short_name, city, mascot, logo_url, leagues(name, short_name)),
+        school_b:schools!rivalries_school_b_id_fkey(id, slug, name, short_name, city, mascot, logo_url, leagues(name, short_name))
+      `)
+      .eq("slug", slug)
+      .single();
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export async function getRivalryRecord(rivalryId: number) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("rivalry_records")
+      .select("*")
+      .eq("rivalry_id", rivalryId)
+      .single();
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export async function getRivalryGames(schoolAId: number, schoolBId: number, sportId: string) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("games")
+      .select(`
+        id, game_date, home_score, away_score, game_type, playoff_round, venue,
+        seasons(label),
+        home_school:schools!games_home_school_id_fkey(id, slug, name, short_name),
+        away_school:schools!games_away_school_id_fkey(id, slug, name, short_name)
+      `)
+      .eq("sport_id", sportId)
+      .or(`and(home_school_id.eq.${schoolAId},away_school_id.eq.${schoolBId}),and(home_school_id.eq.${schoolBId},away_school_id.eq.${schoolAId})`)
+      .order("game_date", { ascending: false });
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getRivalryNotes(rivalryId: number) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("rivalry_notes")
+      .select("*")
+      .eq("rivalry_id", rivalryId)
+      .order("sort_order", { ascending: true });
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getAllRivalries(sportId?: string) {
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from("rivalries")
+      .select(`
+        id, slug, display_name, subtitle, sport_id, featured,
+        school_a:schools!rivalries_school_a_id_fkey(id, slug, name, short_name, logo_url),
+        school_b:schools!rivalries_school_b_id_fkey(id, slug, name, short_name, logo_url)
+      `)
+      .order("featured", { ascending: false })
+      .order("display_name");
+
+    if (sportId) query = query.eq("sport_id", sportId);
+
+    const { data } = await query;
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getRivalryTopPlayers(schoolId: number, sportId: string, limit = 5) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("player_career_summary")
+      .select("*")
+      .eq("school_id", schoolId)
+      .eq("sport_id", sportId)
+      .order("career_games", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getRivalryChampionships(schoolId: number, sportId: string) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("championships")
+      .select("*, seasons(label)")
+      .eq("school_id", schoolId)
+      .eq("sport_id", sportId)
+      .order("year", { ascending: false });
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// ============================================================================
+// SPRINT 1: SERVER-SIDE SEARCH
+// ============================================================================
+
+export async function searchEntitiesServer(query: string, sport?: string, entityType?: string, limit = 30) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.rpc("search_entities", {
+      query,
+      p_sport: sport || null,
+      p_entity_type: entityType || null,
+      p_limit: limit,
+    });
+    return data ?? [];
+  } catch {
+    // Fallback to existing ILIKE search if RPC not available
+    return searchAll(query, limit);
+  }
+}
+
+export async function getTopSearchEntities(limit = 500) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("search_index")
+      .select("entity_type, entity_id, sport_id, display_name, context, url_path, popularity, popularity_score")
+      .order("popularity_score", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// ============================================================================
+// SPRINT 1: TEAM ALL-TIME RECORDS
+// ============================================================================
+
+export async function getTeamAlltimeRecords(sportId: string, limit = 100) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("team_alltime_records")
+      .select("*")
+      .eq("sport_id", sportId)
+      .order("win_pct", { ascending: false })
+      .limit(limit);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getSchoolAlltimeRecord(schoolId: number, sportId: string) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("team_alltime_records")
+      .select("*")
+      .eq("school_id", schoolId)
+      .eq("sport_id", sportId)
+      .single();
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+// ============================================================================
+// EXISTING FUNCTION (unchanged)
+// ============================================================================
 
 export async function getAllTeamSeasonData(schoolId: number, sportId: string) {
   try {

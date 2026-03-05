@@ -54,26 +54,55 @@ export default function SearchTypeahead() {
     }
   }, []);
 
-  // Lazy load Fuse.js and search index
+  // Load Fuse.js and fetch search index from API
   useEffect(() => {
     async function loadFuse() {
       try {
+        // Fetch top search entities from API
+        const response = await fetch("/api/search/typeahead?limit=500");
+        if (!response.ok) throw new Error("Failed to fetch search index");
+
+        const { entities } = await response.json();
+
+        // Convert API entities to SearchResult format
+        const searchResults: SearchResult[] = (entities ?? []).map((entity: any) => {
+          let type: "player" | "school" | "coach" | "season" = "school";
+          if (entity.entity_type === "player") type = "player";
+          if (entity.entity_type === "coach") type = "coach";
+          if (entity.entity_type === "season") type = "season";
+
+          return {
+            type,
+            name: entity.display_name,
+            detail: entity.context,
+            href: entity.url_path,
+            icon: entity.entity_type === "player" ? "👤" : entity.entity_type === "coach" ? "🧑‍🏫" : entity.entity_type === "season" ? "📅" : "🏫",
+            sport: entity.sport_id,
+          };
+        });
+
+        // Initialize Fuse.js with fetched data
         const Fuse = (await import("fuse.js")).default;
-        // In production, this would fetch from /api/search-index
-        // For now, use popular searches as the index
+        const fuse = new Fuse(searchResults, {
+          keys: ["name", "detail"],
+          threshold: 0.4,
+          includeScore: true,
+          ignoreLocation: true,
+        });
+        fuseRef.current = (q: string) =>
+          fuse.search(q).map((r) => ({ item: r.item, score: r.score ?? 1 }));
+      } catch (error) {
+        console.warn("[SearchTypeahead] Failed to load search index, falling back to popular searches:", error);
+        // Fallback to popular searches
+        const Fuse = (await import("fuse.js")).default;
         const fuse = new Fuse(POPULAR_SEARCHES, {
           keys: ["name", "detail"],
           threshold: 0.4,
           includeScore: true,
           ignoreLocation: true,
         });
-        fuseRef.current = (q: string) => fuse.search(q).map(r => ({ item: r.item, score: r.score ?? 1 }));
-      } catch {
-        // Fallback to simple filter
         fuseRef.current = (q: string) =>
-          POPULAR_SEARCHES.filter((s) =>
-            s.name.toLowerCase().includes(q.toLowerCase())
-          ).map((item) => ({ item, score: 0 }));
+          fuse.search(q).map((r) => ({ item: r.item, score: r.score ?? 1 }));
       }
     }
     loadFuse();

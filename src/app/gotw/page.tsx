@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SPORT_META } from '@/lib/sports';
-import Header from '@/components/layout/Header';
+import HeaderWithScores from '@/components/layout/HeaderWithScores';
 import Footer from '@/components/layout/Footer';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import PSPPromo from '@/components/ads/PSPPromo';
@@ -103,7 +103,7 @@ export default async function GotwPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <HeaderWithScores />
       <Breadcrumb items={[{ label: 'Game of the Week' }]} />
 
       {/* ════════ HEADER BAR ════════ */}

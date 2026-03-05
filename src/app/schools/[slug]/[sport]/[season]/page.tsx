@@ -287,7 +287,16 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                             )}
                           </td>
                           <td className="text-center text-sm font-medium">
-                            {ourScore != null && theirScore != null ? `${ourScore}-${theirScore}` : "—"}
+                            {ourScore != null && theirScore != null ? (
+                              <Link
+                                href={`/${sport}/games/${g.id}`}
+                                className="hover:underline"
+                                style={{ color: "var(--link)" }}
+                                title="View game details"
+                              >
+                                {ourScore}-{theirScore}
+                              </Link>
+                            ) : "—"}
                           </td>
                           <td className="text-xs">
                             {isPlayoff ? (

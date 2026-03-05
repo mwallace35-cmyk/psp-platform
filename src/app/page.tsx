@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import Link from "next/link";
-import Header from "@/components/layout/Header";
+import HeaderWithScores from "@/components/layout/HeaderWithScores";
 import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -76,32 +76,36 @@ const ALUMNI = [
   { emoji: "🏈", name: "D'Andre Swift", team: "Bears", hs: "St. Joseph's Prep" },
 ];
 
-/* ── Recent Scores (sidebar) ── */
-const SCORES = [
-  { home: "SJP", away: "Pitt CC", hs: 35, as: 21, status: "Final · FB", win: true },
-  { home: "N-G", away: "MCS", hs: 72, as: 58, status: "Final · BB", win: true },
-  { home: "Imhotep", away: "MLK", hs: 82, as: 59, status: "Final · BB", win: true },
-  { home: "Roman", away: "Judge", hs: 68, as: 61, status: "Final · BB", win: true },
-  { home: "La Salle", away: "Bonner", hs: 8, as: 2, status: "Final · BSB", win: true },
-];
+const SPORT_ABBREV: Record<string, string> = {
+  football: "FB", basketball: "BB", baseball: "BSB", lacrosse: "LAX",
+  soccer: "SOC", "track-field": "TF", wrestling: "WR",
+};
 
 async function getOverviewStats() {
   try {
     const supabase = await createClient();
-    const [schools, players, seasons, championships] = await Promise.all([
+    const [schools, players, seasons, championships, recentGames] = await Promise.all([
       supabase.from("schools").select("id", { count: "exact", head: true }),
       supabase.from("players").select("id", { count: "exact", head: true }),
       supabase.from("seasons").select("id", { count: "exact", head: true }),
       supabase.from("championships").select("id", { count: "exact", head: true }),
+      supabase
+        .from("games")
+        .select("id, sport_id, home_score, away_score, game_type, home_school:schools!games_home_school_id_fkey(id, name, short_name, slug), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug)")
+        .not("home_score", "is", null)
+        .not("away_score", "is", null)
+        .order("game_date", { ascending: false })
+        .limit(6),
     ]);
     return {
       schools: schools.count ?? 0,
       players: players.count ?? 0,
       seasons: seasons.count ?? 0,
       championships: championships.count ?? 0,
+      recentGames: recentGames.data ?? [],
     };
   } catch {
-    return { schools: 405, players: 10057, seasons: 76, championships: 713 };
+    return { schools: 405, players: 10057, seasons: 76, championships: 713, recentGames: [] };
   }
 }
 
@@ -110,7 +114,7 @@ export default async function HomePage() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Header />
+      <HeaderWithScores />
 
       <div className="espn-container" style={{ flex: 1 }}>
         {/* ━━ MAIN CONTENT ━━ */}
@@ -214,19 +218,37 @@ export default async function HomePage() {
           <div className="widget">
             <div className="w-head">Recent Scores <span className="badge">Live</span></div>
             <div className="w-body">
-              {SCORES.map((g, i) => (
-                <div key={i} className="w-row" style={{ flexDirection: "column", alignItems: "stretch", gap: 2, padding: "8px 14px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                    <span style={{ fontWeight: g.win ? 800 : 500, color: g.win ? "var(--text)" : "var(--g400)" }}>{g.home}</span>
-                    <span style={{ fontWeight: 800, color: g.win ? "var(--text)" : "var(--g400)" }}>{g.hs}</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-                    <span style={{ fontWeight: 500, color: "var(--g400)" }}>{g.away}</span>
-                    <span style={{ fontWeight: 500, color: "var(--g400)" }}>{g.as}</span>
-                  </div>
-                  <div style={{ fontSize: 9, color: "var(--psp-gold)", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".3px" }}>{g.status}</div>
-                </div>
-              ))}
+              {stats.recentGames.length > 0 ? stats.recentGames.map((g: any) => {
+                const home = g.home_school;
+                const away = g.away_school;
+                const homeWin = (g.home_score ?? 0) >= (g.away_score ?? 0);
+                const sportAbbr = SPORT_ABBREV[g.sport_id] || g.sport_id?.toUpperCase();
+                const gameType = g.game_type && g.game_type !== "regular"
+                  ? ` · ${g.game_type.charAt(0).toUpperCase() + g.game_type.slice(1)}`
+                  : "";
+                return (
+                  <Link key={g.id} href={`/${g.sport_id}/games/${g.id}`} style={{ textDecoration: "none", display: "block" }}>
+                    <div className="w-row" style={{ flexDirection: "column", alignItems: "stretch", gap: 2, padding: "8px 14px", cursor: "pointer" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                        <span style={{ fontWeight: homeWin ? 800 : 500, color: homeWin ? "var(--text)" : "var(--g400)" }}>{home?.short_name || home?.name}</span>
+                        <span style={{ fontWeight: 800, color: homeWin ? "var(--text)" : "var(--g400)" }}>{g.home_score}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                        <span style={{ fontWeight: !homeWin ? 800 : 500, color: !homeWin ? "var(--text)" : "var(--g400)" }}>{away?.short_name || away?.name}</span>
+                        <span style={{ fontWeight: 800, color: !homeWin ? "var(--text)" : "var(--g400)" }}>{g.away_score}</span>
+                      </div>
+                      <div style={{ fontSize: 9, color: "var(--psp-gold)", fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: ".3px" }}>Final · {sportAbbr}{gameType}</div>
+                    </div>
+                  </Link>
+                );
+              }) : (
+                <div className="w-row" style={{ padding: "12px 14px", fontSize: 12, color: "var(--g400)" }}>No recent scores</div>
+              )}
+              {stats.recentGames.length > 0 && (
+                <Link href="/scores" style={{ display: "block", textAlign: "center", padding: "10px", fontSize: 11, fontWeight: 700, color: "var(--psp-gold)", textTransform: "uppercase" as const, letterSpacing: ".5px" }}>
+                  All Scores →
+                </Link>
+              )}
             </div>
           </div>
 

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import Header from "@/components/layout/Header";
+import HeaderWithScores from "@/components/layout/HeaderWithScores";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PSPPromo from "@/components/ads/PSPPromo";
-import { searchAll, getDatabaseStats, getTopSchoolsByChampionships, SPORT_META } from "@/lib/data";
+import { searchEntitiesServer, getDatabaseStats, getTopSchoolsByChampionships, SPORT_META, VALID_SPORTS } from "@/lib/data";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -59,11 +59,16 @@ export default async function SearchPage({
 }) {
   const { q = "", sport } = await searchParams;
   const hasQuery = q.length >= 2;
-  const results = hasQuery ? await searchAll(q) : [];
+  const results = hasQuery ? await searchEntitiesServer(q, sport || undefined) : [];
+
+  // Filter by sport if provided
+  const filteredResults = sport && VALID_SPORTS.includes(sport as any)
+    ? results.filter((r: any) => !r.sport_id || r.sport_id === sport)
+    : results;
 
   // Group results by entity type
   const grouped: Record<string, any[]> = {};
-  for (const r of results) {
+  for (const r of filteredResults as any[]) {
     const type = r.entity_type || "other";
     if (!grouped[type]) grouped[type] = [];
     grouped[type].push(r);
@@ -79,7 +84,7 @@ export default async function SearchPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <HeaderWithScores />
       <Breadcrumb items={[{ label: "Search Database" }]} />
 
       {/* ════════ HERO SEARCH BAR ════════ */}
@@ -144,15 +149,67 @@ export default async function SearchPage({
         <Link href="/archive">Archive</Link>
       </nav>
 
+      {/* ════════ SPORT FILTER PILLS (when searching) ════════ */}
+      {hasQuery && (
+        <div style={{ padding: "0 20px", borderBottom: "1px solid var(--psp-gray-200)", background: "var(--psp-gray-50)" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto", padding: "12px 0", display: "flex", gap: 8, overflow: "x auto", alignItems: "center" }}>
+            <span style={{ fontSize: 12, color: "var(--psp-gray-500)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap" }}>
+              Filter:
+            </span>
+            <Link
+              href={`/search?q=${encodeURIComponent(q)}`}
+              style={{
+                padding: "6px 14px",
+                borderRadius: 20,
+                border: !sport ? "2px solid var(--psp-blue)" : "1px solid var(--psp-gray-200)",
+                background: !sport ? "var(--psp-blue)" : "transparent",
+                color: !sport ? "#fff" : "var(--psp-navy)",
+                fontSize: 13,
+                fontWeight: 600,
+                textDecoration: "none",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              All
+            </Link>
+            {VALID_SPORTS.map((s: any) => {
+              const meta = (SPORT_META as any)[s];
+              return (
+                <Link
+                  key={s}
+                  href={`/search?q=${encodeURIComponent(q)}&sport=${s}`}
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: 20,
+                    border: sport === s ? "2px solid var(--psp-blue)" : "1px solid var(--psp-gray-200)",
+                    background: sport === s ? "var(--psp-blue)" : "transparent",
+                    color: sport === s ? "#fff" : "var(--psp-navy)",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {meta?.emoji} {meta?.name || s}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* ════════ MAIN 2-COL LAYOUT ════════ */}
       <div className="hub-body">
         <div className="hub-main">
           {hasQuery ? (
-            results.length > 0 ? (
+            filteredResults.length > 0 ? (
               /* ──── RESULTS VIEW ──── */
               <div>
                 <div className="hub-sec-head">
-                  <h3>{results.length} result{results.length !== 1 ? "s" : ""} for &quot;{q}&quot;</h3>
+                  <h3>{filteredResults.length} result{filteredResults.length !== 1 ? "s" : ""} for &quot;{q}&quot;{sport ? ` in ${(SPORT_META as any)[sport]?.name || sport}` : ""}</h3>
                 </div>
 
                 {Object.entries(grouped).map(([type, items]) => {
@@ -191,8 +248,8 @@ export default async function SearchPage({
                             }}
                             className="search-result-row"
                           >
-                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                              {item.sport && (
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
+                              {item.sport_id && (
                                 <span style={{
                                   fontSize: 16,
                                   width: 28,
@@ -203,7 +260,7 @@ export default async function SearchPage({
                                   borderRadius: 6,
                                   background: "var(--psp-gray-100)",
                                 }}>
-                                  {sportEmoji[item.sport] || "📋"}
+                                  {sportEmoji[item.sport_id] || "📋"}
                                 </span>
                               )}
                               <div>
@@ -217,7 +274,21 @@ export default async function SearchPage({
                                 )}
                               </div>
                             </div>
-                            <span style={{ fontSize: 12, color: "var(--psp-gray-400)" }}>→</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                              {item.relevance && item.relevance > 0 && (
+                                <span style={{
+                                  fontSize: 11,
+                                  color: "var(--psp-gray-400)",
+                                  background: "var(--psp-gray-100)",
+                                  padding: "2px 8px",
+                                  borderRadius: 4,
+                                  whiteSpace: "nowrap",
+                                }}>
+                                  {Math.round(item.relevance * 100)}% match
+                                </span>
+                              )}
+                              <span style={{ fontSize: 12, color: "var(--psp-gray-400)" }}>→</span>
+                            </div>
                           </Link>
                         ))}
                       </div>

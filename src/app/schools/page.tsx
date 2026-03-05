@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
-import Header from '@/components/layout/Header';
+import HeaderWithScores from '@/components/layout/HeaderWithScores';
 import Footer from '@/components/layout/Footer';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import { getAllSchools } from '@/lib/data';
@@ -47,7 +47,7 @@ export default async function SchoolsPage() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Header />
+      <HeaderWithScores />
 
       <div className="espn-container" style={{ flex: 1 }}>
         <main>

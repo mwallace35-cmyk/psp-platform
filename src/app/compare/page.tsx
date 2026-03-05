@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import Header from "@/components/layout/Header";
+import HeaderWithScores from "@/components/layout/HeaderWithScores";
 import Footer from "@/components/layout/Footer";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -117,7 +117,7 @@ export default async function ComparePage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <HeaderWithScores />
       <Breadcrumb items={[{ label: "Compare Players" }]} />
 
       {/* ════════ HEADER BAR ════════ */}

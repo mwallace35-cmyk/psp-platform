@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Header from '@/components/layout/Header';
+import HeaderWithScores from '@/components/layout/HeaderWithScores';
 import Footer from '@/components/layout/Footer';
 import { Breadcrumb } from '@/components/ui';
 import { STAT_DEFINITIONS } from '@/lib/stats';
@@ -69,7 +69,7 @@ export default function GlossaryPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <Header />
+      <HeaderWithScores />
       <main className="wrapper">
         <div className="hero-container">
           <div className="hero-content">

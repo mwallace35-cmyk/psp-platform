@@ -1,5 +1,5 @@
 import { Breadcrumb } from "@/components/ui";
-import Header from "@/components/layout/Header";
+import HeaderWithScores from "@/components/layout/HeaderWithScores";
 import Footer from "@/components/layout/Footer";
 import { getTrackedAlumni, getSocialPosts, getFeaturedAlumni, getAlumniCounts } from "@/lib/data";
 import OurGuysClient from "./OurGuysClient";
@@ -24,7 +24,7 @@ export default async function OurGuysPage() {
 
   return (
     <>
-      <Header />
+      <HeaderWithScores />
       <Breadcrumb items={[{ label: "Our Guys" }]} />
 
       {/* Page Header Bar — matches sport hub style */}
