@@ -40,7 +40,7 @@ const TICKER_PROMOS = [
 /* MaxPreps-style sport dropdown links — each sport gets the same structure */
 const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
   football: [
-    { label: "News", href: "/articles?sport=football" },
+    { label: "News", href: "/football/news" },
     { label: "Teams", href: "/football/teams" },
     { label: "Leaderboards", href: "/football/leaderboards/rushing_yards" },
     { label: "Championships", href: "/football/championships" },
@@ -49,7 +49,7 @@ const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
     { label: "Compare Players", href: "/compare" },
   ],
   basketball: [
-    { label: "News", href: "/articles?sport=basketball" },
+    { label: "News", href: "/basketball/news" },
     { label: "Teams", href: "/basketball/teams" },
     { label: "Leaderboards", href: "/basketball/leaderboards/points" },
     { label: "Championships", href: "/basketball/championships" },
@@ -58,7 +58,7 @@ const SPORT_DD_LINKS: Record<string, { label: string; href: string }[]> = {
     { label: "Compare Players", href: "/compare" },
   ],
   baseball: [
-    { label: "News", href: "/articles?sport=baseball" },
+    { label: "News", href: "/baseball/news" },
     { label: "Teams", href: "/baseball/teams" },
     { label: "Championships", href: "/baseball/championships" },
     { label: "Records", href: "/baseball/records" },
