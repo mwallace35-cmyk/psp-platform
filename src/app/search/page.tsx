@@ -259,18 +259,18 @@ export default async function SearchPage({
           ) : (
             /* ──── EMPTY STATE: DISCOVERY ──── */
             <div>
-              {/* Browse by Sport */}
+              {/* Browse by Sport — Big 3 */}
               <div className="hub-sec-head">
                 <h3>Browse by Sport</h3>
                 <Link href="/schools" className="hub-more">All Schools →</Link>
               </div>
               <div style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
-                gap: 10,
-                marginBottom: 28,
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 12,
+                marginBottom: 12,
               }}>
-                {SPORT_BROWSE.map((s) => {
+                {SPORT_BROWSE.slice(0, 3).map((s) => {
                   const meta = SPORT_META[s.sport as keyof typeof SPORT_META];
                   return (
                     <Link
@@ -280,19 +280,56 @@ export default async function SearchPage({
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        padding: "18px 12px",
+                        padding: "24px 12px 20px",
                         borderRadius: 10,
-                        background: `linear-gradient(135deg, ${s.color}18 0%, ${s.color}08 100%)`,
-                        border: `1px solid ${s.color}30`,
+                        background: `linear-gradient(135deg, ${s.color}20 0%, ${s.color}08 100%)`,
+                        border: `2px solid ${s.color}40`,
                         textDecoration: "none",
                         transition: "transform 0.15s, box-shadow 0.15s",
                       }}
                       className="sport-browse-card"
                     >
-                      <span style={{ fontSize: 32, marginBottom: 6 }}>{s.emoji}</span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif", letterSpacing: 0.5 }}>
+                      <span style={{ fontSize: 38, marginBottom: 8 }}>{s.emoji}</span>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: "var(--psp-navy)", fontFamily: "Barlow Condensed, sans-serif", letterSpacing: 0.5 }}>
                         {meta?.name || s.sport}
                       </span>
+                    </Link>
+                  );
+                })}
+              </div>
+              {/* Other Sports — compact row */}
+              <div style={{
+                display: "flex",
+                gap: 8,
+                marginBottom: 28,
+              }}>
+                {SPORT_BROWSE.slice(3).map((s) => {
+                  const meta = SPORT_META[s.sport as keyof typeof SPORT_META];
+                  return (
+                    <Link
+                      key={s.sport}
+                      href={`/${s.sport}`}
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                        padding: "10px 8px",
+                        borderRadius: 8,
+                        border: "1px solid var(--psp-gray-200)",
+                        textDecoration: "none",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: "var(--psp-gray-500)",
+                        fontFamily: "Barlow Condensed, sans-serif",
+                        letterSpacing: 0.3,
+                        transition: "border-color 0.15s, color 0.15s",
+                      }}
+                      className="sport-browse-pill"
+                    >
+                      <span style={{ fontSize: 16 }}>{s.emoji}</span>
+                      {meta?.name || s.sport}
                     </Link>
                   );
                 })}
