@@ -1203,6 +1203,62 @@ export async function getRecentGamesAll(limit = 10) {
   }
 }
 
+export async function getSeasonsBySport(sportId: string) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("games")
+      .select("season_id, seasons(id, label, year_start, year_end)")
+      .eq("sport_id", sportId)
+      .not("home_score", "is", null)
+      .not("away_score", "is", null);
+    if (!data) return [];
+    // Deduplicate seasons
+    const seasonMap = new Map<number, any>();
+    for (const row of data) {
+      const s = (row as any).seasons;
+      if (s && !seasonMap.has(s.id)) {
+        seasonMap.set(s.id, { id: s.id, label: s.label, year_start: s.year_start, year_end: s.year_end });
+      }
+    }
+    return Array.from(seasonMap.values()).sort((a, b) => b.year_start - a.year_start);
+  } catch {
+    return [];
+  }
+}
+
+export async function getGamesBySportAndSeason(sportId: string, seasonLabel?: string | null) {
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from("games")
+      .select(
+        "id, sport_id, home_score, away_score, game_date, game_type, venue, playoff_round, seasons(id, label), home_school:schools!games_home_school_id_fkey(id, name, short_name, slug, city, mascot), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug, city, mascot)"
+      )
+      .eq("sport_id", sportId)
+      .not("home_score", "is", null)
+      .not("away_score", "is", null)
+      .order("game_date", { ascending: false });
+
+    if (seasonLabel) {
+      // Look up season id first
+      const { data: seasonData } = await supabase
+        .from("seasons")
+        .select("id")
+        .eq("label", seasonLabel)
+        .single();
+      if (seasonData) {
+        query = query.eq("season_id", seasonData.id);
+      }
+    }
+
+    const { data } = await query.limit(500);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
 export async function getTeamsWithRecords(sportId: string) {
   try {
     const supabase = await createClient();
