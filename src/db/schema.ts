@@ -517,6 +517,50 @@ export const potwNominees = pgTable("potw_nominees", {
 });
 
 // ============================================================================
+// GOTW (Game of the Week) TABLES
+// ============================================================================
+
+export const gotwNominees = pgTable("gotw_nominees", {
+  id: serial("id").primaryKey(),
+  homeTeam: varchar("home_team", { length: 150 }).notNull(),
+  awayTeam: varchar("away_team", { length: 150 }).notNull(),
+  homeSchoolId: integer("home_school_id").references(() => schools.id),
+  awaySchoolId: integer("away_school_id").references(() => schools.id),
+  sportId: varchar("sport_id", { length: 30 }).references(() => sports.id),
+  seasonId: integer("season_id").references(() => seasons.id),
+  weekLabel: varchar("week_label", { length: 50 }).notNull(),
+  gameDate: date("game_date"),
+  gameTime: varchar("game_time", { length: 50 }),
+  venue: varchar("venue", { length: 200 }),
+  context: text("context"),
+  voteCount: integer("vote_count").default(0),
+  isWinner: boolean("is_winner").default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const gotwVotes = pgTable("gotw_votes", {
+  id: serial("id").primaryKey(),
+  gotwNomineeId: integer("gotw_nominee_id").references(() => gotwNominees.id),
+  ipHash: varchar("ip_hash", { length: 64 }).notNull(),
+  weekLabel: varchar("week_label", { length: 50 }).notNull(),
+  votedAt: timestamp("voted_at", { withTimezone: true }).defaultNow(),
+});
+
+export const gotwWinners = pgTable("gotw_winners", {
+  id: serial("id").primaryKey(),
+  homeTeam: varchar("home_team", { length: 150 }).notNull(),
+  awayTeam: varchar("away_team", { length: 150 }).notNull(),
+  homeScore: integer("home_score"),
+  awayScore: integer("away_score"),
+  sportId: varchar("sport_id", { length: 30 }).references(() => sports.id),
+  week: integer("week").notNull(),
+  year: integer("year").notNull(),
+  voteCount: integer("vote_count").default(0),
+  context: text("context"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+// ============================================================================
 // SYSTEM TABLES
 // ============================================================================
 

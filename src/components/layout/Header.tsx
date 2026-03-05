@@ -29,6 +29,7 @@ const RECENT_SCORES = [
 ];
 
 const TICKER_PROMOS = [
+  { icon: "🎯", text: "<strong>GOTW:</strong> Vote Now", href: "/gotw" },
   { icon: "🗳️", text: "<strong>POTW:</strong> Vote Now", href: "/potw" },
   { icon: "📅", text: "<strong>Friday:</strong> SJP vs La Salle", href: "/events" },
   { icon: "📰", text: "<strong>New:</strong> 2025 All-City Teams", href: "/articles" },
@@ -169,6 +170,10 @@ export default function Header() {
             POTW
           </Link>
 
+          <Link href="/gotw" className={`nav-link ${isActive("/gotw") ? "active" : ""}`}>
+            GOTW
+          </Link>
+
           <Link href="/our-guys" className={`nav-link ${isActive("/our-guys") ? "active" : ""}`}>
             Our Guys
           </Link>
@@ -191,6 +196,7 @@ export default function Header() {
               <div className="mega-col">
                 <div className="mega-col-head">Fan Zone</div>
                 <Link href="/potw">🗳️ Player of the Week</Link>
+                <Link href="/gotw">🎯 Game of the Week</Link>
                 <Link href="/events">📅 Events & Camps</Link>
                 <Link href="/community">💬 Community</Link>
                 <Link href="/articles">📰 Articles</Link>
@@ -276,6 +282,7 @@ export default function Header() {
             <Link href="/events" onClick={() => setMobileOpen(false)}>Events</Link>
             <Link href="/articles" onClick={() => setMobileOpen(false)}>News</Link>
             <Link href="/potw" onClick={() => setMobileOpen(false)}>Player of the Week</Link>
+            <Link href="/gotw" onClick={() => setMobileOpen(false)}>Game of the Week</Link>
             <Link href="/our-guys" onClick={() => setMobileOpen(false)}>Our Guys</Link>
             <Link href="/recruiting" onClick={() => setMobileOpen(false)}>Recruiting</Link>
             <Link href="/coaches" onClick={() => setMobileOpen(false)}>Coaches</Link>

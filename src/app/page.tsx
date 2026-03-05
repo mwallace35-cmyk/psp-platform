@@ -266,6 +266,17 @@ export default async function HomePage() {
             </div>
           </div>
 
+          {/* GOTW Widget */}
+          <div className="widget">
+            <div className="w-head" style={{ background: "var(--psp-blue, #3b82f6)", color: "#fff" }}>🎯 Game of the Week</div>
+            <div className="w-body" style={{ padding: "12px 14px", textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: "var(--text)" }}>Vote for the biggest matchup!</div>
+              <Link href="/gotw" className="btn-primary" style={{ display: "inline-block", fontSize: 12, padding: "6px 18px", textDecoration: "none", background: "var(--psp-blue, #3b82f6)", color: "#fff", borderRadius: 6 }}>
+                Vote Now →
+              </Link>
+            </div>
+          </div>
+
           {/* POTW Widget */}
           <div className="widget">
             <div className="w-head" style={{ background: "var(--psp-gold)", color: "#000" }}>🗳️ Player of the Week</div>
@@ -284,6 +295,7 @@ export default async function HomePage() {
           <div className="widget">
             <div className="w-head">Quick Links</div>
             <div className="w-body">
+              <Link href="/gotw" className="w-link">&#8594; Game of the Week</Link>
               <Link href="/potw" className="w-link">&#8594; Player of the Week</Link>
               <Link href="/our-guys" className="w-link">&#8594; Our Guys / Pro Alumni</Link>
               <Link href="/schools" className="w-link">&#8594; All Schools</Link>

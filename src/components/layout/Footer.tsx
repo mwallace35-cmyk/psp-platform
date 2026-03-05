@@ -62,6 +62,7 @@ export default function Footer() {
             <Link href="/events">Events</Link>
             <Link href="/community">Community</Link>
             <Link href="/potw">Player of the Week</Link>
+            <Link href="/gotw">Game of the Week</Link>
           </div>
 
           {/* About */}
