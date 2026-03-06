@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getFootballLeaders, getBasketballLeaders } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import LeaderboardTable from "@/components/ui/LeaderboardTable";
+import ExportButton from "@/components/ui/ExportButton";
 import PSPPromo from "@/components/ads/PSPPromo";
 import type { Metadata } from "next";
 
@@ -176,8 +177,8 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
           </div>
         )}
 
-        {/* Filter dropdowns */}
-        <div className="flex flex-wrap gap-3 mb-6">
+        {/* Filter dropdowns & Export */}
+        <div className="flex flex-wrap gap-3 mb-6 items-center">
           <select
             className="px-3 py-2 rounded border text-sm"
             style={{ borderColor: "var(--psp-navy)", color: "var(--psp-navy)" }}
@@ -216,6 +217,25 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
               </option>
             ))}
           </select>
+
+          {tableData.length > 0 && (
+            <div style={{ marginLeft: "auto" }}>
+              <ExportButton
+                data={tableData}
+                filename={`${sport}-${stat}-leaders.csv`}
+                columns={[
+                  { key: "rank", label: "Rank" },
+                  { key: "playerName", label: "Player" },
+                  { key: "schoolName", label: "School" },
+                  { key: "seasonLabel", label: "Season" },
+                  ...(statConfig?.cols.map((col) => ({
+                    key: col,
+                    label: colLabels[col] || col,
+                  })) || []),
+                ]}
+              />
+            </div>
+          )}
         </div>
 
         <PSPPromo size="banner" variant={1} />
