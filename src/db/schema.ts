@@ -89,6 +89,8 @@ export const schools = pgTable("schools", {
   schoolType: text("school_type"),
   aliases: text("aliases").array(),
   v4Id: varchar("v4_id", { length: 100 }),
+  division: varchar("division", { length: 50 }),
+  piaaClass: varchar("piaa_class", { length: 10 }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),

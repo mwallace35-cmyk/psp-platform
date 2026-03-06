@@ -61,7 +61,7 @@ export async function getSchoolsBySport(sportId: string, limit = 50) {
       .from("schools")
       .select(
         `
-        id, slug, name, short_name, city, mascot,
+        id, slug, name, short_name, city, mascot, colors, division, piaa_class, league_id,
         leagues(name, short_name),
         team_seasons!inner(wins, losses, ties, sport_id)
       `
@@ -86,6 +86,7 @@ export async function getAllSchools() {
       .select(`
         id, slug, name, short_name, city, state, mascot, league_id, colors, logo_url, address,
         principal, athletic_director, athletic_director_email, phone, enrollment, school_type,
+        division, piaa_class,
         leagues(name, short_name)
       `)
       .is("deleted_at", null)
@@ -1664,7 +1665,7 @@ export async function getTeamsWithRecords(sportId: string) {
     // Get all schools that have team_seasons for this sport
     const { data: teamSeasons } = await supabase
       .from("team_seasons")
-      .select("school_id, wins, losses, ties, schools(id, name, slug, city, state, league_id, leagues(name, short_name)), seasons(year_start)")
+      .select("school_id, wins, losses, ties, schools(id, name, slug, city, state, league_id, colors, division, piaa_class, leagues(name, short_name)), seasons(year_start)")
       .eq("sport_id", sportId);
 
     if (!teamSeasons || teamSeasons.length === 0) return [];
@@ -1673,6 +1674,8 @@ export async function getTeamsWithRecords(sportId: string) {
     const schoolMap = new Map<number, {
       school: any;
       league: string;
+      division: string | null;
+      piaaClass: string | null;
       totalWins: number;
       totalLosses: number;
       totalTies: number;
@@ -1686,6 +1689,8 @@ export async function getTeamsWithRecords(sportId: string) {
         schoolMap.set(schoolId, {
           school: (ts as any).schools,
           league: (ts as any).schools?.leagues?.name || "Independent",
+          division: (ts as any).schools?.division || null,
+          piaaClass: (ts as any).schools?.piaa_class || null,
           totalWins: 0,
           totalLosses: 0,
           totalTies: 0,

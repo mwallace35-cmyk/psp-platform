@@ -80,7 +80,7 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
 
   // School colors — stored as JSONB object {primary?: string, secondary?: string}
   const schoolColors = school.colors as { primary?: string; secondary?: string } | null;
-  const primaryColor = schoolColors?.primary || meta.color;
+  const primaryColor = schoolColors?.primary || "#0a1628"; // Navy fallback (not sport color)
 
   return (
     <>
