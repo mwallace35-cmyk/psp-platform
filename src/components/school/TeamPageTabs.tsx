@@ -22,6 +22,7 @@ interface TeamPageTabsProps {
   seasonLabels: string[]; // sorted newest first
   seasonsData: Record<string, SeasonData>;
   allChamps?: any[];
+  allAwards?: any[];
   notableAlumni?: any[];
   seasonSummaries?: any[];
   topPlayers?: any[];
@@ -54,6 +55,7 @@ export default function TeamPageTabs({
   seasonLabels,
   seasonsData,
   allChamps = [],
+  allAwards = [],
   notableAlumni = [],
   seasonSummaries = [],
   topPlayers = [],
@@ -248,7 +250,7 @@ export default function TeamPageTabs({
             {activeTab === "schedule" && <ScheduleTab data={data} schoolSlug={schoolSlug} sportId={sportId} sportColor={sportColor} />}
             {activeTab === "roster" && <RosterTab data={data} sportId={sportId} sportColor={sportColor} />}
             {activeTab === "stats" && <StatsTab data={data} sportId={sportId} sportName={sportName} sportColor={sportColor} />}
-            {activeTab === "awards" && <AwardsTab data={data} sportId={sportId} sportColor={sportColor} />}
+            {activeTab === "awards" && <AwardsTab data={data} sportId={sportId} sportColor={sportColor} allChamps={allChamps} allAwards={allAwards} />}
           </>
         )}
       </div>
@@ -1130,30 +1132,52 @@ function StatBlock({ label, value, color }: { label: string; value: string; colo
 // ============================================================================
 // AWARDS TAB (unchanged)
 // ============================================================================
-function AwardsTab({ data, sportId, sportColor }: { data: SeasonData; sportId: string; sportColor: string }) {
-  const hasAwards = data.awards.length > 0;
-  const hasChamps = data.championships.length > 0;
+function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }: { data: SeasonData; sportId: string; sportColor: string; allChamps?: any[]; allAwards?: any[] }) {
+  // Use per-season data if available, fall back to all-time data
+  const seasonAwards = data.awards || [];
+  const seasonChamps = data.championships || [];
+  const awards = seasonAwards.length > 0 ? seasonAwards : allAwards;
+  const champs = seasonChamps.length > 0 ? seasonChamps : allChamps;
+  const isAllTime = seasonAwards.length === 0 && seasonChamps.length === 0;
+
+  const hasAwards = awards.length > 0;
+  const hasChamps = champs.length > 0;
 
   if (!hasAwards && !hasChamps) {
-    return <EmptyState icon="🏆" text="No awards or championships for this season" />;
+    return <EmptyState icon="🏆" text="No awards or championships on record" />;
+  }
+
+  // Group awards by type for cleaner display
+  const awardsByType: Record<string, any[]> = {};
+  for (const a of awards) {
+    const type = a.award_type || a.award_name || "Award";
+    if (!awardsByType[type]) awardsByType[type] = [];
+    awardsByType[type].push(a);
   }
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
+      {isAllTime && (hasAwards || hasChamps) && (
+        <div style={{ padding: "8px 14px", background: "rgba(59, 130, 246, 0.08)", border: "1px solid var(--psp-blue)", borderRadius: 6, fontSize: 12, color: "var(--psp-blue)", fontWeight: 600 }}>
+          Showing all-time awards &amp; championships for this program
+        </div>
+      )}
+
       {hasChamps && (
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--psp-gold)", marginBottom: 12, letterSpacing: 1 }}>
-            Championships
+            🏆 Championships ({champs.length})
           </h3>
           <div style={{ display: "grid", gap: 8 }}>
-            {data.championships.map((c: any, i: number) => (
-              <div key={c.id || i} style={{ padding: "10px 14px", background: "rgba(240, 165, 0, 0.08)", border: "1px solid var(--psp-gold)", borderRadius: 6, display: "flex", alignItems: "center", gap: 10 }}>
+            {champs.map((c: any, i: number) => (
+              <div key={c.id || i} style={{ padding: "10px 14px", background: "rgba(240, 165, 0, 0.08)", border: "1px solid rgba(240, 165, 0, 0.3)", borderRadius: 6, display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 20 }}>🥇</span>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-gold)" }}>{c.level} Championship</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-gold)" }}>{c.level || c.championship_type || "Championship"}</div>
                   <div style={{ fontSize: 11, color: "var(--g400)" }}>
-                    {c.score && `${c.score} `}
-                    {c.opponent?.name && `vs ${c.opponent.name}`}
+                    {c.seasons?.label || c.year || ""}
+                    {c.score && ` · ${c.score}`}
+                    {(c.opponent?.name || c.opponent_name) && ` vs ${c.opponent?.name || c.opponent_name}`}
                   </div>
                 </div>
               </div>
@@ -1165,26 +1189,48 @@ function AwardsTab({ data, sportId, sportColor }: { data: SeasonData; sportId: s
       {hasAwards && (
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 12, letterSpacing: 1 }}>
-            Individual Awards ({data.awards.length})
+            🏅 Individual Awards ({awards.length})
           </h3>
-          <div style={{ display: "grid", gap: 6 }}>
-            {data.awards.map((a: any, i: number) => (
-              <div key={a.id || i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: "1px solid var(--g100)" }}>
-                <span style={{ fontSize: 16 }}>🏅</span>
-                <div style={{ flex: 1 }}>
-                  {a.players?.slug ? (
-                    <Link href={`/${sportId}/players/${a.players.slug}`} style={{ fontWeight: 600, fontSize: 13, color: "var(--psp-blue)", textDecoration: "none" }}>
-                      {a.players.name}
-                    </Link>
-                  ) : (
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>{a.player_name || "Unknown"}</span>
-                  )}
-                </div>
-                <span style={{ fontSize: 12, color: sportColor, fontWeight: 600 }}>{a.award_type || a.award_name || "Award"}</span>
-                <span style={{ fontSize: 11, color: "var(--g400)" }}>{a.designation || ""}</span>
+          {Object.entries(awardsByType).map(([type, items]) => (
+            <div key={type} style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: sportColor, textTransform: "uppercase", marginBottom: 6, letterSpacing: 0.5 }}>
+                {type.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())} ({items.length})
               </div>
-            ))}
-          </div>
+              <div style={{ display: "grid", gap: 4 }}>
+                {items.map((a: any, i: number) => (
+                  <div key={a.id || i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 0", borderBottom: "1px solid var(--g100)" }}>
+                    <div style={{ flex: 1 }}>
+                      {a.players?.slug ? (
+                        <Link href={`/${sportId}/players/${a.players.slug}`} style={{ fontWeight: 600, fontSize: 13, color: "var(--psp-blue)", textDecoration: "none" }}>
+                          {a.players?.name || a.player_name}
+                        </Link>
+                      ) : (
+                        <span style={{ fontWeight: 600, fontSize: 13 }}>{a.player_name || a.players?.name || "Unknown"}</span>
+                      )}
+                    </div>
+                    <span style={{ fontSize: 11, color: "var(--g500)", fontFamily: "'Barlow Condensed', sans-serif" }}>
+                      {a.seasons?.label || a.year || ""}
+                    </span>
+                    {a.award_tier && (
+                      <span style={{
+                        fontSize: 10,
+                        padding: "2px 6px",
+                        borderRadius: 4,
+                        fontWeight: 700,
+                        background: a.award_tier === 1 ? "rgba(240, 165, 0, 0.15)" : a.award_tier === 2 ? "rgba(59, 130, 246, 0.1)" : "var(--g100)",
+                        color: a.award_tier === 1 ? "var(--psp-gold)" : a.award_tier === 2 ? "var(--psp-blue)" : "var(--g400)",
+                      }}>
+                        {a.award_tier === 1 ? "1st Team" : a.award_tier === 2 ? "2nd Team" : `${a.award_tier}rd Team`}
+                      </span>
+                    )}
+                    {a.designation && (
+                      <span style={{ fontSize: 11, color: "var(--g400)" }}>{a.designation}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

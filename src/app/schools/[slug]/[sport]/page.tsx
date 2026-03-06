@@ -8,6 +8,7 @@ import {
   getLeagueTeams,
   getTopProgramsBySport,
   getSchoolChampionships,
+  getSchoolAwards,
   getSchoolNotableAlumni,
   getSchoolSeasonSummaries,
   getSchoolPlayers,
@@ -47,13 +48,14 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
   if (!meta) notFound();
 
   // Fetch all season data + sidebar data + program data in parallel
-  const [seasonsData, coaches, activeSports, leagueTeams, topPrograms, allChamps, notableAlumni, seasonSummaries, topPlayers] = await Promise.all([
+  const [seasonsData, coaches, activeSports, leagueTeams, topPrograms, allChamps, allAwards, notableAlumni, seasonSummaries, topPlayers] = await Promise.all([
     getAllTeamSeasonData(school.id, sport),
     getSchoolCoaches(school.id),
     getActiveSportsBySchool(school.id),
     getLeagueTeams(school.league_id, sport, school.id, 8),
     getTopProgramsBySport(sport, school.id, 6),
     getSchoolChampionships(school.id, sport),
+    getSchoolAwards(school.id, sport),
     getSchoolNotableAlumni(school.id, sport, 15),
     getSchoolSeasonSummaries(school.id, sport),
     getSchoolPlayers(school.id, sport, 30),
@@ -191,6 +193,7 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
                   seasonLabels={seasonLabels}
                   seasonsData={seasonsData}
                   allChamps={allChamps}
+                  allAwards={allAwards}
                   notableAlumni={notableAlumni}
                   seasonSummaries={seasonSummaries}
                   topPlayers={topPlayers}
