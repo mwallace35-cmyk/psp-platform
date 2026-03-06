@@ -59,6 +59,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       });
     }
+
+    // Career leaderboards (football + basketball only)
+    if (sport === "football" || sport === "basketball") {
+      const careerStats = sport === "football"
+        ? ["rushing", "passing", "receiving", "scoring"]
+        : ["scoring", "ppg", "rebounds", "assists"];
+      for (const stat of careerStats) {
+        entries.push({
+          url: `${baseUrl}/${sport}/career-leaders/${stat}`,
+          lastModified: new Date(),
+          changeFrequency: "weekly",
+          priority: 0.7,
+        });
+      }
+    }
   }
 
   // Fetch all schools and add to sitemap
@@ -163,6 +178,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Error fetching rivalries for sitemap:", error);
   }
 
+  // Games (recent games with scores — limit to most recent 500 for sitemap size)
+  try {
+    const { data: games } = await supabase
+      .from("games")
+      .select("id, sport_id, game_date")
+      .not("home_score", "is", null)
+      .not("away_score", "is", null)
+      .order("game_date", { ascending: false })
+      .limit(500);
+
+    if (games) {
+      for (const game of games) {
+        entries.push({
+          url: `${baseUrl}/${game.sport_id}/games/${game.id}`,
+          lastModified: game.game_date ? new Date(game.game_date) : new Date(),
+          changeFrequency: "yearly" as const,
+          priority: 0.5,
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching games for sitemap:", error);
+  }
+
   // Public content pages
   entries.push(
     {
@@ -181,6 +220,48 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/potw`,
       lastModified: new Date(),
       changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/compare`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/compare-schools`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/glossary`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/scores`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/community`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/our-guys`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/search`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
       priority: 0.8,
     }
   );

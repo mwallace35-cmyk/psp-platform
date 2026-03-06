@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SPORT_META } from '@/lib/sports';
 import { getEntitiesForArticle } from '@/lib/data';
+import { processArticleForDisplay } from '@/lib/content-cleaner';
 import AdPlaceholder, { LeaderboardAd } from '@/components/ads/AdPlaceholder';
 import CommentSection from '@/components/comments/CommentSection';
 import Breadcrumb from '@/components/ui/Breadcrumb';
@@ -210,7 +211,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           <div className="prose prose-sm max-w-none mb-6">
             <div
               dangerouslySetInnerHTML={{
-                __html: renderMarkdown(article.body || article.content || ''),
+                __html: renderMarkdown(processArticleForDisplay(article).cleanedBody),
               }}
             />
           </div>
