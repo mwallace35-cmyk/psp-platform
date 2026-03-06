@@ -2155,3 +2155,100 @@ export async function getAllTeamSeasonData(schoolId: number, sportId: string) {
     return {};
   }
 }
+
+// ============================================================================
+// SCHOOL TEAM PROFILE PAGE OVERHAUL: NEW DATA FUNCTIONS
+// ============================================================================
+
+export async function getSchoolNotableAlumni(schoolId: number, sportId: string, limit = 10) {
+  try {
+    const supabase = await createClient();
+    const STAT_TABLES: Record<string, string> = {
+      football: "football_player_seasons",
+      basketball: "basketball_player_seasons",
+      baseball: "baseball_player_seasons",
+    };
+    const table = STAT_TABLES[sportId];
+    if (!table) return [];
+
+    const { data } = await supabase
+      .from(table)
+      .select("player_id, players!inner(id, name, slug, college, pro_team, graduation_year, positions)")
+      .eq("school_id", schoolId)
+      .or("players.pro_team.not.is.null,players.college.not.is.null");
+
+    if (!data) return [];
+
+    // Deduplicate by player_id
+    const seen = new Set<number>();
+    const alumni: any[] = [];
+    for (const row of data as any[]) {
+      const pid = row.players?.id;
+      if (!pid || seen.has(pid)) continue;
+      if (!row.players.pro_team && !row.players.college) continue;
+      seen.add(pid);
+      alumni.push(row.players);
+    }
+
+    // Sort: pro players first, then by graduation_year desc
+    alumni.sort((a, b) => {
+      if (a.pro_team && !b.pro_team) return -1;
+      if (!a.pro_team && b.pro_team) return 1;
+      return (b.graduation_year || 0) - (a.graduation_year || 0);
+    });
+
+    return alumni.slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+export async function getSchoolRivalGames(schoolId: number, sportId: string, opponentSchoolId: number, limit = 10) {
+  try {
+    const supabase = await createClient();
+
+    // Games where schoolId is home and opponent is away, or vice versa
+    const { data: homeGames } = await supabase
+      .from("games")
+      .select("*, home_school:schools!games_home_school_id_fkey(id, name, slug), away_school:schools!games_away_school_id_fkey(id, name, slug)")
+      .eq("sport_id", sportId)
+      .eq("home_school_id", schoolId)
+      .eq("away_school_id", opponentSchoolId)
+      .order("game_date", { ascending: false })
+      .limit(limit);
+
+    const { data: awayGames } = await supabase
+      .from("games")
+      .select("*, home_school:schools!games_home_school_id_fkey(id, name, slug), away_school:schools!games_away_school_id_fkey(id, name, slug)")
+      .eq("sport_id", sportId)
+      .eq("home_school_id", opponentSchoolId)
+      .eq("away_school_id", schoolId)
+      .order("game_date", { ascending: false })
+      .limit(limit);
+
+    const all = [...(homeGames || []), ...(awayGames || [])];
+    all.sort((a: any, b: any) => (b.game_date || "").localeCompare(a.game_date || ""));
+    return all.slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+export async function getSchoolSeasonSummaries(schoolId: number, sportId: string) {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("team_seasons")
+      .select("id, wins, losses, ties, points_for, points_against, league_wins, league_losses, league_finish, playoff_result, ranking, seasons(label, year_start, year_end)")
+      .eq("school_id", schoolId)
+      .eq("sport_id", sportId)
+      .order("created_at", { ascending: false });
+
+    if (!data) return [];
+
+    // Sort by year descending
+    return (data as any[]).sort((a, b) => (b.seasons?.year_start || 0) - (a.seasons?.year_start || 0));
+  } catch {
+    return [];
+  }
+}
