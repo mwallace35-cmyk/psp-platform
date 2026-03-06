@@ -1162,23 +1162,43 @@ function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }
     return type.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
   };
 
-  const awardsByType: Record<string, any[]> = {};
+  // Build group key: type + source for differentiation (e.g. "All-Catholic · Coaches" vs "All-Catholic · Daily News")
+  const normalizeSource = (src: string | null) => {
+    if (!src) return null;
+    const lower = src.toLowerCase().trim();
+    if (lower === "daily news" || lower === "philadelphia daily news") return "Daily News";
+    if (lower === "catholic league") return "Coaches";
+    if (lower === "public league") return "Coaches";
+    if (lower.includes("football writers") || lower.includes("sports writers")) return src;
+    return src;
+  };
+
+  const awardsByGroup: Record<string, { type: string; source: string | null; items: any[] }> = {};
   for (const a of awards) {
     const rawType = a.award_type || a.award_name || "Award";
     const type = normalizeAwardType(rawType);
-    if (!awardsByType[type]) awardsByType[type] = [];
-    awardsByType[type].push(a);
+    const source = normalizeSource(a.source);
+    // Only append source to key when there are multiple sources for same type
+    const groupKey = source ? `${type}|||${source}` : type;
+    if (!awardsByGroup[groupKey]) awardsByGroup[groupKey] = { type, source, items: [] };
+    awardsByGroup[groupKey].items.push(a);
   }
 
   // Sort groups: All-City first, then All-Catholic, All-Public, All-State, then alphabetical
   const typeOrder = ["All-City", "All-Catholic", "All-Public", "All-Inter-Ac", "All-State", "All-American", "Player of the Year", "Pitcher of the Year", "MVP"];
-  const sortedTypes = Object.keys(awardsByType).sort((a, b) => {
-    const ai = typeOrder.indexOf(a);
-    const bi = typeOrder.indexOf(b);
-    if (ai !== -1 && bi !== -1) return ai - bi;
+  const sortedGroupKeys = Object.keys(awardsByGroup).sort((a, b) => {
+    const ga = awardsByGroup[a];
+    const gb = awardsByGroup[b];
+    const ai = typeOrder.indexOf(ga.type);
+    const bi = typeOrder.indexOf(gb.type);
+    if (ai !== -1 && bi !== -1) {
+      if (ai !== bi) return ai - bi;
+      // Same type, sort by source
+      return (ga.source || "").localeCompare(gb.source || "");
+    }
     if (ai !== -1) return -1;
     if (bi !== -1) return 1;
-    return a.localeCompare(b);
+    return ga.type.localeCompare(gb.type);
   });
 
   return (
@@ -1217,15 +1237,16 @@ function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }
           <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 12, letterSpacing: 1 }}>
             🏅 Individual Awards ({awards.length})
           </h3>
-          {sortedTypes.map((type) => {
-            const items = awardsByType[type];
+          {sortedGroupKeys.map((groupKey) => {
+            const group = awardsByGroup[groupKey];
+            const displayLabel = group.source ? `${group.type} · ${group.source}` : group.type;
             return (
-            <div key={type} style={{ marginBottom: 16 }}>
+            <div key={groupKey} style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: sportColor, textTransform: "uppercase", marginBottom: 6, letterSpacing: 0.5 }}>
-                {type} ({items.length})
+                {displayLabel} ({group.items.length})
               </div>
               <div style={{ display: "grid", gap: 4 }}>
-                {items.map((a: any, i: number) => (
+                {group.items.map((a: any, i: number) => (
                   <div key={a.id || i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 0", borderBottom: "1px solid var(--g100)" }}>
                     <div style={{ flex: 1 }}>
                       {a.players?.slug ? (
@@ -1235,11 +1256,14 @@ function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }
                       ) : (
                         <span style={{ fontWeight: 600, fontSize: 13 }}>{a.player_name || a.players?.name || "Unknown"}</span>
                       )}
+                      {a.position && (
+                        <span style={{ fontSize: 10, color: "var(--g400)", marginLeft: 6 }}>{a.position}</span>
+                      )}
                     </div>
                     <span style={{ fontSize: 11, color: "var(--g500)", fontFamily: "'Barlow Condensed', sans-serif" }}>
                       {a.seasons?.label || a.year || ""}
                     </span>
-                    {a.award_tier && (() => {
+                    {a.award_tier ? (() => {
                       const tier = Number(a.award_tier);
                       const suffix = tier === 1 ? "st" : tier === 2 ? "nd" : tier === 3 ? "rd" : "th";
                       return (
@@ -1254,7 +1278,18 @@ function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }
                           {tier}{suffix} Team
                         </span>
                       );
-                    })()}
+                    })() : a.category && (
+                      <span style={{
+                        fontSize: 10,
+                        padding: "2px 6px",
+                        borderRadius: 4,
+                        fontWeight: 700,
+                        background: a.category.includes("first") ? "rgba(240, 165, 0, 0.15)" : a.category.includes("second") ? "rgba(59, 130, 246, 0.1)" : "var(--g100)",
+                        color: a.category.includes("first") ? "var(--psp-gold)" : a.category.includes("second") ? "var(--psp-blue)" : "var(--g400)",
+                      }}>
+                        {a.category.replace(/-/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                      </span>
+                    )}
                     {a.designation && (
                       <span style={{ fontSize: 11, color: "var(--g400)" }}>{a.designation}</span>
                     )}
