@@ -263,8 +263,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/corrections`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/embed`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
     }
   );
+
+  // Add analytics and decade pages per sport
+  for (const sport of ["football", "basketball", "baseball"]) {
+    entries.push({
+      url: `${baseUrl}/${sport}/analytics`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    });
+    for (const decade of ["2000s", "2010s", "2020s"]) {
+      entries.push({
+        url: `${baseUrl}/${sport}/decades/${decade}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly",
+        priority: 0.6,
+      });
+    }
+  }
 
   // Fetch articles for sitemap
   try {
