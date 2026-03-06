@@ -29,9 +29,9 @@ interface StatConfig {
 
 const FOOTBALL_STATS: StatConfig[] = [
   { key: "rushing", label: "Rushing", cols: ["rush_yards", "rush_carries", "rush_td", "rush_ypc"] },
-  { key: "passing", label: "Passing", cols: ["pass_yards", "pass_comp", "pass_att", "pass_td", "pass_int"] },
+  { key: "passing", label: "Passing", cols: ["pass_yards", "pass_comp", "pass_att", "comp_pct", "pass_td", "pass_int"] },
   { key: "receiving", label: "Receiving", cols: ["rec_yards", "receptions", "rec_td"] },
-  { key: "scoring", label: "Scoring", cols: ["total_td", "points"] },
+  { key: "scoring", label: "Scoring", cols: ["total_td", "total_yards", "yds_per_game", "points"] },
 ];
 
 const BASKETBALL_STATS: StatConfig[] = [
@@ -79,9 +79,9 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
 
   const colLabels: Record<string, string> = {
     rush_yards: "Rush Yds", rush_carries: "Carries", rush_td: "Rush TD", rush_ypc: "YPC",
-    pass_yards: "Pass Yds", pass_comp: "Comp", pass_att: "Att", pass_td: "Pass TD", pass_int: "INT",
+    pass_yards: "Pass Yds", pass_comp: "Comp", pass_att: "Att", comp_pct: "Comp%", pass_td: "Pass TD", pass_int: "INT",
     rec_yards: "Rec Yds", receptions: "Rec", rec_td: "Rec TD",
-    total_td: "Total TD", points: "Points",
+    total_td: "Total TD", total_yards: "Total Yds", yds_per_game: "YPG", points: "Points",
     ppg: "PPG", games_played: "GP", rebounds: "REB", rpg: "RPG", assists: "AST", apg: "APG",
   };
 
@@ -127,6 +127,25 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
             {statConfig?.label || stat} Leaders
           </h1>
           <p className="text-sm text-gray-400 mt-2">Season-by-season statistical leaders</p>
+
+          {/* Season / Career toggle */}
+          {(sport === "football" || sport === "basketball") && (
+            <div className="flex gap-2 mt-4">
+              <span
+                className="px-4 py-2 rounded-lg text-sm font-medium"
+                style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
+              >
+                Season Leaders
+              </span>
+              <Link
+                href={`/${sport}/career-leaders/${stat}`}
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}
+              >
+                Career Leaders
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 

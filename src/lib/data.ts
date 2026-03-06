@@ -536,10 +536,14 @@ export async function getFootballLeaders(stat: string, limit = 50) {
       .order(orderCol, { ascending: false, nullsFirst: false })
       .limit(limit);
 
-    // Flatten school from players.schools to top-level for template
+    // Flatten school from players.schools to top-level for template + compute derived stats
     return (data ?? []).map((row: any) => ({
       ...row,
       schools: row.players?.schools || row.schools || null,
+      // Derived stats
+      rush_ypc: row.rush_carries > 0 ? +(row.rush_yards / row.rush_carries).toFixed(1) : null,
+      comp_pct: row.pass_att > 0 ? +(row.pass_comp / row.pass_att * 100).toFixed(1) : null,
+      yds_per_game: row.games_played > 0 && row.total_yards ? +(row.total_yards / row.games_played).toFixed(1) : null,
     }));
   } catch {
     return [];
@@ -562,13 +566,270 @@ export async function getBasketballLeaders(stat: string, limit = 50) {
       .order(orderCol, { ascending: false, nullsFirst: false })
       .limit(limit);
 
-    // Flatten school from players.schools to top-level for template
+    // Flatten school from players.schools to top-level for template + compute derived stats
     return (data ?? []).map((row: any) => ({
       ...row,
       schools: row.players?.schools || row.schools || null,
+      // Derived stats
+      rpg: row.games_played > 0 && row.rebounds ? +(row.rebounds / row.games_played).toFixed(1) : null,
+      apg: row.games_played > 0 && row.assists ? +(row.assists / row.games_played).toFixed(1) : null,
     }));
   } catch {
     return [];
+  }
+}
+
+// ── Career Leaders (from materialized views) ──
+
+export async function getFootballCareerLeaders(stat: string, limit = 50) {
+  try {
+    const supabase = await createClient();
+    let orderCol = "career_rush_yards";
+    if (stat === "passing") orderCol = "career_pass_yards";
+    else if (stat === "receiving") orderCol = "career_rec_yards";
+    else if (stat === "scoring" || stat === "touchdowns") orderCol = "career_total_td";
+
+    const { data, error } = await supabase
+      .from("football_career_leaders")
+      .select("*")
+      .not(orderCol, "is", null)
+      .gt(orderCol, 0)
+      .order(orderCol, { ascending: false, nullsFirst: false })
+      .limit(limit);
+
+    if (error) {
+      console.error("[getFootballCareerLeaders] error:", error.message);
+      // Fallback: aggregate from season tables
+      return await getFootballCareerLeadersFallback(stat, limit);
+    }
+
+    return (data ?? []).map((row: any) => ({
+      ...row,
+      // Compute derived stats
+      career_rush_ypc: row.career_rush_carries > 0 ? +(row.career_rush_yards / row.career_rush_carries).toFixed(1) : null,
+      career_comp_pct: row.career_pass_att > 0 ? +(row.career_pass_comp / row.career_pass_att * 100).toFixed(1) : null,
+      career_yds_per_game: row.career_games > 0 ? +(row.career_total_yards / row.career_games).toFixed(1) : null,
+    }));
+  } catch (err) {
+    console.error("[getFootballCareerLeaders] unexpected:", err);
+    return await getFootballCareerLeadersFallback(stat, limit);
+  }
+}
+
+async function getFootballCareerLeadersFallback(stat: string, limit: number) {
+  try {
+    const supabase = await createClient();
+    let orderCol = "rush_yards";
+    if (stat === "passing") orderCol = "pass_yards";
+    else if (stat === "receiving") orderCol = "rec_yards";
+    else if (stat === "scoring" || stat === "touchdowns") orderCol = "total_td";
+
+    // Group by player from season stats
+    const { data } = await supabase
+      .from("football_player_seasons")
+      .select("player_id, rush_yards, rush_carries, rush_td, pass_yards, pass_comp, pass_att, pass_td, pass_int, rec_yards, receptions, rec_td, total_td, total_yards, games_played, points, players(id, name, slug, graduation_year, college, pro_team, schools:schools!players_primary_school_id_fkey(id, name, slug))")
+      .not(orderCol, "is", null)
+      .gt(orderCol, 0)
+      .order(orderCol, { ascending: false, nullsFirst: false })
+      .limit(500);
+
+    // Aggregate by player
+    const playerMap = new Map<number, any>();
+    for (const row of data ?? []) {
+      const pid = row.player_id;
+      if (!playerMap.has(pid)) {
+        const p = row.players as any;
+        const s = p?.schools;
+        playerMap.set(pid, {
+          player_id: pid,
+          player_name: p?.name || "Unknown",
+          player_slug: p?.slug || "",
+          graduation_year: p?.graduation_year,
+          college: p?.college,
+          school_id: s?.id,
+          school_name: s?.name || "Unknown",
+          school_slug: s?.slug || "",
+          seasons_played: 0,
+          career_games: 0,
+          career_rush_carries: 0, career_rush_yards: 0, career_rush_td: 0,
+          career_pass_comp: 0, career_pass_att: 0, career_pass_yards: 0, career_pass_td: 0, career_pass_int: 0,
+          career_receptions: 0, career_rec_yards: 0, career_rec_td: 0,
+          career_total_td: 0, career_total_yards: 0, career_points: 0,
+        });
+      }
+      const agg = playerMap.get(pid)!;
+      agg.seasons_played++;
+      agg.career_games += row.games_played || 0;
+      agg.career_rush_carries += row.rush_carries || 0;
+      agg.career_rush_yards += row.rush_yards || 0;
+      agg.career_rush_td += row.rush_td || 0;
+      agg.career_pass_comp += row.pass_comp || 0;
+      agg.career_pass_att += row.pass_att || 0;
+      agg.career_pass_yards += row.pass_yards || 0;
+      agg.career_pass_td += row.pass_td || 0;
+      agg.career_pass_int += row.pass_int || 0;
+      agg.career_receptions += row.receptions || 0;
+      agg.career_rec_yards += row.rec_yards || 0;
+      agg.career_rec_td += row.rec_td || 0;
+      agg.career_total_td += row.total_td || 0;
+      agg.career_total_yards += row.total_yards || 0;
+      agg.career_points += row.points || 0;
+    }
+
+    const sortKey = `career_${orderCol}`;
+    const results = Array.from(playerMap.values())
+      .sort((a, b) => (b[sortKey] || 0) - (a[sortKey] || 0))
+      .slice(0, limit)
+      .map(row => ({
+        ...row,
+        career_rush_ypc: row.career_rush_carries > 0 ? +(row.career_rush_yards / row.career_rush_carries).toFixed(1) : null,
+        career_comp_pct: row.career_pass_att > 0 ? +(row.career_pass_comp / row.career_pass_att * 100).toFixed(1) : null,
+        career_yds_per_game: row.career_games > 0 ? +(row.career_total_yards / row.career_games).toFixed(1) : null,
+      }));
+
+    return results;
+  } catch {
+    return [];
+  }
+}
+
+export async function getBasketballCareerLeaders(stat: string, limit = 50) {
+  try {
+    const supabase = await createClient();
+    let orderCol = "career_points";
+    if (stat === "ppg") orderCol = "career_ppg";
+    else if (stat === "rebounds") orderCol = "career_rebounds";
+    else if (stat === "assists") orderCol = "career_assists";
+
+    const { data, error } = await supabase
+      .from("basketball_career_leaders")
+      .select("*")
+      .not(orderCol, "is", null)
+      .gt(orderCol, 0)
+      .order(orderCol, { ascending: false, nullsFirst: false })
+      .limit(limit);
+
+    if (error) {
+      console.error("[getBasketballCareerLeaders] error:", error.message);
+      return await getBasketballCareerLeadersFallback(stat, limit);
+    }
+
+    return (data ?? []).map((row: any) => ({
+      ...row,
+      // Compute derived stats
+      career_rpg: row.career_games > 0 && row.career_rebounds ? +(row.career_rebounds / row.career_games).toFixed(1) : null,
+      career_apg: row.career_games > 0 && row.career_assists ? +(row.career_assists / row.career_games).toFixed(1) : null,
+    }));
+  } catch (err) {
+    console.error("[getBasketballCareerLeaders] unexpected:", err);
+    return await getBasketballCareerLeadersFallback(stat, limit);
+  }
+}
+
+async function getBasketballCareerLeadersFallback(stat: string, limit: number) {
+  try {
+    const supabase = await createClient();
+    let orderCol = "points";
+    if (stat === "ppg") orderCol = "ppg";
+    else if (stat === "rebounds") orderCol = "rebounds";
+    else if (stat === "assists") orderCol = "assists";
+
+    const { data } = await supabase
+      .from("basketball_player_seasons")
+      .select("player_id, games_played, points, ppg, rebounds, assists, steals, blocks, players(id, name, slug, graduation_year, college, pro_team, schools:schools!players_primary_school_id_fkey(id, name, slug))")
+      .not(orderCol, "is", null)
+      .gt(orderCol, 0)
+      .order(orderCol, { ascending: false, nullsFirst: false })
+      .limit(500);
+
+    const playerMap = new Map<number, any>();
+    for (const row of data ?? []) {
+      const pid = row.player_id;
+      if (!playerMap.has(pid)) {
+        const p = row.players as any;
+        const s = p?.schools;
+        playerMap.set(pid, {
+          player_id: pid,
+          player_name: p?.name || "Unknown",
+          player_slug: p?.slug || "",
+          graduation_year: p?.graduation_year,
+          college: p?.college,
+          pro_team: p?.pro_team,
+          school_id: s?.id,
+          school_name: s?.name || "Unknown",
+          school_slug: s?.slug || "",
+          seasons_played: 0,
+          career_games: 0,
+          career_points: 0, career_ppg: 0,
+          career_rebounds: 0, career_assists: 0,
+          career_steals: 0, career_blocks: 0,
+        });
+      }
+      const agg = playerMap.get(pid)!;
+      agg.seasons_played++;
+      agg.career_games += row.games_played || 0;
+      agg.career_points += row.points || 0;
+      agg.career_rebounds += row.rebounds || 0;
+      agg.career_assists += row.assists || 0;
+      agg.career_steals += row.steals || 0;
+      agg.career_blocks += row.blocks || 0;
+    }
+
+    // Compute career PPG
+    for (const agg of playerMap.values()) {
+      agg.career_ppg = agg.career_games > 0 ? +(agg.career_points / agg.career_games).toFixed(1) : 0;
+      agg.career_rpg = agg.career_games > 0 && agg.career_rebounds ? +(agg.career_rebounds / agg.career_games).toFixed(1) : null;
+      agg.career_apg = agg.career_games > 0 && agg.career_assists ? +(agg.career_assists / agg.career_games).toFixed(1) : null;
+    }
+
+    const sortKey = stat === "ppg" ? "career_ppg" : `career_${orderCol}`;
+    return Array.from(playerMap.values())
+      .sort((a, b) => (b[sortKey] || 0) - (a[sortKey] || 0))
+      .slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+// ── This Day in History ──
+
+export async function getThisDayInHistory(month: number, day: number, limit = 10) {
+  try {
+    const supabase = await createClient();
+
+    // Find games on this date across all years
+    // game_date is YYYY-MM-DD format, match on month and day
+    const monthStr = month.toString().padStart(2, "0");
+    const dayStr = day.toString().padStart(2, "0");
+
+    const { data: games } = await supabase
+      .from("games")
+      .select("id, sport_id, game_date, home_score, away_score, game_type, home_school:schools!games_home_school_id_fkey(name, short_name, slug), away_school:schools!games_away_school_id_fkey(name, short_name, slug)")
+      .not("home_score", "is", null)
+      .not("away_score", "is", null)
+      .like("game_date", `%-${monthStr}-${dayStr}`)
+      .order("game_date", { ascending: false })
+      .limit(limit);
+
+    // Find championships won on/near this date
+    const { data: champs } = await supabase
+      .from("championships")
+      .select("id, sport_id, level, year, schools(name, short_name, slug)")
+      .order("year", { ascending: false })
+      .limit(200);
+
+    // Filter for notable games (playoffs, big score differentials, etc.)
+    const notableGames = (games ?? []).filter((g: any) => {
+      const diff = Math.abs((g.home_score || 0) - (g.away_score || 0));
+      return g.game_type !== "regular" || diff >= 20; // Playoffs or blowouts
+    });
+
+    return {
+      games: notableGames.slice(0, 5),
+      championships: (champs ?? []).slice(0, 5),
+    };
+  } catch {
+    return { games: [], championships: [] };
   }
 }
 

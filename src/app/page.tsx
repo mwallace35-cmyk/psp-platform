@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import PSPPromo from "@/components/ads/PSPPromo";
 import NewsletterSignup from "@/components/newsletter/NewsletterSignup";
+import ThisDayInHistory from "@/components/features/ThisDayInHistory";
 import { createClient } from "@/lib/supabase/server";
 
 /* ── Featured Hero ── */
@@ -310,6 +311,7 @@ export default async function HomePage() {
             </div>
           </div>
 
+          <ThisDayInHistory />
           <NewsletterSignup />
           <PSPPromo size="sidebar" variant={1} />
 

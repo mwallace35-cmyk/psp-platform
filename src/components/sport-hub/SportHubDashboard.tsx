@@ -87,6 +87,9 @@ export default function SportHubDashboard({
       {/* ════════ SUB-NAV LINKS ════════ */}
       <nav className="hub-subnav">
         <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`}>Leaders</Link>
+        {(sport === "football" || sport === "basketball") && (
+          <Link href={`/${sport}/career-leaders/${meta.statCategories[0]}`}>Career Leaders</Link>
+        )}
         <Link href={`/${sport}/championships`}>Championships</Link>
         <Link href={`/${sport}/records`}>Records</Link>
         <Link href={`/search?sport=${sport}`}>Players</Link>
@@ -346,7 +349,10 @@ export default function SportHubDashboard({
           <div className="hub-widget">
             <div className="hub-wh">Quick Links</div>
             <div className="hub-wb">
-              <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="hub-ql">→ Leaderboards</Link>
+              <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="hub-ql">→ Season Leaders</Link>
+              {(sport === "football" || sport === "basketball") && (
+                <Link href={`/${sport}/career-leaders/${meta.statCategories[0]}`} className="hub-ql">→ Career Leaders</Link>
+              )}
               <Link href={`/${sport}/championships`} className="hub-ql">→ Championships</Link>
               <Link href={`/${sport}/records`} className="hub-ql">→ Records</Link>
               <Link href={`/search?sport=${sport}`} className="hub-ql">→ Search Players</Link>

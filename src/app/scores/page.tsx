@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { createClient } from "@/lib/supabase/server";
 import { SPORT_META } from "@/lib/data";
+import ThisDayInHistory from "@/components/features/ThisDayInHistory";
 export const metadata: Metadata = {
   title: "Scores — PhillySportsPack",
   description:
@@ -238,6 +239,7 @@ export default async function ScoresPage({
 
           {/* Sidebar */}
           <div className="space-y-6">
+            <ThisDayInHistory />
             <PSPPromo size="sidebar" variant={1} />
 
             <div className="sidebar-widget">
