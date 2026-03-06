@@ -247,16 +247,20 @@ export async function getSchoolPlayers(schoolId: number, sportId: string, limit 
       }
     }
 
-    // Sort by most impressive stat
-    const players = Array.from(playerMap.values());
+    // Flatten total_stats onto the player object for easy table access
+    const players = Array.from(playerMap.values()).map(p => ({
+      ...p,
+      ...p.total_stats,
+      season_count: p.seasons_count,
+    }));
     if (sportId === "football") {
       players.sort((a, b) => {
-        const aTotal = (a.total_stats.rush_yards || 0) + (a.total_stats.pass_yards || 0) + (a.total_stats.rec_yards || 0);
-        const bTotal = (b.total_stats.rush_yards || 0) + (b.total_stats.pass_yards || 0) + (b.total_stats.rec_yards || 0);
+        const aTotal = (a.rush_yards || 0) + (a.pass_yards || 0) + (a.rec_yards || 0);
+        const bTotal = (b.rush_yards || 0) + (b.pass_yards || 0) + (b.rec_yards || 0);
         return bTotal - aTotal;
       });
     } else if (sportId === "basketball") {
-      players.sort((a, b) => (b.total_stats.points || 0) - (a.total_stats.points || 0));
+      players.sort((a, b) => (b.points || 0) - (a.points || 0));
     }
 
     return players.slice(0, limit);

@@ -77,7 +77,12 @@ export default function TeamPageTabs({
     const timelineData: { label: string; wins: number; losses: number; ties: number; pct: number; playoffs: boolean }[] = [];
 
     // Use seasonSummaries if available, else fall back to seasonsData
-    const source = seasonSummaries.length > 0 ? seasonSummaries : seasonLabels.map(label => seasonsData[label]?.teamSeason).filter(Boolean);
+    const source = seasonSummaries.length > 0
+      ? seasonSummaries
+      : seasonLabels.map(label => {
+          const ts = seasonsData[label]?.teamSeason;
+          return ts ? { ...ts, season_label: label } : null;
+        }).filter(Boolean);
 
     for (const item of source) {
       const w = item.wins || 0;
@@ -100,11 +105,14 @@ export default function TeamPageTabs({
 
       timelineData.push({ label, wins: w, losses: l, ties: t, pct, playoffs: !!item.playoff_result });
 
-      if (!bestSeason || pct > bestSeason.pct || (pct === bestSeason.pct && w > bestSeason.wins)) {
-        bestSeason = { label, wins: w, losses: l, ties: t, pct };
-      }
-      if (!worstSeason || pct < worstSeason.pct) {
-        worstSeason = { label, wins: w, losses: l, ties: t, pct };
+      // Only consider seasons with 3+ games for best/worst
+      if (games >= 3) {
+        if (!bestSeason || pct > bestSeason.pct || (pct === bestSeason.pct && w > bestSeason.wins)) {
+          bestSeason = { label, wins: w, losses: l, ties: t, pct };
+        }
+        if (!worstSeason || pct < worstSeason.pct) {
+          worstSeason = { label, wins: w, losses: l, ties: t, pct };
+        }
       }
     }
 
@@ -523,9 +531,9 @@ function TopPlayersTable({ players, sportId, sportColor }: { players: any[]; spo
         return [
           { key: "name", label: "Player", align: "left" as const },
           { key: "seasons", label: "Seasons", align: "center" as const },
-          { key: "rushing_yards", label: "Rush Yds", align: "right" as const },
-          { key: "passing_yards", label: "Pass Yds", align: "right" as const },
-          { key: "receiving_yards", label: "Rec Yds", align: "right" as const },
+          { key: "rush_yards", label: "Rush Yds", align: "right" as const },
+          { key: "pass_yards", label: "Pass Yds", align: "right" as const },
+          { key: "rec_yards", label: "Rec Yds", align: "right" as const },
           { key: "total_td", label: "TD", align: "right" as const },
         ];
       case "basketball": case "girls-basketball":
@@ -733,9 +741,9 @@ function RosterTab({ data, sportId, sportColor }: { data: SeasonData; sportId: s
           { key: "name", label: "Player", align: "left" as const },
           { key: "positions", label: "Pos", align: "center" as const },
           { key: "graduation_year", label: "Class", align: "center" as const },
-          { key: "rushing_yards", label: "Rush", align: "right" as const },
-          { key: "passing_yards", label: "Pass", align: "right" as const },
-          { key: "receiving_yards", label: "Rec", align: "right" as const },
+          { key: "rush_yards", label: "Rush", align: "right" as const },
+          { key: "pass_yards", label: "Pass", align: "right" as const },
+          { key: "rec_yards", label: "Rec", align: "right" as const },
           { key: "total_td", label: "TD", align: "right" as const },
         ];
       case "basketball":
@@ -871,9 +879,9 @@ function StatsTab({ data, sportId, sportName, sportColor }: { data: SeasonData; 
     switch (sportId) {
       case "football":
         return [
-          { label: "Rushing Leader", player: [...data.roster].sort((a: any, b: any) => (b.rushing_yards || 0) - (a.rushing_yards || 0))[0], stat: "rushing_yards", unit: "yds" },
-          { label: "Passing Leader", player: [...data.roster].sort((a: any, b: any) => (b.passing_yards || 0) - (a.passing_yards || 0))[0], stat: "passing_yards", unit: "yds" },
-          { label: "Receiving Leader", player: [...data.roster].sort((a: any, b: any) => (b.receiving_yards || 0) - (a.receiving_yards || 0))[0], stat: "receiving_yards", unit: "yds" },
+          { label: "Rushing Leader", player: [...data.roster].sort((a: any, b: any) => (b.rush_yards || 0) - (a.rush_yards || 0))[0], stat: "rush_yards", unit: "yds" },
+          { label: "Passing Leader", player: [...data.roster].sort((a: any, b: any) => (b.pass_yards || 0) - (a.pass_yards || 0))[0], stat: "pass_yards", unit: "yds" },
+          { label: "Receiving Leader", player: [...data.roster].sort((a: any, b: any) => (b.rec_yards || 0) - (a.rec_yards || 0))[0], stat: "rec_yards", unit: "yds" },
           { label: "TD Leader", player: [...data.roster].sort((a: any, b: any) => (b.total_td || 0) - (a.total_td || 0))[0], stat: "total_td", unit: "TD" },
         ];
       case "basketball": case "girls-basketball":
@@ -897,34 +905,34 @@ function StatsTab({ data, sportId, sportName, sportColor }: { data: SeasonData; 
         return [
           {
             title: "Rushing",
-            sortKey: "rushing_yards",
+            sortKey: "rush_yards",
             cols: [
               { key: "name", label: "Player", align: "left" as const },
-              { key: "rushing_attempts", label: "ATT", align: "right" as const },
-              { key: "rushing_yards", label: "YDS", align: "right" as const },
-              { key: "rushing_td", label: "TD", align: "right" as const },
+              { key: "rush_carries", label: "ATT", align: "right" as const },
+              { key: "rush_yards", label: "YDS", align: "right" as const },
+              { key: "rush_td", label: "TD", align: "right" as const },
             ],
           },
           {
             title: "Passing",
-            sortKey: "passing_yards",
+            sortKey: "pass_yards",
             cols: [
               { key: "name", label: "Player", align: "left" as const },
-              { key: "completions", label: "CMP", align: "right" as const },
-              { key: "pass_attempts", label: "ATT", align: "right" as const },
-              { key: "passing_yards", label: "YDS", align: "right" as const },
-              { key: "passing_td", label: "TD", align: "right" as const },
-              { key: "interceptions", label: "INT", align: "right" as const },
+              { key: "pass_comp", label: "CMP", align: "right" as const },
+              { key: "pass_att", label: "ATT", align: "right" as const },
+              { key: "pass_yards", label: "YDS", align: "right" as const },
+              { key: "pass_td", label: "TD", align: "right" as const },
+              { key: "pass_int", label: "INT", align: "right" as const },
             ],
           },
           {
             title: "Receiving",
-            sortKey: "receiving_yards",
+            sortKey: "rec_yards",
             cols: [
               { key: "name", label: "Player", align: "left" as const },
               { key: "receptions", label: "REC", align: "right" as const },
-              { key: "receiving_yards", label: "YDS", align: "right" as const },
-              { key: "receiving_td", label: "TD", align: "right" as const },
+              { key: "rec_yards", label: "YDS", align: "right" as const },
+              { key: "rec_td", label: "TD", align: "right" as const },
             ],
           },
           {
@@ -932,9 +940,9 @@ function StatsTab({ data, sportId, sportName, sportColor }: { data: SeasonData; 
             sortKey: "total_td",
             cols: [
               { key: "name", label: "Player", align: "left" as const },
-              { key: "rushing_td", label: "Rush TD", align: "right" as const },
-              { key: "passing_td", label: "Pass TD", align: "right" as const },
-              { key: "receiving_td", label: "Rec TD", align: "right" as const },
+              { key: "rush_td", label: "Rush TD", align: "right" as const },
+              { key: "pass_td", label: "Pass TD", align: "right" as const },
+              { key: "rec_td", label: "Rec TD", align: "right" as const },
               { key: "total_td", label: "Total TD", align: "right" as const },
             ],
           },
