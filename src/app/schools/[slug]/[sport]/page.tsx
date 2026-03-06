@@ -78,9 +78,9 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
   });
   const currentCoach = sportCoaches[0];
 
-  // School colors
-  const schoolColors = school.colors as string[] | null;
-  const primaryColor = schoolColors?.[0] || meta.color;
+  // School colors — stored as JSONB object {primary?: string, secondary?: string}
+  const schoolColors = school.colors as { primary?: string; secondary?: string } | null;
+  const primaryColor = schoolColors?.primary || meta.color;
 
   return (
     <>
