@@ -16,6 +16,7 @@ const ARTICLES_PER_PAGE = 24;
 
 const CONTENT_TYPES = [
   { id: 'all', label: 'All Content', emoji: '📚' },
+  { id: 'tribute', label: 'Tributes', emoji: '🕯️' },
   { id: 'season-recap', label: 'Season Recaps', emoji: '📅' },
   { id: 'editorial', label: 'Editorials & Features', emoji: '📝' },
   { id: 'writer-profile', label: 'Writer Profiles', emoji: '✍️' },
@@ -218,10 +219,14 @@ export default async function ArchiveContentPage({
           </form>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-6">
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bebas text-gold">{totalArchive}</div>
               <div className="text-xs text-white/70 uppercase">Archive Articles</div>
+            </div>
+            <div className="bg-white/10 rounded-lg p-3 text-center">
+              <div className="text-2xl font-bebas text-gold">{typeCountMap['tribute'] || 0}</div>
+              <div className="text-xs text-white/70 uppercase">Tributes</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bebas text-gold">{typeCountMap['season-recap'] || 0}</div>
@@ -435,7 +440,9 @@ export default async function ArchiveContentPage({
                           </div>
                           {typeLabel && (
                             <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                              article.content_type === 'season-recap'
+                              article.content_type === 'tribute'
+                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200'
+                                : article.content_type === 'season-recap'
                                 ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
                                 : article.content_type === 'writer-profile'
                                 ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
