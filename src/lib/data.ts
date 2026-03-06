@@ -389,14 +389,19 @@ export async function getSchoolAllPlayers(schoolId: number, limit = 30) {
 export async function getPlayerBySlug(slug: string) {
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("players")
       .select("*, schools:schools!players_primary_school_id_fkey(name, slug)")
       .eq("slug", slug)
       .is("deleted_at", null)
       .single();
+    if (error) {
+      console.error("[getPlayerBySlug] Supabase error for slug:", slug, error.message);
+      return null;
+    }
     return data;
-  } catch {
+  } catch (err) {
+    console.error("[getPlayerBySlug] Unexpected error for slug:", slug, err);
     return null;
   }
 }
@@ -1256,15 +1261,40 @@ export async function getRecentGamesBySport(sportId: string, limit = 20) {
 export async function getRecentGamesAll(limit = 10) {
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("games")
-      .select("id, sport_id, home_score, away_score, game_date, game_type, seasons(label), home_school:schools!games_home_school_id_fkey(id, name, short_name, slug), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug)")
+      .select("id, sport_id, home_school_id, away_school_id, home_score, away_score, game_date, game_type, seasons(label), home_school:schools!games_home_school_id_fkey(id, name, short_name, slug), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug)")
       .not("home_score", "is", null)
       .not("away_score", "is", null)
-      .order("game_date", { ascending: false })
+      .order("game_date", { ascending: false, nullsFirst: false })
       .limit(limit * 2);
-    return dedupeGames(data ?? []).slice(0, limit);
-  } catch {
+
+    if (error) console.error("[getRecentGamesAll] Supabase error:", error.message);
+
+    const games = data ?? [];
+
+    // If FK joins failed (school objects null but IDs exist), fetch school names separately
+    const missingSchoolIds = new Set<number>();
+    for (const g of games) {
+      if (!(g as any).home_school && (g as any).home_school_id) missingSchoolIds.add((g as any).home_school_id);
+      if (!(g as any).away_school && (g as any).away_school_id) missingSchoolIds.add((g as any).away_school_id);
+    }
+
+    if (missingSchoolIds.size > 0) {
+      const { data: schools } = await supabase
+        .from("schools")
+        .select("id, name, short_name, slug")
+        .in("id", Array.from(missingSchoolIds));
+      const schoolMap = new Map((schools ?? []).map((s: any) => [s.id, s]));
+      for (const g of games) {
+        if (!(g as any).home_school && (g as any).home_school_id) (g as any).home_school = schoolMap.get((g as any).home_school_id) || null;
+        if (!(g as any).away_school && (g as any).away_school_id) (g as any).away_school = schoolMap.get((g as any).away_school_id) || null;
+      }
+    }
+
+    return dedupeGames(games).slice(0, limit);
+  } catch (err) {
+    console.error("[getRecentGamesAll] Unexpected error:", err);
     return [];
   }
 }
@@ -1313,12 +1343,12 @@ export async function getGamesBySportAndSeason(sportId: string, seasonLabel?: st
     let query = supabase
       .from("games")
       .select(
-        "id, sport_id, home_score, away_score, game_date, game_type, venue, playoff_round, seasons(id, label), home_school:schools!games_home_school_id_fkey(id, name, short_name, slug, city, mascot), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug, city, mascot)"
+        "id, sport_id, home_school_id, away_school_id, home_score, away_score, game_date, game_type, venue, playoff_round, season_id, seasons(id, label), home_school:schools!games_home_school_id_fkey(id, name, short_name, slug, city, mascot), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug, city, mascot)"
       )
       .eq("sport_id", sportId)
       .not("home_score", "is", null)
       .not("away_score", "is", null)
-      .order("game_date", { ascending: false });
+      .order("game_date", { ascending: false, nullsFirst: false });
 
     if (seasonLabel) {
       // Look up season id first
@@ -1332,9 +1362,33 @@ export async function getGamesBySportAndSeason(sportId: string, seasonLabel?: st
       }
     }
 
-    const { data } = await query.limit(500);
-    return dedupeGames(data ?? []);
-  } catch {
+    const { data, error } = await query.limit(500);
+    if (error) console.error("[getGamesBySportAndSeason] Supabase error:", error.message);
+
+    const games = data ?? [];
+
+    // If FK joins failed (school objects null but IDs exist), fetch school names separately
+    const missingSchoolIds = new Set<number>();
+    for (const g of games) {
+      if (!(g as any).home_school && (g as any).home_school_id) missingSchoolIds.add((g as any).home_school_id);
+      if (!(g as any).away_school && (g as any).away_school_id) missingSchoolIds.add((g as any).away_school_id);
+    }
+
+    if (missingSchoolIds.size > 0) {
+      const { data: schools } = await supabase
+        .from("schools")
+        .select("id, name, short_name, slug, city, mascot")
+        .in("id", Array.from(missingSchoolIds));
+      const schoolMap = new Map((schools ?? []).map((s: any) => [s.id, s]));
+      for (const g of games) {
+        if (!(g as any).home_school && (g as any).home_school_id) (g as any).home_school = schoolMap.get((g as any).home_school_id) || null;
+        if (!(g as any).away_school && (g as any).away_school_id) (g as any).away_school = schoolMap.get((g as any).away_school_id) || null;
+      }
+    }
+
+    return dedupeGames(games);
+  } catch (err) {
+    console.error("[getGamesBySportAndSeason] Unexpected error:", err);
     return [];
   }
 }
@@ -1730,6 +1784,11 @@ export async function getRivalryChampionships(schoolId: number, sportId: string)
 // ============================================================================
 
 export async function searchEntitiesServer(query: string, sport?: string, entityType?: string, limit = 30) {
+  // Primary: direct table search (always works, no dependency on search_index population)
+  const directResults = await searchAll(query, limit);
+  if (directResults.length > 0) return directResults;
+
+  // Fallback: try RPC if direct search returned nothing (search_index may have extra data)
   try {
     const supabase = await createClient();
     const { data } = await supabase.rpc("search_entities", {
@@ -1740,8 +1799,7 @@ export async function searchEntitiesServer(query: string, sport?: string, entity
     });
     return data ?? [];
   } catch {
-    // Fallback to existing ILIKE search if RPC not available
-    return searchAll(query, limit);
+    return [];
   }
 }
 

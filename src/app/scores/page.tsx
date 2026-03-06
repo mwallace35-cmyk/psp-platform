@@ -29,20 +29,43 @@ async function getScores(sport?: string | null) {
     let query = supabase
       .from("games")
       .select(
-        "id, sport_id, home_score, away_score, game_date, game_type, venue, seasons(label), home_school:schools!games_home_school_id_fkey(id, name, short_name, slug, city, mascot), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug, city, mascot)"
+        "id, sport_id, home_school_id, away_school_id, home_score, away_score, game_date, game_type, venue, season_id, seasons(label), home_school:schools!games_home_school_id_fkey(id, name, short_name, slug, city, mascot), away_school:schools!games_away_school_id_fkey(id, name, short_name, slug, city, mascot)"
       )
       .not("home_score", "is", null)
       .not("away_score", "is", null)
-      .order("game_date", { ascending: false })
+      .order("game_date", { ascending: false, nullsFirst: false })
       .limit(100);
 
     if (sport && sport !== "all") {
       query = query.eq("sport_id", sport);
     }
 
-    const { data } = await query;
-    return data ?? [];
-  } catch {
+    const { data, error } = await query;
+    if (error) console.error("[getScores] Supabase error:", error.message);
+
+    // If FK joins failed (school objects null but IDs exist), fetch school names separately
+    const games = data ?? [];
+    const missingSchoolIds = new Set<number>();
+    for (const g of games) {
+      if (!g.home_school && g.home_school_id) missingSchoolIds.add(g.home_school_id);
+      if (!g.away_school && g.away_school_id) missingSchoolIds.add(g.away_school_id);
+    }
+
+    if (missingSchoolIds.size > 0) {
+      const { data: schools } = await supabase
+        .from("schools")
+        .select("id, name, short_name, slug")
+        .in("id", Array.from(missingSchoolIds));
+      const schoolMap = new Map((schools ?? []).map(s => [s.id, s]));
+      for (const g of games) {
+        if (!g.home_school && g.home_school_id) (g as any).home_school = schoolMap.get(g.home_school_id) || null;
+        if (!g.away_school && g.away_school_id) (g as any).away_school = schoolMap.get(g.away_school_id) || null;
+      }
+    }
+
+    return games;
+  } catch (err) {
+    console.error("[getScores] Unexpected error:", err);
     return [];
   }
 }
@@ -56,17 +79,26 @@ export default async function ScoresPage({
   const activeSport = params.sport || "all";
   const games = await getScores(activeSport);
 
-  // Group games by date
+  // Group games by date — put dated games first, then undated by season
   const gamesByDate = new Map<string, any[]>();
   for (const game of games) {
-    const dateKey = game.game_date
-      ? new Date(game.game_date).toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        })
-      : "Date Unknown";
+    let dateKey: string;
+    if (game.game_date) {
+      // Parse as local date (game_date is YYYY-MM-DD format)
+      const [year, month, day] = game.game_date.split("-").map(Number);
+      const d = new Date(year, month - 1, day);
+      dateKey = d.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+    } else {
+      // Group undated games by season label
+      const s = game.seasons as any;
+      const seasonLabel = Array.isArray(s) ? s[0]?.label : s?.label;
+      dateKey = seasonLabel ? `${seasonLabel} Season` : "Other Games";
+    }
     if (!gamesByDate.has(dateKey)) gamesByDate.set(dateKey, []);
     gamesByDate.get(dateKey)!.push(game);
   }
@@ -243,6 +275,8 @@ const SPORT_ABBREV: Record<string, string> = {
 function ScoreCard({ game }: { game: any }) {
   const home = game.home_school;
   const away = game.away_school;
+  const homeName = home?.short_name || home?.name || "Team A";
+  const awayName = away?.short_name || away?.name || "Team B";
   const homeWin = (game.home_score ?? 0) > (game.away_score ?? 0);
   const awayWin = (game.away_score ?? 0) > (game.home_score ?? 0);
   const sportAbbr = SPORT_ABBREV[game.sport_id] || game.sport_id;
@@ -337,7 +371,7 @@ function ScoreCard({ game }: { game: any }) {
                 color: awayWin ? "var(--text)" : "var(--g400)",
               }}
             >
-              {away?.name || "Away"}
+              {awayName}
             </span>
           </div>
           <span
@@ -376,7 +410,7 @@ function ScoreCard({ game }: { game: any }) {
                 color: homeWin ? "var(--text)" : "var(--g400)",
               }}
             >
-              {home?.name || "Home"}
+              {homeName}
             </span>
           </div>
           <span

@@ -32,15 +32,31 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
   const meta = SPORT_META[sport];
 
+  // Try the URL sport first, then check all sport stat tables for this player
   let stats: any[] = [];
+  let detectedSport = sport;
   if (sport === "football") stats = await getFootballPlayerStats(player.id);
   else if (sport === "basketball") stats = await getBasketballPlayerStats(player.id);
   else if (sport === "baseball") stats = await getBaseballPlayerStats(player.id);
 
+  // If no stats found for URL sport, try other sports (handle cross-sport URLs)
+  if (stats.length === 0 && sport !== "football") {
+    const fbStats = await getFootballPlayerStats(player.id);
+    if (fbStats.length > 0) { stats = fbStats; detectedSport = "football"; }
+  }
+  if (stats.length === 0 && sport !== "basketball") {
+    const bbStats = await getBasketballPlayerStats(player.id);
+    if (bbStats.length > 0) { stats = bbStats; detectedSport = "basketball"; }
+  }
+  if (stats.length === 0 && sport !== "baseball") {
+    const bsbStats = await getBaseballPlayerStats(player.id);
+    if (bsbStats.length > 0) { stats = bsbStats; detectedSport = "baseball"; }
+  }
+
   const awards = await getPlayerAwards(player.id);
 
   // Football career totals
-  const footballTotals = sport === "football" && stats.length > 0 ? {
+  const footballTotals = detectedSport === "football" && stats.length > 0 ? {
     rushYards: stats.reduce((sum: number, s: any) => sum + (s.rush_yards || 0), 0),
     rushTd: stats.reduce((sum: number, s: any) => sum + (s.rush_td || 0), 0),
     passYards: stats.reduce((sum: number, s: any) => sum + (s.pass_yards || 0), 0),
@@ -52,7 +68,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   } : null;
 
   // Basketball career totals
-  const basketballTotals = sport === "basketball" && stats.length > 0 ? {
+  const basketballTotals = detectedSport === "basketball" && stats.length > 0 ? {
     points: stats.reduce((sum: number, s: any) => sum + (s.points || 0), 0),
     games: stats.reduce((sum: number, s: any) => sum + (s.games_played || 0), 0),
     rebounds: stats.reduce((sum: number, s: any) => sum + (s.rebounds || 0), 0),
@@ -156,7 +172,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {serializedStats.length > 0 && (
               <div>
                 <h2 className="espn-section-head">Season-by-Season Stats</h2>
-                <PlayerStatsTable sport={sport} stats={serializedStats} />
+                <PlayerStatsTable sport={detectedSport} stats={serializedStats} />
               </div>
             )}
 

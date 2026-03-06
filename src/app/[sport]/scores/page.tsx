@@ -51,17 +51,22 @@ export default async function SportScoresPage({
     getSeasonsBySport(sport),
   ]);
 
-  // Group games by date
+  // Group games by date — put dated games first, then undated by season
   const gamesByDate = new Map<string, any[]>();
   for (const game of games) {
-    const dateKey = game.game_date
-      ? new Date(game.game_date).toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        })
-      : "Date Unknown";
+    let dateKey: string;
+    if (game.game_date) {
+      const [year, month, day] = game.game_date.split("-").map(Number);
+      const d = new Date(year, month - 1, day);
+      dateKey = d.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+    } else {
+      dateKey = (game as any).seasons?.label ? `${(game as any).seasons.label} Season` : "Other Games";
+    }
     if (!gamesByDate.has(dateKey)) gamesByDate.set(dateKey, []);
     gamesByDate.get(dateKey)!.push(game);
   }
@@ -429,6 +434,8 @@ function ScoreCard({
 }) {
   const home = game.home_school;
   const away = game.away_school;
+  const homeName = home?.short_name || home?.name || "Team A";
+  const awayName = away?.short_name || away?.name || "Team B";
   const homeWin = (game.home_score ?? 0) > (game.away_score ?? 0);
   const awayWin = (game.away_score ?? 0) > (game.home_score ?? 0);
   const sportAbbr = SPORT_ABBREV[game.sport_id] || game.sport_id;
@@ -553,7 +560,7 @@ function ScoreCard({
                 color: awayWin ? "var(--text)" : "var(--g400)",
               }}
             >
-              {away?.name || "Away"}
+              {awayName}
             </span>
             {away?.city && (
               <span style={{ fontSize: 11, color: "var(--g400)", opacity: 0.6 }}>
@@ -603,7 +610,7 @@ function ScoreCard({
                 color: homeWin ? "var(--text)" : "var(--g400)",
               }}
             >
-              {home?.name || "Home"}
+              {homeName}
             </span>
             {home?.city && (
               <span style={{ fontSize: 11, color: "var(--g400)", opacity: 0.6 }}>
