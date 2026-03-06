@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 
-type TabKey = "schedule" | "roster" | "stats" | "awards";
+type TabKey = "schedule" | "roster" | "stats" | "program" | "awards";
 
 interface SeasonData {
   teamSeason: any;
@@ -21,12 +21,17 @@ interface TeamPageTabsProps {
   sportColor: string;
   seasonLabels: string[]; // sorted newest first
   seasonsData: Record<string, SeasonData>;
+  allChamps?: any[];
+  notableAlumni?: any[];
+  seasonSummaries?: any[];
+  topPlayers?: any[];
 }
 
 const TABS: { key: TabKey; label: string; icon: string }[] = [
   { key: "schedule", label: "Schedule", icon: "📅" },
   { key: "roster", label: "Roster", icon: "👥" },
   { key: "stats", label: "Stats", icon: "📊" },
+  { key: "program", label: "Program", icon: "🏛️" },
   { key: "awards", label: "Awards", icon: "🏆" },
 ];
 
@@ -48,6 +53,10 @@ export default function TeamPageTabs({
   sportColor,
   seasonLabels,
   seasonsData,
+  allChamps = [],
+  notableAlumni = [],
+  seasonSummaries = [],
+  topPlayers = [],
 }: TeamPageTabsProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("schedule");
   const [selectedSeason, setSelectedSeason] = useState(seasonLabels[0] || "");
@@ -55,40 +64,99 @@ export default function TeamPageTabs({
   const data = useMemo(() => seasonsData[selectedSeason] || null, [seasonsData, selectedSeason]);
   const ts = data?.teamSeason;
 
+  // Compute program-level stats from all seasons
+  const programStats = useMemo(() => {
+    let totalW = 0, totalL = 0, totalT = 0, totalPF = 0, totalPA = 0, totalGames = 0;
+    let bestSeason: { label: string; wins: number; losses: number; ties: number; pct: number } | null = null;
+    let worstSeason: { label: string; wins: number; losses: number; ties: number; pct: number } | null = null;
+    let currentStreak = 0;
+    let streakType: "W" | "L" | null = null;
+    let longestWinStreak = 0;
+    let playoffAppearances = 0;
+
+    const timelineData: { label: string; wins: number; losses: number; ties: number; pct: number; playoffs: boolean }[] = [];
+
+    // Use seasonSummaries if available, else fall back to seasonsData
+    const source = seasonSummaries.length > 0 ? seasonSummaries : seasonLabels.map(label => seasonsData[label]?.teamSeason).filter(Boolean);
+
+    for (const item of source) {
+      const w = item.wins || 0;
+      const l = item.losses || 0;
+      const t = item.ties || 0;
+      const games = w + l + t;
+      if (games === 0) continue;
+
+      const pct = games > 0 ? w / games : 0;
+      const label = item.season_label || item.season || "";
+
+      totalW += w;
+      totalL += l;
+      totalT += t;
+      totalPF += item.points_for || 0;
+      totalPA += item.points_against || 0;
+      totalGames += games;
+
+      if (item.playoff_result) playoffAppearances++;
+
+      timelineData.push({ label, wins: w, losses: l, ties: t, pct, playoffs: !!item.playoff_result });
+
+      if (!bestSeason || pct > bestSeason.pct || (pct === bestSeason.pct && w > bestSeason.wins)) {
+        bestSeason = { label, wins: w, losses: l, ties: t, pct };
+      }
+      if (!worstSeason || pct < worstSeason.pct) {
+        worstSeason = { label, wins: w, losses: l, ties: t, pct };
+      }
+    }
+
+    const winPct = totalGames > 0 ? ((totalW / totalGames) * 100).toFixed(1) : "0.0";
+
+    return {
+      totalW, totalL, totalT, totalPF, totalPA, totalGames,
+      winPct, bestSeason, worstSeason, playoffAppearances,
+      timelineData: timelineData.sort((a, b) => {
+        const aY = parseInt(a.label.split("-")[0]) || 0;
+        const bY = parseInt(b.label.split("-")[0]) || 0;
+        return aY - bY;
+      }),
+    };
+  }, [seasonSummaries, seasonLabels, seasonsData]);
+
   return (
     <>
       {/* Tab Bar */}
       <div className="school-tab-bar" style={{ "--school-color": sportColor } as React.CSSProperties}>
         <div className="stb-inner">
-          {/* Season Dropdown */}
-          <div style={{ display: "flex", alignItems: "center", marginRight: 8, borderRight: "1px solid rgba(255,255,255,0.15)", paddingRight: 12 }}>
-            <select
-              value={selectedSeason}
-              onChange={(e) => setSelectedSeason(e.target.value)}
-              style={{
-                background: "rgba(255,255,255,0.1)",
-                color: "#fff",
-                border: "1px solid rgba(255,255,255,0.2)",
-                borderRadius: 4,
-                padding: "6px 10px",
-                fontSize: 12,
-                fontWeight: 700,
-                cursor: "pointer",
-                fontFamily: "'Barlow Condensed', sans-serif",
-              }}
-            >
-              {seasonLabels.map((label) => {
-                const sd = seasonsData[label];
-                const ts = sd?.teamSeason;
-                const record = ts ? `${ts.wins || 0}-${ts.losses || 0}${ts.ties ? `-${ts.ties}` : ""}` : "";
-                return (
-                  <option key={label} value={label} style={{ color: "#000" }}>
-                    {label}{record ? ` (${record})` : ""}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+          {/* Season Dropdown — only shown for season-specific tabs */}
+          {activeTab !== "program" && (
+            <div style={{ display: "flex", alignItems: "center", marginRight: 8, borderRight: "1px solid rgba(255,255,255,0.15)", paddingRight: 12 }}>
+              <select
+                value={selectedSeason}
+                onChange={(e) => setSelectedSeason(e.target.value)}
+                style={{
+                  background: "rgba(255,255,255,0.1)",
+                  color: "#fff",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: 4,
+                  padding: "6px 10px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                }}
+              >
+                {seasonLabels.map((label) => {
+                  const sd = seasonsData[label];
+                  const ts = sd?.teamSeason;
+                  const record = ts ? `${ts.wins || 0}-${ts.losses || 0}${ts.ties ? `-${ts.ties}` : ""}` : "";
+                  return (
+                    <option key={label} value={label} style={{ color: "#000" }}>
+                      {label}{record ? ` (${record})` : ""}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          )}
 
           {/* Tab Buttons */}
           {TABS.map((tab) => (
@@ -99,13 +167,18 @@ export default function TeamPageTabs({
             >
               <span className="stb-icon">{tab.icon}</span>
               {tab.label}
+              {tab.key === "awards" && allChamps.length > 0 && (
+                <span style={{ marginLeft: 4, fontSize: 10, background: "var(--psp-gold)", color: "var(--psp-navy)", borderRadius: 8, padding: "1px 6px", fontWeight: 700 }}>
+                  {allChamps.length}
+                </span>
+              )}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Season Summary Bar */}
-      {ts && (
+      {/* Season Summary Bar — only for season-specific tabs */}
+      {activeTab !== "program" && ts && (
         <div style={{
           background: "var(--card-bg)",
           borderBottom: "1px solid var(--g100)",
@@ -145,7 +218,19 @@ export default function TeamPageTabs({
 
       {/* Tab Content */}
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "16px 20px" }}>
-        {!data ? (
+        {activeTab === "program" ? (
+          <ProgramTab
+            programStats={programStats}
+            allChamps={allChamps}
+            notableAlumni={notableAlumni}
+            topPlayers={topPlayers}
+            sportId={sportId}
+            sportName={sportName}
+            sportColor={sportColor}
+            sportEmoji={sportEmoji}
+            seasonLabels={seasonLabels}
+          />
+        ) : !data ? (
           <div style={{ textAlign: "center", padding: 40, color: "var(--g400)" }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>{sportEmoji}</div>
             <div style={{ fontWeight: 600 }}>No data for {selectedSeason}</div>
@@ -164,7 +249,384 @@ export default function TeamPageTabs({
 }
 
 // ============================================================================
-// SCHEDULE TAB
+// PROGRAM TAB (NEW)
+// ============================================================================
+function ProgramTab({
+  programStats,
+  allChamps,
+  notableAlumni,
+  topPlayers,
+  sportId,
+  sportName,
+  sportColor,
+  sportEmoji,
+  seasonLabels,
+}: {
+  programStats: any;
+  allChamps: any[];
+  notableAlumni: any[];
+  topPlayers: any[];
+  sportId: string;
+  sportName: string;
+  sportColor: string;
+  sportEmoji: string;
+  seasonLabels: string[];
+}) {
+  return (
+    <div style={{ display: "grid", gap: 16 }}>
+      {/* All-Time Record Summary */}
+      <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 16, letterSpacing: 1 }}>
+          All-Time Program Summary
+        </h3>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 16 }}>
+          <StatBlock label="All-Time Record" value={`${programStats.totalW}-${programStats.totalL}${programStats.totalT ? `-${programStats.totalT}` : ""}`} color="var(--text)" />
+          <StatBlock label="Win %" value={`${programStats.winPct}%`} color={sportColor} />
+          <StatBlock label="Championships" value={String(allChamps.length)} color="var(--psp-gold)" />
+          <StatBlock label="Seasons" value={String(seasonLabels.length)} color="var(--text)" />
+          <StatBlock label="Playoff Appearances" value={String(programStats.playoffAppearances)} color={sportColor} />
+          {programStats.totalPF > 0 && (
+            <StatBlock label="Total Points For" value={String(programStats.totalPF)} color="var(--text)" />
+          )}
+        </div>
+        {/* Best / Worst Seasons */}
+        <div style={{ display: "flex", gap: 16, marginTop: 16, flexWrap: "wrap" }}>
+          {programStats.bestSeason && (
+            <div style={{ flex: 1, minWidth: 200, padding: 12, background: "rgba(22,163,74,0.08)", border: "1px solid rgba(22,163,74,0.2)", borderRadius: 6 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", color: "#16a34a", letterSpacing: 0.5, marginBottom: 4 }}>Best Season</div>
+              <div style={{ fontWeight: 700, fontSize: 18, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                {programStats.bestSeason.wins}-{programStats.bestSeason.losses}{programStats.bestSeason.ties ? `-${programStats.bestSeason.ties}` : ""}
+              </div>
+              <div style={{ fontSize: 12, color: "var(--g500)" }}>{programStats.bestSeason.label} ({(programStats.bestSeason.pct * 100).toFixed(0)}%)</div>
+            </div>
+          )}
+          {programStats.worstSeason && programStats.worstSeason.label !== programStats.bestSeason?.label && (
+            <div style={{ flex: 1, minWidth: 200, padding: 12, background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.15)", borderRadius: 6 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", color: "#dc2626", letterSpacing: 0.5, marginBottom: 4 }}>Toughest Season</div>
+              <div style={{ fontWeight: 700, fontSize: 18, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                {programStats.worstSeason.wins}-{programStats.worstSeason.losses}{programStats.worstSeason.ties ? `-${programStats.worstSeason.ties}` : ""}
+              </div>
+              <div style={{ fontSize: 12, color: "var(--g500)" }}>{programStats.worstSeason.label} ({(programStats.worstSeason.pct * 100).toFixed(0)}%)</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Season History Timeline */}
+      {programStats.timelineData.length > 1 && (
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 16, letterSpacing: 1 }}>
+            Season History
+          </h3>
+          {/* Visual W-L bar chart */}
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 2, minHeight: 120, padding: "0 4px" }}>
+            {programStats.timelineData.map((season: any, i: number) => {
+              const maxGames = Math.max(...programStats.timelineData.map((s: any) => s.wins + s.losses + s.ties));
+              const totalGames = season.wins + season.losses + season.ties;
+              const barHeight = maxGames > 0 ? Math.max(8, (totalGames / maxGames) * 100) : 8;
+              const greenPct = totalGames > 0 ? (season.wins / totalGames) * 100 : 0;
+
+              return (
+                <div
+                  key={season.label}
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                    minWidth: 0,
+                  }}
+                  title={`${season.label}: ${season.wins}-${season.losses}${season.ties ? `-${season.ties}` : ""} (${(season.pct * 100).toFixed(0)}%)${season.playoffs ? " ★ Playoffs" : ""}`}
+                >
+                  {season.playoffs && (
+                    <div style={{ fontSize: 8, color: "var(--psp-gold)" }}>★</div>
+                  )}
+                  <div style={{
+                    width: "100%",
+                    height: barHeight,
+                    borderRadius: "3px 3px 0 0",
+                    background: `linear-gradient(to top, #16a34a ${greenPct}%, #dc2626 ${greenPct}%)`,
+                    opacity: 0.85,
+                    transition: "opacity 0.15s",
+                    cursor: "pointer",
+                  }}
+                    onMouseEnter={(e) => { (e.target as HTMLElement).style.opacity = "1"; }}
+                    onMouseLeave={(e) => { (e.target as HTMLElement).style.opacity = "0.85"; }}
+                  />
+                  <div style={{
+                    fontSize: 8,
+                    color: "var(--g400)",
+                    writingMode: "vertical-rl",
+                    transform: "rotate(180deg)",
+                    whiteSpace: "nowrap",
+                    maxHeight: 40,
+                    overflow: "hidden",
+                  }}>
+                    {season.label.replace("20", "'").split("-")[0]}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 10, fontSize: 10, color: "var(--g400)" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: "#16a34a" }} /> Wins
+            </span>
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: "#dc2626" }} /> Losses
+            </span>
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <span style={{ color: "var(--psp-gold)", fontSize: 12 }}>★</span> Playoffs
+            </span>
+          </div>
+
+          {/* Season-by-season table */}
+          <div style={{ marginTop: 16, maxHeight: 400, overflowY: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr style={{ borderBottom: "2px solid var(--g200)", position: "sticky", top: 0, background: "var(--card-bg)" }}>
+                  <th style={{ padding: "6px 10px", textAlign: "left", fontWeight: 700 }}>Season</th>
+                  <th style={{ padding: "6px 10px", textAlign: "center", fontWeight: 700 }}>Record</th>
+                  <th style={{ padding: "6px 10px", textAlign: "center", fontWeight: 700 }}>Win %</th>
+                  <th style={{ padding: "6px 10px", textAlign: "center", fontWeight: 700 }}>Playoffs</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...programStats.timelineData].reverse().map((season: any) => (
+                  <tr key={season.label} style={{ borderBottom: "1px solid var(--g100)" }}>
+                    <td style={{ padding: "6px 10px", fontWeight: 600 }}>{season.label}</td>
+                    <td style={{ padding: "6px 10px", textAlign: "center", fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700 }}>
+                      {season.wins}-{season.losses}{season.ties ? `-${season.ties}` : ""}
+                    </td>
+                    <td style={{ padding: "6px 10px", textAlign: "center" }}>
+                      <span style={{
+                        color: season.pct >= 0.6 ? "#16a34a" : season.pct < 0.4 ? "#dc2626" : "var(--text)",
+                        fontWeight: 600,
+                      }}>
+                        {(season.pct * 100).toFixed(0)}%
+                      </span>
+                    </td>
+                    <td style={{ padding: "6px 10px", textAlign: "center" }}>
+                      {season.playoffs ? <span style={{ color: "var(--psp-gold)" }}>★</span> : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Championships */}
+      {allChamps.length > 0 && (
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--psp-gold)", marginBottom: 12, letterSpacing: 1 }}>
+            Championship History ({allChamps.length})
+          </h3>
+          <div style={{ display: "grid", gap: 8 }}>
+            {allChamps.map((c: any, i: number) => (
+              <div key={c.id || i} style={{
+                padding: "10px 14px",
+                background: "rgba(240, 165, 0, 0.06)",
+                border: "1px solid rgba(240, 165, 0, 0.15)",
+                borderRadius: 6,
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+              }}>
+                <span style={{ fontSize: 20 }}>🥇</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-gold)" }}>
+                    {c.season_label || c.year} {c.level} Championship
+                  </div>
+                  <div style={{ fontSize: 11, color: "var(--g400)" }}>
+                    {c.score && `${c.score} `}
+                    {c.opponent_name || (c.opponent?.name && `vs ${c.opponent.name}`) || ""}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Notable Alumni */}
+      {notableAlumni.length > 0 && (
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 12, letterSpacing: 1 }}>
+            Notable Alumni
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 10 }}>
+            {notableAlumni.map((alum: any, i: number) => {
+              const p = alum.players || alum;
+              return (
+                <div key={p.id || i} style={{
+                  padding: "10px 14px",
+                  background: `${sportColor}06`,
+                  border: `1px solid ${sportColor}15`,
+                  borderRadius: 6,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: "50%",
+                    background: `${sportColor}15`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 16, flexShrink: 0,
+                  }}>
+                    {p.pro_team ? "⭐" : p.college ? "🎓" : sportEmoji}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    {p.slug ? (
+                      <Link href={`/${sportId}/players/${p.slug}`} style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-blue)", textDecoration: "none", display: "block" }}>
+                        {p.name}
+                      </Link>
+                    ) : (
+                      <div style={{ fontWeight: 700, fontSize: 13 }}>{p.name}</div>
+                    )}
+                    <div style={{ fontSize: 11, color: "var(--g400)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {p.pro_team && <span style={{ color: sportColor, fontWeight: 600 }}>{p.pro_team}</span>}
+                      {p.pro_team && p.college && " · "}
+                      {p.college && <span>{p.college}</span>}
+                      {p.graduation_year && <span> · Class of {p.graduation_year}</span>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* All-Time Top Players */}
+      {topPlayers.length > 0 && (
+        <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 12, letterSpacing: 1 }}>
+            Top Players — All Time
+          </h3>
+          <TopPlayersTable players={topPlayers} sportId={sportId} sportColor={sportColor} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// TOP PLAYERS TABLE (used in Program tab)
+// ============================================================================
+function TopPlayersTable({ players, sportId, sportColor }: { players: any[]; sportId: string; sportColor: string }) {
+  const getCols = () => {
+    switch (sportId) {
+      case "football":
+        return [
+          { key: "name", label: "Player", align: "left" as const },
+          { key: "seasons", label: "Seasons", align: "center" as const },
+          { key: "rushing_yards", label: "Rush Yds", align: "right" as const },
+          { key: "passing_yards", label: "Pass Yds", align: "right" as const },
+          { key: "receiving_yards", label: "Rec Yds", align: "right" as const },
+          { key: "total_td", label: "TD", align: "right" as const },
+        ];
+      case "basketball": case "girls-basketball":
+        return [
+          { key: "name", label: "Player", align: "left" as const },
+          { key: "seasons", label: "Seasons", align: "center" as const },
+          { key: "points", label: "PTS", align: "right" as const },
+          { key: "ppg", label: "PPG", align: "right" as const },
+          { key: "rebounds", label: "REB", align: "right" as const },
+          { key: "assists", label: "AST", align: "right" as const },
+        ];
+      case "baseball": case "softball":
+        return [
+          { key: "name", label: "Player", align: "left" as const },
+          { key: "seasons", label: "Seasons", align: "center" as const },
+          { key: "batting_avg", label: "AVG", align: "right" as const },
+          { key: "hits", label: "H", align: "right" as const },
+          { key: "rbi", label: "RBI", align: "right" as const },
+        ];
+      default:
+        return [
+          { key: "name", label: "Player", align: "left" as const },
+          { key: "seasons", label: "Seasons", align: "center" as const },
+        ];
+    }
+  };
+
+  const cols = getCols().filter(col => {
+    if (col.key === "name" || col.key === "seasons") return true;
+    if (col.key === "ppg") return players.some((p: any) => (p.points ?? 0) > 0 && (p.games_played ?? 0) > 0);
+    return players.some((p: any) => p[col.key] != null && p[col.key] !== 0);
+  });
+
+  return (
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+        <thead>
+          <tr style={{ borderBottom: "2px solid var(--g200)" }}>
+            <th style={{ padding: "6px 10px", textAlign: "center", fontWeight: 700, width: 30 }}>#</th>
+            {cols.map(col => (
+              <th key={col.key} style={{ padding: "6px 10px", textAlign: col.align, fontWeight: 700 }}>{col.label}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {players.slice(0, 20).map((player: any, i: number) => {
+            const p = player.players || player;
+            return (
+              <tr key={p.id || i} style={{ borderBottom: "1px solid var(--g100)" }}>
+                <td style={{ padding: "6px 10px", textAlign: "center", fontSize: 11, color: i < 3 ? "var(--psp-gold)" : "var(--g400)", fontWeight: i < 3 ? 700 : 400 }}>
+                  {i + 1}
+                </td>
+                {cols.map(col => {
+                  if (col.key === "name") {
+                    return (
+                      <td key={col.key} style={{ padding: "6px 10px" }}>
+                        {p.slug ? (
+                          <Link href={`/${sportId}/players/${p.slug}`} style={{ color: "var(--psp-blue)", textDecoration: "none", fontWeight: 600, fontSize: 13 }}>
+                            {p.name}
+                          </Link>
+                        ) : (
+                          <span style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</span>
+                        )}
+                        {p.college && <span style={{ fontSize: 10, color: sportColor, marginLeft: 6 }}>→ {p.college}</span>}
+                      </td>
+                    );
+                  }
+                  if (col.key === "seasons") {
+                    return (
+                      <td key={col.key} style={{ padding: "6px 10px", textAlign: "center", fontSize: 11, color: "var(--g500)" }}>
+                        {player.season_count || "—"}
+                      </td>
+                    );
+                  }
+                  if (col.key === "ppg") {
+                    const pts = player.points ?? 0;
+                    const gp = player.games_played ?? 1;
+                    return (
+                      <td key={col.key} style={{ padding: "6px 10px", textAlign: "right", fontWeight: 600, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                        {gp > 0 ? (pts / gp).toFixed(1) : "—"}
+                      </td>
+                    );
+                  }
+                  const val = player[col.key];
+                  return (
+                    <td key={col.key} style={{ padding: "6px 10px", textAlign: "right", fontWeight: 600, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                      {val != null && val !== 0 ? val.toLocaleString() : "—"}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ============================================================================
+// SCHEDULE TAB (unchanged)
 // ============================================================================
 function ScheduleTab({ data, schoolSlug, sportId, sportColor }: { data: SeasonData; schoolSlug: string; sportId: string; sportColor: string }) {
   const ts = data.teamSeason;
@@ -257,14 +719,13 @@ function ScheduleTab({ data, schoolSlug, sportId, sportColor }: { data: SeasonDa
 }
 
 // ============================================================================
-// ROSTER TAB
+// ROSTER TAB (unchanged)
 // ============================================================================
 function RosterTab({ data, sportId, sportColor }: { data: SeasonData; sportId: string; sportColor: string }) {
   if (!data.roster.length) {
     return <EmptyState icon="👥" text="No roster data for this season" />;
   }
 
-  // Sport-specific column definitions
   const getColumns = () => {
     switch (sportId) {
       case "football":
@@ -308,12 +769,8 @@ function RosterTab({ data, sportId, sportColor }: { data: SeasonData; sportId: s
   };
 
   const allColumns = getColumns();
-
-  // Smart column hiding: only show stat columns that have at least one non-null value
   const columns = allColumns.filter((col) => {
-    // Always show core columns
     if (col.key === "name" || col.key === "positions" || col.key === "graduation_year") return true;
-    // For stat columns, check if ANY player has a non-null, non-zero value
     if (col.key === "ppg") {
       return data.roster.some((p: any) => (p.points ?? 0) > 0 && (p.games_played ?? 0) > 0);
     }
@@ -380,7 +837,6 @@ function RosterTab({ data, sportId, sportColor }: { data: SeasonData; sportId: s
                     </td>
                   );
                 }
-                // Generic numeric stat
                 const val = player[col.key];
                 return (
                   <td key={col.key} style={{ padding: "10px 12px", textAlign: "right", fontWeight: 600, fontFamily: "'Barlow Condensed', sans-serif" }}>
@@ -397,12 +853,17 @@ function RosterTab({ data, sportId, sportColor }: { data: SeasonData; sportId: s
 }
 
 // ============================================================================
-// STATS TAB
+// STATS TAB (UPGRADED — full individual stat tables + point differential)
 // ============================================================================
 function StatsTab({ data, sportId, sportName, sportColor }: { data: SeasonData; sportId: string; sportName: string; sportColor: string }) {
   const ts = data.teamSeason;
   const totalGames = (ts?.wins || 0) + (ts?.losses || 0) + (ts?.ties || 0);
   const winPct = totalGames > 0 ? (((ts?.wins || 0) / totalGames) * 100).toFixed(1) : null;
+  const ptDiff = ts?.points_for != null && ts?.points_against != null
+    ? ts.points_for - ts.points_against
+    : null;
+  const avgPF = ts?.points_for != null && totalGames > 0 ? (ts.points_for / totalGames).toFixed(1) : null;
+  const avgPA = ts?.points_against != null && totalGames > 0 ? (ts.points_against / totalGames).toFixed(1) : null;
 
   // Stat leaders from roster
   const getLeaders = () => {
@@ -415,7 +876,7 @@ function StatsTab({ data, sportId, sportName, sportColor }: { data: SeasonData; 
           { label: "Receiving Leader", player: [...data.roster].sort((a: any, b: any) => (b.receiving_yards || 0) - (a.receiving_yards || 0))[0], stat: "receiving_yards", unit: "yds" },
           { label: "TD Leader", player: [...data.roster].sort((a: any, b: any) => (b.total_td || 0) - (a.total_td || 0))[0], stat: "total_td", unit: "TD" },
         ];
-      case "basketball":
+      case "basketball": case "girls-basketball":
         return [
           { label: "Scoring Leader", player: [...data.roster].sort((a: any, b: any) => (b.points || 0) - (a.points || 0))[0], stat: "points", unit: "pts" },
           { label: "Rebounds Leader", player: [...data.roster].sort((a: any, b: any) => (b.rebounds || 0) - (a.rebounds || 0))[0], stat: "rebounds", unit: "reb" },
@@ -428,14 +889,98 @@ function StatsTab({ data, sportId, sportName, sportColor }: { data: SeasonData; 
 
   const leaders = getLeaders().filter((l) => l.player && l.player[l.stat]);
 
+  // Full stat tables by category for football
+  const getStatTables = () => {
+    if (!data.roster.length) return [];
+    switch (sportId) {
+      case "football":
+        return [
+          {
+            title: "Rushing",
+            sortKey: "rushing_yards",
+            cols: [
+              { key: "name", label: "Player", align: "left" as const },
+              { key: "rushing_attempts", label: "ATT", align: "right" as const },
+              { key: "rushing_yards", label: "YDS", align: "right" as const },
+              { key: "rushing_td", label: "TD", align: "right" as const },
+            ],
+          },
+          {
+            title: "Passing",
+            sortKey: "passing_yards",
+            cols: [
+              { key: "name", label: "Player", align: "left" as const },
+              { key: "completions", label: "CMP", align: "right" as const },
+              { key: "pass_attempts", label: "ATT", align: "right" as const },
+              { key: "passing_yards", label: "YDS", align: "right" as const },
+              { key: "passing_td", label: "TD", align: "right" as const },
+              { key: "interceptions", label: "INT", align: "right" as const },
+            ],
+          },
+          {
+            title: "Receiving",
+            sortKey: "receiving_yards",
+            cols: [
+              { key: "name", label: "Player", align: "left" as const },
+              { key: "receptions", label: "REC", align: "right" as const },
+              { key: "receiving_yards", label: "YDS", align: "right" as const },
+              { key: "receiving_td", label: "TD", align: "right" as const },
+            ],
+          },
+          {
+            title: "Scoring",
+            sortKey: "total_td",
+            cols: [
+              { key: "name", label: "Player", align: "left" as const },
+              { key: "rushing_td", label: "Rush TD", align: "right" as const },
+              { key: "passing_td", label: "Pass TD", align: "right" as const },
+              { key: "receiving_td", label: "Rec TD", align: "right" as const },
+              { key: "total_td", label: "Total TD", align: "right" as const },
+            ],
+          },
+        ];
+      case "basketball": case "girls-basketball":
+        return [
+          {
+            title: "Scoring",
+            sortKey: "points",
+            cols: [
+              { key: "name", label: "Player", align: "left" as const },
+              { key: "games_played", label: "GP", align: "right" as const },
+              { key: "points", label: "PTS", align: "right" as const },
+              { key: "ppg", label: "PPG", align: "right" as const },
+            ],
+          },
+        ];
+      case "baseball": case "softball":
+        return [
+          {
+            title: "Batting",
+            sortKey: "hits",
+            cols: [
+              { key: "name", label: "Player", align: "left" as const },
+              { key: "batting_avg", label: "AVG", align: "right" as const },
+              { key: "hits", label: "H", align: "right" as const },
+              { key: "rbi", label: "RBI", align: "right" as const },
+              { key: "home_runs", label: "HR", align: "right" as const },
+            ],
+          },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const statTables = getStatTables();
+
   return (
     <div style={{ display: "grid", gap: 16 }}>
-      {/* Team Record Card */}
+      {/* Team Record Card (enhanced) */}
       <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
         <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 12, letterSpacing: 1 }}>
           Team Record
         </h3>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 16 }}>
           <StatBlock label="Overall" value={`${ts?.wins || 0}-${ts?.losses || 0}${ts?.ties ? `-${ts.ties}` : ""}`} color="var(--text)" />
           {winPct && <StatBlock label="Win %" value={`${winPct}%`} color={sportColor} />}
           {ts?.league_wins != null && (
@@ -443,6 +988,15 @@ function StatsTab({ data, sportId, sportName, sportColor }: { data: SeasonData; 
           )}
           {ts?.points_for != null && <StatBlock label="Points For" value={String(ts.points_for)} color="var(--text)" />}
           {ts?.points_against != null && <StatBlock label="Points Against" value={String(ts.points_against)} color="var(--text)" />}
+          {ptDiff !== null && (
+            <StatBlock
+              label="Point Diff"
+              value={`${ptDiff > 0 ? "+" : ""}${ptDiff}`}
+              color={ptDiff > 0 ? "#16a34a" : ptDiff < 0 ? "#dc2626" : "var(--text)"}
+            />
+          )}
+          {avgPF && <StatBlock label="Avg PF/Game" value={avgPF} color="var(--text)" />}
+          {avgPA && <StatBlock label="Avg PA/Game" value={avgPA} color="var(--text)" />}
           {ts?.league_finish && <StatBlock label="League Finish" value={ts.league_finish} color="var(--g500)" />}
           {ts?.playoff_result && <StatBlock label="Playoffs" value={ts.playoff_result} color={sportColor} />}
           {ts?.ranking && <StatBlock label="Ranking" value={`#${ts.ranking}`} color="var(--psp-gold)" />}
@@ -481,6 +1035,77 @@ function StatsTab({ data, sportId, sportName, sportColor }: { data: SeasonData; 
           </div>
         </div>
       )}
+
+      {/* Full Individual Stat Tables */}
+      {statTables.map((table) => {
+        const sorted = [...data.roster]
+          .filter((p: any) => p[table.sortKey] != null && p[table.sortKey] > 0)
+          .sort((a: any, b: any) => (b[table.sortKey] || 0) - (a[table.sortKey] || 0));
+
+        if (sorted.length === 0) return null;
+
+        return (
+          <div key={table.title} style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, overflow: "hidden" }}>
+            <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--g100)" }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", letterSpacing: 1, margin: 0 }}>
+                {table.title}
+              </h3>
+            </div>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: "var(--g50, rgba(0,0,0,0.03))", borderBottom: "2px solid var(--g200)" }}>
+                  <th style={{ padding: "6px 10px", textAlign: "center", fontWeight: 700, width: 30 }}>#</th>
+                  {table.cols.map(col => (
+                    <th key={col.key} style={{ padding: "6px 10px", textAlign: col.align, fontWeight: 700 }}>{col.label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sorted.slice(0, 15).map((player: any, i: number) => {
+                  const p = player.players || player;
+                  return (
+                    <tr key={p.id || i} style={{ borderBottom: "1px solid var(--g100)", background: i === 0 ? `${sportColor}06` : undefined }}>
+                      <td style={{ padding: "6px 10px", textAlign: "center", fontSize: 11, color: i < 3 ? "var(--psp-gold)" : "var(--g400)", fontWeight: i < 3 ? 700 : 400 }}>
+                        {i + 1}
+                      </td>
+                      {table.cols.map(col => {
+                        if (col.key === "name") {
+                          return (
+                            <td key={col.key} style={{ padding: "6px 10px" }}>
+                              {p.slug ? (
+                                <Link href={`/${sportId}/players/${p.slug}`} style={{ color: "var(--psp-blue)", textDecoration: "none", fontWeight: 600 }}>
+                                  {p.name}
+                                </Link>
+                              ) : (
+                                <span style={{ fontWeight: 600 }}>{p.name}</span>
+                              )}
+                            </td>
+                          );
+                        }
+                        if (col.key === "ppg") {
+                          const pts = player.points ?? 0;
+                          const gp = player.games_played ?? 1;
+                          return (
+                            <td key={col.key} style={{ padding: "6px 10px", textAlign: "right", fontWeight: 600, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                              {gp > 0 ? (pts / gp).toFixed(1) : "—"}
+                            </td>
+                          );
+                        }
+                        const val = player[col.key];
+                        return (
+                          <td key={col.key} style={{ padding: "6px 10px", textAlign: "right", fontWeight: 600, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                            {val != null ? val : "—"}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -495,7 +1120,7 @@ function StatBlock({ label, value, color }: { label: string; value: string; colo
 }
 
 // ============================================================================
-// AWARDS TAB
+// AWARDS TAB (unchanged)
 // ============================================================================
 function AwardsTab({ data, sportId, sportColor }: { data: SeasonData; sportId: string; sportColor: string }) {
   const hasAwards = data.awards.length > 0;
@@ -507,7 +1132,6 @@ function AwardsTab({ data, sportId, sportColor }: { data: SeasonData; sportId: s
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
-      {/* Championships */}
       {hasChamps && (
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--psp-gold)", marginBottom: 12, letterSpacing: 1 }}>
@@ -530,7 +1154,6 @@ function AwardsTab({ data, sportId, sportColor }: { data: SeasonData; sportId: s
         </div>
       )}
 
-      {/* Individual Awards */}
       {hasAwards && (
         <div style={{ background: "var(--card-bg)", border: "1px solid var(--g100)", borderRadius: 8, padding: 20 }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 12, letterSpacing: 1 }}>

@@ -8,6 +8,9 @@ import {
   getLeagueTeams,
   getTopProgramsBySport,
   getSchoolChampionships,
+  getSchoolNotableAlumni,
+  getSchoolSeasonSummaries,
+  getSchoolPlayers,
   SPORT_META,
   VALID_SPORTS,
   isValidSport,
@@ -43,14 +46,17 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
   const meta = (SPORT_META as any)[sport];
   if (!meta) notFound();
 
-  // Fetch all season data + sidebar data in parallel
-  const [seasonsData, coaches, activeSports, leagueTeams, topPrograms, allChamps] = await Promise.all([
+  // Fetch all season data + sidebar data + program data in parallel
+  const [seasonsData, coaches, activeSports, leagueTeams, topPrograms, allChamps, notableAlumni, seasonSummaries, topPlayers] = await Promise.all([
     getAllTeamSeasonData(school.id, sport),
     getSchoolCoaches(school.id),
     getActiveSportsBySchool(school.id),
     getLeagueTeams(school.league_id, sport, school.id, 8),
     getTopProgramsBySport(sport, school.id, 6),
     getSchoolChampionships(school.id, sport),
+    getSchoolNotableAlumni(school.id, sport, 15),
+    getSchoolSeasonSummaries(school.id, sport),
+    getSchoolPlayers(school.id, sport, 30),
   ]);
 
   const seasonLabels = Object.keys(seasonsData).sort((a, b) => {
@@ -184,6 +190,10 @@ export default async function TeamProfilePage({ params }: { params: Promise<Page
                   sportColor={meta.color}
                   seasonLabels={seasonLabels}
                   seasonsData={seasonsData}
+                  allChamps={allChamps}
+                  notableAlumni={notableAlumni}
+                  seasonSummaries={seasonSummaries}
+                  topPlayers={topPlayers}
                 />
               </div>
 
