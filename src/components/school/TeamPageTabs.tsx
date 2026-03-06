@@ -1147,13 +1147,39 @@ function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }
     return <EmptyState icon="🏆" text="No awards or championships on record" />;
   }
 
-  // Group awards by type for cleaner display
+  // Normalize and group awards by type
+  const normalizeAwardType = (type: string) => {
+    const lower = type.toLowerCase().trim();
+    if (lower === "all-city" || lower === "all-city selection") return "All-City";
+    if (lower === "all-catholic") return "All-Catholic";
+    if (lower === "all-public") return "All-Public";
+    if (lower === "all-state") return "All-State";
+    if (lower === "all-inter-ac") return "All-Inter-Ac";
+    if (lower === "all-american") return "All-American";
+    if (lower.includes("player of the year")) return "Player of the Year";
+    if (lower.includes("pitcher of the year")) return "Pitcher of the Year";
+    if (lower === "mvp") return "MVP";
+    return type.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+  };
+
   const awardsByType: Record<string, any[]> = {};
   for (const a of awards) {
-    const type = a.award_type || a.award_name || "Award";
+    const rawType = a.award_type || a.award_name || "Award";
+    const type = normalizeAwardType(rawType);
     if (!awardsByType[type]) awardsByType[type] = [];
     awardsByType[type].push(a);
   }
+
+  // Sort groups: All-City first, then All-Catholic, All-Public, All-State, then alphabetical
+  const typeOrder = ["All-City", "All-Catholic", "All-Public", "All-Inter-Ac", "All-State", "All-American", "Player of the Year", "Pitcher of the Year", "MVP"];
+  const sortedTypes = Object.keys(awardsByType).sort((a, b) => {
+    const ai = typeOrder.indexOf(a);
+    const bi = typeOrder.indexOf(b);
+    if (ai !== -1 && bi !== -1) return ai - bi;
+    if (ai !== -1) return -1;
+    if (bi !== -1) return 1;
+    return a.localeCompare(b);
+  });
 
   return (
     <div style={{ display: "grid", gap: 16 }}>
@@ -1191,10 +1217,12 @@ function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }
           <h3 style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", textTransform: "uppercase", color: "var(--g400)", marginBottom: 12, letterSpacing: 1 }}>
             🏅 Individual Awards ({awards.length})
           </h3>
-          {Object.entries(awardsByType).map(([type, items]) => (
+          {sortedTypes.map((type) => {
+            const items = awardsByType[type];
+            return (
             <div key={type} style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: sportColor, textTransform: "uppercase", marginBottom: 6, letterSpacing: 0.5 }}>
-                {type.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())} ({items.length})
+                {type} ({items.length})
               </div>
               <div style={{ display: "grid", gap: 4 }}>
                 {items.map((a: any, i: number) => (
@@ -1211,18 +1239,22 @@ function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }
                     <span style={{ fontSize: 11, color: "var(--g500)", fontFamily: "'Barlow Condensed', sans-serif" }}>
                       {a.seasons?.label || a.year || ""}
                     </span>
-                    {a.award_tier && (
-                      <span style={{
-                        fontSize: 10,
-                        padding: "2px 6px",
-                        borderRadius: 4,
-                        fontWeight: 700,
-                        background: a.award_tier === 1 ? "rgba(240, 165, 0, 0.15)" : a.award_tier === 2 ? "rgba(59, 130, 246, 0.1)" : "var(--g100)",
-                        color: a.award_tier === 1 ? "var(--psp-gold)" : a.award_tier === 2 ? "var(--psp-blue)" : "var(--g400)",
-                      }}>
-                        {a.award_tier === 1 ? "1st Team" : a.award_tier === 2 ? "2nd Team" : `${a.award_tier}rd Team`}
-                      </span>
-                    )}
+                    {a.award_tier && (() => {
+                      const tier = Number(a.award_tier);
+                      const suffix = tier === 1 ? "st" : tier === 2 ? "nd" : tier === 3 ? "rd" : "th";
+                      return (
+                        <span style={{
+                          fontSize: 10,
+                          padding: "2px 6px",
+                          borderRadius: 4,
+                          fontWeight: 700,
+                          background: tier === 1 ? "rgba(240, 165, 0, 0.15)" : tier === 2 ? "rgba(59, 130, 246, 0.1)" : "var(--g100)",
+                          color: tier === 1 ? "var(--psp-gold)" : tier === 2 ? "var(--psp-blue)" : "var(--g400)",
+                        }}>
+                          {tier}{suffix} Team
+                        </span>
+                      );
+                    })()}
                     {a.designation && (
                       <span style={{ fontSize: 11, color: "var(--g400)" }}>{a.designation}</span>
                     )}
@@ -1230,7 +1262,8 @@ function AwardsTab({ data, sportId, sportColor, allChamps = [], allAwards = [] }
                 ))}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
