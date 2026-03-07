@@ -63,3 +63,114 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return this.props.children as ReactElement;
   }
 }
+
+/**
+ * ErrorFallback - Inline error component for component-level errors
+ * Can be used within components without wrapping entire page
+ */
+interface ErrorFallbackProps {
+  error?: Error;
+  title?: string;
+  message?: string;
+  onRetry?: () => void;
+  className?: string;
+}
+
+export function ErrorFallback({
+  error,
+  title = "Something went wrong",
+  message = "An error occurred while loading this content. Please try again.",
+  onRetry,
+  className = "",
+}: ErrorFallbackProps) {
+  return (
+    <div
+      className={`error-fallback ${className}`}
+      style={{
+        background: "var(--psp-white)",
+        border: "1px solid var(--psp-gray-200)",
+        borderRadius: "0.5rem",
+        padding: "2rem 1rem",
+        textAlign: "center",
+        minHeight: "200px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>⚠️</div>
+
+      <h3
+        style={{
+          fontSize: "1.125rem",
+          fontWeight: 700,
+          marginBottom: "0.5rem",
+          color: "var(--psp-navy)",
+        }}
+      >
+        {title}
+      </h3>
+
+      <p
+        style={{
+          fontSize: "0.875rem",
+          color: "var(--psp-gray-500)",
+          marginBottom: "1.5rem",
+          maxWidth: "28rem",
+        }}
+      >
+        {message}
+      </p>
+
+      {process.env.NODE_ENV === "development" && error && (
+        <div
+          style={{
+            background: "var(--psp-gray-100)",
+            borderRadius: "0.375rem",
+            padding: "0.75rem",
+            marginBottom: "1rem",
+            width: "100%",
+            textAlign: "left",
+          }}
+        >
+          <p
+            style={{
+              fontSize: "0.75rem",
+              fontFamily: "monospace",
+              color: "var(--psp-gray-700)",
+              wordBreak: "break-all",
+              margin: 0,
+            }}
+          >
+            {error.message}
+          </p>
+        </div>
+      )}
+
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          style={{
+            background: "var(--psp-gold)",
+            color: "var(--psp-navy)",
+            padding: "0.5rem 1.25rem",
+            border: "none",
+            borderRadius: "0.375rem",
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "all 0.15s",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--psp-gold-light)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "var(--psp-gold)";
+          }}
+        >
+          Try Again
+        </button>
+      )}
+    </div>
+  );
+}

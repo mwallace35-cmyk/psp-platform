@@ -1,0 +1,228 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmptyState - Snapshot Tests > renders empty state with action button 1`] = `
+<div
+  class="empty-state "
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    📭
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No games scheduled
+  </h3>
+  <p
+    style="font-size: 0.875rem; max-width: 28rem; margin: 0px auto 1.5rem; color: var(--psp-gray-500); line-height: 1.6;"
+  >
+    Schedule a game to get started
+  </p>
+  <div
+    style="margin-top: 0.5rem;"
+  >
+    <button
+      class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+    >
+      New Game
+    </button>
+  </div>
+</div>
+`;
+
+exports[`EmptyState - Snapshot Tests > renders empty state with all options 1`] = `
+<div
+  class="empty-state custom-class"
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    🏆
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No championships won
+  </h3>
+  <p
+    style="font-size: 0.875rem; max-width: 28rem; margin: 0px auto 1.5rem; color: var(--psp-gray-500); line-height: 1.6;"
+  >
+    Your school has not won any state championships yet
+  </p>
+  <div
+    style="margin-top: 0.5rem;"
+  >
+    <button
+      class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+    >
+      View history
+    </button>
+  </div>
+</div>
+`;
+
+exports[`EmptyState - Snapshot Tests > renders empty state with custom icon 1`] = `
+<div
+  class="empty-state "
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    <span
+      class="text-4xl"
+    >
+      📋
+    </span>
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No coaches
+  </h3>
+</div>
+`;
+
+exports[`EmptyState - Snapshot Tests > renders empty state with description prop 1`] = `
+<div
+  class="empty-state "
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    📭
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No records
+  </h3>
+  <p
+    style="font-size: 0.875rem; max-width: 28rem; margin: 0px auto 1.5rem; color: var(--psp-gray-500); line-height: 1.6;"
+  >
+    There are no school records available at this time
+  </p>
+</div>
+`;
+
+exports[`EmptyState - Snapshot Tests > renders empty state with icon and title 1`] = `
+<div
+  class="empty-state "
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    👥
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No players
+  </h3>
+</div>
+`;
+
+exports[`EmptyState - Snapshot Tests > renders empty state with link action 1`] = `
+<div
+  class="empty-state "
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    📭
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No teams
+  </h3>
+  <div
+    style="margin-top: 0.5rem;"
+  >
+    <button
+      class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+    >
+      Create Team
+    </button>
+  </div>
+</div>
+`;
+
+exports[`EmptyState - Snapshot Tests > renders empty state with long text 1`] = `
+<div
+  class="empty-state "
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    📭
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No awards found
+  </h3>
+  <p
+    style="font-size: 0.875rem; max-width: 28rem; margin: 0px auto 1.5rem; color: var(--psp-gray-500); line-height: 1.6;"
+  >
+    The selected school does not have any recorded awards or achievements in the database
+  </p>
+  <div
+    style="margin-top: 0.5rem;"
+  >
+    <button
+      class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+    >
+      Add Award
+    </button>
+  </div>
+</div>
+`;
+
+exports[`EmptyState - Snapshot Tests > renders empty state with title and message 1`] = `
+<div
+  class="empty-state "
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    📭
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No results found
+  </h3>
+  <p
+    style="font-size: 0.875rem; max-width: 28rem; margin: 0px auto 1.5rem; color: var(--psp-gray-500); line-height: 1.6;"
+  >
+    Try adjusting your search criteria
+  </p>
+</div>
+`;
+
+exports[`EmptyState - Snapshot Tests > renders empty state with title only 1`] = `
+<div
+  class="empty-state "
+  style="text-align: center; padding: 2rem 1rem; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;"
+>
+  <div
+    style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;"
+  >
+    📭
+  </div>
+  <h3
+    style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--psp-navy);"
+  >
+    No data available
+  </h3>
+</div>
+`;

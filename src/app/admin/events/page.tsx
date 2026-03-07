@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
-import { Button, Badge } from '@/components/ui';
+import { Button, Badge, ToastContainer } from '@/components/ui';
+import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
 
 interface Event {
@@ -37,6 +39,7 @@ export default function EventsManagement() {
   const [saving, setSaving] = useState(false);
 
   const supabase = createClient();
+  const { toasts, removeToast, error: toastError, success: toastSuccess } = useToast();
 
   useEffect(() => {
     fetchEvents();
@@ -68,7 +71,7 @@ export default function EventsManagement() {
 
   async function handleSaveEvent() {
     if (!formTitle.trim() || !formDate || !formLocation.trim()) {
-      alert('Please fill in required fields');
+      toastError('Please fill in all required fields');
       return;
     }
 
@@ -96,10 +99,11 @@ export default function EventsManagement() {
       setFormRegistrationUrl('');
       setShowForm(false);
 
+      toastSuccess('Event created successfully!');
       fetchEvents();
     } catch (error) {
       console.error('Error saving event:', error);
-      alert('Error saving event');
+      toastError('Error saving event. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -125,7 +129,9 @@ export default function EventsManagement() {
   ];
 
   return (
-    <div className="space-y-6">
+    <>
+      <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} />
+      <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-navy mb-2">Events</h1>
@@ -345,6 +351,7 @@ export default function EventsManagement() {
           ))
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

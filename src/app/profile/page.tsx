@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import { ToastContainer } from '@/components/ui';
+import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS } from '@/lib/sports';
 
 export default function ProfilePage() {
@@ -19,6 +21,7 @@ export default function ProfilePage() {
 
   const supabase = createClient();
   const router = useRouter();
+  const { toasts, removeToast, error: toastError, success: toastSuccess } = useToast();
 
   useEffect(() => {
     async function loadProfile() {
@@ -69,10 +72,11 @@ export default function ProfilePage() {
 
       if (error) throw error;
       setSaved(true);
+      toastSuccess('Profile saved successfully!');
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error('Error saving profile:', err);
-      alert('Could not save profile');
+      toastError('Could not save profile. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -93,7 +97,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
+    <>
+      <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} />
+      <div className="max-w-2xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
@@ -180,6 +186,7 @@ export default function ProfilePage() {
           {saved ? 'Saved!' : saving ? 'Saving...' : 'Save Profile'}
         </button>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

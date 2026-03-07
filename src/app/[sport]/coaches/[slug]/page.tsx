@@ -3,21 +3,44 @@ import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
 
 type PageParams = { sport: string; slug: string };
 
-async function getCoachBySlug(slug: string) {
+interface Coach {
+  id: number;
+  name: string;
+  slug: string;
+  [key: string]: unknown;
+}
+
+interface CoachingStint {
+  id: number;
+  coach_id: number;
+  start_year?: number;
+  end_year?: number;
+  sport_id?: string;
+  record_wins?: number;
+  record_losses?: number;
+  record_ties?: number;
+  championships?: number;
+  role?: string;
+  notes?: string;
+  schools?: { name: string; slug: string };
+}
+
+async function getCoachBySlug(slug: string): Promise<Coach | null> {
   try {
     const supabase = await createClient();
     const { data } = await supabase.from("coaches").select("*").eq("slug", slug).is("deleted_at", null).single();
-    return data;
+    return data as Coach | null;
   } catch { return null; }
 }
 
-async function getCoachingStints(coachId: number, sportId?: string) {
+async function getCoachingStints(coachId: number, sportId?: string): Promise<CoachingStint[]> {
   try {
     const supabase = await createClient();
     let query = supabase
@@ -26,7 +49,7 @@ async function getCoachingStints(coachId: number, sportId?: string) {
       .eq("coach_id", coachId);
     if (sportId) query = query.eq("sport_id", sportId);
     const { data } = await query.order("start_year", { ascending: false });
-    return data ?? [];
+    return (data ?? []) as CoachingStint[];
   } catch { return []; }
 }
 
@@ -38,6 +61,9 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   return {
     title: `${coach.name} — ${SPORT_META[sport].name} Coach — PhillySportsPack`,
     description: `${coach.name} coaching career, record, and championships.`,
+    alternates: {
+      canonical: `https://phillysportspack.com/${sport}/coaches/${slug}`,
+    },
   };
 }
 
@@ -52,7 +78,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
   const stints = await getCoachingStints(coach.id, sport);
 
   const totalRecord = stints.reduce(
-    (acc: { w: number; l: number; t: number; c: number }, st: any) => ({
+    (acc: { w: number; l: number; t: number; c: number }, st: CoachingStint) => ({
       w: acc.w + (st.record_wins || 0),
       l: acc.l + (st.record_losses || 0),
       t: acc.t + (st.record_ties || 0),
@@ -63,6 +89,12 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
 
   return (
     <>
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "https://phillysportspack.com" },
+        { name: meta.name, url: `https://phillysportspack.com/${sport}` },
+        { name: "Coaches", url: `https://phillysportspack.com/${sport}/coaches` },
+        { name: coach.name, url: `https://phillysportspack.com/${sport}/coaches/${slug}` },
+      ]} />
       <section className="py-12" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
@@ -89,7 +121,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
               Coaching Timeline
             </h2>
             <div className="space-y-4">
-              {stints.map((stint: any) => (
+              {stints.map((stint: CoachingStint) => (
                 <div key={stint.id} className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-5 flex items-start gap-4">
                   <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0"
@@ -105,8 +137,8 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
                       {stint.start_year}–{stint.end_year || "Present"} • {stint.role === "head_coach" ? "Head Coach" : stint.role}
                     </div>
                     <div className="text-sm mt-2" style={{ color: "var(--psp-gray-500)" }}>
-                      Record: {stint.record_wins}-{stint.record_losses}{stint.record_ties > 0 ? `-${stint.record_ties}` : ""}
-                      {stint.championships > 0 && (
+                      Record: {stint.record_wins}-{stint.record_losses}{(stint.record_ties ?? 0) > 0 ? `-${stint.record_ties}` : ""}
+                      {(stint.championships ?? 0) > 0 && (
                         <span className="ml-3" style={{ color: "var(--psp-gold)" }}>
                           🏆 {stint.championships} title{stint.championships !== 1 ? "s" : ""}
                         </span>
@@ -127,12 +159,12 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
           </div>
         )}
 
-        {coach.bio && (
+        {coach.bio ? (
           <div className="mt-8 bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
             <h3 className="font-bold text-sm uppercase tracking-wider mb-3" style={{ color: "var(--psp-gray-400)" }}>Bio</h3>
-            <p className="text-sm leading-relaxed" style={{ color: "var(--psp-gray-500)" }}>{coach.bio}</p>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--psp-gray-500)" }}>{String(coach.bio)}</p>
           </div>
-        )}
+        ) : null}
       </div>
 
       <script

@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
-import { Button, Badge } from '@/components/ui';
+import { Button, Badge, ToastContainer } from '@/components/ui';
+import { useToast } from '@/hooks/useToast';
 
 interface Correction {
   id: number;
@@ -29,6 +31,7 @@ export default function CorrectionsAdmin() {
   const [adminNotes, setAdminNotes] = useState<Record<number, string>>({});
 
   const supabase = createClient();
+  const { toasts, removeToast, error: toastError, success: toastSuccess } = useToast();
 
   useEffect(() => {
     fetchCorrections();
@@ -68,10 +71,11 @@ export default function CorrectionsAdmin() {
         .eq('id', id);
 
       if (error) throw error;
+      toastSuccess(`Correction ${newStatus} successfully!`);
       fetchCorrections();
     } catch (err) {
       console.error('Error resolving correction:', err);
-      alert('Error updating correction');
+      toastError('Error updating correction. Please try again.');
     }
   }
 
@@ -89,19 +93,22 @@ export default function CorrectionsAdmin() {
   };
 
   return (
-    <div className="space-y-6">
+    <>
+      <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} />
+      <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-navy mb-2">Community Corrections</h1>
         <p className="text-gray-600">Review data corrections submitted by the community</p>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {['pending', 'approved', 'rejected', 'all'].map((s) => (
           <button
             key={s}
             onClick={() => setStatusFilter(s)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition ${
+            aria-pressed={statusFilter === s}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 ${
               statusFilter === s
                 ? 'bg-navy text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -158,9 +165,10 @@ export default function CorrectionsAdmin() {
               className="bg-white border border-gray-200 rounded-lg overflow-hidden"
             >
               {/* Header row */}
-              <div
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition"
+              <button
+                className="w-full p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400 text-left bg-white border-none"
                 onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}
+                aria-expanded={expandedId === c.id}
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <span className="text-lg">{entityEmoji[c.entity_type] || '📝'}</span>
@@ -197,7 +205,7 @@ export default function CorrectionsAdmin() {
                     <path d="m6 9 6 6 6-6" />
                   </svg>
                 </div>
-              </div>
+              </button>
 
               {/* Expanded detail */}
               {expandedId === c.id && (
@@ -256,22 +264,30 @@ export default function CorrectionsAdmin() {
                   {c.status === 'pending' && (
                     <div className="space-y-3 pt-2 border-t border-gray-200">
                       <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1">Admin Notes</label>
+                        <label htmlFor={`admin-notes-${c.id}`} className="block text-xs font-medium text-gray-500 mb-1">
+                          Admin Notes <span className="text-gray-400">(optional)</span>
+                        </label>
                         <textarea
+                          id={`admin-notes-${c.id}`}
                           value={adminNotes[c.id] || ''}
                           onChange={(e) =>
                             setAdminNotes((prev) => ({ ...prev, [c.id]: e.target.value }))
                           }
                           placeholder="Optional notes about this correction..."
                           rows={2}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold min-h-[44px]"
+                          aria-describedby={`admin-notes-hint-${c.id}`}
                         />
+                        <div id={`admin-notes-hint-${c.id}`} className="text-xs text-gray-400 mt-1">
+                          Provide context for your decision on this correction request.
+                        </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         <Button
                           variant="primary"
                           size="sm"
                           onClick={() => handleResolve(c.id, 'approved')}
+                          aria-label={`Approve correction for ${c.entity_name}`}
                         >
                           Approve
                         </Button>
@@ -279,6 +295,7 @@ export default function CorrectionsAdmin() {
                           variant="secondary"
                           size="sm"
                           onClick={() => handleResolve(c.id, 'rejected')}
+                          aria-label={`Reject correction for ${c.entity_name}`}
                         >
                           Reject
                         </Button>
@@ -298,6 +315,7 @@ export default function CorrectionsAdmin() {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

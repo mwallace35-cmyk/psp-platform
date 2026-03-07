@@ -1,0 +1,106 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Card - Snapshot Tests > renders card with all options combined 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm  hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer overflow-hidden p-8 extra-class"
+  id="card-1"
+>
+  All Options Card
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders card with custom className 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm   p-6 custom-class"
+>
+  Custom Card
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders card with hover variant 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm hover:shadow-md hover:border-[var(--psp-gray-300)] transition-all duration-200 cursor-pointer  p-6 "
+>
+  Hover Card
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders card with large padding 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm   p-8 "
+>
+  Large Padding
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders card with medium padding 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm   p-6 "
+>
+  Medium Padding
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders card with multiple children 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm   p-6 "
+>
+  <h3>
+    Title
+  </h3>
+  <p>
+    Paragraph 1
+  </p>
+  <p>
+    Paragraph 2
+  </p>
+  <button>
+    Action
+  </button>
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders card with nested content 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm hover:shadow-md hover:border-[var(--psp-gray-300)] transition-all duration-200 cursor-pointer  p-6 "
+>
+  <div
+    class="header"
+  >
+    <h2>
+      Card Title
+    </h2>
+  </div>
+  <div
+    class="body"
+  >
+    <p>
+      Card description text
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders card with small padding 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm   p-4 "
+>
+  Small Padding
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders card with sport variant 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm  hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer overflow-hidden p-6 "
+>
+  Sport Card
+</div>
+`;
+
+exports[`Card - Snapshot Tests > renders default card correctly 1`] = `
+<div
+  class="bg-white rounded-xl border border-[var(--psp-gray-200)] shadow-sm   p-6 "
+>
+  Card content
+</div>
+`;

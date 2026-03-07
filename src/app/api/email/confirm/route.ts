@@ -1,11 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
+import { rateLimit } from '@/lib/rate-limit';
+import { captureError } from '@/lib/error-tracking';
 
 export async function GET(request: NextRequest) {
+  // Get request ID from middleware for error correlation
+  const requestId = request.headers.get("x-request-id") || randomUUID();
+
+  const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+  const userAgent = request.headers.get("user-agent");
+  const acceptLanguage = request.headers.get("accept-language");
+
+  const { success } = await rateLimit(
+    ip,
+    10,
+    60000,
+    "/api/email/confirm",
+    userAgent,
+    acceptLanguage
+  );
+  if (!success) {
+    const response = NextResponse.redirect(new URL('/?error=rate-limited', request.url));
+    response.headers.set("x-request-id", requestId);
+    return response;
+  }
+
   const token = request.nextUrl.searchParams.get('token');
 
   if (!token) {
-    return NextResponse.redirect(new URL('/?error=invalid-token', request.url));
+    const response = NextResponse.redirect(new URL('/?error=invalid-token', request.url));
+    response.headers.set("x-request-id", requestId);
+    return response;
   }
 
   try {
@@ -20,12 +46,21 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (error || !data) {
-      return NextResponse.redirect(new URL('/?error=invalid-token', request.url));
+      if (error) {
+        captureError(error, { token: `${token.substring(0, 8)}...`, endpoint: '/api/email/confirm' }, { requestId, path: '/api/email/confirm', method: 'GET', endpoint: '/api/email/confirm' });
+      }
+      const response = NextResponse.redirect(new URL('/?error=invalid-token', request.url));
+      response.headers.set("x-request-id", requestId);
+      return response;
     }
 
-    return NextResponse.redirect(new URL('/?subscribed=true', request.url));
+    const response = NextResponse.redirect(new URL('/?subscribed=true', request.url));
+    response.headers.set("x-request-id", requestId);
+    return response;
   } catch (err) {
-    console.error('Confirm error:', err);
-    return NextResponse.redirect(new URL('/?error=confirm-failed', request.url));
+    captureError(err, { endpoint: '/api/email/confirm' }, { requestId, path: '/api/email/confirm', method: 'GET', endpoint: '/api/email/confirm' });
+    const response = NextResponse.redirect(new URL('/?error=confirm-failed', request.url));
+    response.headers.set("x-request-id", requestId);
+    return response;
   }
 }

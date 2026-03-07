@@ -2,8 +2,11 @@ import { createClient } from '@/lib/supabase/server';
 import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { SPORT_META, VALID_SPORTS } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
+
+export const revalidate = 1800;
 
 export const metadata: Metadata = generatePageMetadata({ pageType: 'articles' });
 
@@ -121,7 +124,7 @@ export default async function ArticlesPage({
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {articles.map((article) => (
+              {articles.map((article, index) => (
                 <Link
                   key={article.id}
                   href={`/articles/${article.slug}`}
@@ -131,10 +134,13 @@ export default async function ArticlesPage({
                     {/* Image */}
                     {article.featured_image_url && (
                       <div className="relative w-full h-48 bg-gray-100 overflow-hidden">
-                        <img
+                        <Image
                           src={article.featured_image_url}
                           alt={article.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition"
+                          fill
+                          priority={index === 0}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition"
                         />
                       </div>
                     )}

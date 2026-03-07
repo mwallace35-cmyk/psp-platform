@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 
 interface PotwVoteButtonProps {
   nomineeId: string;
+  playerName?: string;
 }
 
 // Generate a simple hash from a string (IP-like fingerprint using browser info)
@@ -32,10 +33,11 @@ function getCurrentWeekLabel(): string {
   return `${now.getFullYear()}-W${week}`;
 }
 
-export default function PotwVoteButton({ nomineeId }: PotwVoteButtonProps) {
+export default function PotwVoteButton({ nomineeId, playerName = "Player" }: PotwVoteButtonProps) {
   const [hasVoted, setHasVoted] = useState(false);
   const [voting, setVoting] = useState(false);
   const [voteSuccess, setVoteSuccess] = useState(false);
+  const [announcementText, setAnnouncementText] = useState("");
   const supabase = createClient();
 
   const weekLabel = getCurrentWeekLabel();
@@ -67,6 +69,7 @@ export default function PotwVoteButton({ nomineeId }: PotwVoteButtonProps) {
         if (voteError.code === '23505') {
           // Unique constraint violation - already voted
           setHasVoted(true);
+          setAnnouncementText(`Vote for ${playerName} already submitted`);
           localStorage.setItem(`potw-voted-${weekLabel}`, nomineeId);
           return;
         }
@@ -84,6 +87,7 @@ export default function PotwVoteButton({ nomineeId }: PotwVoteButtonProps) {
 
       setHasVoted(true);
       setVoteSuccess(true);
+      setAnnouncementText(`Vote for ${playerName} submitted successfully`);
       localStorage.setItem(`potw-voted-${weekLabel}`, nomineeId);
 
       // Reload page to show updated vote counts
@@ -92,41 +96,62 @@ export default function PotwVoteButton({ nomineeId }: PotwVoteButtonProps) {
       }, 1000);
     } catch (err) {
       console.error('Error voting:', err);
-      alert('Could not submit vote. Please try again.');
+      const errorMessage = 'Could not submit vote. Please try again.';
+      setAnnouncementText(errorMessage);
     } finally {
       setVoting(false);
     }
   }
 
-  if (voteSuccess) {
-    return (
-      <button
-        disabled
-        className="px-6 py-3 rounded-lg bg-green-100 text-green-700 font-bold text-sm cursor-default"
-      >
-        Voted!
-      </button>
-    );
-  }
-
-  if (hasVoted) {
-    return (
-      <button
-        disabled
-        className="px-6 py-3 rounded-lg bg-gray-100 text-gray-500 font-medium text-sm cursor-default"
-      >
-        Already Voted
-      </button>
-    );
-  }
-
   return (
-    <button
-      onClick={handleVote}
-      disabled={voting}
-      className="px-6 py-3 rounded-lg bg-gold text-navy font-bold text-sm hover:bg-gold/90 active:scale-95 transition disabled:opacity-50"
-    >
-      {voting ? 'Voting...' : 'Vote'}
-    </button>
+    <>
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0,0,0,0)',
+          whiteSpace: 'nowrap',
+          borderWidth: 0
+        }}
+      >
+        {announcementText}
+      </div>
+      {voteSuccess ? (
+        <button
+          disabled
+          className="px-6 py-3 rounded-lg bg-green-100 text-green-700 font-bold text-sm cursor-default"
+          aria-pressed="true"
+          aria-label={`Vote for ${playerName} - already voted`}
+        >
+          Voted!
+        </button>
+      ) : hasVoted ? (
+        <button
+          disabled
+          className="px-6 py-3 rounded-lg bg-gray-100 text-gray-500 font-medium text-sm cursor-default"
+          aria-pressed="true"
+          aria-label={`Vote for ${playerName} - already voted this week`}
+        >
+          Already Voted
+        </button>
+      ) : (
+        <button
+          onClick={handleVote}
+          disabled={voting}
+          className="px-6 py-3 rounded-lg bg-gold text-navy font-bold text-sm hover:bg-gold/90 active:scale-95 transition disabled:opacity-50"
+          aria-label={`Vote for ${playerName}`}
+          aria-pressed="false"
+          aria-disabled={voting}
+        >
+          {voting ? 'Voting...' : 'Vote'}
+        </button>
+      )}
+    </>
   );
 }

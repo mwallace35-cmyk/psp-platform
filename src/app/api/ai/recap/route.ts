@@ -1,21 +1,67 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { randomUUID } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
 import { generateGameRecap } from '@/lib/anthropic';
+import { rateLimit } from '@/lib/rate-limit';
+import { validateCsrfToken, CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/lib/csrf';
+import { aiRecapSchema } from '@/lib/validation';
+import { captureError } from '@/lib/error-tracking';
+import { apiSuccess, apiError } from '@/lib/api-response';
 
 export async function POST(request: NextRequest) {
+  // Get request ID from middleware for error correlation
+  const requestId = request.headers.get("x-request-id") || randomUUID();
+
+  // CSRF validation
+  const csrfToken = request.headers.get(CSRF_HEADER_NAME);
+  const csrfCookie = request.cookies.get(CSRF_COOKIE_NAME)?.value;
+  if (!csrfToken || !csrfCookie || !validateCsrfToken(csrfToken, csrfCookie)) {
+    const response = apiError("Invalid CSRF token", 403, "CSRF_VALIDATION_FAILED");
+    response.headers.set("x-request-id", requestId);
+    return response;
+  }
+
+  const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+  const userAgent = request.headers.get("user-agent");
+  const acceptLanguage = request.headers.get("accept-language");
+
+  const { success } = await rateLimit(
+    ip,
+    5,
+    60000,
+    "/api/ai/recap",
+    userAgent,
+    acceptLanguage
+  );
+
+  if (!success) {
+    const response = apiError("Too many requests", 429, "RATE_LIMIT_EXCEEDED");
+    response.headers.set("Retry-After", "60");
+    response.headers.set("x-request-id", requestId);
+    return response;
+  }
+
   // Check auth
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const response = apiError('Unauthorized', 401, "UNAUTHORIZED");
+    response.headers.set("x-request-id", requestId);
+    return response;
   }
 
   try {
-    const { gameIds } = await request.json();
+    const body = await request.json();
 
-    if (!gameIds || !Array.isArray(gameIds) || gameIds.length === 0) {
-      return NextResponse.json({ error: 'gameIds array is required' }, { status: 400 });
+    // Validate request body with Zod
+    const parsed = aiRecapSchema.safeParse(body);
+    if (!parsed.success) {
+      const response = apiError('Invalid request: gameIds must be an array of numeric IDs', 400, 'INVALID_REQUEST');
+      response.headers.set("x-request-id", requestId);
+      return response;
     }
+
+    const { gameIds } = parsed.data;
 
     // Fetch games with team info
     const { data: games, error } = await supabase
@@ -29,9 +75,14 @@ export async function POST(request: NextRequest) {
       `)
       .in('id', gameIds);
 
-    if (error) throw error;
+    if (error) {
+      captureError(error, { gameIds: gameIds.join(','), endpoint: '/api/ai/recap' }, { requestId, userId: user.id, path: '/api/ai/recap', method: 'POST', endpoint: '/api/ai/recap' });
+      throw error;
+    }
     if (!games || games.length === 0) {
-      return NextResponse.json({ error: 'No games found' }, { status: 404 });
+      const response = apiError('No games found', 404, 'NO_GAMES_FOUND');
+      response.headers.set("x-request-id", requestId);
+      return response;
     }
 
     const results = [];
@@ -70,21 +121,24 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (insertError) {
-          results.push({ gameId: game.id, error: insertError.message });
+          captureError(insertError, { gameId: String(game.id), endpoint: '/api/ai/recap' }, { requestId, userId: user.id, path: '/api/ai/recap', method: 'POST', endpoint: '/api/ai/recap' });
+          results.push({ gameId: game.id, error: 'Failed to create article draft' });
         } else {
           results.push({ gameId: game.id, article });
         }
       } catch (err: any) {
-        results.push({ gameId: game.id, error: err.message });
+        captureError(err, { gameId: String(game.id), endpoint: '/api/ai/recap' }, { requestId, userId: user.id, path: '/api/ai/recap', method: 'POST', endpoint: '/api/ai/recap' });
+        results.push({ gameId: game.id, error: 'Failed to generate recap' });
       }
     }
 
-    return NextResponse.json({ results });
+    const response = apiSuccess({ results });
+    response.headers.set("x-request-id", requestId);
+    return response;
   } catch (error: any) {
-    console.error('AI recap error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to generate recaps' },
-      { status: 500 }
-    );
+    captureError(error, { endpoint: '/api/ai/recap' }, { requestId, userId: user?.id, path: '/api/ai/recap', method: 'POST', endpoint: '/api/ai/recap' });
+    const response = apiError('Failed to generate recaps', 500, 'RECAP_GENERATION_ERROR');
+    response.headers.set("x-request-id", requestId);
+    return response;
   }
 }

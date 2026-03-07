@@ -1,0 +1,95 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Badge - Snapshot Tests > renders badge with long text 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--psp-gray-100)] text-[var(--psp-gray-700)] "
+>
+  This is a very long badge text that might wrap
+</span>
+`;
+
+exports[`Badge - Snapshot Tests > renders badge with special characters 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--psp-gold)]/10 text-[var(--psp-gold)] "
+>
+  2024 🏆 Championship
+</span>
+`;
+
+exports[`Badge - Snapshot Tests > renders default variant correctly 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--psp-gray-100)] text-[var(--psp-gray-700)] "
+>
+  Default Badge
+</span>
+`;
+
+exports[`Badge - Snapshot Tests > renders error variant correctly 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 "
+>
+  Error Badge
+</span>
+`;
+
+exports[`Badge - Snapshot Tests > renders info variant correctly 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 "
+>
+  Info Badge
+</span>
+`;
+
+exports[`Badge - Snapshot Tests > renders multiple badges together 1`] = `
+<div>
+  <div>
+    <span
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 "
+    >
+      Approved
+    </span>
+    <span
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 "
+    >
+      Pending
+    </span>
+    <span
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 "
+    >
+      Rejected
+    </span>
+  </div>
+</div>
+`;
+
+exports[`Badge - Snapshot Tests > renders sport variant correctly 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--psp-gold)]/10 text-[var(--psp-gold)] "
+>
+  Sport Badge
+</span>
+`;
+
+exports[`Badge - Snapshot Tests > renders success variant correctly 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 "
+>
+  Success Badge
+</span>
+`;
+
+exports[`Badge - Snapshot Tests > renders warning variant correctly 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 "
+>
+  Warning Badge
+</span>
+`;
+
+exports[`Badge - Snapshot Tests > renders with custom className 1`] = `
+<span
+  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--psp-gray-100)] text-[var(--psp-gray-700)] custom-class"
+>
+  Custom Badge
+</span>
+`;

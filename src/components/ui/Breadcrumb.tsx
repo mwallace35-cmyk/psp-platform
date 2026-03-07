@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 
 export interface BreadcrumbItem {
@@ -10,7 +11,7 @@ interface BreadcrumbProps {
   className?: string;
 }
 
-export default function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
+function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
   // Build JSON-LD schema
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -63,3 +64,5 @@ export default function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
     </>
   );
 }
+
+export default React.memo(Breadcrumb);

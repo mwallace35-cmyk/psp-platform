@@ -1,4 +1,4 @@
-import { HTMLAttributes } from "react";
+import React, { HTMLAttributes } from "react";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "hover" | "sport";
@@ -11,7 +11,7 @@ const paddingStyles = {
   lg: "p-8",
 };
 
-export default function Card({
+function Card({
   variant = "default",
   padding = "md",
   className = "",
@@ -38,3 +38,5 @@ export default function Card({
     </div>
   );
 }
+
+export default React.memo(Card);

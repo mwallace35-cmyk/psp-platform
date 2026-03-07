@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { SPORT_META, type SportId } from "@/lib/data";
+import { SPORT_META } from "@/lib/data";
+import type { SportId } from "@/lib/sports";
 
 export type PageType =
   | "homepage"
@@ -159,6 +160,9 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     title,
     description,
     metadataBase: new URL(SITE_URL),
+    alternates: {
+      canonical: url,
+    },
     openGraph: {
       title,
       description,

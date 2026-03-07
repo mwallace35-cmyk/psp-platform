@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui';
+import { Button, ToastContainer } from '@/components/ui';
+import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
 
 export default function NewArticle() {
   const router = useRouter();
   const supabase = createClient();
+  const { toasts, removeToast, error: toastError, success: toastSuccess } = useToast();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -36,7 +39,7 @@ export default function NewArticle() {
 
   async function handleSave(publishNow: boolean) {
     if (!title.trim()) {
-      alert('Please enter a title');
+      toastError('Please enter a title');
       return;
     }
 
@@ -61,18 +64,21 @@ export default function NewArticle() {
 
       if (error) throw error;
 
+      toastSuccess(`Article ${publishNow ? 'published' : 'saved as draft'} successfully!`);
       router.push('/admin/articles');
       router.refresh();
     } catch (error) {
       console.error('Error saving article:', error);
-      alert('Error saving article');
+      toastError('Error saving article. Please try again.');
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <>
+      <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} />
+      <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-navy font-bebas mb-2">New Article</h1>
@@ -145,13 +151,15 @@ export default function NewArticle() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold"
             />
             {featuredImage && (
-              <div className="mt-3 rounded-md overflow-hidden border border-gray-300">
-                <img
+              <div className="mt-3 rounded-md overflow-hidden border border-gray-300 relative w-full h-48">
+                <Image
                   src={featuredImage}
                   alt="Featured"
-                  className="w-full h-48 object-cover"
+                  fill
+                  className="object-cover"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
+                    const img = e.target as HTMLImageElement;
+                    img.style.display = 'none';
                   }}
                 />
               </div>
@@ -249,6 +257,7 @@ export default function NewArticle() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

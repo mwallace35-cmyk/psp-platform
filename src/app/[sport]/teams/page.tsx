@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getTeamsWithRecords } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
 import type { Metadata } from "next";
 
@@ -16,6 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   return {
     title: `${meta.name} Teams — PhillySportsPack`,
     description: `All Philadelphia area ${meta.name.toLowerCase()} teams — records, championships, and season-by-season results.`,
+    alternates: {
+      canonical: `https://phillysportspack.com/${sport}/teams`,
+    },
   };
 }
 
@@ -51,6 +55,13 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
 
   return (
     <>
+      {/* Breadcrumb JSON-LD */}
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "https://phillysportspack.com" },
+        { name: meta.name, url: `https://phillysportspack.com/${sport}` },
+        { name: "Teams", url: `https://phillysportspack.com/${sport}/teams` },
+      ]} />
+
       {/* Header */}
       <section
         className="py-12 md:py-16"

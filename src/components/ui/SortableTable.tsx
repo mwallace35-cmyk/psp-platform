@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 
 export interface SortableColumn {
@@ -22,7 +23,7 @@ interface SortableTableProps {
   onRowClick?: (row: any) => void;
 }
 
-export default function SortableTable({
+function SortableTable({
   columns,
   data,
   highlightTop3 = false,
@@ -34,8 +35,12 @@ export default function SortableTable({
   const [sortDir, setSortDir] = useState<'asc' | 'desc' | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Memoize column lookup to prevent recalculations
+  const visibleColumns = useMemo(() => columns.filter((c) => !c.hideOnMobile), [columns]);
+  const primaryColumn = useMemo(() => columns.find((c) => c.primary), [columns]);
+
   // Detect mobile on mount/resize
-  useMemo(() => {
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       const checkMobile = () => setIsMobile(window.innerWidth < 768);
       checkMobile();
@@ -45,22 +50,54 @@ export default function SortableTable({
   }, []);
 
   // Handle column click
-  const handleSort = (key: string) => {
-    const col = columns.find((c) => c.key === key);
-    if (!col || col.sortable === false) return;
+  const handleSort = useCallback((key: string) => {
+    setSortKey((currentSortKey) => {
+      setSortDir((currentSortDir) => {
+        const col = columns.find((c) => c.key === key);
+        if (!col || col.sortable === false) return currentSortDir;
 
-    if (sortKey === key) {
-      if (sortDir === 'asc') {
-        setSortDir('desc');
-      } else if (sortDir === 'desc') {
-        setSortKey(null);
-        setSortDir(null);
-      }
-    } else {
-      setSortKey(key);
-      setSortDir('asc');
+        if (currentSortKey === key) {
+          if (currentSortDir === 'asc') {
+            return 'desc';
+          } else if (currentSortDir === 'desc') {
+            setSortKey(null);
+            return null;
+          }
+        } else {
+          setSortKey(key);
+          return 'asc';
+        }
+        return currentSortDir;
+      });
+      return currentSortKey === key ? currentSortKey : key;
+    });
+  }, [columns]);
+
+  // Handle keyboard navigation on sortable headers
+  const handleHeaderKeyDown = useCallback((e: React.KeyboardEvent<HTMLTableCellElement>, key: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleSort(key);
     }
-  };
+  }, [handleSort]);
+
+  // Get aria-sort value for a column
+  const getAriaSort = useCallback((key: string) => {
+    if (sortKey !== key) return 'none';
+    return sortDir === 'asc' ? 'ascending' : 'descending';
+  }, [sortKey, sortDir]);
+
+  // Get accessible label for a sortable column header
+  const getHeaderAriaLabel = useCallback((col: SortableColumn) => {
+    if (col.sortable === false) return col.label;
+    const ariaSort = getAriaSort(col.key);
+    const sortStatus = ariaSort === 'ascending'
+      ? ', sorted ascending'
+      : ariaSort === 'descending'
+      ? ', sorted descending'
+      : ', not sorted';
+    return `${col.label}${sortStatus}. Click to sort`;
+  }, [getAriaSort]);
 
   // Sort data
   const sortedData = useMemo(() => {
@@ -98,7 +135,6 @@ export default function SortableTable({
 
   // Mobile card mode
   if (mobileCardMode && isMobile) {
-    const primaryCol = columns.find((c) => c.primary);
     const rankCol = columns[0];
 
     return (
@@ -126,21 +162,29 @@ export default function SortableTable({
           return (
             <div
               key={idx}
-              className={`border ${borderColor} rounded-lg p-4 ${bgColor} cursor-pointer hover:shadow-md transition`}
+              role={onRowClick ? 'button' : undefined}
+              tabIndex={onRowClick ? 0 : undefined}
+              className={`border ${borderColor} rounded-lg p-4 ${bgColor} ${onRowClick ? 'cursor-pointer hover:shadow-md focus:outline-2 focus:outline-offset-2 focus:outline-blue-400' : ''} transition`}
               onClick={() => onRowClick?.(row)}
+              onKeyDown={(e) => {
+                if (onRowClick && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  onRowClick(row);
+                }
+              }}
             >
               {/* Rank + Primary Value */}
               <div className="flex items-baseline gap-3 mb-3">
-                {rankCol && rankCol.key !== primaryCol?.key && (
+                {rankCol && rankCol.key !== primaryColumn?.key && (
                   <div className="text-sm font-semibold text-gray-500 min-w-8">
                     {row[rankCol.key]}
                   </div>
                 )}
-                {primaryCol && (
+                {primaryColumn && (
                   <div className="text-lg font-bold text-navy">
-                    {primaryCol.render
-                      ? primaryCol.render(row[primaryCol.key], row)
-                      : row[primaryCol.key]}
+                    {primaryColumn.render
+                      ? primaryColumn.render(row[primaryColumn.key], row)
+                      : row[primaryColumn.key]}
                   </div>
                 )}
               </div>
@@ -148,7 +192,7 @@ export default function SortableTable({
               {/* Other columns as label:value pairs */}
               <div className="space-y-1 text-sm">
                 {columns
-                  .filter((c) => c.key !== rankCol.key && c.key !== primaryCol?.key)
+                  .filter((c) => c.key !== rankCol.key && c.key !== primaryColumn?.key)
                   .map((col) => (
                     <div key={col.key} className="flex justify-between text-gray-600">
                       <span className="font-medium">{col.label}</span>
@@ -171,14 +215,19 @@ export default function SortableTable({
       <table className="w-full text-sm">
         <thead className="sticky top-0 z-10 bg-navy text-white">
           <tr>
-            {columns
-              .filter((c) => !c.hideOnMobile)
+            {visibleColumns
               .map((col) => (
                 <th
                   key={col.key}
+                  scope="col"
+                  role={col.sortable !== false ? 'button' : undefined}
+                  tabIndex={col.sortable !== false ? 0 : undefined}
                   onClick={() => handleSort(col.key)}
-                  className={`px-4 py-3 text-left font-semibold border-b border-gray-300 ${
-                    col.sortable !== false ? 'cursor-pointer hover:bg-gray-800' : ''
+                  onKeyDown={(e) => col.sortable !== false && handleHeaderKeyDown(e, col.key)}
+                  aria-sort={col.sortable !== false ? getAriaSort(col.key) : undefined}
+                  aria-label={getHeaderAriaLabel(col)}
+                  className={`px-4 py-3 text-left font-semibold border-b border-gray-300 transition min-h-[44px] flex items-center ${
+                    col.sortable !== false ? 'cursor-pointer hover:bg-gray-800 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400' : ''
                   }`}
                   style={{
                     textAlign: col.align || 'left',
@@ -187,7 +236,7 @@ export default function SortableTable({
                   <div className="flex items-center gap-2">
                     {col.label}
                     {sortKey === col.key && (
-                      <span className="text-gold">
+                      <span className="text-gold" aria-hidden="true">
                         {sortDir === 'asc' ? '▲' : '▼'}
                       </span>
                     )}
@@ -213,17 +262,24 @@ export default function SortableTable({
             return (
               <tr
                 key={idx}
-                className={`${bgColor} border-b border-gray-100 hover:bg-gray-100 transition ${
+                role={onRowClick ? 'button' : undefined}
+                tabIndex={onRowClick ? 0 : undefined}
+                className={`${bgColor} border-b border-gray-100 hover:bg-gray-100 transition focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400 ${
                   onRowClick ? 'cursor-pointer' : ''
                 }`}
                 onClick={() => onRowClick?.(row)}
+                onKeyDown={(e) => {
+                  if (onRowClick && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    onRowClick(row);
+                  }
+                }}
               >
-                {columns
-                  .filter((c) => !c.hideOnMobile)
+                {visibleColumns
                   .map((col) => (
                     <td
                       key={col.key}
-                      className="px-4 py-3"
+                      className="px-4 py-3 min-h-[44px] flex items-center"
                       style={{
                         textAlign: col.align || 'left',
                       }}
@@ -239,3 +295,5 @@ export default function SortableTable({
     </div>
   );
 }
+
+export default React.memo(SortableTable);

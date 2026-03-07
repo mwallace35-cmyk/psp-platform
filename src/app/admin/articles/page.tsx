@@ -1,10 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { Button, Badge } from '@/components/ui';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
+
+// Dynamic imports for heavy client components
+const SortableTable = dynamic(() => import('@/components/ui/SortableTable'), {
+  loading: () => <div className="text-center py-8 text-gray-500">Loading table...</div>,
+});
 
 interface Article {
   id: string;

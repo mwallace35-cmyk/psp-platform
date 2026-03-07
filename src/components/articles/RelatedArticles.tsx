@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { SPORT_META, type SportId } from '@/lib/sports';
 
@@ -51,11 +52,16 @@ export default async function RelatedArticles({ entityType, entityId }: RelatedA
             >
               <div className="flex items-start gap-3">
                 {article.featured_image_url && (
-                  <img
-                    src={article.featured_image_url}
-                    alt=""
-                    className="w-16 h-12 object-cover rounded flex-shrink-0"
-                  />
+                  <div className="w-16 h-12 rounded overflow-hidden flex-shrink-0">
+                    <Image
+                      src={article.featured_image_url}
+                      alt={article.title}
+                      width={64}
+                      height={48}
+                      sizes="64px"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-gray-900 text-sm group-hover:text-gold transition line-clamp-2">

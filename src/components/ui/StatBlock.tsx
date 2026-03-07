@@ -1,3 +1,5 @@
+import React from "react";
+
 interface StatBlockProps {
   label: string;
   value: string | number;
@@ -6,7 +8,7 @@ interface StatBlockProps {
   size?: "sm" | "md" | "lg";
 }
 
-export default function StatBlock({
+function StatBlock({
   label,
   value,
   icon,
@@ -43,3 +45,5 @@ export default function StatBlock({
     </div>
   );
 }
+
+export default React.memo(StatBlock);

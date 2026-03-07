@@ -1,3 +1,5 @@
+import React from "react";
+
 type BadgeVariant = "default" | "success" | "warning" | "error" | "info" | "sport";
 
 interface BadgeProps {
@@ -15,7 +17,7 @@ const variantStyles: Record<BadgeVariant, string> = {
   sport: "bg-[var(--psp-gold)]/10 text-[var(--psp-gold)]",
 };
 
-export default function Badge({ variant = "default", children, className = "" }: BadgeProps) {
+function Badge({ variant = "default", children, className = "" }: BadgeProps) {
   return (
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${variantStyles[variant]} ${className}`}
@@ -24,3 +26,5 @@ export default function Badge({ variant = "default", children, className = "" }:
     </span>
   );
 }
+
+export default React.memo(Badge);

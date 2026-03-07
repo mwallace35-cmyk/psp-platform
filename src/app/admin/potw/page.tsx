@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
-import { Button, Badge } from '@/components/ui';
+import { Button, Badge, ToastContainer } from '@/components/ui';
+import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
 
 interface PotwNominee {
@@ -38,6 +40,7 @@ export default function PotwManagement() {
   const [newStatLine, setNewStatLine] = useState('');
 
   const supabase = createClient();
+  const { toasts, removeToast, error: toastError, success: toastSuccess } = useToast();
 
   useEffect(() => {
     fetchData();
@@ -69,7 +72,7 @@ export default function PotwManagement() {
 
   async function handleAddNominee() {
     if (!newPlayerName.trim() || !newSchoolName.trim() || !newStatLine.trim()) {
-      alert('Please fill in all fields');
+      toastError('Please fill in all fields');
       return;
     }
 
@@ -88,10 +91,11 @@ export default function PotwManagement() {
       setNewSchoolName('');
       setNewStatLine('');
       setNewSport('football');
+      toastSuccess('Nominee added successfully!');
       fetchData();
     } catch (error) {
       console.error('Error adding nominee:', error);
-      alert('Error adding nominee');
+      toastError('Error adding nominee. Please try again.');
     }
   }
 
@@ -124,10 +128,11 @@ export default function PotwManagement() {
 
       if (deleteError) throw deleteError;
 
+      toastSuccess('Winner declared successfully! Voting reset for new period.');
       fetchData();
     } catch (error) {
       console.error('Error declaring winner:', error);
-      alert('Error declaring winner');
+      toastError('Error declaring winner. Please try again.');
     }
   }
 
@@ -144,7 +149,9 @@ export default function PotwManagement() {
   }
 
   return (
-    <div className="space-y-8">
+    <>
+      <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} />
+      <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-navy mb-2">Player of the Week</h1>
         <p className="text-gray-600">Manage current voting period and view past winners</p>
@@ -293,6 +300,7 @@ export default function PotwManagement() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

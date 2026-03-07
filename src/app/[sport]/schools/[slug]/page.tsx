@@ -1,11 +1,20 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships } from "@/lib/data";
+import { isValidSport, SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, type School, type TeamSeason, type Championship } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
-import CorrectionForm from "@/components/corrections/CorrectionForm";
+import ShareButtons from "@/components/social/ShareButtons";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
+import { captureError } from "@/lib/error-tracking";
+import { buildOgImageUrl } from "@/lib/og-utils";
 import type { Metadata } from "next";
+
+// Dynamic import for heavy client component
+const CorrectionForm = dynamic(() => import("@/components/corrections/CorrectionForm"), {
+  loading: () => <div className="text-center py-4 text-gray-500 text-sm">Loading form...</div>,
+});
 
 export const revalidate = 86400; // ISR: daily
 
@@ -16,9 +25,38 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   if (!isValidSport(sport)) return {};
   const school = await getSchoolBySlug(slug);
   if (!school) return {};
+  const ogImageUrl = buildOgImageUrl({
+    title: school.name,
+    subtitle: `${SPORT_META[sport].name} — School Profile`,
+    sport: sport,
+    type: "school",
+  });
   return {
     title: `${school.name} ${SPORT_META[sport].name} — PhillySportsPack`,
     description: `${school.name} ${SPORT_META[sport].name.toLowerCase()} statistics, season results, championships, and notable players.`,
+    alternates: {
+      canonical: `https://phillysportspack.com/${sport}/schools/${slug}`,
+    },
+    openGraph: {
+      title: `${school.name} ${SPORT_META[sport].name} — PhillySportsPack`,
+      description: `${school.name} ${SPORT_META[sport].name.toLowerCase()} statistics, season results, championships, and notable players.`,
+      url: `https://phillysportspack.com/${sport}/schools/${slug}`,
+      type: "website",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${school.name} ${SPORT_META[sport].name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${school.name} ${SPORT_META[sport].name} — PhillySportsPack`,
+      description: `${school.name} ${SPORT_META[sport].name.toLowerCase()} statistics, season results, championships, and notable players.`,
+      images: [ogImageUrl],
+    },
   };
 }
 
@@ -26,18 +64,35 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   const { sport, slug } = await params;
   if (!isValidSport(sport)) notFound();
 
-  const school = await getSchoolBySlug(slug);
-  if (!school) notFound();
+  const schoolData = await getSchoolBySlug(slug);
+  if (!schoolData) notFound();
+
+  const school = schoolData as unknown as School;
 
   const meta = SPORT_META[sport];
-  const [teamSeasons, championships] = await Promise.all([
-    getSchoolTeamSeasons(school.id, sport),
-    getSchoolChampionships(school.id, sport),
-  ]);
+
+  // Get school data - use allSettled to prevent one failure from crashing the page
+  let teamSeasons: TeamSeason[] = [];
+  let championships: Championship[] = [];
+
+  try {
+    const results = await Promise.allSettled([
+      getSchoolTeamSeasons(school.id, sport),
+      getSchoolChampionships(school.id, sport),
+    ]);
+
+    if (results[0].status === "fulfilled") teamSeasons = results[0].value;
+    if (results[1].status === "fulfilled") championships = results[1].value;
+
+    if (results[0].status === "rejected") captureError(results[0].reason, { sport, slug, fetch: "getSchoolTeamSeasons" });
+    if (results[1].status === "rejected") captureError(results[1].reason, { sport, slug, fetch: "getSchoolChampionships" });
+  } catch (error) {
+    captureError(error, { sport, slug, context: "data_fetching" });
+  }
 
   // Compute all-time record
   const allTimeRecord = teamSeasons.reduce(
-    (acc: { w: number; l: number; t: number }, ts: any) => ({
+    (acc: { w: number; l: number; t: number }, ts: TeamSeason) => ({
       w: acc.w + (ts.wins || 0),
       l: acc.l + (ts.losses || 0),
       t: acc.t + (ts.ties || 0),
@@ -47,6 +102,12 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
 
   return (
     <>
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "https://phillysportspack.com" },
+        { name: meta.name, url: `https://phillysportspack.com/${sport}` },
+        { name: "Schools", url: `https://phillysportspack.com/${sport}/schools` },
+        { name: school.name, url: `https://phillysportspack.com/${sport}/schools/${slug}` },
+      ]} />
       {/* School header */}
       <section
         className="py-12 md:py-16"
@@ -66,7 +127,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             >
               {meta.emoji}
             </div>
-            <div>
+            <div className="flex-1">
               <h1
                 className="text-4xl md:text-5xl text-white mb-2 tracking-wider"
                 style={{ fontFamily: "Bebas Neue, sans-serif" }}
@@ -75,13 +136,20 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               </h1>
               <div className="flex flex-wrap gap-4 text-sm">
                 {school.leagues && (
-                  <span style={{ color: "var(--psp-gold)" }}>{(school as any).leagues?.name}</span>
+                  <span style={{ color: "var(--psp-gold)" }}>{school.leagues?.name}</span>
                 )}
                 <span className="text-gray-400">{school.city}, {school.state}</span>
                 {school.mascot && <span className="text-gray-400">Mascot: {school.mascot}</span>}
                 {school.closed_year && (
                   <span className="text-red-400">Closed {school.closed_year}</span>
                 )}
+              </div>
+              <div className="mt-4">
+                <ShareButtons
+                  url={`/${sport}/schools/${slug}`}
+                  title={`${school.name} ${meta.name} — PhillySportsPack`}
+                  description={`Check out ${school.name}'s ${meta.name.toLowerCase()} statistics and records on PhillySportsPack.com`}
+                />
               </div>
             </div>
           </div>
@@ -131,7 +199,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                   Championships ({championships.length})
                 </h2>
                 <div className="space-y-2">
-                  {championships.map((c: any) => (
+                  {championships.map((c: Championship) => (
                     <div key={c.id} className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3">
                       <span className="text-xl">🏆</span>
                       <div>
@@ -174,7 +242,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                       </tr>
                     </thead>
                     <tbody>
-                      {teamSeasons.map((ts: any) => (
+                      {teamSeasons.map((ts: TeamSeason) => (
                         <tr key={ts.id}>
                           <td className="font-medium">
                             {ts.seasons?.label ? (
@@ -224,7 +292,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                 {school.leagues && (
                   <div className="flex justify-between">
                     <dt style={{ color: "var(--psp-gray-500)" }}>League</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{(school as any).leagues?.name}</dd>
+                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{school.leagues?.name}</dd>
                   </div>
                 )}
                 {school.founded_year && (

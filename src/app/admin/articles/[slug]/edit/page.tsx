@@ -2,8 +2,10 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui';
+import { Button, ToastContainer } from '@/components/ui';
+import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
 import EntityLinker from '@/components/articles/EntityLinker';
 
@@ -12,6 +14,7 @@ export default function EditArticle() {
   const params = useParams();
   const slug = params.slug as string;
   const supabase = createClient();
+  const { toasts, removeToast, error: toastError, success: toastSuccess, warning: toastWarning } = useToast();
 
   const [articleId, setArticleId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
@@ -40,7 +43,7 @@ export default function EditArticle() {
           .single();
 
         if (error || !data) {
-          alert('Article not found');
+          toastError('Article not found');
           router.push('/admin/articles');
           return;
         }
@@ -107,7 +110,7 @@ export default function EditArticle() {
 
   async function handleSave(publishNow: boolean) {
     if (!title.trim()) {
-      alert('Please enter a title');
+      toastError('Please enter a title');
       return;
     }
     if (!articleId) return;
@@ -140,6 +143,7 @@ export default function EditArticle() {
       localStorage.removeItem(`article-${slug}-autosave`);
       setHasUnsavedChanges(false);
       setLastSaved(new Date().toLocaleTimeString());
+      toastSuccess(`Article ${publishNow ? 'published' : 'saved'} successfully!`);
 
       // If slug changed, redirect to new URL
       if (newSlug !== slug) {
@@ -147,7 +151,7 @@ export default function EditArticle() {
       }
     } catch (error) {
       console.error('Error saving article:', error);
-      alert('Error saving article');
+      toastError('Error saving article. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -162,7 +166,9 @@ export default function EditArticle() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <>
+      <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} />
+      <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-navy font-bebas mb-2">Edit Article</h1>
@@ -202,7 +208,7 @@ export default function EditArticle() {
               <button
                 type="button"
                 onClick={async () => {
-                  if (!content.trim()) { alert('Write article content first'); return; }
+                  if (!content.trim()) { toastWarning('Please write article content first'); return; }
                   setGeneratingAI(true);
                   try {
                     const res = await fetch('/api/ai/summary', {
@@ -213,8 +219,9 @@ export default function EditArticle() {
                     const data = await res.json();
                     if (data.error) throw new Error(data.error);
                     handleChange(setExcerpt, data.summary);
+                    toastSuccess('Summary generated successfully!');
                   } catch (err: any) {
-                    alert(err.message || 'Could not generate summary');
+                    toastError(err.message || 'Could not generate summary');
                   } finally {
                     setGeneratingAI(false);
                   }
@@ -284,13 +291,15 @@ export default function EditArticle() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold"
             />
             {featuredImage && (
-              <div className="mt-3 rounded-md overflow-hidden border border-gray-300">
-                <img
+              <div className="mt-3 rounded-md overflow-hidden border border-gray-300 relative w-full h-48">
+                <Image
                   src={featuredImage}
                   alt="Featured"
-                  className="w-full h-48 object-cover"
+                  fill
+                  className="object-cover"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
+                    const img = e.target as HTMLImageElement;
+                    img.style.display = 'none';
                   }}
                 />
               </div>
@@ -414,6 +423,7 @@ export default function EditArticle() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

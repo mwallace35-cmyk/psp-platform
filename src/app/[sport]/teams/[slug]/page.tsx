@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META } from "@/lib/sports";
 import AdPlaceholder, { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
@@ -646,7 +647,7 @@ export default function TeamDetailPage() {
   if (!isValidSport(sport)) notFound();
 
   const sportMeta = SPORT_META[sport as keyof typeof SPORT_META];
-  const team = (TEAMS_DATABASE as any)[sport]?.[slug];
+  const team = TEAMS_DATABASE[sport]?.[slug];
 
   if (!team) notFound();
 
@@ -810,11 +811,16 @@ export default function TeamDetailPage() {
                   <div className="space-y-4">
                     {SAMPLE_NEWS.slice(0, 3).map((article, idx) => (
                       <div key={idx} className="flex gap-4 bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-md transition-shadow">
-                        <img
-                          src={article.image}
-                          alt={article.title}
-                          className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
-                        />
+                        <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                          <Image
+                            src={article.image}
+                            alt={article.title}
+                            width={96}
+                            height={96}
+                            sizes="96px"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <h3
                             className="font-bold text-sm truncate"
@@ -1025,11 +1031,16 @@ export default function TeamDetailPage() {
                     key={idx}
                     className="flex gap-4 bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-md transition-shadow"
                   >
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="w-32 h-32 rounded-lg object-cover flex-shrink-0"
-                    />
+                    <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0">
+                      <Image
+                        src={article.image}
+                        alt={article.title}
+                        width={128}
+                        height={128}
+                        sizes="128px"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <h3
                         className="font-bold text-base"
@@ -1128,7 +1139,7 @@ export default function TeamDetailPage() {
                       Recent Titles
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                      {team.recentChampionships.map((year: any) => (
+                      {team.recentChampionships.map((year: string) => (
                         <span
                           key={year}
                           className="text-xs font-bold px-3 py-1 rounded-full"

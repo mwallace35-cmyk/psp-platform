@@ -8,7 +8,7 @@ interface WinLossBarProps {
   showLabel?: boolean;
 }
 
-export default function WinLossBar({
+function WinLossBar({
   wins,
   losses,
   ties = 0,
@@ -66,3 +66,5 @@ export default function WinLossBar({
     </div>
   );
 }
+
+export default React.memo(WinLossBar);

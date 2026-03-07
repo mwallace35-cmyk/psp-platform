@@ -14,6 +14,9 @@ export const metadata: Metadata = {
       'Complete reference guide for all statistical abbreviations and definitions used across PhillySportsPack football, basketball, baseball, and minor sports coverage.',
     type: 'website',
   },
+  alternates: {
+    canonical: 'https://phillysportspack.com/glossary',
+  },
 };
 
 // Group stats by sport

@@ -2,9 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getFootballLeaders, getBasketballLeaders } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import SortableTable from "@/components/ui/SortableTable";
 import PSPPromo from "@/components/ads/PSPPromo";
+import ShareButtons from "@/components/social/ShareButtons";
 import type { Metadata } from "next";
+import type React from "react";
 
 export const revalidate = 3600;
 
@@ -17,6 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   return {
     title: `${stat.charAt(0).toUpperCase() + stat.slice(1)} Leaders — ${meta.name} — PhillySportsPack`,
     description: `Top ${stat} leaders in Philadelphia high school ${meta.name.toLowerCase()}.`,
+    alternates: {
+      canonical: `https://phillysportspack.com/${sport}/leaderboards/${stat}`,
+    },
   };
 }
 
@@ -56,7 +62,30 @@ interface RawLeader {
     label: string;
     year_start: number;
   };
-  [key: string]: any;
+  [key: string]: unknown;
+}
+
+interface ColumnConfig {
+  key: string;
+  label: string;
+  align?: "left" | "center" | "right";
+  sortable?: boolean;
+  primary?: boolean;
+  width?: string;
+  hideOnMobile?: boolean;
+  render?: (value: unknown, row?: TableRow) => React.ReactNode;
+}
+
+interface TableRow {
+  id: string;
+  rank: number;
+  playerName: string;
+  playerSlug: string;
+  schoolName: string;
+  schoolSlug: string;
+  seasonLabel: string;
+  pro_team?: string | null;
+  [key: string]: unknown;
 }
 
 export default async function LeaderboardPage({ params }: { params: Promise<PageParams> }) {
@@ -87,19 +116,19 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
 
   // Extract all unique seasons and schools for filtering
   const uniqueSeasons = Array.from(
-    new Set(leaders.map((row: any) => row.seasons?.label).filter(Boolean))
+    new Set(leaders.map((row: RawLeader) => row.seasons?.label).filter(Boolean))
   ).sort().reverse();
 
   const uniqueSchools = Array.from(
-    new Set(leaders.map((row: any) => row.schools?.name).filter(Boolean))
+    new Set(leaders.map((row: RawLeader) => row.schools?.name).filter(Boolean))
   ).sort() as string[];
 
   const uniqueLeagues = Array.from(
-    new Set(leaders.map((row: any) => (row.schools as any)?.league || "").filter(Boolean))
+    new Set(leaders.map((row: RawLeader) => (row.schools as unknown as { league?: string })?.league || "").filter(Boolean))
   ).sort() as string[];
 
   // Build columns for SortableTable
-  const columns: any[] = [
+  const columns: ColumnConfig[] = [
     {
       key: "rank",
       label: "#",
@@ -112,15 +141,15 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
       label: "Player",
       sortable: true,
       primary: true,
-      render: (value: string, row: any) => (
+      render: (value: unknown, row?: TableRow) => (
         <div className="flex items-center gap-2">
-          {row.pro_team && <span className="text-gold">⭐</span>}
+          {row?.pro_team && <span className="text-gold">⭐</span>}
           <Link
-            href={`/${sport}/players/${row.playerSlug}`}
+            href={`/${sport}/players/${row?.playerSlug || ""}`}
             className="font-medium text-sm hover:underline"
             style={{ color: "var(--psp-navy)" }}
           >
-            {value}
+            {String(value)}
           </Link>
         </div>
       ),
@@ -129,13 +158,13 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
       key: "schoolName",
       label: "School",
       sortable: true,
-      render: (value: string, row: any) => (
+      render: (value: unknown, row?: TableRow) => (
         <Link
-          href={`/${sport}/schools/${row.schoolSlug}`}
+          href={`/${sport}/schools/${row?.schoolSlug || ""}`}
           className="hover:underline text-sm"
           style={{ color: "var(--psp-gray-500)" }}
         >
-          {value}
+          {String(value)}
         </Link>
       ),
     },
@@ -156,13 +185,13 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
         align: "right",
         sortable: true,
         hideOnMobile: false,
-        render: (value: any) => value ?? "—",
+        render: (value: unknown) => String(value ?? "—"),
       });
     }
   }
 
   // Transform leaders data for SortableTable
-  const tableData = leaders.map((row: any, idx: number) => ({
+  const tableData = leaders.map((row: RawLeader, idx: number): TableRow => ({
     id: row.id,
     rank: idx + 1,
     playerName: row.players?.name || "Unknown",
@@ -171,11 +200,17 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
     schoolSlug: row.schools?.slug || "",
     seasonLabel: row.seasons?.label || "Unknown",
     pro_team: row.players?.pro_team,
-    ...statConfig?.cols.reduce((acc: any, col) => ({ ...acc, [col]: row[col] }), {}),
+    ...statConfig?.cols.reduce((acc: Record<string, unknown>, col) => ({ ...acc, [col]: (row as unknown as Record<string, unknown>)[col] }), {}),
   }));
 
   return (
     <>
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "https://phillysportspack.com" },
+        { name: meta.name, url: `https://phillysportspack.com/${sport}` },
+        { name: "Leaderboards", url: `https://phillysportspack.com/${sport}/leaderboards` },
+        { name: statConfig?.label || stat, url: `https://phillysportspack.com/${sport}/leaderboards/${stat}` },
+      ]} />
       {/* Header */}
       <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)` }}>
         <div className="max-w-7xl mx-auto px-4">
@@ -190,6 +225,13 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
             {statConfig?.label || stat} Leaders
           </h1>
           <p className="text-sm text-gray-400 mt-2">Season-by-season statistical leaders</p>
+          <div className="mt-6">
+            <ShareButtons
+              url={`/${sport}/leaderboards/${stat}`}
+              title={`${statConfig?.label || stat} Leaders | PhillySportsPack`}
+              description={`Top ${statConfig?.label.toLowerCase() || stat} leaders in Philadelphia high school ${meta.name.toLowerCase()}.`}
+            />
+          </div>
         </div>
       </section>
 

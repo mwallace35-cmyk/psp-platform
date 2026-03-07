@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { VALID_SPORTS } from "@/lib/data";
+import { captureError } from "@/lib/error-tracking";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://phillysportspack.com";
@@ -61,78 +62,199 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Fetch all schools and add to sitemap
+  // Fetch all entities in parallel using Promise.all with individual error handling
   try {
-    const { data: schools } = await supabase
-      .from("schools")
-      .select("slug, sport_id")
-      .order("slug");
+    const results = await Promise.allSettled([
+      // Fetch all schools in one query
+      supabase.from("team_seasons").select("sport_id, schools(slug)"),
+      // Fetch all player IDs from sport-specific tables
+      supabase
+        .from("football_player_seasons")
+        .select("player_id")
+        .is("deleted_at", null),
+      supabase
+        .from("basketball_player_seasons")
+        .select("player_id")
+        .is("deleted_at", null),
+      supabase
+        .from("baseball_player_seasons")
+        .select("player_id")
+        .is("deleted_at", null),
+      // Fetch all players from misc sports table
+      supabase.from("player_seasons_misc").select("player_id, sport_id"),
+      // Fetch all coaches with their sports
+      supabase.from("coaching_stints").select("sport_id, coach_id"),
+      // Fetch all published articles
+      supabase
+        .from("articles")
+        .select("slug, updated_at")
+        .eq("status", "published")
+        .order("slug"),
+    ]);
 
-    if (schools) {
-      // Group schools by sport for efficient querying
-      const sportSchools: Record<string, Set<string>> = {};
-      for (const school of schools) {
-        if (!sportSchools[school.sport_id]) {
-          sportSchools[school.sport_id] = new Set();
+    const [
+      schoolsSettled,
+      fbPlayersSettled,
+      bbPlayersSettled,
+      bsbPlayersSettled,
+      miscPlayersSettled,
+      coachesSettled,
+      articlesSettled,
+    ] = results;
+
+    // Process schools with error handling
+    if (schoolsSettled.status === "fulfilled" && schoolsSettled.value.data) {
+      const schoolsResult = schoolsSettled.value;
+      const uniqueSlugs = new Set<string>();
+      const schoolsData = schoolsResult.data as unknown as Array<{ schools: { slug: string } | null }>;
+      for (const ts of schoolsData) {
+        const schoolData = ts.schools;
+        if (schoolData?.slug) {
+          uniqueSlugs.add(schoolData.slug);
         }
-        sportSchools[school.sport_id].add(school.slug);
       }
 
-      for (const [sport, schoolSlugs] of Object.entries(sportSchools)) {
-        for (const slug of schoolSlugs) {
-          entries.push({
-            url: `${baseUrl}/${sport}/schools/${slug}`,
-            lastModified: new Date(),
-            changeFrequency: "monthly",
-            priority: 0.8,
-          });
-        }
-      }
-    }
-  } catch (error) {
-    console.error("Error fetching schools for sitemap:", error);
-  }
-
-  // Fetch all players and add to sitemap
-  try {
-    const { data: players } = await supabase
-      .from("players")
-      .select("slug, primary_sport")
-      .order("slug");
-
-    if (players) {
-      for (const player of players) {
+      for (const slug of uniqueSlugs) {
         entries.push({
-          url: `${baseUrl}/${player.primary_sport}/players/${player.slug}`,
+          url: `${baseUrl}/football/schools/${slug}`,
           lastModified: new Date(),
           changeFrequency: "monthly",
-          priority: 0.7,
+          priority: 0.8,
         });
       }
+    } else if (schoolsSettled.status === "rejected") {
+      captureError(schoolsSettled.reason, { context: "sitemap", fetch: "schools" });
     }
-  } catch (error) {
-    console.error("Error fetching players for sitemap:", error);
-  }
 
-  // Fetch all coaches and add to sitemap
-  try {
-    const { data: coaches } = await supabase
-      .from("coaches")
-      .select("slug, sport_id")
-      .order("slug");
+    // Build player sports map from all sources with error handling
+    const playerSportsMap = new Map<number, string>();
 
-    if (coaches) {
-      for (const coach of coaches) {
+    // Map football players
+    if (fbPlayersSettled.status === "fulfilled" && fbPlayersSettled.value.data) {
+      for (const row of fbPlayersSettled.value.data as Array<{ player_id: number }>) {
+        if (!playerSportsMap.has(row.player_id)) {
+          playerSportsMap.set(row.player_id, "football");
+        }
+      }
+    } else if (fbPlayersSettled.status === "rejected") {
+      captureError(fbPlayersSettled.reason, { context: "sitemap", fetch: "football_players" });
+    }
+
+    // Map basketball players
+    if (bbPlayersSettled.status === "fulfilled" && bbPlayersSettled.value.data) {
+      for (const row of bbPlayersSettled.value.data as Array<{ player_id: number }>) {
+        if (!playerSportsMap.has(row.player_id)) {
+          playerSportsMap.set(row.player_id, "basketball");
+        }
+      }
+    } else if (bbPlayersSettled.status === "rejected") {
+      captureError(bbPlayersSettled.reason, { context: "sitemap", fetch: "basketball_players" });
+    }
+
+    // Map baseball players
+    if (bsbPlayersSettled.status === "fulfilled" && bsbPlayersSettled.value.data) {
+      for (const row of bsbPlayersSettled.value.data as Array<{ player_id: number }>) {
+        if (!playerSportsMap.has(row.player_id)) {
+          playerSportsMap.set(row.player_id, "baseball");
+        }
+      }
+    } else if (bsbPlayersSettled.status === "rejected") {
+      captureError(bsbPlayersSettled.reason, { context: "sitemap", fetch: "baseball_players" });
+    }
+
+    // Map minor sport players
+    if (miscPlayersSettled.status === "fulfilled" && miscPlayersSettled.value.data) {
+      for (const row of miscPlayersSettled.value.data as Array<{ player_id: number; sport_id: string | null }>) {
+        if (!playerSportsMap.has(row.player_id)) {
+          playerSportsMap.set(row.player_id, row.sport_id || "miscellaneous");
+        }
+      }
+    } else if (miscPlayersSettled.status === "rejected") {
+      captureError(miscPlayersSettled.reason, { context: "sitemap", fetch: "misc_players" });
+    }
+
+    // Fetch all players in one query and add to sitemap
+    if (playerSportsMap.size > 0) {
+      try {
+        const { data: players } = await supabase
+          .from("players")
+          .select("id, slug")
+          .is("deleted_at", null)
+          .order("slug");
+
+        if (players) {
+          for (const player of players as Array<{ id: number; slug: string }>) {
+            const sport = playerSportsMap.get(player.id);
+            if (sport) {
+              entries.push({
+                url: `${baseUrl}/${sport}/players/${player.slug}`,
+                lastModified: new Date(),
+                changeFrequency: "monthly",
+                priority: 0.7,
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching player slugs for sitemap:", error);
+      }
+    }
+
+    // Build coach sports map with error handling
+    const coachSportsMap = new Map<number, string>();
+
+    if (coachesSettled.status === "fulfilled" && coachesSettled.value.data) {
+      for (const stint of coachesSettled.value.data as Array<{ coach_id: number; sport_id: string | null }>) {
+        if (!coachSportsMap.has(stint.coach_id)) {
+          coachSportsMap.set(stint.coach_id, stint.sport_id || "football");
+        }
+      }
+    } else if (coachesSettled.status === "rejected") {
+      console.error("Failed to fetch coaches for sitemap:", coachesSettled.reason);
+    }
+
+    // Fetch all coaches in one query and add to sitemap
+    if (coachSportsMap.size > 0) {
+      try {
+        const { data: coaches } = await supabase
+          .from("coaches")
+          .select("id, slug")
+          .is("deleted_at", null)
+          .order("slug");
+
+        if (coaches) {
+          for (const coach of coaches as Array<{ id: number; slug: string }>) {
+            const sport = coachSportsMap.get(coach.id);
+            if (sport) {
+              entries.push({
+                url: `${baseUrl}/${sport}/coaches/${coach.slug}`,
+                lastModified: new Date(),
+                changeFrequency: "monthly",
+                priority: 0.6,
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching coach slugs for sitemap:", error);
+      }
+    }
+
+    // Process articles with error handling
+    if (articlesSettled.status === "fulfilled" && articlesSettled.value.data) {
+      for (const article of articlesSettled.value.data as Array<{ slug: string; updated_at: string | null }>) {
         entries.push({
-          url: `${baseUrl}/${coach.sport_id}/coaches/${coach.slug}`,
-          lastModified: new Date(),
+          url: `${baseUrl}/articles/${article.slug}`,
+          lastModified: new Date(article.updated_at || Date.now()),
           changeFrequency: "monthly",
           priority: 0.6,
         });
       }
+    } else if (articlesSettled.status === "rejected") {
+      console.error("Failed to fetch articles for sitemap:", articlesSettled.reason);
     }
   } catch (error) {
-    console.error("Error fetching coaches for sitemap:", error);
+    console.error("Error during sitemap generation:", error);
   }
 
   // Public content pages
@@ -156,28 +278,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }
   );
-
-  // Fetch articles for sitemap
-  try {
-    const { data: articles } = await supabase
-      .from("articles")
-      .select("slug, updated_at")
-      .eq("status", "published")
-      .order("slug");
-
-    if (articles) {
-      for (const article of articles) {
-        entries.push({
-          url: `${baseUrl}/articles/${article.slug}`,
-          lastModified: new Date(article.updated_at || Date.now()),
-          changeFrequency: "monthly",
-          priority: 0.6,
-        });
-      }
-    }
-  } catch (error) {
-    console.error("Error fetching articles for sitemap:", error);
-  }
 
   return entries;
 }

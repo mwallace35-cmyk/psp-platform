@@ -10,7 +10,7 @@ interface SparkLineProps {
   showDot?: boolean;
 }
 
-export default function SparkLine({
+function SparkLine({
   data,
   width = 80,
   height = 24,
@@ -73,3 +73,5 @@ export default function SparkLine({
     </svg>
   );
 }
+
+export default React.memo(SparkLine);

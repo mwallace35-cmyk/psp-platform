@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { getSportOverview, getRecentChampions, getSchoolsBySport } from "@/lib/data";
+import { captureError } from "@/lib/error-tracking";
 
 export const revalidate = 3600;
 
@@ -128,12 +129,33 @@ const MORE_STORIES = [
 ];
 
 export default async function FootballPage() {
-  // Fetch real data from database
-  const [overview, champions, schools] = await Promise.all([
-    getSportOverview("football"),
-    getRecentChampions("football", 10),
-    getSchoolsBySport("football", 30),
-  ]);
+  // Fallback data for graceful degradation
+  const defaultOverview = { schools: 0, players: 0, seasons: 0, championships: 0 };
+  const defaultArray: any[] = [];
+
+  // Wrap data fetching in try/catch to prevent full page crash
+  let overview = defaultOverview;
+  let champions = defaultArray;
+  let schools = defaultArray;
+
+  try {
+    // Fetch real data from database - use allSettled to prevent one failure from crashing the page
+    const results = await Promise.allSettled([
+      getSportOverview("football"),
+      getRecentChampions("football", 10),
+      getSchoolsBySport("football", 30),
+    ]);
+    if (results[0].status === "fulfilled") overview = results[0].value;
+    if (results[1].status === "fulfilled") champions = results[1].value;
+    if (results[2].status === "fulfilled") schools = results[2].value;
+
+    if (results[0].status === "rejected") captureError(results[0].reason, { sport: "football", fetch: "getSportOverview" });
+    if (results[1].status === "rejected") captureError(results[1].reason, { sport: "football", fetch: "getRecentChampions" });
+    if (results[2].status === "rejected") captureError(results[2].reason, { sport: "football", fetch: "getSchoolsBySport" });
+  } catch (error) {
+    captureError(error, { sport: "football", context: "data_fetching" });
+    // Page will degrade gracefully with fallback data
+  }
 
   const SUB_NAV = [
     { href: "/football", label: "Home", active: true },

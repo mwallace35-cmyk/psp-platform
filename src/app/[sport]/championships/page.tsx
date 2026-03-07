@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
-import { isValidSport, SPORT_META, getChampionshipsBySport } from "@/lib/data";
+import { isValidSport, SPORT_META, getChampionshipsBySport, type Championship } from "@/lib/data";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
@@ -15,6 +16,9 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   return {
     title: `Championships — ${SPORT_META[sport].name} — PhillySportsPack`,
     description: `Championship history and dynasty tracker for Philadelphia high school ${SPORT_META[sport].name.toLowerCase()}.`,
+    alternates: {
+      canonical: `https://phillysportspack.com/${sport}/championships`,
+    },
   };
 }
 
@@ -23,13 +27,14 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
   if (!isValidSport(sport)) notFound();
 
   const meta = SPORT_META[sport];
-  const championships = await getChampionshipsBySport(sport);
+  const champData = await getChampionshipsBySport(sport);
+  const championships = (champData ?? []) as Championship[];
 
   // Dynasty analysis — count titles per school
-  const dynastyMap: Record<string, { name: string; slug: string; count: number }> = {};
+  const dynastyMap: Record<string, { name: string; slug: string | undefined; count: number }> = {};
   for (const c of championships) {
-    const schoolName = (c as any).schools?.name;
-    const schoolSlug = (c as any).schools?.slug;
+    const schoolName = c.schools?.name;
+    const schoolSlug = c.schools?.slug;
     if (schoolName) {
       if (!dynastyMap[schoolName]) dynastyMap[schoolName] = { name: schoolName, slug: schoolSlug, count: 0 };
       dynastyMap[schoolName].count++;
@@ -37,23 +42,65 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
   }
   const dynasties = Object.values(dynastyMap).sort((a, b) => b.count - a.count).slice(0, 10);
 
-  // Group by level
-  const byLevel: Record<string, any[]> = {};
+  // Group by season year, then by classification within each year
+  // Each year may have a different number of classifications (PIAA changed over time: 4→6 classes)
+  const bySeason: Record<string, { label: string; yearStart: number; champs: Championship[] }> = {};
   for (const c of championships) {
-    const lvl = c.level || "Other";
-    if (!byLevel[lvl]) byLevel[lvl] = [];
-    byLevel[lvl].push(c);
+    const season = c.seasons;
+    const yearKey = season?.year_start?.toString() || "unknown";
+    if (!bySeason[yearKey]) {
+      bySeason[yearKey] = {
+        label: season?.label || yearKey,
+        yearStart: season?.year_start ?? 0,
+        champs: [],
+      };
+    }
+    bySeason[yearKey].champs.push(c);
+  }
+
+  // Sort years descending, and within each year sort classifications naturally
+  const sortedYears = Object.values(bySeason)
+    .sort((a, b) => b.yearStart - a.yearStart);
+
+  // Natural sort for classifications (e.g., "6A" > "5A" > "4A" > "3A" > "2A" > "1A", or "AAAA" > "AAA")
+  const classificationOrder = (level: string): number => {
+    const l = (level || "").toUpperCase();
+    // Match patterns like "6A", "5A", etc.
+    const numMatch = l.match(/(\d+)A/);
+    if (numMatch) return parseInt(numMatch[1], 10);
+    // Match patterns like "AAAAAA", "AAAAA", "AAAA", "AAA", "AA", "A"
+    const aMatch = l.match(/^(A+)$/);
+    if (aMatch) return aMatch[1].length;
+    return 0;
+  };
+
+  for (const year of sortedYears) {
+    year.champs.sort((a: Championship, b: Championship) => classificationOrder(b.level || "") - classificationOrder(a.level || ""));
+  }
+
+  // Collect all unique classifications across all years for context
+  const allClassifications = new Set<string>();
+  for (const c of championships) {
+    if (c.level) allClassifications.add(c.level);
   }
 
   return (
     <>
-      <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "https://phillysportspack.com" },
+        { name: meta.name, url: `https://phillysportspack.com/${sport}` },
+        { name: "Championships", url: `https://phillysportspack.com/${sport}/championships` },
+      ]} />
+      <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, ${meta.color}33 100%)` }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{label: meta.name, href: `/${sport}`}, {label: "Championships"}]} />
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
-            {meta.name} Championships
+          <h1 className="text-4xl md:text-5xl text-white mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+            {meta.emoji} {meta.name} Championships
           </h1>
-          <p className="text-sm text-gray-400 mt-2">{championships.length} titles on record</p>
+          <p className="text-gray-300">
+            {championships.length} titles across {sortedYears.length} seasons
+            {allClassifications.size > 0 && ` • ${allClassifications.size} classifications`}
+          </p>
         </div>
       </section>
 
@@ -61,39 +108,40 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main content */}
+          {/* Main content — grouped by year, each year shows all classifications */}
           <div className="lg:col-span-2 space-y-8">
-            {Object.entries(byLevel).map(([level, champs]) => (
-              <div key={level}>
+            {sortedYears.map((yearData) => (
+              <div key={yearData.label}>
                 <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                  {level} ({champs.length})
+                  {yearData.label}
+                  <span className="text-base font-normal ml-2" style={{ color: "var(--psp-gray-400)" }}>
+                    ({yearData.champs.length} {yearData.champs.length === 1 ? "classification" : "classifications"})
+                  </span>
                 </h2>
                 <div className="overflow-x-auto">
                   <table className="data-table">
                     <thead>
                       <tr>
-                        <th>Season</th>
+                        <th>Classification</th>
                         <th>Champion</th>
-                        <th>League</th>
                         <th>Score</th>
                         <th>Opponent</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {champs.map((c: any) => (
+                      {yearData.champs.map((c: Championship) => (
                         <tr key={c.id}>
                           <td className="font-medium whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>
-                            {c.seasons?.label || "—"}
+                            {c.level || "—"}
                           </td>
                           <td>
                             <Link href={`/${sport}/schools/${c.schools?.slug}`} className="font-medium text-sm hover:underline" style={{ color: "var(--psp-gold)" }}>
                               🏆 {c.schools?.name}
                             </Link>
                           </td>
-                          <td className="text-xs" style={{ color: "var(--psp-gray-500)" }}>{c.leagues?.name || "—"}</td>
                           <td className="text-sm">{c.score || "—"}</td>
                           <td className="text-xs" style={{ color: "var(--psp-gray-400)" }}>
-                            {(c as any).opponent?.name || "—"}
+                            {c.opponent?.name || "—"}
                           </td>
                         </tr>
                       ))}
@@ -119,7 +167,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                 Dynasty Tracker
               </h3>
               <p className="text-xs mb-4" style={{ color: "var(--psp-gray-500)" }}>
-                Most titles by school (all levels combined)
+                Most titles by school (all classifications combined)
               </p>
               <div className="space-y-3">
                 {dynasties.map((d, idx) => (

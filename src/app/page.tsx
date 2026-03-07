@@ -1,13 +1,43 @@
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
+import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import PSPPromo from "@/components/ads/PSPPromo";
-import NewsletterSignup from "@/components/newsletter/NewsletterSignup";
+import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { SkeletonText } from "@/components/ui/Skeleton";
+import { BillboardPromo, NewsletterWidget, SidebarPromo } from "@/components/home/HomeClientContent";
 import { createClient } from "@/lib/supabase/server";
+import { getFootballLeaders, getBasketballLeaders } from "@/lib/data";
+import { captureError } from "@/lib/error-tracking";
 
-const HEADLINES = [
+// Helper function to format time ago
+function formatTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  if (hours < 1) return "Just now";
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+// Helper function to get emoji for sport
+function getSportEmoji(sportId?: string): string {
+  const emojiMap: Record<string, string> = {
+    basketball: "🏀",
+    football: "🏈",
+    baseball: "⚾",
+    soccer: "⚽",
+    lacrosse: "🥍",
+    wrestling: "🤼",
+    track: "🏃",
+  };
+  return emojiMap[sportId?.toLowerCase() || ""] || "🏅";
+}
+
+// Fallback headlines (used if database query returns empty)
+const FALLBACK_HEADLINES = [
   {
     sport: "Basketball",
     sportColor: "var(--bb)",
@@ -58,14 +88,16 @@ const HEADLINES = [
   },
 ];
 
-const MORE_STORIES = [
+// Fallback more stories (used if database query returns empty)
+const FALLBACK_MORE_STORIES = [
   { icon: "🤼", img: "/sports/wrestling.svg", sport: "Wrestling", color: "var(--wrest)", gradient: "linear-gradient(135deg,var(--wrest),#713f12)", title: "Malvern Prep Earns #5 National Ranking", desc: "2024 state champs continue their dominance." },
   { icon: "🏃", img: "/sports/track.svg", sport: "Track", color: "var(--track)", gradient: "linear-gradient(135deg,var(--track),#4c1d95)", title: "West Catholic Takes PIAA 2A Girls Title", desc: "Complete results from the state championship meet." },
   { icon: "🏈", img: "/sports/football.svg", sport: "Recruiting", color: "var(--fb)", gradient: "linear-gradient(135deg,#0a1628,#1a365d)", title: "Top 25 Philly Recruits: Class of 2027", desc: "D1 offers tracker and commitment updates." },
   { icon: "⚽", img: "/sports/soccer.svg", sport: "Soccer", color: "var(--soccer)", gradient: "linear-gradient(135deg,var(--soccer),#064e3b)", title: "Catholic League Soccer Preview", desc: "Breaking down the contenders for the 2025 season." },
 ];
 
-const ALUMNI = [
+// Fallback alumni (used if database query returns empty)
+const FALLBACK_ALUMNI = [
   { emoji: "🏀", name: "Kobe Bryant", team: "Lakers (HOF)", hs: "Lower Merion" },
   { emoji: "🏀", name: "Wilt Chamberlain", team: "Warriors (HOF)", hs: "Overbrook" },
   { emoji: "🏈", name: "Marvin Harrison Jr.", team: "Cardinals", hs: "St. Joseph's Prep" },
@@ -91,13 +123,143 @@ async function getOverviewStats() {
       seasons: seasons.count ?? 0,
       championships: championships.count ?? 0,
     };
-  } catch {
+  } catch (error) {
+    captureError(error, { function: "getOverviewStats" });
     return { schools: 405, players: 10057, seasons: 76, championships: 713 };
   }
 }
 
+async function getRecentHeadlines() {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("articles")
+      .select("slug, title, excerpt, sport_id, featured_image_url, published_at")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(4);
+    return data || [];
+  } catch (error) {
+    captureError(error, { function: "getRecentHeadlines" });
+    return [];
+  }
+}
+
+async function getFeaturedAlumni() {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("next_level_tracking")
+      .select(
+        `person_name,
+         current_org,
+         current_role,
+         sport_id,
+         high_school_id,
+         schools!next_level_tracking_high_school_id_fkey(name)`
+      )
+      .eq("featured", true)
+      .eq("status", "active")
+      .limit(8);
+    return data || [];
+  } catch (error) {
+    captureError(error, { function: "getFeaturedAlumni" });
+    return [];
+  }
+}
+
+async function getUpcomingEvents() {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("events")
+      .select("title, location, start_date")
+      .eq("status", "upcoming")
+      .gte("start_date", new Date().toISOString())
+      .order("start_date", { ascending: true })
+      .limit(3);
+    return data || [];
+  } catch (error) {
+    captureError(error, { function: "getUpcomingEvents" });
+    return [];
+  }
+}
+
 export default async function HomePage() {
-  const stats = await getOverviewStats();
+  // Wrap all data fetching in try/catch to prevent full page crash
+  let stats = { schools: 405, players: 10057, seasons: 76, championships: 713 };
+  let rushingLeaders: any[] = [];
+  let scoringLeaders: any[] = [];
+  let headlines: any[] = [];
+  let featuredAlumni: any[] = [];
+  let upcomingEvents: any[] = [];
+
+  try {
+    // Use Promise.allSettled to prevent one failure from crashing the page
+    const results = await Promise.allSettled([
+      getOverviewStats(),
+      getFootballLeaders("rushing", 5),
+      getBasketballLeaders("scoring", 5),
+      getRecentHeadlines(),
+      getFeaturedAlumni(),
+      getUpcomingEvents(),
+    ]);
+
+    // Process results safely
+    const [statsResult, rushingResult, scoringResult, headlinesResult, alumniResult, eventsResult] = results;
+
+    if (statsResult.status === "fulfilled") stats = statsResult.value;
+    if (rushingResult.status === "fulfilled") rushingLeaders = rushingResult.value;
+    if (scoringResult.status === "fulfilled") scoringLeaders = scoringResult.value;
+    if (headlinesResult.status === "fulfilled") headlines = headlinesResult.value;
+    if (alumniResult.status === "fulfilled") featuredAlumni = alumniResult.value;
+    if (eventsResult.status === "fulfilled") upcomingEvents = eventsResult.value;
+
+    // Log any failures that occurred during data fetching
+    if (statsResult.status === "rejected") {
+      captureError(statsResult.reason, { function: "HomePage", fetch: "getOverviewStats" });
+    }
+    if (rushingResult.status === "rejected") {
+      captureError(rushingResult.reason, { function: "HomePage", fetch: "getFootballLeaders" });
+    }
+    if (scoringResult.status === "rejected") {
+      captureError(scoringResult.reason, { function: "HomePage", fetch: "getBasketballLeaders" });
+    }
+    if (headlinesResult.status === "rejected") {
+      captureError(headlinesResult.reason, { function: "HomePage", fetch: "getRecentHeadlines" });
+    }
+    if (alumniResult.status === "rejected") {
+      captureError(alumniResult.reason, { function: "HomePage", fetch: "getFeaturedAlumni" });
+    }
+    if (eventsResult.status === "rejected") {
+      captureError(eventsResult.reason, { function: "HomePage", fetch: "getUpcomingEvents" });
+    }
+  } catch (error) {
+    captureError(error, { function: "HomePage", context: "data_fetching" });
+    // Page will degrade gracefully with fallback data already set above
+  }
+
+  // Map headlines from database or use fallback
+  const displayHeadlines = headlines.length > 0 ? headlines.map((h: any) => ({
+    sport: h.sport_id || "News",
+    sportColor: "var(--psp-navy)",
+    tagBg: "#f0f4ff",
+    icon: "📰",
+    img: h.featured_image_url || "/sports/football.svg",
+    gradient: "linear-gradient(135deg,var(--psp-navy),#1a365d)",
+    title: h.title,
+    desc: h.excerpt || "",
+    time: h.published_at ? formatTimeAgo(h.published_at) : "",
+    href: `/articles/${h.slug}`,
+  })) : FALLBACK_HEADLINES;
+
+  // Map alumni from database or use fallback
+  const displayAlumni = featuredAlumni.length > 0 ? featuredAlumni.map((person: any) => ({
+    emoji: getSportEmoji(person.sport_id),
+    name: person.person_name,
+    team: `${person.current_org}${person.current_role ? ` (${person.current_role})` : ""}`,
+    hs: person.schools?.name || "Unknown",
+  })) : FALLBACK_ALUMNI;
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -105,8 +267,11 @@ export default async function HomePage() {
 
       <div className="espn-container" style={{ flex: 1 }}>
         {/* Main Content */}
-        <main>
+        <main id="main-content">
+          {/* Accessibility: aria-live region for content updates */}
+          <div id="content-updates" aria-live="polite" aria-atomic="true" className="sr-only"></div>
           {/* Hero Card */}
+          {/* TODO: Migrate to database — fetch from articles/featured_content table */}
           <div className="hero-card">
             <div className="hero-tag">Featured</div>
             <div
@@ -116,7 +281,7 @@ export default async function HomePage() {
               }}
             >
               <div>
-                <h2>St. Joseph&apos;s Prep Captures 9th State Championship</h2>
+                <h1>St. Joseph&apos;s Prep Captures 9th State Championship</h1>
                 <div className="hero-sub">
                   QB Samaj Jones throws for 312 yards and 4 TDs as the Hawks dominate in the 6A title game
                 </div>
@@ -127,12 +292,25 @@ export default async function HomePage() {
           {/* Top Headlines */}
           <div className="sec-head"><h2>Top Headlines</h2></div>
           <div className="headline-list">
-            {HEADLINES.map((hl, i) => (
+            {displayHeadlines.map((hl, i) => (
               <Link key={i} href={hl.href} className="hl-item" style={{ textDecoration: "none", color: "inherit" }}>
-                <div className="hl-img" style={{ background: `${hl.gradient}, url(${hl.img}) center/cover`, backgroundBlendMode: "overlay" }}>
+                <div className="hl-img" style={{ background: `${hl.gradient}, url(${hl.img}) center/cover`, backgroundBlendMode: "overlay", position: "relative" }}>
+                  {hl.img && hl.img.endsWith('.svg') ? (
+                    <Image
+                      src={hl.img}
+                      alt={`${hl.sport} - ${hl.title}`}
+                      fill
+                      priority={i === 0}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
+                      style={{ opacity: 0.3 }}
+                    />
+                  ) : null}
                 </div>
                 <div className="hl-text">
                   <div className="hl-tag" style={{ background: hl.tagBg, color: hl.sportColor }}>
+                    {hl.icon && <span role="img" aria-hidden="true">{hl.icon} </span>}
                     {hl.sport}
                   </div>
                   <h3>{hl.title}</h3>
@@ -144,18 +322,32 @@ export default async function HomePage() {
           </div>
 
           {/* Billboard Ad */}
-          <PSPPromo size="billboard" variant={2} />
+          <BillboardPromo />
 
           {/* More Coverage */}
           <div className="sec-head"><h2>More Coverage</h2></div>
           <div className="stories">
-            {MORE_STORIES.map((story, i) => (
+            {FALLBACK_MORE_STORIES.map((story, i) => (
               <div key={i} className="story">
-                <div className="s-img" style={{ background: `${story.gradient}, url(${story.img}) center/cover`, backgroundBlendMode: "overlay" }}>
+                <div className="s-img" style={{ background: story.gradient, backgroundBlendMode: "overlay", position: "relative" }}>
+                  {story.img && story.img.endsWith('.svg') ? (
+                    <Image
+                      src={story.img}
+                      alt={`${story.sport} - ${story.title}`}
+                      fill
+                      loading="lazy"
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                      style={{ opacity: 0.3 }}
+                    />
+                  ) : null}
                 </div>
                 <div className="s-body">
-                  <div className="s-tag" style={{ color: story.color }}>{story.sport}</div>
-                  <h4>{story.title}</h4>
+                  <div className="s-tag" style={{ color: story.color }}>
+                    {story.icon && <span role="img" aria-hidden="true">{story.icon} </span>}
+                    {story.sport}
+                  </div>
+                  <h3>{story.title}</h3>
                   <p>{story.desc}</p>
                 </div>
               </div>
@@ -168,9 +360,9 @@ export default async function HomePage() {
             <Link href="/search" className="more">All 72 Athletes &#8594;</Link>
           </div>
           <div className="alumni-strip">
-            {ALUMNI.map((a, i) => (
+            {displayAlumni.map((a, i) => (
               <div key={i} className="a-card">
-                <div className="a-emoji">{a.emoji}</div>
+                <div className="a-emoji" role="img" aria-label={`${a.name} - ${a.team}`}>{a.emoji}</div>
                 <div className="a-name">{a.name}</div>
                 <div className="a-team">{a.team}</div>
                 <div className="a-hs">{a.hs}</div>
@@ -194,32 +386,66 @@ export default async function HomePage() {
           </div>
 
           {/* Rushing Leaders */}
-          <div className="widget">
-            <div className="w-head">🏈 Rushing Leaders</div>
-            <div className="w-body">
-              <div className="w-row"><span className="rank top">1</span><span className="name">Amir Williams</span><span className="val">4,856</span></div>
-              <div className="w-row"><span className="rank">2</span><span className="name">Donte Brown</span><span className="val">4,312</span></div>
-              <div className="w-row"><span className="rank">3</span><span className="name">Rashon Miles</span><span className="val">3,987</span></div>
-              <div className="w-row"><span className="rank">4</span><span className="name">Khalil Carter</span><span className="val">3,654</span></div>
-              <div className="w-row"><span className="rank">5</span><span className="name">DeShawn Jackson</span><span className="val">3,421</span></div>
+          <Suspense fallback={
+            <div className="widget">
+              <div className="w-head"><span role="img" aria-label="football">🏈</span> Rushing Leaders</div>
+              <div className="w-body" style={{ padding: "10px 14px" }}>
+                <SkeletonText lines={5} />
+              </div>
             </div>
-          </div>
+          }>
+            <div className="widget">
+              <div className="w-head"><span role="img" aria-label="football">🏈</span> Rushing Leaders</div>
+              <div className="w-body">
+                {rushingLeaders && rushingLeaders.length > 0 ? (
+                  rushingLeaders.map((leader: any, idx: number) => (
+                    <div key={idx} className="w-row">
+                      <span className={`rank ${idx === 0 ? 'top' : ''}`}>{idx + 1}</span>
+                      <Link href={`/football/players/${leader.players?.slug}`} className="name" style={{ textDecoration: "none", color: "inherit" }}>
+                        {leader.players?.name || "Unknown"}
+                      </Link>
+                      <span className="val">{leader.rush_yards?.toLocaleString() || 0}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ padding: "10px 0", color: "#999" }}>No data available</div>
+                )}
+              </div>
+            </div>
+          </Suspense>
 
           {/* Scoring Leaders */}
-          <div className="widget">
-            <div className="w-head">🏀 Scoring Leaders</div>
-            <div className="w-body">
-              <div className="w-row"><span className="rank top">1</span><span className="name">Marcus Johnson</span><span className="val">2,412</span></div>
-              <div className="w-row"><span className="rank">2</span><span className="name">Tyrese Maxey</span><span className="val">2,287</span></div>
-              <div className="w-row"><span className="rank">3</span><span className="name">Jalen Duren</span><span className="val">2,156</span></div>
-              <div className="w-row"><span className="rank">4</span><span className="name">Cam Reddish</span><span className="val">2,044</span></div>
-              <div className="w-row"><span className="rank">5</span><span className="name">Dahmir Bishop</span><span className="val">1,987</span></div>
+          <Suspense fallback={
+            <div className="widget">
+              <div className="w-head"><span role="img" aria-label="basketball">🏀</span> Scoring Leaders</div>
+              <div className="w-body" style={{ padding: "10px 14px" }}>
+                <SkeletonText lines={5} />
+              </div>
             </div>
-          </div>
+          }>
+            <div className="widget">
+              <div className="w-head"><span role="img" aria-label="basketball">🏀</span> Scoring Leaders</div>
+              <div className="w-body">
+                {scoringLeaders && scoringLeaders.length > 0 ? (
+                  scoringLeaders.map((leader: any, idx: number) => (
+                    <div key={idx} className="w-row">
+                      <span className={`rank ${idx === 0 ? 'top' : ''}`}>{idx + 1}</span>
+                      <Link href={`/basketball/players/${leader.players?.slug}`} className="name" style={{ textDecoration: "none", color: "inherit" }}>
+                        {leader.players?.name || "Unknown"}
+                      </Link>
+                      <span className="val">{leader.points?.toLocaleString() || 0}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ padding: "10px 0", color: "#999" }}>No data available</div>
+                )}
+              </div>
+            </div>
+          </Suspense>
 
           {/* Ad Space */}
-          <NewsletterSignup />
-          <PSPPromo size="sidebar" variant={1} />
+          <NewsletterWidget />
+          <SidebarPromo />
 
           {/* Quick Links */}
           <div className="widget">
@@ -234,22 +460,48 @@ export default async function HomePage() {
           </div>
 
           {/* Upcoming Events */}
-          <div className="widget">
-            <div className="w-head">Upcoming Events</div>
-            <div className="w-body" style={{ padding: "10px 14px" }}>
-              <div className="evt-item">
-                <div className="evt-date"><div className="m">Mar</div><div className="d">15</div></div>
-                <div className="evt-info"><h4>Rivals Showcase</h4><p>The Haverford School</p></div>
-              </div>
-              <div className="evt-item">
-                <div className="evt-date"><div className="m">Mar</div><div className="d">22</div></div>
-                <div className="evt-info"><h4>PCL Basketball Final</h4><p>The Palestra</p></div>
+          <Suspense fallback={
+            <div className="widget">
+              <div className="w-head">Upcoming Events</div>
+              <div className="w-body" style={{ padding: "10px 14px" }}>
+                <SkeletonText lines={4} />
               </div>
             </div>
-          </div>
+          }>
+            <div className="widget">
+              <div className="w-head">Upcoming Events</div>
+              <div className="w-body" style={{ padding: "10px 14px" }}>
+                {upcomingEvents.length > 0 ? (
+                  upcomingEvents.map((evt: any, i: number) => {
+                    const eventDate = new Date(evt.start_date);
+                    const monthAbr = eventDate.toLocaleString("en-US", { month: "short" });
+                    const day = eventDate.getDate();
+                    return (
+                      <div key={i} className="evt-item">
+                        <div className="evt-date"><div className="m">{monthAbr}</div><div className="d">{day}</div></div>
+                        <div className="evt-info"><h4>{evt.title}</h4><p>{evt.location || "Location TBA"}</p></div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <>
+                    <div className="evt-item">
+                      <div className="evt-date"><div className="m">Mar</div><div className="d">15</div></div>
+                      <div className="evt-info"><h4>Rivals Showcase</h4><p>The Haverford School</p></div>
+                    </div>
+                    <div className="evt-item">
+                      <div className="evt-date"><div className="m">Mar</div><div className="d">22</div></div>
+                      <div className="evt-info"><h4>PCL Basketball Final</h4><p>The Palestra</p></div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </Suspense>
         </aside>
       </div>
 
+      <OrganizationJsonLd />
       <Footer />
     </div>
   );

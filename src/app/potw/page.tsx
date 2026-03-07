@@ -7,7 +7,7 @@ import PotwVoteButton from '@/components/potw/PotwVoteButton';
 
 export const metadata: Metadata = generatePageMetadata({ pageType: 'potw' });
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 300; // Revalidate every 5 minutes for voting
 
 export default async function PotwPage() {
   const supabase = await createClient();

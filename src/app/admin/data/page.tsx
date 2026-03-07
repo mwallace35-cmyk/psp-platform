@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { ToastContainer } from "@/components/ui";
+import { useToast } from "@/hooks/useToast";
 
 type EntityType = "schools" | "players" | "team_seasons" | "championships" | "awards";
 
@@ -35,6 +37,11 @@ const COLUMNS: Record<EntityType, string[]> = {
   awards: ["id", "player_id", "school_id", "season_id", "sport_id", "award_type", "category", "position"],
 };
 
+// Memoize column config lookup to prevent recalculations
+const getColumnConfig = (entity: EntityType) => COLUMNS[entity] || [];
+const getEntityOptions = () => ENTITY_TYPES;
+const getSportOptions = () => SPORT_FILTER;
+
 export default function DataBrowser() {
   const [entity, setEntity] = useState<EntityType>("schools");
   const [sportFilter, setSportFilter] = useState("");
@@ -55,6 +62,8 @@ export default function DataBrowser() {
   const [findValue, setFindValue] = useState("");
   const [replaceValue, setReplaceValue] = useState("");
   const [previewCount, setPreviewCount] = useState(0);
+
+  const { toasts, removeToast, success: toastSuccess, info: toastInfo } = useToast();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -144,7 +153,7 @@ export default function DataBrowser() {
 
     setPendingChanges(new Map());
     setHasChanges(false);
-    alert(`Saved ${savedCount} changes.`);
+    toastSuccess(`Saved ${savedCount} changes.`);
     fetchData();
   }
 
@@ -212,7 +221,7 @@ export default function DataBrowser() {
     }
 
     setSelectedRows(new Set());
-    alert(`Soft-deleted ${deletedCount} records.`);
+    toastInfo(`Soft-deleted ${deletedCount} records.`);
     fetchData();
   }
 
@@ -235,7 +244,7 @@ export default function DataBrowser() {
     }
 
     setSelectedRows(new Set());
-    alert(`Updated ${updatedCount} records with sport: ${sport}`);
+    toastSuccess(`Updated ${updatedCount} records with sport: ${sport}`);
     fetchData();
   }
 
@@ -276,7 +285,7 @@ export default function DataBrowser() {
     setFindValue("");
     setReplaceValue("");
     setPreviewCount(0);
-    alert(`Replaced ${replacedCount} values.`);
+    toastSuccess(`Replaced ${replacedCount} values.`);
     fetchData();
   }
 
@@ -288,7 +297,9 @@ export default function DataBrowser() {
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   return (
-    <div>
+    <>
+      <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} />
+      <div>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold" style={{ color: "var(--psp-navy)" }}>
@@ -579,5 +590,6 @@ export default function DataBrowser() {
         Double-click any cell to edit. Press Enter to apply, Escape to cancel. Click &quot;Save Changes&quot; to commit edits to the database.
       </p>
     </div>
+    </>
   );
 }

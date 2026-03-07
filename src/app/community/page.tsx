@@ -10,6 +10,9 @@ export const revalidate = 3600; // ISR: hourly
 export const metadata: Metadata = {
   title: 'Community — PhillySportsPack',
   description: 'Join the PhillySportsPack community. POTW history, top contributors, and more.',
+  alternates: {
+    canonical: 'https://phillysportspack.com/community',
+  },
 };
 
 export default async function CommunityPage() {

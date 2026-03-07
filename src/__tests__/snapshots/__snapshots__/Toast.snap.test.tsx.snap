@@ -1,0 +1,173 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Toast - Snapshot Tests > renders empty toast container 1`] = `<div />`;
+
+exports[`Toast - Snapshot Tests > renders error toast correctly 1`] = `
+<div
+  class="bg-red-50 border-red-200 text-red-800 rounded-lg border-2 p-4 shadow-lg animate-in slide-in-from-top-5 fade-in duration-300 flex items-start gap-3"
+  role="alert"
+>
+  <span
+    class="text-red-600 text-lg font-bold flex-shrink-0"
+  >
+    ✕
+  </span>
+  <p
+    class="text-sm font-medium flex-1"
+  >
+    An error occurred
+  </p>
+  <button
+    aria-label="Close notification"
+    class="text-red-600 flex-shrink-0 hover:opacity-70 transition-opacity"
+  >
+    ✕
+  </button>
+</div>
+`;
+
+exports[`Toast - Snapshot Tests > renders info toast correctly 1`] = `
+<div
+  class="bg-blue-50 border-blue-200 text-blue-800 rounded-lg border-2 p-4 shadow-lg animate-in slide-in-from-top-5 fade-in duration-300 flex items-start gap-3"
+  role="alert"
+>
+  <span
+    class="text-blue-600 text-lg font-bold flex-shrink-0"
+  >
+    ℹ
+  </span>
+  <p
+    class="text-sm font-medium flex-1"
+  >
+    Information message
+  </p>
+  <button
+    aria-label="Close notification"
+    class="text-blue-600 flex-shrink-0 hover:opacity-70 transition-opacity"
+  >
+    ✕
+  </button>
+</div>
+`;
+
+exports[`Toast - Snapshot Tests > renders success toast correctly 1`] = `
+<div
+  class="bg-green-50 border-green-200 text-green-800 rounded-lg border-2 p-4 shadow-lg animate-in slide-in-from-top-5 fade-in duration-300 flex items-start gap-3"
+  role="alert"
+>
+  <span
+    class="text-green-600 text-lg font-bold flex-shrink-0"
+  >
+    ✓
+  </span>
+  <p
+    class="text-sm font-medium flex-1"
+  >
+    Operation successful
+  </p>
+  <button
+    aria-label="Close notification"
+    class="text-green-600 flex-shrink-0 hover:opacity-70 transition-opacity"
+  >
+    ✕
+  </button>
+</div>
+`;
+
+exports[`Toast - Snapshot Tests > renders toast container with multiple toasts 1`] = `<div />`;
+
+exports[`Toast - Snapshot Tests > renders toast with custom duration 1`] = `
+<div
+  class="bg-green-50 border-green-200 text-green-800 rounded-lg border-2 p-4 shadow-lg animate-in slide-in-from-top-5 fade-in duration-300 flex items-start gap-3"
+  role="alert"
+>
+  <span
+    class="text-green-600 text-lg font-bold flex-shrink-0"
+  >
+    ✓
+  </span>
+  <p
+    class="text-sm font-medium flex-1"
+  >
+    Custom duration
+  </p>
+  <button
+    aria-label="Close notification"
+    class="text-green-600 flex-shrink-0 hover:opacity-70 transition-opacity"
+  >
+    ✕
+  </button>
+</div>
+`;
+
+exports[`Toast - Snapshot Tests > renders toast with long message 1`] = `
+<div
+  class="bg-yellow-50 border-yellow-200 text-yellow-800 rounded-lg border-2 p-4 shadow-lg animate-in slide-in-from-top-5 fade-in duration-300 flex items-start gap-3"
+  role="alert"
+>
+  <span
+    class="text-yellow-600 text-lg font-bold flex-shrink-0"
+  >
+    ⚠
+  </span>
+  <p
+    class="text-sm font-medium flex-1"
+  >
+    This is a very long message that might wrap to multiple lines in the toast notification
+  </p>
+  <button
+    aria-label="Close notification"
+    class="text-yellow-600 flex-shrink-0 hover:opacity-70 transition-opacity"
+  >
+    ✕
+  </button>
+</div>
+`;
+
+exports[`Toast - Snapshot Tests > renders toast with zero duration 1`] = `
+<div
+  class="bg-blue-50 border-blue-200 text-blue-800 rounded-lg border-2 p-4 shadow-lg animate-in slide-in-from-top-5 fade-in duration-300 flex items-start gap-3"
+  role="alert"
+>
+  <span
+    class="text-blue-600 text-lg font-bold flex-shrink-0"
+  >
+    ℹ
+  </span>
+  <p
+    class="text-sm font-medium flex-1"
+  >
+    No auto-close
+  </p>
+  <button
+    aria-label="Close notification"
+    class="text-blue-600 flex-shrink-0 hover:opacity-70 transition-opacity"
+  >
+    ✕
+  </button>
+</div>
+`;
+
+exports[`Toast - Snapshot Tests > renders warning toast correctly 1`] = `
+<div
+  class="bg-yellow-50 border-yellow-200 text-yellow-800 rounded-lg border-2 p-4 shadow-lg animate-in slide-in-from-top-5 fade-in duration-300 flex items-start gap-3"
+  role="alert"
+>
+  <span
+    class="text-yellow-600 text-lg font-bold flex-shrink-0"
+  >
+    ⚠
+  </span>
+  <p
+    class="text-sm font-medium flex-1"
+  >
+    Warning message
+  </p>
+  <button
+    aria-label="Close notification"
+    class="text-yellow-600 flex-shrink-0 hover:opacity-70 transition-opacity"
+  >
+    ✕
+  </button>
+</div>
+`;

@@ -1,0 +1,117 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Button - Snapshot Tests > renders button group 1`] = `
+<div>
+  <div
+    class="flex gap-2"
+  >
+    <button
+      class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+    >
+      Save
+    </button>
+    <button
+      class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 border border-[var(--psp-gray-300)] text-[var(--psp-gray-600)] hover:border-[var(--psp-gray-400)] hover:bg-[var(--psp-gray-50)] px-5 py-2 text-sm rounded-lg "
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Button - Snapshot Tests > renders button with custom className 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg custom-class"
+>
+  Custom
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders button with long text 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+>
+  This is a button with a very long text inside
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders disabled button 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+  disabled=""
+>
+  Disabled
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders ghost button correctly 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 text-[var(--psp-gray-600)] hover:text-[var(--psp-navy)] hover:bg-[var(--psp-gray-100)] px-5 py-2 text-sm rounded-lg "
+>
+  Ghost
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders large button correctly 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-8 py-3 text-base rounded-lg "
+>
+  Large
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders medium button correctly 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+>
+  Medium
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders outline button correctly 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 border border-[var(--psp-gray-300)] text-[var(--psp-gray-600)] hover:border-[var(--psp-gray-400)] hover:bg-[var(--psp-gray-50)] px-5 py-2 text-sm rounded-lg "
+>
+  Outline
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders primary button correctly 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-5 py-2 text-sm rounded-lg "
+>
+  Primary
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders primary large button 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-8 py-3 text-base rounded-lg "
+>
+  Primary Large
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders secondary button correctly 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-navy)] text-white hover:bg-[var(--psp-navy-mid)] font-semibold px-5 py-2 text-sm rounded-lg "
+>
+  Secondary
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders secondary small button 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-navy)] text-white hover:bg-[var(--psp-navy-mid)] font-semibold px-3 py-1.5 text-sm rounded-md "
+>
+  Secondary Small
+</button>
+`;
+
+exports[`Button - Snapshot Tests > renders small button correctly 1`] = `
+<button
+  class="inline-flex items-center justify-center transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] focus:outline-2 focus:outline-offset-2 focus:outline-blue-400 bg-[var(--psp-gold)] text-[var(--psp-navy)] hover:bg-[var(--psp-gold-light)] hover:shadow-lg font-semibold px-3 py-1.5 text-sm rounded-md "
+>
+  Small
+</button>
+`;

@@ -2,10 +2,16 @@ import { createClient } from '@/lib/supabase/server';
 import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { SPORT_META } from '@/lib/sports';
+import { ArticleJsonLd } from '@/components/seo/JsonLd';
 import AdPlaceholder, { LeaderboardAd } from '@/components/ads/AdPlaceholder';
 import CommentSection from '@/components/comments/CommentSection';
+import { sanitizeHtml } from '@/lib/sanitize';
+import ShareButtons from '@/components/social/ShareButtons';
+
+export const revalidate = 3600;
 
 interface PageProps {
   params: Promise<{
@@ -28,12 +34,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return generatePageMetadata({ pageType: 'article-detail' });
   }
 
-  return generatePageMetadata({
-    pageType: 'article-detail',
-    title: article.title,
-    description: article.excerpt || article.title,
-    slug: article.slug,
-  });
+  return {
+    ...generatePageMetadata({
+      pageType: 'article-detail',
+      title: article.title,
+      description: article.excerpt || article.title,
+      slug: article.slug,
+    }),
+    alternates: {
+      canonical: `https://phillysportspack.com/articles/${article.slug}`,
+    },
+  };
 }
 
 export default async function ArticleDetailPage({ params }: PageProps) {
@@ -62,7 +73,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     .limit(3);
 
   const renderMarkdown = (content: string) => {
-    return content
+    const html = content
       .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
       .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
       .replace(/^# (.*?)$/gm, '<h1>$1</h1>')
@@ -71,10 +82,20 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       .replace(/\n\n/g, '</p><p>')
       .replace(/^/gm, '<p>')
       .replace(/$/gm, '</p>');
+    return sanitizeHtml(html);
   };
 
   return (
     <div className="min-h-screen bg-white">
+      <ArticleJsonLd
+        title={article.title}
+        description={article.excerpt || article.title}
+        author={article.author}
+        datePublished={article.created_at}
+        dateModified={article.updated_at || article.created_at}
+        url={`https://phillysportspack.com/articles/${article.slug}`}
+        imageUrl={article.featured_image_url}
+      />
       {/* Hero */}
       <div className="bg-gradient-to-r from-navy to-navy-mid py-8 px-4">
         <div className="max-w-2xl mx-auto">
@@ -103,11 +124,14 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         <div className="col-span-2">
           {/* Featured Image */}
           {article.featured_image_url && (
-            <div className="mb-8 rounded-lg overflow-hidden border border-gray-200">
-              <img
+            <div className="mb-8 rounded-lg overflow-hidden border border-gray-200 relative w-full h-96">
+              <Image
                 src={article.featured_image_url}
                 alt={article.title}
-                className="w-full h-96 object-cover"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
+                className="object-cover"
               />
             </div>
           )}
@@ -140,25 +164,11 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
           {/* Social Sharing */}
           <div className="py-6">
-            <p className="text-sm font-medium text-gray-700 mb-3">Share:</p>
-            <div className="flex gap-4">
-              <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=https://phillysportspack.com/articles/${article.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm font-medium"
-              >
-                Twitter
-              </a>
-              <a
-                href={`https://www.facebook.com/sharer/sharer.php?u=https://phillysportspack.com/articles/${article.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
-              >
-                Facebook
-              </a>
-            </div>
+            <ShareButtons
+              url={`/articles/${article.slug}`}
+              title={`${article.title} | PhillySportsPack`}
+              description={article.excerpt || article.title}
+            />
           </div>
 
           {/* Comments */}

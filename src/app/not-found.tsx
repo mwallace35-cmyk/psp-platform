@@ -17,9 +17,10 @@ export default function NotFound() {
 
         {/* Search Box */}
         <div className="mb-12">
-          <p className="text-white mb-4 text-sm">Try searching for what you're looking for:</p>
+          <label htmlFor="not-found-search" className="text-white mb-4 text-sm block">Try searching for what you're looking for:</label>
           <form action="/search" method="get" className="flex gap-2 max-w-md mx-auto">
             <input
+              id="not-found-search"
               type="text"
               name="q"
               placeholder="Search players, schools, stats..."

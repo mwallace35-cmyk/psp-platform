@@ -12,36 +12,36 @@ export default function Footer() {
             every stat, every champion, every player.
           </p>
         </div>
-        <div style={{ flex: "1 1 140px" }}>
+        <nav style={{ flex: "1 1 140px" }} aria-label="Sports navigation">
           <h5>Sports</h5>
           <p>
-            <Link href="/football" style={{ color: "rgba(255,255,255,.5)" }}>Football</Link><br />
-            <Link href="/basketball" style={{ color: "rgba(255,255,255,.5)" }}>Basketball</Link><br />
-            <Link href="/baseball" style={{ color: "rgba(255,255,255,.5)" }}>Baseball</Link><br />
-            <Link href="/track-field" style={{ color: "rgba(255,255,255,.5)" }}>Track &amp; Field</Link><br />
-            <Link href="/lacrosse" style={{ color: "rgba(255,255,255,.5)" }}>Lacrosse</Link><br />
-            <Link href="/wrestling" style={{ color: "rgba(255,255,255,.5)" }}>Wrestling</Link><br />
-            <Link href="/soccer" style={{ color: "rgba(255,255,255,.5)" }}>Soccer</Link>
+            <Link href="/football">Football</Link><br />
+            <Link href="/basketball">Basketball</Link><br />
+            <Link href="/baseball">Baseball</Link><br />
+            <Link href="/track-field">Track &amp; Field</Link><br />
+            <Link href="/lacrosse">Lacrosse</Link><br />
+            <Link href="/wrestling">Wrestling</Link><br />
+            <Link href="/soccer">Soccer</Link>
           </p>
-        </div>
-        <div style={{ flex: "1 1 140px" }}>
+        </nav>
+        <nav style={{ flex: "1 1 140px" }} aria-label="Data navigation">
           <h5>Data</h5>
           <p>
-            <Link href="/search" style={{ color: "rgba(255,255,255,.5)" }}>Search</Link><br />
-            <Link href="/compare" style={{ color: "rgba(255,255,255,.5)" }}>Compare Players</Link><br />
-            <Link href="/our-guys" style={{ color: "rgba(255,255,255,.5)" }}>Our Guys</Link><br />
-            <Link href="/recruiting" style={{ color: "rgba(255,255,255,.5)" }}>Recruiting</Link><br />
-            <Link href="/coaches" style={{ color: "rgba(255,255,255,.5)" }}>Coaches</Link><br />
-            <Link href="/articles" style={{ color: "rgba(255,255,255,.5)" }}>Articles</Link><br />
-            <Link href="/events" style={{ color: "rgba(255,255,255,.5)" }}>Events</Link>
+            <Link href="/search">Search</Link><br />
+            <Link href="/compare">Compare Players</Link><br />
+            <Link href="/our-guys">Our Guys</Link><br />
+            <Link href="/recruiting">Recruiting</Link><br />
+            <Link href="/coaches">Coaches</Link><br />
+            <Link href="/articles">Articles</Link><br />
+            <Link href="/events">Events</Link>
           </p>
-        </div>
+        </nav>
         <div style={{ flex: "1 1 140px" }}>
           <h5>About</h5>
           <p>
             Data compiled by <strong style={{ color: "var(--psp-gold)" }}>Ted Silary</strong><br />
             Built by Mike Wallace<br />
-            <Link href="/admin" style={{ color: "rgba(255,255,255,.5)" }}>Admin</Link>
+            <Link href="/admin">Admin</Link>
           </p>
         </div>
       </div>

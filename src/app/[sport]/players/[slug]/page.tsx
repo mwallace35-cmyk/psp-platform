@@ -1,11 +1,19 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards } from "@/lib/data";
+import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
-import CorrectionForm from "@/components/corrections/CorrectionForm";
+import ShareButtons from "@/components/social/ShareButtons";
+import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
+import { buildOgImageUrl } from "@/lib/og-utils";
 import type { Metadata } from "next";
+
+// Dynamic import for heavy client component
+const CorrectionForm = dynamic(() => import("@/components/corrections/CorrectionForm"), {
+  loading: () => <div className="text-center py-4 text-gray-500 text-sm">Loading form...</div>,
+});
 
 export const revalidate = 86400;
 
@@ -16,9 +24,38 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   if (!isValidSport(sport)) return {};
   const player = await getPlayerBySlug(slug);
   if (!player) return {};
+  const ogImageUrl = buildOgImageUrl({
+    title: player.name,
+    subtitle: `${SPORT_META[sport].name} — Career Profile`,
+    sport: sport,
+    type: "player",
+  });
   return {
     title: `${player.name} — ${SPORT_META[sport].name} — PhillySportsPack`,
     description: `${player.name} career stats, season-by-season breakdown, awards, and honors.`,
+    alternates: {
+      canonical: `https://phillysportspack.com/${sport}/players/${slug}`,
+    },
+    openGraph: {
+      title: `${player.name} — ${SPORT_META[sport].name} — PhillySportsPack`,
+      description: `${player.name} career stats, season-by-season breakdown, awards, and honors.`,
+      url: `https://phillysportspack.com/${sport}/players/${slug}`,
+      type: "profile",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${player.name} profile`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${player.name} — ${SPORT_META[sport].name} — PhillySportsPack`,
+      description: `${player.name} career stats, season-by-season breakdown, awards, and honors.`,
+      images: [ogImageUrl],
+    },
   };
 }
 
@@ -26,49 +63,66 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   const { sport, slug } = await params;
   if (!isValidSport(sport)) notFound();
 
-  const player = await getPlayerBySlug(slug);
-  if (!player) notFound();
+  const playerData = await getPlayerBySlug(slug);
+  if (!playerData) notFound();
 
+  const player = playerData as unknown as Player;
   const meta = SPORT_META[sport];
 
   // Get sport-specific stats
-  let stats: any[] = [];
-  if (sport === "football") stats = await getFootballPlayerStats(player.id);
-  else if (sport === "basketball") stats = await getBasketballPlayerStats(player.id);
-  else if (sport === "baseball") stats = await getBaseballPlayerStats(player.id);
+  let stats: (FootballPlayerSeason | BasketballPlayerSeason | BaseballPlayerSeason)[] = [];
+  if (sport === "football") stats = (await getFootballPlayerStats(player.id)) as FootballPlayerSeason[];
+  else if (sport === "basketball") stats = (await getBasketballPlayerStats(player.id)) as BasketballPlayerSeason[];
+  else if (sport === "baseball") stats = (await getBaseballPlayerStats(player.id)) as BaseballPlayerSeason[];
 
   const awards = await getPlayerAwards(player.id);
 
   // Football career totals
   const footballTotals = sport === "football" && stats.length > 0 ? {
-    rushYards: stats.reduce((sum: number, s: any) => sum + (s.rush_yards || 0), 0),
-    rushTd: stats.reduce((sum: number, s: any) => sum + (s.rush_td || 0), 0),
-    passYards: stats.reduce((sum: number, s: any) => sum + (s.pass_yards || 0), 0),
-    passTd: stats.reduce((sum: number, s: any) => sum + (s.pass_td || 0), 0),
-    recYards: stats.reduce((sum: number, s: any) => sum + (s.rec_yards || 0), 0),
-    recTd: stats.reduce((sum: number, s: any) => sum + (s.rec_td || 0), 0),
-    totalTd: stats.reduce((sum: number, s: any) => sum + (s.total_td || 0), 0),
-    totalYards: stats.reduce((sum: number, s: any) => sum + (s.total_yards || 0), 0),
+    rushYards: (stats as FootballPlayerSeason[]).reduce((sum: number, s: FootballPlayerSeason) => sum + (s.rush_yards || 0), 0),
+    rushTd: (stats as FootballPlayerSeason[]).reduce((sum: number, s: FootballPlayerSeason) => sum + (s.rush_td || 0), 0),
+    passYards: (stats as FootballPlayerSeason[]).reduce((sum: number, s: FootballPlayerSeason) => sum + (s.pass_yards || 0), 0),
+    passTd: (stats as FootballPlayerSeason[]).reduce((sum: number, s: FootballPlayerSeason) => sum + (s.pass_td || 0), 0),
+    recYards: (stats as FootballPlayerSeason[]).reduce((sum: number, s: FootballPlayerSeason) => sum + (s.rec_yards || 0), 0),
+    recTd: (stats as FootballPlayerSeason[]).reduce((sum: number, s: FootballPlayerSeason) => sum + (s.rec_td || 0), 0),
+    totalTd: (stats as FootballPlayerSeason[]).reduce((sum: number, s: FootballPlayerSeason) => sum + (s.total_td || 0), 0),
+    totalYards: (stats as FootballPlayerSeason[]).reduce((sum: number, s: FootballPlayerSeason) => sum + (s.total_yards || 0), 0),
   } : null;
 
   // Basketball career totals
   const basketballTotals = sport === "basketball" && stats.length > 0 ? {
-    points: stats.reduce((sum: number, s: any) => sum + (s.points || 0), 0),
-    games: stats.reduce((sum: number, s: any) => sum + (s.games_played || 0), 0),
-    rebounds: stats.reduce((sum: number, s: any) => sum + (s.rebounds || 0), 0),
-    assists: stats.reduce((sum: number, s: any) => sum + (s.assists || 0), 0),
+    points: (stats as BasketballPlayerSeason[]).reduce((sum: number, s: BasketballPlayerSeason) => sum + (s.points || 0), 0),
+    games: (stats as BasketballPlayerSeason[]).reduce((sum: number, s: BasketballPlayerSeason) => sum + (s.games_played || 0), 0),
+    rebounds: (stats as BasketballPlayerSeason[]).reduce((sum: number, s: BasketballPlayerSeason) => sum + (s.rebounds || 0), 0),
+    assists: (stats as BasketballPlayerSeason[]).reduce((sum: number, s: BasketballPlayerSeason) => sum + (s.assists || 0), 0),
   } : null;
 
   // Determine which columns to show for football (hide all-zero columns)
   const footballColumnVisibility = sport === "football" && stats.length > 0 ? {
-    pass_yards: stats.some((s: any) => s.pass_yards && s.pass_yards > 0),
-    pass_td: stats.some((s: any) => s.pass_td && s.pass_td > 0),
-    rec_yards: stats.some((s: any) => s.rec_yards && s.rec_yards > 0),
-    rec_td: stats.some((s: any) => s.rec_td && s.rec_td > 0),
+    pass_yards: (stats as FootballPlayerSeason[]).some((s: FootballPlayerSeason) => s.pass_yards && s.pass_yards > 0),
+    pass_td: (stats as FootballPlayerSeason[]).some((s: FootballPlayerSeason) => s.pass_td && s.pass_td > 0),
+    rec_yards: (stats as FootballPlayerSeason[]).some((s: FootballPlayerSeason) => s.rec_yards && s.rec_yards > 0),
+    rec_td: (stats as FootballPlayerSeason[]).some((s: FootballPlayerSeason) => s.rec_td && s.rec_td > 0),
   } : null;
 
   return (
     <>
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "https://phillysportspack.com" },
+        { name: meta.name, url: `https://phillysportspack.com/${sport}` },
+        { name: "Players", url: `https://phillysportspack.com/${sport}/players` },
+        { name: player.name, url: `https://phillysportspack.com/${sport}/players/${slug}` },
+      ]} />
+      {/* Rendered HTML breadcrumbs with aria attributes */}
+      <PersonJsonLd
+        name={player.name}
+        description={`${player.name} is a Philadelphia high school ${meta.name.toLowerCase()} player.`}
+        sport={meta.name}
+        school={player.schools?.name}
+        url={`https://phillysportspack.com/${sport}/players/${slug}`}
+        college={player.college}
+        proTeam={player.pro_team}
+      />
       {/* Player header */}
       <section
         className="py-12 md:py-16"
@@ -97,8 +151,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               </h1>
               <div className="flex flex-wrap gap-4 text-sm">
                 {player.schools && (
-                  <Link href={`/${sport}/schools/${(player as any).schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
-                    {(player as any).schools?.name}
+                  <Link href={`/${sport}/schools/${player.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
+                    {player.schools?.name}
                   </Link>
                 )}
                 {player.positions && player.positions.length > 0 && (
@@ -122,6 +176,13 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                     🎓 College
                   </span>
                 )}
+              </div>
+              <div className="mt-4">
+                <ShareButtons
+                  url={`/${sport}/players/${slug}`}
+                  title={`${player.name} — ${meta.name} Stats | PhillySportsPack`}
+                  description={`Check out ${player.name}'s career stats on PhillySportsPack.com`}
+                />
               </div>
             </div>
           </div>
@@ -177,19 +238,19 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   <table className="data-table">
                     <thead>
                       <tr>
-                        <th>Season</th>
-                        <th>School</th>
-                        <th className="text-right">Rush Yds</th>
-                        <th className="text-right">Rush TD</th>
-                        {footballColumnVisibility?.pass_yards && <th className="text-right">Pass Yds</th>}
-                        {footballColumnVisibility?.pass_td && <th className="text-right">Pass TD</th>}
-                        {footballColumnVisibility?.rec_yards && <th className="text-right">Rec Yds</th>}
-                        {footballColumnVisibility?.rec_td && <th className="text-right">Rec TD</th>}
-                        <th className="text-right">Total TD</th>
+                        <th scope="col">Season</th>
+                        <th scope="col">School</th>
+                        <th scope="col" className="text-right">Rush Yds</th>
+                        <th scope="col" className="text-right">Rush TD</th>
+                        {footballColumnVisibility?.pass_yards && <th scope="col" className="text-right">Pass Yds</th>}
+                        {footballColumnVisibility?.pass_td && <th scope="col" className="text-right">Pass TD</th>}
+                        {footballColumnVisibility?.rec_yards && <th scope="col" className="text-right">Rec Yds</th>}
+                        {footballColumnVisibility?.rec_td && <th scope="col" className="text-right">Rec TD</th>}
+                        <th scope="col" className="text-right">Total TD</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {stats.map((s: any) => (
+                      {(stats as FootballPlayerSeason[]).map((s: FootballPlayerSeason) => (
                         <tr key={s.id}>
                           <td className="font-medium whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>{s.seasons?.label}</td>
                           <td className="text-xs">
@@ -233,19 +294,19 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   <table className="data-table">
                     <thead>
                       <tr>
-                        <th>Season</th>
-                        <th>School</th>
-                        <th className="text-right">GP</th>
-                        <th className="text-right">PTS</th>
-                        <th className="text-right">PPG</th>
-                        <th className="text-right">REB</th>
-                        <th className="text-right">AST</th>
-                        <th className="text-right">STL</th>
-                        <th className="text-right">BLK</th>
+                        <th scope="col">Season</th>
+                        <th scope="col">School</th>
+                        <th scope="col" className="text-right">GP</th>
+                        <th scope="col" className="text-right">PTS</th>
+                        <th scope="col" className="text-right">PPG</th>
+                        <th scope="col" className="text-right">REB</th>
+                        <th scope="col" className="text-right">AST</th>
+                        <th scope="col" className="text-right">STL</th>
+                        <th scope="col" className="text-right">BLK</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {stats.map((s: any) => (
+                      {(stats as BasketballPlayerSeason[]).map((s: BasketballPlayerSeason) => (
                         <tr key={s.id}>
                           <td className="font-medium whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>{s.seasons?.label}</td>
                           <td className="text-xs">
@@ -275,7 +336,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   Honors & Awards
                 </h2>
                 <div className="space-y-2">
-                  {awards.map((a: any) => (
+                  {(awards as Award[]).map((a: Award) => (
                     <div key={a.id} className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3">
                       <span className="text-xl">🏅</span>
                       <div>
@@ -299,11 +360,11 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {player.schools && (
               <div>
                 <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                  More from {(player as any).schools?.name}
+                  More from {player.schools?.name}
                 </h2>
                 <p className="text-sm text-gray-500 mb-4">Explore other players from this school</p>
-                <Link href={`/${sport}/schools/${(player as any).schools?.slug}`} className="inline-block px-6 py-3 rounded-lg font-medium" style={{ background: "var(--psp-navy)", color: "white" }}>
-                  View all {(player as any).schools?.name} players →
+                <Link href={`/${sport}/schools/${player.schools?.slug}`} className="inline-block px-6 py-3 rounded-lg font-medium" style={{ background: "var(--psp-navy)", color: "white" }}>
+                  View all {player.schools?.name} players →
                 </Link>
               </div>
             )}
@@ -321,8 +382,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   <div className="flex justify-between">
                     <dt style={{ color: "var(--psp-gray-500)" }}>School</dt>
                     <dd>
-                      <Link href={`/${sport}/schools/${(player as any).schools?.slug}`} className="font-medium hover:underline" style={{ color: "var(--psp-navy)" }}>
-                        {(player as any).schools?.name}
+                      <Link href={`/${sport}/schools/${player.schools?.slug}`} className="font-medium hover:underline" style={{ color: "var(--psp-navy)" }}>
+                        {player.schools?.name}
                       </Link>
                     </dd>
                   </div>
@@ -390,22 +451,6 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       <div className="max-w-7xl mx-auto px-4 pb-4">
         <CorrectionForm entityType="player" entityId={player.id} entityName={player.name} />
       </div>
-
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: player.name,
-            description: `${player.name} — Philadelphia high school ${meta.name.toLowerCase()} player.`,
-            url: `https://phillysportspack.com/${sport}/players/${slug}`,
-            ...(player.college && { alumniOf: { "@type": "CollegeOrUniversity", name: player.college } }),
-            ...(player.pro_team && { memberOf: { "@type": "SportsTeam", name: player.pro_team } }),
-          }),
-        }}
-      />
     </>
   );
 }
