@@ -162,7 +162,7 @@ export default function Header() {
       {/* Main Nav - Desktop */}
       <nav className="mainnav" aria-label="Main navigation">
         <div className="mainnav-inner">
-          <Link href="/" className={`nav-link ${pathname === "/" ? "active" : ""}`}>
+          <Link href="/" className={`nav-link ${pathname === "/" ? "active" : ""}`} aria-current={pathname === "/" ? "page" : undefined}>
             Home
           </Link>
           {MAIN_SPORTS.map((sport) => (
@@ -170,6 +170,7 @@ export default function Header() {
               key={sport.href}
               href={sport.href}
               className={`nav-link ${isActive(sport.href) ? "active" : ""}`}
+              aria-current={isActive(sport.href) ? "page" : undefined}
             >
               <span className="nav-dot" style={{ background: sport.color }} />
               {sport.label}
@@ -182,8 +183,9 @@ export default function Header() {
               className="nav-link"
               role="button"
               tabIndex={0}
-              aria-haspopup="true"
+              aria-haspopup="menu"
               aria-expanded={moreOpen}
+              aria-label="More sports menu"
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -199,6 +201,7 @@ export default function Header() {
             </div>
             <div
               className="dd-menu"
+              role="menu"
               aria-label="More sports"
               style={{ display: moreOpen ? "block" : undefined }}
               onKeyDown={(e) => {
@@ -208,7 +211,7 @@ export default function Header() {
               }}
             >
               {MORE_SPORTS.map((sport) => (
-                <Link key={sport.href} href={sport.href}>
+                <Link key={sport.href} href={sport.href} role="menuitem" aria-current={isActive(sport.href) ? "page" : undefined}>
                   <span className="nav-dot" style={{ background: sport.color }} />
                   {sport.label}
                 </Link>
@@ -222,8 +225,9 @@ export default function Header() {
               className="nav-link"
               role="button"
               tabIndex={0}
-              aria-haspopup="true"
+              aria-haspopup="menu"
               aria-expanded={eventsOpen}
+              aria-label="Events menu"
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -239,6 +243,7 @@ export default function Header() {
             </div>
             <div
               className="dd-menu"
+              role="menu"
               aria-label="Events"
               style={{ display: eventsOpen ? "block" : undefined }}
               onKeyDown={(e) => {
@@ -247,18 +252,18 @@ export default function Header() {
                 }
               }}
             >
-              <Link href="/events">Upcoming Events</Link>
-              <Link href="/events">Camps &amp; Showcases</Link>
+              <Link href="/events" role="menuitem" aria-current={isActive("/events") ? "page" : undefined}>Upcoming Events</Link>
+              <Link href="/events" role="menuitem">Camps &amp; Showcases</Link>
             </div>
           </div>
 
-          <Link href="/articles" className={`nav-link ${isActive("/articles") ? "active" : ""}`}>
+          <Link href="/articles" className={`nav-link ${isActive("/articles") ? "active" : ""}`} aria-current={isActive("/articles") ? "page" : undefined}>
             News
           </Link>
-          <Link href="/potw" className={`nav-link ${isActive("/potw") ? "active" : ""}`}>
+          <Link href="/potw" className={`nav-link ${isActive("/potw") ? "active" : ""}`} aria-current={isActive("/potw") ? "page" : undefined}>
             POTW
           </Link>
-          <Link href="/community" className={`nav-link ${isActive("/community") ? "active" : ""}`}>
+          <Link href="/community" className={`nav-link ${isActive("/community") ? "active" : ""}`} aria-current={isActive("/community") ? "page" : undefined}>
             Community
           </Link>
 
@@ -268,8 +273,9 @@ export default function Header() {
               className="nav-link"
               role="button"
               tabIndex={0}
-              aria-haspopup="true"
+              aria-haspopup="menu"
               aria-expanded={dataOpen}
+              aria-label="Data and Recruiting menu"
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -285,6 +291,7 @@ export default function Header() {
             </div>
             <div
               className="dd-menu"
+              role="menu"
               aria-label="Data & Recruiting"
               style={{ display: dataOpen ? "block" : undefined }}
               onKeyDown={(e) => {
@@ -293,17 +300,17 @@ export default function Header() {
                 }
               }}
             >
-              <Link href="/our-guys"><span role="img" aria-label="star">🌟</span> Our Guys</Link>
-              <Link href="/recruiting"><span role="img" aria-label="star">⭐</span> Recruiting</Link>
-              <Link href="/coaches"><span role="img" aria-label="clipboard">📋</span> Coaches</Link>
-              <Link href="/compare"><span role="img" aria-label="chart">📊</span> Compare Players</Link>
+              <Link href="/our-guys" role="menuitem" aria-current={isActive("/our-guys") ? "page" : undefined}><span role="img" aria-label="star">🌟</span> Our Guys</Link>
+              <Link href="/recruiting" role="menuitem" aria-current={isActive("/recruiting") ? "page" : undefined}><span role="img" aria-label="star">⭐</span> Recruiting</Link>
+              <Link href="/coaches" role="menuitem" aria-current={isActive("/coaches") ? "page" : undefined}><span role="img" aria-label="clipboard">📋</span> Coaches</Link>
+              <Link href="/compare" role="menuitem" aria-current={isActive("/compare") ? "page" : undefined}><span role="img" aria-label="chart">📊</span> Compare Players</Link>
             </div>
           </div>
 
           <div className="nav-right">
-            <Link href="/search" className="nav-link">Schools</Link>
-            <Link href="/search" className="nav-link" aria-label="Search players and teams">Search</Link>
-            <Link href="/signup" className="nav-link" style={{ color: 'var(--psp-gold)' }}>Sign Up</Link>
+            <Link href="/search" className="nav-link" aria-current={isActive("/search") ? "page" : undefined}>Schools</Link>
+            <Link href="/search" className="nav-link" aria-label="Search players and teams" aria-current={isActive("/search") ? "page" : undefined}>Search</Link>
+            <Link href="/signup" className="nav-link" style={{ color: 'var(--psp-gold)' }} aria-current={isActive("/signup") ? "page" : undefined}>Sign Up</Link>
 
             {/* Mobile hamburger */}
             <button
@@ -347,7 +354,7 @@ export default function Header() {
             className="mobile-nav-overlay open"
             onClick={handleMobileToggle}
           />
-          <div className="mobile-nav-panel" id="mobile-menu" role="navigation" aria-label="Mobile navigation" ref={mobileMenuRef}>
+          <div className="mobile-nav-panel" id="mobile-menu" role="navigation" aria-label="Mobile navigation" aria-modal="true" ref={mobileMenuRef}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <span style={{ color: "var(--psp-gold)", fontWeight: 800, fontSize: 16 }}>Menu</span>
               <button

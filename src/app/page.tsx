@@ -11,6 +11,7 @@ import { BillboardPromo, NewsletterWidget, SidebarPromo } from "@/components/hom
 import { createClient } from "@/lib/supabase/server";
 import { getFootballLeaders, getBasketballLeaders } from "@/lib/data";
 import { captureError } from "@/lib/error-tracking";
+import type { FootballLeaderRowData, BasketballLeaderRowData } from "@/lib/data/events";
 
 // Helper function to format time ago
 function formatTimeAgo(dateStr: string): string {
@@ -193,14 +194,38 @@ async function getUpcomingEvents() {
   }
 }
 
+interface Headline {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  sport_id: string;
+  featured_image_url: string | null;
+  published_at: string;
+}
+
+interface FeaturedAlumni {
+  person_name: string;
+  current_org: string;
+  current_role: string | null;
+  sport_id: string;
+  high_school_id: number;
+  schools: { name: string }[] | { name: string } | null;
+}
+
+interface UpcomingEvent {
+  title: string;
+  location: string | null;
+  start_date: string;
+}
+
 export default async function HomePage() {
   // Wrap all data fetching in try/catch to prevent full page crash
   let stats = { schools: 405, players: 10057, seasons: 76, championships: 713 };
-  let rushingLeaders: any[] = [];
-  let scoringLeaders: any[] = [];
-  let headlines: any[] = [];
-  let featuredAlumni: any[] = [];
-  let upcomingEvents: any[] = [];
+  let rushingLeaders: FootballLeaderRowData[] = [];
+  let scoringLeaders: BasketballLeaderRowData[] = [];
+  let headlines: Headline[] = [];
+  let featuredAlumni: FeaturedAlumni[] = [];
+  let upcomingEvents: UpcomingEvent[] = [];
 
   try {
     // Use Promise.allSettled to prevent one failure from crashing the page
@@ -248,7 +273,7 @@ export default async function HomePage() {
   }
 
   // Map headlines from database or use fallback
-  const displayHeadlines = headlines.length > 0 ? headlines.map((h: any) => ({
+  const displayHeadlines = headlines.length > 0 ? headlines.map((h) => ({
     sport: h.sport_id || "News",
     sportColor: "var(--psp-navy)",
     tagBg: "#f0f4ff",
@@ -262,12 +287,19 @@ export default async function HomePage() {
   })) : FALLBACK_HEADLINES;
 
   // Map alumni from database or use fallback
-  const displayAlumni = featuredAlumni.length > 0 ? featuredAlumni.map((person: any) => ({
-    emoji: getSportEmoji(person.sport_id),
-    name: person.person_name,
-    team: `${person.current_org}${person.current_role ? ` (${person.current_role})` : ""}`,
-    hs: person.schools?.name || "Unknown",
-  })) : FALLBACK_ALUMNI;
+  const displayAlumni = featuredAlumni.length > 0 ? featuredAlumni.map((person) => {
+    const schoolName = person.schools
+      ? Array.isArray(person.schools)
+        ? person.schools[0]?.name
+        : person.schools.name
+      : undefined;
+    return {
+      emoji: getSportEmoji(person.sport_id),
+      name: person.person_name,
+      team: `${person.current_org}${person.current_role ? ` (${person.current_role})` : ""}`,
+      hs: schoolName || "Unknown",
+    };
+  }) : FALLBACK_ALUMNI;
 
   const websiteJsonLd = {
     "@context": "https://schema.org",

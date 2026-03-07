@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
 
       case "message": {
         // Demonstrate message capture
-        const reporter = (global as any).__errorReporter;
+        const reporter = (global as Record<string, unknown>).__errorReporter as { captureMessage?: (msg: string, severity: string) => void } | undefined;
         if (reporter && reporter.captureMessage) {
           reporter.captureMessage("Test message from Sentry API endpoint", ErrorSeverity.MEDIUM);
         } else {

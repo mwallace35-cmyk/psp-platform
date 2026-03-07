@@ -69,6 +69,9 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable}`}>
       <head>
+        {/* Preconnect to Google Fonts for faster font loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <Script
           nonce={nonce}
           dangerouslySetInnerHTML={{

@@ -49,11 +49,11 @@ export default function CommentsModeration() {
       if (error) throw error;
 
       setComments(
-        (data || []).map((c: any) => ({
+        (data || []).map((c) => ({
           ...c,
           articles: Array.isArray(c.articles) ? c.articles[0] : c.articles,
           user_profiles: Array.isArray(c.user_profiles) ? c.user_profiles[0] : c.user_profiles,
-        }))
+        })) as CommentWithMeta[]
       );
     } catch (err) {
       console.error('Error fetching comments:', err);

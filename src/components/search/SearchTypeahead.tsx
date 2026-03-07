@@ -186,6 +186,25 @@ export default function SearchTypeahead() {
     : results;
   const showDropdown = isOpen && (displayItems.length > 0 || query.length < 2 || closestMatch);
 
+  // Helper function to get the correct aria-activedescendant ID based on context
+  const getActivedescendantId = () => {
+    if (selectedIndex < 0) return "";
+    if (query.length < 2 && recentSearches.length > 0) {
+      return `search-recent-${selectedIndex}`;
+    }
+    if (query.length >= 2 && hasGroupedResults) {
+      const schools = groupedResults.schools;
+      if (selectedIndex < schools.length) {
+        return `search-school-${selectedIndex}`;
+      }
+      return `search-player-${selectedIndex - schools.length}`;
+    }
+    if (query.length < 2 && recentSearches.length === 0) {
+      return `search-popular-${selectedIndex}`;
+    }
+    return "";
+  };
+
   // Group results by type for display
   const groupedResults = {
     schools: results.filter((r) => r.type === "school"),
@@ -208,7 +227,8 @@ export default function SearchTypeahead() {
           role="combobox"
           aria-expanded={isOpen}
           aria-controls="search-listbox"
-          aria-activedescendant={selectedIndex >= 0 ? `search-option-${selectedIndex}` : ""}
+          aria-autocomplete="list"
+          aria-activedescendant={getActivedescendantId()}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:bg-white/15 focus:border-[var(--psp-gold)] focus:outline-none transition-colors"
         />
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -232,7 +252,7 @@ export default function SearchTypeahead() {
               {recentSearches.map((item, i) => (
                 <button
                   key={`recent-${item.href}`}
-                  id={`search-option-${i}`}
+                  id={`search-recent-${i}`}
                   role="option"
                   aria-selected={i === selectedIndex}
                   onClick={() => handleSelectResult(item)}
@@ -282,7 +302,7 @@ export default function SearchTypeahead() {
                   {groupedResults.schools.map((item, i) => (
                     <button
                       key={`school-${item.href}`}
-                      id={`search-option-${i}`}
+                      id={`search-school-${i}`}
                       role="option"
                       aria-selected={i === selectedIndex}
                       onClick={() => handleSelectResult(item)}
@@ -324,7 +344,7 @@ export default function SearchTypeahead() {
                   {groupedResults.players.map((item, i) => (
                     <button
                       key={`player-${item.href}`}
-                      id={`search-option-${i}`}
+                      id={`search-player-${i}`}
                       role="option"
                       aria-selected={i === selectedIndex}
                       onClick={() => handleSelectResult(item)}
@@ -366,7 +386,7 @@ export default function SearchTypeahead() {
               {POPULAR_SEARCHES.map((item, i) => (
                 <button
                   key={`${item.type}-${item.name}`}
-                  id={`search-option-${i}`}
+                  id={`search-popular-${i}`}
                   role="option"
                   aria-selected={i === selectedIndex}
                   onClick={() => handleSelectResult(item)}

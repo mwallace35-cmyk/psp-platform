@@ -49,8 +49,25 @@ export interface RateLimitAdapter {
 }
 
 /**
+ * Flag to track when rate limiting has degraded to in-memory mode.
+ * Used to alert operators that the system is not using distributed rate limiting.
+ */
+let isDegradedToInMemory = false;
+
+/**
+ * Check if rate limiting is degraded to in-memory mode.
+ * @returns true if running in degraded mode (Redis unavailable)
+ */
+export function isRateLimitDegraded(): boolean {
+  return isDegradedToInMemory;
+}
+
+/**
  * In-memory adapter for rate limiting using fixed window counters.
  * Suitable for single-instance deployments.
+ *
+ * SECURITY WARNING: This adapter does NOT work across distributed systems.
+ * When used in production, it indicates rate limiting is degraded.
  */
 export class InMemoryAdapter implements RateLimitAdapter {
   async check(key: string, maxRequests: number, windowMs: number): Promise<RateLimitResult> {
@@ -86,6 +103,10 @@ export class RedisAdapter implements RateLimitAdapter {
       const client = await getRedisClient();
       if (!client) {
         // Fall back to in-memory if Redis is not available
+        if (!isDegradedToInMemory) {
+          isDegradedToInMemory = true;
+          console.warn('[PSP:SECURITY] Rate limiting degraded to in-memory - Redis unavailable');
+        }
         return new InMemoryAdapter().check(key, maxRequests, windowMs);
       }
 
@@ -128,6 +149,10 @@ export class RedisAdapter implements RateLimitAdapter {
     } catch (error) {
       console.error('[RateLimitAdapter] Redis error:', error);
       // Fall back to in-memory on any error
+      if (!isDegradedToInMemory) {
+        isDegradedToInMemory = true;
+        console.warn('[PSP:SECURITY] Rate limiting degraded to in-memory - Redis unavailable');
+      }
       return new InMemoryAdapter().check(key, maxRequests, windowMs);
     }
   }
@@ -149,14 +174,17 @@ async function initializeAdapter(): Promise<RateLimitAdapter> {
     const redisAvailable = await isRedisAvailable();
     if (redisAvailable) {
       rateLimitAdapter = new RedisAdapter();
-      console.log('[RateLimiter] Using Redis adapter');
+      console.log('[RateLimiter] Using Redis adapter for distributed rate limiting');
     } else {
+      isDegradedToInMemory = true;
       rateLimitAdapter = new InMemoryAdapter();
-      console.log('[RateLimiter] Using in-memory adapter');
+      console.warn('[PSP:SECURITY] Rate limiting degraded to in-memory - Redis unavailable');
     }
   } catch (error) {
     console.error('[RateLimiter] Failed to initialize adapter:', error);
+    isDegradedToInMemory = true;
     rateLimitAdapter = new InMemoryAdapter();
+    console.warn('[PSP:SECURITY] Rate limiting degraded to in-memory - initialization failed');
   }
 
   return rateLimitAdapter;

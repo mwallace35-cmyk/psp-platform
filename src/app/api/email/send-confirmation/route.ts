@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const response = apiSuccess({});
     response.headers.set("x-request-id", requestId);
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Log the full error internally but return generic message to client
     captureError(error, { endpoint: '/api/email/send-confirmation' }, { requestId, path: '/api/email/send-confirmation', method: 'POST', endpoint: '/api/email/send-confirmation' });
     const response = apiError('Failed to send confirmation email', 500, 'EMAIL_SEND_ERROR');

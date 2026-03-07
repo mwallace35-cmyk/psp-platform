@@ -15,6 +15,16 @@ export const metadata: Metadata = {
   },
 };
 
+interface POTWWinner {
+  id: number;
+  player_name: string;
+  school_name: string;
+  sport_id: string;
+  week: number;
+  year: number;
+  vote_count: number;
+}
+
 export default async function CommunityPage() {
   const supabase = await createClient();
 
@@ -23,7 +33,7 @@ export default async function CommunityPage() {
     .from('potw_winners')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(12);
+    .limit(12) as { data: POTWWinner[] | null };
 
   // Fetch recent corrections count
   const { count: correctionsCount } = await supabase
@@ -96,7 +106,7 @@ export default async function CommunityPage() {
 
             {winners && winners.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {winners.map((w: any) => (
+                {winners.map((w) => (
                   <div
                     key={w.id}
                     className="p-4 border rounded-lg hover:shadow-md transition"

@@ -62,6 +62,21 @@ export async function getArticleBySlug(slug: string) {
 }
 
 /**
+ * Article mention type from article_mentions join with articles
+ */
+interface ArticleMention {
+  articles: {
+    id: number;
+    slug: string;
+    title: string;
+    excerpt: string;
+    sport_id: string;
+    published_at: string;
+    featured_image_url: string | null;
+  } | null;
+}
+
+/**
  * Get articles that mention a specific entity (player, school, etc.)
  */
 export async function getArticlesForEntity(entityType: string, entityId: number, limit = 10) {
@@ -84,8 +99,9 @@ export async function getArticlesForEntity(entityType: string, entityId: number,
 
           if (!data?.length) return [];
           // Extract articles from the mentions - filter out nulls
-          return data
-            .map((m: any) => m.articles as any)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (data as any[])
+            .map((m) => m.articles)
             .filter(Boolean)
             .slice(0, limit);
         },

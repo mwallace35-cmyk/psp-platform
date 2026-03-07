@@ -63,14 +63,21 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   }
 
   // Fetch related articles (same sport, different article)
+  interface RelatedArticle {
+    id: number;
+    slug: string;
+    title: string;
+    created_at: string;
+  }
+
   const { data: relatedArticles } = await supabase
     .from('articles')
-    .select('*')
+    .select('id, slug, title, created_at')
     .eq('sport_id', article.sport_id)
     .eq('status', 'published')
     .neq('id', article.id)
     .order('created_at', { ascending: false })
-    .limit(3);
+    .limit(3) as { data: RelatedArticle[] | null };
 
   const renderMarkdown = (content: string) => {
     const html = content
@@ -218,7 +225,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h3 className="font-bebas text-xl text-navy mb-4">Related Articles</h3>
               <div className="space-y-4">
-                {relatedArticles.map((related: any) => (
+                {relatedArticles.map((related) => (
                   <Link
                     key={related.id}
                     href={`/articles/${related.slug}`}

@@ -36,6 +36,7 @@ export default function SportError({ error, reset }: ErrorProps) {
       }}
     >
       <div
+        aria-live="polite"
         style={{
           maxWidth: "600px",
           textAlign: "center",

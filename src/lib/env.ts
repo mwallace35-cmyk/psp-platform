@@ -46,9 +46,26 @@ function getRequiredEnv(key: string): string {
 }
 
 /**
+ * Require a specific environment variable in production.
+ * In production, empty or missing secrets are security risks and must be treated as errors.
+ *
+ * @param key - The environment variable key
+ * @param value - The environment variable value to check
+ * @throws Error if value is empty and NODE_ENV is 'production'
+ */
+function requireInProduction(key: string, value: string): void {
+  if (process.env.NODE_ENV === 'production' && (!value || value.length === 0)) {
+    throw new Error(
+      `[PSP:SECURITY] Required security credential is missing in production: ${key}. ` +
+      `This disables authentication for critical endpoints. Set this environment variable immediately.`
+    );
+  }
+}
+
+/**
  * Validate and parse environment variables at startup.
  * Throws an error immediately if any required variables are missing.
- * Issues runtime warnings if critical secrets are empty in production.
+ * In production, throws an error if critical secrets are empty (fail-secure approach).
  */
 function validateEnv() {
   const result = envSchema.safeParse(process.env);
@@ -63,7 +80,7 @@ function validateEnv() {
 
   const data = result.data;
 
-  // Runtime warnings for critical secrets in production
+  // FAIL SECURE: In production, critical secrets must not be empty
   if (data.NODE_ENV === 'production') {
     const criticalSecrets = [
       { name: 'REVALIDATION_SECRET', value: data.REVALIDATION_SECRET },
@@ -71,12 +88,7 @@ function validateEnv() {
     ];
 
     for (const secret of criticalSecrets) {
-      if (!secret.value || secret.value.length === 0) {
-        console.warn(
-          `⚠️  SECURITY WARNING: Environment variable "${secret.name}" is empty or missing in production. ` +
-          `This disables authentication for critical endpoints. Set this variable immediately.`
-        );
-      }
+      requireInProduction(secret.name, secret.value);
     }
   }
 
@@ -127,3 +139,9 @@ export const env = {
     return getValidatedEnv().NEXT_PUBLIC_GA_MEASUREMENT_ID;
   },
 } as const;
+
+/**
+ * Export helper for production-only environment variable validation.
+ * Use this when you need to validate that a secret is set in production only.
+ */
+export { requireInProduction };

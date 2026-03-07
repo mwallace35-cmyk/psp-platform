@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     const response = apiSuccess({ summary });
     response.headers.set("x-request-id", requestId);
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Log the full error internally but return generic message to client
     captureError(error, { endpoint: '/api/ai/summary' }, { requestId, userId: user?.id, path: '/api/ai/summary', method: 'POST', endpoint: '/api/ai/summary' });
     const response = apiError('Failed to generate summary', 500, "SUMMARY_GENERATION_ERROR");

@@ -58,6 +58,7 @@ export function Toast({ id, message, type, duration = 3000, onClose }: ToastProp
     <div
       className={`${colors.bg} ${colors.border} ${colors.text} rounded-lg border-2 p-4 shadow-lg animate-in slide-in-from-top-5 fade-in duration-300 flex items-start gap-3`}
       role="alert"
+      aria-atomic="true"
     >
       <span className={`${colors.iconColor} text-lg font-bold flex-shrink-0`}>
         {colors.icon}

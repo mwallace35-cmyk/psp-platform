@@ -228,7 +228,7 @@ export default function OurGuysClient({ alumni, socialPosts, featuredAlumni, cou
               gap: 12,
             }}>
               {filtered.map(a => (
-                <AlumniCard key={a.id} person={a as any} />
+                <AlumniCard key={a.id} person={a} />
               ))}
             </div>
           )}

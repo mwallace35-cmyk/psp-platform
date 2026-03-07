@@ -21,6 +21,7 @@ interface SortableTableProps {
   mobileCardMode?: boolean;
   emptyMessage?: string;
   onRowClick?: (row: any) => void;
+  ariaLabel?: string;
 }
 
 function SortableTable({
@@ -30,6 +31,7 @@ function SortableTable({
   mobileCardMode = false,
   emptyMessage = 'No data available',
   onRowClick,
+  ariaLabel,
 }: SortableTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc' | null>(null);
@@ -212,7 +214,7 @@ function SortableTable({
   // Desktop table mode
   return (
     <div className="overflow-x-auto border border-gray-200 rounded-lg">
-      <table className="w-full text-sm">
+      <table className="w-full text-sm" aria-label={ariaLabel}>
         <thead className="sticky top-0 z-10 bg-navy text-white">
           <tr>
             {visibleColumns

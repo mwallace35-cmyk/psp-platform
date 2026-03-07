@@ -53,15 +53,19 @@ interface RawLeader {
     name: string;
     slug: string;
     pro_team?: string | null;
-  };
+    schools?: {
+      name: string;
+      slug: string;
+    } | null;
+  } | null;
   schools?: {
     name: string;
     slug: string;
-  };
+  } | null;
   seasons?: {
     label: string;
     year_start: number;
-  };
+  } | null;
   [key: string]: unknown;
 }
 

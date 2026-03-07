@@ -55,6 +55,7 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.searchParams.delete("preview");
     const response = NextResponse.redirect(url);
+    // SECURITY: Use sameSite:'strict' in production to prevent CSRF attacks on preview bypass
     response.cookies.set(BYPASS_COOKIE, "1", {
       httpOnly: true,
       maxAge: 60 * 60 * 24 * 30,

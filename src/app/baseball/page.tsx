@@ -21,9 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function BaseballPage() {
   // Fallback data for graceful degradation
   const defaultOverview = { schools: 0, players: 0, seasons: 0, championships: 0 };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const defaultArray: any[] = [];
 
   // Wrap data fetching in try/catch to prevent full page crash

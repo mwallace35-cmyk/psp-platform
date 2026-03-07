@@ -10,6 +10,7 @@ interface DataTableProps<T extends Record<string, unknown>> {
   data: T[];
   onRowClick?: (row: T) => void;
   emptyMessage?: string;
+  ariaLabel?: string;
 }
 
 export default function DataTable<T extends Record<string, unknown>>({
@@ -17,6 +18,7 @@ export default function DataTable<T extends Record<string, unknown>>({
   data,
   onRowClick,
   emptyMessage = "No data available",
+  ariaLabel,
 }: DataTableProps<T>) {
   const handleRowKeyDown = (row: T, e: React.KeyboardEvent<HTMLTableRowElement>) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -35,7 +37,7 @@ export default function DataTable<T extends Record<string, unknown>>({
 
   return (
     <div className="overflow-x-auto">
-      <table className="data-table">
+      <table className="data-table" aria-label={ariaLabel}>
         <thead>
           <tr>
             {columns.map((col) => (

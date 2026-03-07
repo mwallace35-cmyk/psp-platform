@@ -53,7 +53,11 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
     if (results[0].status === "fulfilled") games = results[0].value as Game[];
     if (results[1].status === "fulfilled") roster = results[1].value as RosterPlayer[];
-    if (results[2].status === "fulfilled") availableSeasons = (results[2].value as any[]).map((s: any) => s.seasons || s) as Season[];
+    if (results[2].status === "fulfilled") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const seasonsData = (results[2].value as any[]) ?? [];
+      availableSeasons = seasonsData.map((s) => ('seasons' in s && s.seasons ? s.seasons : s));
+    }
 
     if (results[0].status === "rejected") captureError(results[0].reason, { sport, slug, season, fetch: "getGamesByTeamSeason" });
     if (results[1].status === "rejected") captureError(results[1].reason, { sport, slug, season, fetch: "getTeamRosterBySeason" });
@@ -301,10 +305,14 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         </tr>
                       </thead>
                       <tbody>
-                        {roster.map((p: RosterPlayer, idx: number) => {
-                          const hasRush = p.rush_yards !== null && p.rush_yards !== 0;
-                          const hasPass = p.pass_yards !== null && p.pass_yards !== 0;
-                          const hasRec = p.rec_yards !== null && p.rec_yards !== 0;
+                        {roster.map((player: unknown, idx: number) => {
+                          // Roster API returns enriched data with stats beyond RosterPlayer type
+                          const p = player as RosterPlayer & Record<string, unknown>;
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          const stats = p as any;
+                          const hasRush = (stats.rush_yards as number | null) !== null && (stats.rush_yards as number) !== 0;
+                          const hasPass = (stats.pass_yards as number | null) !== null && (stats.pass_yards as number) !== 0;
+                          const hasRec = (stats.rec_yards as number | null) !== null && (stats.rec_yards as number) !== 0;
                           return (
                             <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
                               <td className="py-3 px-4 text-xs text-gray-400 sticky left-0 bg-white">{idx + 1}</td>
@@ -316,34 +324,34 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                                 ) : "Unknown"}
                               </td>
                               <td className="py-3 px-4 text-right text-sm" style={{ borderLeft: "1px solid var(--psp-gray-100, #f3f4f6)", color: hasRush ? "var(--psp-navy)" : "#ccc" }}>
-                                {String(p.rush_carries ?? "—")}
+                                {String(stats.rush_carries ?? "—")}
                               </td>
                               <td className="py-3 px-4 text-right text-sm font-medium" style={{ color: hasRush ? "var(--psp-navy)" : "#ccc" }}>
-                                {hasRush ? String(p.rush_yards) : "—"}
+                                {hasRush ? String(stats.rush_yards) : "—"}
                               </td>
-                              <td className="py-3 px-4 text-right text-sm" style={{ color: ((p.rush_td ?? 0) as number) > 0 ? "var(--psp-gold)" : "#ccc" }}>
-                                {String(p.rush_td ?? "—")}
+                              <td className="py-3 px-4 text-right text-sm" style={{ color: ((stats.rush_td ?? 0) as number) > 0 ? "var(--psp-gold)" : "#ccc" }}>
+                                {String(stats.rush_td ?? "—")}
                               </td>
                               <td className="py-3 px-4 text-right text-sm" style={{ borderLeft: "1px solid var(--psp-gray-100, #f3f4f6)", color: hasPass ? "var(--psp-navy)" : "#ccc" }}>
-                                {hasPass ? `${p.pass_comp ?? 0}/${p.pass_att ?? 0}` : "—"}
+                                {hasPass ? `${stats.pass_comp ?? 0}/${stats.pass_att ?? 0}` : "—"}
                               </td>
                               <td className="py-3 px-4 text-right text-sm font-medium" style={{ color: hasPass ? "var(--psp-navy)" : "#ccc" }}>
-                                {hasPass ? String(p.pass_yards) : "—"}
+                                {hasPass ? String(stats.pass_yards) : "—"}
                               </td>
                               <td className="py-3 px-4 text-right text-sm" style={{ color: hasPass ? "var(--psp-navy)" : "#ccc" }}>
-                                {hasPass ? `${String(p.pass_td ?? 0)}/${String(p.pass_int ?? 0)}` : "—"}
+                                {hasPass ? `${String(stats.pass_td ?? 0)}/${String(stats.pass_int ?? 0)}` : "—"}
                               </td>
                               <td className="py-3 px-4 text-right text-sm" style={{ borderLeft: "1px solid var(--psp-gray-100, #f3f4f6)", color: hasRec ? "var(--psp-navy)" : "#ccc" }}>
-                                {hasRec ? String(p.receptions) : "—"}
+                                {hasRec ? String(stats.receptions) : "—"}
                               </td>
                               <td className="py-3 px-4 text-right text-sm font-medium" style={{ color: hasRec ? "var(--psp-navy)" : "#ccc" }}>
-                                {hasRec ? String(p.rec_yards) : "—"}
+                                {hasRec ? String(stats.rec_yards) : "—"}
                               </td>
-                              <td className="py-3 px-4 text-right text-sm font-bold" style={{ borderLeft: "1px solid var(--psp-gray-100, #f3f4f6)", color: ((p.total_td ?? 0) as number) > 0 ? "var(--psp-gold)" : "#ccc" }}>
-                                {String(p.total_td ?? "—")}
+                              <td className="py-3 px-4 text-right text-sm font-bold" style={{ borderLeft: "1px solid var(--psp-gray-100, #f3f4f6)", color: ((stats.total_td ?? 0) as number) > 0 ? "var(--psp-gold)" : "#ccc" }}>
+                                {String(stats.total_td ?? "—")}
                               </td>
-                              <td className="py-3 px-4 text-right text-sm font-bold" style={{ color: ((p.points ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>
-                                {String(p.points ?? "—")}
+                              <td className="py-3 px-4 text-right text-sm font-bold" style={{ color: ((stats.points ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>
+                                {String(stats.points ?? "—")}
                               </td>
                             </tr>
                           );
@@ -371,28 +379,33 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         </tr>
                       </thead>
                       <tbody>
-                        {roster.map((p: RosterPlayer, idx: number) => (
-                          <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
-                            <td className="py-3 px-4 text-xs text-gray-400">{idx + 1}</td>
-                            <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
-                              {p.players ? (
-                                <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
-                                  {p.players.name}
-                                </Link>
-                              ) : "Unknown"}
-                            </td>
-                            <td className="py-3 px-3 text-center" style={{ color: "var(--psp-navy)" }}>{String(p.games_played ?? "—")}</td>
-                            <td className="py-3 px-3 text-right font-bold" style={{ color: "var(--psp-navy)" }}>{String(p.points ?? "—")}</td>
-                            <td className="py-3 px-3 text-right font-medium" style={{ color: "var(--psp-gold)" }}>{p.ppg ? Number(p.ppg).toFixed(1) : "—"}</td>
-                            <td className="py-3 px-3 text-right" style={{ color: ((p.rebounds ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>{String(p.rebounds ?? "—")}</td>
-                            <td className="py-3 px-3 text-right" style={{ color: ((p.assists ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>{String(p.assists ?? "—")}</td>
-                            <td className="py-3 px-3 text-right" style={{ color: ((p.steals ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>{String(p.steals ?? "—")}</td>
-                            <td className="py-3 px-3 text-right" style={{ color: ((p.blocks ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>{String(p.blocks ?? "—")}</td>
-                            <td className="py-3 px-3 text-right text-sm" style={{ color: p.fg_pct ? "var(--psp-navy)" : "#ccc" }}>{p.fg_pct ? `${(Number(p.fg_pct) * 100).toFixed(0)}%` : "—"}</td>
-                            <td className="py-3 px-3 text-right text-sm" style={{ color: p.three_pct ? "var(--psp-navy)" : "#ccc" }}>{p.three_pct ? `${(Number(p.three_pct) * 100).toFixed(0)}%` : "—"}</td>
-                            <td className="py-3 px-3 text-right text-sm" style={{ color: p.ft_pct ? "var(--psp-navy)" : "#ccc" }}>{p.ft_pct ? `${(Number(p.ft_pct) * 100).toFixed(0)}%` : "—"}</td>
-                          </tr>
-                        ))}
+                        {roster.map((player: unknown, idx: number) => {
+                          const p = player as RosterPlayer & Record<string, unknown>;
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          const stats = p as any;
+                          return (
+                            <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
+                              <td className="py-3 px-4 text-xs text-gray-400">{idx + 1}</td>
+                              <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
+                                {p.players ? (
+                                  <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
+                                    {p.players.name}
+                                  </Link>
+                                ) : "Unknown"}
+                              </td>
+                              <td className="py-3 px-3 text-center" style={{ color: "var(--psp-navy)" }}>{String(stats.games_played ?? "—")}</td>
+                            <td className="py-3 px-3 text-right font-bold" style={{ color: "var(--psp-navy)" }}>{String(stats.points ?? "—")}</td>
+                            <td className="py-3 px-3 text-right font-medium" style={{ color: "var(--psp-gold)" }}>{stats.ppg ? Number(stats.ppg).toFixed(1) : "—"}</td>
+                            <td className="py-3 px-3 text-right" style={{ color: ((stats.rebounds ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>{String(stats.rebounds ?? "—")}</td>
+                            <td className="py-3 px-3 text-right" style={{ color: ((stats.assists ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>{String(stats.assists ?? "—")}</td>
+                            <td className="py-3 px-3 text-right" style={{ color: ((stats.steals ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>{String(stats.steals ?? "—")}</td>
+                            <td className="py-3 px-3 text-right" style={{ color: ((stats.blocks ?? 0) as number) > 0 ? "var(--psp-navy)" : "#ccc" }}>{String(stats.blocks ?? "—")}</td>
+                            <td className="py-3 px-3 text-right text-sm" style={{ color: stats.fg_pct ? "var(--psp-navy)" : "#ccc" }}>{stats.fg_pct ? `${(Number(stats.fg_pct) * 100).toFixed(0)}%` : "—"}</td>
+                            <td className="py-3 px-3 text-right text-sm" style={{ color: stats.three_pct ? "var(--psp-navy)" : "#ccc" }}>{stats.three_pct ? `${(Number(stats.three_pct) * 100).toFixed(0)}%` : "—"}</td>
+                              <td className="py-3 px-3 text-right text-sm" style={{ color: stats.ft_pct ? "var(--psp-navy)" : "#ccc" }}>{stats.ft_pct ? `${(Number(stats.ft_pct) * 100).toFixed(0)}%` : "—"}</td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </>
                   )}
@@ -417,7 +430,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                                 </Link>
                               ) : "Unknown"}
                             </td>
-                            <td className="py-3 px-4 text-sm text-gray-500">{String(p.honor_level || "—")}</td>
+                            <td className="py-3 px-4 text-sm text-gray-500">{String((p as unknown as Record<string, unknown>).honor_level || "—")}</td>
                           </tr>
                         ))}
                       </tbody>

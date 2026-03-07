@@ -77,7 +77,7 @@ export default async function SearchPage({
                     {typeLabels[type]?.label || type} ({items.length})
                   </h2>
                   <div className="space-y-2">
-                    {items.map((item: any, idx: number) => (
+                    {items?.map((item, idx: number) => (
                       <Link
                         key={idx}
                         href={item.url_path || "#"}

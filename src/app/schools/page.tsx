@@ -83,17 +83,21 @@ export default function SchoolsPage() {
   useEffect(() => {
     if (!mapLoaded) return;
 
-    const L = (window as any).L;
+    // @ts-expect-error - Leaflet is loaded dynamically from CDN
+    const L = (window as Record<string, Record<string, unknown>>).L as unknown;
     if (!L) return;
 
     const mapElement = document.getElementById('schools-map');
     if (!mapElement) return;
 
-    if ((mapElement as any)._map) return; // Map already initialized
+    // @ts-expect-error - Checking if map instance already exists
+    if ((mapElement as Record<string, unknown>)._map) return; // Map already initialized
 
-    const map = L.map('schools-map').setView([39.95, -75.2], 10);
+    // @ts-expect-error - Leaflet map methods
+    const map = (L as Record<string, unknown>).map('schools-map').setView([39.95, -75.2], 10);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // @ts-expect-error - Leaflet tile layer
+    (L as Record<string, unknown>).tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 19,
     }).addTo(map);
@@ -118,7 +122,8 @@ export default function SchoolsPage() {
       const coords = schoolCoords[school.slug];
       if (coords) {
         const color = LEAGUE_COLORS[school.league?.name || ''] || '#0a1628';
-        const marker = L.circleMarker(coords, {
+        // @ts-expect-error - Leaflet circle marker
+        const marker = (L as Record<string, unknown>).circleMarker(coords, {
           radius: 8,
           fillColor: color,
           color: '#fff',

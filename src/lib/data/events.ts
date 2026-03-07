@@ -621,11 +621,12 @@ export async function getDataFreshness(sportId: string) {
   );
 }
 
-interface FootballLeaderRowData extends Record<string, unknown> {
+export interface FootballLeaderRowData extends Record<string, unknown> {
   id: string;
   players?: {
     name: string;
     slug: string;
+    pro_team?: string | null;
     schools?: { name: string; slug: string } | null;
   } | null;
   schools?: {
@@ -658,17 +659,17 @@ export async function getFootballLeaders(stat: string, limit = 50) {
 
           const { data } = await supabase
             .from("football_player_seasons")
-            .select("*, players(name, slug, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
+            .select("*, players(name, slug, pro_team, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
             .order(orderCol, { ascending: false, nullsFirst: false })
             .limit(limit);
 
           // Flatten school from players.schools to top-level for template
-          return (data as any[] ?? []).map((row: any) => ({
+          return (data as FootballLeaderRowData[] ?? []).map((row) => ({
             ...row,
             schools: row.players?.schools || row.schools || null,
-          })) as any[];
+          })) as FootballLeaderRowData[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -679,11 +680,12 @@ export async function getFootballLeaders(stat: string, limit = 50) {
   );
 }
 
-interface BasketballLeaderRowData extends Record<string, unknown> {
+export interface BasketballLeaderRowData extends Record<string, unknown> {
   id: string;
   players?: {
     name: string;
     slug: string;
+    pro_team?: string | null;
     schools?: { name: string; slug: string } | null;
   } | null;
   schools?: {
@@ -716,17 +718,17 @@ export async function getBasketballLeaders(stat: string, limit = 50) {
 
           const { data } = await supabase
             .from("basketball_player_seasons")
-            .select("*, players(name, slug, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
+            .select("*, players(name, slug, pro_team, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
             .order(orderCol, { ascending: false, nullsFirst: false })
             .limit(limit);
 
           // Flatten school from players.schools to top-level for template
-          return (data as any[] ?? []).map((row: any) => ({
+          return (data as BasketballLeaderRowData[] ?? []).map((row) => ({
             ...row,
             schools: row.players?.schools || row.schools || null,
-          })) as any[];
+          })) as BasketballLeaderRowData[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );

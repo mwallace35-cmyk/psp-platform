@@ -29,15 +29,24 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  // Authorization gate - check for admin role
-  const isAdmin = await checkAdminRole(supabase, user.id, user.user_metadata);
+  // Authorization gate - check for admin role (with fail-secure error handling)
+  try {
+    const isAdmin = await checkAdminRole(supabase, user.id, user.user_metadata);
 
-  if (!isAdmin) {
-    console.warn(
-      `⚠️ Unauthorized admin access attempt by user ${user.id} (${user.email}). ` +
-      `Redirecting to home page.`
+    if (!isAdmin) {
+      console.warn(
+        `⚠️ Unauthorized admin access attempt by user ${user.id} (${user.email}). ` +
+        `Redirecting to home page.`
+      );
+      redirect("/");
+    }
+  } catch (error) {
+    // FAIL SECURE: On any error during role verification, deny access and redirect
+    console.error(
+      `[PSP:SECURITY] Admin role verification failed for user ${user.id} (${user.email}). ` +
+      `Redirecting to home page. Error: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
-    redirect("/");
+    redirect("/?error=access_denied");
   }
 
   return (
@@ -87,13 +96,21 @@ async function checkAdminRole(
     }
 
     // If error is "No rows found", that's expected - user just doesn't have admin role
-    if (error && error.code !== 'PGRST116') {
-      console.error('Error checking admin role in database:', error);
+    if (error && error.code === 'PGRST116') {
+      return false;
+    }
+
+    // FAIL SECURE: Any other error (database connection, timeout, etc.) denies access
+    // This ensures that temporary issues don't grant unintended access
+    if (error) {
+      console.error('[PSP:SECURITY] Failed to check admin role in database:', error);
+      throw new Error(`Admin role verification failed: ${error.message}`);
     }
 
     return false;
   } catch (error) {
-    console.error('Failed to check admin role:', error);
-    return false;
+    console.error('[PSP:SECURITY] Critical error during admin role check:', error);
+    // FAIL SECURE: On any error, deny access and redirect
+    throw error;
   }
 }

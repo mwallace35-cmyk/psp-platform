@@ -8,6 +8,21 @@ import { aiRecapSchema } from '@/lib/validation';
 import { captureError } from '@/lib/error-tracking';
 import { apiSuccess, apiError } from '@/lib/api-response';
 
+/**
+ * Game data structure from Supabase query with team, sport, and season joins
+ * Note: Supabase returns nested arrays for relations by default
+ */
+interface GameRecapData {
+  id: number;
+  home_score: number | null;
+  away_score: number | null;
+  game_date: string | null;
+  home_team?: { name: string }[] | { name: string } | null;
+  away_team?: { name: string }[] | { name: string } | null;
+  sport?: { id: string; name: string }[] | { id: string; name: string } | null;
+  season?: { label: string }[] | { label: string } | null;
+}
+
 export async function POST(request: NextRequest) {
   // Get request ID from middleware for error correlation
   const requestId = request.headers.get("x-request-id") || randomUUID();
@@ -70,7 +85,7 @@ export async function POST(request: NextRequest) {
         id, home_score, away_score, game_date,
         home_team:schools!games_home_team_id_fkey(name),
         away_team:schools!games_away_team_id_fkey(name),
-        sport:sports!games_sport_id_fkey(name),
+        sport:sports!games_sport_id_fkey(id, name),
         season:seasons!games_season_id_fkey(label)
       `)
       .in('id', gameIds);
@@ -87,16 +102,22 @@ export async function POST(request: NextRequest) {
 
     const results = [];
 
-    for (const game of games) {
+    for (const game of games as GameRecapData[]) {
       try {
+        // Handle both array and object responses from Supabase
+        const homeTeam = Array.isArray(game.home_team) ? game.home_team[0] : game.home_team;
+        const awayTeam = Array.isArray(game.away_team) ? game.away_team[0] : game.away_team;
+        const sport = Array.isArray(game.sport) ? game.sport[0] : game.sport;
+        const season = Array.isArray(game.season) ? game.season[0] : game.season;
+
         const recap = await generateGameRecap({
-          homeTeam: (game.home_team as any)?.name || 'Home Team',
-          awayTeam: (game.away_team as any)?.name || 'Away Team',
+          homeTeam: homeTeam?.name || 'Home Team',
+          awayTeam: awayTeam?.name || 'Away Team',
           homeScore: game.home_score || 0,
           awayScore: game.away_score || 0,
-          sport: (game.sport as any)?.name || 'Sports',
+          sport: sport?.name || 'Sports',
           date: game.game_date || '',
-          season: (game.season as any)?.label || '',
+          season: season?.label || '',
         });
 
         // Create draft article
@@ -115,7 +136,7 @@ export async function POST(request: NextRequest) {
             excerpt: recap.excerpt,
             author_name: 'PSP AI',
             status: 'draft',
-            sport_id: (game.sport as any)?.id,
+            sport_id: sport?.id,
           })
           .select('id, slug')
           .single();
@@ -126,7 +147,7 @@ export async function POST(request: NextRequest) {
         } else {
           results.push({ gameId: game.id, article });
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         captureError(err, { gameId: String(game.id), endpoint: '/api/ai/recap' }, { requestId, userId: user.id, path: '/api/ai/recap', method: 'POST', endpoint: '/api/ai/recap' });
         results.push({ gameId: game.id, error: 'Failed to generate recap' });
       }
@@ -135,7 +156,7 @@ export async function POST(request: NextRequest) {
     const response = apiSuccess({ results });
     response.headers.set("x-request-id", requestId);
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     captureError(error, { endpoint: '/api/ai/recap' }, { requestId, userId: user?.id, path: '/api/ai/recap', method: 'POST', endpoint: '/api/ai/recap' });
     const response = apiError('Failed to generate recaps', 500, 'RECAP_GENERATION_ERROR');
     response.headers.set("x-request-id", requestId);

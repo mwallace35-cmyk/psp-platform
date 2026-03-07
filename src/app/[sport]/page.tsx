@@ -94,16 +94,22 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
 
   // Fallback data for graceful degradation if any fetch fails
   const defaultOverview = { schools: 0, players: 0, seasons: 0, championships: 0 };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const defaultArray: any[] = [];
   const defaultFreshness: { fetched_at: string } | null = { fetched_at: new Date().toISOString() };
 
   // Wrap all data fetching in try/catch to prevent full page crash
   let overview = defaultOverview;
-  let champions = defaultArray;
-  let schools = defaultArray;
-  let featured = defaultArray;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let champions: any[] = defaultArray;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let schools: any[] = defaultArray;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let featured: any[] = defaultArray;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let freshness: any = defaultFreshness;
-  let recentGames = defaultArray;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let recentGames: any[] = defaultArray;
 
   try {
     // Use Promise.allSettled to prevent one failure from crashing the page

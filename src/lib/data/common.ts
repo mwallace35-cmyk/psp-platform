@@ -170,10 +170,11 @@ export interface Game {
   away_school_id?: number;
   home_score?: number | null;
   away_score?: number | null;
+  home_team?: { name: string } | null;
+  away_team?: { name: string } | null;
   seasons?: { label: string };
   home_school?: { id: number; name: string; slug: string } | null;
   away_school?: { id: number; name: string; slug: string } | null;
-  [key: string]: unknown;
 }
 
 export interface RosterPlayer {
@@ -185,7 +186,6 @@ export interface RosterPlayer {
   jersey_number?: number;
   position?: string;
   players?: { id: number; name: string; slug: string };
-  [key: string]: unknown;
 }
 
 export interface Championship {
