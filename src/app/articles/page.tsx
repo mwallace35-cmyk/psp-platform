@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server';
-import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,7 +7,22 @@ import PSPPromo from '@/components/ads/PSPPromo';
 
 export const revalidate = 1800;
 
-export const metadata: Metadata = generatePageMetadata({ pageType: 'articles' });
+export const metadata: Metadata = {
+  title: 'Articles | PhillySportsPack.com',
+  description: 'Read news and articles about Philadelphia high school sports.',
+  metadataBase: new URL('https://phillysportspack.com'),
+  alternates: { canonical: 'https://phillysportspack.com/articles' },
+  openGraph: {
+    title: 'Articles | PhillySportsPack.com',
+    description: 'Read news and articles about Philadelphia high school sports.',
+    url: 'https://phillysportspack.com/articles',
+    siteName: 'PhillySportsPack.com',
+    images: [{ url: 'https://phillysportspack.com/og-default.png', width: 1200, height: 630, alt: 'PhillySportsPack.com' }],
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image', title: 'Articles | PhillySportsPack.com', description: 'Read news and articles about Philadelphia high school sports.', images: ['https://phillysportspack.com/og-default.png'] },
+  robots: { index: true, follow: true },
+};
 
 const ARTICLES_PER_PAGE = 12;
 

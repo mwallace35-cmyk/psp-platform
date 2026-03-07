@@ -16,8 +16,8 @@ import { isValidSport } from "@/lib/sports";
 
 export const runtime = "nodejs";
 
-// Cache for 1 year with revalidation
-export const revalidate = 365 * 24 * 60 * 60;
+// Cache for 1 year with revalidation (365 * 24 * 60 * 60)
+export const revalidate = 31536000;
 
 interface OGParams {
   title?: string;

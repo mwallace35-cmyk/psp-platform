@@ -1,11 +1,25 @@
 import { createClient } from '@/lib/supabase/server';
-import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import { SPORT_META } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
 import PotwVoteButton from '@/components/potw/PotwVoteButton';
 
-export const metadata: Metadata = generatePageMetadata({ pageType: 'potw' });
+export const metadata: Metadata = {
+  title: 'Player of the Week | PhillySportsPack.com',
+  description: 'Vote for Philadelphia high school Player of the Week. See current nominees and past winners.',
+  metadataBase: new URL('https://phillysportspack.com'),
+  alternates: { canonical: 'https://phillysportspack.com/potw' },
+  openGraph: {
+    title: 'Player of the Week | PhillySportsPack.com',
+    description: 'Vote for Philadelphia high school Player of the Week. See current nominees and past winners.',
+    url: 'https://phillysportspack.com/potw',
+    siteName: 'PhillySportsPack.com',
+    images: [{ url: 'https://phillysportspack.com/og-default.png', width: 1200, height: 630, alt: 'PhillySportsPack.com' }],
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image', title: 'Player of the Week | PhillySportsPack.com', description: 'Vote for Philadelphia high school Player of the Week. See current nominees and past winners.', images: ['https://phillysportspack.com/og-default.png'] },
+  robots: { index: true, follow: true },
+};
 
 export const revalidate = 300; // Revalidate every 5 minutes for voting
 

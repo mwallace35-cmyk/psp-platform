@@ -1,10 +1,24 @@
 import { createClient } from '@/lib/supabase/server';
-import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import { SPORT_META } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
 
-export const metadata: Metadata = generatePageMetadata({ pageType: 'events' });
+export const metadata: Metadata = {
+  title: 'Events | PhillySportsPack.com',
+  description: 'Upcoming Philadelphia high school sports events, camps, and showcases.',
+  metadataBase: new URL('https://phillysportspack.com'),
+  alternates: { canonical: 'https://phillysportspack.com/events' },
+  openGraph: {
+    title: 'Events | PhillySportsPack.com',
+    description: 'Upcoming Philadelphia high school sports events, camps, and showcases.',
+    url: 'https://phillysportspack.com/events',
+    siteName: 'PhillySportsPack.com',
+    images: [{ url: 'https://phillysportspack.com/og-default.png', width: 1200, height: 630, alt: 'PhillySportsPack.com' }],
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image', title: 'Events | PhillySportsPack.com', description: 'Upcoming Philadelphia high school sports events, camps, and showcases.', images: ['https://phillysportspack.com/og-default.png'] },
+  robots: { index: true, follow: true },
+};
 
 interface Event {
   id: string;
