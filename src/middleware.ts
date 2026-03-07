@@ -23,14 +23,35 @@ const PASSTHROUGH_PREFIXES = [
   "/manifest",
 ];
 
+/**
+ * Constant-time comparison for the preview parameter.
+ * Uses a simple XOR approach that works in Edge Runtime without importing 'crypto'.
+ *
+ * @param a - Provided value
+ * @param b - Expected value
+ * @returns true if equal, false otherwise
+ */
+function constantTimeCompare(a: string, b: string): boolean {
+  if (!a || !b || a.length !== b.length) {
+    return false;
+  }
+
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
   // Generate or retrieve request correlation ID
   const requestId = request.headers.get("x-request-id") || generateRequestId();
 
-  // Set bypass cookie via ?preview=psp2026
-  if (searchParams.get("preview") === BYPASS_KEY) {
+  // Set bypass cookie via ?preview=<secret> - using constant-time comparison
+  const previewParam = searchParams.get("preview") || "";
+  if (BYPASS_KEY && constantTimeCompare(previewParam, BYPASS_KEY)) {
     const url = request.nextUrl.clone();
     url.searchParams.delete("preview");
     const response = NextResponse.redirect(url);

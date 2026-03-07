@@ -5,12 +5,22 @@ import {
   sanitizePostgREST,
   SearchResult,
   PlayerSearchResult,
+  LeaderboardEntry,
+  Season,
 } from "./common";
 
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+}
+
 /**
- * Search across schools, players, and coaches
+ * Search across schools, players, and coaches with pagination
  */
-export async function searchAll(query: string, limit = 30) {
+export async function searchAll(query: string, page = 1, pageSize = 30) {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -20,30 +30,50 @@ export async function searchAll(query: string, limit = 30) {
           // Sanitize query to prevent PostgREST injection
           const sanitizedQuery = sanitizePostgREST(query);
 
-          // Search schools, players, and coaches directly (search_index may be empty)
+          const offset = (page - 1) * pageSize;
+
+          // Search schools, players, and coaches with pagination
           // Optimized search: use prefix matching and word-start matching for index usage
-          const [schoolsRes, playersRes, coachesRes] = await Promise.all([
+          const [schoolsRes, playersRes, coachesRes, totalRes] = await Promise.all([
             supabase
               .from("schools")
               .select("id, slug, name, city, state")
               .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
               .is("deleted_at", null)
               .order("name")
-              .limit(15),
+              .range(offset, offset + pageSize - 1),
             supabase
               .from("players")
               .select("id, slug, name, college, pro_team, primary_school_id, schools:schools!players_primary_school_id_fkey(name, slug)")
               .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
               .is("deleted_at", null)
               .order("name")
-              .limit(15),
+              .range(offset, offset + pageSize - 1),
             supabase
               .from("coaches")
               .select("id, slug, name")
               .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
               .is("deleted_at", null)
               .order("name")
-              .limit(10),
+              .range(offset, offset + Math.floor(pageSize / 3) - 1),
+            // Get total count across all entities for hasMore calculation
+            Promise.all([
+              supabase
+                .from("schools")
+                .select("id", { count: "exact", head: true })
+                .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
+                .is("deleted_at", null),
+              supabase
+                .from("players")
+                .select("id", { count: "exact", head: true })
+                .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
+                .is("deleted_at", null),
+              supabase
+                .from("coaches")
+                .select("id", { count: "exact", head: true })
+                .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
+                .is("deleted_at", null),
+            ]),
           ]);
 
           const results: SearchResult[] = [];
@@ -83,66 +113,105 @@ export async function searchAll(query: string, limit = 30) {
             });
           }
 
-          return results.slice(0, limit);
+          const [schoolCount, playerCount, coachCount] = await totalRes;
+          const totalResults = (schoolCount.count ?? 0) + (playerCount.count ?? 0) + (coachCount.count ?? 0);
+
+          return {
+            data: results,
+            total: totalResults,
+            page,
+            pageSize,
+            hasMore: (offset + pageSize) < totalResults,
+          };
         },
         { maxRetries: 2, baseDelay: 500 }
       );
     },
-    [],
+    { data: [], total: 0, page, pageSize, hasMore: false },
     "DATA_SEARCH_ALL",
-    { query, limit }
+    { query, page, pageSize }
   );
 }
 
 /**
- * Get all coaches with their coaching stints
+ * Get all coaches with their coaching stints (with pagination)
  */
-export async function getAllCoaches(limit = 100) {
+export async function getAllCoaches(page = 1, pageSize = 50) {
   return withErrorHandling(
     async () => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data } = await supabase
-            .from("coaches")
-            .select("*, coaching_stints(school_id, sport_id, start_year, end_year, role, record_wins, record_losses, record_ties, championships, schools(name, slug), sports(name))")
-            .is("deleted_at", null)
-            .order("name")
-            .limit(limit);
-          return data ?? [];
+          const offset = (page - 1) * pageSize;
+
+          const [dataRes, countRes] = await Promise.all([
+            supabase
+              .from("coaches")
+              .select("*, coaching_stints(school_id, sport_id, start_year, end_year, role, record_wins, record_losses, record_ties, championships, schools(name, slug), sports(name))")
+              .is("deleted_at", null)
+              .order("name")
+              .range(offset, offset + pageSize - 1),
+            supabase
+              .from("coaches")
+              .select("id", { count: "exact", head: true })
+              .is("deleted_at", null),
+          ]);
+
+          return {
+            data: dataRes.data ?? [],
+            total: countRes.count ?? 0,
+            page,
+            pageSize,
+            hasMore: (offset + pageSize) < (countRes.count ?? 0),
+          };
         },
         { maxRetries: 2, baseDelay: 500 }
       );
     },
-    [],
+    { data: [], total: 0, page, pageSize, hasMore: false },
     "DATA_ALL_COACHES",
-    { limit }
+    { page, pageSize }
   );
 }
 
 /**
- * Get coaches for a specific sport
+ * Get coaches for a specific sport (with pagination)
  */
-export async function getCoachesBySport(sportId: string, limit = 50) {
+export async function getCoachesBySport(sportId: string, page = 1, pageSize = 50) {
   return withErrorHandling(
     async () => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data } = await supabase
-            .from("coaching_stints")
-            .select("*, coaches(id, name, slug, bio, photo_url), schools(name, slug), sports(name)")
-            .eq("sport_id", sportId)
-            .order("championships", { ascending: false })
-            .limit(limit);
-          return data ?? [];
+          const offset = (page - 1) * pageSize;
+
+          const [dataRes, countRes] = await Promise.all([
+            supabase
+              .from("coaching_stints")
+              .select("*, coaches(id, name, slug, bio, photo_url), schools(name, slug), sports(name)")
+              .eq("sport_id", sportId)
+              .order("championships", { ascending: false })
+              .range(offset, offset + pageSize - 1),
+            supabase
+              .from("coaching_stints")
+              .select("id", { count: "exact", head: true })
+              .eq("sport_id", sportId),
+          ]);
+
+          return {
+            data: dataRes.data ?? [],
+            total: countRes.count ?? 0,
+            page,
+            pageSize,
+            hasMore: (offset + pageSize) < (countRes.count ?? 0),
+          };
         },
         { maxRetries: 2, baseDelay: 500 }
       );
     },
-    [],
+    { data: [], total: 0, page, pageSize, hasMore: false },
     "DATA_COACHES_BY_SPORT",
-    { sportId, limit }
+    { sportId, page, pageSize }
   );
 }
 
@@ -346,29 +415,45 @@ export async function getRecentCommitments(limit = 10) {
 }
 
 /**
- * Get teams with records for a sport
+ * Get teams with records for a sport (with pagination)
  */
-export async function getTeamsWithRecords(sportId: string) {
+export async function getTeamsWithRecords(sportId: string, page = 1, pageSize = 50) {
   return withErrorHandling(
     async () => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data } = await supabase
-            .from("team_seasons")
-            .select("*, schools(name, slug), seasons(label)")
-            .eq("sport_id", sportId)
-            .order("wins", { ascending: false })
-            .order("losses")
-            .order("ties");
-          return data ?? [];
+          const offset = (page - 1) * pageSize;
+
+          const [dataRes, countRes] = await Promise.all([
+            supabase
+              .from("team_seasons")
+              .select("*, schools(name, slug), seasons(label)")
+              .eq("sport_id", sportId)
+              .order("wins", { ascending: false })
+              .order("losses")
+              .order("ties")
+              .range(offset, offset + pageSize - 1),
+            supabase
+              .from("team_seasons")
+              .select("id", { count: "exact", head: true })
+              .eq("sport_id", sportId),
+          ]);
+
+          return {
+            data: dataRes.data ?? [],
+            total: countRes.count ?? 0,
+            page,
+            pageSize,
+            hasMore: (offset + pageSize) < (countRes.count ?? 0),
+          };
         },
         { maxRetries: 2, baseDelay: 500 }
       );
     },
-    [],
+    { data: [], total: 0, page, pageSize, hasMore: false },
     "DATA_TEAMS_WITH_RECORDS",
-    { sportId }
+    { sportId, page, pageSize }
   );
 }
 
@@ -391,7 +476,14 @@ const STAT_TABLE_MAP: Record<string, { table: string; column: string; sport: str
   era: { table: "baseball_player_seasons", column: "era", sport: "baseball" },
 };
 
-export async function getLeaderboard(stat: StatCategory, limit = 25) {
+interface LeaderboardRowData {
+  [key: string]: unknown;
+  players?: { id: number; name: string; slug: string } | null;
+  schools?: { name: string; slug: string } | null;
+  seasons?: Season | null;
+}
+
+export async function getLeaderboard(stat: StatCategory, limit = 25): Promise<LeaderboardEntry[]> {
   const mapping = STAT_TABLE_MAP[stat];
   if (!mapping) return [];
   return withErrorHandling(
@@ -407,15 +499,15 @@ export async function getLeaderboard(stat: StatCategory, limit = 25) {
             .gt(mapping.column, 0)
             .order(mapping.column, { ascending })
             .limit(limit);
-          return (data ?? []).map((row: any, i: number) => ({
+          return (data as LeaderboardRowData[] ?? []).map((row: LeaderboardRowData, i: number) => ({
             rank: i + 1,
-            value: row[mapping.column as keyof typeof row] as number,
-            player: row.players,
-            school: row.schools,
-            season: row.seasons,
+            value: (row[mapping.column] as number) ?? 0,
+            player: row.players ?? null,
+            school: row.schools ?? null,
+            season: row.seasons ?? null,
             sport: mapping.sport,
             stat,
-          }));
+          } as LeaderboardEntry));
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -529,6 +621,27 @@ export async function getDataFreshness(sportId: string) {
   );
 }
 
+interface FootballLeaderRowData extends Record<string, unknown> {
+  id: string;
+  players?: {
+    name: string;
+    slug: string;
+    schools?: { name: string; slug: string } | null;
+  } | null;
+  schools?: {
+    name: string;
+    slug: string;
+  } | null;
+  seasons?: {
+    label: string;
+    year_start: number;
+  } | null;
+  rush_yards?: number;
+  pass_yards?: number;
+  rec_yards?: number;
+  total_td?: number;
+}
+
 /**
  * Get football leaders by stat (rushing, passing, receiving, scoring)
  */
@@ -552,10 +665,10 @@ export async function getFootballLeaders(stat: string, limit = 50) {
             .limit(limit);
 
           // Flatten school from players.schools to top-level for template
-          return (data ?? []).map((row: any) => ({
+          return (data as any[] ?? []).map((row: any) => ({
             ...row,
             schools: row.players?.schools || row.schools || null,
-          }));
+          })) as any[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -564,6 +677,27 @@ export async function getFootballLeaders(stat: string, limit = 50) {
     "DATA_FOOTBALL_LEADERS",
     { stat, limit }
   );
+}
+
+interface BasketballLeaderRowData extends Record<string, unknown> {
+  id: string;
+  players?: {
+    name: string;
+    slug: string;
+    schools?: { name: string; slug: string } | null;
+  } | null;
+  schools?: {
+    name: string;
+    slug: string;
+  } | null;
+  seasons?: {
+    label: string;
+    year_start: number;
+  } | null;
+  points?: number;
+  ppg?: number;
+  rebounds?: number;
+  assists?: number;
 }
 
 /**
@@ -589,10 +723,10 @@ export async function getBasketballLeaders(stat: string, limit = 50) {
             .limit(limit);
 
           // Flatten school from players.schools to top-level for template
-          return (data ?? []).map((row: any) => ({
+          return (data as any[] ?? []).map((row: any) => ({
             ...row,
             schools: row.players?.schools || row.schools || null,
-          }));
+          })) as any[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );

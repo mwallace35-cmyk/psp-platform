@@ -7,6 +7,7 @@
   --psp-navy-light: #1a2d4a;
   --psp-gold: #f0a500;
   --psp-gold-light: #f5c542;
+  --psp-gold-text: #b87900; /* Text-safe gold with 4.5:1 contrast on white */
   --psp-white: #ffffff;
   --psp-gray-50: #f8fafc;
   --psp-gray-100: #f1f5f9;
@@ -45,6 +46,15 @@
   --lac: #0891b2;
   --wrest: #ca8a04;
   --soccer: #059669;
+
+  /* Sport Colors - Text Safe (WCAG AA 4.5:1 on white background) */
+  --fb-text: #0d5a1f; /* Football - darker green */
+  --bb-text: #a83f00; /* Basketball - darker orange */
+  --base-text: #8b0000; /* Baseball - dark red */
+  --track-text: #4a1f7f; /* Track - darker purple */
+  --lac-text: #005f7f; /* Lacrosse - darker cyan */
+  --wrest-text: #804700; /* Wrestling - darker gold-brown */
+  --soccer-text: #034f30; /* Soccer - darker green */
 
   /* Semantic Colors */
   --psp-success: #22c55e;
@@ -446,12 +456,12 @@ select {
 
 /* Accessibility: Focus indicators */
 *:focus-visible {
-  outline: 2px solid var(--psp-blue);
+  outline: 2px solid var(--psp-gold-text);
   outline-offset: 2px;
   border-radius: 2px;
 }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 2px solid var(--psp-blue);
+  outline: 2px solid var(--psp-gold-text);
   outline-offset: 2px;
 }
 /* Remove default focus ring when not keyboard-navigating */

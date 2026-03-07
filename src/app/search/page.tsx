@@ -1,7 +1,5 @@
 import Link from "next/link";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import { searchAll } from "@/lib/data";
+import { searchAll, SearchResult } from "@/lib/data";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
 
@@ -10,20 +8,25 @@ export const metadata: Metadata = {
   description: "Search players, schools, coaches, and seasons in the Philadelphia high school sports database.",
 };
 
+type GroupedResults = Partial<Record<SearchResult['entity_type'] | 'other', SearchResult[]>>;
+
 export default async function SearchPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string; sport?: string }>;
 }) {
   const { q = "", sport } = await searchParams;
-  const results = q.length >= 2 ? await searchAll(q) : [];
+  const searchResponse = q.length >= 2 ? await searchAll(q) : { data: [], total: 0, page: 1, pageSize: 30, hasMore: false };
+  const results = searchResponse.data;
 
-  // Group results by entity type
-  const grouped: Record<string, any[]> = {};
+  // Group results by entity type with proper typing
+  const grouped: GroupedResults = {};
   for (const r of results) {
-    const type = r.entity_type || "other";
-    if (!grouped[type]) grouped[type] = [];
-    grouped[type].push(r);
+    const type: SearchResult['entity_type'] | 'other' = r.entity_type || "other";
+    if (!grouped[type]) {
+      grouped[type] = [];
+    }
+    grouped[type]?.push(r);
   }
 
   const typeLabels: Record<string, { label: string; icon: string }> = {
@@ -35,8 +38,7 @@ export default async function SearchPage({
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    <>
 
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
@@ -127,8 +129,6 @@ export default async function SearchPage({
         )}
         <InContentAd id="psp-search-btm" />
       </main>
-
-      <Footer />
-    </div>
+    </>
   );
 }

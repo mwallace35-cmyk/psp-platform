@@ -39,7 +39,8 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
   if (!isValidSport(sport)) notFound();
 
   const meta = SPORT_META[sport];
-  const teams = await getTeamsWithRecords(sport);
+  const teamsResult = await getTeamsWithRecords(sport);
+  const teams = teamsResult.data;
 
   // Group by league
   const leagueGroups: Record<string, typeof teams> = {};

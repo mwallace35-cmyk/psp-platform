@@ -7,14 +7,35 @@ vi.mock("next/cache", () => ({
   revalidateTag: vi.fn(),
 }));
 
+// Mock rate limiting
+vi.mock("@/lib/rate-limit", () => ({
+  rateLimit: vi.fn(async () => ({
+    success: true,
+    remaining: 9,
+    resetAt: Date.now() + 60000,
+  })),
+  getRateLimitHeaders: vi.fn(() => ({})),
+}));
+
+// Mock request security
+vi.mock("@/lib/request-security", () => ({
+  isOriginAllowed: vi.fn(() => true),
+  getRequestOrigin: vi.fn(() => "same-origin"),
+  getRequestReferer: vi.fn(() => undefined),
+}));
+
 // Helper to create mock NextRequest
 const createMockRequest = (
   body: any,
-  authHeader?: string | null
+  authHeader?: string | null,
+  origin?: string | null
 ) => {
   const headers = new Map();
   if (authHeader !== undefined) {
     headers.set("authorization", authHeader);
+  }
+  if (origin !== undefined) {
+    headers.set("origin", origin);
   }
 
   return {

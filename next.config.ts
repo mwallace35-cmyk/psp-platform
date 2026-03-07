@@ -85,6 +85,16 @@ let config: NextConfig = {
           },
         ],
       },
+      // Cache image and media files for 1 year
+      {
+        source: "/:all*(svg|jpg|jpeg|png|gif|webp|avif|ico|woff|woff2|ttf|otf)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
   },
 

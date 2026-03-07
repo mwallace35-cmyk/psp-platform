@@ -143,11 +143,11 @@ export default async function FootballPage() {
     const results = await Promise.allSettled([
       getSportOverview("football"),
       getRecentChampions("football", 10),
-      getSchoolsBySport("football", 30),
+      getSchoolsBySport("football", 1, 30),
     ]);
     if (results[0].status === "fulfilled") overview = results[0].value;
     if (results[1].status === "fulfilled") champions = results[1].value;
-    if (results[2].status === "fulfilled") schools = results[2].value;
+    if (results[2].status === "fulfilled") schools = results[2].value.data;
 
     if (results[0].status === "rejected") captureError(results[0].reason, { sport: "football", fetch: "getSportOverview" });
     if (results[1].status === "rejected") captureError(results[1].reason, { sport: "football", fetch: "getRecentChampions" });

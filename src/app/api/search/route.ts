@@ -47,11 +47,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    let results = await searchAll(parsed.data.q, 20);
+    const searchResult = await searchAll(parsed.data.q, 1, 20);
+    let results = searchResult.data;
     if (parsed.data.type) {
       results = results.filter((r) => r.entity_type === parsed.data.type);
     }
-    const response = apiSuccess({ results });
+    const response = apiSuccess({ results, total: searchResult.total, hasMore: searchResult.hasMore });
     response.headers.set("X-RateLimit-Remaining", String(remaining));
     response.headers.set("x-request-id", requestId);
     if (resetAt) {

@@ -53,36 +53,59 @@ export async function getSportOverview(sportId: string) {
   );
 }
 
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+}
+
 /**
- * Get schools for a specific sport
+ * Get schools for a specific sport (with pagination)
  */
-export async function getSchoolsBySport(sportId: string, limit = 50) {
+export async function getSchoolsBySport(sportId: string, page = 1, pageSize = 50) {
   return withErrorHandling(
     async () => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data } = await supabase
-            .from("schools")
-            .select(
+          const offset = (page - 1) * pageSize;
+
+          const [dataRes, countRes] = await Promise.all([
+            supabase
+              .from("schools")
+              .select(
+                `
+                id, slug, name, short_name, city, mascot,
+                leagues(name, short_name),
+                team_seasons!inner(wins, losses, ties, sport_id)
               `
-              id, slug, name, short_name, city, mascot,
-              leagues(name, short_name),
-              team_seasons!inner(wins, losses, ties, sport_id)
-            `
-            )
-            .eq("team_seasons.sport_id", sportId)
-            .is("deleted_at", null)
-            .order("name")
-            .limit(limit);
-          return data ?? [];
+              )
+              .eq("team_seasons.sport_id", sportId)
+              .is("deleted_at", null)
+              .order("name")
+              .range(offset, offset + pageSize - 1),
+            supabase
+              .from("schools")
+              .select("id", { count: "exact", head: true })
+              .is("deleted_at", null),
+          ]);
+
+          return {
+            data: dataRes.data ?? [],
+            total: countRes.count ?? 0,
+            page,
+            pageSize,
+            hasMore: (offset + pageSize) < (countRes.count ?? 0),
+          };
         },
         { maxRetries: 2, baseDelay: 500 }
       );
     },
-    [],
+    { data: [], total: 0, page, pageSize, hasMore: false },
     "DATA_SCHOOLS_BY_SPORT",
-    { sportId, limit }
+    { sportId, page, pageSize }
   );
 }
 

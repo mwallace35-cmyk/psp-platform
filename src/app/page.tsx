@@ -111,6 +111,7 @@ const FALLBACK_ALUMNI = [
 async function getOverviewStats() {
   try {
     const supabase = await createClient();
+    // Fetch all counts in parallel
     const [schools, players, seasons, championships] = await Promise.all([
       supabase.from("schools").select("id", { count: "exact", head: true }),
       supabase.from("players").select("id", { count: "exact", head: true }),
@@ -124,7 +125,8 @@ async function getOverviewStats() {
       championships: championships.count ?? 0,
     };
   } catch (error) {
-    captureError(error, { function: "getOverviewStats" });
+    captureError(error, { function: "getOverviewStats", context: "data_fetching" });
+    console.error("[PSP] Failed to fetch overview stats:", error instanceof Error ? error.message : String(error));
     return { schools: 405, players: 10057, seasons: 76, championships: 713 };
   }
 }
@@ -140,7 +142,9 @@ async function getRecentHeadlines() {
       .limit(4);
     return data || [];
   } catch (error) {
-    captureError(error, { function: "getRecentHeadlines" });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    captureError(error, { function: "getRecentHeadlines", context: "data_fetching" });
+    console.error("[PSP] Failed to fetch recent headlines:", errorMessage);
     return [];
   }
 }
@@ -163,7 +167,9 @@ async function getFeaturedAlumni() {
       .limit(8);
     return data || [];
   } catch (error) {
-    captureError(error, { function: "getFeaturedAlumni" });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    captureError(error, { function: "getFeaturedAlumni", context: "data_fetching" });
+    console.error("[PSP] Failed to fetch featured alumni:", errorMessage);
     return [];
   }
 }
@@ -180,7 +186,9 @@ async function getUpcomingEvents() {
       .limit(3);
     return data || [];
   } catch (error) {
-    captureError(error, { function: "getUpcomingEvents" });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    captureError(error, { function: "getUpcomingEvents", context: "data_fetching" });
+    console.error("[PSP] Failed to fetch upcoming events:", errorMessage);
     return [];
   }
 }
@@ -261,8 +269,25 @@ export default async function HomePage() {
     hs: person.schools?.name || "Unknown",
   })) : FALLBACK_ALUMNI;
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "PhillySportsPack",
+    url: "https://phillysportspack.com",
+    description: "Comprehensive database of Philadelphia high school sports statistics, players, coaches, and records across football, basketball, baseball, and more.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://phillysportspack.com/search?q={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       <Header />
 
       <div className="espn-container" style={{ flex: 1 }}>

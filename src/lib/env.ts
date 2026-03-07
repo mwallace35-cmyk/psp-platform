@@ -16,6 +16,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'Supabase anon key is required'),
 
   // Server-side API keys and secrets (optional with defaults)
+  // NOTE: These secrets are critical for security and should NOT be empty in production
   REVALIDATION_SECRET: z.string().optional().default(''),
   PSP_PREVIEW_KEY: z.string().optional().default(''),
   RESEND_API_KEY: z.string().optional().default(''),
@@ -23,6 +24,9 @@ const envSchema = z.object({
 
   // Public analytics configuration (optional)
   NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional().default(''),
+
+  // Node environment (for runtime warnings)
+  NODE_ENV: z.enum(['development', 'production', 'test']).optional().default('development'),
 });
 
 /**
@@ -44,6 +48,7 @@ function getRequiredEnv(key: string): string {
 /**
  * Validate and parse environment variables at startup.
  * Throws an error immediately if any required variables are missing.
+ * Issues runtime warnings if critical secrets are empty in production.
  */
 function validateEnv() {
   const result = envSchema.safeParse(process.env);
@@ -56,7 +61,26 @@ function validateEnv() {
     throw new Error(`Environment variable validation failed:\n${errors}`);
   }
 
-  return result.data;
+  const data = result.data;
+
+  // Runtime warnings for critical secrets in production
+  if (data.NODE_ENV === 'production') {
+    const criticalSecrets = [
+      { name: 'REVALIDATION_SECRET', value: data.REVALIDATION_SECRET },
+      { name: 'PSP_PREVIEW_KEY', value: data.PSP_PREVIEW_KEY },
+    ];
+
+    for (const secret of criticalSecrets) {
+      if (!secret.value || secret.value.length === 0) {
+        console.warn(
+          `⚠️  SECURITY WARNING: Environment variable "${secret.name}" is empty or missing in production. ` +
+          `This disables authentication for critical endpoints. Set this variable immediately.`
+        );
+      }
+    }
+  }
+
+  return data;
 }
 
 // Lazy initialize to support testing

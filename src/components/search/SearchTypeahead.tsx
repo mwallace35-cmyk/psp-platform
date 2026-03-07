@@ -21,13 +21,13 @@ const POPULAR_SEARCHES: SearchResult[] = [
 ];
 
 const SPORT_COLORS: Record<string, string> = {
-  football: "#0a7a2a",
-  basketball: "#1e3a5f",
+  football: "#0d5a1f",
+  basketball: "#a83f00",
   baseball: "#8b0000",
-  soccer: "#003d2a",
-  lacrosse: "#001f5f",
-  track: "#4a008c",
-  wrestling: "#b8860b",
+  soccer: "#034f30",
+  lacrosse: "#005f7f",
+  track: "#4a1f7f",
+  wrestling: "#804700",
 };
 
 export default function SearchTypeahead() {
@@ -205,6 +205,10 @@ export default function SearchTypeahead() {
           onKeyDown={handleKeyDown}
           placeholder="Search players, schools, coaches..."
           aria-label="Search for players, schools, and coaches"
+          role="combobox"
+          aria-expanded={isOpen}
+          aria-controls="search-listbox"
+          aria-activedescendant={selectedIndex >= 0 ? `search-option-${selectedIndex}` : ""}
           className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:bg-white/15 focus:border-[var(--psp-gold)] focus:outline-none transition-colors"
         />
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -214,7 +218,11 @@ export default function SearchTypeahead() {
 
       {/* Dropdown */}
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-[var(--psp-gray-200)] overflow-hidden z-50 max-h-96 overflow-y-auto">
+        <div
+          id="search-listbox"
+          role="listbox"
+          className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-[var(--psp-gray-200)] overflow-hidden z-50 max-h-96 overflow-y-auto"
+        >
           {/* Recent Searches Section */}
           {query.length < 2 && recentSearches.length > 0 && (
             <>
@@ -224,6 +232,9 @@ export default function SearchTypeahead() {
               {recentSearches.map((item, i) => (
                 <button
                   key={`recent-${item.href}`}
+                  id={`search-option-${i}`}
+                  role="option"
+                  aria-selected={i === selectedIndex}
                   onClick={() => handleSelectResult(item)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
                     i === selectedIndex
@@ -271,6 +282,9 @@ export default function SearchTypeahead() {
                   {groupedResults.schools.map((item, i) => (
                     <button
                       key={`school-${item.href}`}
+                      id={`search-option-${i}`}
+                      role="option"
+                      aria-selected={i === selectedIndex}
                       onClick={() => handleSelectResult(item)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
                         i === selectedIndex
@@ -310,6 +324,9 @@ export default function SearchTypeahead() {
                   {groupedResults.players.map((item, i) => (
                     <button
                       key={`player-${item.href}`}
+                      id={`search-option-${i}`}
+                      role="option"
+                      aria-selected={i === selectedIndex}
                       onClick={() => handleSelectResult(item)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
                         i === selectedIndex
@@ -349,6 +366,9 @@ export default function SearchTypeahead() {
               {POPULAR_SEARCHES.map((item, i) => (
                 <button
                   key={`${item.type}-${item.name}`}
+                  id={`search-option-${i}`}
+                  role="option"
+                  aria-selected={i === selectedIndex}
                   onClick={() => handleSelectResult(item)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
                     i === selectedIndex

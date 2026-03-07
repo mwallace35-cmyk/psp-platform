@@ -23,7 +23,7 @@ export interface AppError {
 
 /**
  * Log structured errors. In production, this would send to Sentry/LogRocket.
- * For now, provides better console output than console.error alone.
+ * For now, provides structured console logging with proper error context.
  */
 export function logError(
   code: string,
@@ -53,13 +53,21 @@ export function logError(
   // Use centralized error tracking
   captureError(message, errorContext);
 
+  // Log to console in all environments (helps with debugging and monitoring)
+  const logLevel = severity === ErrorSeverity.CRITICAL || severity === ErrorSeverity.HIGH ? 'error' : 'warn';
+  console[logLevel as 'error' | 'warn'](`[PSP:${code}] ${message}`, {
+    severity,
+    context: context ?? {},
+    timestamp: appError.timestamp,
+  });
+
   // TODO: Send to external error tracking service (Sentry, LogRocket, etc.)
   // if (process.env.SENTRY_DSN) { Sentry.captureException(appError); }
 }
 
 /**
  * Wrapper for data fetching functions that provides structured error handling.
- * Returns fallback data if fetch fails.
+ * Logs errors and returns fallback data if fetch fails (no silent failures).
  */
 export async function withErrorHandling<T>(
   fn: () => Promise<T>,
@@ -71,10 +79,15 @@ export async function withErrorHandling<T>(
     return await fn();
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+
+    // Log error with full context (no silent failures)
     logError(errorCode, message, ErrorSeverity.MEDIUM, {
       ...context,
-      stack: error instanceof Error ? error.stack : undefined,
+      stack: errorStack,
+      errorType: error?.constructor?.name,
     });
+
     return fallback;
   }
 }

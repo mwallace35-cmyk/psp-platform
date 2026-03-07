@@ -105,6 +105,12 @@ export default async function RootLayout({
         )}
       </head>
       <body className="antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-[var(--psp-gold-text)] focus:text-[var(--psp-navy)] focus:p-4 focus:text-sm focus:font-bold focus:top-0 focus:left-0"
+        >
+          Skip to main content
+        </a>
         <WebVitalsReporter />
         {children}
       </body>
