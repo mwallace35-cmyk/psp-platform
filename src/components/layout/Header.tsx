@@ -51,6 +51,7 @@ export default function Header() {
   const [announcement, setAnnouncement] = useState("");
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const announcementRef = useRef<HTMLDivElement>(null);
+  const scoreScrollRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   const isActive = useCallback((href: string) => pathname === href || pathname.startsWith(href + "/"), [pathname]);
@@ -75,6 +76,25 @@ export default function Header() {
       setAnnouncement("Submenu closed");
     }
   }, [moreOpen, eventsOpen, dataOpen]);
+
+  // Keyboard navigation for score strip
+  useEffect(() => {
+    const scrollContainer = scoreScrollRef.current;
+    if (!scrollContainer) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        scrollContainer.scrollLeft -= 100;
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        scrollContainer.scrollLeft += 100;
+      }
+    };
+
+    scrollContainer.addEventListener("keydown", handleKeyDown);
+    return () => scrollContainer.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Focus trap for mobile menu
   useEffect(() => {
@@ -179,10 +199,9 @@ export default function Header() {
 
           {/* More Sports Dropdown */}
           <div className="nav-dd">
-            <div
+            <button
               className="nav-link"
-              role="button"
-              tabIndex={0}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
               aria-haspopup="menu"
               aria-expanded={moreOpen}
               aria-label="More sports menu"
@@ -198,7 +217,7 @@ export default function Header() {
               onBlur={handleMoreClose}
             >
               More &#9662;
-            </div>
+            </button>
             <div
               className="dd-menu"
               role="menu"
@@ -221,10 +240,9 @@ export default function Header() {
 
           {/* Events Dropdown */}
           <div className="nav-dd">
-            <div
+            <button
               className="nav-link"
-              role="button"
-              tabIndex={0}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
               aria-haspopup="menu"
               aria-expanded={eventsOpen}
               aria-label="Events menu"
@@ -240,7 +258,7 @@ export default function Header() {
               onBlur={handleEventsClose}
             >
               Events &#9662;
-            </div>
+            </button>
             <div
               className="dd-menu"
               role="menu"
@@ -269,10 +287,9 @@ export default function Header() {
 
           {/* Data & Recruiting Dropdown */}
           <div className="nav-dd">
-            <div
+            <button
               className="nav-link"
-              role="button"
-              tabIndex={0}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
               aria-haspopup="menu"
               aria-expanded={dataOpen}
               aria-label="Data and Recruiting menu"
@@ -288,7 +305,7 @@ export default function Header() {
               onBlur={handleDataClose}
             >
               Data &#9662;
-            </div>
+            </button>
             <div
               className="dd-menu"
               role="menu"
@@ -330,7 +347,7 @@ export default function Header() {
       {/* Score Strip */}
       <div className="scorestrip" aria-label="Score results">
         <div className="ss-label">Scores</div>
-        <div className="ss-scroll">
+        <div className="ss-scroll" ref={scoreScrollRef} tabIndex={0} role="region" aria-label="Scrollable score results. Use left and right arrow keys to navigate.">
           {RECENT_SCORES.map((game, i) => (
             <Link key={i} href={game.href} className="ss-game" style={{ textDecoration: "none" }}>
               <div className={`ss-team ${game.homeWin ? "winner" : ""}`}>
@@ -360,7 +377,7 @@ export default function Header() {
               <button
                 onClick={handleMobileToggle}
                 style={{ background: "none", border: "none", color: "#fff", fontSize: 20, cursor: "pointer" }}
-                aria-label="Close menu"
+                aria-label="Close navigation menu"
               >
                 &#10005;
               </button>

@@ -6,6 +6,7 @@ import { captureError } from "@/lib/error-tracking";
 import { timingSafeEqual } from "@/lib/crypto";
 import { rateLimit } from "@/lib/rate-limit";
 import { isOriginAllowed, getRequestOrigin } from "@/lib/request-security";
+import { validateCsrfToken, CSRF_HEADER_NAME, CSRF_COOKIE_NAME } from "@/lib/csrf";
 
 /**
  * POST /api/revalidate
@@ -73,6 +74,16 @@ export async function POST(request: NextRequest) {
     if (resetAt) {
       response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
     }
+    return response;
+  }
+
+  // CSRF validation: verify token in header matches token in cookie
+  // This provides additional protection against cross-site request forgery
+  const csrfToken = request.headers.get(CSRF_HEADER_NAME) || "";
+  const csrfCookie = request.cookies.get(CSRF_COOKIE_NAME)?.value || "";
+  if (csrfToken && csrfCookie && !validateCsrfToken(csrfToken, csrfCookie)) {
+    const response = apiError("CSRF validation failed", 403, "CSRF_INVALID");
+    response.headers.set("x-request-id", requestId);
     return response;
   }
 

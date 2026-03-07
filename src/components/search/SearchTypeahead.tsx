@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
 
 interface SearchResult {
   type: "player" | "school" | "coach" | "season";
@@ -19,16 +20,6 @@ const POPULAR_SEARCHES: SearchResult[] = [
   { type: "school", name: "Neumann-Goretti", detail: "Catholic League", href: "/basketball/schools/neumann-goretti", icon: "🏫" },
   { type: "school", name: "La Salle College HS", detail: "Catholic League", href: "/football/schools/la-salle-college-hs", icon: "🏫" },
 ];
-
-const SPORT_COLORS: Record<string, string> = {
-  football: "#0d5a1f",
-  basketball: "#a83f00",
-  baseball: "#8b0000",
-  soccer: "#034f30",
-  lacrosse: "#005f7f",
-  track: "#4a1f7f",
-  wrestling: "#804700",
-};
 
 export default function SearchTypeahead() {
   const [query, setQuery] = useState("");
@@ -326,7 +317,7 @@ export default function SearchTypeahead() {
                       {item.sport && (
                         <span
                           className="text-xs px-2 py-1 rounded text-white flex-shrink-0"
-                          style={{ backgroundColor: SPORT_COLORS[item.sport] || "#666" }}
+                          style={{ backgroundColor: SPORT_COLORS_HEX[item.sport] || "#666" }}
                         >
                           {item.sport}
                         </span>
@@ -368,7 +359,7 @@ export default function SearchTypeahead() {
                       {item.sport && (
                         <span
                           className="text-xs px-2 py-1 rounded text-white flex-shrink-0"
-                          style={{ backgroundColor: SPORT_COLORS[item.sport] || "#666" }}
+                          style={{ backgroundColor: SPORT_COLORS_HEX[item.sport] || "#666" }}
                         >
                           {item.sport}
                         </span>

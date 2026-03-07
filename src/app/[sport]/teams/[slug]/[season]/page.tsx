@@ -36,8 +36,8 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
   // Get team season data
   const teamSeasonData = await getTeamSeason(school.id, sport, season);
-  const teamSeason = teamSeasonData as unknown as TeamSeason;
-  if (!teamSeason) notFound();
+  if (!teamSeasonData) notFound();
+  const teamSeason: TeamSeason = teamSeasonData;
 
   // Get games and roster - use allSettled to prevent one failure from crashing the page
   let games: Game[] = [];

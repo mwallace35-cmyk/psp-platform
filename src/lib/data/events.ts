@@ -486,6 +486,10 @@ interface LeaderboardRowData {
 export async function getLeaderboard(stat: StatCategory, limit = 25): Promise<LeaderboardEntry[]> {
   const mapping = STAT_TABLE_MAP[stat];
   if (!mapping) return [];
+
+  // Cap limit to prevent abuse: maximum 100 results
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -498,7 +502,7 @@ export async function getLeaderboard(stat: StatCategory, limit = 25): Promise<Le
             .not(mapping.column, "is", null)
             .gt(mapping.column, 0)
             .order(mapping.column, { ascending })
-            .limit(limit);
+            .limit(cappedLimit);
           return (data as LeaderboardRowData[] ?? []).map((row: LeaderboardRowData, i: number) => ({
             rank: i + 1,
             value: (row[mapping.column] as number) ?? 0,
@@ -647,6 +651,9 @@ export interface FootballLeaderRowData extends Record<string, unknown> {
  * Get football leaders by stat (rushing, passing, receiving, scoring)
  */
 export async function getFootballLeaders(stat: string, limit = 50) {
+  // Cap limit to prevent abuse: maximum 100 results
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -663,7 +670,7 @@ export async function getFootballLeaders(stat: string, limit = 50) {
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
             .order(orderCol, { ascending: false, nullsFirst: false })
-            .limit(limit);
+            .limit(cappedLimit);
 
           // Flatten school from players.schools to top-level for template
           return (data as FootballLeaderRowData[] ?? []).map((row) => ({
@@ -706,6 +713,9 @@ export interface BasketballLeaderRowData extends Record<string, unknown> {
  * Get basketball leaders by stat (points, ppg, rebounds, assists)
  */
 export async function getBasketballLeaders(stat: string, limit = 50) {
+  // Cap limit to prevent abuse: maximum 100 results
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -722,7 +732,7 @@ export async function getBasketballLeaders(stat: string, limit = 50) {
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
             .order(orderCol, { ascending: false, nullsFirst: false })
-            .limit(limit);
+            .limit(cappedLimit);
 
           // Flatten school from players.schools to top-level for template
           return (data as BasketballLeaderRowData[] ?? []).map((row) => ({

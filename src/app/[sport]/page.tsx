@@ -1,37 +1,38 @@
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport } from "@/lib/data";
+import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, type Championship } from "@/lib/data";
 import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher";
-import HubScoresStrip from "@/components/sport-layouts/HubScoresStrip";
+import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScoresStrip";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
+import { SPORT_COLORS, SPORT_COLORS_HEX } from "@/lib/constants/sports";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
 
 type PageParams = { sport: string };
 
-const SPORT_COLORS: Record<string, string> = {
-  football: "var(--fb)",
-  basketball: "var(--bb)",
-  baseball: "var(--base)",
-  "track-field": "var(--track)",
-  lacrosse: "var(--lac)",
-  wrestling: "var(--wrest)",
-  soccer: "var(--soccer)",
-};
+interface SportOverview {
+  schools: number;
+  players: number;
+  seasons: number;
+  championships: number;
+}
 
-// Raw hex colors for client components (CSS vars don't work in JS)
-const SPORT_COLORS_HEX: Record<string, string> = {
-  football: "#16a34a",
-  basketball: "#ea580c",
-  baseball: "#dc2626",
-  "track-field": "#7c3aed",
-  lacrosse: "#0891b2",
-  wrestling: "#ca8a04",
-  soccer: "#059669",
-};
+interface FeaturedArticle {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  featured_image_url?: string | null;
+}
+
+interface DataFreshness {
+  lastUpdated?: string;
+  source?: string;
+  lastVerified?: string;
+}
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport } = await params;
@@ -93,23 +94,16 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
   const sportColorHex = SPORT_COLORS_HEX[sport] || "#16a34a";
 
   // Fallback data for graceful degradation if any fetch fails
-  const defaultOverview = { schools: 0, players: 0, seasons: 0, championships: 0 };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const defaultArray: any[] = [];
-  const defaultFreshness: { fetched_at: string } | null = { fetched_at: new Date().toISOString() };
+  const defaultOverview: SportOverview = { schools: 0, players: 0, seasons: 0, championships: 0 };
+  const defaultFreshness: DataFreshness | null = { lastUpdated: new Date().toISOString() };
 
   // Wrap all data fetching in try/catch to prevent full page crash
-  let overview = defaultOverview;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let champions: any[] = defaultArray;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let schools: any[] = defaultArray;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let featured: any[] = defaultArray;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let freshness: any = defaultFreshness;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let recentGames: any[] = defaultArray;
+  let overview: SportOverview = defaultOverview;
+  let champions: Championship[] = [];
+  let schools: Awaited<ReturnType<typeof getSchoolsBySport>>["data"] = [];
+  let featured: FeaturedArticle[] = [];
+  let freshness: DataFreshness | null = defaultFreshness;
+  let recentGames: HubGame[] = [];
 
   try {
     // Use Promise.allSettled to prevent one failure from crashing the page
@@ -125,12 +119,12 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     // Process results safely
     const [overviewResult, championsResult, schoolsResult, featuredResult, freshnessResult, gamesResult] = results;
 
-    if (overviewResult.status === "fulfilled") overview = overviewResult.value;
-    if (championsResult.status === "fulfilled") champions = championsResult.value;
-    if (schoolsResult.status === "fulfilled") schools = schoolsResult.value.data;
-    if (featuredResult.status === "fulfilled") featured = featuredResult.value;
-    if (freshnessResult.status === "fulfilled") freshness = freshnessResult.value;
-    if (gamesResult.status === "fulfilled") recentGames = gamesResult.value;
+    if (overviewResult.status === "fulfilled") overview = overviewResult.value as unknown as SportOverview;
+    if (championsResult.status === "fulfilled") champions = championsResult.value as unknown as Championship[];
+    if (schoolsResult.status === "fulfilled") schools = (schoolsResult.value as unknown as Awaited<ReturnType<typeof getSchoolsBySport>>).data;
+    if (featuredResult.status === "fulfilled") featured = featuredResult.value as unknown as FeaturedArticle[];
+    if (freshnessResult.status === "fulfilled") freshness = freshnessResult.value as unknown as DataFreshness | null;
+    if (gamesResult.status === "fulfilled") recentGames = gamesResult.value as unknown as HubGame[];
 
     // Log any failures with structured error context
     if (overviewResult.status === "rejected") {

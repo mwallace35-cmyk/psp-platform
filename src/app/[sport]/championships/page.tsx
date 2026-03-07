@@ -22,6 +22,18 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
+export function generateStaticParams() {
+  return [
+    { sport: "football" },
+    { sport: "basketball" },
+    { sport: "baseball" },
+    { sport: "track-field" },
+    { sport: "lacrosse" },
+    { sport: "wrestling" },
+    { sport: "soccer" },
+  ];
+}
+
 export default async function ChampionshipsPage({ params }: { params: Promise<PageParams> }) {
   const { sport } = await params;
   if (!isValidSport(sport)) notFound();

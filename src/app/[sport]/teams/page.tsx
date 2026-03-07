@@ -23,6 +23,18 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
+export function generateStaticParams() {
+  return [
+    { sport: "football" },
+    { sport: "basketball" },
+    { sport: "baseball" },
+    { sport: "track-field" },
+    { sport: "lacrosse" },
+    { sport: "wrestling" },
+    { sport: "soccer" },
+  ];
+}
+
 const LEAGUE_COLORS: Record<string, string> = {
   "Catholic League": "#dc2626",
   "Public League": "#16a34a",

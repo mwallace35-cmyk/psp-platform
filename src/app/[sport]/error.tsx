@@ -50,7 +50,7 @@ export default function SportError({ error, reset }: ErrorProps) {
           style={{
             fontSize: "48px",
             fontWeight: "bold",
-            color: "var(--psp-navy, #0a1628)",
+            color: "var(--psp-navy)",
             marginBottom: "16px",
           }}
         >
@@ -61,7 +61,7 @@ export default function SportError({ error, reset }: ErrorProps) {
           style={{
             fontSize: "28px",
             fontWeight: "bold",
-            color: "var(--psp-navy, #0a1628)",
+            color: "var(--psp-navy)",
             marginBottom: "12px",
           }}
         >
@@ -123,7 +123,7 @@ export default function SportError({ error, reset }: ErrorProps) {
               padding: "12px 24px",
               fontSize: "16px",
               fontWeight: "600",
-              backgroundColor: "var(--psp-navy, #0a1628)",
+              backgroundColor: "var(--psp-navy)",
               color: "white",
               border: "none",
               borderRadius: "6px",
@@ -132,11 +132,18 @@ export default function SportError({ error, reset }: ErrorProps) {
             }}
             onMouseEnter={(e) => {
               (e.target as HTMLButtonElement).style.backgroundColor =
-                "var(--psp-navy-dark, #051018)";
+                "var(--psp-navy-mid)";
             }}
             onMouseLeave={(e) => {
               (e.target as HTMLButtonElement).style.backgroundColor =
-                "var(--psp-navy, #0a1628)";
+                "var(--psp-navy)";
+            }}
+            onFocus={(e) => {
+              (e.target as HTMLButtonElement).style.outline = "2px solid var(--psp-gold)";
+              (e.target as HTMLButtonElement).style.outlineOffset = "2px";
+            }}
+            onBlur={(e) => {
+              (e.target as HTMLButtonElement).style.outline = "none";
             }}
           >
             Try again
@@ -149,7 +156,7 @@ export default function SportError({ error, reset }: ErrorProps) {
                 fontSize: "16px",
                 fontWeight: "600",
                 backgroundColor: "#e8ecf3",
-                color: "var(--psp-navy, #0a1628)",
+                color: "var(--psp-navy)",
                 border: "none",
                 borderRadius: "6px",
                 cursor: "pointer",
@@ -160,6 +167,13 @@ export default function SportError({ error, reset }: ErrorProps) {
               }}
               onMouseLeave={(e) => {
                 (e.target as HTMLButtonElement).style.backgroundColor = "#e8ecf3";
+              }}
+              onFocus={(e) => {
+                (e.target as HTMLButtonElement).style.outline = "2px solid var(--psp-gold)";
+                (e.target as HTMLButtonElement).style.outlineOffset = "2px";
+              }}
+              onBlur={(e) => {
+                (e.target as HTMLButtonElement).style.outline = "none";
               }}
             >
               Go to homepage
@@ -173,7 +187,7 @@ export default function SportError({ error, reset }: ErrorProps) {
                 fontSize: "16px",
                 fontWeight: "600",
                 backgroundColor: "#e8ecf3",
-                color: "var(--psp-navy, #0a1628)",
+                color: "var(--psp-navy)",
                 border: "none",
                 borderRadius: "6px",
                 cursor: "pointer",
@@ -184,6 +198,13 @@ export default function SportError({ error, reset }: ErrorProps) {
               }}
               onMouseLeave={(e) => {
                 (e.target as HTMLButtonElement).style.backgroundColor = "#e8ecf3";
+              }}
+              onFocus={(e) => {
+                (e.target as HTMLButtonElement).style.outline = "2px solid var(--psp-gold)";
+                (e.target as HTMLButtonElement).style.outlineOffset = "2px";
+              }}
+              onBlur={(e) => {
+                (e.target as HTMLButtonElement).style.outline = "none";
               }}
             >
               Browse sports

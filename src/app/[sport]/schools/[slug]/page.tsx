@@ -67,7 +67,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   const schoolData = await getSchoolBySlug(slug);
   if (!schoolData) notFound();
 
-  const school = schoolData as unknown as School;
+  const school: School = schoolData;
 
   const meta = SPORT_META[sport];
 

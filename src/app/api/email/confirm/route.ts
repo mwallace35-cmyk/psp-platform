@@ -34,6 +34,15 @@ export async function GET(request: NextRequest) {
     return response;
   }
 
+  // Validate token format: should be a UUID or alphanumeric string
+  // Reject tokens with SQL injection attempts or malformed characters
+  const tokenFormatRegex = /^[a-f0-9\-]+$/i;
+  if (!tokenFormatRegex.test(token)) {
+    const response = NextResponse.redirect(new URL('/?error=invalid-token', request.url));
+    response.headers.set("x-request-id", requestId);
+    return response;
+  }
+
   try {
     const supabase = await createClient();
 

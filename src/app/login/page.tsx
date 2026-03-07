@@ -10,12 +10,21 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isBlocked, setIsBlocked] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/admin";
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+
+    // Client-side rate limiting: block if too many failed attempts
+    if (isBlocked) {
+      setError("Too many failed attempts. Please try again in 30 seconds.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -26,11 +35,25 @@ function LoginForm() {
     });
 
     if (error) {
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
       setError(error.message);
       setLoading(false);
+
+      // After 5 failed attempts, disable the button for 30 seconds
+      if (newAttempts >= 5) {
+        setIsBlocked(true);
+        setTimeout(() => {
+          setIsBlocked(false);
+          setFailedAttempts(0);
+        }, 30000); // 30 seconds
+      }
       return;
     }
 
+    // Reset on successful login
+    setFailedAttempts(0);
+    setIsBlocked(false);
     router.push(redirect);
     router.refresh();
   }
@@ -79,12 +102,18 @@ function LoginForm() {
         </div>
       )}
 
+      {failedAttempts > 0 && failedAttempts < 5 && (
+        <div className="badge-warning p-2 rounded text-sm" role="status" aria-live="polite">
+          Failed attempts: {failedAttempts}/5
+        </div>
+      )}
+
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || isBlocked}
         className="btn-primary w-full text-center min-h-[44px]"
       >
-        {loading ? "Signing in..." : "Sign In"}
+        {loading ? "Signing in..." : isBlocked ? "Too many attempts. Try again soon." : "Sign In"}
       </button>
     </form>
   );

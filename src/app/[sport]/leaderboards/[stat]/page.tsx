@@ -319,6 +319,7 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
               highlightTop3={true}
               mobileCardMode={true}
               emptyMessage="No leaderboard data available"
+              ariaLabel={`${statConfig?.label || stat} leaders leaderboard for Philadelphia high school ${meta.name}`}
             />
           </div>
         ) : (

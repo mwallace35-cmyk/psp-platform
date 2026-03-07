@@ -52,6 +52,12 @@ export async function GET(
   try {
     const supabase = await createClient();
 
+    // NOTE: Inline Supabase queries below are intentional for this API route's specific data shape.
+    // The API response aggregates data from multiple tables (players, stats, schools) that differs
+    // from the generic data layer's structure. Extracting to data layer would require creating
+    // multiple separate functions or a complex wrapper. This approach keeps the API contract clear
+    // while maintaining separation between API layer and general-purpose data functions.
+
     // Get player info
     const { data: player } = await supabase
       .from("players")

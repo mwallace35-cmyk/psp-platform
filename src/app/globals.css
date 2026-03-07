@@ -968,7 +968,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .espn-footer a { color: #ffffff; min-height: 44px; display: inline-flex; align-items: center; padding: 0 4px; transition: color 150ms ease-in-out; }
 .espn-footer a:hover { color: var(--psp-gold); text-decoration: underline; }
 .espn-footer a:focus-visible { outline: 2px solid var(--psp-gold); outline-offset: 2px; border-radius: 2px; }
-.footer-bottom { max-width: 1200px; margin: auto; padding-top: 16px; margin-top: 16px; border-top: 1px solid rgba(255,255,255,.08); font-size: 10px; color: rgba(255,255,255,.4); }
+.footer-bottom { max-width: 1200px; margin: auto; padding-top: 16px; margin-top: 16px; border-top: 1px solid rgba(255,255,255,.08); font-size: 12px; color: rgba(255,255,255,.4); }
+@media (max-width: 768px) {
+  .espn-footer { font-size: 12px; }
+  .footer-bottom { font-size: 12px; }
+}
 
 /* ===== SPONSOR SPOTS ===== */
 .psp-promo-spot { background: #e8e8e8; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; font-weight: 600; margin-bottom: 12px; border-radius: 4px; }
@@ -1028,6 +1032,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: var(--psp-gold-light);
   box-shadow: 0 2px 8px rgba(240, 165, 0, 0.3);
 }
+.btn-primary:focus-visible {
+  outline: 2px solid var(--psp-gold);
+  outline-offset: 2px;
+}
 .btn-secondary {
   background: var(--psp-navy);
   color: white;
@@ -1039,6 +1047,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border: none;
 }
 .btn-secondary:hover { background: var(--psp-navy-mid); }
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--psp-gold);
+  outline-offset: 2px;
+}
 .btn-outline {
   background: transparent;
   color: var(--psp-gray-600);
