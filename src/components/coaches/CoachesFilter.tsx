@@ -14,6 +14,7 @@ interface Coach {
   championships: number;
   yearsCoaching: string;
   bio?: string;
+  pipelineCount?: number;
 }
 
 interface SportTab {
@@ -170,6 +171,24 @@ export default function CoachesFilter({
                   >
                     {coach.sportName}
                   </div>
+                  {/* Dynasty indicators */}
+                  {coach.championships >= 5 && (
+                    <span style={{
+                      display: "inline-block",
+                      marginTop: 6,
+                      marginLeft: 6,
+                      padding: "2px 8px",
+                      borderRadius: 10,
+                      fontSize: 9,
+                      fontWeight: 800,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.5,
+                      background: "linear-gradient(135deg, #d4a843, #b8922f)",
+                      color: "#fff",
+                    }}>
+                      🏆 Dynasty
+                    </span>
+                  )}
                 </div>
 
                 {/* Body */}
@@ -273,6 +292,14 @@ export default function CoachesFilter({
                         </div>
                       </div>
                     )}
+                    <div>
+                      <div style={{ fontSize: 9, color: "var(--g400)", textTransform: "uppercase", marginBottom: 4 }}>
+                        Pipeline
+                      </div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: "var(--psp-navy)" }}>
+                        {coach.pipelineCount ?? 0} at next level
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, type Championship } from "@/lib/data";
+import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, getTeamsWithRecords, getTrackedAlumni, type Championship } from "@/lib/data";
 import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher";
 import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScoresStrip";
 import { captureError } from "@/lib/error-tracking";
@@ -32,6 +32,29 @@ interface DataFreshness {
   lastUpdated?: string;
   source?: string;
   lastVerified?: string;
+}
+
+interface TeamWithRecords {
+  id: number;
+  wins: number;
+  losses: number;
+  ties?: number;
+  schools?: { name: string; slug: string } | null;
+  seasons?: { label: string } | null;
+}
+
+interface TrackedAlumni {
+  id: number;
+  person_name: string;
+  current_level: string;
+  current_org: string;
+  current_role?: string;
+  college?: string;
+  pro_team?: string;
+  pro_league?: string;
+  sport_id: string;
+  bio_note?: string;
+  schools?: { name: string; slug: string } | null;
 }
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
@@ -104,6 +127,8 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
   let featured: FeaturedArticle[] = [];
   let freshness: DataFreshness | null = defaultFreshness;
   let recentGames: HubGame[] = [];
+  let standings: TeamWithRecords[] = [];
+  let trackedAlumni: TrackedAlumni[] = [];
 
   try {
     // Use Promise.allSettled to prevent one failure from crashing the page
@@ -114,10 +139,12 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       getFeaturedArticles(sport, 3),
       getDataFreshness(sport),
       getRecentGamesBySport(sport, 20),
+      getTeamsWithRecords(sport, 1, 10),
+      getTrackedAlumni({ sport }, 8),
     ]);
 
     // Process results safely
-    const [overviewResult, championsResult, schoolsResult, featuredResult, freshnessResult, gamesResult] = results;
+    const [overviewResult, championsResult, schoolsResult, featuredResult, freshnessResult, gamesResult, standingsResult, alumniResult] = results;
 
     if (overviewResult.status === "fulfilled") overview = overviewResult.value as unknown as SportOverview;
     if (championsResult.status === "fulfilled") champions = championsResult.value as unknown as Championship[];
@@ -125,6 +152,8 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     if (featuredResult.status === "fulfilled") featured = featuredResult.value as unknown as FeaturedArticle[];
     if (freshnessResult.status === "fulfilled") freshness = freshnessResult.value as unknown as DataFreshness | null;
     if (gamesResult.status === "fulfilled") recentGames = gamesResult.value as unknown as HubGame[];
+    if (standingsResult.status === "fulfilled") standings = (standingsResult.value as unknown as Awaited<ReturnType<typeof getTeamsWithRecords>>).data || [];
+    if (alumniResult.status === "fulfilled") trackedAlumni = alumniResult.value as unknown as TrackedAlumni[];
 
     // Log any failures with structured error context
     if (overviewResult.status === "rejected") {
@@ -156,6 +185,16 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       const errorMsg = gamesResult.reason instanceof Error ? gamesResult.reason.message : String(gamesResult.reason);
       console.error(`[PSP] Failed to fetch recent games for ${sport}:`, errorMsg);
       captureError(gamesResult.reason, { sport, fetch: "getRecentGamesBySport" });
+    }
+    if (standingsResult.status === "rejected") {
+      const errorMsg = standingsResult.reason instanceof Error ? standingsResult.reason.message : String(standingsResult.reason);
+      console.error(`[PSP] Failed to fetch team standings for ${sport}:`, errorMsg);
+      captureError(standingsResult.reason, { sport, fetch: "getTeamsWithRecords" });
+    }
+    if (alumniResult.status === "rejected") {
+      const errorMsg = alumniResult.reason instanceof Error ? alumniResult.reason.message : String(alumniResult.reason);
+      console.error(`[PSP] Failed to fetch tracked alumni for ${sport}:`, errorMsg);
+      captureError(alumniResult.reason, { sport, fetch: "getTrackedAlumni" });
     }
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
@@ -202,6 +241,9 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         schools={schools}
         featured={featured}
         freshness={freshness}
+        recentGames={recentGames}
+        standings={standings}
+        trackedAlumni={trackedAlumni}
       />
 
       {/* JSON-LD */}

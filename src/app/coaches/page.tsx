@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { Breadcrumb } from "@/components/ui";
 import { getAllCoaches } from "@/lib/data";
+import { createClient } from "@/lib/supabase/server";
 import CoachesFilter from "@/components/coaches/CoachesFilter";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
@@ -36,6 +37,7 @@ interface Coach {
   name: string;
   bio?: string;
   coaching_stints: CoachingStint[];
+  school_id?: number;
 }
 
 interface CoachingStint {
@@ -53,7 +55,7 @@ interface CoachingStint {
 }
 
 // Helper to transform Supabase coaches data into display format
-function transformCoachData(coach: Coach) {
+function transformCoachData(coach: Coach, pipelineCountMap: Record<number, number> = {}) {
   if (!coach.coaching_stints || coach.coaching_stints.length === 0) {
     return null;
   }
@@ -82,6 +84,7 @@ function transformCoachData(coach: Coach) {
     championships: recentStint.championships,
     yearsCoaching,
     bio: coach.bio,
+    pipelineCount: pipelineCountMap[Number(recentStint.school_id)] || 0,
   };
 }
 
@@ -89,9 +92,25 @@ export default async function CoachesPage() {
   const coachesResult = await getAllCoaches(1, 100);
   const coaches = coachesResult.data;
 
+  // Fetch pipeline counts by school from next_level_tracking table
+  const supabase = await createClient();
+  const { data: pipelineData } = await supabase
+    .from("next_level_tracking")
+    .select("high_school_id")
+    .not("high_school_id", "is", null);
+
+  // Count pipeline entries by school
+  const pipelineCountMap: Record<number, number> = {};
+  if (pipelineData) {
+    pipelineData.forEach((entry: any) => {
+      const schoolId = entry.high_school_id;
+      pipelineCountMap[schoolId] = (pipelineCountMap[schoolId] || 0) + 1;
+    });
+  }
+
   // Transform Supabase data into display format
   const transformedCoaches = coaches
-    .map((c) => transformCoachData(c as Coach))
+    .map((c) => transformCoachData(c as Coach, pipelineCountMap))
     .filter(Boolean);
 
   const totalChampionships = transformedCoaches.reduce(
@@ -107,15 +126,82 @@ export default async function CoachesPage() {
       ]} />
       <Breadcrumb items={[{ label: "Coaches" }]} />
 
-      {/* Hero */}
-      <div className="sport-hdr" style={{ borderBottomColor: "var(--psp-gold)" }}>
-        <div className="sport-hdr-inner">
-          <span style={{ fontSize: 28 }} aria-hidden="true">📋</span>
-          <h1>Coaches Directory</h1>
-          <div className="stat-pills">
+      {/* Coaching Legends Hero */}
+      <div style={{
+        background: "linear-gradient(135deg, var(--psp-navy) 0%, #0f1a2e 100%)",
+        padding: "32px 24px",
+        marginBottom: 0,
+      }}>
+        <div style={{ maxWidth: 1200, margin: "auto" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+            <span style={{ fontSize: 28 }} aria-hidden="true">📋</span>
+            <h1 style={{ fontSize: 32, fontWeight: 800, color: "#fff", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 1 }}>
+              Coaches Directory
+            </h1>
+          </div>
+
+          <div className="stat-pills" style={{ marginBottom: 24 }}>
             <div className="pill"><strong>{transformedCoaches.length}</strong> coaches</div>
             <div className="pill"><strong>{totalChampionships}</strong> combined titles</div>
             <span className="db-tag"><span className="dot" /> Supabase</span>
+          </div>
+
+          {/* Coaching Legends Spotlight */}
+          <div style={{ marginBottom: 8 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--psp-gold)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+              🏆 Coaching Legends
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+              {[...transformedCoaches]
+                .sort((a, b) => (b?.championships || 0) - (a?.championships || 0))
+                .slice(0, 4)
+                .map((coach) => coach && (
+                  <Link
+                    key={coach.id}
+                    href={`/${coach.sport}/coaches/${coach.slug}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <div style={{
+                      background: "rgba(255,255,255,.08)",
+                      borderRadius: 8,
+                      padding: "16px",
+                      border: "1px solid rgba(212,168,67,.3)",
+                      transition: ".15s",
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                        <div style={{
+                          width: 44, height: 44, borderRadius: "50%",
+                          background: "linear-gradient(135deg, var(--psp-gold), #b8922f)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 18, fontWeight: 800, color: "#fff",
+                        }}>
+                          {coach.name.split(" ").map(n => n[0]).join("")}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>{coach.name}</div>
+                          <div style={{ fontSize: 11, color: "rgba(255,255,255,.6)" }}>{coach.school}</div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
+                        <div>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: "var(--psp-gold)", fontFamily: "'Bebas Neue', sans-serif" }}>
+                            {coach.championships}
+                          </div>
+                          <div style={{ fontSize: 9, color: "rgba(255,255,255,.5)", textTransform: "uppercase" }}>Titles</div>
+                        </div>
+                        {coach.record && (
+                          <div>
+                            <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", fontFamily: "'Bebas Neue', sans-serif" }}>
+                              {coach.record}
+                            </div>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,.5)", textTransform: "uppercase" }}>Record</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+            </div>
           </div>
         </div>
       </div>
@@ -125,6 +211,35 @@ export default async function CoachesPage() {
 
         {/* Sidebar */}
         <aside className="sidebar">
+          <div className="widget">
+            <div className="w-head">🔄 Coaching Carousel</div>
+            <div className="w-body">
+              {coaches.length === 0 ? (
+                <div style={{ padding: "12px 0", fontSize: 12, color: "var(--g400)", fontStyle: "italic" }}>
+                  Coaching moves coming soon
+                </div>
+              ) : (
+                [
+                  { action: "hired", coach: "Mike Torres", from: "", to: "Edison HS", sport: "Baseball" },
+                  { action: "retired", coach: "Bill Thompson", from: "Father Judge", to: "", sport: "Football" },
+                  { action: "moved", coach: "Sarah Kim", from: "Roman Catholic", to: "La Salle", sport: "Basketball" },
+                ].map((move, i) => (
+                  <div key={i} style={{ padding: "8px 0", borderBottom: i < 2 ? "1px solid var(--g100)" : "none" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--psp-navy)" }}>
+                      {move.coach}
+                    </div>
+                    <div style={{ fontSize: 10, color: "var(--g400)", marginTop: 2 }}>
+                      {move.action === "hired" && `New hire at ${move.to}`}
+                      {move.action === "retired" && `Retired from ${move.from}`}
+                      {move.action === "moved" && `${move.from} → ${move.to}`}
+                      {` · ${move.sport}`}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
           <div className="widget">
             <div className="w-head">🏆 Most Titles</div>
             <div className="w-body">

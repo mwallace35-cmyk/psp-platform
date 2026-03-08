@@ -528,8 +528,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 /* ===== MAIN NAV ===== */
 .mainnav { background: var(--espn-dark); border-bottom: 1px solid #333; }
-.mainnav-inner { max-width: 1200px; margin: auto; display: flex; align-items: center; height: 44px; gap: 0; padding: 0 16px; }
-.nav-link { font-size: 13px; font-weight: 600; color: #e2e8f0; padding: 0 14px; height: 44px; display: flex; align-items: center; position: relative; cursor: pointer; white-space: nowrap; transition: .15s; text-decoration: none; min-height: 44px; }
+.mainnav-inner { max-width: 1200px; margin: auto; display: flex; align-items: center; height: 44px; gap: 2px; padding: 0 16px; }
+.nav-link { font-size: 13px; font-weight: 600; color: #e2e8f0; padding: 0 16px; height: 44px; display: flex; align-items: center; position: relative; cursor: pointer; white-space: nowrap; transition: .15s; text-decoration: none; min-height: 44px; }
 .nav-link:hover { background: #222; text-decoration: none; color: #fff; }
 .nav-link:focus-visible { outline: 2px solid var(--psp-gold); outline-offset: -2px; }
 .nav-link.active { color: var(--psp-gold); }
@@ -541,7 +541,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .dd-menu a { display: flex; align-items: center; gap: 8px; padding: 10px 16px; font-size: 12px; font-weight: 500; color: #cbd5e1; cursor: pointer; min-height: 44px; }
 .dd-menu a:hover { background: #222; color: #fff; text-decoration: none; }
 .dd-menu a:focus-visible { outline: 2px solid var(--psp-gold); outline-offset: -2px; }
-.nav-right { margin-left: auto; display: flex; align-items: center; gap: 0; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
 .nav-search { background: #222; border: 1px solid #444; border-radius: 4px; padding: 5px 10px; font-size: 12px; color: #fff; width: 180px; outline: none; }
 .nav-search::placeholder { color: #666; }
 

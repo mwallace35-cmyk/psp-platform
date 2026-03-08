@@ -318,6 +318,7 @@ export default function Header() {
               }}
             >
               <Link href="/our-guys" role="menuitem" aria-current={isActive("/our-guys") ? "page" : undefined}><span role="img" aria-label="star">🌟</span> Our Guys</Link>
+              <Link href="/philly-everywhere" role="menuitem" aria-current={isActive("/philly-everywhere") ? "page" : undefined}><span role="img" aria-label="globe">🌍</span> Philly Everywhere</Link>
               <Link href="/recruiting" role="menuitem" aria-current={isActive("/recruiting") ? "page" : undefined}><span role="img" aria-label="star">⭐</span> Recruiting</Link>
               <Link href="/coaches" role="menuitem" aria-current={isActive("/coaches") ? "page" : undefined}><span role="img" aria-label="clipboard">📋</span> Coaches</Link>
               <Link href="/compare" role="menuitem" aria-current={isActive("/compare") ? "page" : undefined}><span role="img" aria-label="chart">📊</span> Compare Players</Link>

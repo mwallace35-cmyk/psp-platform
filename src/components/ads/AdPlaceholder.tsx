@@ -42,53 +42,20 @@ export default function AdPlaceholder({ size, className = '', id, style }: SpotP
         width: isFullWidth ? '100%' : `${config.width}px`,
         maxWidth: '100%',
         height: `${config.height}px`,
-        background: 'linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 50%, #e8e8e8 100%)',
-        border: '1px dashed #ccc',
+        background: '#f5f5f5',
+        border: '1px solid #e5e5e5',
         borderRadius: '4px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '6px',
         margin: '0 auto 12px',
         position: 'relative',
         overflow: 'hidden',
         ...style,
       }}
-    >
-      {/* Corner label */}
-      <span style={{
-        position: 'absolute',
-        top: '4px',
-        right: '6px',
-        fontSize: '9px',
-        color: '#bbb',
-        fontWeight: 500,
-        letterSpacing: '0.5px',
-        textTransform: 'uppercase',
-      }}>
-        Sponsor
-      </span>
+    />
 
-      {/* Size label */}
-      <span style={{
-        fontSize: '11px',
-        color: '#999',
-        fontWeight: 600,
-        letterSpacing: '0.3px',
-      }}>
-        {config.label}
-      </span>
-
-      {/* Partner text */}
-      <span style={{
-        fontSize: '9px',
-        color: '#bbb',
-        fontWeight: 400,
-      }}>
-        Become a PSP Partner
-      </span>
-    </div>
   );
 }
 

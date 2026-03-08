@@ -1,6 +1,10 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import PSPPromo from "@/components/ads/PSPPromo";
 import type { Championship } from "@/lib/data/types";
+import type { HubGame } from "./HubScoresStrip";
+
+const PhillyEverywhereSection = dynamic(() => import("@/components/philly-everywhere/PhillyEverywhereSection"), { ssr: false });
 
 interface FeaturedArticle {
   id: number;
@@ -17,6 +21,29 @@ interface DataFreshness {
   lastVerified?: string;
 }
 
+interface TeamWithRecords {
+  id: number;
+  wins: number;
+  losses: number;
+  ties?: number;
+  schools?: { name: string; slug: string } | null;
+  seasons?: { label: string } | null;
+}
+
+interface TrackedAlumni {
+  id: number;
+  person_name: string;
+  current_level: string;
+  current_org: string;
+  current_role?: string;
+  college?: string;
+  pro_team?: string;
+  pro_league?: string;
+  sport_id: string;
+  bio_note?: string;
+  schools?: { name: string; slug: string } | null;
+}
+
 interface SportLayoutAProps {
   sport: string;
   sportColor: string;
@@ -26,9 +53,12 @@ interface SportLayoutAProps {
   schools: Array<{ name: string; slug: string; city?: string; state?: string; id?: number }>;
   featured: FeaturedArticle[];
   freshness: DataFreshness | null;
+  recentGames: HubGame[];
+  standings: TeamWithRecords[];
+  trackedAlumni: TrackedAlumni[];
 }
 
-export default function SportLayoutA({ sport, sportColor, meta, overview, champions, schools, featured, freshness }: SportLayoutAProps) {
+export default function SportLayoutA({ sport, sportColor, meta, overview, champions, schools, featured, freshness, recentGames, standings, trackedAlumni }: SportLayoutAProps) {
   const topStory = featured?.[0];
   const moreStories = featured?.slice(1) || [];
 
@@ -144,6 +174,50 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           </>
         )}
 
+        {/* Tonight's Games */}
+        {recentGames.length > 0 && (
+          <>
+            <div className="sec-head">
+              <h2>Recent Games</h2>
+              <Link href={`/${sport}/teams`} className="more">Full Schedule →</Link>
+            </div>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+              gap: 10,
+              marginBottom: 20,
+            }}>
+              {recentGames.slice(0, 4).map((game) => (
+                <div key={game.id} style={{
+                  background: "var(--psp-white)",
+                  border: "1px solid var(--g100)",
+                  borderRadius: 6,
+                  padding: "12px 14px",
+                  borderLeft: `3px solid ${sportColor}`,
+                }}>
+                  <div style={{ fontSize: 10, color: sportColor, fontWeight: 700, textTransform: "uppercase", marginBottom: 6 }}>
+                    {game.game_date ? new Date(game.game_date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Date TBA"}
+                  </div>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)", marginBottom: 2 }}>
+                    {game.home_school?.name || "Home"}
+                  </div>
+                  <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>vs</div>
+                  <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text)", marginBottom: 6 }}>
+                    {game.away_school?.name || "Away"}
+                  </div>
+                  {game.home_score !== null && game.away_score !== null ? (
+                    <div style={{ fontSize: 14, fontWeight: 800, color: sportColor }}>
+                      {game.home_score}-{game.away_score}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 11, color: "var(--g400)" }}>Final score pending</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
         {/* Recent Champions */}
         {champions.length > 0 && (
           <>
@@ -163,6 +237,84 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
                     <div className="rsub">{champ.seasons?.label} &mdash; {champ.level}{champ.score ? ` (${champ.score})` : ""}</div>
                   </div>
                   <div className="rt-rec">🏆</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Philly Everywhere */}
+        <PhillyEverywhereSection sport={sport} alumni={trackedAlumni} />
+
+        {/* The Pulse - Community Feed */}
+        <div className="sec-head">
+          <h2 style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ color: sportColor }}>●</span> The Pulse
+          </h2>
+          <Link href="/community" className="more">Join the Conversation →</Link>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+          {[
+            { user: "CoachK_Philly", text: `Big matchup tonight — ${sport === "football" ? "Prep vs La Salle" : sport === "basketball" ? "Neumann vs Roman" : "La Salle vs Prep"} will set the tone for the league.`, time: "2h ago", type: "hot_take" },
+            { user: "PhillyHoopsScout", text: "Just left practice — keep an eye on the freshman class this year. Philly is LOADED.", time: "4h ago", type: "insider" },
+            { user: "PSP_Community", text: `Who's your pick for ${meta.name} Player of the Week? Cast your vote now!`, time: "6h ago", type: "poll" },
+          ].map((item, i) => (
+            <div key={i} style={{
+              background: "var(--psp-white)",
+              border: "1px solid var(--g100)",
+              borderRadius: 6,
+              padding: "12px 14px",
+              display: "flex",
+              gap: 10,
+            }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: "50%",
+                background: item.type === "hot_take" ? "#fef3c7" : item.type === "insider" ? "#dbeafe" : "#f3e8ff",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 14, flexShrink: 0,
+              }}>
+                {item.type === "hot_take" ? "🔥" : item.type === "insider" ? "👀" : "📊"}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <span style={{ fontWeight: 700, fontSize: 12, color: "var(--psp-navy)" }}>@{item.user}</span>
+                  <span style={{ fontSize: 10, color: "var(--g400)" }}>{item.time}</span>
+                </div>
+                <div style={{ fontSize: 12, color: "var(--text)", lineHeight: 1.5 }}>{item.text}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* League Standings */}
+        {standings.length > 0 && (
+          <>
+            <div className="sec-head">
+              <h2>League Standings</h2>
+              <Link href={`/${sport}/teams`} className="more">Full Standings →</Link>
+            </div>
+            <div className="rank-table" style={{ marginBottom: 20 }}>
+              <div className="rt-head">
+                <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                  <span>{meta.name} Standings</span>
+                  <span style={{ fontSize: 10, color: "var(--psp-gold)" }}>W-L{standings[0]?.ties ? "-T" : ""}</span>
+                </div>
+              </div>
+              {standings.map((team, i) => (
+                <div key={team.id} className="rt-row">
+                  <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
+                  <div className="rt-info">
+                    {team.schools?.slug ? (
+                      <Link href={`/${sport}/schools/${team.schools.slug}`} className="rname" style={{ color: "var(--link)" }}>
+                        {team.schools.name}
+                      </Link>
+                    ) : (
+                      <span className="rname">{team.schools?.name || `Team ${team.id}`}</span>
+                    )}
+                  </div>
+                  <div className="rt-rec" style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>
+                    {team.wins}-{team.losses}{team.ties ? `-${team.ties}` : ""}
+                  </div>
                 </div>
               ))}
             </div>

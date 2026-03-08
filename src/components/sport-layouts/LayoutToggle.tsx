@@ -65,9 +65,9 @@ export default function LayoutToggle({ sport, sportColor, onLayoutChange, defaul
             fontSize: 11,
             fontWeight: 600,
             borderRadius: 20,
-            border: active === key ? `2px solid ${sportColor}` : "1px solid var(--g200)",
-            background: active === key ? `${sportColor}15` : "var(--psp-white)",
-            color: active === key ? sportColor : "var(--g500)",
+            border: active === key ? "2px solid var(--psp-navy)" : "1px solid var(--g200)",
+            background: active === key ? "var(--psp-navy)" : "var(--psp-white)",
+            color: active === key ? "var(--psp-gold)" : "var(--g500)",
             cursor: "pointer",
             transition: ".15s",
           }}

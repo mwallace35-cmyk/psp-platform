@@ -7,6 +7,7 @@ import SportLayoutA from "./SportLayoutA";
 import SportLayoutB from "./SportLayoutB";
 import SportLayoutC from "./SportLayoutC";
 import type { Championship, School } from "@/lib/data/types";
+import type { HubGame } from "./HubScoresStrip";
 
 interface FeaturedArticle {
   id: number;
@@ -22,6 +23,29 @@ interface DataFreshness {
   lastVerified?: string;
 }
 
+interface TeamWithRecords {
+  id: number;
+  wins: number;
+  losses: number;
+  ties?: number;
+  schools?: { name: string; slug: string } | null;
+  seasons?: { label: string } | null;
+}
+
+interface TrackedAlumni {
+  id: number;
+  person_name: string;
+  current_level: string;
+  current_org: string;
+  current_role?: string;
+  college?: string;
+  pro_team?: string;
+  pro_league?: string;
+  sport_id: string;
+  bio_note?: string;
+  schools?: { name: string; slug: string } | null;
+}
+
 interface SportLayoutSwitcherProps {
   sport: string;
   sportColor: string;
@@ -31,6 +55,9 @@ interface SportLayoutSwitcherProps {
   schools: Array<{ name: string; slug: string; city?: string; state?: string; id?: number }>;
   featured: FeaturedArticle[];
   freshness: DataFreshness | null;
+  recentGames: HubGame[];
+  standings: TeamWithRecords[];
+  trackedAlumni: TrackedAlumni[];
 }
 
 const DEFAULT_LAYOUTS: Record<string, LayoutType> = {
