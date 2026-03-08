@@ -139,7 +139,7 @@ export async function middleware(request: NextRequest) {
   const nonce = generateRequestId();
   // Note: style-src uses 'nonce-${nonce}' for inline styles and Google Fonts
   // To fully eliminate 'unsafe-inline', ensure all inline styles use the nonce attribute
-  const csp = `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://www.google-analytics.com; frame-ancestors 'none';`;
+  const csp = `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://www.google-analytics.com; frame-ancestors 'none';`;
   response.headers.set("Content-Security-Policy", csp);
 
   // Pass nonce to layout via custom header
