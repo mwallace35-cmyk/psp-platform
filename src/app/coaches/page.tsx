@@ -31,6 +31,68 @@ const SPORT_EMOJIS: Record<string, string> = {
   "track-field": "🏃", lacrosse: "🥍", wrestling: "🤼", soccer: "⚽",
 };
 
+// Sample data for Coaching Moments carousel
+const COACHING_MOMENTS = [
+  {
+    id: 1,
+    title: "First Championship",
+    coach: "Mike Torres",
+    year: 2015,
+    milestone: "Led Edison to first state title in school history",
+    emoji: "🏆",
+  },
+  {
+    id: 2,
+    title: "100 Wins",
+    coach: "Bill Thompson",
+    year: 2020,
+    milestone: "Reached century mark in career victories",
+    emoji: "💯",
+  },
+  {
+    id: 3,
+    title: "Back-to-Back Titles",
+    coach: "Sarah Kim",
+    year: 2022,
+    milestone: "Two consecutive state championships",
+    emoji: "🥇",
+  },
+  {
+    id: 4,
+    title: "Historic Season",
+    coach: "Marcus Johnson",
+    year: 2023,
+    milestone: "Undefeated regular season, 15-0 record",
+    emoji: "✨",
+  },
+  {
+    id: 5,
+    title: "Regional Dominance",
+    coach: "Patricia Chen",
+    year: 2024,
+    milestone: "5 consecutive league championships",
+    emoji: "👑",
+  },
+  {
+    id: 6,
+    title: "Youth Development",
+    coach: "David Garcia",
+    year: 2024,
+    milestone: "12 players on college rosters this year",
+    emoji: "🌟",
+  },
+];
+
+// Sample Coach of the Year data
+const COACH_OF_THE_YEAR = {
+  name: "Marcus Johnson",
+  school: "Abraham Lincoln High",
+  sport: "Football",
+  achievements: "Undefeated season, 47 wins in 5 years",
+  quote: "It's all about developing character in these young athletes.",
+  yearsCoaching: "18",
+};
+
 interface Coach {
   id: number;
   slug: string;
@@ -73,6 +135,24 @@ function transformCoachData(coach: Coach, pipelineCountMap: Record<number, numbe
     ? `${recentStint.start_year}-${recentStint.end_year}`
     : `${recentStint.start_year}-present`;
 
+  // Generate sample coaching timeline
+  const startYear = recentStint.start_year;
+  const endYear = recentStint.end_year || new Date().getFullYear();
+  const timelineEvents = [];
+
+  if (startYear) {
+    timelineEvents.push({ year: startYear, milestone: "Hired" });
+  }
+
+  const middleYear = Math.floor((startYear + endYear) / 2);
+  if (middleYear > startYear && middleYear < endYear) {
+    timelineEvents.push({ year: middleYear, milestone: `First Championship` });
+  }
+
+  if (endYear > startYear + 5 && recentStint.championships > 0) {
+    timelineEvents.push({ year: endYear - 1, milestone: `${recentStint.championships} Total Titles` });
+  }
+
   return {
     id: coach.id,
     slug: coach.slug,
@@ -85,6 +165,7 @@ function transformCoachData(coach: Coach, pipelineCountMap: Record<number, numbe
     yearsCoaching,
     bio: coach.bio,
     pipelineCount: pipelineCountMap[Number(recentStint.school_id)] || 0,
+    coachingTimeline: timelineEvents.length > 0 ? timelineEvents : undefined,
   };
 }
 
@@ -223,6 +304,212 @@ export default async function CoachesPage() {
                 ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Coach of the Year Spotlight */}
+      <div style={{
+        maxWidth: 1200,
+        margin: "32px auto",
+        padding: "0 24px",
+      }}>
+        <div style={{
+          background: "linear-gradient(135deg, #f0a500 0%, #d4a843 100%)",
+          borderRadius: 8,
+          padding: "24px",
+          position: "relative",
+          border: "2px solid #d4a843",
+          boxShadow: "0 4px 12px rgba(240, 165, 0, .15)",
+        }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 24,
+          }}>
+            {/* Gold Medal */}
+            <div style={{
+              fontSize: 64,
+              minWidth: 100,
+              textAlign: "center",
+            }}>🥇</div>
+
+            {/* Content */}
+            <div style={{ flex: 1 }}>
+              <div style={{
+                fontSize: 11,
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: 1,
+                color: "rgba(0, 0, 0, .6)",
+                marginBottom: 4,
+              }}>
+                Coach of the Year
+              </div>
+              <h2 style={{
+                fontSize: 28,
+                fontWeight: 800,
+                color: "#fff",
+                margin: "0 0 8px 0",
+                fontFamily: "'Bebas Neue', sans-serif",
+                letterSpacing: 1,
+              }}>
+                {COACH_OF_THE_YEAR.name}
+              </h2>
+              <div style={{
+                fontSize: 13,
+                color: "rgba(0, 0, 0, .7)",
+                marginBottom: 12,
+                fontWeight: 600,
+              }}>
+                {COACH_OF_THE_YEAR.school} • {COACH_OF_THE_YEAR.sport}
+              </div>
+              <p style={{
+                fontSize: 14,
+                color: "#fff",
+                fontStyle: "italic",
+                margin: "0 0 12px 0",
+                lineHeight: 1.6,
+              }}>
+                "{COACH_OF_THE_YEAR.quote}"
+              </p>
+              <div style={{
+                display: "flex",
+                gap: 24,
+              }}>
+                <div>
+                  <div style={{
+                    fontSize: 9,
+                    color: "rgba(0, 0, 0, .5)",
+                    textTransform: "uppercase",
+                    fontWeight: 700,
+                    marginBottom: 4,
+                  }}>
+                    Years Coaching
+                  </div>
+                  <div style={{
+                    fontSize: 20,
+                    fontWeight: 800,
+                    color: "#fff",
+                    fontFamily: "'Bebas Neue', sans-serif",
+                  }}>
+                    {COACH_OF_THE_YEAR.yearsCoaching}
+                  </div>
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: 9,
+                    color: "rgba(0, 0, 0, .5)",
+                    textTransform: "uppercase",
+                    fontWeight: 700,
+                    marginBottom: 4,
+                  }}>
+                    Achievements
+                  </div>
+                  <div style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#fff",
+                  }}>
+                    {COACH_OF_THE_YEAR.achievements}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Coaching Moments Carousel */}
+      <div style={{
+        maxWidth: 1200,
+        margin: "32px auto",
+        padding: "0 24px",
+      }}>
+        <div style={{
+          marginBottom: 16,
+        }}>
+          <h2 style={{
+            fontSize: 20,
+            fontWeight: 800,
+            color: "var(--psp-navy)",
+            margin: "0 0 16px 0",
+            fontFamily: "'Bebas Neue', sans-serif",
+            letterSpacing: 1,
+          }}>
+            🎬 Coaching Moments
+          </h2>
+        </div>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-scroll, minmax(220px, 1fr))",
+          gap: 12,
+          overflowX: "auto",
+          paddingBottom: 8,
+          scrollBehavior: "smooth",
+        }}>
+          {COACHING_MOMENTS.map((moment) => (
+            <div
+              key={moment.id}
+              style={{
+                background: "#fff",
+                border: "1px solid var(--g100)",
+                borderRadius: 6,
+                padding: "16px",
+                minWidth: "220px",
+                transition: ".15s",
+                position: "relative",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 12px rgba(0,0,0,.08)";
+                (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+              }}
+            >
+              <div style={{
+                fontSize: 32,
+                marginBottom: 8,
+              }}>
+                {moment.emoji}
+              </div>
+              <div style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: "var(--psp-gold)",
+                textTransform: "uppercase",
+                marginBottom: 4,
+                letterSpacing: 0.5,
+              }}>
+                {moment.year}
+              </div>
+              <h3 style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: "var(--psp-navy)",
+                margin: "0 0 6px 0",
+              }}>
+                {moment.title}
+              </h3>
+              <div style={{
+                fontSize: 11,
+                color: "var(--g400)",
+                marginBottom: 8,
+              }}>
+                {moment.coach}
+              </div>
+              <p style={{
+                fontSize: 12,
+                color: "var(--text)",
+                lineHeight: 1.5,
+                margin: 0,
+              }}>
+                {moment.milestone}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 

@@ -15,6 +15,10 @@ interface Coach {
   yearsCoaching: string;
   bio?: string;
   pipelineCount?: number;
+  coachingTimeline?: Array<{
+    year: number;
+    milestone: string;
+  }>;
 }
 
 interface SportTab {
@@ -301,6 +305,23 @@ export default function CoachesFilter({
                       </div>
                     </div>
                   </div>
+
+                  {/* Coaching Timeline */}
+                  {coach.coachingTimeline && coach.coachingTimeline.length > 0 && (
+                    <div style={{ gridColumn: "1 / -1", marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--g100)" }}>
+                      <div style={{ fontSize: 9, color: "var(--g400)", textTransform: "uppercase", marginBottom: 8, fontWeight: 700 }}>
+                        Timeline
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {coach.coachingTimeline.map((event, idx) => (
+                          <div key={idx} style={{ fontSize: 11, color: "var(--text)", display: "flex", alignItems: "flex-start", gap: 8 }}>
+                            <span style={{ fontWeight: 700, color: "var(--psp-gold)", minWidth: 40 }}>{event.year}:</span>
+                            <span>{event.milestone}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </Link>

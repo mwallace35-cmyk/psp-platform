@@ -1826,3 +1826,140 @@ select:focus-visible {
     padding: 0 12px;
   }
 }
+
+/* ============ CSS MICRO-INTERACTIONS & SCROLL ANIMATIONS ============ */
+
+/* Card hover effects - smooth transitions and lift */
+.story,
+.ldr-card,
+.widget {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.story:hover,
+.ldr-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Button hover transitions - smooth color changes */
+.btn-primary,
+.btn-secondary,
+.btn-outline {
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation link transitions */
+nav a,
+.nav-link {
+  transition: all 0.2s ease;
+}
+
+nav a:hover {
+  color: var(--psp-gold);
+}
+
+/* Scroll-triggered fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-on-scroll {
+  animation: fadeInUp 0.6s ease forwards;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%;
+}
+
+/* Sport pulse animation for live game indicators */
+@keyframes sportPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.sport-pulse {
+  animation: sportPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Link underline transitions - smooth reveal on hover */
+a.article-link,
+.story a,
+.story h4 {
+  position: relative;
+  text-decoration: none;
+}
+
+a.article-link::after,
+.story h4::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--psp-gold);
+  transition: width 0.3s ease;
+}
+
+a.article-link:hover::after,
+.story:hover h4::after {
+  width: 100%;
+}
+
+/* Focus ring transitions - smooth focus-visible outlines */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--psp-gold);
+  outline-offset: 2px;
+  transition: outline 0.2s ease;
+}
+
+/* Subtle scale animation for buttons on active state */
+button:active,
+.btn-primary:active,
+.btn-secondary:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* Smooth transitions for interactive elements */
+input,
+textarea,
+select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 3px rgba(240, 165, 0, 0.1);
+}

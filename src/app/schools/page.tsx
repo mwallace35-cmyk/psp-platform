@@ -15,6 +15,9 @@ interface School {
   state: string;
   league?: { name: string };
   championships_count?: number;
+  recentPerformance?: "winning" | "competitive" | "rebuilding";
+  leaguePositionChange?: number;
+  winImprovement?: number;
 }
 
 const LEAGUES = [
@@ -41,21 +44,54 @@ const LEAGUE_COLORS: Record<string, string> = {
 
 // Placeholder school data - in production, this would come from Supabase
 const PLACEHOLDER_SCHOOLS: School[] = [
-  { id: 1, slug: 'saint-josephs-prep', name: 'St. Joseph\'s Prep', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 23 },
-  { id: 2, slug: 'imhotep-charter', name: 'Imhotep Charter', league_id: 2, city: 'Philadelphia', state: 'PA', league: { name: 'Public League' }, championships_count: 16 },
-  { id: 3, slug: 'neumann-goretti', name: 'Neumann-Goretti', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 13 },
-  { id: 4, slug: 'roman-catholic', name: 'Roman Catholic', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 12 },
-  { id: 5, slug: 'la-salle-college-hs', name: 'La Salle College High School', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 8 },
-  { id: 6, slug: 'archbishop-wood', name: 'Archbishop Wood', league_id: 1, city: 'Warminster', state: 'PA', league: { name: 'Catholic League' }, championships_count: 7 },
-  { id: 7, slug: 'malvern-prep', name: 'Malvern Prep', league_id: 3, city: 'Malvern', state: 'PA', league: { name: 'Inter-Ac' }, championships_count: 6 },
-  { id: 8, slug: 'haverford-school', name: 'Haverford School', league_id: 3, city: 'Haverford', state: 'PA', league: { name: 'Inter-Ac' }, championships_count: 9 },
-  { id: 9, slug: 'episcopal-academy', name: 'Episcopal Academy', league_id: 3, city: 'Newtown', state: 'PA', league: { name: 'Inter-Ac' }, championships_count: 4 },
-  { id: 10, slug: 'conestoga', name: 'Conestoga High School', league_id: 6, city: 'Berwyn', state: 'PA', league: { name: 'Suburban One' }, championships_count: 4 },
-  { id: 11, slug: 'father-judge', name: 'Father Judge High School', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 3 },
-  { id: 12, slug: 'bonner-prendie', name: 'Bonner-Prendie', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 2 },
+  { id: 1, slug: 'saint-josephs-prep', name: 'St. Joseph\'s Prep', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 23, recentPerformance: 'winning' },
+  { id: 2, slug: 'imhotep-charter', name: 'Imhotep Charter', league_id: 2, city: 'Philadelphia', state: 'PA', league: { name: 'Public League' }, championships_count: 16, recentPerformance: 'winning', leaguePositionChange: 3, winImprovement: 4 },
+  { id: 3, slug: 'neumann-goretti', name: 'Neumann-Goretti', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 13, recentPerformance: 'competitive' },
+  { id: 4, slug: 'roman-catholic', name: 'Roman Catholic', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 12, recentPerformance: 'competitive' },
+  { id: 5, slug: 'la-salle-college-hs', name: 'La Salle College High School', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 8, recentPerformance: 'competitive' },
+  { id: 6, slug: 'archbishop-wood', name: 'Archbishop Wood', league_id: 1, city: 'Warminster', state: 'PA', league: { name: 'Catholic League' }, championships_count: 7, recentPerformance: 'winning', leaguePositionChange: 2, winImprovement: 3 },
+  { id: 7, slug: 'malvern-prep', name: 'Malvern Prep', league_id: 3, city: 'Malvern', state: 'PA', league: { name: 'Inter-Ac' }, championships_count: 6, recentPerformance: 'rebuilding' },
+  { id: 8, slug: 'haverford-school', name: 'Haverford School', league_id: 3, city: 'Haverford', state: 'PA', league: { name: 'Inter-Ac' }, championships_count: 9, recentPerformance: 'winning' },
+  { id: 9, slug: 'episcopal-academy', name: 'Episcopal Academy', league_id: 3, city: 'Newtown', state: 'PA', league: { name: 'Inter-Ac' }, championships_count: 4, recentPerformance: 'rebuilding' },
+  { id: 10, slug: 'conestoga', name: 'Conestoga High School', league_id: 6, city: 'Berwyn', state: 'PA', league: { name: 'Suburban One' }, championships_count: 4, recentPerformance: 'competitive' },
+  { id: 11, slug: 'father-judge', name: 'Father Judge High School', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 3, recentPerformance: 'winning', leaguePositionChange: 5, winImprovement: 6 },
+  { id: 12, slug: 'bonner-prendie', name: 'Bonner-Prendie', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 2, recentPerformance: 'rebuilding' },
+];
+
+// Rising Programs - top 3 schools with most improvement
+const RISING_PROGRAMS = [
+  { id: 2, slug: 'imhotep-charter', name: 'Imhotep Charter', league: 'Public League', positionChange: 3, winImprovement: 4 },
+  { id: 6, slug: 'archbishop-wood', name: 'Archbishop Wood', league: 'Catholic League', positionChange: 2, winImprovement: 3 },
+  { id: 11, slug: 'father-judge', name: 'Father Judge High School', league: 'Catholic League', positionChange: 5, winImprovement: 6 },
 ];
 
 type ViewMode = 'map' | 'league' | 'search';
+
+function getHeatIndicatorColor(performance?: string): string {
+  switch (performance) {
+    case 'winning':
+      return '#16a34a';
+    case 'competitive':
+      return '#eab308';
+    case 'rebuilding':
+      return '#ef4444';
+    default:
+      return '#999';
+  }
+}
+
+function getHeatIndicatorLabel(performance?: string): string {
+  switch (performance) {
+    case 'winning':
+      return 'Winning';
+    case 'competitive':
+      return 'Competitive';
+    case 'rebuilding':
+      return 'Rebuilding';
+    default:
+      return 'Unknown';
+  }
+}
 
 export default function SchoolsPage() {
   const [schools, setSchools] = useState<School[]>(PLACEHOLDER_SCHOOLS);
@@ -179,6 +215,122 @@ export default function SchoolsPage() {
                   Explore {schools.length} schools across Catholic League, Public League, Inter-Ac, and more
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Rising Programs Spotlight */}
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ marginBottom: 16 }}>
+              <h2 style={{
+                fontSize: 18,
+                fontWeight: 800,
+                color: 'var(--psp-navy)',
+                margin: 0,
+                fontFamily: "'Bebas Neue', sans-serif",
+                letterSpacing: 1,
+              }}>
+                📈 Rising Programs
+              </h2>
+              <p style={{ fontSize: 12, color: 'var(--g400)', margin: '4px 0 0 0' }}>
+                Schools showing the most improvement in league standings
+              </p>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 12,
+            }}>
+              {RISING_PROGRAMS.map((school) => (
+                <Link
+                  key={school.id}
+                  href={`/football/schools/${school.slug}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #f0a500 0%, #d4a843 100%)',
+                      borderRadius: 6,
+                      padding: '16px',
+                      transition: '.15s',
+                      cursor: 'pointer',
+                      border: '1px solid rgba(212, 168, 67, .4)',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(240, 165, 0, .2)';
+                      (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+                      (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: 12 }}>
+                      <div style={{ flex: 1 }}>
+                        <h3 style={{
+                          fontSize: 16,
+                          fontWeight: 800,
+                          color: '#fff',
+                          margin: '0 0 4px 0',
+                          fontFamily: "'Bebas Neue', sans-serif",
+                        }}>
+                          {school.name}
+                        </h3>
+                        <div style={{ fontSize: 11, color: 'rgba(0, 0, 0, .7)', fontWeight: 600 }}>
+                          {school.league}
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 32 }}>🔥</div>
+                    </div>
+
+                    <div style={{
+                      display: 'flex',
+                      gap: 12,
+                      paddingTop: 12,
+                      borderTop: '1px solid rgba(0, 0, 0, .1)',
+                    }}>
+                      <div>
+                        <div style={{
+                          fontSize: 10,
+                          fontWeight: 700,
+                          color: 'rgba(0, 0, 0, .7)',
+                          textTransform: 'uppercase',
+                          marginBottom: 2,
+                        }}>
+                          League Position
+                        </div>
+                        <div style={{
+                          fontSize: 18,
+                          fontWeight: 800,
+                          color: '#fff',
+                          fontFamily: "'Bebas Neue', sans-serif",
+                        }}>
+                          ↑ {school.positionChange}
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{
+                          fontSize: 10,
+                          fontWeight: 700,
+                          color: 'rgba(0, 0, 0, .7)',
+                          textTransform: 'uppercase',
+                          marginBottom: 2,
+                        }}>
+                          Win Improvement
+                        </div>
+                        <div style={{
+                          fontSize: 18,
+                          fontWeight: 800,
+                          color: '#fff',
+                          fontFamily: "'Bebas Neue', sans-serif",
+                        }}>
+                          +{school.winImprovement}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
 
@@ -324,6 +476,7 @@ export default function SchoolsPage() {
                           overflow: 'hidden',
                           transition: '.15s',
                           cursor: 'pointer',
+                          position: 'relative',
                         }}
                         onMouseEnter={(e) => {
                           (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,.08)';
@@ -332,6 +485,18 @@ export default function SchoolsPage() {
                           (e.currentTarget as HTMLElement).style.boxShadow = 'none';
                         }}
                       >
+                        {/* Heat Indicator Bar */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: '4px',
+                            background: getHeatIndicatorColor(school.recentPerformance),
+                          }}
+                        />
+
                         {/* Header with league color */}
                         <div
                           style={{
@@ -352,6 +517,20 @@ export default function SchoolsPage() {
                           </div>
                           <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8 }}>
                             {school.city}, {school.state}
+                          </div>
+
+                          {/* Heat Status Badge */}
+                          <div style={{
+                            display: 'inline-block',
+                            padding: '3px 8px',
+                            borderRadius: 3,
+                            fontSize: 9,
+                            fontWeight: 700,
+                            background: getHeatIndicatorColor(school.recentPerformance) + '20',
+                            color: getHeatIndicatorColor(school.recentPerformance),
+                            marginBottom: 8,
+                          }}>
+                            {getHeatIndicatorLabel(school.recentPerformance)}
                           </div>
 
                           {/* Stats */}
@@ -431,6 +610,7 @@ export default function SchoolsPage() {
                                   transition: '.15s',
                                   cursor: 'pointer',
                                   borderLeft: `4px solid ${LEAGUE_COLORS[school.league?.name || ''] || '#0a1628'}`,
+                                  position: 'relative',
                                 }}
                                 onMouseEnter={(e) => {
                                   (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,.08)';
@@ -439,6 +619,20 @@ export default function SchoolsPage() {
                                   (e.currentTarget as HTMLElement).style.boxShadow = 'none';
                                 }}
                               >
+                                {/* Heat Indicator Dot */}
+                                <div
+                                  style={{
+                                    position: 'absolute',
+                                    top: 12,
+                                    right: 12,
+                                    width: '10px',
+                                    height: '10px',
+                                    borderRadius: '50%',
+                                    background: getHeatIndicatorColor(school.recentPerformance),
+                                  }}
+                                  title={getHeatIndicatorLabel(school.recentPerformance)}
+                                />
+
                                 <div style={{ padding: '12px' }}>
                                   <h3 style={{ margin: '0 0 8px 0', fontSize: 14, fontWeight: 700, color: 'var(--psp-navy)' }}>
                                     {school.name}
@@ -528,6 +722,7 @@ export default function SchoolsPage() {
                           justifyContent: 'space-between',
                           transition: '.15s',
                           cursor: 'pointer',
+                          position: 'relative',
                         }}
                         onMouseEnter={(e) => {
                           (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,.08)';
@@ -536,12 +731,25 @@ export default function SchoolsPage() {
                           (e.currentTarget as HTMLElement).style.boxShadow = 'none';
                         }}
                       >
-                        <div>
+                        {/* Heat Indicator Dot */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: '4px',
+                            background: getHeatIndicatorColor(school.recentPerformance),
+                            borderRadius: '4px 0 0 4px',
+                          }}
+                        />
+
+                        <div style={{ paddingLeft: 8 }}>
                           <h3 style={{ margin: '0 0 4px 0', fontSize: 16, fontWeight: 700, color: 'var(--psp-navy)' }}>
                             {school.name}
                           </h3>
                           <div style={{ fontSize: 13, color: 'var(--g400)' }}>
-                            {school.city}, {school.state} · {school.league?.name}
+                            {school.city}, {school.state} · {school.league?.name} · {getHeatIndicatorLabel(school.recentPerformance)}
                           </div>
                         </div>
                         <div style={{ textAlign: 'right', display: 'flex', gap: 16, alignItems: 'center' }}>

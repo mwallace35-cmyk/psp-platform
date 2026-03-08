@@ -25,11 +25,19 @@ const MAIN_SPORTS = [
   { href: "/baseball", label: "Baseball", color: "var(--base)" },
 ];
 
-const MORE_SPORTS = [
-  { href: "/track-field", label: "Track & Field", color: "var(--track)" },
-  { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)" },
-  { href: "/wrestling", label: "Wrestling", color: "var(--wrest)" },
-  { href: "/soccer", label: "Soccer", color: "var(--soccer)" },
+const MORE_ITEMS = [
+  { href: "/events", label: "Events", type: "page" },
+  { href: "/articles", label: "News", type: "page" },
+  { href: "/potw", label: "POTW", type: "page" },
+  { href: "/community", label: "Community", type: "page" },
+  { href: "/schools", label: "Schools", type: "page" },
+  { href: "/coaches", label: "Coaches", type: "page" },
+  { href: "/our-guys", label: "Our Guys", type: "page" },
+  { href: "/recruiting", label: "Recruiting", type: "page" },
+  { href: "/track-field", label: "Track & Field", color: "var(--track)", type: "sport" },
+  { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)", type: "sport" },
+  { href: "/wrestling", label: "Wrestling", color: "var(--wrest)", type: "sport" },
+  { href: "/soccer", label: "Soccer", color: "var(--soccer)", type: "sport" },
 ];
 
 // TODO: Migrate to database — fetch from games table with most recent results
@@ -46,8 +54,6 @@ const RECENT_SCORES = [
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const [eventsOpen, setEventsOpen] = useState(false);
-  const [dataOpen, setDataOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const announcementRef = useRef<HTMLDivElement>(null);
@@ -59,23 +65,15 @@ export default function Header() {
   const handleMobileToggle = useCallback(() => setMobileOpen(prev => !prev), []);
   const handleMoreOpen = useCallback(() => setMoreOpen(prev => !prev), []);
   const handleMoreClose = useCallback(() => setMoreOpen(false), []);
-  const handleEventsOpen = useCallback(() => setEventsOpen(prev => !prev), []);
-  const handleEventsClose = useCallback(() => setEventsOpen(false), []);
-  const handleDataOpen = useCallback(() => setDataOpen(prev => !prev), []);
-  const handleDataClose = useCallback(() => setDataOpen(false), []);
 
   // Update aria-live announcement when dropdowns change
   useEffect(() => {
     if (moreOpen) {
-      setAnnouncement("More sports submenu opened");
-    } else if (eventsOpen) {
-      setAnnouncement("Events submenu opened");
-    } else if (dataOpen) {
-      setAnnouncement("Data submenu opened");
-    } else if (moreOpen === false && eventsOpen === false && dataOpen === false) {
-      setAnnouncement("Submenu closed");
+      setAnnouncement("More menu opened");
+    } else {
+      setAnnouncement("Menu closed");
     }
-  }, [moreOpen, eventsOpen, dataOpen]);
+  }, [moreOpen]);
 
   // Keyboard navigation for score strip
   useEffect(() => {
@@ -197,14 +195,14 @@ export default function Header() {
             </Link>
           ))}
 
-          {/* More Sports Dropdown */}
+          {/* More Dropdown */}
           <div className="nav-dd">
             <button
               className="nav-link"
               style={{ background: "none", border: "none", cursor: "pointer" }}
               aria-haspopup="menu"
               aria-expanded={moreOpen}
-              aria-label="More sports menu"
+              aria-label="More menu"
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -221,7 +219,7 @@ export default function Header() {
             <div
               className="dd-menu"
               role="menu"
-              aria-label="More sports"
+              aria-label="More menu"
               style={{ display: moreOpen ? "block" : undefined }}
               onKeyDown={(e) => {
                 if (e.key === "Escape") {
@@ -229,99 +227,12 @@ export default function Header() {
                 }
               }}
             >
-              {MORE_SPORTS.map((sport) => (
-                <Link key={sport.href} href={sport.href} role="menuitem" aria-current={isActive(sport.href) ? "page" : undefined}>
-                  <span className="nav-dot" style={{ background: sport.color }} />
-                  {sport.label}
+              {MORE_ITEMS.map((item) => (
+                <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
+                  {item.type === "sport" && item.color && <span className="nav-dot" style={{ background: item.color }} />}
+                  {item.label}
                 </Link>
               ))}
-            </div>
-          </div>
-
-          {/* Events Dropdown */}
-          <div className="nav-dd">
-            <button
-              className="nav-link"
-              style={{ background: "none", border: "none", cursor: "pointer" }}
-              aria-haspopup="menu"
-              aria-expanded={eventsOpen}
-              aria-label="Events menu"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleEventsOpen();
-                } else if (e.key === "Escape") {
-                  handleEventsClose();
-                }
-              }}
-              onClick={handleEventsOpen}
-              onBlur={handleEventsClose}
-            >
-              Events &#9662;
-            </button>
-            <div
-              className="dd-menu"
-              role="menu"
-              aria-label="Events"
-              style={{ display: eventsOpen ? "block" : undefined }}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  setEventsOpen(false);
-                }
-              }}
-            >
-              <Link href="/events" role="menuitem" aria-current={isActive("/events") ? "page" : undefined}>Upcoming Events</Link>
-              <Link href="/events" role="menuitem">Camps &amp; Showcases</Link>
-            </div>
-          </div>
-
-          <Link href="/articles" className={`nav-link ${isActive("/articles") ? "active" : ""}`} aria-current={isActive("/articles") ? "page" : undefined}>
-            News
-          </Link>
-          <Link href="/potw" className={`nav-link ${isActive("/potw") ? "active" : ""}`} aria-current={isActive("/potw") ? "page" : undefined}>
-            POTW
-          </Link>
-          <Link href="/community" className={`nav-link ${isActive("/community") ? "active" : ""}`} aria-current={isActive("/community") ? "page" : undefined}>
-            Community
-          </Link>
-
-          {/* Data & Recruiting Dropdown */}
-          <div className="nav-dd">
-            <button
-              className="nav-link"
-              style={{ background: "none", border: "none", cursor: "pointer" }}
-              aria-haspopup="menu"
-              aria-expanded={dataOpen}
-              aria-label="Data and Recruiting menu"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleDataOpen();
-                } else if (e.key === "Escape") {
-                  handleDataClose();
-                }
-              }}
-              onClick={handleDataOpen}
-              onBlur={handleDataClose}
-            >
-              Data &#9662;
-            </button>
-            <div
-              className="dd-menu"
-              role="menu"
-              aria-label="Data & Recruiting"
-              style={{ display: dataOpen ? "block" : undefined }}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  setDataOpen(false);
-                }
-              }}
-            >
-              <Link href="/our-guys" role="menuitem" aria-current={isActive("/our-guys") ? "page" : undefined}><span role="img" aria-label="star">🌟</span> Our Guys</Link>
-              <Link href="/philly-everywhere" role="menuitem" aria-current={isActive("/philly-everywhere") ? "page" : undefined}><span role="img" aria-label="globe">🌍</span> Philly Everywhere</Link>
-              <Link href="/recruiting" role="menuitem" aria-current={isActive("/recruiting") ? "page" : undefined}><span role="img" aria-label="star">⭐</span> Recruiting</Link>
-              <Link href="/coaches" role="menuitem" aria-current={isActive("/coaches") ? "page" : undefined}><span role="img" aria-label="clipboard">📋</span> Coaches</Link>
-              <Link href="/compare" role="menuitem" aria-current={isActive("/compare") ? "page" : undefined}><span role="img" aria-label="chart">📊</span> Compare Players</Link>
             </div>
           </div>
 
@@ -384,24 +295,23 @@ export default function Header() {
               </button>
             </div>
             <Link href="/" onClick={handleMobileToggle}>Home</Link>
-            {[...MAIN_SPORTS, ...MORE_SPORTS].map((sport) => (
+            {MAIN_SPORTS.map((sport) => (
               <Link key={sport.href} href={sport.href} onClick={handleMobileToggle}>
                 <span className="nav-dot" style={{ background: sport.color }} />
                 {sport.label}
               </Link>
             ))}
-            <Link href="/events" onClick={handleMobileToggle}>Events</Link>
-            <Link href="/articles" onClick={handleMobileToggle}>News</Link>
-            <Link href="/potw" onClick={handleMobileToggle}>Player of the Week</Link>
-            <div style={{ borderBottom: "1px solid #333", margin: "8px 0" }} />
+            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }} />
+            {MORE_ITEMS.map((item) => (
+              <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
+                {item.type === "sport" && item.color && <span className="nav-dot" style={{ background: item.color }} />}
+                {item.label}
+              </Link>
+            ))}
+            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }} />
             <Link href="/articles" onClick={handleMobileToggle}>Articles</Link>
             <Link href="/glossary" onClick={handleMobileToggle}>Glossary</Link>
             <Link href="/search" onClick={handleMobileToggle}>Hall of Fame</Link>
-            <div style={{ borderBottom: "1px solid #333", margin: "8px 0" }} />
-            <Link href="/our-guys" onClick={handleMobileToggle}>Our Guys</Link>
-            <Link href="/recruiting" onClick={handleMobileToggle}>Recruiting</Link>
-            <Link href="/coaches" onClick={handleMobileToggle}>Coaches</Link>
-            <Link href="/search" onClick={handleMobileToggle}>Search</Link>
           </div>
         </>
       )}

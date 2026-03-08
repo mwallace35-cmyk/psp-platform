@@ -3,6 +3,7 @@ export const revalidate = 3600;
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
 import { createClient } from "@/lib/supabase/server";
 import { captureError } from "@/lib/error-tracking";
@@ -190,8 +191,9 @@ export default async function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       <Header />
 
-      <main id="main-content" style={{ flex: 1, width: "100%" }}>
-        <div id="content-updates" aria-live="polite" aria-atomic="true" className="sr-only"></div>
+      <ErrorBoundary>
+        <main id="main-content" style={{ flex: 1, width: "100%" }}>
+          <div id="content-updates" aria-live="polite" aria-atomic="true" className="sr-only"></div>
 
         {/* ============ HERO SECTION ============ */}
         <section
@@ -398,9 +400,9 @@ export default async function HomePage() {
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px" }}>
               {[
-                { name: "Football", color: "#16a34a", icon: "🏈", href: "/football" },
-                { name: "Basketball", color: "#ea580c", icon: "🏀", href: "/basketball" },
-                { name: "Baseball", color: "#dc2626", icon: "⚾", href: "/baseball" },
+                { name: "Football", color: "#16a34a", icon: "🏈", href: "/football", desc: "120+ schools, 5,000+ players tracked" },
+                { name: "Basketball", color: "#ea580c", icon: "🏀", href: "/basketball", desc: "120+ schools, 5,000+ players tracked" },
+                { name: "Baseball", color: "#dc2626", icon: "⚾", href: "/baseball", desc: "120+ schools, 5,000+ players tracked" },
               ].map((sport, idx) => (
                 <Link
                   key={idx}
@@ -435,7 +437,7 @@ export default async function HomePage() {
                     {sport.name}
                   </h3>
                   <p style={{ fontSize: "0.9rem", opacity: 0.9, margin: 0 }}>
-                    View schools, stats & records
+                    {sport.desc}
                   </p>
                 </Link>
               ))}
@@ -568,7 +570,8 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-      </main>
+        </main>
+      </ErrorBoundary>
 
       <OrganizationJsonLd />
       <Footer />

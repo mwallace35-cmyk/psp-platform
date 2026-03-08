@@ -2,6 +2,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { SkeletonCard, SkeletonText } from "@/components/ui/Skeleton";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import LeagueStandings from "./LeagueStandings";
 import StatLeadersSidebar from "./StatLeadersSidebar";
 import ContextAwareHero from "./ContextAwareHero";
@@ -73,7 +74,8 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
 
   return (
     <div className="espn-container">
-      <main>
+      <ErrorBoundary>
+        <main>
         {/* Context-Aware Hero - Game Day vs Off-Season */}
         <ContextAwareHero
           sport={sport}
@@ -200,7 +202,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           </h2>
           <Link href="/community" className="more">Join the Conversation →</Link>
         </div>
-        <PulseHotTakes sport={sport} sportColor={sportColor} />
+        <PulseHotTakes sport={sport} />
 
         {/* League Standings - Using New Component */}
         {standings.length > 0 && (
@@ -274,10 +276,12 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
             </div>
           </>
         )}
-      </main>
+        </main>
+      </ErrorBoundary>
 
       {/* Sidebar */}
-      <aside className="sidebar">
+      <ErrorBoundary>
+        <aside className="sidebar">
         {freshness && (
           <div style={{ padding: "8px 12px", background: "#f3f4f6", borderLeft: "3px solid var(--psp-gold)", marginBottom: 16, borderRadius: 3 }}>
             <div style={{ fontSize: 10, color: "var(--psp-gray-400)", fontWeight: 500, letterSpacing: 0.5, textTransform: "uppercase" }}>
@@ -319,7 +323,8 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
 
         <PSPPromo size="sidebar" variant={1} />
         <PSPPromo size="sidebar" variant={2} />
-      </aside>
+        </aside>
+      </ErrorBoundary>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
 interface HotTake {
   id: string;
@@ -8,6 +9,25 @@ interface HotTake {
   text: string;
   time: string;
   type: 'hot_take' | 'insider' | 'poll';
+}
+
+// Helper function to format time relative to now
+function formatTimeAgo(isoDateString: string): string {
+  const date = new Date(isoDateString);
+  const now = new Date();
+  const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (secondsAgo < 60) return 'just now';
+  const minutesAgo = Math.floor(secondsAgo / 60);
+  if (minutesAgo < 60) return `${minutesAgo}m ago`;
+  const hoursAgo = Math.floor(minutesAgo / 60);
+  if (hoursAgo < 24) return `${hoursAgo}h ago`;
+  const daysAgo = Math.floor(hoursAgo / 24);
+  if (daysAgo < 7) return `${daysAgo}d ago`;
+  const weeksAgo = Math.floor(daysAgo / 7);
+  if (weeksAgo < 4) return `${weeksAgo}w ago`;
+
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 const SAMPLE_HOT_TAKES: HotTake[] = [
@@ -40,7 +60,7 @@ interface PulseHotTakesProps {
   limit?: number;
 }
 
-export default function PulseHotTakes({ sport, sportColor, limit = 3 }: PulseHotTakesProps) {
+export default function PulseHotTakes({ sport, limit = 3 }: Omit<PulseHotTakesProps, 'sportColor'>) {
   const [hotTakes, setHotTakes] = useState<HotTake[]>(SAMPLE_HOT_TAKES);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -49,29 +69,39 @@ export default function PulseHotTakes({ sport, sportColor, limit = 3 }: PulseHot
       try {
         setIsLoading(true);
 
-        // TODO: Replace with actual Supabase query
-        // const { data } = await supabase
-        //   .from('hot_takes')
-        //   .select('*')
-        //   .eq('sport', sport)
-        //   .order('created_at', { ascending: false })
-        //   .limit(limit);
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from('hot_takes')
+          .select('*')
+          .eq('sport', sport)
+          .order('created_at', { ascending: false })
+          .limit(limit || 3);
 
-        // if (data && data.length > 0) {
-        //   const formattedTakes = data.map((take: any) => ({
-        //     id: take.id,
-        //     user: take.user_handle || 'PSP_Community',
-        //     text: take.content,
-        //     time: formatTimeAgo(take.created_at),
-        //     type: 'hot_take',
-        //   }));
-        //   setHotTakes(formattedTakes);
-        // } else {
-        //   setHotTakes(SAMPLE_HOT_TAKES);
-        // }
+        if (error) {
+          console.error('Error fetching hot takes from database:', error);
+          setHotTakes(SAMPLE_HOT_TAKES);
+          return;
+        }
 
-        // For now, using sample data
-        setHotTakes(SAMPLE_HOT_TAKES);
+        if (data && data.length > 0) {
+          type DBHotTake = {
+            id?: string | number;
+            user_handle?: string;
+            content?: string;
+            created_at?: string;
+            type?: string;
+          };
+          const formattedTakes = data.map((take: DBHotTake) => ({
+            id: take.id?.toString() || Math.random().toString(),
+            user: take.user_handle || 'PSP_Community',
+            text: take.content || '',
+            time: take.created_at ? formatTimeAgo(take.created_at) : 'recently',
+            type: (take.type as 'hot_take' | 'insider' | 'poll') || 'hot_take',
+          }));
+          setHotTakes(formattedTakes);
+        } else {
+          setHotTakes(SAMPLE_HOT_TAKES);
+        }
       } catch (error) {
         console.error('Error fetching hot takes:', error);
         setHotTakes(SAMPLE_HOT_TAKES);
@@ -84,7 +114,38 @@ export default function PulseHotTakes({ sport, sportColor, limit = 3 }: PulseHot
   }, [sport, limit]);
 
   if (isLoading) {
-    return null;
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            style={{
+              background: 'var(--psp-white)',
+              border: '1px solid var(--g100)',
+              borderRadius: 6,
+              padding: '12px 14px',
+              display: 'flex',
+              gap: 10,
+              animation: 'pulse 2s infinite',
+            }}
+          >
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: 'var(--g100)',
+                flexShrink: 0,
+              }}
+            />
+            <div style={{ flex: 1 }}>
+              <div style={{ height: 12, background: 'var(--g100)', borderRadius: 4, marginBottom: 8 }} />
+              <div style={{ height: 10, background: 'var(--g100)', borderRadius: 4, width: '80%' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   return (

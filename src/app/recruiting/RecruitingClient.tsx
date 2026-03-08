@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import RecruitingBoard from "@/components/recruiting/RecruitingBoard";
 import CommitmentTracker from "@/components/recruiting/CommitmentTracker";
+import PipelineFunnel from "@/components/recruiting/PipelineFunnel";
 import PSPPromo from "@/components/ads/PSPPromo";
 
 interface Recruit {
@@ -163,6 +164,9 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
 
       <div className="espn-container">
         <main>
+          {/* Pipeline Funnel */}
+          <PipelineFunnel />
+
           {/* Filter bar */}
           <div style={{
             display: "flex",

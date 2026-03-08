@@ -269,38 +269,78 @@ export default function TeamPageClient({
       {/* Right Now Section */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div style={{
-          background: "var(--psp-white)",
-          border: "1px solid var(--g100)",
+          background: "#f9fafb",
           borderRadius: 8,
-          padding: "16px 20px",
-          borderLeft: `4px solid ${sportMeta.color}`,
+          overflow: "hidden",
+          border: "1px solid var(--g100)",
         }}>
-          <h3 style={{ fontSize: 13, fontWeight: 700, color: sportMeta.color, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>
-            Right Now
-          </h3>
-          <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-            <div>
-              <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>Current Record</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif" }}>
-                {team.currentRecord.wins}-{team.currentRecord.losses}{team.currentRecord.ties > 0 ? `-${team.currentRecord.ties}` : ""}
+          {/* Header with navy background */}
+          <div style={{
+            background: "var(--psp-navy)",
+            padding: "12px 20px",
+            borderLeft: `4px solid ${school.primary_color || sportMeta.color}`,
+          }}>
+            <h3 style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: "var(--psp-white)",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              margin: 0,
+              fontFamily: "'Bebas Neue', sans-serif"
+            }}>
+              Right Now
+            </h3>
+          </div>
+
+          {/* Content */}
+          <div style={{ padding: "16px 20px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 20 }}>
+              {/* This Week's Game */}
+              <div>
+                <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  This Week's Game
+                </div>
+                <div style={{ fontSize: 13, color: "var(--psp-navy)", fontWeight: 600, marginBottom: 2 }}>
+                  {SAMPLE_SCHEDULE.length > 0 ? SAMPLE_SCHEDULE[0].opponent : "TBA"}
+                </div>
+                <div style={{ fontSize: 11, color: "var(--g500)" }}>
+                  {SAMPLE_SCHEDULE.length > 0 ? `${SAMPLE_SCHEDULE[0].homeAway === "H" ? "Home" : "Away"} • ${SAMPLE_SCHEDULE[0].date}` : "Season hasn't started yet"}
+                </div>
               </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>Championships</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "var(--psp-gold)", fontFamily: "'Bebas Neue', sans-serif" }}>
-                {team.championships}
+
+              {/* Current Record */}
+              <div>
+                <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Season Record
+                </div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: school.primary_color || sportMeta.color, fontFamily: "'Bebas Neue', sans-serif" }}>
+                  {team.currentRecord.wins}-{team.currentRecord.losses}{team.currentRecord.ties > 0 ? `-${team.currentRecord.ties}` : ""}
+                </div>
               </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>Points For/Against</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif" }}>
-                {team.pointsFor}/{team.pointsAgainst}
+
+              {/* League Standing */}
+              <div>
+                <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  League Standing
+                </div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: "var(--psp-gold)", fontFamily: "'Bebas Neue', sans-serif" }}>
+                  TBA
+                </div>
+                <div style={{ fontSize: 11, color: "var(--g500)", marginTop: 2 }}>in {team.league}</div>
               </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>Head Coach</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--psp-navy)" }}>
-                {team.coach}
+
+              {/* Next Opponent */}
+              <div>
+                <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Next Opponent
+                </div>
+                <div style={{ fontSize: 13, color: "var(--psp-navy)", fontWeight: 600, marginBottom: 2 }}>
+                  {SAMPLE_SCHEDULE.length > 1 ? SAMPLE_SCHEDULE[1].opponent : SAMPLE_SCHEDULE[0]?.opponent || "TBA"}
+                </div>
+                <div style={{ fontSize: 11, color: "var(--g500)" }}>
+                  {SAMPLE_SCHEDULE.length > 1 ? SAMPLE_SCHEDULE[1].date : (SAMPLE_SCHEDULE[0]?.date || "TBA")}
+                </div>
               </div>
             </div>
           </div>
