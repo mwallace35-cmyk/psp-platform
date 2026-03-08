@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   createClient,
   withErrorHandling,
@@ -10,8 +11,9 @@ import {
 
 /**
  * Get overview stats for a sport (schools, players, seasons, championships)
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getSportOverview(sportId: string) {
+export const getSportOverview = cache(async (sportId: string) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -51,7 +53,7 @@ export async function getSportOverview(sportId: string) {
     "DATA_SPORT_OVERVIEW",
     { sportId }
   );
-}
+});
 
 export interface PaginatedResult<T> {
   data: T[];
@@ -63,8 +65,9 @@ export interface PaginatedResult<T> {
 
 /**
  * Get schools for a specific sport (with pagination)
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getSchoolsBySport(sportId: string, page = 1, pageSize = 50) {
+export const getSchoolsBySport = cache(async (sportId: string, page = 1, pageSize = 50) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -107,12 +110,13 @@ export async function getSchoolsBySport(sportId: string, page = 1, pageSize = 50
     "DATA_SCHOOLS_BY_SPORT",
     { sportId, page, pageSize }
   );
-}
+});
 
 /**
  * Get school by slug
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getSchoolBySlug(slug: string) {
+export const getSchoolBySlug = cache(async (slug: string) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -133,12 +137,13 @@ export async function getSchoolBySlug(slug: string) {
     "DATA_SCHOOL_BY_SLUG",
     { slug }
   );
-}
+});
 
 /**
  * Get team seasons for a school and sport
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getSchoolTeamSeasons(schoolId: number, sportId: string) {
+export const getSchoolTeamSeasons = cache(async (schoolId: number, sportId: string) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -165,12 +170,13 @@ export async function getSchoolTeamSeasons(schoolId: number, sportId: string) {
     "DATA_SCHOOL_TEAM_SEASONS",
     { schoolId, sportId }
   );
-}
+});
 
 /**
  * Get championships for a school (optionally filtered by sport)
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getSchoolChampionships(schoolId: number, sportId?: string) {
+export const getSchoolChampionships = cache(async (schoolId: number, sportId?: string) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -197,4 +203,4 @@ export async function getSchoolChampionships(schoolId: number, sportId?: string)
     "DATA_SCHOOL_CHAMPIONSHIPS",
     { schoolId, sportId }
   );
-}
+});

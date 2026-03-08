@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   createClient,
   withErrorHandling,
@@ -135,8 +136,9 @@ export async function searchAll(query: string, page = 1, pageSize = 30) {
 
 /**
  * Get all coaches with their coaching stints (with pagination)
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getAllCoaches(page = 1, pageSize = 50) {
+export const getAllCoaches = cache(async (page = 1, pageSize = 50) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -172,12 +174,13 @@ export async function getAllCoaches(page = 1, pageSize = 50) {
     "DATA_ALL_COACHES",
     { page, pageSize }
   );
-}
+});
 
 /**
  * Get coaches for a specific sport (with pagination)
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getCoachesBySport(sportId: string, page = 1, pageSize = 50) {
+export const getCoachesBySport = cache(async (sportId: string, page = 1, pageSize = 50) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -213,12 +216,13 @@ export async function getCoachesBySport(sportId: string, page = 1, pageSize = 50
     "DATA_COACHES_BY_SPORT",
     { sportId, page, pageSize }
   );
-}
+});
 
 /**
  * Get total count of coaches
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getCoachCount() {
+export const getCoachCount = cache(async () => {
   return withErrorHandling(
     async () => {
       const supabase = await createClient();
@@ -232,12 +236,13 @@ export async function getCoachCount() {
     "DATA_COACH_COUNT",
     {}
   );
-}
+});
 
 /**
  * Get tracked alumni ("Our Guys" - next level tracking)
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getTrackedAlumni(filters?: { level?: string; sport?: string; featured?: boolean }, limit = 100) {
+export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?: string; featured?: boolean }, limit = 100) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -262,12 +267,13 @@ export async function getTrackedAlumni(filters?: { level?: string; sport?: strin
     "DATA_TRACKED_ALUMNI",
     { filters, limit }
   );
-}
+});
 
 /**
  * Get social posts from tracked alumni
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getSocialPosts(limit = 20) {
+export const getSocialPosts = cache(async (limit = 20) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -287,12 +293,13 @@ export async function getSocialPosts(limit = 20) {
     "DATA_SOCIAL_POSTS",
     { limit }
   );
-}
+});
 
 /**
  * Get featured alumni
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getFeaturedAlumni(limit = 5) {
+export const getFeaturedAlumni = cache(async (limit = 5) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -314,12 +321,13 @@ export async function getFeaturedAlumni(limit = 5) {
     "DATA_FEATURED_ALUMNI",
     { limit }
   );
-}
+});
 
 /**
  * Get counts of alumni across different levels
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getAlumniCounts() {
+export const getAlumniCounts = cache(async () => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -348,12 +356,13 @@ export async function getAlumniCounts() {
     "DATA_ALUMNI_COUNTS",
     {}
   );
-}
+});
 
 /**
  * Get recruiting profiles with optional filters
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getRecruits(filters?: { sportId?: string; classYear?: number; status?: string }, limit = 50) {
+export const getRecruits = cache(async (filters?: { sportId?: string; classYear?: number; status?: string }, limit = 50) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -378,7 +387,7 @@ export async function getRecruits(filters?: { sportId?: string; classYear?: numb
     "DATA_RECRUITS",
     { filters, limit }
   );
-}
+});
 
 /**
  * Get recruiting profiles for a specific class year
@@ -649,8 +658,9 @@ export interface FootballLeaderRowData extends Record<string, unknown> {
 
 /**
  * Get football leaders by stat (rushing, passing, receiving, scoring)
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getFootballLeaders(stat: string, limit = 50) {
+export const getFootballLeaders = cache(async (stat: string, limit = 50) => {
   // Cap limit to prevent abuse: maximum 100 results
   const cappedLimit = Math.min(Math.max(1, limit), 100);
 
@@ -685,7 +695,7 @@ export async function getFootballLeaders(stat: string, limit = 50) {
     "DATA_FOOTBALL_LEADERS",
     { stat, limit }
   );
-}
+});
 
 export interface BasketballLeaderRowData extends Record<string, unknown> {
   id: string;
@@ -711,8 +721,9 @@ export interface BasketballLeaderRowData extends Record<string, unknown> {
 
 /**
  * Get basketball leaders by stat (points, ppg, rebounds, assists)
+ * Cached to avoid redundant database queries within the same request
  */
-export async function getBasketballLeaders(stat: string, limit = 50) {
+export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
   // Cap limit to prevent abuse: maximum 100 results
   const cappedLimit = Math.min(Math.max(1, limit), 100);
 
@@ -747,4 +758,4 @@ export async function getBasketballLeaders(stat: string, limit = 50) {
     "DATA_BASKETBALL_LEADERS",
     { stat, limit }
   );
-}
+});

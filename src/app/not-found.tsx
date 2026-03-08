@@ -1,9 +1,16 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Button } from '@/components/ui';
 import { VALID_SPORTS, SPORT_META } from '@/lib/sports';
 
+export const metadata: Metadata = {
+  title: '404 - Page Not Found — PhillySportsPack',
+  description: 'The page you are looking for could not be found. Search our database of Philadelphia high school sports players, coaches, teams, and records.',
+};
+
 export default function NotFound() {
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-r from-navy to-navy-mid flex flex-col items-center justify-center px-4">
       <div className="text-center max-w-2xl">
         {/* 404 Number */}
@@ -59,5 +66,25 @@ export default function NotFound() {
         </Link>
       </div>
     </div>
+
+    {/* JSON-LD for 404 error page */}
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: "404 - Page Not Found",
+          url: "https://phillysportspack.com/404",
+          description: "The page you are looking for could not be found.",
+          isPartOf: {
+            "@type": "WebSite",
+            name: "PhillySportsPack",
+            url: "https://phillysportspack.com",
+          },
+        }),
+      }}
+    />
+    </>
   );
 }

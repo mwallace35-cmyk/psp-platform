@@ -103,7 +103,7 @@ export default function EditArticle() {
   }, [loading, articleId]);
 
   // Track changes
-  const handleChange = useCallback((setter: (val: any) => void, val: any) => {
+  const handleChange = useCallback(<T,>(setter: (val: T) => void, val: T) => {
     setter(val);
     setHasUnsavedChanges(true);
   }, []);

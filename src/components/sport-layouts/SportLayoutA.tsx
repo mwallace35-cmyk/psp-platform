@@ -1,15 +1,31 @@
 import Link from "next/link";
 import PSPPromo from "@/components/ads/PSPPromo";
+import type { Championship } from "@/lib/data/types";
+
+interface FeaturedArticle {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  featured_image_url?: string | null;
+  published_at?: string | null;
+}
+
+interface DataFreshness {
+  lastUpdated?: string;
+  source?: string;
+  lastVerified?: string;
+}
 
 interface SportLayoutAProps {
   sport: string;
   sportColor: string;
   meta: { name: string; emoji: string; color: string; statCategories: string[] };
   overview: { players: number; schools: number; seasons: number; championships: number };
-  champions: any[];
-  schools: any[];
-  featured: any[];
-  freshness: any;
+  champions: Championship[];
+  schools: Array<{ name: string; slug: string; city?: string; state?: string; id?: number }>;
+  featured: FeaturedArticle[];
+  freshness: DataFreshness | null;
 }
 
 export default function SportLayoutA({ sport, sportColor, meta, overview, champions, schools, featured, freshness }: SportLayoutAProps) {
@@ -105,7 +121,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <Link href="/articles" className="more">All Articles &#8594;</Link>
             </div>
             <div className="stories">
-              {moreStories.map((article: any) => (
+              {moreStories.map((article: FeaturedArticle) => (
                 <Link key={article.id} href={`/articles/${article.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                   <div className="story">
                     <div

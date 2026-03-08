@@ -2,6 +2,7 @@ import Link from "next/link";
 import { searchAll, SearchResult } from "@/lib/data";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = {
   title: "Search — PhillySportsPack",
@@ -38,7 +39,11 @@ export default async function SearchPage({
   };
 
   return (
-    <>
+    <main id="main-content">
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "https://phillysportspack.com" },
+        { name: "Search", url: "https://phillysportspack.com/search" },
+      ]} />
 
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
@@ -129,6 +134,44 @@ export default async function SearchPage({
         )}
         <InContentAd id="psp-search-btm" />
       </main>
-    </>
+
+      {/* JSON-LD for Search Page */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SearchResultsPage",
+            name: "Search — PhillySportsPack",
+            url: "https://phillysportspack.com/search",
+            description: "Search the Philadelphia high school sports database for players, schools, coaches, and seasons.",
+            isPartOf: {
+              "@type": "WebSite",
+              name: "PhillySportsPack",
+              url: "https://phillysportspack.com",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://phillysportspack.com/search?q={search_term_string}",
+                },
+                query_input: "required name=search_term_string",
+              },
+            },
+            mainEntity: {
+              "@type": "ItemList",
+              numberOfItems: results.length,
+              itemListElement: results.slice(0, 10).map((result, idx) => ({
+                "@type": "ListItem",
+                position: idx + 1,
+                name: result.display_name,
+                url: result.url_path || "https://phillysportspack.com",
+                description: result.context,
+              })),
+            },
+          }),
+        }}
+      />
+    </main>
   );
 }

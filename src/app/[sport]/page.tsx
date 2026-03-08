@@ -165,7 +165,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
   }
 
   return (
-    <>
+    <main id="main-content">
       {/* Breadcrumb JSON-LD */}
       <BreadcrumbJsonLd items={[
         { name: "Home", url: "https://phillysportspack.com" },
@@ -178,7 +178,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       {/* Sport Header */}
       <div className="sport-hdr" style={{ borderBottomColor: sportColor }}>
         <div className="sport-hdr-inner">
-          <span style={{ fontSize: 28 }}>{meta.emoji}</span>
+          <span style={{ fontSize: 28 }} aria-hidden="true">{meta.emoji}</span>
           <h1>{meta.name}</h1>
           <div className="stat-pills">
             <div className="pill"><strong>{overview.players.toLocaleString()}</strong> players</div>
@@ -198,7 +198,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         sportColor={sportColorHex}
         meta={meta}
         overview={overview}
-        champions={champions}
+        champions={champions as unknown as import("@/lib/data/types").Championship[]}
         schools={schools}
         featured={featured}
         freshness={freshness}
@@ -218,6 +218,6 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
           }),
         }}
       />
-    </>
+    </main>
   );
 }

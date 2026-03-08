@@ -35,6 +35,8 @@ export default function AdPlaceholder({ size, className = '', id, style }: SpotP
   return (
     <div
       id={id}
+      role="complementary"
+      aria-label={`Advertisement placeholder: ${config.label}`}
       className={`psp-promo-spot ${className}`}
       style={{
         width: isFullWidth ? '100%' : `${config.width}px`,

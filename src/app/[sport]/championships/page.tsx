@@ -97,7 +97,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
   }
 
   return (
-    <>
+    <main id="main-content">
       <BreadcrumbJsonLd items={[
         { name: "Home", url: "https://phillysportspack.com" },
         { name: meta.name, url: `https://phillysportspack.com/${sport}` },
@@ -107,7 +107,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{label: meta.name, href: `/${sport}`}, {label: "Championships"}]} />
           <h1 className="text-4xl md:text-5xl text-white mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
-            {meta.emoji} {meta.name} Championships
+            <span aria-hidden="true">{meta.emoji}</span> {meta.name} Championships
           </h1>
           <p className="text-gray-300">
             {championships.length} titles across {sortedYears.length} seasons
@@ -221,6 +221,6 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
           }),
         }}
       />
-    </>
+    </main>
   );
 }

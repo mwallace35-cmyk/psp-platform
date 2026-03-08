@@ -209,6 +209,40 @@ export async function getRateLimitAdapter(): Promise<RateLimitAdapter> {
 }
 
 /**
+ * Extract the client IP address from request headers.
+ * Checks x-forwarded-for (proxy/CDN) first, then x-real-ip, then connection socket.
+ *
+ * @param request - Next.js NextRequest object
+ * @returns The client IP address
+ */
+export function getClientIp(request: { headers: { get: (key: string) => string | null } }): string {
+  // x-forwarded-for may contain multiple IPs (client, proxy1, proxy2, etc.)
+  // We want the first one (the original client)
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    const ips = forwardedFor.split(',').map(ip => ip.trim());
+    if (ips.length > 0) {
+      return ips[0];
+    }
+  }
+
+  // Fallback to x-real-ip (used by some proxies like Nginx)
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp;
+  }
+
+  // Fallback to cf-connecting-ip (Cloudflare)
+  const cfConnectingIp = request.headers.get('cf-connecting-ip');
+  if (cfConnectingIp) {
+    return cfConnectingIp;
+  }
+
+  // Default fallback
+  return 'unknown';
+}
+
+/**
  * Generate a fingerprint hash from request characteristics
  * Combines IP, User-Agent, and Accept-Language for better abuse detection
  *
@@ -274,4 +308,31 @@ export function getRateLimitHeaders(remaining: number, limit: number, resetAt: n
     'X-RateLimit-Remaining': String(Math.max(0, remaining)),
     'X-RateLimit-Reset': String(Math.ceil(resetAt / 1000)),
   };
+}
+
+/**
+ * Check rate limit specifically for login attempts.
+ * Default: 5 attempts per IP per 15 minutes
+ *
+ * @param ip - Client IP address
+ * @param userAgent - Optional User-Agent header for fingerprinting
+ * @param acceptLanguage - Optional Accept-Language header for fingerprinting
+ * @param isAdmin - Optional flag to bypass rate limits for authenticated admins
+ * @returns Object with success status, remaining attempts, and reset timestamp
+ */
+export async function rateLimitLogin(
+  ip: string,
+  userAgent?: string | null,
+  acceptLanguage?: string | null,
+  isAdmin = false
+): Promise<{ success: boolean; remaining: number; resetAt?: number }> {
+  return rateLimit(
+    ip,
+    5, // Max 5 login attempts
+    15 * 60 * 1000, // 15 minute window
+    '/auth/login', // Login-specific endpoint
+    userAgent,
+    acceptLanguage,
+    isAdmin
+  );
 }

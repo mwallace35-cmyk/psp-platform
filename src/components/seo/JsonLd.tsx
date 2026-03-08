@@ -99,7 +99,7 @@ export function SportsTeamJsonLd({
   logo,
   memberOf,
 }: SportsTeamJsonLdProps) {
-  const schema: Record<string, any> = {
+  const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "SportsTeam",
     name,
@@ -246,7 +246,7 @@ export function SportsEventJsonLd({
   awayTeam,
   url,
 }: SportsEventJsonLdProps) {
-  const schema: Record<string, any> = {
+  const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
     name,

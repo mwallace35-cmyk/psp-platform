@@ -67,7 +67,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
     .sort((a, b) => b[1].length - a[1].length);
 
   return (
-    <>
+    <main id="main-content">
       {/* Breadcrumb JSON-LD */}
       <BreadcrumbJsonLd items={[
         { name: "Home", url: "https://phillysportspack.com" },
@@ -277,6 +277,6 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
           }),
         }}
       />
-    </>
+    </main>
   );
 }

@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
+import SearchInput from "./SearchInput";
+import SearchResults from "./SearchResults";
 
 interface SearchResult {
   type: "player" | "school" | "coach" | "season";
@@ -170,12 +171,12 @@ export default function SearchTypeahead() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const displayItems = query.length < 2 && isOpen
-    ? recentSearches.length > 0
-      ? recentSearches
-      : POPULAR_SEARCHES
-    : results;
-  const showDropdown = isOpen && (displayItems.length > 0 || query.length < 2 || closestMatch);
+  // Group results by type for display
+  const groupedResults = {
+    schools: results.filter((r) => r.type === "school"),
+    players: results.filter((r) => r.type === "player"),
+  };
+  const hasGroupedResults = groupedResults.schools.length > 0 || groupedResults.players.length > 0;
 
   // Helper function to get the correct aria-activedescendant ID based on context
   const getActivedescendantId = () => {
@@ -196,254 +197,37 @@ export default function SearchTypeahead() {
     return "";
   };
 
-  // Group results by type for display
-  const groupedResults = {
-    schools: results.filter((r) => r.type === "school"),
-    players: results.filter((r) => r.type === "player"),
-  };
-  const hasGroupedResults = groupedResults.schools.length > 0 || groupedResults.players.length > 0;
+  const handleSearchAll = useCallback(() => {
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+    setIsOpen(false);
+  }, [query, router]);
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="relative">
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => handleSearch(e.target.value)}
-          onFocus={() => setIsOpen(true)}
-          onKeyDown={handleKeyDown}
-          placeholder="Search players, schools, coaches..."
-          aria-label="Search for players, schools, and coaches"
-          role="combobox"
-          aria-expanded={isOpen}
-          aria-controls="search-listbox"
-          aria-autocomplete="list"
-          aria-activedescendant={getActivedescendantId()}
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:bg-white/15 focus:border-[var(--psp-gold)] focus:outline-none transition-colors"
-        />
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-          🔍
-        </span>
-      </div>
-
-      {/* Dropdown */}
-      {showDropdown && (
-        <div
-          id="search-listbox"
-          role="listbox"
-          className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-[var(--psp-gray-200)] overflow-hidden z-50 max-h-96 overflow-y-auto"
-        >
-          {/* Recent Searches Section */}
-          {query.length < 2 && recentSearches.length > 0 && (
-            <>
-              <div className="px-3 py-2 text-xs font-semibold text-[var(--psp-gray-400)] uppercase tracking-wider">
-                Recent Searches
-              </div>
-              {recentSearches.map((item, i) => (
-                <button
-                  key={`recent-${item.href}`}
-                  id={`search-recent-${i}`}
-                  role="option"
-                  aria-selected={i === selectedIndex}
-                  onClick={() => handleSelectResult(item)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
-                    i === selectedIndex
-                      ? "bg-[var(--psp-gray-100)]"
-                      : "hover:bg-[var(--psp-gray-50)]"
-                  }`}
-                >
-                  <span className="text-lg flex-shrink-0">{item.icon}</span>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-medium text-[var(--psp-navy)] truncate">
-                      {item.name}
-                    </div>
-                    {item.detail && (
-                      <div className="text-xs text-[var(--psp-gray-400)] truncate">
-                        {item.detail}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    onClick={(e) => removeRecentSearch(e, item.href)}
-                    className="text-[var(--psp-gray-300)] hover:text-[var(--psp-gray-500)] flex-shrink-0"
-                  >
-                    ×
-                  </button>
-                </button>
-              ))}
-              <div className="h-px bg-[var(--psp-gray-100)]" />
-            </>
-          )}
-
-          {/* Popular Searches / Instant Results */}
-          {query.length < 2 && recentSearches.length === 0 && (
-            <div className="px-3 py-2 text-xs font-semibold text-[var(--psp-gray-400)] uppercase tracking-wider">
-              Popular Searches
-            </div>
-          )}
-
-          {query.length >= 2 && hasGroupedResults && (
-            <>
-              {groupedResults.schools.length > 0 && (
-                <>
-                  <div className="px-3 py-2 text-xs font-semibold text-[var(--psp-gray-400)] uppercase tracking-wider">
-                    Schools
-                  </div>
-                  {groupedResults.schools.map((item, i) => (
-                    <button
-                      key={`school-${item.href}`}
-                      id={`search-school-${i}`}
-                      role="option"
-                      aria-selected={i === selectedIndex}
-                      onClick={() => handleSelectResult(item)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
-                        i === selectedIndex
-                          ? "bg-[var(--psp-gray-100)]"
-                          : "hover:bg-[var(--psp-gray-50)]"
-                      }`}
-                    >
-                      <span className="text-lg flex-shrink-0">{item.icon}</span>
-                      <div className="min-w-0 flex-1">
-                        <div className="font-medium text-[var(--psp-navy)] truncate">
-                          {item.name}
-                        </div>
-                        {item.detail && (
-                          <div className="text-xs text-[var(--psp-gray-400)] truncate">
-                            {item.detail}
-                          </div>
-                        )}
-                      </div>
-                      {item.sport && (
-                        <span
-                          className="text-xs px-2 py-1 rounded text-white flex-shrink-0"
-                          style={{ backgroundColor: SPORT_COLORS_HEX[item.sport] || "#666" }}
-                        >
-                          {item.sport}
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </>
-              )}
-              {groupedResults.players.length > 0 && (
-                <>
-                  {groupedResults.schools.length > 0 && <div className="h-px bg-[var(--psp-gray-100)]" />}
-                  <div className="px-3 py-2 text-xs font-semibold text-[var(--psp-gray-400)] uppercase tracking-wider">
-                    Players
-                  </div>
-                  {groupedResults.players.map((item, i) => (
-                    <button
-                      key={`player-${item.href}`}
-                      id={`search-player-${i}`}
-                      role="option"
-                      aria-selected={i === selectedIndex}
-                      onClick={() => handleSelectResult(item)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
-                        i === selectedIndex
-                          ? "bg-[var(--psp-gray-100)]"
-                          : "hover:bg-[var(--psp-gray-50)]"
-                      }`}
-                    >
-                      <span className="text-lg flex-shrink-0">{item.icon}</span>
-                      <div className="min-w-0 flex-1">
-                        <div className="font-medium text-[var(--psp-navy)] truncate">
-                          {item.name}
-                        </div>
-                        {item.detail && (
-                          <div className="text-xs text-[var(--psp-gray-400)] truncate">
-                            {item.detail}
-                          </div>
-                        )}
-                      </div>
-                      {item.sport && (
-                        <span
-                          className="text-xs px-2 py-1 rounded text-white flex-shrink-0"
-                          style={{ backgroundColor: SPORT_COLORS_HEX[item.sport] || "#666" }}
-                        >
-                          {item.sport}
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </>
-              )}
-            </>
-          )}
-
-          {/* Default Popular Searches (when no query and no recents) */}
-          {query.length < 2 && recentSearches.length === 0 && (
-            <>
-              {POPULAR_SEARCHES.map((item, i) => (
-                <button
-                  key={`${item.type}-${item.name}`}
-                  id={`search-popular-${i}`}
-                  role="option"
-                  aria-selected={i === selectedIndex}
-                  onClick={() => handleSelectResult(item)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
-                    i === selectedIndex
-                      ? "bg-[var(--psp-gray-100)]"
-                      : "hover:bg-[var(--psp-gray-50)]"
-                  }`}
-                >
-                  <span className="text-lg flex-shrink-0">{item.icon}</span>
-                  <div className="min-w-0">
-                    <div className="font-medium text-[var(--psp-navy)] truncate">
-                      {item.name}
-                    </div>
-                    {item.detail && (
-                      <div className="text-xs text-[var(--psp-gray-400)] truncate">
-                        {item.detail}
-                      </div>
-                    )}
-                  </div>
-                  <span className="ml-auto text-xs text-[var(--psp-gray-300)] capitalize flex-shrink-0">
-                    {item.type}
-                  </span>
-                </button>
-              ))}
-            </>
-          )}
-
-          {/* "Did you mean?" suggestion */}
-          {query.length >= 2 && !hasGroupedResults && closestMatch && (
-            <div className="px-3 py-2 text-xs text-[var(--psp-gray-500)]">
-              Did you mean:
-              <button
-                onClick={() => handleSelectResult(closestMatch.item)}
-                className="block w-full mt-1 px-3 py-2 text-sm font-medium text-[var(--psp-navy)] hover:bg-[var(--psp-gray-50)] rounded transition-colors text-left"
-              >
-                <span className="mr-2">{closestMatch.item.icon}</span>
-                {closestMatch.item.name}
-              </button>
-            </div>
-          )}
-
-          {/* "Search all" button */}
-          {query.length >= 2 && hasGroupedResults && (
-            <>
-              <div className="h-px bg-[var(--psp-gray-100)]" />
-              <button
-                onClick={() => {
-                  router.push(`/search?q=${encodeURIComponent(query)}`);
-                  setIsOpen(false);
-                }}
-                className="w-full px-3 py-2.5 text-sm text-center text-[var(--psp-gray-500)] hover:bg-[var(--psp-gray-50)]"
-              >
-                Search all for &quot;<strong>{query}</strong>&quot;
-              </button>
-            </>
-          )}
-
-          {/* No results fallback */}
-          {query.length >= 2 && !hasGroupedResults && !closestMatch && (
-            <div className="px-3 py-4 text-sm text-center text-[var(--psp-gray-400)]">
-              No results found
-            </div>
-          )}
-        </div>
-      )}
+      <SearchInput
+        ref={inputRef}
+        value={query}
+        isOpen={isOpen}
+        selectedIndex={selectedIndex}
+        onSearch={handleSearch}
+        onFocus={() => setIsOpen(true)}
+        onKeyDown={handleKeyDown}
+        getActivedescendantId={getActivedescendantId}
+      />
+      <SearchResults
+        query={query}
+        isOpen={isOpen}
+        selectedIndex={selectedIndex}
+        results={results}
+        recentSearches={recentSearches}
+        popularSearches={POPULAR_SEARCHES}
+        closestMatch={closestMatch}
+        groupedResults={groupedResults}
+        hasGroupedResults={hasGroupedResults}
+        onSelectResult={handleSelectResult}
+        onRemoveRecent={removeRecentSearch}
+        onSearchAll={handleSearchAll}
+      />
     </div>
   );
 }

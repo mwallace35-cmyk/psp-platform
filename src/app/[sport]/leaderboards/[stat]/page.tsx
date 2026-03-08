@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getFootballLeaders, getBasketballLeaders } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import SortableTable from "@/components/ui/SortableTable";
+import SortableTable, { SortableColumn } from "@/components/ui/SortableTable";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import type { Metadata } from "next";
@@ -12,6 +12,25 @@ import type React from "react";
 export const revalidate = 3600;
 
 type PageParams = { sport: string; stat: string };
+
+export function generateStaticParams() {
+  return [
+    // Football stats
+    { sport: "football", stat: "rushing" },
+    { sport: "football", stat: "passing" },
+    { sport: "football", stat: "receiving" },
+    { sport: "football", stat: "scoring" },
+    // Basketball stats
+    { sport: "basketball", stat: "scoring" },
+    { sport: "basketball", stat: "ppg" },
+    { sport: "basketball", stat: "rebounds" },
+    { sport: "basketball", stat: "assists" },
+    // Baseball stats
+    { sport: "baseball", stat: "batting" },
+    { sport: "baseball", stat: "pitching" },
+    { sport: "baseball", stat: "home-runs" },
+  ];
+}
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport, stat } = await params;
@@ -69,16 +88,7 @@ interface RawLeader {
   [key: string]: unknown;
 }
 
-interface ColumnConfig {
-  key: string;
-  label: string;
-  align?: "left" | "center" | "right";
-  sortable?: boolean;
-  primary?: boolean;
-  width?: string;
-  hideOnMobile?: boolean;
-  render?: (value: unknown, row?: TableRow) => React.ReactNode;
-}
+type ColumnConfig = SortableColumn;
 
 interface TableRow {
   id: string;
@@ -138,14 +148,13 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
       label: "#",
       align: "center",
       sortable: false,
-      width: "w-12",
     },
     {
       key: "playerName",
       label: "Player",
       sortable: true,
       primary: true,
-      render: (value: unknown, row?: TableRow) => (
+      render: (value: unknown, row: Record<string, any>) => (
         <div className="flex items-center gap-2">
           {row?.pro_team && <span className="text-gold">⭐</span>}
           <Link
@@ -162,7 +171,7 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
       key: "schoolName",
       label: "School",
       sortable: true,
-      render: (value: unknown, row?: TableRow) => (
+      render: (value: unknown, row: Record<string, any>) => (
         <Link
           href={`/${sport}/schools/${row?.schoolSlug || ""}`}
           className="hover:underline text-sm"
@@ -208,7 +217,7 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
   }));
 
   return (
-    <>
+    <main id="main-content">
       <BreadcrumbJsonLd items={[
         { name: "Home", url: "https://phillysportspack.com" },
         { name: meta.name, url: `https://phillysportspack.com/${sport}` },
@@ -376,7 +385,7 @@ export default async function LeaderboardPage({ params }: { params: Promise<Page
           }),
         }}
       />
-    </>
+    </main>
   );
 }
 

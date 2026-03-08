@@ -70,7 +70,7 @@ export default async function ArticlesPage({
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <main id="main-content" className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-gradient-to-r from-navy to-navy-mid py-12 px-4">
         <div className="max-w-4xl mx-auto">
@@ -231,6 +231,6 @@ export default async function ArticlesPage({
           </>
         )}
       </div>
-    </div>
+    </main>
   );
 }

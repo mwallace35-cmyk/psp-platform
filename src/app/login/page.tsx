@@ -21,41 +21,71 @@ function LoginForm() {
 
     // Client-side rate limiting: block if too many failed attempts
     if (isBlocked) {
-      setError("Too many failed attempts. Please try again in 30 seconds.");
+      setError("Too many failed attempts. Please try again later.");
       return;
     }
 
     setLoading(true);
     setError(null);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      // Use the server-side rate-limited login API endpoint
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (error) {
-      const newAttempts = failedAttempts + 1;
-      setFailedAttempts(newAttempts);
-      setError(error.message);
-      setLoading(false);
+      const data = await response.json();
 
-      // After 5 failed attempts, disable the button for 30 seconds
-      if (newAttempts >= 5) {
-        setIsBlocked(true);
-        setTimeout(() => {
-          setIsBlocked(false);
-          setFailedAttempts(0);
-        }, 30000); // 30 seconds
+      if (!response.ok) {
+        const newAttempts = failedAttempts + 1;
+        setFailedAttempts(newAttempts);
+
+        // Handle rate limiting (429) specially
+        if (response.status === 429) {
+          setError("Too many login attempts. Please try again in 15 minutes.");
+          setIsBlocked(true);
+          // Reset after a longer period
+          setTimeout(() => {
+            setIsBlocked(false);
+            setFailedAttempts(0);
+          }, 15 * 60 * 1000); // 15 minutes
+          return;
+        }
+
+        setError(data.error || "Login failed");
+        setLoading(false);
+
+        // After 5 failed attempts, disable the button for a period
+        if (newAttempts >= 5) {
+          setIsBlocked(true);
+          setTimeout(() => {
+            setIsBlocked(false);
+            setFailedAttempts(0);
+          }, 30000); // 30 seconds
+        }
+        return;
       }
-      return;
-    }
 
-    // Reset on successful login
-    setFailedAttempts(0);
-    setIsBlocked(false);
-    router.push(redirect);
-    router.refresh();
+      // Successful login - redirect
+      setFailedAttempts(0);
+      setIsBlocked(false);
+
+      // Refresh auth state and redirect
+      const supabase = createClient();
+      const session = await supabase.auth.getSession();
+
+      if (session.data.session) {
+        router.push(redirect);
+        router.refresh();
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An unexpected error occurred");
+      setLoading(false);
+    }
   }
 
   return (

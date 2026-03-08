@@ -35,9 +35,9 @@ export default async function RecruitingPage() {
   }
 
   return (
-    <>
+    <main id="main-content">
       <Breadcrumb items={[{ label: "Recruiting" }]} />
       <RecruitingClient recruits={recruits} commitments={commitments} />
-    </>
+    </main>
   );
 }

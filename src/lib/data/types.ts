@@ -156,8 +156,12 @@ export interface Championship {
   sport_id: string;
   level?: string;
   result?: string;
+  score?: string;
+  opponent_id?: number;
   schools?: School;
   seasons?: Season;
+  leagues?: { name: string };
+  opponent?: { name: string };
 }
 
 export interface LeaderboardEntry {

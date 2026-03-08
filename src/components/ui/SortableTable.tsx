@@ -4,23 +4,26 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import React from 'react';
 import Link from 'next/link';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RowData = Record<string, any>;
+
 export interface SortableColumn {
   key: string;
   label: string;
   align?: 'left' | 'center' | 'right';
   sortable?: boolean;
-  render?: (value: any, row: any) => React.ReactNode;
+  render?: (value: unknown, row: RowData) => React.ReactNode;
   hideOnMobile?: boolean;
   primary?: boolean;
 }
 
 interface SortableTableProps {
   columns: SortableColumn[];
-  data: any[];
+  data: RowData[];
   highlightTop3?: boolean;
   mobileCardMode?: boolean;
   emptyMessage?: string;
-  onRowClick?: (row: any) => void;
+  onRowClick?: (row: RowData) => void;
   ariaLabel?: string;
 }
 

@@ -1,20 +1,37 @@
 import Link from "next/link";
 import PSPPromo from "@/components/ads/PSPPromo";
+import type { Championship } from "@/lib/data/types";
+
+interface FeaturedArticle {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  featured_image_url?: string | null;
+}
+
+interface DataFreshness {
+  lastUpdated?: string;
+  source?: string;
+  lastVerified?: string;
+}
+
+type SchoolData = { name: string; slug: string; city?: string; state?: string; id?: number; mascot?: string; leagues?: { name?: string; short_name?: string } | null };
 
 interface SportLayoutCProps {
   sport: string;
   sportColor: string;
   meta: { name: string; emoji: string; color: string; statCategories: string[] };
   overview: { players: number; schools: number; seasons: number; championships: number };
-  champions: any[];
-  schools: any[];
-  featured: any[];
-  freshness: any;
+  champions: Championship[];
+  schools: SchoolData[];
+  featured: FeaturedArticle[];
+  freshness: DataFreshness | null;
 }
 
 // Group schools by league name
-function groupByLeague(schools: any[]): Record<string, any[]> {
-  const groups: Record<string, any[]> = {};
+function groupByLeague(schools: SchoolData[]): Record<string, SchoolData[]> {
+  const groups: Record<string, SchoolData[]> = {};
   for (const school of schools) {
     const league = school.leagues?.name || school.leagues?.short_name || "Independent";
     if (!groups[league]) groups[league] = [];
@@ -22,7 +39,7 @@ function groupByLeague(schools: any[]): Record<string, any[]> {
   }
   // Sort groups: Catholic League first, then Public, then alphabetical
   const priority = ["Catholic League", "Philadelphia Catholic League", "Public League", "Philadelphia Public League", "Inter-Ac League"];
-  const sorted: Record<string, any[]> = {};
+  const sorted: Record<string, SchoolData[]> = {};
   for (const p of priority) {
     for (const key of Object.keys(groups)) {
       if (key.includes(p.split(" ")[0]) && !sorted[key]) {
@@ -135,7 +152,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
                   gap: 10,
                 }}
               >
-                {leagueSchools.map((school: any) => (
+                {leagueSchools.map((school) => (
                   <Link
                     key={school.id}
                     href={`/${sport}/schools/${school.slug}`}
@@ -174,7 +191,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
             </div>
             <div className="rank-table">
               <div className="rt-head">Title History</div>
-              {champions.map((champ: any, i: number) => (
+              {champions.map((champ, i: number) => (
                 <div key={champ.id} className="rt-row">
                   <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
                   <div className="rt-info">
@@ -225,7 +242,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
               <Link href="/articles" className="more">All Articles &#8594;</Link>
             </div>
             <div className="headline-list">
-              {featured.map((article: any) => (
+              {featured.map((article) => (
                 <Link key={article.id} href={`/articles/${article.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                   <div className="hl-item">
                     <div

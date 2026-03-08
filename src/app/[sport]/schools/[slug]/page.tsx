@@ -20,6 +20,46 @@ export const revalidate = 86400; // ISR: daily
 
 type PageParams = { sport: string; slug: string };
 
+/**
+ * Generate static params for popular schools
+ *
+ * Note: Generating static params for ALL schools would be computationally expensive
+ * during build time and could significantly increase build duration. Instead, we
+ * pre-render a curated set of high-traffic schools and rely on ISR (Incremental Static
+ * Regeneration) with the revalidate setting above to handle other schools on-demand.
+ *
+ * Schools not in this list will be generated on first request and cached.
+ */
+export async function generateStaticParams() {
+  // Popular schools that should be pre-rendered
+  // In production, this could be fetched from an analytics or trending list
+  return [
+    // Football favorites (examples - adjust based on your actual popular schools)
+    { sport: "football", slug: "la-salle" },
+    { sport: "football", slug: "archbishop-ryan" },
+    { sport: "football", slug: "archbishop-carroll" },
+    { sport: "football", slug: "neshaminy" },
+    { sport: "football", slug: "cheltenham" },
+
+    // Basketball favorites
+    { sport: "basketball", slug: "la-salle" },
+    { sport: "basketball", slug: "roman-catholic" },
+    { sport: "basketball", slug: "st-josephs-prep" },
+    { sport: "basketball", slug: "archbishop-ryan" },
+    { sport: "basketball", slug: "archbishop-carroll" },
+
+    // Baseball
+    { sport: "baseball", slug: "la-salle" },
+    { sport: "baseball", slug: "archbishop-ryan" },
+
+    // Other sports
+    { sport: "track-field", slug: "la-salle" },
+    { sport: "lacrosse", slug: "la-salle" },
+    { sport: "wrestling", slug: "la-salle" },
+    { sport: "soccer", slug: "la-salle" },
+  ];
+}
+
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport, slug } = await params;
   if (!isValidSport(sport)) return {};

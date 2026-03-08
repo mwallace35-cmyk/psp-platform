@@ -4,6 +4,7 @@ import PSPPromo from "@/components/ads/PSPPromo";
 import { Breadcrumb } from "@/components/ui";
 import { getAllCoaches } from "@/lib/data";
 import CoachesFilter from "@/components/coaches/CoachesFilter";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -99,13 +100,17 @@ export default async function CoachesPage() {
   );
 
   return (
-    <>
+    <main id="main-content">
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "https://phillysportspack.com" },
+        { name: "Coaches", url: "https://phillysportspack.com/coaches" },
+      ]} />
       <Breadcrumb items={[{ label: "Coaches" }]} />
 
       {/* Hero */}
       <div className="sport-hdr" style={{ borderBottomColor: "var(--psp-gold)" }}>
         <div className="sport-hdr-inner">
-          <span style={{ fontSize: 28 }}>📋</span>
+          <span style={{ fontSize: 28 }} aria-hidden="true">📋</span>
           <h1>Coaches Directory</h1>
           <div className="stat-pills">
             <div className="pill"><strong>{transformedCoaches.length}</strong> coaches</div>
@@ -166,6 +171,36 @@ export default async function CoachesPage() {
           <PSPPromo size="sidebar" variant={1} />
         </aside>
       </div>
-    </>
+
+      {/* JSON-LD for Coaches Collection Page */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Coaches Directory",
+            url: "https://phillysportspack.com/coaches",
+            description: "Philadelphia high school sports coaches directory featuring football, basketball, baseball, and more.",
+            numberOfItems: transformedCoaches.length,
+            isPartOf: {
+              "@type": "WebSite",
+              name: "PhillySportsPack",
+              url: "https://phillysportspack.com",
+            },
+            mainEntity: {
+              "@type": "ItemList",
+              numberOfItems: transformedCoaches.length,
+              itemListElement: transformedCoaches.slice(0, 10).map((coach, idx) => ({
+                "@type": "ListItem",
+                position: idx + 1,
+                name: coach?.name,
+                url: `https://phillysportspack.com/${coach?.sport}/coaches/${coach?.slug}`,
+              })),
+            },
+          }),
+        }}
+      />
+    </main>
   );
 }

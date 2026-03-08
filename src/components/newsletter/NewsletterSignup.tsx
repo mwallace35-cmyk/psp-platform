@@ -61,7 +61,7 @@ export default function NewsletterSignup({ variant = 'card' }: NewsletterSignupP
       });
 
       setSubmitted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       captureError(err, { component: 'NewsletterSignup', email });
       setError('Could not sign up. Please try again.');
       emailInputRef.current?.focus();

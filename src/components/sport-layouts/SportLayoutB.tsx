@@ -1,15 +1,30 @@
 import Link from "next/link";
 import PSPPromo from "@/components/ads/PSPPromo";
+import type { Championship } from "@/lib/data/types";
+
+interface FeaturedArticle {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  featured_image_url?: string | null;
+}
+
+interface DataFreshness {
+  lastUpdated?: string;
+  source?: string;
+  lastVerified?: string;
+}
 
 interface SportLayoutBProps {
   sport: string;
   sportColor: string;
   meta: { name: string; emoji: string; color: string; statCategories: string[] };
   overview: { players: number; schools: number; seasons: number; championships: number };
-  champions: any[];
-  schools: any[];
-  featured: any[];
-  freshness: any;
+  champions: Championship[];
+  schools: Array<{ name: string; slug: string; city?: string; state?: string; id?: number }>;
+  featured: FeaturedArticle[];
+  freshness: DataFreshness | null;
 }
 
 export default function SportLayoutB({ sport, sportColor, meta, overview, champions, schools, featured, freshness }: SportLayoutBProps) {
@@ -103,7 +118,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                   <span style={{ fontSize: 10, color: "var(--psp-gold)" }}>{schools.length} teams</span>
                 </div>
               </div>
-              {schools.slice(0, 15).map((school: any, i: number) => (
+              {schools.slice(0, 15).map((school, i: number) => (
                 <div key={school.id} className="rt-row">
                   <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
                   <div className="rt-info">
@@ -134,7 +149,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
             </div>
             <div className="rank-table">
               <div className="rt-head">Recent Titles</div>
-              {champions.map((champ: any, i: number) => (
+              {champions.map((champ, i: number) => (
                 <div key={champ.id} className="rt-row">
                   <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
                   <div className="rt-info">
@@ -158,7 +173,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
               <Link href="/articles" className="more">All Articles &#8594;</Link>
             </div>
             <div className="headline-list">
-              {featured.map((article: any) => (
+              {featured.map((article) => (
                 <Link key={article.id} href={`/articles/${article.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                   <div className="hl-item">
                     <div

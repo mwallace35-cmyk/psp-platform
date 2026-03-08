@@ -66,6 +66,8 @@ export default function PSPPromo({ size, variant = 0 }: PSPPromoProps) {
   return (
     <Link
       href={promo.href}
+      role="complementary"
+      aria-label={`Promotional content: ${promo.text}`}
       className={`
         ${styles.container}
         ${styles.minHeight}
@@ -79,7 +81,7 @@ export default function PSPPromo({ size, variant = 0 }: PSPPromoProps) {
       <div className={`${styles.textSize} font-semibold text-white leading-tight`}>
         {promo.text}
       </div>
-      <div className="text-2xl font-bold text-gold group-hover:text-yellow-300 transition-colors">
+      <div className="text-2xl font-bold text-gold group-hover:text-yellow-300 transition-colors" aria-hidden="true">
         {promo.cta}
       </div>
     </Link>

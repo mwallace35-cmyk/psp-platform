@@ -25,13 +25,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function BaseballPage() {
   // Fallback data for graceful degradation
   const defaultOverview = { schools: 0, players: 0, seasons: 0, championships: 0 };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const defaultArray: any[] = [];
+  const defaultArray: unknown[] = [];
 
   // Wrap data fetching in try/catch to prevent full page crash
   let overview = defaultOverview;
-  let champions = defaultArray;
-  let schools = defaultArray;
+  let champions: unknown[] = defaultArray;
+  let schools: unknown[] = defaultArray;
 
   try {
     // Use allSettled to prevent one failure from crashing the page
