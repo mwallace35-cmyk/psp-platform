@@ -148,7 +148,7 @@ CREATE POLICY "potw_nominees_authenticated_write" ON potw_nominees
 CREATE TRIGGER articles_updated_at_trigger
   BEFORE UPDATE ON articles
   FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+  EXECUTE FUNCTION update_updated_at();
 
 -- ============================================================================
 -- TRIGGER FOR EVENTS UPDATED_AT
@@ -157,4 +157,4 @@ CREATE TRIGGER articles_updated_at_trigger
 CREATE TRIGGER events_updated_at_trigger
   BEFORE UPDATE ON events
   FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+  EXECUTE FUNCTION update_updated_at();

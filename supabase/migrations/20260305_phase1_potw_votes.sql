@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION increment_potw_votes(nominee_id integer)
 RETURNS void AS $$
 BEGIN
   UPDATE potw_nominees
-  SET vote_count = vote_count + 1
+  SET votes = votes + 1
   WHERE id = nominee_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

@@ -48,7 +48,7 @@ export default function EventsManagement() {
   async function fetchEvents() {
     try {
       setLoading(true);
-      let query = supabase.from('events').select('*').order('date', { ascending: true });
+      let query = supabase.from('events').select('*').order('start_date', { ascending: true });
 
       if (selectedSport !== 'all') {
         query = query.eq('sport_id', selectedSport);
