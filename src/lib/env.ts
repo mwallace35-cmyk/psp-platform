@@ -19,6 +19,7 @@ const envSchema = z.object({
   // NOTE: These secrets are critical for security and should NOT be empty in production
   REVALIDATION_SECRET: z.string().optional().default(''),
   PSP_PREVIEW_KEY: z.string().optional().default(''),
+  PSP_ALLOWED_IPS: z.string().optional().default(''),
   RESEND_API_KEY: z.string().optional().default(''),
   ANTHROPIC_API_KEY: z.string().optional().default(''),
 
@@ -126,6 +127,9 @@ export const env = {
   },
   get previewKey() {
     return getValidatedEnv().PSP_PREVIEW_KEY;
+  },
+  get allowedIps() {
+    return getValidatedEnv().PSP_ALLOWED_IPS;
   },
   get resendApiKey() {
     return getValidatedEnv().RESEND_API_KEY;

@@ -10,6 +10,10 @@ function generateRequestId(): string {
 
 const BYPASS_COOKIE = "psp_preview";
 const BYPASS_KEY = process.env.PSP_PREVIEW_KEY || "";
+const ALLOWED_IPS = (process.env.PSP_ALLOWED_IPS || "")
+  .split(",")
+  .map((ip) => ip.trim())
+  .filter(Boolean);
 
 const PASSTHROUGH_PREFIXES = [
   "/coming-soon",
@@ -68,7 +72,26 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Coming-soon gate removed — site is now publicly accessible
+  // Coming-soon gate — redirect public visitors, allow IP-allowlisted & cookie-bypassed users
+  const isPassthrough = PASSTHROUGH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  if (!isPassthrough) {
+    // Check IP allowlist (Vercel sets x-forwarded-for)
+    const forwarded = request.headers.get("x-forwarded-for") || "";
+    const clientIp = forwarded.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "";
+    const ipAllowed = ALLOWED_IPS.length > 0 && ALLOWED_IPS.includes(clientIp);
+
+    // Check preview cookie (set via ?preview=<key>)
+    const hasBypassCookie = request.cookies.get(BYPASS_COOKIE)?.value === "1";
+
+    if (!ipAllowed && !hasBypassCookie) {
+      const comingSoonUrl = request.nextUrl.clone();
+      comingSoonUrl.pathname = "/coming-soon";
+      comingSoonUrl.search = "";
+      const response = NextResponse.redirect(comingSoonUrl);
+      response.headers.set("x-request-id", requestId);
+      return response;
+    }
+  }
 
   // Admin auth gate
   if (pathname.startsWith("/admin") || pathname === "/login") {
