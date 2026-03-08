@@ -9,6 +9,7 @@ import ContextAwareHero from "./ContextAwareHero";
 import WeeklyMatchups from "./WeeklyMatchups";
 import PhillyPipeline from "./PhillyPipeline";
 import PulseHotTakes from "./PulseHotTakes";
+import SummerLeagueSection from "./SummerLeagueSection";
 import type { Championship } from "@/lib/data/types";
 import type { HubGame } from "./HubScoresStrip";
 import BilingualHeader from "@/components/ui/BilingualHeader";
@@ -219,6 +220,9 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
             />
           </>
         )}
+
+        {/* Summer League Section - Baseball Only */}
+        {sport === "baseball" && <SummerLeagueSection />}
 
         {/* Quick Nav Cards */}
         <div className="sec-head">{sport === "baseball" ? <BilingualHeader english={`Explore ${meta.name}`} spanish={baseballSpanish["Explore Baseball"]} /> : <h2>Explore {meta.name}</h2>}</div>

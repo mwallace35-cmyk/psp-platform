@@ -28,12 +28,11 @@ const MAIN_SPORTS = [
 const MORE_ITEMS = [
   { href: "/events", label: "Events", type: "page" },
   { href: "/articles", label: "News", type: "page" },
-  { href: "/potw", label: "POTW", type: "page" },
-  { href: "/community", label: "Community", type: "page" },
-  { href: "/schools", label: "Schools", type: "page" },
   { href: "/coaches", label: "Coaches", type: "page" },
-  { href: "/our-guys", label: "Our Guys", type: "page" },
   { href: "/recruiting", label: "Recruiting", type: "page" },
+];
+
+const MOBILE_EXTRA = [
   { href: "/track-field", label: "Track & Field", color: "var(--track)", type: "sport" },
   { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)", type: "sport" },
   { href: "/wrestling", label: "Wrestling", color: "var(--wrest)", type: "sport" },
@@ -236,8 +235,18 @@ export default function Header() {
             </div>
           </div>
 
+          {/* Primary Nav Items */}
+          <Link href="/our-guys" className={`nav-link ${isActive("/our-guys") ? "active" : ""}`} aria-current={isActive("/our-guys") ? "page" : undefined}>
+            Our Guys
+          </Link>
+          <Link href="/community" className={`nav-link ${isActive("/community") ? "active" : ""}`} aria-current={isActive("/community") ? "page" : undefined}>
+            The Pulse
+          </Link>
+          <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`} aria-current={isActive("/schools") ? "page" : undefined}>
+            Schools
+          </Link>
+
           <div className="nav-right">
-            <Link href="/search" className="nav-link" aria-current={isActive("/search") ? "page" : undefined}>Schools</Link>
             <Link href="/search" className="nav-link" aria-label="Search players and teams" aria-current={isActive("/search") ? "page" : undefined}>Search</Link>
             <Link href="/signup" className="nav-link" style={{ color: 'var(--psp-gold)' }} aria-current={isActive("/signup") ? "page" : undefined}>Sign Up</Link>
 
@@ -301,10 +310,20 @@ export default function Header() {
                 {sport.label}
               </Link>
             ))}
+            <Link href="/our-guys" onClick={handleMobileToggle}>Our Guys</Link>
+            <Link href="/community" onClick={handleMobileToggle}>The Pulse</Link>
+            <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }} />
             {MORE_ITEMS.map((item) => (
               <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
                 {item.type === "sport" && item.color && <span className="nav-dot" style={{ background: item.color }} />}
+                {item.label}
+              </Link>
+            ))}
+            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }} />
+            {MOBILE_EXTRA.map((item) => (
+              <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
+                <span className="nav-dot" style={{ background: item.color }} />
                 {item.label}
               </Link>
             ))}

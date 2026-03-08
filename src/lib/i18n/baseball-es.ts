@@ -21,4 +21,6 @@ export const baseballSpanish: Record<string, string> = {
   "Championships": "Campeonatos",
   "Tools": "Herramientas",
   "Campeones Recientes": "Campeones Recientes",
+  "Summer League": "Liga de Verano",
+  "Summer Standings": "Clasificación de Verano",
 };

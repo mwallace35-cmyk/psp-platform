@@ -33,6 +33,36 @@ interface DisplayAlumnus {
   hs: string;
 }
 
+interface DisplayScore {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
+  gameDate: string;
+  status: string;
+  sportId: string;
+}
+
+interface DisplayPotwNominee {
+  id: string;
+  playerName: string;
+  schoolName: string;
+  sportId: string;
+  statLine: string;
+  votes: number;
+}
+
+interface DisplayHotTake {
+  id: string;
+  userHandle: string;
+  content: string;
+  type: string;
+  upvotes: number;
+  downvotes: number;
+  createdAt: string;
+}
+
 interface HomePageClientProps {
   stats: {
     schools: number;
@@ -42,10 +72,13 @@ interface HomePageClientProps {
   };
   articles: DisplayArticle[];
   alumni: DisplayAlumnus[];
+  recentScores: DisplayScore[];
+  potwNominees: DisplayPotwNominee[];
+  hotTakes: DisplayHotTake[];
   websiteJsonLd: Record<string, unknown>;
 }
 
-export default function HomePageClient({ stats, articles, alumni, websiteJsonLd }: HomePageClientProps) {
+export default function HomePageClient({ stats, articles, alumni, recentScores, potwNominees, hotTakes, websiteJsonLd }: HomePageClientProps) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "var(--psp-white)" }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
@@ -184,6 +217,107 @@ export default function HomePageClient({ stats, articles, alumni, websiteJsonLd 
           </div>
         </section>
 
+        {/* ============ RECENT SCORES TICKER ============ */}
+        <section style={{ width: "100%", padding: "40px 20px", backgroundColor: "var(--psp-navy)" }}>
+          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "24px", color: "var(--psp-white)", fontFamily: "var(--font-bebas)" }}>
+              Recent Scores
+            </h2>
+            <div
+              style={{
+                display: "flex",
+                overflowX: "auto",
+                gap: "16px",
+                paddingBottom: "12px",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              {recentScores.length > 0 ? (
+                recentScores.map((score) => {
+                  const isHomeWin = score.homeScore > score.awayScore;
+                  return (
+                    <div
+                      key={score.id}
+                      style={{
+                        flexShrink: 0,
+                        width: "280px",
+                        padding: "16px",
+                        backgroundColor: "rgba(240, 165, 0, 0.1)",
+                        borderRadius: "8px",
+                        border: "1px solid rgba(240, 165, 0, 0.3)",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "12px",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--psp-gold)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        {score.sportId}
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ flex: 1 }}>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              fontWeight: isHomeWin ? 700 : 500,
+                              color: "var(--psp-white)",
+                              marginBottom: "4px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {score.homeTeam}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              fontWeight: !isHomeWin ? 700 : 500,
+                              color: "var(--psp-white)",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {score.awayTeam}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <div
+                            style={{
+                              fontSize: "1.5rem",
+                              fontWeight: 700,
+                              color: isHomeWin ? "var(--psp-gold)" : "var(--psp-white)",
+                              marginBottom: "4px",
+                            }}
+                          >
+                            {score.homeScore}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "1.5rem",
+                              fontWeight: 700,
+                              color: !isHomeWin ? "var(--psp-gold)" : "var(--psp-white)",
+                            }}
+                          >
+                            {score.awayScore}
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.7)", paddingTop: "8px", borderTop: "1px solid rgba(240, 165, 0, 0.2)" }}>
+                        {formatTimeAgo(score.gameDate)}
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div style={{ color: "var(--psp-white)", fontSize: "0.95rem", padding: "24px 16px" }}>
+                  No recent scores available
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* ============ FEATURED CONTENT GRID ============ */}
         <section style={{ width: "100%", padding: "60px 20px" }}>
           <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
@@ -305,6 +439,123 @@ export default function HomePageClient({ stats, articles, alumni, websiteJsonLd 
           </div>
         </section>
 
+        {/* ============ POTW SPOTLIGHT ============ */}
+        <section style={{ width: "100%", padding: "60px 20px", backgroundColor: "var(--psp-white)" }}>
+          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+            <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "32px", color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+              Player of the Week Spotlight
+            </h2>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "24px",
+              }}
+            >
+              {potwNominees.length > 0 ? (
+                potwNominees.map((nominee) => (
+                  <div
+                    key={nominee.id}
+                    style={{
+                      padding: "24px",
+                      backgroundColor: "var(--psp-white)",
+                      border: "2px solid var(--psp-gold)",
+                      borderRadius: "12px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "16px",
+                      transition: "all 0.3s ease",
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: "12px" }}>
+                      <div style={{ flex: 1 }}>
+                        <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 4px 0", color: "var(--psp-navy)" }}>
+                          {nominee.playerName}
+                        </h3>
+                        <p style={{ fontSize: "0.9rem", color: "var(--psp-gold)", margin: "0 0 4px 0", fontWeight: 500 }}>
+                          {nominee.schoolName}
+                        </p>
+                        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--psp-gray-600)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          {nominee.sportId}
+                        </span>
+                      </div>
+                      <div style={{ textAlign: "right", minWidth: "60px" }}>
+                        <div style={{ fontSize: "1.8rem", fontWeight: 700, color: "var(--psp-gold)" }}>
+                          {nominee.votes}
+                        </div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--psp-gray-600)", fontWeight: 500 }}>
+                          votes
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ padding: "12px", backgroundColor: "var(--psp-gray-50)", borderRadius: "6px" }}>
+                      <p style={{ fontSize: "0.9rem", color: "var(--psp-navy)", margin: 0, fontStyle: "italic" }}>
+                        {nominee.statLine}
+                      </p>
+                    </div>
+                    <Link
+                      href="/potw"
+                      style={{
+                        padding: "10px 16px",
+                        backgroundColor: "var(--psp-gold)",
+                        color: "var(--psp-navy)",
+                        textDecoration: "none",
+                        borderRadius: "6px",
+                        fontWeight: 600,
+                        fontSize: "0.9rem",
+                        textAlign: "center",
+                        transition: "all 0.3s ease",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-gold-light)";
+                        (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-gold)";
+                        (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
+                      }}
+                    >
+                      Vote Now
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 20px", color: "var(--psp-gray-600)" }}>
+                  <p style={{ fontSize: "0.95rem" }}>No POTW nominees available at this time</p>
+                </div>
+              )}
+            </div>
+            <div style={{ marginTop: "32px", textAlign: "center" }}>
+              <Link
+                href="/potw"
+                style={{
+                  padding: "12px 28px",
+                  backgroundColor: "var(--psp-navy)",
+                  color: "var(--psp-white)",
+                  textDecoration: "none",
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  display: "inline-block",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#1a4d8f";
+                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-navy)";
+                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
+                }}
+              >
+                View All Nominees
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ============ NEWSLETTER CTA ============ */}
         <section
           style={{
@@ -359,6 +610,93 @@ export default function HomePageClient({ stats, articles, alumni, websiteJsonLd 
               >
                 Subscribe
               </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ============ QUICK COMMUNITY PULSE ============ */}
+        <section style={{ width: "100%", padding: "60px 20px", backgroundColor: "var(--psp-gray-50)" }}>
+          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+            <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "16px", color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+              Community Hot Takes
+            </h2>
+            <p style={{ fontSize: "0.95rem", color: "var(--psp-gray-600)", marginBottom: "32px", maxWidth: "600px" }}>
+              What the community is talking about this week. Share your takes and join the conversation.
+            </p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "24px",
+                marginBottom: "32px",
+              }}
+            >
+              {hotTakes.map((take) => {
+                const totalVotes = take.upvotes + take.downvotes;
+                const upvotePercent = totalVotes > 0 ? Math.round((take.upvotes / totalVotes) * 100) : 0;
+                return (
+                  <div
+                    key={take.id}
+                    style={{
+                      padding: "20px",
+                      backgroundColor: "var(--psp-white)",
+                      borderRadius: "12px",
+                      border: "1px solid var(--psp-gray-200)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "16px",
+                      transition: "all 0.3s ease",
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontSize: "1.5rem" }}>
+                        {take.type === "take" ? "🔥" : take.type === "prediction" ? "🔮" : "💬"}
+                      </span>
+                      <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--psp-navy)" }}>
+                        {take.userHandle}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: "0.95rem", color: "var(--psp-navy)", margin: 0, lineHeight: "1.5" }}>
+                      {take.content}
+                    </p>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px", paddingTop: "8px", borderTop: "1px solid var(--psp-gray-200)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem", color: "var(--psp-gray-600)" }}>
+                        <span>👍 {take.upvotes}</span>
+                        <span>👎 {take.downvotes}</span>
+                      </div>
+                      <div style={{ marginLeft: "auto", fontSize: "0.8rem", color: "var(--psp-gray-500)" }}>
+                        {formatTimeAgo(take.createdAt)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Link
+                href="/community"
+                style={{
+                  padding: "12px 28px",
+                  backgroundColor: "var(--psp-navy)",
+                  color: "var(--psp-white)",
+                  textDecoration: "none",
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  display: "inline-block",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#1a4d8f";
+                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-navy)";
+                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
+                }}
+              >
+                Join The Pulse
+              </Link>
             </div>
           </div>
         </section>
