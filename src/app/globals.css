@@ -386,6 +386,24 @@
   background: var(--skeleton-bg, #e2e8f0);
 }
 
+/* Skeleton pulse animation */
+@keyframes skeleton-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse,
+.skeleton {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 body {
   font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
   background: var(--bg);
@@ -996,12 +1014,151 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .psp-banner-wrap, .psp-hero-wrap { overflow: hidden; }
 .psp-rail-stack { display: flex; flex-direction: column; gap: 12px; }
 
+/* ===== MOBILE NAVIGATION FIX - HIDE DESKTOP NAV ON MOBILE ===== */
+@media (max-width: 768px) {
+  /* Hide all main nav sport links (Football, Basketball, Baseball, More, etc.) on mobile */
+  .mainnav-inner {
+    justify-content: flex-end;
+  }
+
+  /* Hide nav-dd (dropdown menus) on mobile */
+  .nav-dd {
+    display: none;
+  }
+
+  /* Hide nav-link items except those in nav-right (hamburger button) on mobile */
+  .mainnav-inner > .nav-link:not(.nav-right .nav-link),
+  .mainnav-inner > a:not(:first-child) {
+    display: none;
+  }
+
+  /* Show only the home link and nav-right section on mobile */
+  .mainnav-inner > .nav-link:first-child {
+    display: flex;
+  }
+
+  /* Show the hamburger button - it's in nav-right */
+  .nav-right {
+    display: flex;
+    gap: 2px;
+  }
+
+  /* Hide secondary nav links on mobile in nav-right */
+  .nav-right > .nav-link {
+    display: none;
+  }
+
+  /* Show only the hamburger and search-like buttons */
+  .nav-right > button,
+  .nav-right > .block {
+    display: flex !important;
+  }
+
+  /* Hide "Schools" and "Search" links in nav-right, show hamburger */
+  .nav-right .nav-link:nth-child(1),
+  .nav-right .nav-link:nth-child(2),
+  .nav-right .nav-link:nth-child(3) {
+    display: none;
+  }
+
+  /* Topbar secondary links - hide on mobile */
+  .topbar-links {
+    display: none !important;
+  }
+
+  /* Topbar on mobile - show only logo */
+  .topbar-inner {
+    gap: 8px;
+  }
+
+  /* Logo on mobile */
+  .logo-mark {
+    font-size: 14px;
+  }
+
+  /* Ensure score strip is horizontally scrollable without overflow */
+  .scorestrip {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ss-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Hide score strip fade gradients on small screens for more space */
+  .ss-scroll::before,
+  .ss-scroll::after {
+    width: 10px;
+  }
+}
+
+/* Extra small phones - further adjustments */
+@media (max-width: 480px) {
+  .topbar {
+    height: 36px;
+    padding: 0 8px;
+  }
+
+  .topbar-inner {
+    gap: 6px;
+  }
+
+  .logo-mark {
+    font-size: 12px;
+  }
+
+  .mainnav-inner {
+    height: 40px;
+    padding: 0 4px;
+  }
+
+  .nav-right {
+    gap: 0;
+  }
+}
+
 /* ===== MOBILE NAV ===== */
 .mobile-nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.8); z-index: 600; }
 .mobile-nav-overlay.open { display: block; }
 .mobile-nav-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 280px; background: var(--espn-dark); z-index: 601; padding: 16px; overflow-y: auto; }
-.mobile-nav-panel a { display: flex; align-items: center; gap: 8px; padding: 12px 8px; font-size: 14px; font-weight: 600; color: #ccc; border-bottom: 1px solid #222; text-decoration: none; }
+.mobile-nav-panel a { display: flex; align-items: center; gap: 8px; padding: 12px 8px; font-size: 14px; font-weight: 600; color: #ccc; border-bottom: 1px solid #222; text-decoration: none; min-height: 44px; }
 .mobile-nav-panel a:hover { color: #fff; text-decoration: none; }
+.mobile-nav-panel a:focus-visible { outline: 2px solid var(--psp-gold); outline-offset: -2px; }
+
+/* ===== TOUCH TARGET SIZING (WCAG 2.1 Level AAA - 44x44px minimum) ===== */
+@media (hover: none) and (pointer: coarse) {
+  /* Mobile touch targets */
+  button,
+  a,
+  [role="button"],
+  [role="menuitem"],
+  [role="link"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px;
+  }
+
+  /* Header buttons */
+  .nav-right button,
+  .topbar-inner button,
+  .mobile-nav-panel button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Nav links */
+  .nav-link {
+    min-height: 44px;
+    padding: 0 12px;
+  }
+
+  /* Mobile menu links */
+  .mobile-nav-panel a {
+    min-height: 44px;
+  }
+}
 
 /* ===== ADMIN-SPECIFIC STYLES ===== */
 .admin-card {

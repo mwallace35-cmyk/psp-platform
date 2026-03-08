@@ -1,8 +1,17 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import PSPPromo from "@/components/ads/PSPPromo";
+import { SkeletonCard, SkeletonText } from "@/components/ui/Skeleton";
+import LeagueStandings from "./LeagueStandings";
+import StatLeadersSidebar from "./StatLeadersSidebar";
+import ContextAwareHero from "./ContextAwareHero";
+import WeeklyMatchups from "./WeeklyMatchups";
+import PhillyPipeline from "./PhillyPipeline";
+import PulseHotTakes from "./PulseHotTakes";
 import type { Championship } from "@/lib/data/types";
 import type { HubGame } from "./HubScoresStrip";
+import BilingualHeader from "@/components/ui/BilingualHeader";
+import { baseballSpanish } from "@/lib/i18n/baseball-es";
 
 const PhillyEverywhereSection = dynamic(() => import("@/components/philly-everywhere/PhillyEverywhereSection"), { ssr: false });
 
@@ -65,89 +74,27 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
   return (
     <div className="espn-container">
       <main>
-        {/* Full-Width Featured Story Hero */}
-        {topStory ? (
-          <Link href={`/articles/${topStory.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-            <div
-              style={{
-                position: "relative",
-                height: 320,
-                borderRadius: 6,
-                overflow: "hidden",
-                marginBottom: 20,
-                background: topStory.featured_image_url
-                  ? `url(${topStory.featured_image_url}) center / cover`
-                  : `linear-gradient(135deg, ${meta.color}cc 0%, var(--psp-navy) 100%)`,
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(0deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.2) 50%, transparent 100%)",
-                }}
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  top: 12,
-                  left: 12,
-                  background: sportColor,
-                  color: "#fff",
-                  fontSize: 10,
-                  fontWeight: 800,
-                  padding: "4px 10px",
-                  borderRadius: 3,
-                  textTransform: "uppercase",
-                  letterSpacing: 0.5,
-                }}
-              >
-                FEATURED
-              </div>
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 24 }}>
-                <h2
-                  style={{
-                    fontSize: 28,
-                    fontWeight: 800,
-                    color: "#fff",
-                    lineHeight: 1.15,
-                    marginBottom: 8,
-                    fontFamily: '"Bebas Neue", sans-serif',
-                    maxWidth: 600,
-                  }}
-                >
-                  {topStory.title}
-                </h2>
-                {topStory.excerpt && (
-                  <p style={{ fontSize: 14, color: "rgba(255,255,255,.7)", maxWidth: 500, lineHeight: 1.4 }}>
-                    {topStory.excerpt}
-                  </p>
-                )}
-                <div style={{ fontSize: 11, color: "var(--psp-gold)", fontWeight: 700, marginTop: 8 }}>
-                  {topStory.published_at
-                    ? new Date(topStory.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-                    : ""}
-                </div>
-              </div>
-            </div>
-          </Link>
-        ) : (
-          <div className="hero-card">
-            <div className="hero-tag">{meta.name}</div>
-            <div className="hero-img" style={{ background: `linear-gradient(180deg, ${meta.color}88 0%, rgba(10,22,40,.95) 100%)` }}>
-              <div>
-                <h2>Philadelphia High School {meta.name}</h2>
-                <div className="hero-sub">{overview.players.toLocaleString()} players, {overview.schools.toLocaleString()} schools tracked</div>
-              </div>
-            </div>
-          </div>
+        {/* Context-Aware Hero - Game Day vs Off-Season */}
+        <ContextAwareHero
+          sport={sport}
+          sportColor={sportColor}
+          metaName={meta.name}
+          recentGames={recentGames}
+          featuredArticle={topStory || undefined}
+          playerCount={overview.players}
+          schoolCount={overview.schools}
+        />
+
+        {/* This Week's Matchups */}
+        {recentGames.length > 0 && (
+          <WeeklyMatchups games={recentGames} sport={sport} sportColor={sportColor} />
         )}
 
         {/* Story Grid (2-column) */}
         {moreStories.length > 0 && (
           <>
             <div className="sec-head">
-              <h2>Latest {meta.name} Stories</h2>
+              {sport === "baseball" ? <BilingualHeader english={`Latest ${meta.name} Stories`} spanish={baseballSpanish["Latest Stories"]} /> : <h2>Latest {meta.name} Stories</h2>}
               <Link href="/articles" className="more">All Articles &#8594;</Link>
             </div>
             <div className="stories">
@@ -222,7 +169,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
         {champions.length > 0 && (
           <>
             <div className="sec-head">
-              <h2>Recent Champions</h2>
+              {sport === "baseball" ? <BilingualHeader english="Recent Champions" spanish={baseballSpanish["Campeones Recientes"]} /> : <h2>Recent Champions</h2>}
               <Link href={`/${sport}/championships`} className="more">All Championships &#8594;</Link>
             </div>
             <div className="rank-table">
@@ -246,83 +193,33 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
         {/* Philly Everywhere */}
         <PhillyEverywhereSection sport={sport} alumni={trackedAlumni} />
 
-        {/* The Pulse - Community Feed */}
+        {/* The Pulse - Community Feed (DB-connected with fallback) */}
         <div className="sec-head">
           <h2 style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ color: sportColor }}>●</span> The Pulse
           </h2>
           <Link href="/community" className="more">Join the Conversation →</Link>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-          {[
-            { user: "CoachK_Philly", text: `Big matchup tonight — ${sport === "football" ? "Prep vs La Salle" : sport === "basketball" ? "Neumann vs Roman" : "La Salle vs Prep"} will set the tone for the league.`, time: "2h ago", type: "hot_take" },
-            { user: "PhillyHoopsScout", text: "Just left practice — keep an eye on the freshman class this year. Philly is LOADED.", time: "4h ago", type: "insider" },
-            { user: "PSP_Community", text: `Who's your pick for ${meta.name} Player of the Week? Cast your vote now!`, time: "6h ago", type: "poll" },
-          ].map((item, i) => (
-            <div key={i} style={{
-              background: "var(--psp-white)",
-              border: "1px solid var(--g100)",
-              borderRadius: 6,
-              padding: "12px 14px",
-              display: "flex",
-              gap: 10,
-            }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: "50%",
-                background: item.type === "hot_take" ? "#fef3c7" : item.type === "insider" ? "#dbeafe" : "#f3e8ff",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 14, flexShrink: 0,
-              }}>
-                {item.type === "hot_take" ? "🔥" : item.type === "insider" ? "👀" : "📊"}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                  <span style={{ fontWeight: 700, fontSize: 12, color: "var(--psp-navy)" }}>@{item.user}</span>
-                  <span style={{ fontSize: 10, color: "var(--g400)" }}>{item.time}</span>
-                </div>
-                <div style={{ fontSize: 12, color: "var(--text)", lineHeight: 1.5 }}>{item.text}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <PulseHotTakes sport={sport} sportColor={sportColor} />
 
-        {/* League Standings */}
+        {/* League Standings - Using New Component */}
         {standings.length > 0 && (
           <>
             <div className="sec-head">
-              <h2>League Standings</h2>
+              {sport === "baseball" ? <BilingualHeader english="League Standings" spanish={baseballSpanish["League Standings"]} /> : <h2>League Standings</h2>}
               <Link href={`/${sport}/teams`} className="more">Full Standings →</Link>
             </div>
-            <div className="rank-table" style={{ marginBottom: 20 }}>
-              <div className="rt-head">
-                <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                  <span>{meta.name} Standings</span>
-                  <span style={{ fontSize: 10, color: "var(--psp-gold)" }}>W-L{standings[0]?.ties ? "-T" : ""}</span>
-                </div>
-              </div>
-              {standings.map((team, i) => (
-                <div key={team.id} className="rt-row">
-                  <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
-                  <div className="rt-info">
-                    {team.schools?.slug ? (
-                      <Link href={`/${sport}/schools/${team.schools.slug}`} className="rname" style={{ color: "var(--link)" }}>
-                        {team.schools.name}
-                      </Link>
-                    ) : (
-                      <span className="rname">{team.schools?.name || `Team ${team.id}`}</span>
-                    )}
-                  </div>
-                  <div className="rt-rec" style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>
-                    {team.wins}-{team.losses}{team.ties ? `-${team.ties}` : ""}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <LeagueStandings
+              standings={standings}
+              sport={sport}
+              sportColor={sportColor}
+              metaName={meta.name}
+            />
           </>
         )}
 
         {/* Quick Nav Cards */}
-        <div className="sec-head"><h2>Explore {meta.name}</h2></div>
+        <div className="sec-head">{sport === "baseball" ? <BilingualHeader english={`Explore ${meta.name}`} spanish={baseballSpanish["Explore Baseball"]} /> : <h2>Explore {meta.name}</h2>}</div>
         <div className="ldr-grid">
           <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Leaderboards</div>
@@ -399,16 +296,15 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           </div>
         </div>
 
-        {/* Mini Leaderboard */}
-        <div className="widget">
-          <div className="w-head">📊 Top Performers</div>
-          <div className="w-body">
-            <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="w-link">&#8594; {meta.statCategories[0]} Leaders</Link>
-            {meta.statCategories[1] && (
-              <Link href={`/${sport}/leaderboards/${meta.statCategories[1]}`} className="w-link">&#8594; {meta.statCategories[1]} Leaders</Link>
-            )}
-          </div>
-        </div>
+        {/* Stat Leaders Sidebar Widget */}
+        <StatLeadersSidebar
+          sport={sport}
+          sportColor={sportColor}
+          statCategories={[]}
+        />
+
+        {/* Philly Pipeline - Recruits + Our Guys */}
+        <PhillyPipeline sport={sport} sportColor={sportColor} />
 
         <div className="widget">
           <div className="w-head">{meta.emoji} Tools</div>

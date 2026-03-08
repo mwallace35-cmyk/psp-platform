@@ -55,6 +55,8 @@ const PLACEHOLDER_SCHOOLS: School[] = [
   { id: 12, slug: 'bonner-prendie', name: 'Bonner-Prendie', league_id: 1, city: 'Philadelphia', state: 'PA', league: { name: 'Catholic League' }, championships_count: 2 },
 ];
 
+type ViewMode = 'map' | 'league' | 'search';
+
 export default function SchoolsPage() {
   const [schools, setSchools] = useState<School[]>(PLACEHOLDER_SCHOOLS);
   const [filteredSchools, setFilteredSchools] = useState<School[]>(PLACEHOLDER_SCHOOLS);
@@ -62,6 +64,7 @@ export default function SchoolsPage() {
   const [selectedSport, setSelectedSport] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('map');
 
   // Load Leaflet
   useEffect(() => {
@@ -179,138 +182,394 @@ export default function SchoolsPage() {
             </div>
           </div>
 
-          {/* Map Section */}
-          <div className="sec-head">
-            <h2>School Locations</h2>
-          </div>
-          <div
-            id="schools-map"
-            style={{
-              width: '100%',
-              height: 400,
-              marginBottom: 16,
-              borderRadius: 4,
-              border: '1px solid var(--g100)',
-            }}
-          />
-
-          {/* Filters */}
-          <div className="filter-bar">
-            <input
-              type="text"
-              placeholder="Search schools or cities..."
-              className="filter-input"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ flex: 1, minWidth: 200 }}
-            />
-            <select
-              className="filter-select"
-              value={selectedLeague}
-              onChange={(e) => setSelectedLeague(e.target.value)}
-            >
-              <option value="">All Leagues</option>
-              {LEAGUES.map((league) => (
-                <option key={league.id} value={league.name}>
-                  {league.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Section Header */}
-          <div className="sec-head">
-            <h2>School Directory</h2>
-            <span style={{ fontSize: 11, color: 'var(--g400)', marginLeft: 'auto' }}>
-              {filteredSchools.length} {filteredSchools.length === 1 ? 'school' : 'schools'}
-            </span>
-          </div>
-
-          {/* School Cards Grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: 12,
-              marginBottom: 16,
-            }}
-          >
-            {filteredSchools.map((school) => (
-              <Link
-                key={school.id}
-                href={`/football/schools/${school.slug}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
+          {/* View Mode Switcher */}
+          <div style={{
+            display: 'flex',
+            gap: 8,
+            marginBottom: 24,
+            borderBottom: '1px solid var(--g100)',
+            paddingBottom: 16,
+          }}>
+            {[
+              { mode: 'map' as ViewMode, label: '📍 Map View' },
+              { mode: 'league' as ViewMode, label: '🏆 League View' },
+              { mode: 'search' as ViewMode, label: '🔍 Search' },
+            ].map((tab) => (
+              <button
+                key={tab.mode}
+                onClick={() => setViewMode(tab.mode)}
+                style={{
+                  padding: '10px 16px',
+                  borderRadius: 4,
+                  border: 'none',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  background: viewMode === tab.mode ? 'var(--psp-gold)' : 'var(--psp-navy)',
+                  color: viewMode === tab.mode ? 'var(--psp-navy)' : '#fff',
+                  transition: '.15s',
+                }}
+                onMouseEnter={(e) => {
+                  if (viewMode !== tab.mode) {
+                    (e.currentTarget as HTMLElement).style.opacity = '0.85';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (viewMode !== tab.mode) {
+                    (e.currentTarget as HTMLElement).style.opacity = '1';
+                  }
+                }}
               >
-                <div
-                  style={{
-                    background: '#fff',
-                    border: '1px solid var(--g100)',
-                    borderRadius: 4,
-                    overflow: 'hidden',
-                    transition: '.15s',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,.08)';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-                  }}
-                >
-                  {/* Header with league color */}
-                  <div
-                    style={{
-                      background: LEAGUE_COLORS[school.league?.name || ''] || '#0a1628',
-                      padding: '12px',
-                      color: '#fff',
-                    }}
-                  >
-                    <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif" }}>
-                      {school.name}
-                    </h3>
-                  </div>
-
-                  {/* Body */}
-                  <div style={{ padding: '12px' }}>
-                    <div style={{ fontSize: 11, color: 'var(--g400)', marginBottom: 8 }}>
-                      {school.league?.name}
-                    </div>
-                    <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8 }}>
-                      {school.city}, {school.state}
-                    </div>
-
-                    {/* Stats */}
-                    <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid var(--g100)' }}>
-                      <div>
-                        <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase' }}>Championships</div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--psp-gold)' }}>
-                          {school.championships_count || 0}
-                        </div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase' }}>Sports</div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--psp-navy)' }}>
-                          7
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+                {tab.label}
+              </button>
             ))}
           </div>
 
-          {filteredSchools.length === 0 && (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '40px 20px',
-                color: 'var(--g400)',
-              }}
-            >
-              <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
-              <p>No schools match your search. Try adjusting your filters.</p>
+          {/* Map View */}
+          {viewMode === 'map' && (
+            <>
+              <div className="sec-head">
+                <h2>School Locations</h2>
+              </div>
+              <div
+                id="schools-map"
+                style={{
+                  width: '100%',
+                  height: 400,
+                  marginBottom: 16,
+                  borderRadius: 4,
+                  border: '1px solid var(--g100)',
+                }}
+              />
+            </>
+          )}
+
+          {/* Filters - Show for Map and League views */}
+          {(viewMode === 'map' || viewMode === 'league') && (
+            <div className="filter-bar">
+              {viewMode === 'map' && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Search schools or cities..."
+                    className="filter-input"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ flex: 1, minWidth: 200 }}
+                  />
+                  <select
+                    className="filter-select"
+                    value={selectedLeague}
+                    onChange={(e) => setSelectedLeague(e.target.value)}
+                  >
+                    <option value="">All Leagues</option>
+                    {LEAGUES.map((league) => (
+                      <option key={league.id} value={league.name}>
+                        {league.name}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+              {viewMode === 'league' && (
+                <select
+                  className="filter-select"
+                  value={selectedLeague}
+                  onChange={(e) => setSelectedLeague(e.target.value)}
+                >
+                  <option value="">All Leagues</option>
+                  {LEAGUES.map((league) => (
+                    <option key={league.id} value={league.name}>
+                      {league.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
+          )}
+
+          {/* Map View - Grid of School Cards */}
+          {(viewMode === 'map' || viewMode === 'league') && (
+            <>
+              <div className="sec-head">
+                <h2>{viewMode === 'map' ? 'School Directory' : 'Schools by League'}</h2>
+                <span style={{ fontSize: 11, color: 'var(--g400)', marginLeft: 'auto' }}>
+                  {viewMode === 'map'
+                    ? `${filteredSchools.length} ${filteredSchools.length === 1 ? 'school' : 'schools'}`
+                    : `${schools.length} total schools`}
+                </span>
+              </div>
+
+              {viewMode === 'map' ? (
+                // Standard grid view
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                    gap: 12,
+                    marginBottom: 16,
+                  }}
+                >
+                  {filteredSchools.map((school) => (
+                    <Link
+                      key={school.id}
+                      href={`/football/schools/${school.slug}`}
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <div
+                        style={{
+                          background: '#fff',
+                          border: '1px solid var(--g100)',
+                          borderRadius: 4,
+                          overflow: 'hidden',
+                          transition: '.15s',
+                          cursor: 'pointer',
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,.08)';
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+                        }}
+                      >
+                        {/* Header with league color */}
+                        <div
+                          style={{
+                            background: LEAGUE_COLORS[school.league?.name || ''] || '#0a1628',
+                            padding: '12px',
+                            color: '#fff',
+                          }}
+                        >
+                          <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif" }}>
+                            {school.name}
+                          </h3>
+                        </div>
+
+                        {/* Body */}
+                        <div style={{ padding: '12px' }}>
+                          <div style={{ fontSize: 11, color: 'var(--g400)', marginBottom: 8 }}>
+                            {school.league?.name}
+                          </div>
+                          <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8 }}>
+                            {school.city}, {school.state}
+                          </div>
+
+                          {/* Stats */}
+                          <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid var(--g100)' }}>
+                            <div>
+                              <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase' }}>Championships</div>
+                              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--psp-gold)' }}>
+                                {school.championships_count || 0}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase' }}>Sports</div>
+                              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--psp-navy)' }}>
+                                7
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                // League view - grouped by league
+                <>
+                  {LEAGUES.map((league) => {
+                    const leagueSchools = schools.filter(
+                      (s) => s.league?.name === league.name && (!selectedLeague || s.league?.name === selectedLeague)
+                    );
+                    if (leagueSchools.length === 0) return null;
+                    return (
+                      <div key={league.id} style={{ marginBottom: 32 }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          marginBottom: 16,
+                          paddingBottom: 12,
+                          borderBottom: `2px solid ${LEAGUE_COLORS[league.name] || '#999'}`,
+                        }}>
+                          <div style={{
+                            width: 12,
+                            height: 12,
+                            borderRadius: '50%',
+                            background: LEAGUE_COLORS[league.name] || '#999',
+                          }} />
+                          <h3 style={{
+                            fontSize: 18,
+                            fontWeight: 700,
+                            color: 'var(--psp-navy)',
+                            fontFamily: "'Bebas Neue', sans-serif",
+                            margin: 0,
+                          }}>
+                            {league.name}
+                          </h3>
+                          <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--g400)' }}>
+                            {leagueSchools.length} schools
+                          </span>
+                        </div>
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                          gap: 12,
+                        }}>
+                          {leagueSchools.map((school) => (
+                            <Link
+                              key={school.id}
+                              href={`/football/schools/${school.slug}`}
+                              style={{ textDecoration: 'none', color: 'inherit' }}
+                            >
+                              <div
+                                style={{
+                                  background: '#fff',
+                                  border: `1px solid ${LEAGUE_COLORS[school.league?.name || ''] || '#0a1628'}33`,
+                                  borderRadius: 4,
+                                  overflow: 'hidden',
+                                  transition: '.15s',
+                                  cursor: 'pointer',
+                                  borderLeft: `4px solid ${LEAGUE_COLORS[school.league?.name || ''] || '#0a1628'}`,
+                                }}
+                                onMouseEnter={(e) => {
+                                  (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,.08)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+                                }}
+                              >
+                                <div style={{ padding: '12px' }}>
+                                  <h3 style={{ margin: '0 0 8px 0', fontSize: 14, fontWeight: 700, color: 'var(--psp-navy)' }}>
+                                    {school.name}
+                                  </h3>
+                                  <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8 }}>
+                                    {school.city}, {school.state}
+                                  </div>
+                                  <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid var(--g100)' }}>
+                                    <div>
+                                      <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase' }}>Championships</div>
+                                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--psp-gold)' }}>
+                                        {school.championships_count || 0}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+
+              {filteredSchools.length === 0 && viewMode === 'map' && (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '40px 20px',
+                    color: 'var(--g400)',
+                  }}
+                >
+                  <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+                  <p>No schools match your search. Try adjusting your filters.</p>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Search View */}
+          {viewMode === 'search' && (
+            <>
+              <div style={{ marginBottom: 24 }}>
+                <input
+                  type="text"
+                  placeholder="Search schools by name, city, or league..."
+                  className="filter-input"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    fontSize: 14,
+                    border: '1px solid var(--g100)',
+                    borderRadius: 4,
+                    fontFamily: 'inherit',
+                  }}
+                  autoFocus
+                />
+              </div>
+
+              <div className="sec-head">
+                <h2>Search Results</h2>
+                <span style={{ fontSize: 11, color: 'var(--g400)', marginLeft: 'auto' }}>
+                  {filteredSchools.length} {filteredSchools.length === 1 ? 'match' : 'matches'}
+                </span>
+              </div>
+
+              {filteredSchools.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {filteredSchools.map((school) => (
+                    <Link
+                      key={school.id}
+                      href={`/football/schools/${school.slug}`}
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <div
+                        style={{
+                          background: '#fff',
+                          border: '1px solid var(--g100)',
+                          borderRadius: 4,
+                          padding: 16,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          transition: '.15s',
+                          cursor: 'pointer',
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,.08)';
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+                        }}
+                      >
+                        <div>
+                          <h3 style={{ margin: '0 0 4px 0', fontSize: 16, fontWeight: 700, color: 'var(--psp-navy)' }}>
+                            {school.name}
+                          </h3>
+                          <div style={{ fontSize: 13, color: 'var(--g400)' }}>
+                            {school.city}, {school.state} · {school.league?.name}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right', display: 'flex', gap: 16, alignItems: 'center' }}>
+                          <div>
+                            <div style={{ fontSize: 11, color: 'var(--g400)', textTransform: 'uppercase', marginBottom: 2 }}>Titles</div>
+                            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--psp-gold)' }}>
+                              {school.championships_count || 0}
+                            </div>
+                          </div>
+                          <div style={{ color: 'var(--psp-navy)' }}>→</div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '40px 20px',
+                    color: 'var(--g400)',
+                  }}
+                >
+                  <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+                  <p>{searchTerm ? 'No schools match your search. Try different keywords.' : 'Enter a school name, city, or league to search.'}</p>
+                </div>
+              )}
+            </>
           )}
         </main>
 

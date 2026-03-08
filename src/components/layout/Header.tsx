@@ -174,8 +174,8 @@ export default function Header() {
             <Link href="/glossary">Glossary</Link>
             <Link href="/search">Hall of Fame</Link>
             <span className="db-tag" style={{ color: "var(--psp-gray-600)" }}><span className="dot" /> Supabase Live</span>
-            <ThemeToggle />
           </div>
+          <ThemeToggle />
         </div>
       </div>
 
@@ -393,6 +393,11 @@ export default function Header() {
             <Link href="/events" onClick={handleMobileToggle}>Events</Link>
             <Link href="/articles" onClick={handleMobileToggle}>News</Link>
             <Link href="/potw" onClick={handleMobileToggle}>Player of the Week</Link>
+            <div style={{ borderBottom: "1px solid #333", margin: "8px 0" }} />
+            <Link href="/articles" onClick={handleMobileToggle}>Articles</Link>
+            <Link href="/glossary" onClick={handleMobileToggle}>Glossary</Link>
+            <Link href="/search" onClick={handleMobileToggle}>Hall of Fame</Link>
+            <div style={{ borderBottom: "1px solid #333", margin: "8px 0" }} />
             <Link href="/our-guys" onClick={handleMobileToggle}>Our Guys</Link>
             <Link href="/recruiting" onClick={handleMobileToggle}>Recruiting</Link>
             <Link href="/coaches" onClick={handleMobileToggle}>Coaches</Link>

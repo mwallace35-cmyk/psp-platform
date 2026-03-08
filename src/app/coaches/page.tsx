@@ -128,15 +128,15 @@ export default async function CoachesPage() {
 
       {/* Coaching Legends Hero */}
       <div style={{
-        background: "linear-gradient(135deg, var(--psp-navy) 0%, #0f1a2e 100%)",
-        padding: "32px 24px",
+        background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-gold) 100%)",
+        padding: "48px 24px",
         marginBottom: 0,
       }}>
         <div style={{ maxWidth: 1200, margin: "auto" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <span style={{ fontSize: 28 }} aria-hidden="true">📋</span>
-            <h1 style={{ fontSize: 32, fontWeight: 800, color: "#fff", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 1 }}>
-              Coaches Directory
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+            <span style={{ fontSize: 40 }} aria-hidden="true">🏆</span>
+            <h1 style={{ fontSize: 40, fontWeight: 800, color: "#fff", fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 2, margin: 0 }}>
+              Coaching Legends of Philadelphia
             </h1>
           </div>
 
@@ -154,7 +154,7 @@ export default async function CoachesPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
               {[...transformedCoaches]
                 .sort((a, b) => (b?.championships || 0) - (a?.championships || 0))
-                .slice(0, 4)
+                .slice(0, 5)
                 .map((coach) => coach && (
                   <Link
                     key={coach.id}
@@ -167,7 +167,27 @@ export default async function CoachesPage() {
                       padding: "16px",
                       border: "1px solid rgba(212,168,67,.3)",
                       transition: ".15s",
+                      position: "relative",
                     }}>
+                      {/* Dynasty Badge */}
+                      {(coach.championships || 0) >= 5 && (
+                        <div style={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          background: "linear-gradient(135deg, var(--psp-gold), #b8922f)",
+                          color: "var(--psp-navy)",
+                          padding: "4px 8px",
+                          borderRadius: 4,
+                          fontSize: 9,
+                          fontWeight: 800,
+                          textTransform: "uppercase",
+                          letterSpacing: 0.5,
+                        }}>
+                          Dynasty
+                        </div>
+                      )}
+
                       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                         <div style={{
                           width: 44, height: 44, borderRadius: "50%",

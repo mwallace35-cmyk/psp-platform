@@ -35,6 +35,8 @@ interface School {
   founded_year?: number;
   website_url?: string;
   leagues?: { name: string; short_name?: string } | null;
+  primary_color?: string;
+  secondary_color?: string;
 }
 
 interface TeamSeason {
@@ -177,6 +179,11 @@ export default function TeamPageClient({
   const winPct = ((team.currentRecord.wins / (team.currentRecord.wins + team.currentRecord.losses)) * 100).toFixed(1);
   const pointDiff = team.pointsFor - team.pointsAgainst;
 
+  // Dynamic school colors for hero gradient
+  const heroGradient = school.primary_color
+    ? `linear-gradient(135deg, ${school.primary_color} 0%, ${school.secondary_color || school.primary_color} 100%)`
+    : `linear-gradient(135deg, var(--psp-navy) 0%, ${sportMeta.color}33 100%)`;
+
   // Tab styling
   const tabClasses = (tab: TabType) =>
     `px-4 py-2 text-sm font-bold border-b-2 transition-colors ${
@@ -190,7 +197,7 @@ export default function TeamPageClient({
       {/* Team Header */}
       <section
         className="py-12 md:py-16"
-        style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, ${sportMeta.color}33 100%)` }}
+        style={{ background: heroGradient }}
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
