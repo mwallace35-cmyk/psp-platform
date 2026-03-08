@@ -95,19 +95,105 @@ interface TeamPageClientProps {
   sportMeta: SportMeta;
 }
 
-// Sample roster data (same for all teams, just dummy data)
-const SAMPLE_ROSTER = [
+// Sample roster data for different sports
+const FOOTBALL_ROSTER = [
+  // Offense
   { name: "James Martinez", position: "QB", class: "Sr" as const, height: '6\'2"', weight: "210", slug: "james-martinez" },
   { name: "DeShawn Johnson", position: "RB", class: "Sr" as const, height: '5\'10"', weight: "195", slug: "deshawn-johnson" },
   { name: "Marcus White", position: "WR", class: "Jr" as const, height: '6\'1"', weight: "185", slug: "marcus-white" },
+  { name: "Eric Torres", position: "WR", class: "Jr" as const, height: '6\'0"', weight: "180", slug: "eric-torres" },
   { name: "Kevin Brown", position: "OL", class: "Sr" as const, height: '6\'3"', weight: "295", slug: "kevin-brown" },
   { name: "David Lee", position: "OL", class: "Jr" as const, height: '6\'4"', weight: "305", slug: "david-lee" },
+  { name: "Joseph Adams", position: "OL", class: "So" as const, height: '6\'2"', weight: "280", slug: "joseph-adams" },
   { name: "Alex Garcia", position: "TE", class: "So" as const, height: '6\'4"', weight: "235", slug: "alex-garcia" },
+  // Defense
   { name: "Tyler Jackson", position: "DE", class: "Sr" as const, height: '6\'2"', weight: "245", slug: "tyler-jackson" },
+  { name: "Marcus Johnson", position: "DL", class: "Jr" as const, height: '6\'0"', weight: "265", slug: "marcus-johnson" },
   { name: "Michael Davis", position: "LB", class: "Jr" as const, height: '6\'0"', weight: "225", slug: "michael-davis" },
   { name: "Christopher Miller", position: "DB", class: "Sr" as const, height: '5\'11"', weight: "190", slug: "christopher-miller" },
   { name: "Brandon Wilson", position: "DB", class: "Jr" as const, height: '5\'10"', weight: "185", slug: "brandon-wilson" },
+  { name: "Anthony Santos", position: "S", class: "So" as const, height: '5\'11"', weight: "195", slug: "anthony-santos" },
+  // Special Teams
+  { name: "Lucas Perez", position: "K", class: "Sr" as const, height: '5\'11"', weight: "185", slug: "lucas-perez" },
+  { name: "Nathan White", position: "P", class: "Jr" as const, height: '6\'1"', weight: "195", slug: "nathan-white" },
 ];
+
+const BASKETBALL_ROSTER = [
+  // Guards
+  { name: "Michael Johnson", position: "PG", class: "Sr" as const, height: '6\'2"', weight: "185", slug: "michael-johnson" },
+  { name: "David Chen", position: "SG", class: "Jr" as const, height: '6\'3"', weight: "195", slug: "david-chen" },
+  { name: "Tyler Rodriguez", position: "SG", class: "Sr" as const, height: '6\'1"', weight: "190", slug: "tyler-rodriguez" },
+  // Forwards
+  { name: "James Williams", position: "SF", class: "Jr" as const, height: '6\'6"', weight: "215", slug: "james-williams" },
+  { name: "Marcus Thompson", position: "PF", class: "So" as const, height: '6\'7"', weight: "235", slug: "marcus-thompson" },
+  { name: "Anthony Davis", position: "PF", class: "Sr" as const, height: '6\'8"', weight: "245", slug: "anthony-davis" },
+  // Centers
+  { name: "DeAndre Jordan", position: "C", class: "Sr" as const, height: '6\'11"', weight: "265", slug: "deandre-jordan" },
+  { name: "Jamal Murray", position: "C", class: "Jr" as const, height: '7\'0"', weight: "280", slug: "jamal-murray" },
+];
+
+const BASEBALL_ROSTER = [
+  // Pitchers
+  { name: "Clayton Kershaw", position: "SP", class: "Sr" as const, height: '6\'3"', weight: "215", slug: "clayton-kershaw" },
+  { name: "David Price", position: "SP", class: "Sr" as const, height: '6\'5"', weight: "225", slug: "david-price" },
+  { name: "Aroldis Chapman", position: "RP", class: "Jr" as const, height: '6\'4"', weight: "210", slug: "aroldis-chapman" },
+  // Catchers
+  { name: "Buster Posey", position: "C", class: "Sr" as const, height: '6\'1"', weight: "205", slug: "buster-posey" },
+  // Infielders
+  { name: "Mike Trout", position: "SS", class: "Jr" as const, height: '6\'2"', weight: "235", slug: "mike-trout" },
+  { name: "Jose Altuve", position: "2B", class: "Sr" as const, height: '5\'6"', weight: "165", slug: "jose-altuve" },
+  { name: "Adrian Beltre", position: "3B", class: "Sr" as const, height: '6\'1"', weight: "210", slug: "adrian-beltre" },
+  { name: "Joey Votto", position: "1B", class: "Sr" as const, height: '6\'3"', weight: "220", slug: "joey-votto" },
+  // Outfielders
+  { name: "Christian Yelich", position: "LF", class: "Jr" as const, height: '6\'3"', weight: "195", slug: "christian-yelich" },
+  { name: "Mookie Betts", position: "CF", class: "Jr" as const, height: '5\'9"', weight: "180", slug: "mookie-betts" },
+  { name: "Bryce Harper", position: "RF", class: "Sr" as const, height: '6\'3"', weight: "210", slug: "bryce-harper" },
+];
+
+// Helper function to get roster for sport
+const getSampleRoster = (sportId: string) => {
+  if (sportId === "basketball") return BASKETBALL_ROSTER;
+  if (sportId === "baseball") return BASEBALL_ROSTER;
+  return FOOTBALL_ROSTER; // Default to football
+};
+
+// Helper function to get position groups based on sport
+const getPositionGroups = (sportId: string): Record<string, string[]> => {
+  if (sportId === "basketball") {
+    return {
+      "Guards": ["PG", "SG"],
+      "Forwards": ["SF", "PF"],
+      "Centers": ["C"],
+    };
+  }
+  if (sportId === "baseball") {
+    return {
+      "Pitchers": ["P", "SP", "RP"],
+      "Catchers": ["C"],
+      "Infielders": ["1B", "2B", "3B", "SS"],
+      "Outfielders": ["LF", "CF", "RF"],
+    };
+  }
+  // Football is default
+  return {
+    "Offense": ["QB", "RB", "WR", "OL", "TE"],
+    "Defense": ["DL", "DE", "LB", "DB", "S"],
+    "Special Teams": ["K", "P"],
+  };
+};
+
+// Helper function to group roster by positions
+const groupRosterByPosition = (roster: typeof FOOTBALL_ROSTER, positionGroups: Record<string, string[]>) => {
+  const grouped: Record<string, typeof FOOTBALL_ROSTER> = {};
+
+  Object.keys(positionGroups).forEach(group => {
+    grouped[group] = roster.filter(player =>
+      positionGroups[group].includes(player.position)
+    );
+  });
+
+  return grouped;
+};
 
 // Sample schedule data
 const SAMPLE_SCHEDULE = [
@@ -585,55 +671,93 @@ export default function TeamPageClient({
             )}
 
             {/* Roster Tab */}
-            {activeTab === "roster" && (
-              <div className="space-y-4">
-                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr style={{ background: "var(--psp-navy)", color: "white" }}>
-                          <th className="px-4 py-3 text-left font-bold">Name</th>
-                          <th className="px-4 py-3 text-left font-bold">Position</th>
-                          <th className="px-4 py-3 text-center font-bold">Class</th>
-                          <th className="px-4 py-3 text-center font-bold">HT</th>
-                          <th className="px-4 py-3 text-center font-bold">WT</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {SAMPLE_ROSTER.map((player, idx) => (
-                          <tr
-                            key={idx}
-                            className="border-b border-[var(--psp-gray-200)] hover:bg-gray-50 transition-colors"
-                          >
-                            <td className="px-4 py-3 font-medium">
-                              <Link
-                                href={`/${sport}/players/${player.slug}`}
-                                className="hover:underline"
-                                style={{ color: "var(--psp-navy)" }}
-                              >
-                                {player.name}
-                              </Link>
-                            </td>
-                            <td className="px-4 py-3 text-xs">
-                              {player.position}
-                            </td>
-                            <td className="px-4 py-3 text-center text-xs font-bold">
-                              {player.class}
-                            </td>
-                            <td className="px-4 py-3 text-center text-xs">
-                              {player.height}
-                            </td>
-                            <td className="px-4 py-3 text-center text-xs">
-                              {player.weight}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+            {activeTab === "roster" && (() => {
+              const roster = getSampleRoster(sport);
+              const positionGroups = getPositionGroups(sport);
+              const groupedRoster = groupRosterByPosition(roster, positionGroups);
+
+              return (
+                <div className="space-y-6">
+                  {Object.keys(positionGroups).map((groupName) => {
+                    const groupPlayers = groupedRoster[groupName] || [];
+                    const playerCount = groupPlayers.length;
+
+                    return (
+                      <div key={groupName} className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
+                        {/* Position Group Header */}
+                        <div
+                          style={{
+                            background: sportMeta.color,
+                            padding: "12px 16px",
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: "14px",
+                            fontFamily: "'Bebas Neue', sans-serif",
+                            textTransform: "uppercase",
+                            letterSpacing: 0.5,
+                          }}
+                        >
+                          {groupName} ({playerCount})
+                        </div>
+
+                        {/* Players in Group */}
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr style={{ background: "#f9fafb" }}>
+                                <th className="px-4 py-3 text-left font-bold text-gray-700">Name</th>
+                                <th className="px-4 py-3 text-left font-bold text-gray-700">Position</th>
+                                <th className="px-4 py-3 text-center font-bold text-gray-700">Class</th>
+                                <th className="px-4 py-3 text-center font-bold text-gray-700">HT</th>
+                                <th className="px-4 py-3 text-center font-bold text-gray-700">WT</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {playerCount > 0 ? (
+                                groupPlayers.map((player, idx) => (
+                                  <tr
+                                    key={idx}
+                                    className="border-b border-[var(--psp-gray-200)] hover:bg-gray-50 transition-colors last:border-b-0"
+                                  >
+                                    <td className="px-4 py-3 font-medium">
+                                      <Link
+                                        href={`/${sport}/players/${player.slug}`}
+                                        className="hover:underline"
+                                        style={{ color: "var(--psp-navy)" }}
+                                      >
+                                        {player.name}
+                                      </Link>
+                                    </td>
+                                    <td className="px-4 py-3 text-xs font-semibold">
+                                      {player.position}
+                                    </td>
+                                    <td className="px-4 py-3 text-center text-xs font-bold">
+                                      {player.class}
+                                    </td>
+                                    <td className="px-4 py-3 text-center text-xs">
+                                      {player.height}
+                                    </td>
+                                    <td className="px-4 py-3 text-center text-xs">
+                                      {player.weight}
+                                    </td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan={5} className="px-4 py-4 text-center text-gray-500">
+                                    No players in this position group
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Alumni Pipeline */}
             <div style={{ marginTop: 20 }}>

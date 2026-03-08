@@ -21,6 +21,48 @@ interface Coach {
   }>;
 }
 
+// Dynasty indicator styles
+const DYNASTY_STYLES = `
+  @keyframes dynasty-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(212, 168, 67, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(212, 168, 67, 0);
+    }
+  }
+
+  @keyframes elite-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(192, 192, 192, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(192, 192, 192, 0);
+    }
+  }
+
+  @keyframes champion-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(205, 127, 50, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(205, 127, 50, 0);
+    }
+  }
+
+  .dynasty-badge {
+    animation: dynasty-pulse 2s infinite;
+  }
+
+  .elite-badge {
+    animation: elite-pulse 2s infinite;
+  }
+
+  .champion-badge {
+    animation: champion-pulse 2s infinite;
+  }
+`;
+
 interface SportTab {
   id: string;
   label: string;
@@ -30,6 +72,39 @@ interface CoachesFilterProps {
   coaches: (Coach | null)[];
   sportTabs: SportTab[];
   sportEmojis: Record<string, string>;
+}
+
+function getDynastyBadge(championships: number): {
+  label: string;
+  className: string;
+  bgColor: string;
+  textColor: string;
+} | null {
+  if (championships >= 5) {
+    return {
+      label: "👑 DYNASTY",
+      className: "dynasty-badge",
+      bgColor: "linear-gradient(135deg, #d4a843, #b8922f)",
+      textColor: "#fff",
+    };
+  }
+  if (championships >= 3) {
+    return {
+      label: "⭐ ELITE",
+      className: "elite-badge",
+      bgColor: "linear-gradient(135deg, #c0c0c0, #a8a8a8)",
+      textColor: "#000",
+    };
+  }
+  if (championships >= 1) {
+    return {
+      label: "🏅 CHAMPION",
+      className: "champion-badge",
+      bgColor: "linear-gradient(135deg, #cd7f32, #b86f1f)",
+      textColor: "#fff",
+    };
+  }
+  return null;
 }
 
 export default function CoachesFilter({
@@ -59,6 +134,7 @@ export default function CoachesFilter({
 
   return (
     <>
+      <style>{DYNASTY_STYLES}</style>
       {/* Sport Tabs */}
       <div className="subnav">
         <div className="subnav-inner">
@@ -139,6 +215,7 @@ export default function CoachesFilter({
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
+                  position: "relative",
                 }}
               >
                 {/* Header */}
@@ -175,25 +252,35 @@ export default function CoachesFilter({
                   >
                     {coach.sportName}
                   </div>
-                  {/* Dynasty indicators */}
-                  {coach.championships >= 5 && (
-                    <span style={{
-                      display: "inline-block",
-                      marginTop: 6,
-                      marginLeft: 6,
-                      padding: "2px 8px",
-                      borderRadius: 10,
-                      fontSize: 9,
-                      fontWeight: 800,
-                      textTransform: "uppercase",
-                      letterSpacing: 0.5,
-                      background: "linear-gradient(135deg, #d4a843, #b8922f)",
-                      color: "#fff",
-                    }}>
-                      🏆 Dynasty
-                    </span>
-                  )}
                 </div>
+
+                {/* Dynasty Badge - Top Right Corner */}
+                {getDynastyBadge(coach.championships) && (() => {
+                  const badge = getDynastyBadge(coach.championships)!;
+                  return (
+                    <div
+                      className={badge.className}
+                      style={{
+                        position: "absolute",
+                        top: 12,
+                        right: 12,
+                        display: "inline-block",
+                        padding: "4px 10px",
+                        borderRadius: "50px",
+                        fontSize: 10,
+                        fontWeight: 800,
+                        textTransform: "uppercase",
+                        letterSpacing: 0.5,
+                        background: badge.bgColor,
+                        color: badge.textColor,
+                        zIndex: 10,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {badge.label}
+                    </div>
+                  );
+                })()}
 
                 {/* Body */}
                 <div

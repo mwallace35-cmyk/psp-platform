@@ -11,6 +11,12 @@ interface HotTake {
   type: 'hot_take' | 'insider' | 'poll';
 }
 
+interface VoteState {
+  upvotes: number;
+  downvotes: number;
+  userVote: 'up' | 'down' | null;
+}
+
 // Helper function to format time relative to now
 function formatTimeAgo(isoDateString: string): string {
   const date = new Date(isoDateString);
@@ -63,6 +69,7 @@ interface PulseHotTakesProps {
 export default function PulseHotTakes({ sport, limit = 3 }: Omit<PulseHotTakesProps, 'sportColor'>) {
   const [hotTakes, setHotTakes] = useState<HotTake[]>(SAMPLE_HOT_TAKES);
   const [isLoading, setIsLoading] = useState(true);
+  const [votes, setVotes] = useState<Record<string, VoteState>>({});
 
   useEffect(() => {
     const fetchHotTakes = async () => {
@@ -113,6 +120,45 @@ export default function PulseHotTakes({ sport, limit = 3 }: Omit<PulseHotTakesPr
     fetchHotTakes();
   }, [sport, limit]);
 
+  const initializeVotes = (take: HotTake) => {
+    if (!votes[take.id]) {
+      setVotes(prev => ({
+        ...prev,
+        [take.id]: { upvotes: 0, downvotes: 0, userVote: null }
+      }));
+    }
+  };
+
+  const handleVote = (takeId: string, direction: 'up' | 'down') => {
+    setVotes(prev => {
+      const current = prev[takeId] || { upvotes: 0, downvotes: 0, userVote: null };
+      let newUpvotes = current.upvotes;
+      let newDownvotes = current.downvotes;
+      let newUserVote = current.userVote;
+
+      // Handle vote logic
+      if (current.userVote === direction) {
+        // Clicking same button removes the vote
+        newUserVote = null;
+        if (direction === 'up') newUpvotes = Math.max(0, newUpvotes - 1);
+        if (direction === 'down') newDownvotes = Math.max(0, newDownvotes - 1);
+      } else {
+        // Switching or adding new vote
+        if (current.userVote === 'up') newUpvotes = Math.max(0, newUpvotes - 1);
+        if (current.userVote === 'down') newDownvotes = Math.max(0, newDownvotes - 1);
+
+        if (direction === 'up') newUpvotes += 1;
+        if (direction === 'down') newDownvotes += 1;
+        newUserVote = direction;
+      }
+
+      return {
+        ...prev,
+        [takeId]: { upvotes: newUpvotes, downvotes: newDownvotes, userVote: newUserVote }
+      };
+    });
+  };
+
   if (isLoading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
@@ -150,51 +196,120 @@ export default function PulseHotTakes({ sport, limit = 3 }: Omit<PulseHotTakesPr
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
-      {hotTakes.map((item) => (
-        <div
-          key={item.id}
-          style={{
-            background: 'var(--psp-white)',
-            border: '1px solid var(--g100)',
-            borderRadius: 6,
-            padding: '12px 14px',
-            display: 'flex',
-            gap: 10,
-          }}
-        >
+      {hotTakes.map((item) => {
+        const itemVotes = votes[item.id] || { upvotes: 0, downvotes: 0, userVote: null };
+        if (!votes[item.id]) {
+          initializeVotes(item);
+        }
+
+        return (
           <div
+            key={item.id}
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              background:
-                item.type === 'hot_take'
-                  ? '#fef3c7'
-                  : item.type === 'insider'
-                    ? '#dbeafe'
-                    : '#f3e8ff',
+              background: 'var(--psp-white)',
+              border: '1px solid var(--g100)',
+              borderRadius: 6,
+              padding: '12px 14px',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 14,
-              flexShrink: 0,
+              flexDirection: 'column',
+              gap: 10,
             }}
           >
-            {item.type === 'hot_take' ? '🔥' : item.type === 'insider' ? '👀' : '📊'}
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-              <span style={{ fontWeight: 700, fontSize: 12, color: 'var(--psp-navy)' }}>
-                @{item.user}
+            <div style={{ display: 'flex', gap: 10 }}>
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background:
+                    item.type === 'hot_take'
+                      ? '#fef3c7'
+                      : item.type === 'insider'
+                        ? '#dbeafe'
+                        : '#f3e8ff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 14,
+                  flexShrink: 0,
+                }}
+              >
+                {item.type === 'hot_take' ? '🔥' : item.type === 'insider' ? '👀' : '📊'}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <span style={{ fontWeight: 700, fontSize: 12, color: 'var(--psp-navy)' }}>
+                    @{item.user}
+                  </span>
+                  <span style={{ fontSize: 10, color: 'var(--g400)' }}>{item.time}</span>
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.5 }}>
+                  {item.text}
+                </div>
+              </div>
+            </div>
+
+            {/* Voting UI */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end', paddingTop: 6, borderTop: '1px solid var(--g100)' }}>
+              <button
+                onClick={() => handleVote(item.id, 'up')}
+                style={{
+                  background: itemVotes.userVote === 'up' ? '#16a34a' : '#e5e7eb',
+                  color: itemVotes.userVote === 'up' ? 'white' : '#6b7280',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '4px 8px',
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  if (itemVotes.userVote !== 'up') {
+                    (e.currentTarget as HTMLButtonElement).style.background = '#d1d5db';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (itemVotes.userVote !== 'up') {
+                    (e.currentTarget as HTMLButtonElement).style.background = '#e5e7eb';
+                  }
+                }}
+              >
+                ▲
+              </button>
+              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--g400)', minWidth: 30, textAlign: 'center' }}>
+                {itemVotes.upvotes - itemVotes.downvotes}
               </span>
-              <span style={{ fontSize: 10, color: 'var(--g400)' }}>{item.time}</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.5 }}>
-              {item.text}
+              <button
+                onClick={() => handleVote(item.id, 'down')}
+                style={{
+                  background: itemVotes.userVote === 'down' ? '#dc2626' : '#e5e7eb',
+                  color: itemVotes.userVote === 'down' ? 'white' : '#6b7280',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '4px 8px',
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  if (itemVotes.userVote !== 'down') {
+                    (e.currentTarget as HTMLButtonElement).style.background = '#d1d5db';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (itemVotes.userVote !== 'down') {
+                    (e.currentTarget as HTMLButtonElement).style.background = '#e5e7eb';
+                  }
+                }}
+              >
+                ▼
+              </button>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

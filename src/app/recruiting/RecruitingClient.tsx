@@ -69,6 +69,40 @@ const STATUS_FILTERS = [
   { key: "signed", label: "Signed" },
 ];
 
+interface CommitmentCelebration {
+  playerName: string;
+  school: string;
+  highSchool: string;
+  date: string;
+}
+
+const RECENT_COMMITMENTS: CommitmentCelebration[] = [
+  {
+    playerName: "Marcus Thompson",
+    school: "Penn State",
+    highSchool: "Roman Catholic",
+    date: "Jan 2026",
+  },
+  {
+    playerName: "David Rodriguez",
+    school: "Temple",
+    highSchool: "Northeast",
+    date: "Feb 2026",
+  },
+  {
+    playerName: "James Williams",
+    school: "Villanova",
+    highSchool: "La Salle",
+    date: "Dec 2025",
+  },
+  {
+    playerName: "Anthony Jackson",
+    school: "Penn",
+    highSchool: "Imhotep Charter",
+    date: "Jan 2026",
+  },
+];
+
 export default function RecruitingClient({ recruits, commitments }: RecruitingClientProps) {
   const [classYear, setClassYear] = useState(CURRENT_YEAR);
   const [sport, setSport] = useState("all");
@@ -159,6 +193,123 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
           <span>
             <strong style={{ color: "rgba(255,255,255,0.7)" }}>{unsignedCount}</strong> unsigned
           </span>
+        </div>
+      </div>
+
+      {/* Recent Commitments Celebration Section */}
+      <div style={{
+        padding: "20px 16px",
+        marginBottom: 20,
+        marginLeft: "auto",
+        marginRight: "auto",
+        maxWidth: "1200px",
+        width: "100%",
+        boxSizing: "border-box",
+      }}>
+        <div style={{
+          border: "3px solid #D4A843",
+          borderRadius: 12,
+          padding: "20px",
+          background: "linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.04) 100%)",
+        }}>
+          <h2 style={{
+            fontSize: 20,
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontWeight: 700,
+            color: "var(--text)",
+            marginTop: 0,
+            marginBottom: 16,
+            letterSpacing: 0.5,
+          }}>
+            🎉 Recent Commitments
+          </h2>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: 12,
+          }}>
+            {RECENT_COMMITMENTS.map((commitment, index) => (
+              <div
+                key={index}
+                style={{
+                  background: "linear-gradient(135deg, rgba(212, 168, 67, 0.15) 0%, rgba(212, 168, 67, 0.08) 100%)",
+                  border: "2px solid #D4A843",
+                  borderRadius: 8,
+                  padding: "16px",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                {/* Gold confetti corner accent */}
+                <div style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  width: 60,
+                  height: 60,
+                  background: "radial-gradient(circle, rgba(212, 168, 67, 0.3) 0%, transparent 70%)",
+                  borderRadius: "0 8px 0 40px",
+                  pointerEvents: "none",
+                }} />
+
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: 12,
+                  marginBottom: 12,
+                  position: "relative",
+                  zIndex: 1,
+                }}>
+                  <div>
+                    <div style={{
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: "var(--text)",
+                      marginBottom: 4,
+                    }}>
+                      {commitment.playerName}
+                    </div>
+                    <div style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: "#D4A843",
+                      marginBottom: 2,
+                    }}>
+                      {commitment.school}
+                    </div>
+                    <div style={{
+                      fontSize: 11,
+                      color: "var(--g400)",
+                    }}>
+                      {commitment.highSchool}
+                    </div>
+                  </div>
+                  <div style={{
+                    background: "#16a34a",
+                    color: "white",
+                    padding: "4px 8px",
+                    borderRadius: 4,
+                    fontSize: 10,
+                    fontWeight: 700,
+                    whiteSpace: "nowrap",
+                  }}>
+                    COMMITTED
+                  </div>
+                </div>
+
+                <div style={{
+                  fontSize: 10,
+                  color: "var(--g400)",
+                  fontWeight: 500,
+                  position: "relative",
+                  zIndex: 1,
+                }}>
+                  {commitment.date}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
