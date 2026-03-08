@@ -3,7 +3,7 @@
 interface CoachingMoment {
   id: number;
   emoji: string;
-  year: string;
+  year: number | string;
   title: string;
   coach: string;
   milestone: string;
