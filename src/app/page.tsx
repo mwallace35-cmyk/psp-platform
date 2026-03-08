@@ -170,8 +170,8 @@ interface GameScore {
   game_date: string;
   status: string;
   sport_id: string;
-  schools: { name: string };
-  away_schools: { name: string };
+  schools: { name: string }[] | { name: string } | null;
+  away_schools: { name: string }[] | { name: string } | null;
 }
 
 interface PotwNominee {
@@ -282,16 +282,24 @@ export default async function HomePage() {
     },
   };
 
-  const displayScores = recentScores.map((game) => ({
-    id: game.id,
-    homeTeam: game.schools?.name || "Unknown",
-    awayTeam: game.away_schools?.name || "Unknown",
-    homeScore: game.home_score,
-    awayScore: game.away_score,
-    gameDate: game.game_date,
-    status: game.status,
-    sportId: game.sport_id,
-  }));
+  const displayScores = recentScores.map((game) => {
+    const homeName = game.schools
+      ? Array.isArray(game.schools) ? game.schools[0]?.name : game.schools.name
+      : "Unknown";
+    const awayName = game.away_schools
+      ? Array.isArray(game.away_schools) ? game.away_schools[0]?.name : game.away_schools.name
+      : "Unknown";
+    return {
+      id: game.id,
+      homeTeam: homeName || "Unknown",
+      awayTeam: awayName || "Unknown",
+      homeScore: game.home_score,
+      awayScore: game.away_score,
+      gameDate: game.game_date,
+      status: game.status,
+      sportId: game.sport_id,
+    };
+  });
 
   const displayPotw = potwNominees.map((nominee) => ({
     id: nominee.id,

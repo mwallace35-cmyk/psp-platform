@@ -228,7 +228,6 @@ export default function Header() {
             >
               {MORE_ITEMS.map((item) => (
                 <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
-                  {item.type === "sport" && item.color && <span className="nav-dot" style={{ background: item.color }} />}
                   {item.label}
                 </Link>
               ))}
@@ -316,7 +315,6 @@ export default function Header() {
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }} />
             {MORE_ITEMS.map((item) => (
               <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
-                {item.type === "sport" && item.color && <span className="nav-dot" style={{ background: item.color }} />}
                 {item.label}
               </Link>
             ))}
