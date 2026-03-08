@@ -68,22 +68,7 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Allow passthrough routes
-  const isPassthrough = PASSTHROUGH_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/") || pathname.startsWith(prefix + ".")
-  );
-
-  if (!isPassthrough) {
-    const hasBypass = request.cookies.get(BYPASS_COOKIE)?.value === "1";
-    if (!hasBypass) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/coming-soon";
-      url.search = "";
-      const response = NextResponse.redirect(url);
-      response.headers.set("x-request-id", requestId);
-      return response;
-    }
-  }
+  // Coming-soon gate removed — site is now publicly accessible
 
   // Admin auth gate
   if (pathname.startsWith("/admin") || pathname === "/login") {
