@@ -53,12 +53,34 @@ const SCOPE_COLORS: Record<string, string> = {
   "city-title": "#f0a500",
 };
 
+// Scope display priority (game → season → career → all-time)
+const SCOPE_SORT_ORDER: Record<string, number> = {
+  game: 0,
+  season: 1,
+  career: 2,
+  city: 3,
+  postseason: 0,
+  "city-title": 0,
+};
+
+// Categories whose records are team records (no individual player)
+const TEAM_CATEGORIES = new Set(["Team", "Team Records"]);
+
+// Categories where scope=career actually means "all-time single play"
+const SINGLE_PLAY_CATEGORIES = new Set(["Longest TD"]);
+
+// Normalize category names for display
+function normalizeCategory(cat: string): string {
+  if (cat === "Misc") return "Miscellaneous";
+  return cat;
+}
+
 // Categories that are actually leaderboards (many entries per subcategory+scope)
 const LEADERBOARD_SUBCATS = new Set(["Yards"]);
 
-function scopeBadge(scope: string | null) {
+function scopeBadge(scope: string | null, overrideLabel?: string) {
   if (!scope) return null;
-  const label = SCOPE_LABELS[scope] || scope;
+  const label = overrideLabel || SCOPE_LABELS[scope] || scope;
   const color = SCOPE_COLORS[scope] || "#6b7280";
   return (
     <span
@@ -105,21 +127,26 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
     return tabRecords.filter((r) => scopeSet.has(r.scope || ""));
   }, [tabRecords, activeTab]);
 
-  // Group by category, then subcategory
+  // Group by normalized category → subcategory+scope key → records
+  // Each unique (subcategory, scope) gets its own group so we never mix
+  // game/season/career records in a single ranked table
   const grouped = useMemo(() => {
     const map = new Map<string, Map<string, RecordItem[]>>();
     for (const r of filtered) {
-      const cat = r.category || "Other";
+      const cat = normalizeCategory(r.category || "Other");
+      const scope = r.scope || "unknown";
       const sub = r.subcategory || "General";
+      // Create a compound key: "subcategory||scope"
+      const key = `${sub}||${scope}`;
       if (!map.has(cat)) map.set(cat, new Map());
       const subMap = map.get(cat)!;
-      if (!subMap.has(sub)) subMap.set(sub, []);
-      subMap.get(sub)!.push(r);
+      if (!subMap.has(key)) subMap.set(key, []);
+      subMap.get(key)!.push(r);
     }
     return map;
   }, [filtered]);
 
-  // Sort categories in a sensible order
+  // Sort categories in a sensible order (uses normalized names)
   const CATEGORY_ORDER = [
     "Rushing",
     "Passing",
@@ -131,7 +158,6 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
     "Return Touchdowns",
     "Team",
     "Team Records",
-    "Misc",
     "Miscellaneous",
   ];
 
@@ -252,7 +278,16 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
         <>
           {sortedCategories.map((category) => {
             const subcatMap = grouped.get(category)!;
-            const subcats = Array.from(subcatMap.keys()).sort();
+            const isTeamCategory = TEAM_CATEGORIES.has(category);
+            const isSinglePlay = SINGLE_PLAY_CATEGORIES.has(category);
+
+            // Sort compound keys: by subcategory name, then by scope order
+            const sortedKeys = Array.from(subcatMap.keys()).sort((a, b) => {
+              const [subA, scopeA] = a.split("||");
+              const [subB, scopeB] = b.split("||");
+              if (subA !== subB) return subA.localeCompare(subB);
+              return (SCOPE_SORT_ORDER[scopeA] ?? 99) - (SCOPE_SORT_ORDER[scopeB] ?? 99);
+            });
 
             return (
               <section key={category} style={{ marginBottom: 40 }}>
@@ -283,10 +318,11 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
                   </span>
                 </div>
 
-                {/* Records grouped by subcategory */}
+                {/* Records grouped by subcategory + scope */}
                 <div style={{ display: "grid", gap: 8 }}>
-                  {subcats.map((subcat) => {
-                    const items = subcatMap.get(subcat)!;
+                  {sortedKeys.map((compoundKey) => {
+                    const [subcat, scope] = compoundKey.split("||");
+                    const items = subcatMap.get(compoundKey)!;
                     // Sort by record_number desc, then year desc
                     const sorted = [...items].sort((a, b) => {
                       if (a.record_number !== null && b.record_number !== null)
@@ -296,12 +332,15 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
                       return (b.year_set || 0) - (a.year_set || 0);
                     });
 
-                    // If only one record in this subcategory+scope combo, show compact
+                    // Determine scope badge label
+                    const badgeLabel = isSinglePlay && scope === "career" ? "All-Time" : undefined;
+
+                    // Multiple records with same subcategory+scope → ranked table
                     const showAsTable = sorted.length > 2;
 
                     if (showAsTable) {
                       return (
-                        <div key={subcat} style={{ marginBottom: 16 }}>
+                        <div key={compoundKey} style={{ marginBottom: 16 }}>
                           <h3
                             style={{
                               fontSize: 15,
@@ -314,22 +353,22 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
                             }}
                           >
                             {subcat}
-                            {sorted[0]?.scope && scopeBadge(sorted[0].scope)}
+                            {scopeBadge(scope, badgeLabel)}
                           </h3>
                           <div style={{ overflowX: "auto" }}>
                             <table className="data-table" style={{ width: "100%", fontSize: 14 }}>
                               <thead>
                                 <tr>
                                   <th style={{ width: 40 }}>#</th>
-                                  <th>Player</th>
-                                  <th>School</th>
+                                  <th>{isTeamCategory ? "School" : "Player"}</th>
+                                  {!isTeamCategory && <th>School</th>}
                                   <th>Year</th>
                                   <th style={{ textAlign: "right" }}>Record</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {sorted.map((rec, i) => (
-                                  <RecordRow key={rec.id} rec={rec} rank={i + 1} sport={sport} sportColor={sportColor} />
+                                  <RecordRow key={rec.id} rec={rec} rank={i + 1} sport={sport} sportColor={sportColor} isTeam={isTeamCategory} />
                                 ))}
                               </tbody>
                             </table>
@@ -339,9 +378,9 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
                     }
 
                     return (
-                      <div key={subcat}>
+                      <div key={compoundKey}>
                         {sorted.map((rec) => (
-                          <RecordCard key={rec.id} rec={rec} subcat={subcat} sport={sport} sportColor={sportColor} />
+                          <RecordCard key={rec.id} rec={rec} subcat={subcat} sport={sport} sportColor={sportColor} isTeam={isTeamCategory} scopeLabel={badgeLabel} />
                         ))}
                       </div>
                     );
@@ -362,14 +401,20 @@ function RecordCard({
   subcat,
   sport,
   sportColor,
+  isTeam = false,
+  scopeLabel,
 }: {
   rec: RecordItem;
   subcat: string;
   sport: string;
   sportColor: string;
+  isTeam?: boolean;
+  scopeLabel?: string;
 }) {
-  const playerName = rec.player_name || rec.holder_name || "Unknown";
   const schoolName = rec.school_name || rec.holder_school || "";
+  // For team records, show school as the main entity (no "Unknown" player)
+  const hasPlayer = !isTeam && (rec.player_name || rec.holder_name);
+  const playerName = rec.player_name || rec.holder_name || "";
 
   return (
     <div
@@ -389,35 +434,55 @@ function RecordCard({
       <div style={{ flex: "1 1 auto", minWidth: 200 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
           <span style={{ fontSize: 14, fontWeight: 600, color: "#374151" }}>{subcat}</span>
-          {scopeBadge(rec.scope)}
+          {scopeBadge(rec.scope, scopeLabel)}
         </div>
         <div style={{ fontSize: 13, color: "#6b7280" }}>
-          {rec.player_slug ? (
-            <Link
-              href={`/${sport}/players/${rec.player_slug}`}
-              style={{ color: "var(--psp-navy)", fontWeight: 500 }}
-            >
-              {playerName}
-            </Link>
-          ) : (
-            <span style={{ fontWeight: 500, color: "var(--psp-navy)" }}>{playerName}</span>
-          )}
-          {schoolName && (
+          {isTeam ? (
+            // Team record — show school as main entity
             <>
-              {" — "}
               {rec.school_slug ? (
                 <Link
                   href={`/${sport}/schools/${rec.school_slug}`}
-                  style={{ color: "var(--psp-gold, #f0a500)" }}
+                  style={{ color: "var(--psp-navy)", fontWeight: 500 }}
                 >
                   {schoolName}
                 </Link>
-              ) : (
-                <span>{schoolName}</span>
+              ) : schoolName ? (
+                <span style={{ fontWeight: 500, color: "var(--psp-navy)" }}>{schoolName}</span>
+              ) : null}
+              {rec.year_set && <span style={{ color: "#9ca3af" }}> ({rec.year_set})</span>}
+            </>
+          ) : (
+            // Individual record — show player + school
+            <>
+              {hasPlayer ? (
+                rec.player_slug ? (
+                  <Link
+                    href={`/${sport}/players/${rec.player_slug}`}
+                    style={{ color: "var(--psp-navy)", fontWeight: 500 }}
+                  >
+                    {playerName}
+                  </Link>
+                ) : (
+                  <span style={{ fontWeight: 500, color: "var(--psp-navy)" }}>{playerName}</span>
+                )
+              ) : null}
+              {schoolName && hasPlayer && " — "}
+              {schoolName && (
+                rec.school_slug ? (
+                  <Link
+                    href={`/${sport}/schools/${rec.school_slug}`}
+                    style={{ color: "var(--psp-gold, #f0a500)" }}
+                  >
+                    {schoolName}
+                  </Link>
+                ) : (
+                  <span>{schoolName}</span>
+                )
               )}
+              {rec.year_set && <span style={{ color: "#9ca3af" }}> ({rec.year_set})</span>}
             </>
           )}
-          {rec.year_set && <span style={{ color: "#9ca3af" }}> ({rec.year_set})</span>}
         </div>
         {rec.description && (
           <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 2 }}>{rec.description}</div>
@@ -597,14 +662,46 @@ function RecordRow({
   rank,
   sport,
   sportColor,
+  isTeam = false,
 }: {
   rec: RecordItem;
   rank: number;
   sport: string;
   sportColor: string;
+  isTeam?: boolean;
 }) {
-  const playerName = rec.player_name || rec.holder_name || "—";
   const schoolName = rec.school_name || rec.holder_school || "—";
+
+  if (isTeam) {
+    // Team record row: show school as main entity, no player column
+    return (
+      <tr>
+        <td style={{ fontWeight: 700, color: rank === 1 ? "#f59e0b" : "#9ca3af" }}>{rank}</td>
+        <td>
+          {rec.school_slug ? (
+            <Link
+              href={`/${sport}/schools/${rec.school_slug}`}
+              className="hover:underline"
+              style={{ color: "var(--psp-navy)", fontWeight: 500 }}
+            >
+              {schoolName}
+            </Link>
+          ) : (
+            <span style={{ fontWeight: 500 }}>{schoolName}</span>
+          )}
+          {rec.description && (
+            <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 2 }}>{rec.description}</div>
+          )}
+        </td>
+        <td style={{ fontSize: 13, color: "#6b7280" }}>{rec.year_set || "—"}</td>
+        <td style={{ textAlign: "right", fontWeight: 700, color: sportColor }}>
+          {rec.record_value || rec.record_number?.toLocaleString() || "—"}
+        </td>
+      </tr>
+    );
+  }
+
+  const playerName = rec.player_name || rec.holder_name || "—";
 
   return (
     <tr>
