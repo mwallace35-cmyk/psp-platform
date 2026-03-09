@@ -25,6 +25,22 @@ interface SchoolRow {
   leagues: { name: string } | { name: string }[] | null;
 }
 
+interface SchoolData {
+  id: number;
+  slug: string;
+  name: string;
+  city: string;
+  state: string;
+  league: string | null;
+  colors: string | null;
+  championships_count: number;
+  total_wins: number;
+  total_losses: number;
+  has_data: boolean;
+  sports: string[];
+  award_count: number;
+}
+
 async function fetchSchools() {
   try {
     const supabase = createStaticClient();
@@ -42,6 +58,101 @@ async function fetchSchools() {
   } catch (error) {
     captureError(error, { function: 'fetchSchools', context: 'schools_directory' });
     return [];
+  }
+}
+
+async function fetchSchoolsWithTeamSeasons() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('team_seasons')
+      .select('school_id');
+
+    if (error) return new Set<number>();
+
+    const schoolIds = new Set<number>();
+    (data || []).forEach((row: { school_id: number | null }) => {
+      if (row.school_id) schoolIds.add(row.school_id);
+    });
+    return schoolIds;
+  } catch {
+    return new Set<number>();
+  }
+}
+
+async function fetchSchoolsWithChampionships() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('championships')
+      .select('school_id');
+
+    if (error) return new Set<number>();
+
+    const schoolIds = new Set<number>();
+    (data || []).forEach((row: { school_id: number | null }) => {
+      if (row.school_id) schoolIds.add(row.school_id);
+    });
+    return schoolIds;
+  } catch {
+    return new Set<number>();
+  }
+}
+
+async function fetchSchoolsWithFootball() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('football_player_seasons')
+      .select('school_id');
+
+    if (error) return new Set<number>();
+
+    const schoolIds = new Set<number>();
+    (data || []).forEach((row: { school_id: number | null }) => {
+      if (row.school_id) schoolIds.add(row.school_id);
+    });
+    return schoolIds;
+  } catch {
+    return new Set<number>();
+  }
+}
+
+async function fetchSchoolsWithBasketball() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('basketball_player_seasons')
+      .select('school_id');
+
+    if (error) return new Set<number>();
+
+    const schoolIds = new Set<number>();
+    (data || []).forEach((row: { school_id: number | null }) => {
+      if (row.school_id) schoolIds.add(row.school_id);
+    });
+    return schoolIds;
+  } catch {
+    return new Set<number>();
+  }
+}
+
+async function fetchSchoolsWithBaseball() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('baseball_player_seasons')
+      .select('school_id');
+
+    if (error) return new Set<number>();
+
+    const schoolIds = new Set<number>();
+    (data || []).forEach((row: { school_id: number | null }) => {
+      if (row.school_id) schoolIds.add(row.school_id);
+    });
+    return schoolIds;
+  } catch {
+    return new Set<number>();
   }
 }
 
@@ -66,10 +177,55 @@ async function fetchChampionshipCounts() {
   }
 }
 
+async function fetchTeamSeasonWinLoss() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('team_seasons')
+      .select('school_id, wins, losses');
+
+    if (error) return {};
+
+    const winLoss: Record<number, { wins: number; losses: number }> = {};
+    (data || []).forEach((row: { school_id: number | null; wins: number | null; losses: number | null }) => {
+      if (row.school_id) {
+        if (!winLoss[row.school_id]) {
+          winLoss[row.school_id] = { wins: 0, losses: 0 };
+        }
+        winLoss[row.school_id].wins += row.wins || 0;
+        winLoss[row.school_id].losses += row.losses || 0;
+      }
+    });
+    return winLoss;
+  } catch {
+    return {};
+  }
+}
+
+async function fetchAwardCounts() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('awards')
+      .select('school_id');
+
+    if (error) return {};
+
+    const counts: Record<number, number> = {};
+    (data || []).forEach((row: { school_id: number | null }) => {
+      if (row.school_id) {
+        counts[row.school_id] = (counts[row.school_id] || 0) + 1;
+      }
+    });
+    return counts;
+  } catch {
+    return {};
+  }
+}
+
 async function fetchTopSchoolsByChampionships() {
   try {
     const supabase = createStaticClient();
-    // Get schools with most recent championship wins for "Rising Programs"
     const { data, error } = await supabase
       .from('championships')
       .select('school_id, season_id, schools(id, slug, name, leagues(name)), seasons(year_start)')
@@ -77,7 +233,6 @@ async function fetchTopSchoolsByChampionships() {
 
     if (error) return [];
 
-    // Count recent titles per school (2020+)
     const recentCounts: Record<number, { count: number; school: any }> = {};
     (data || []).forEach((row: any) => {
       const sid = row.school_id;
@@ -106,17 +261,48 @@ async function fetchTopSchoolsByChampionships() {
 }
 
 export default async function SchoolsPage() {
-  const [schoolRows, champCounts, risingPrograms] = await Promise.all([
+  const [
+    schoolRows,
+    champCounts,
+    risingPrograms,
+    teamSeasonSchools,
+    championshipSchools,
+    footballSchools,
+    basketballSchools,
+    baseballSchools,
+    winLossData,
+    awardCounts,
+  ] = await Promise.all([
     fetchSchools(),
     fetchChampionshipCounts(),
     fetchTopSchoolsByChampionships(),
+    fetchSchoolsWithTeamSeasons(),
+    fetchSchoolsWithChampionships(),
+    fetchSchoolsWithFootball(),
+    fetchSchoolsWithBasketball(),
+    fetchSchoolsWithBaseball(),
+    fetchTeamSeasonWinLoss(),
+    fetchAwardCounts(),
   ]);
 
-  // Transform for client component
-  const schools = schoolRows.map((s) => {
+  const schools: SchoolData[] = schoolRows.map((s) => {
     const leagueName = s.leagues
       ? Array.isArray(s.leagues) ? s.leagues[0]?.name : s.leagues.name
       : null;
+
+    const sports: string[] = [];
+    if (footballSchools.has(s.id)) sports.push('football');
+    if (basketballSchools.has(s.id)) sports.push('basketball');
+    if (baseballSchools.has(s.id)) sports.push('baseball');
+
+    const hasTeamSeasons = teamSeasonSchools.has(s.id);
+    const hasChampionships = championshipSchools.has(s.id);
+    const hasAwards = (awardCounts[s.id] || 0) > 0;
+    const hasPlayerStats = sports.length > 0;
+
+    const hasData = hasTeamSeasons || hasChampionships || hasAwards || hasPlayerStats;
+
+    const wl = winLossData[s.id];
 
     return {
       id: s.id,
@@ -125,14 +311,18 @@ export default async function SchoolsPage() {
       city: s.city || '',
       state: s.state || 'PA',
       league: leagueName || null,
-      championships_count: champCounts[s.id] || 0,
       colors: s.colors && typeof s.colors === 'object' && 'primary' in s.colors
         ? (s.colors as { primary?: string }).primary || null
         : null,
+      championships_count: champCounts[s.id] || 0,
+      total_wins: wl?.wins || 0,
+      total_losses: wl?.losses || 0,
+      has_data: hasData,
+      sports,
+      award_count: awardCounts[s.id] || 0,
     };
   });
 
-  // Get league list from actual data
   const leagueSet = new Set<string>();
   schools.forEach((s) => { if (s.league) leagueSet.add(s.league); });
   const leagues = Array.from(leagueSet).sort();
