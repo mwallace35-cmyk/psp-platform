@@ -31,7 +31,9 @@ interface RecordsViewProps {
 const SCOPE_TABS: Record<string, string[]> = {
   "All-Time": ["game", "season", "career", "city"],
   "School Records": [], // special tab
-  Postseason: ["postseason"],
+  "Regular Season": ["regular-season"],
+  "Catholic League": ["catholic-league"],
+  Postseason: ["postseason", "playoff"],
   "City Title": ["city-title"],
 };
 
@@ -41,7 +43,10 @@ const SCOPE_LABELS: Record<string, string> = {
   career: "Career",
   city: "All-Time",
   postseason: "Postseason",
+  playoff: "Playoff",
   "city-title": "City Title",
+  "regular-season": "Regular Season",
+  "catholic-league": "Catholic League",
 };
 
 const SCOPE_COLORS: Record<string, string> = {
@@ -50,7 +55,10 @@ const SCOPE_COLORS: Record<string, string> = {
   career: "#f59e0b",
   city: "#8b5cf6",
   postseason: "#ef4444",
+  playoff: "#ef4444",
   "city-title": "#f0a500",
+  "regular-season": "#06b6d4",
+  "catholic-league": "#7c3aed",
 };
 
 // Scope display priority (game → season → career → all-time)
@@ -60,7 +68,10 @@ const SCOPE_SORT_ORDER: Record<string, number> = {
   career: 2,
   city: 3,
   postseason: 0,
+  playoff: 0,
   "city-title": 0,
+  "regular-season": 0,
+  "catholic-league": 0,
 };
 
 // Categories whose records are team records (no individual player)
