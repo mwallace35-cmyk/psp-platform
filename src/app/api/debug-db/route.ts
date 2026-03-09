@@ -27,10 +27,10 @@ export async function GET() {
     error: t1.error?.message ?? null,
   };
 
-  // Test 2: Exact same query as schools page (with leagues join)
+  // Test 2: Fixed schools query (colors instead of metadata)
   const t2 = await supabase
     .from("schools")
-    .select("id, slug, name, city, state, league_id, metadata, leagues(name)")
+    .select("id, slug, name, city, state, league_id, colors, leagues(name)")
     .is("deleted_at", null)
     .order("name", { ascending: true })
     .limit(5);
@@ -40,11 +40,10 @@ export async function GET() {
     sample: t2.data?.slice(0, 3).map((s: any) => ({ name: s.name, league: s.leagues })) ?? [],
   };
 
-  // Test 3: Championships query
+  // Test 3: Championships query (no deleted_at)
   const t3 = await supabase
     .from("championships")
     .select("school_id")
-    .is("deleted_at", null)
     .limit(5);
   results.test3_championships = {
     rows: t3.data?.length ?? 0,

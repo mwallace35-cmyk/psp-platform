@@ -76,16 +76,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // Fetch all player IDs from sport-specific tables
       supabase
         .from("football_player_seasons")
-        .select("player_id")
-        .is("deleted_at", null),
+        .select("player_id"),
       supabase
         .from("basketball_player_seasons")
-        .select("player_id")
-        .is("deleted_at", null),
+        .select("player_id"),
       supabase
         .from("baseball_player_seasons")
-        .select("player_id")
-        .is("deleted_at", null),
+        .select("player_id"),
       // Fetch all players from misc sports table
       supabase.from("player_seasons_misc").select("player_id, sport_id"),
       // Fetch all coaches with their sports

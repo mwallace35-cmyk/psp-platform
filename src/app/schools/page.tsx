@@ -4,7 +4,7 @@ import { Breadcrumb } from '@/components/ui';
 import SchoolsDirectory from './SchoolsDirectory';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'School Directory — PhillySportsPack',
@@ -21,24 +21,18 @@ interface SchoolRow {
   city: string | null;
   state: string | null;
   league_id: number | null;
-  metadata: Record<string, unknown> | null;
+  colors: Record<string, unknown> | null;
   leagues: { name: string } | { name: string }[] | null;
 }
 
 async function fetchSchools() {
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    console.log(`[PSP Schools] ENV CHECK: URL=${url ? url.substring(0, 30) + '...' : 'MISSING'}, KEY=${key ? key.substring(0, 20) + '...' : 'MISSING'}`);
-
     const supabase = createStaticClient();
     const { data, error } = await supabase
       .from('schools')
-      .select('id, slug, name, city, state, league_id, metadata, leagues(name)')
+      .select('id, slug, name, city, state, league_id, colors, leagues(name)')
       .is('deleted_at', null)
       .order('name', { ascending: true });
-
-    console.log(`[PSP Schools] Query result: ${data?.length ?? 0} rows, error: ${error ? JSON.stringify(error) : 'none'}`);
 
     if (error) {
       captureError(error, { function: 'fetchSchools', context: 'schools_directory' });
@@ -46,7 +40,6 @@ async function fetchSchools() {
     }
     return (data || []) as SchoolRow[];
   } catch (error) {
-    console.error(`[PSP Schools] Exception:`, error);
     captureError(error, { function: 'fetchSchools', context: 'schools_directory' });
     return [];
   }
@@ -57,8 +50,7 @@ async function fetchChampionshipCounts() {
     const supabase = createStaticClient();
     const { data, error } = await supabase
       .from('championships')
-      .select('school_id')
-      .is('deleted_at', null);
+      .select('school_id');
 
     if (error) return {};
 
@@ -80,18 +72,17 @@ async function fetchTopSchoolsByChampionships() {
     // Get schools with most recent championship wins for "Rising Programs"
     const { data, error } = await supabase
       .from('championships')
-      .select('school_id, year, schools(id, slug, name, leagues(name))')
-      .is('deleted_at', null)
-      .gte('year', '2020')
-      .order('year', { ascending: false });
+      .select('school_id, season_id, schools(id, slug, name, leagues(name)), seasons(year_start)')
+      .order('season_id', { ascending: false });
 
     if (error) return [];
 
-    // Count recent titles per school
+    // Count recent titles per school (2020+)
     const recentCounts: Record<number, { count: number; school: any }> = {};
     (data || []).forEach((row: any) => {
       const sid = row.school_id;
-      if (sid && row.schools) {
+      const yearStart = row.seasons?.year_start;
+      if (sid && row.schools && yearStart && yearStart >= 2020) {
         if (!recentCounts[sid]) {
           recentCounts[sid] = { count: 0, school: row.schools };
         }
@@ -135,8 +126,8 @@ export default async function SchoolsPage() {
       state: s.state || 'PA',
       league: leagueName || null,
       championships_count: champCounts[s.id] || 0,
-      colors: s.metadata && typeof s.metadata === 'object' && 'colors' in s.metadata
-        ? (s.metadata as { colors?: { primary?: string } }).colors?.primary || null
+      colors: s.colors && typeof s.colors === 'object' && 'primary' in s.colors
+        ? (s.colors as { primary?: string }).primary || null
         : null,
     };
   });

@@ -138,8 +138,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
       `,
         { count: "exact" }
       )
-      .eq("sport_id", sport)
-      .is("deleted_at", null);
+      .eq("sport_id", sport);
 
     // Filter by school if provided
     if (finalSchoolId) {
