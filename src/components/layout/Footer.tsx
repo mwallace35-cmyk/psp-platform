@@ -34,6 +34,7 @@ export default function Footer() {
             <li><Link href="/coaches">Coaches</Link></li>
             <li><Link href="/articles">Articles</Link></li>
             <li><Link href="/events">Events</Link></li>
+            <li><Link href="/glossary">Glossary</Link></li>
           </ul>
         </nav>
         <div style={{ flex: "1 1 140px" }}>

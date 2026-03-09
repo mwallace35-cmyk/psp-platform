@@ -65,20 +65,11 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="theme-toggle"
+      className="theme-toggle w-8 h-8 rounded border-none flex items-center justify-center cursor-pointer transition-all duration-300 ease-out"
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       style={{
-        width: "32px",
-        height: "32px",
-        borderRadius: "6px",
-        border: "none",
-        background: isDark ? "#ffffff" : "var(--psp-navy)",
-        color: isDark ? "var(--psp-navy)" : "#ffffff",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        transition: "all 0.3s ease",
+        background: isDark ? "var(--psp-white, #ffffff)" : "var(--psp-navy)",
+        color: isDark ? "var(--psp-navy)" : "var(--psp-white, #ffffff)",
       }}
     >
       {isDark ? <SunIcon /> : <MoonIcon />}

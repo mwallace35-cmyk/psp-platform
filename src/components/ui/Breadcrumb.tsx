@@ -39,7 +39,7 @@ function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
         {/* Home link */}
         <Link
           href="/"
-          className="text-gray-400 hover:text-white transition"
+          className="dark:text-gray-400 text-gray-600 hover:dark:text-white hover:text-gray-900 transition"
         >
           Home
         </Link>
@@ -47,16 +47,16 @@ function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
         {/* Items */}
         {items.map((item, idx) => (
           <div key={idx} className="flex items-center gap-2">
-            <span className="text-gray-600">›</span>
+            <span className="dark:text-gray-600 text-gray-500">›</span>
             {item.href ? (
               <Link
                 href={item.href}
-                className="text-gray-400 hover:text-white transition"
+                className="dark:text-gray-400 text-gray-600 hover:dark:text-white hover:text-gray-900 transition"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="text-white">{item.label}</span>
+              <span className="dark:text-white text-gray-900">{item.label}</span>
             )}
           </div>
         ))}

@@ -64,26 +64,27 @@ export default function PSPPromo({ size, variant = 0 }: PSPPromoProps) {
   const styles = SIZE_STYLES[size];
 
   return (
-    <Link
-      href={promo.href}
-      role="complementary"
-      aria-label={`Promotional content: ${promo.text}`}
-      className={`
-        ${styles.container}
-        ${styles.minHeight}
-        flex flex-col items-center justify-center gap-4
-        bg-gradient-to-br from-navy via-navy to-blue-900
-        border border-blue-800
-        hover:border-gold hover:shadow-lg transition-all duration-300
-        group
-      `}
-    >
-      <div className={`${styles.textSize} font-semibold text-white leading-tight`}>
-        {promo.text}
-      </div>
-      <div className="text-2xl font-bold text-gold group-hover:text-yellow-300 transition-colors" aria-hidden="true">
-        {promo.cta}
-      </div>
-    </Link>
+    <div role="region" aria-label="Promotional content">
+      <Link
+        href={promo.href}
+        aria-label={`Promotional content: ${promo.text}`}
+        className={`
+          ${styles.container}
+          ${styles.minHeight}
+          flex flex-col items-center justify-center gap-4
+          bg-gradient-to-br from-navy via-navy to-blue-900
+          border border-blue-800
+          hover:border-gold hover:shadow-lg transition-all duration-300
+          group
+        `}
+      >
+        <div className={`${styles.textSize} font-semibold text-white leading-tight`}>
+          {promo.text}
+        </div>
+        <div className="text-2xl font-bold text-gold group-hover:text-yellow-300 transition-colors" aria-hidden="true">
+          {promo.cta}
+        </div>
+      </Link>
+    </div>
   );
 }

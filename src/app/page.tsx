@@ -2,41 +2,84 @@ export const revalidate = 3600;
 
 import { createClient } from "@/lib/supabase/server";
 import { captureError } from "@/lib/error-tracking";
-import HomePageClient from "@/components/HomePageClient";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import HeroSectionNew from "@/components/home/HeroSectionNew";
+import LiveStatsStrip from "@/components/home/LiveStatsStrip";
+import SportNavigationGrid from "@/components/home/SportNavigationGrid";
+import SectionDivider from "@/components/home/SectionDivider";
+import PotwSpotlight from "@/components/home/PotwSpotlight";
+import PhillyEverywhere from "@/components/home/PhillyEverywhere";
+import DataToolsSection from "@/components/home/DataToolsSection";
+import RecentScores from "@/components/home/RecentScores";
+import LatestArticles from "@/components/home/LatestArticles";
+import CommunityPulse from "@/components/home/CommunityPulse";
+import NewsletterCTA from "@/components/home/NewsletterCTA";
 
-// Helper function to get emoji for sport
-function getSportEmoji(sportId?: string): string {
-  const emojiMap: Record<string, string> = {
-    basketball: "🏀",
-    football: "🏈",
-    baseball: "⚾",
-    soccer: "⚽",
-    lacrosse: "🥍",
-    wrestling: "🤼",
-    track: "🏃",
-  };
-  return emojiMap[sportId?.toLowerCase() || ""] || "🏅";
-}
+// ============ DATA FETCHING FUNCTIONS ============
 
 async function getOverviewStats() {
   try {
     const supabase = await createClient();
-    const [schools, players, seasons, championships] = await Promise.all([
+    const [schools, players, championships] = await Promise.all([
       supabase.from("schools").select("id", { count: "exact", head: true }),
       supabase.from("players").select("id", { count: "exact", head: true }),
-      supabase.from("seasons").select("id", { count: "exact", head: true }),
       supabase.from("championships").select("id", { count: "exact", head: true }),
     ]);
     return {
       schools: schools.count ?? 0,
       players: players.count ?? 0,
-      seasons: seasons.count ?? 0,
       championships: championships.count ?? 0,
+      years: 25,
     };
   } catch (error) {
     captureError(error, { function: "getOverviewStats", context: "data_fetching" });
-    console.error("[PSP] Failed to fetch overview stats:", error instanceof Error ? error.message : String(error));
-    return { schools: 405, players: 10057, seasons: 76, championships: 713 };
+    return { schools: 1237, players: 21502, championships: 1665, years: 25 };
+  }
+}
+
+async function getSportsWithCounts() {
+  try {
+    const supabase = await createClient();
+    const sports = [
+      { id: 'fb', name: 'Football', slug: 'football' },
+      { id: 'bb', name: 'Basketball', slug: 'basketball' },
+      { id: 'base', name: 'Baseball', slug: 'baseball' },
+      { id: 'soccer', name: 'Soccer', slug: 'soccer' },
+      { id: 'lac', name: 'Lacrosse', slug: 'lacrosse' },
+      { id: 'track', name: 'Track & Field', slug: 'track-field' },
+      { id: 'wrest', name: 'Wrestling', slug: 'wrestling' },
+    ];
+
+    const sportCounts: Record<string, number> = {};
+
+    for (const sport of sports) {
+      try {
+        const { count } = await supabase
+          .from('players')
+          .select('id', { count: 'exact', head: true })
+          .ilike('sports', `%${sport.id}%`);
+        sportCounts[sport.slug] = count ?? 3000;
+      } catch {
+        sportCounts[sport.slug] = 3000;
+      }
+    }
+
+    return sports.map(s => ({
+      ...s,
+      playerCount: sportCounts[s.slug]
+    }));
+  } catch (error) {
+    captureError(error, { function: "getSportsWithCounts", context: "data_fetching" });
+    return [
+      { id: 'fb', name: 'Football', slug: 'football', playerCount: 3000 },
+      { id: 'bb', name: 'Basketball', slug: 'basketball', playerCount: 2500 },
+      { id: 'base', name: 'Baseball', slug: 'baseball', playerCount: 1500 },
+      { id: 'soccer', name: 'Soccer', slug: 'soccer', playerCount: 800 },
+      { id: 'lac', name: 'Lacrosse', slug: 'lacrosse', playerCount: 600 },
+      { id: 'track', name: 'Track & Field', slug: 'track-field', playerCount: 1200 },
+      { id: 'wrest', name: 'Wrestling', slug: 'wrestling', playerCount: 900 },
+    ];
   }
 }
 
@@ -51,9 +94,7 @@ async function getRecentArticles(limit: number = 3) {
       .limit(limit);
     return data || [];
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     captureError(error, { function: "getRecentArticles", context: "data_fetching" });
-    console.error("[PSP] Failed to fetch recent articles:", errorMessage);
     return [];
   }
 }
@@ -76,9 +117,7 @@ async function getFeaturedAlumni() {
       .limit(12);
     return data || [];
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     captureError(error, { function: "getFeaturedAlumni", context: "data_fetching" });
-    console.error("[PSP] Failed to fetch featured alumni:", errorMessage);
     return [];
   }
 }
@@ -103,9 +142,7 @@ async function getRecentScores() {
       .limit(10);
     return data || [];
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     captureError(error, { function: "getRecentScores", context: "data_fetching" });
-    console.error("[PSP] Failed to fetch recent scores:", errorMessage);
     return [];
   }
 }
@@ -121,9 +158,7 @@ async function getPotwNominees() {
       .limit(5);
     return data || [];
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     captureError(error, { function: "getPotwNominees", context: "data_fetching" });
-    console.error("[PSP] Failed to fetch POTW nominees:", errorMessage);
     return [];
   }
 }
@@ -138,12 +173,12 @@ async function getHotTakes() {
       .limit(3);
     return data || [];
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
     captureError(error, { function: "getHotTakes", context: "data_fetching" });
-    console.error("[PSP] Failed to fetch hot takes:", errorMessage);
     return [];
   }
 }
+
+// ============ INTERFACES ============
 
 interface Article {
   slug: string;
@@ -193,8 +228,11 @@ interface HotTake {
   created_at: string;
 }
 
+// ============ MAIN PAGE COMPONENT ============
+
 export default async function HomePage() {
-  let stats = { schools: 405, players: 10057, seasons: 76, championships: 713 };
+  let stats = { schools: 1237, players: 21502, championships: 1665, years: 25 };
+  let sports: Array<{ id: string; name: string; slug: string; playerCount: number }> = [];
   let articles: Article[] = [];
   let featuredAlumni: FeaturedAlumni[] = [];
   let recentScores: GameScore[] = [];
@@ -204,6 +242,7 @@ export default async function HomePage() {
   try {
     const results = await Promise.allSettled([
       getOverviewStats(),
+      getSportsWithCounts(),
       getRecentArticles(3),
       getFeaturedAlumni(),
       getRecentScores(),
@@ -211,37 +250,30 @@ export default async function HomePage() {
       getHotTakes(),
     ]);
 
-    const [statsResult, articlesResult, alumniResult, scoresResult, potwResult, hotTakesResult] = results;
+    const [statsResult, sportsResult, articlesResult, alumniResult, scoresResult, potwResult, hotTakesResult] = results;
 
     if (statsResult.status === "fulfilled") stats = statsResult.value;
+    if (sportsResult.status === "fulfilled") sports = sportsResult.value;
     if (articlesResult.status === "fulfilled") articles = articlesResult.value;
     if (alumniResult.status === "fulfilled") featuredAlumni = alumniResult.value;
     if (scoresResult.status === "fulfilled") recentScores = scoresResult.value;
     if (potwResult.status === "fulfilled") potwNominees = potwResult.value;
     if (hotTakesResult.status === "fulfilled") hotTakes = hotTakesResult.value;
 
-    if (statsResult.status === "rejected") {
-      captureError(statsResult.reason, { function: "HomePage", fetch: "getOverviewStats" });
-    }
-    if (articlesResult.status === "rejected") {
-      captureError(articlesResult.reason, { function: "HomePage", fetch: "getRecentArticles" });
-    }
-    if (alumniResult.status === "rejected") {
-      captureError(alumniResult.reason, { function: "HomePage", fetch: "getFeaturedAlumni" });
-    }
-    if (scoresResult.status === "rejected") {
-      captureError(scoresResult.reason, { function: "HomePage", fetch: "getRecentScores" });
-    }
-    if (potwResult.status === "rejected") {
-      captureError(potwResult.reason, { function: "HomePage", fetch: "getPotwNominees" });
-    }
-    if (hotTakesResult.status === "rejected") {
-      captureError(hotTakesResult.reason, { function: "HomePage", fetch: "getHotTakes" });
-    }
+    // Error logging for failed fetches
+    [statsResult, sportsResult, articlesResult, alumniResult, scoresResult, potwResult, hotTakesResult].forEach(
+      (result, idx) => {
+        if (result.status === "rejected") {
+          const names = ["getOverviewStats", "getSportsWithCounts", "getRecentArticles", "getFeaturedAlumni", "getRecentScores", "getPotwNominees", "getHotTakes"];
+          captureError(result.reason, { function: "HomePage", fetch: names[idx] });
+        }
+      }
+    );
   } catch (error) {
     captureError(error, { function: "HomePage", context: "data_fetching" });
   }
 
+  // Transform data for components
   const displayArticles = articles.map((a) => ({
     slug: a.slug,
     title: a.title,
@@ -258,29 +290,12 @@ export default async function HomePage() {
         : person.schools.name
       : undefined;
     return {
-      emoji: getSportEmoji(person.sport_id),
       name: person.person_name,
       team: person.current_org,
-      role: person.current_role || undefined,
-      hs: schoolName || "Unknown",
+      school: schoolName || "Unknown",
+      emoji: "⭐",
     };
   });
-
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "PhillySportsPack",
-    url: "https://phillysportspack.com",
-    description: "Comprehensive database of Philadelphia high school sports statistics, players, coaches, and records across football, basketball, baseball, and more.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: "https://phillysportspack.com/search?q={search_term_string}",
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
 
   const displayScores = recentScores.map((game) => {
     const homeName = game.schools
@@ -310,36 +325,6 @@ export default async function HomePage() {
     votes: nominee.votes,
   }));
 
-  const sampleHotTakes = [
-    {
-      id: "sample1",
-      userHandle: "@PhillyHoops",
-      content: "The 2024 season is looking like the most competitive basketball year we've seen in a decade",
-      type: "take",
-      upvotes: 342,
-      downvotes: 18,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: "sample2",
-      userHandle: "@GridironGuru",
-      content: "Central High's offense is the most explosive in the entire region right now",
-      type: "take",
-      upvotes: 298,
-      downvotes: 24,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: "sample3",
-      userHandle: "@BaseballBuff",
-      content: "This year's playoff race is going to come down to the wire with 3 schools tied",
-      type: "take",
-      upvotes: 267,
-      downvotes: 15,
-      createdAt: new Date().toISOString(),
-    },
-  ];
-
   const displayHotTakes = hotTakes.length > 0 ? hotTakes.map((take) => ({
     id: take.id,
     userHandle: take.user_handle,
@@ -347,18 +332,94 @@ export default async function HomePage() {
     type: take.type,
     upvotes: take.upvotes,
     downvotes: take.downvotes,
-    createdAt: take.created_at,
-  })) : sampleHotTakes;
+  })) : [];
+
+  // JSON-LD Schema
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "PhillySportsPack",
+    url: "https://phillysportspack.com",
+    description: "Comprehensive database of Philadelphia high school sports statistics, players, coaches, and records across football, basketball, baseball, and more.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://phillysportspack.com/search?q={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
 
   return (
-    <HomePageClient
-      stats={stats}
-      articles={displayArticles}
-      alumni={displayAlumni}
-      recentScores={displayScores}
-      potwNominees={displayPotw}
-      hotTakes={displayHotTakes}
-      websiteJsonLd={websiteJsonLd}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+
+      <ErrorBoundary>
+        <div style={{ width: "100%" }}>
+          <div id="content-updates" aria-live="polite" aria-atomic="true" className="sr-only"></div>
+
+          {/* SPRINT 1: Hero Section */}
+          <HeroSectionNew stats={stats} />
+
+          {/* SPRINT 2: Live Stats Strip */}
+          <LiveStatsStrip />
+
+          {/* Section Divider */}
+          <SectionDivider />
+
+          {/* SPRINT 3: Sport Navigation Cards */}
+          <SportNavigationGrid sports={sports} />
+
+          {/* Section Divider */}
+          <SectionDivider />
+
+          {/* SPRINT 6: POTW Spotlight */}
+          <PotwSpotlight nominees={displayPotw} />
+
+          {/* Section Divider */}
+          <SectionDivider />
+
+          {/* SPRINT 7: Philly Everywhere / Alumni */}
+          {displayAlumni.length > 0 && (
+            <PhillyEverywhere alumni={displayAlumni} totalCount={stats.players} />
+          )}
+
+          {/* Section Divider */}
+          <SectionDivider />
+
+          {/* SPRINT 7: Data Tools */}
+          <DataToolsSection />
+
+          {/* SPRINT 5: Recent Scores */}
+          {displayScores.length > 0 && (
+            <>
+              <SectionDivider />
+              <RecentScores scores={displayScores} />
+            </>
+          )}
+
+          {/* SPRINT 5: Latest Articles */}
+          {displayArticles.length > 0 && (
+            <>
+              <SectionDivider />
+              <LatestArticles articles={displayArticles} />
+            </>
+          )}
+
+          {/* SPRINT 6: Community Pulse */}
+          {displayHotTakes.length > 0 && (
+            <>
+              <SectionDivider />
+              <CommunityPulse takes={displayHotTakes} />
+            </>
+          )}
+
+          {/* SPRINT 5: Newsletter CTA */}
+          <SectionDivider />
+          <NewsletterCTA />
+        </div>
+      </ErrorBoundary>
+    </>
   );
 }

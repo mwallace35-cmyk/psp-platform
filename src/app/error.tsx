@@ -24,79 +24,33 @@ export default function Error({ error, reset }: ErrorProps) {
 
   return (
     <div
+      className="min-h-screen flex items-center justify-center bg-gray-50 font-sans p-5"
       style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         backgroundColor: "var(--bg-secondary, #f5f5f5)",
-        fontFamily: "var(--font-dm-sans, sans-serif)",
-        padding: "20px",
       }}
     >
       <div
         aria-live="polite"
-        style={{
-          maxWidth: "600px",
-          textAlign: "center",
-          backgroundColor: "white",
-          padding: "60px 40px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-        }}
+        className="max-w-2xl text-center bg-white p-20 rounded-lg shadow-sm"
       >
-        <div
-          style={{
-            fontSize: "48px",
-            fontWeight: "bold",
-            color: "var(--psp-navy)",
-            marginBottom: "16px",
-          }}
-        >
+        <div className="text-6xl font-bold text-navy mb-4">
           Oops!
         </div>
 
         <h1
           ref={headingRef}
           tabIndex={-1}
-          style={{
-            fontSize: "28px",
-            fontWeight: "bold",
-            color: "var(--psp-navy)",
-            marginBottom: "12px",
-            outline: "none",
-          }}
+          className="text-3xl font-bold text-navy mb-3 outline-none"
         >
           Something went wrong
         </h1>
 
-        <p
-          style={{
-            fontSize: "16px",
-            color: "#666",
-            marginBottom: "32px",
-            lineHeight: "1.6",
-          }}
-        >
+        <p className="text-base text-gray-600 mb-8 leading-relaxed">
           We encountered an unexpected error while loading this page. Our team has been notified, and we're working to fix it.
         </p>
 
         {process.env.NODE_ENV === 'development' && error.message && (
-          <div
-            style={{
-              backgroundColor: "#f0f4ff",
-              border: "1px solid #d0d9ff",
-              borderRadius: "6px",
-              padding: "16px",
-              marginBottom: "32px",
-              fontSize: "14px",
-              color: "#333",
-              textAlign: "left",
-              fontFamily: "monospace",
-              overflow: "auto",
-              maxHeight: "120px",
-            }}
-          >
+          <div className="bg-blue-50 border border-blue-200 rounded px-4 py-4 mb-8 text-sm text-gray-900 text-left font-mono overflow-auto max-h-32">
             <strong>Details:</strong> {error.message}
             {error.digest && (
               <>
@@ -107,73 +61,16 @@ export default function Error({ error, reset }: ErrorProps) {
           </div>
         )}
 
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            justifyContent: "center",
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="flex gap-3 justify-center flex-wrap">
           <button
             onClick={reset}
-            style={{
-              padding: "12px 24px",
-              fontSize: "16px",
-              fontWeight: "600",
-              backgroundColor: "var(--psp-navy)",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              transition: "background-color 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLButtonElement).style.backgroundColor =
-                "var(--psp-navy-mid)";
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLButtonElement).style.backgroundColor =
-                "var(--psp-navy)";
-            }}
-            onFocus={(e) => {
-              (e.target as HTMLButtonElement).style.outline = "2px solid var(--psp-gold)";
-              (e.target as HTMLButtonElement).style.outlineOffset = "2px";
-            }}
-            onBlur={(e) => {
-              (e.target as HTMLButtonElement).style.outline = "none";
-            }}
+            className="px-6 py-3 text-base font-semibold bg-navy text-white rounded hover:bg-navy-mid transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold cursor-pointer"
           >
             Try again
           </button>
 
-          <Link href="/" style={{ textDecoration: "none" }}>
-            <button
-              style={{
-                padding: "12px 24px",
-                fontSize: "16px",
-                fontWeight: "600",
-                backgroundColor: "#e8ecf3",
-                color: "var(--psp-navy)",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-                transition: "background-color 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor = "#d0d9ff";
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor = "#e8ecf3";
-              }}
-              onFocus={(e) => {
-                (e.target as HTMLButtonElement).style.outline = "2px solid var(--psp-gold)";
-                (e.target as HTMLButtonElement).style.outlineOffset = "2px";
-              }}
-              onBlur={(e) => {
-                (e.target as HTMLButtonElement).style.outline = "none";
-              }}
-            >
+          <Link href="/" className="no-underline">
+            <button className="px-6 py-3 text-base font-semibold bg-blue-100 text-navy rounded hover:bg-blue-200 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold cursor-pointer">
               Go to homepage
             </button>
           </Link>

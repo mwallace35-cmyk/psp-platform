@@ -194,14 +194,15 @@ function SortableTable({
                 )}
               </div>
 
-              {/* Other columns as label:value pairs */}
+              {/* Top 2 stat columns as compact key-value pairs */}
               <div className="space-y-1 text-sm">
                 {columns
                   .filter((c) => c.key !== rankCol.key && c.key !== primaryColumn?.key)
+                  .slice(0, 2)
                   .map((col) => (
-                    <div key={col.key} className="flex justify-between text-gray-600">
-                      <span className="font-medium">{col.label}</span>
-                      <span className="text-right">
+                    <div key={col.key} className="flex justify-between items-center text-gray-600">
+                      <span className="font-medium text-xs uppercase tracking-wide">{col.label}</span>
+                      <span className="text-right font-semibold text-navy">
                         {col.render ? col.render(row[col.key], row) : row[col.key]}
                       </span>
                     </div>

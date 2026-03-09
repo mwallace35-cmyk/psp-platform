@@ -1,6 +1,4 @@
 import { Suspense } from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import PlayerCompare from "@/components/compare/PlayerCompare";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import type { Metadata } from "next";
@@ -15,9 +13,7 @@ export const metadata: Metadata = {
 
 export default function ComparePage() {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Header />
-      <main id="main-content" className="max-w-7xl mx-auto px-4 py-8" style={{ flex: 1 }}>
+    <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}>
           Compare Players
         </h1>
@@ -32,8 +28,6 @@ export default function ComparePage() {
         }>
           <PlayerCompare />
         </Suspense>
-      </main>
-      <Footer />
     </div>
   );
 }

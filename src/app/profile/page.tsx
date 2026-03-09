@@ -75,7 +75,9 @@ export default function ProfilePage() {
       toastSuccess('Profile saved successfully!');
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      console.error('Error saving profile:', err);
+      if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+        console.error('Error saving profile:', err);
+      }
       toastError('Could not save profile. Please try again.');
     } finally {
       setSaving(false);

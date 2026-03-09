@@ -4,6 +4,8 @@ import { Bebas_Neue, DM_Sans } from "next/font/google";
 import { headers } from "next/headers";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 import { WebVitalsReporter } from "@/app/web-vitals-reporter";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import "./globals.css";
 import "./type-scale.css";
 
@@ -118,7 +120,13 @@ export default async function RootLayout({
           Skip to main content
         </a>
         <WebVitalsReporter />
-        {children}
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+          <Header />
+          <main id="main-content" style={{ flex: 1 }}>
+            {children}
+          </main>
+          <Footer />
+        </div>
       </body>
     </html>
   );

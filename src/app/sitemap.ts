@@ -202,7 +202,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           }
         }
       } catch (error) {
-        console.error("Error fetching player slugs for sitemap:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error fetching player slugs for sitemap:", error);
+        }
       }
     }
 
@@ -216,7 +218,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
       }
     } else if (coachesSettled.status === "rejected") {
-      console.error("Failed to fetch coaches for sitemap:", coachesSettled.reason);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to fetch coaches for sitemap:", coachesSettled.reason);
+      }
+      captureError(coachesSettled.reason, { context: "sitemap", fetch: "coaches" });
     }
 
     // Fetch all coaches in one query and add to sitemap
@@ -242,7 +247,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           }
         }
       } catch (error) {
-        console.error("Error fetching coach slugs for sitemap:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Error fetching coach slugs for sitemap:", error);
+        }
       }
     }
 
@@ -257,10 +264,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     } else if (articlesSettled.status === "rejected") {
-      console.error("Failed to fetch articles for sitemap:", articlesSettled.reason);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to fetch articles for sitemap:", articlesSettled.reason);
+      }
+      captureError(articlesSettled.reason, { context: "sitemap", fetch: "articles" });
     }
   } catch (error) {
-    console.error("Error during sitemap generation:", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Error during sitemap generation:", error);
+    }
+    captureError(error, { context: "sitemap_generation" });
   }
 
   // Public content pages

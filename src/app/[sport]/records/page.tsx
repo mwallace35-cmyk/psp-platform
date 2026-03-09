@@ -61,7 +61,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
       <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, ${meta.color}33 100%)` }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{ label: meta.name, href: `/${sport}` }, { label: "Records" }]} />
-          <h1 className="text-4xl md:text-5xl text-white mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="text-4xl md:text-5xl text-white mb-2 font-bebas">
             {meta.emoji} {meta.name} Records
           </h1>
           <p className="text-gray-300">All-time records across {categories.length} categories</p>
@@ -80,7 +80,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
         ) : (
           categories.map((category, idx) => (
             <div key={category} className="mb-10">
-              <h2 className="text-2xl font-bold mb-4 capitalize" style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}>
+              <h2 className="text-2xl font-bold mb-4 capitalize font-bebas" style={{ color: "var(--psp-navy)" }}>
                 {category}
               </h2>
               <div className="overflow-x-auto">

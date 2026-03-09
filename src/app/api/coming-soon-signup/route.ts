@@ -58,7 +58,9 @@ export async function POST(request: NextRequest) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceKey) {
-    console.error("[coming-soon-signup] Missing Supabase config");
+    if (process.env.NODE_ENV === 'development') {
+      console.error("[coming-soon-signup] Missing Supabase config");
+    }
     return apiError("Service unavailable", 503, "CONFIG_ERROR");
   }
 

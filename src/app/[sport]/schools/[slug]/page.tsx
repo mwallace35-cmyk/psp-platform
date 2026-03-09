@@ -3,13 +3,17 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, type School, type TeamSeason, type Championship } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
+import WinLossBar from "@/components/ui/WinLossBar";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
+import WinLossTrendChart from "@/components/charts/WinLossTrendChart";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import type { Metadata } from "next";
+import type { SeasonRecord } from "@/components/viz/types";
+import ClientDynastyTimeline from "@/components/viz/ClientDynastyTimeline";
 
 // Dynamic import for heavy client component
 const CorrectionForm = dynamic(() => import("@/components/corrections/CorrectionForm"), {
@@ -232,6 +236,24 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Dynasty Timeline */}
+            {teamSeasons.length > 1 && (
+              <ClientDynastyTimeline
+                schoolName={school.name}
+                seasons={teamSeasons.map((ts) => ({
+                  year: parseInt(ts.seasons?.label?.substring(0, 4) || "0") || new Date().getFullYear(),
+                  wins: ts.wins || 0,
+                  losses: ts.losses || 0,
+                  ties: ts.ties,
+                  championships: championships
+                    .filter((c) => c.seasons?.label === ts.seasons?.label)
+                    .map((c) => c.level || "State"),
+                  coach: ts.coaches?.name,
+                }))}
+                sport={sport}
+              />
+            )}
+
             {/* Championships */}
             {championships.length > 0 && (
               <div>

@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import AdPlaceholder from '@/components/ads/AdPlaceholder';
 
 export const revalidate = 3600;
@@ -140,7 +138,9 @@ async function fetchProAthletes(): Promise<ProAthlete[]> {
       .order('person_name', { ascending: true });
 
     if (error) {
-      console.error('Error fetching pro athletes:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error fetching pro athletes:', error);
+      }
       return FALLBACK_ATHLETES;
     }
 
@@ -173,7 +173,9 @@ async function fetchProAthletes(): Promise<ProAthlete[]> {
 
     return athletes;
   } catch (error) {
-    console.error('Error fetching pro athletes:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching pro athletes:', error);
+    }
     return FALLBACK_ATHLETES;
   }
 }
@@ -293,10 +295,7 @@ export default async function NextLevelPage() {
     .slice(0, 8);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Header />
-
-      <div className="espn-container" style={{ flex: 1 }}>
+    <div className="espn-container" style={{ flex: 1 }}>
         <main>
           {/* Hero Card */}
           <div className="hero-card">
@@ -448,9 +447,6 @@ export default async function NextLevelPage() {
           {/* Ad Space */}
           <AdPlaceholder size="sidebar-rect" id="psp-nextlevel-rail" />
         </aside>
-      </div>
-
-      <Footer />
     </div>
   );
 }

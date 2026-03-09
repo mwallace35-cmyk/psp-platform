@@ -42,26 +42,22 @@ function EmptyState({
     >
       {/* Icon */}
       {icon && (
-        <div
+        <span
+          role="img"
+          aria-label={title || "Status icon"}
           style={{
             fontSize: "3.5rem",
             marginBottom: "1rem",
             opacity: 0.8,
+            display: "block",
           }}
         >
           {icon}
-        </div>
+        </span>
       )}
 
       {/* Title */}
-      <h3
-        style={{
-          fontSize: "1.25rem",
-          fontWeight: 700,
-          marginBottom: "0.5rem",
-          color: "var(--psp-navy)",
-        }}
-      >
+      <h3 className="text-xl font-bold mb-2 text-navy">
         {title}
       </h3>
 

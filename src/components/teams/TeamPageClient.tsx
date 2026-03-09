@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import AdPlaceholder from "@/components/ads/AdPlaceholder";
+import PSPPromo from "@/components/ads/PSPPromo";
 
 // Type definitions
 interface TeamDetail {
@@ -984,8 +984,8 @@ export default function TeamPageClient({
               </div>
             )}
 
-            {/* Ad Space */}
-            <AdPlaceholder size="sidebar-rect" id="psp-team-rail" />
+            {/* Promotional Content */}
+            <PSPPromo size="sidebar" />
 
             {/* Related Teams */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">

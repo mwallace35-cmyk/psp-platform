@@ -3,17 +3,23 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
+import SparkLine from "@/components/ui/SparkLine";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import { buildOgImageUrl } from "@/lib/og-utils";
+import { ComputedMetricsPanel } from "@/components/stats";
 import type { Metadata } from "next";
+import type { SeasonData } from "@/components/viz/types";
 
-// Dynamic import for heavy client component
+// Dynamic imports for heavy client components
 const CorrectionForm = dynamic(() => import("@/components/corrections/CorrectionForm"), {
   loading: () => <div className="text-center py-4 text-gray-500 text-sm">Loading form...</div>,
 });
+
+// ClientCareerTrajectory is a client component wrapper, import it directly
+import ClientCareerTrajectory from "@/components/viz/ClientCareerTrajectory";
 
 export const revalidate = 86400;
 
@@ -228,6 +234,20 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Career Trajectory Chart */}
+            {sport === "football" && stats.length > 1 && (
+              <ClientCareerTrajectory
+                seasons={(stats as FootballPlayerSeason[]).map((s) => ({
+                  year: s.seasons?.label || "Unknown",
+                  value: s.rush_yards || s.total_yards || 0,
+                  isChampionship: false,
+                }))}
+                stat="Total Yards"
+                sport={sport}
+                height={300}
+              />
+            )}
+
             {/* Season-by-season stats */}
             {sport === "football" && stats.length > 0 && (
               <div>
@@ -283,6 +303,20 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   </table>
                 </div>
               </div>
+            )}
+
+            {/* Career Trajectory Chart */}
+            {sport === "basketball" && stats.length > 1 && (
+              <ClientCareerTrajectory
+                seasons={(stats as BasketballPlayerSeason[]).map((s) => ({
+                  year: s.seasons?.label || "Unknown",
+                  value: s.points || 0,
+                  isChampionship: false,
+                }))}
+                stat="Points"
+                sport={sport}
+                height={300}
+              />
             )}
 
             {sport === "basketball" && stats.length > 0 && (

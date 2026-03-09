@@ -88,6 +88,13 @@
   --space-16: 4rem;         /* 64px */
   --space-20: 5rem;         /* 80px */
 
+  /* Page Layout Spacing Scale - Section padding and margins */
+  --psp-space-section: 5rem;      /* 80px - major section vertical spacing */
+  --psp-space-subsection: 2.5rem; /* 40px - subsection vertical spacing */
+  --psp-space-element: 1.5rem;    /* 24px - element vertical spacing */
+  --psp-space-tight: 1rem;        /* 16px - tight spacing between related elements */
+  --psp-space-xs: 0.5rem;         /* 8px - very tight spacing */
+
   /* Shadow System - Depth and elevation */
   --shadow-none: none;
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -118,7 +125,8 @@
   --psp-navy-light: #1a2d4a;
   --psp-gold: #f0a500;
   --psp-gold-light: #f5c542;
-  --psp-white: #0f2040;
+  --psp-gold-text: #f0a500; /* Text-safe gold for dark mode */
+  --psp-white: #ffffff;
   --psp-gray-50: #0f172a;
   --psp-gray-100: #1e293b;
   --psp-gray-200: #334155;

@@ -155,50 +155,72 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     if (standingsResult.status === "fulfilled") standings = (standingsResult.value as unknown as Awaited<ReturnType<typeof getTeamsWithRecords>>).data || [];
     if (alumniResult.status === "fulfilled") trackedAlumni = alumniResult.value as unknown as TrackedAlumni[];
 
-    // Log any failures with structured error context
+    // Log any failures with structured error context (development logging)
+    if (process.env.NODE_ENV === 'development') {
+      if (overviewResult.status === "rejected") {
+        const errorMsg = overviewResult.reason instanceof Error ? overviewResult.reason.message : String(overviewResult.reason);
+        console.error(`[PSP] Failed to fetch sport overview for ${sport}:`, errorMsg);
+      }
+      if (championsResult.status === "rejected") {
+        const errorMsg = championsResult.reason instanceof Error ? championsResult.reason.message : String(championsResult.reason);
+        console.error(`[PSP] Failed to fetch recent champions for ${sport}:`, errorMsg);
+      }
+      if (schoolsResult.status === "rejected") {
+        const errorMsg = schoolsResult.reason instanceof Error ? schoolsResult.reason.message : String(schoolsResult.reason);
+        console.error(`[PSP] Failed to fetch schools for ${sport}:`, errorMsg);
+      }
+      if (featuredResult.status === "rejected") {
+        const errorMsg = featuredResult.reason instanceof Error ? featuredResult.reason.message : String(featuredResult.reason);
+        console.error(`[PSP] Failed to fetch featured articles for ${sport}:`, errorMsg);
+      }
+      if (freshnessResult.status === "rejected") {
+        const errorMsg = freshnessResult.reason instanceof Error ? freshnessResult.reason.message : String(freshnessResult.reason);
+        console.error(`[PSP] Failed to fetch data freshness for ${sport}:`, errorMsg);
+      }
+      if (gamesResult.status === "rejected") {
+        const errorMsg = gamesResult.reason instanceof Error ? gamesResult.reason.message : String(gamesResult.reason);
+        console.error(`[PSP] Failed to fetch recent games for ${sport}:`, errorMsg);
+      }
+      if (standingsResult.status === "rejected") {
+        const errorMsg = standingsResult.reason instanceof Error ? standingsResult.reason.message : String(standingsResult.reason);
+        console.error(`[PSP] Failed to fetch team standings for ${sport}:`, errorMsg);
+      }
+      if (alumniResult.status === "rejected") {
+        const errorMsg = alumniResult.reason instanceof Error ? alumniResult.reason.message : String(alumniResult.reason);
+        console.error(`[PSP] Failed to fetch tracked alumni for ${sport}:`, errorMsg);
+      }
+    }
+
+    // Always capture errors for error tracking (non-development)
     if (overviewResult.status === "rejected") {
-      const errorMsg = overviewResult.reason instanceof Error ? overviewResult.reason.message : String(overviewResult.reason);
-      console.error(`[PSP] Failed to fetch sport overview for ${sport}:`, errorMsg);
       captureError(overviewResult.reason, { sport, fetch: "getSportOverview" });
     }
     if (championsResult.status === "rejected") {
-      const errorMsg = championsResult.reason instanceof Error ? championsResult.reason.message : String(championsResult.reason);
-      console.error(`[PSP] Failed to fetch recent champions for ${sport}:`, errorMsg);
       captureError(championsResult.reason, { sport, fetch: "getRecentChampions" });
     }
     if (schoolsResult.status === "rejected") {
-      const errorMsg = schoolsResult.reason instanceof Error ? schoolsResult.reason.message : String(schoolsResult.reason);
-      console.error(`[PSP] Failed to fetch schools for ${sport}:`, errorMsg);
       captureError(schoolsResult.reason, { sport, fetch: "getSchoolsBySport" });
     }
     if (featuredResult.status === "rejected") {
-      const errorMsg = featuredResult.reason instanceof Error ? featuredResult.reason.message : String(featuredResult.reason);
-      console.error(`[PSP] Failed to fetch featured articles for ${sport}:`, errorMsg);
       captureError(featuredResult.reason, { sport, fetch: "getFeaturedArticles" });
     }
     if (freshnessResult.status === "rejected") {
-      const errorMsg = freshnessResult.reason instanceof Error ? freshnessResult.reason.message : String(freshnessResult.reason);
-      console.error(`[PSP] Failed to fetch data freshness for ${sport}:`, errorMsg);
       captureError(freshnessResult.reason, { sport, fetch: "getDataFreshness" });
     }
     if (gamesResult.status === "rejected") {
-      const errorMsg = gamesResult.reason instanceof Error ? gamesResult.reason.message : String(gamesResult.reason);
-      console.error(`[PSP] Failed to fetch recent games for ${sport}:`, errorMsg);
       captureError(gamesResult.reason, { sport, fetch: "getRecentGamesBySport" });
     }
     if (standingsResult.status === "rejected") {
-      const errorMsg = standingsResult.reason instanceof Error ? standingsResult.reason.message : String(standingsResult.reason);
-      console.error(`[PSP] Failed to fetch team standings for ${sport}:`, errorMsg);
       captureError(standingsResult.reason, { sport, fetch: "getTeamsWithRecords" });
     }
     if (alumniResult.status === "rejected") {
-      const errorMsg = alumniResult.reason instanceof Error ? alumniResult.reason.message : String(alumniResult.reason);
-      console.error(`[PSP] Failed to fetch tracked alumni for ${sport}:`, errorMsg);
       captureError(alumniResult.reason, { sport, fetch: "getTrackedAlumni" });
     }
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    console.error(`[PSP] Unexpected error during sport page data fetching for ${sport}:`, errorMsg);
+    if (process.env.NODE_ENV === 'development') {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.error(`[PSP] Unexpected error during sport page data fetching for ${sport}:`, errorMsg);
+    }
     captureError(error, { sport, context: "data_fetching" });
     // Page will degrade gracefully with fallback data already set above
   }

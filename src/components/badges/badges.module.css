@@ -1,0 +1,111 @@
+.badgesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.badgeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 2px solid;
+  transition: all 0.3s ease;
+}
+
+.badgeCard.earned {
+  background: linear-gradient(135deg, rgba(240, 165, 0, 0.1), rgba(59, 130, 246, 0.1));
+  border-color: var(--psp-gold);
+  box-shadow: 0 0 12px rgba(240, 165, 0, 0.2);
+}
+
+.badgeCard.locked {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.1);
+  opacity: 0.7;
+}
+
+.badgeCard.earned:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(240, 165, 0, 0.3);
+}
+
+.badgeIconWrapper {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.badgeName {
+  font-family: var(--font-bebas);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.badgeDescription {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.progressContainer {
+  width: 100%;
+  margin-top: auto;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--psp-gold), var(--psp-blue));
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.progressText {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.earnedBadge {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--psp-gold);
+  color: var(--psp-navy);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+  .badgesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .badgeCard {
+    padding: 1rem;
+  }
+
+  .badgeName {
+    font-size: 1.1rem;
+  }
+}

@@ -250,7 +250,9 @@ export async function GET(request: Request) {
       }
     );
   } catch (error) {
-    console.error("OG image generation error:", error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error("OG image generation error:", error);
+    }
     // Return a fallback error image
     return new ImageResponse(
       <div

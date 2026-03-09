@@ -1,0 +1,96 @@
+.reactionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reactionsGrid {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.reactionButton {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.reactionButton:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.reactionButton:active:not(:disabled) {
+  animation: bounceClick 0.3s ease-out;
+}
+
+.reactionButton.selected {
+  background-color: var(--psp-gold);
+  border-color: var(--psp-gold);
+  color: var(--psp-navy);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(240, 165, 0, 0.3);
+}
+
+.reactionButton.mostPopular:not(.selected) {
+  border-color: var(--psp-gold);
+  background-color: rgba(240, 165, 0, 0.1);
+  color: var(--psp-gold);
+}
+
+.reactionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.emoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.count {
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+.popularNote {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
+@keyframes bounceClick {
+  0% {
+    transform: scale(1.05);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .reactionButton {
+    flex: 1 1 calc(33.33% - 0.35rem);
+    min-width: 80px;
+    justify-content: center;
+  }
+
+  .reactionButton.selected {
+    flex: 1 1 100%;
+  }
+}
