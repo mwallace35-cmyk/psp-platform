@@ -1,6 +1,6 @@
 export const revalidate = 3600;
 
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { captureError } from "@/lib/error-tracking";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
@@ -20,7 +20,7 @@ import NewsletterCTA from "@/components/home/NewsletterCTA";
 
 async function getOverviewStats() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const [schools, players, championships] = await Promise.all([
       supabase.from("schools").select("id", { count: "exact", head: true }),
       supabase.from("players").select("id", { count: "exact", head: true }),
@@ -40,7 +40,7 @@ async function getOverviewStats() {
 
 async function getSportsWithCounts() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const sports = [
       { id: 'fb', name: 'Football', slug: 'football' },
       { id: 'bb', name: 'Basketball', slug: 'basketball' },
@@ -85,7 +85,7 @@ async function getSportsWithCounts() {
 
 async function getRecentArticles(limit: number = 3) {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase
       .from("articles")
       .select("slug, title, excerpt, sport_id, featured_image_url, published_at")
@@ -101,7 +101,7 @@ async function getRecentArticles(limit: number = 3) {
 
 async function getFeaturedAlumni() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase
       .from("next_level_tracking")
       .select(
@@ -124,7 +124,7 @@ async function getFeaturedAlumni() {
 
 async function getRecentScores() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase
       .from("games")
       .select(
@@ -149,7 +149,7 @@ async function getRecentScores() {
 
 async function getPotwNominees() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase
       .from("potw_nominees")
       .select("id, player_name, school_name, sport_id, stat_line, votes")
@@ -165,7 +165,7 @@ async function getPotwNominees() {
 
 async function getHotTakes() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase
       .from("hot_takes")
       .select("id, user_handle, content, type, upvotes, downvotes, created_at")

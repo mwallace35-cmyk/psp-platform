@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createStaticClient } from '@/lib/supabase/static';
 import { captureError } from '@/lib/error-tracking';
 import { Breadcrumb } from '@/components/ui';
 import SchoolsDirectory from './SchoolsDirectory';
@@ -27,7 +27,7 @@ interface SchoolRow {
 
 async function fetchSchools() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data, error } = await supabase
       .from('schools')
       .select('id, slug, name, city, state, league_id, metadata, leagues(name)')
@@ -47,7 +47,7 @@ async function fetchSchools() {
 
 async function fetchChampionshipCounts() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data, error } = await supabase
       .from('championships')
       .select('school_id')
@@ -69,7 +69,7 @@ async function fetchChampionshipCounts() {
 
 async function fetchTopSchoolsByChampionships() {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     // Get schools with most recent championship wins for "Rising Programs"
     const { data, error } = await supabase
       .from('championships')

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createStaticClient } from '@/lib/supabase/static';
 import type { Metadata } from 'next';
 import { SPORT_META } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
@@ -33,7 +33,7 @@ interface Event {
 }
 
 export default async function EventsPage() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   const { data: events } = await supabase
     .from('events')

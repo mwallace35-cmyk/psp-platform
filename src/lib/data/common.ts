@@ -1,13 +1,21 @@
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { withErrorHandling } from "@/lib/errors";
 import { withRetry } from "@/lib/retry";
 
-// Re-export client creation
+// Re-export client creation (cookie-free for ISR/static compatibility)
 // Re-export sports constants
 export { VALID_SPORTS, SPORT_META, isValidSport } from "@/lib/sports";
 export type { SportId } from "@/lib/sports";
 
-export { createClient };
+/**
+ * Creates a Supabase client for public data reads.
+ * Uses the static (cookie-free) client so it works during
+ * build-time static generation, ISR revalidation, and runtime.
+ */
+export async function createClient() {
+  return createStaticClient();
+}
+
 export { withErrorHandling, withRetry };
 
 // ============================================================================

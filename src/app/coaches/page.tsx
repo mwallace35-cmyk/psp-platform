@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { Breadcrumb } from "@/components/ui";
 import { getAllCoaches } from "@/lib/data";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import CoachesFilter from "@/components/coaches/CoachesFilter";
 import CoachingMomentsCarousel from "@/components/coaches/CoachingMomentsCarousel";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
@@ -175,7 +175,7 @@ export default async function CoachesPage() {
   const coaches = coachesResult.data;
 
   // Fetch pipeline counts by school from next_level_tracking table
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data: pipelineData } = await supabase
     .from("next_level_tracking")
     .select("high_school_id")

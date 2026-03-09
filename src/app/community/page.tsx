@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createStaticClient } from '@/lib/supabase/static';
 import Link from 'next/link';
 import { SPORT_META, type SportId } from '@/lib/sports';
 import { Breadcrumb } from '@/components/ui';
@@ -44,7 +44,7 @@ interface Correction {
 }
 
 export default async function CommunityPage() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   // Fetch POTW winners
   let winners: POTWWinner[] = [];

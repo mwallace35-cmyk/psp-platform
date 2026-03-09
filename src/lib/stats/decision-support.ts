@@ -8,7 +8,7 @@
  * - Era-adjusted player comparison tools
  */
 
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import type { SportId } from "@/lib/sports";
 import { adjustForEra } from "./era-adjustment";
 import {
@@ -101,7 +101,7 @@ export async function getCollegePlacementRate(
   schoolId: number
 ): Promise<CollegePlacementStats | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
 
     // Get all players from this school
     const { data: schoolPlayers, error: playerError } = await supabase
@@ -209,7 +209,7 @@ export async function getProPipelineScore(
   schoolId: number
 ): Promise<ProPipelineScore | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
 
     // Get all players from this school
     const { data: schoolPlayers, error: playerError } = await supabase

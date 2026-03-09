@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createStaticClient } from '@/lib/supabase/static';
 import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -21,7 +21,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   const { data: article } = await supabase
     .from('articles')
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ArticleDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   const { data: article } = await supabase
     .from('articles')

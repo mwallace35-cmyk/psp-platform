@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { VALID_SPORTS } from "@/lib/data";
 import { captureError } from "@/lib/error-tracking";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://phillysportspack.com";
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   // NOTE: lastModified uses current date for all entries except articles (which have updated_at).
   // This is a tradeoff: we prioritize simplicity and ISR cache efficiency over per-record timestamps.
@@ -182,7 +182,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch all players in one query and add to sitemap
     if (playerSportsMap.size > 0) {
       try {
-        const { data: players } = await supabase
+        const supabase2 = createStaticClient();
+        const { data: players } = await supabase2
           .from("players")
           .select("id, slug")
           .is("deleted_at", null)
@@ -227,7 +228,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch all coaches in one query and add to sitemap
     if (coachSportsMap.size > 0) {
       try {
-        const { data: coaches } = await supabase
+        const supabase3 = createStaticClient();
+        const { data: coaches } = await supabase3
           .from("coaches")
           .select("id, slug")
           .is("deleted_at", null)

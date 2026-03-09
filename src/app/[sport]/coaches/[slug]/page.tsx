@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidSport, SPORT_META } from "@/lib/data";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
@@ -34,7 +34,7 @@ interface CoachingStint {
 
 async function getCoachBySlug(slug: string): Promise<Coach | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase.from("coaches").select("*").eq("slug", slug).is("deleted_at", null).single();
     return data as Coach | null;
   } catch { return null; }
@@ -42,7 +42,7 @@ async function getCoachBySlug(slug: string): Promise<Coach | null> {
 
 async function getCoachingStints(coachId: number, sportId?: string): Promise<CoachingStint[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     let query = supabase
       .from("coaching_stints")
       .select("*, schools(name, slug)")

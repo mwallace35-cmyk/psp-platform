@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createStaticClient } from '@/lib/supabase/static';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -41,7 +41,7 @@ export default async function ArticlesPage({
   const selectedSport = params.sport || 'all';
   const offset = (currentPage - 1) * ARTICLES_PER_PAGE;
 
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   // Build query
   let query = supabase

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 
 export const runtime = "edge";
 export const alt = "Player Profile - PhillySportsPack.com";
@@ -29,7 +29,7 @@ export default async function Image({ params }: { params: Promise<{ sport: strin
   let schoolName = "";
 
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase
       .from("players")
       .select("name, schools:schools!players_primary_school_id_fkey(name)")

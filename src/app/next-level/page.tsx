@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
+import { createStaticClient } from '@/lib/supabase/static';
 import AdPlaceholder from '@/components/ads/AdPlaceholder';
 
 export const revalidate = 3600;
@@ -117,7 +117,7 @@ const FALLBACK_ATHLETES: ProAthlete[] = [
 
 async function fetchProAthletes(): Promise<ProAthlete[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
 
     const { data, error } = await supabase
       .from('next_level_tracking')

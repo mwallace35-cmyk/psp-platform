@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { createClient } from '@/lib/supabase/server';
+import { createStaticClient } from '@/lib/supabase/static';
 import { SPORT_META, type SportId } from '@/lib/sports';
 
 interface RelatedArticlesProps {
@@ -9,7 +9,7 @@ interface RelatedArticlesProps {
 }
 
 export default async function RelatedArticles({ entityType, entityId }: RelatedArticlesProps) {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   // Get article IDs linked to this entity
   const { data: mentions } = await supabase

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createStaticClient } from '@/lib/supabase/static';
 import type { Metadata } from 'next';
 import { SPORT_META } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export const revalidate = 300; // Revalidate every 5 minutes for voting
 
 export default async function PotwPage() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
 
   // Fetch current nominees
   const { data: nominees } = await supabase

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { searchAll, SearchResult } from "@/lib/data";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
@@ -38,7 +38,7 @@ export default async function SearchPage({
   let risingPrograms: any[] = [];
 
   if (!q) {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
 
     // Fetch schools grouped by league
     const { data: allLeagueSchools } = await supabase
