@@ -4,7 +4,7 @@ import { Breadcrumb } from '@/components/ui';
 import SchoolsDirectory from './SchoolsDirectory';
 import type { Metadata } from 'next';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'School Directory — PhillySportsPack',
@@ -27,6 +27,10 @@ interface SchoolRow {
 
 async function fetchSchools() {
   try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    console.log(`[PSP Schools] ENV CHECK: URL=${url ? url.substring(0, 30) + '...' : 'MISSING'}, KEY=${key ? key.substring(0, 20) + '...' : 'MISSING'}`);
+
     const supabase = createStaticClient();
     const { data, error } = await supabase
       .from('schools')
@@ -34,12 +38,15 @@ async function fetchSchools() {
       .is('deleted_at', null)
       .order('name', { ascending: true });
 
+    console.log(`[PSP Schools] Query result: ${data?.length ?? 0} rows, error: ${error ? JSON.stringify(error) : 'none'}`);
+
     if (error) {
       captureError(error, { function: 'fetchSchools', context: 'schools_directory' });
       return [];
     }
     return (data || []) as SchoolRow[];
   } catch (error) {
+    console.error(`[PSP Schools] Exception:`, error);
     captureError(error, { function: 'fetchSchools', context: 'schools_directory' });
     return [];
   }
