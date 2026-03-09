@@ -27,9 +27,10 @@ interface RecordsViewProps {
   sportColor: string;
 }
 
-// Which scopes go in which tab
+// Which scopes go in which tab (School Records is special — handled separately)
 const SCOPE_TABS: Record<string, string[]> = {
   "All-Time": ["game", "season", "career", "city"],
+  "School Records": [], // special tab
   Postseason: ["postseason"],
   "City Title": ["city-title"],
 };
@@ -80,25 +81,27 @@ function scopeBadge(scope: string | null) {
 
 export default function RecordsView({ records, sport, sportColor }: RecordsViewProps) {
   const [activeTab, setActiveTab] = useState("All-Time");
+  const [schoolSearch, setSchoolSearch] = useState("");
 
-  // Separate records vs leaderboard entries
-  const { tabRecords, leaderboardEntries } = useMemo(() => {
+  // Separate records vs school records (per-school yard records)
+  const { tabRecords, schoolRecords } = useMemo(() => {
     const tabRec: RecordItem[] = [];
-    const leaders: RecordItem[] = [];
+    const schoolRec: RecordItem[] = [];
 
     for (const r of records) {
       if (LEADERBOARD_SUBCATS.has(r.subcategory || "")) {
-        leaders.push(r);
+        schoolRec.push(r);
       } else {
         tabRec.push(r);
       }
     }
-    return { tabRecords: tabRec, leaderboardEntries: leaders };
+    return { tabRecords: tabRec, schoolRecords: schoolRec };
   }, [records]);
 
   // Filter by active tab
   const scopeSet = new Set(SCOPE_TABS[activeTab] || []);
   const filtered = useMemo(() => {
+    if (activeTab === "School Records") return [];
     return tabRecords.filter((r) => scopeSet.has(r.scope || ""));
   }, [tabRecords, activeTab]);
 
@@ -143,34 +146,44 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
     });
   }, [grouped]);
 
-  // Leaderboard summary (top 3 per category+scope for All-Time tab)
-  const leaderboardSummary = useMemo(() => {
-    if (activeTab !== "All-Time") return new Map<string, Map<string, RecordItem[]>>();
-    const map = new Map<string, Map<string, RecordItem[]>>();
-    for (const r of leaderboardEntries) {
-      if (!scopeSet.has(r.scope || "")) continue;
-      const cat = r.category || "Other";
-      const key = `${r.scope || "unknown"}`;
-      if (!map.has(cat)) map.set(cat, new Map());
-      const scopeMap = map.get(cat)!;
-      if (!scopeMap.has(key)) scopeMap.set(key, []);
-      const arr = scopeMap.get(key)!;
-      if (arr.length < 3) {
-        arr.push(r);
+  // School records grouped by school name
+  const schoolsByName = useMemo(() => {
+    const map = new Map<string, RecordItem[]>();
+    for (const r of schoolRecords) {
+      const school = r.holder_school || r.school_name || "Unknown";
+      if (!map.has(school)) map.set(school, []);
+      map.get(school)!.push(r);
+    }
+    // Sort schools alphabetically
+    return new Map([...map.entries()].sort((a, b) => a[0].localeCompare(b[0])));
+  }, [schoolRecords]);
+
+  // Filter schools by search
+  const filteredSchools = useMemo(() => {
+    if (!schoolSearch.trim()) return schoolsByName;
+    const q = schoolSearch.toLowerCase();
+    const filtered = new Map<string, RecordItem[]>();
+    for (const [name, recs] of schoolsByName) {
+      if (name.toLowerCase().includes(q)) {
+        filtered.set(name, recs);
       }
     }
-    return map;
-  }, [leaderboardEntries, activeTab]);
+    return filtered;
+  }, [schoolsByName, schoolSearch]);
 
   // Tab counts
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const tab of Object.keys(SCOPE_TABS)) {
+      if (tab === "School Records") {
+        counts[tab] = schoolsByName.size;
+        continue;
+      }
       const scopes = new Set(SCOPE_TABS[tab]);
       counts[tab] = tabRecords.filter((r) => scopes.has(r.scope || "")).length;
     }
     return counts;
-  }, [tabRecords]);
+  }, [tabRecords, schoolsByName]);
 
   return (
     <div>
@@ -214,14 +227,23 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
                   color: isActive ? sportColor : "#9ca3af",
                 }}
               >
-                ({count})
+                ({count}{tab === "School Records" ? " schools" : ""})
               </span>
             </button>
           );
         })}
       </div>
 
-      {filtered.length === 0 && activeTab !== "All-Time" ? (
+      {activeTab === "School Records" ? (
+        <SchoolRecordsTab
+          schools={filteredSchools}
+          totalSchools={schoolsByName.size}
+          searchValue={schoolSearch}
+          onSearch={setSchoolSearch}
+          sport={sport}
+          sportColor={sportColor}
+        />
+      ) : filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "48px 0", color: "#9ca3af" }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
           <p>No {activeTab.toLowerCase()} records available yet.</p>
@@ -326,75 +348,6 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
                   })}
                 </div>
 
-                {/* Show leaderboard summary if exists for this category */}
-                {leaderboardSummary.has(category) && (
-                  <div
-                    style={{
-                      marginTop: 16,
-                      padding: 16,
-                      background: "#f9fafb",
-                      borderRadius: 8,
-                      border: "1px solid #e5e7eb",
-                    }}
-                  >
-                    <h3 style={{ fontSize: 14, fontWeight: 600, color: "#374151", marginBottom: 12 }}>
-                      📊 Stat Leaders
-                    </h3>
-                    {Array.from(leaderboardSummary.get(category)!.entries()).map(([scopeKey, items]) => (
-                      <div key={scopeKey} style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 4, fontWeight: 600, textTransform: "uppercase" }}>
-                          Top {SCOPE_LABELS[scopeKey] || scopeKey} {category === "Passing" ? "Passers" : category === "Rushing" ? "Rushers" : "Receivers"} (Yards)
-                        </div>
-                        {items.map((r, i) => (
-                          <div
-                            key={r.id}
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              padding: "4px 0",
-                              fontSize: 13,
-                              borderBottom: i < items.length - 1 ? "1px solid #f3f4f6" : "none",
-                            }}
-                          >
-                            <span>
-                              <span style={{ color: i === 0 ? "#f59e0b" : "#9ca3af", fontWeight: 600, marginRight: 8 }}>
-                                {i + 1}.
-                              </span>
-                              {r.player_slug ? (
-                                <Link href={`/${sport}/players/${r.player_slug}`} style={{ color: "var(--psp-navy)", fontWeight: 500 }}>
-                                  {r.player_name || r.holder_name}
-                                </Link>
-                              ) : (
-                                <span style={{ fontWeight: 500 }}>{r.holder_name || r.player_name || "—"}</span>
-                              )}
-                              {" — "}
-                              <span style={{ color: "#6b7280", fontSize: 12 }}>
-                                {r.school_name || r.holder_school || ""}
-                                {r.year_set ? ` (${r.year_set})` : ""}
-                              </span>
-                            </span>
-                            <span style={{ fontWeight: 700, color: sportColor }}>
-                              {r.record_value || r.record_number?.toLocaleString() || "—"}
-                            </span>
-                          </div>
-                        ))}
-                        <Link
-                          href={`/${sport}/leaderboards/${category.toLowerCase()}-yards`}
-                          style={{
-                            display: "inline-block",
-                            marginTop: 4,
-                            fontSize: 12,
-                            color: "var(--psp-blue, #3b82f6)",
-                            fontWeight: 500,
-                          }}
-                        >
-                          View full leaderboard →
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </section>
             );
           })}
@@ -481,6 +434,151 @@ function RecordCard({
       >
         {rec.record_value || rec.record_number?.toLocaleString() || "—"}
       </div>
+    </div>
+  );
+}
+
+function SchoolRecordsTab({
+  schools,
+  totalSchools,
+  searchValue,
+  onSearch,
+  sport,
+  sportColor,
+}: {
+  schools: Map<string, RecordItem[]>;
+  totalSchools: number;
+  searchValue: string;
+  onSearch: (v: string) => void;
+  sport: string;
+  sportColor: string;
+}) {
+  const SCOPE_ORDER = ["game", "season", "career"];
+  const CAT_LABELS: Record<string, string> = {
+    Rushing: "Rush",
+    Passing: "Pass",
+    Receiving: "Rec",
+  };
+
+  return (
+    <div>
+      {/* Search box */}
+      <div style={{ marginBottom: 24 }}>
+        <input
+          type="text"
+          placeholder={`Search ${totalSchools} schools...`}
+          value={searchValue}
+          onChange={(e) => onSearch(e.target.value)}
+          style={{
+            width: "100%",
+            maxWidth: 400,
+            padding: "10px 16px",
+            fontSize: 14,
+            border: "2px solid #e5e7eb",
+            borderRadius: 8,
+            outline: "none",
+            fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
+          }}
+          onFocus={(e) => (e.target.style.borderColor = sportColor)}
+          onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
+        />
+        {searchValue && (
+          <span style={{ marginLeft: 12, fontSize: 13, color: "#6b7280" }}>
+            {schools.size} of {totalSchools} schools
+          </span>
+        )}
+      </div>
+
+      {/* School cards */}
+      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))" }}>
+        {Array.from(schools.entries()).map(([schoolName, recs]) => {
+          // Group by scope then category
+          const byScope = new Map<string, RecordItem[]>();
+          for (const r of recs) {
+            const s = r.scope || "unknown";
+            if (!byScope.has(s)) byScope.set(s, []);
+            byScope.get(s)!.push(r);
+          }
+
+          return (
+            <div
+              key={schoolName}
+              style={{
+                border: "1px solid #e5e7eb",
+                borderRadius: 12,
+                overflow: "hidden",
+                background: "#fff",
+              }}
+            >
+              {/* School header */}
+              <div
+                style={{
+                  padding: "12px 16px",
+                  background: "var(--psp-navy, #0a1628)",
+                  borderBottom: `3px solid ${sportColor}`,
+                }}
+              >
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", margin: 0, fontFamily: "var(--font-heading, 'Bebas Neue', sans-serif)" }}>
+                  {schoolName}
+                </h3>
+                <span style={{ fontSize: 12, color: "#9ca3af" }}>
+                  {recs.length} records
+                </span>
+              </div>
+
+              {/* Records table */}
+              <div style={{ padding: "8px 0" }}>
+                <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid #f3f4f6" }}>
+                      <th style={{ padding: "6px 16px", textAlign: "left", fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase" }}>Stat</th>
+                      <th style={{ padding: "6px 8px", textAlign: "left", fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase" }}>Record Holder</th>
+                      <th style={{ padding: "6px 16px", textAlign: "right", fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase" }}>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SCOPE_ORDER.map((scope) => {
+                      const scopeRecs = byScope.get(scope);
+                      if (!scopeRecs) return null;
+                      // Sort by category order
+                      const sorted = [...scopeRecs].sort((a, b) => {
+                        const cats = ["Rushing", "Passing", "Receiving"];
+                        return cats.indexOf(a.category) - cats.indexOf(b.category);
+                      });
+                      return sorted.map((rec, i) => (
+                        <tr key={rec.id} style={{ borderBottom: "1px solid #f9fafb" }}>
+                          <td style={{ padding: "6px 16px" }}>
+                            <span style={{ fontWeight: 500 }}>{CAT_LABELS[rec.category] || rec.category}</span>
+                            {i === 0 && (
+                              <span style={{ marginLeft: 6 }}>{scopeBadge(scope)}</span>
+                            )}
+                          </td>
+                          <td style={{ padding: "6px 8px", color: "#374151" }}>
+                            {rec.holder_name || rec.player_name || "—"}
+                            {rec.year_set && (
+                              <span style={{ color: "#9ca3af", fontSize: 11 }}> ({rec.year_set})</span>
+                            )}
+                          </td>
+                          <td style={{ padding: "6px 16px", textAlign: "right", fontWeight: 700, color: sportColor }}>
+                            {rec.record_value || "—"}
+                          </td>
+                        </tr>
+                      ));
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {schools.size === 0 && (
+        <div style={{ textAlign: "center", padding: "48px 0", color: "#9ca3af" }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+          <p>No schools match &ldquo;{searchValue}&rdquo;</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -61,12 +61,11 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
   }));
 
   // Count records by type for the subtitle
-  const totalRecords = records.filter(
-    (r: any) => r.subcategory !== "Yards"
-  ).length;
-  const categoryCount = new Set(
-    records.filter((r: any) => r.subcategory !== "Yards").map((r: any) => r.category)
-  ).size;
+  const individualRecords = records.filter((r: any) => r.subcategory !== "Yards");
+  const schoolRecords = records.filter((r: any) => r.subcategory === "Yards");
+  const totalRecords = individualRecords.length;
+  const schoolCount = new Set(schoolRecords.map((r: any) => r.holder_school || r.school_name)).size;
+  const categoryCount = new Set(individualRecords.map((r: any) => r.category)).size;
 
   return (
     <>
@@ -82,7 +81,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
             {meta.emoji} {meta.name} Records
           </h1>
           <p className="text-gray-300">
-            {totalRecords} records across {categoryCount} categories — game, season, career, postseason &amp; city title
+            {totalRecords} records across {categoryCount} categories + {schoolCount} school record books
           </p>
         </div>
       </section>
