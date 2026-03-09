@@ -21,6 +21,7 @@ interface SchoolRow {
   city: string | null;
   state: string | null;
   league_id: number | null;
+  closed_year: number | null;
   colors: Record<string, unknown> | null;
   leagues: { name: string } | { name: string }[] | null;
 }
@@ -39,6 +40,7 @@ interface SchoolData {
   has_data: boolean;
   sports: string[];
   award_count: number;
+  closed_year: number | null;
 }
 
 async function fetchSchools() {
@@ -46,7 +48,7 @@ async function fetchSchools() {
     const supabase = createStaticClient();
     const { data, error } = await supabase
       .from('schools')
-      .select('id, slug, name, city, state, league_id, colors, leagues(name)')
+      .select('id, slug, name, city, state, league_id, closed_year, colors, leagues(name)')
       .is('deleted_at', null)
       .order('name', { ascending: true });
 
@@ -320,6 +322,7 @@ export default async function SchoolsPage() {
       has_data: hasData,
       sports,
       award_count: awardCounts[s.id] || 0,
+      closed_year: s.closed_year || null,
     };
   });
 

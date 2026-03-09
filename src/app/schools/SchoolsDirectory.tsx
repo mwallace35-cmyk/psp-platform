@@ -17,6 +17,7 @@ interface SchoolData {
   has_data: boolean;
   sports: string[];
   award_count: number;
+  closed_year: number | null;
 }
 
 interface RisingProgram {
@@ -66,7 +67,8 @@ function getLeagueColor(league: string | null): string {
   return key ? LEAGUE_COLORS[key] : '#64748b';
 }
 
-function getLeagueGroupKey(league: string | null): 'catholic' | 'public' | 'interac' | 'independent' {
+function getLeagueGroupKey(league: string | null, closedYear: number | null): 'catholic' | 'public' | 'interac' | 'independent' | 'closed' {
+  if (closedYear) return 'closed';
   if (!league) return 'independent';
   const l = league.toLowerCase();
   if (l.includes('catholic')) return 'catholic';
@@ -82,6 +84,7 @@ const MAIN_LEAGUES = [
   { key: 'public', name: 'Philadelphia Public League', color: '#0a1628' },
   { key: 'interac', name: 'Inter-Academic League', color: '#16a34a' },
   { key: 'independent', name: 'Independent', color: '#64748b' },
+  { key: 'closed', name: 'Closed / Historic', color: '#78716c' },
 ];
 
 export default function SchoolsDirectory({ schools, leagues, risingPrograms }: Props) {
@@ -102,7 +105,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
     let result = schoolsToShow;
 
     if (selectedLeagueKey) {
-      result = result.filter(s => getLeagueGroupKey(s.league) === selectedLeagueKey);
+      result = result.filter(s => getLeagueGroupKey(s.league, s.closed_year) === selectedLeagueKey);
     }
 
     if (searchTerm) {
@@ -136,7 +139,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
   const groupedByLeague = useMemo(() => {
     const groups: Record<string, SchoolData[]> = {};
     filtered.forEach(s => {
-      const groupKey = getLeagueGroupKey(s.league);
+      const groupKey = getLeagueGroupKey(s.league, s.closed_year);
       const displayName = MAIN_LEAGUES.find(l => l.key === groupKey)?.name || 'Other Leagues';
       if (!groups[displayName]) groups[displayName] = [];
       groups[displayName].push(s);
@@ -147,7 +150,8 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
         'Philadelphia Public League': 2,
         'Inter-Academic League': 3,
         'Independent': 4,
-        'Other Leagues': 5,
+        'Closed / Historic': 5,
+        'Other Leagues': 6,
       };
       return (orderMap[a[0]] || 99) - (orderMap[b[0]] || 99);
     });
@@ -157,7 +161,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
   const leagueStats = useMemo(() => {
     const stats: Record<string, number> = {};
     MAIN_LEAGUES.forEach(league => {
-      stats[league.key] = schoolsToShow.filter(s => getLeagueGroupKey(s.league) === league.key).length;
+      stats[league.key] = schoolsToShow.filter(s => getLeagueGroupKey(s.league, s.closed_year) === league.key).length;
     });
     return stats;
   }, [schoolsToShow]);
@@ -432,7 +436,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
           <div className="w-head">League Breakdown</div>
           <div className="w-body">
             {MAIN_LEAGUES.map(league => {
-              const count = schoolsToShow.filter(s => getLeagueGroupKey(s.league) === league.key).length;
+              const count = schoolsToShow.filter(s => getLeagueGroupKey(s.league, s.closed_year) === league.key).length;
               return (
                 <div
                   key={league.key}
@@ -465,7 +469,10 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
           <div className="w-head">Data Coverage</div>
           <div className="w-body" style={{ fontSize: 12, color: 'var(--text)' }}>
             <div style={{ marginBottom: 8 }}>
-              <strong>{schoolsToShow.length}</strong> schools with real data
+              <strong>{schoolsToShow.filter(s => !s.closed_year).length}</strong> active schools with data
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <strong>{schoolsToShow.filter(s => !!s.closed_year).length}</strong> historic/closed schools
             </div>
             <div style={{ marginBottom: 8 }}>
               <strong>{schools.length}</strong> total in database
@@ -496,6 +503,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
 function SchoolCard({ school }: { school: SchoolData }) {
   const leagueColor = getLeagueColor(school.league);
   const primaryColor = school.colors && school.colors.startsWith('#') ? school.colors : leagueColor;
+  const isClosed = !!school.closed_year;
   const record = school.total_wins > 0 || school.total_losses > 0
     ? `${school.total_wins}-${school.total_losses}`
     : null;
@@ -504,7 +512,7 @@ function SchoolCard({ school }: { school: SchoolData }) {
     <Link href={`/football/schools/${school.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div style={{
         background: 'var(--surface, #fff)',
-        border: '1px solid var(--g100)',
+        border: isClosed ? '1px solid #d6d3d1' : '1px solid var(--g100)',
         borderRadius: 6,
         overflow: 'hidden',
         transition: 'all .2s',
@@ -512,24 +520,30 @@ function SchoolCard({ school }: { school: SchoolData }) {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        opacity: isClosed ? 0.9 : 1,
       }}
       onMouseEnter={e => {
         const el = e.currentTarget;
         el.style.boxShadow = '0 8px 24px rgba(0,0,0,.12)';
         el.style.transform = 'translateY(-4px)';
+        el.style.opacity = '1';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget;
         el.style.boxShadow = 'none';
         el.style.transform = 'translateY(0)';
+        el.style.opacity = isClosed ? '0.9' : '1';
       }}
       >
         {/* Header with School Color */}
         <div style={{
-          background: primaryColor,
+          background: isClosed
+            ? `linear-gradient(135deg, ${primaryColor}cc, ${primaryColor}99)`
+            : primaryColor,
           padding: '12px 14px',
           color: '#fff',
           borderLeft: school.championships_count > 0 ? `4px solid var(--psp-gold)` : 'none',
+          position: 'relative',
         }}>
           <h3 style={{
             margin: 0,
@@ -541,6 +555,23 @@ function SchoolCard({ school }: { school: SchoolData }) {
           }}>
             {school.name}
           </h3>
+          {isClosed && (
+            <span style={{
+              position: 'absolute',
+              top: 6,
+              right: 8,
+              fontSize: 9,
+              fontWeight: 700,
+              background: 'rgba(0,0,0,0.4)',
+              color: '#fff',
+              padding: '2px 6px',
+              borderRadius: 3,
+              letterSpacing: 0.5,
+              textTransform: 'uppercase',
+            }}>
+              Closed {school.closed_year}
+            </span>
+          )}
         </div>
 
         {/* Body */}
