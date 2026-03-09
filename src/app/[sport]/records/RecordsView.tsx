@@ -146,11 +146,11 @@ export default function RecordsView({ records, sport, sportColor }: RecordsViewP
     });
   }, [grouped]);
 
-  // School records grouped by school name
+  // School records grouped by canonical school name (prefer school_name from DB join)
   const schoolsByName = useMemo(() => {
     const map = new Map<string, RecordItem[]>();
     for (const r of schoolRecords) {
-      const school = r.holder_school || r.school_name || "Unknown";
+      const school = r.school_name || r.holder_school || "Unknown";
       if (!map.has(school)) map.set(school, []);
       map.get(school)!.push(r);
     }
@@ -500,6 +500,9 @@ function SchoolRecordsTab({
             byScope.get(s)!.push(r);
           }
 
+          // Get school slug for linking (from any record in this group)
+          const schoolSlug = recs[0]?.school_slug;
+
           return (
             <div
               key={schoolName}
@@ -519,7 +522,13 @@ function SchoolRecordsTab({
                 }}
               >
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", margin: 0, fontFamily: "var(--font-heading, 'Bebas Neue', sans-serif)" }}>
-                  {schoolName}
+                  {schoolSlug ? (
+                    <Link href={`/${sport}/schools/${schoolSlug}`} style={{ color: "#fff", textDecoration: "none" }}>
+                      {schoolName} →
+                    </Link>
+                  ) : (
+                    schoolName
+                  )}
                 </h3>
                 <span style={{ fontSize: 12, color: "#9ca3af" }}>
                   {recs.length} records
