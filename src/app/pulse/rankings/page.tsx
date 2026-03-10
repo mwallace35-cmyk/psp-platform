@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: 'Power Rankings — The Pulse | PhillySportsPack.com',
   description: 'Weekly power rankings for Philadelphia high school sports — football, basketball, baseball, and more.',
   metadataBase: new URL('https://phillysportspack.com'),
-  alternates: { canonical: 'https://phillysportspack.com/events/rankings' },
+  alternates: { canonical: 'https://phillysportspack.com/pulse/rankings' },
   robots: { index: true, follow: true },
 };
 
@@ -80,7 +80,7 @@ export default async function RankingsPage({
             return (
               <Link
                 key={sport}
-                href={`/events/rankings?sport=${sport}`}
+                href={`/pulse/rankings?sport=${sport}`}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition ${
                   sport === activeSport
                     ? 'bg-navy text-gold'

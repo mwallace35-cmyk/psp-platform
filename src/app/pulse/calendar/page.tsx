@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Events Calendar — The Pulse | PhillySportsPack.com',
   description: 'Upcoming Philadelphia high school sports events, camps, showcases, and tournaments.',
   metadataBase: new URL('https://phillysportspack.com'),
-  alternates: { canonical: 'https://phillysportspack.com/events/calendar' },
+  alternates: { canonical: 'https://phillysportspack.com/pulse/calendar' },
   robots: { index: true, follow: true },
 };
 

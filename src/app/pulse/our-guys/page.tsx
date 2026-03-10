@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: 'Our Guys — The Pulse | PhillySportsPack.com',
   description: 'Track Philadelphia high school alumni playing in the NFL, NBA, MLB, college, and coaching at the next level.',
   metadataBase: new URL('https://phillysportspack.com'),
-  alternates: { canonical: 'https://phillysportspack.com/events/our-guys' },
+  alternates: { canonical: 'https://phillysportspack.com/pulse/our-guys' },
   robots: { index: true, follow: true },
 };
 

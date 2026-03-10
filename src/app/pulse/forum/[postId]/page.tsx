@@ -87,7 +87,7 @@ export default async function ForumPostPage({ params }: { params: Promise<{ post
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-8 px-4">
         <div className="max-w-4xl mx-auto">
-          <Link href="/events/forum" className="text-gray-400 hover:text-gold text-sm mb-3 inline-block">
+          <Link href="/pulse/forum" className="text-gray-400 hover:text-gold text-sm mb-3 inline-block">
             &larr; Back to Forum
           </Link>
           <div className="flex items-center gap-2 mb-2">

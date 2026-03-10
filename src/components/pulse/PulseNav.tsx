@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const PULSE_TABS = [
-  { href: '/events', label: 'Hub', icon: '🔥' },
-  { href: '/events/our-guys', label: 'Our Guys', icon: '🌟' },
-  { href: '/events/forum', label: 'Forum', icon: '💬' },
-  { href: '/events/transfers', label: 'Transfers', icon: '🔄' },
-  { href: '/events/rankings', label: 'Rankings', icon: '📊' },
+  { href: '/pulse', label: 'Hub', icon: '🔥' },
+  { href: '/pulse/our-guys', label: 'Our Guys', icon: '🌟' },
+  { href: '/pulse/forum', label: 'Forum', icon: '💬' },
+  { href: '/pulse/outside-the-215', label: 'Outside the 215', icon: '🔄' },
+  { href: '/pulse/rankings', label: 'Rankings', icon: '📊' },
 ];
 
 export default function PulseNav() {
@@ -20,7 +20,7 @@ export default function PulseNav() {
         <div className="flex gap-1 overflow-x-auto scrollbar-hide py-1">
           {PULSE_TABS.map((tab) => {
             const isActive = pathname === tab.href ||
-              (tab.href !== '/events' && pathname.startsWith(tab.href));
+              (tab.href !== '/pulse' && pathname.startsWith(tab.href));
             return (
               <Link
                 key={tab.href}

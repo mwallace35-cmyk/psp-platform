@@ -8,10 +8,10 @@ import PulseNav from '@/components/pulse/PulseNav';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Transfer Tracker — The Pulse | PhillySportsPack.com',
+  title: 'Outside the 215 — The Pulse | PhillySportsPack.com',
   description: 'Track player transfers in and out of Philadelphia high school sports programs.',
   metadataBase: new URL('https://phillysportspack.com'),
-  alternates: { canonical: 'https://phillysportspack.com/events/transfers' },
+  alternates: { canonical: 'https://phillysportspack.com/pulse/outside-the-215' },
   robots: { index: true, follow: true },
 };
 

@@ -133,7 +133,18 @@ let config: NextConfig = {
       },
       {
         source: "/camps-showcases/",
-        destination: "/events",
+        destination: "/pulse",
+        permanent: true,
+      },
+      // /events → /pulse redirects (route rename)
+      {
+        source: "/events",
+        destination: "/pulse",
+        permanent: true,
+      },
+      {
+        source: "/events/:path*",
+        destination: "/pulse/:path*",
         permanent: true,
       },
       {

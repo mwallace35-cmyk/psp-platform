@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Forum — The Pulse | PhillySportsPack.com',
   description: 'The Forum — debates, predictions, trashtalk, and discussions about Philadelphia high school sports.',
   metadataBase: new URL('https://phillysportspack.com'),
-  alternates: { canonical: 'https://phillysportspack.com/events/forum' },
+  alternates: { canonical: 'https://phillysportspack.com/pulse/forum' },
   robots: { index: true, follow: true },
 };
 
@@ -123,7 +123,7 @@ export default async function ForumPage({
                 {CATEGORIES.map(cat => (
                   <Link
                     key={cat.key}
-                    href={`/events/forum${cat.key === 'all' ? '' : `?category=${cat.key}`}`}
+                    href={`/pulse/forum${cat.key === 'all' ? '' : `?category=${cat.key}`}`}
                     className={`flex items-center gap-3 px-4 py-3 text-sm transition ${
                       category === cat.key
                         ? 'bg-gold/10 text-navy font-bold border-l-4 border-gold'
@@ -170,7 +170,7 @@ export default async function ForumPage({
                   const sportMeta = post.sport_id ? SPORT_META[post.sport_id as keyof typeof SPORT_META] : null;
 
                   return (
-                    <Link key={post.id} href={`/events/forum/${post.id}`} className="flex items-start gap-4 p-4 hover:bg-gray-50 transition group">
+                    <Link key={post.id} href={`/pulse/forum/${post.id}`} className="flex items-start gap-4 p-4 hover:bg-gray-50 transition group">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                           {post.is_pinned && <span className="text-xs text-gold font-bold uppercase">📌 Pinned</span>}

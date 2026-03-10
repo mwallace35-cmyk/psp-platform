@@ -152,7 +152,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
       title = `The Pulse | ${SITE_NAME}`;
       description =
         "The Pulse — upcoming Philadelphia high school sports events, camps, and showcases.";
-      url = `${SITE_URL}/events`;
+      url = `${SITE_URL}/pulse`;
       break;
   }
 
