@@ -201,7 +201,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 )}
               </div>
 
-              {/* Location */}
+              {/* Location & League */}
               <div className="flex flex-wrap gap-4 text-sm mb-6">
                 <span className="text-gray-200">
                   {school.city}, {school.state}
@@ -213,22 +213,68 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 )}
               </div>
 
-              {/* Contact info */}
-              <div className="flex flex-wrap gap-4 text-sm mb-6">
-                {school.website_url && (
-                  <a
-                    href={school.website_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-200 hover:text-blue-100 underline"
-                  >
-                    School Website →
-                  </a>
+              {/* School Details Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {school.address && (
+                  <div className="text-sm">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Address</div>
+                    <a
+                      href={`https://maps.google.com/?q=${encodeURIComponent(school.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-200 hover:text-white underline"
+                    >
+                      {school.address}
+                    </a>
+                  </div>
                 )}
                 {school.phone && (
-                  <span className="text-gray-300">
-                    📞 {school.phone}
-                  </span>
+                  <div className="text-sm">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Phone</div>
+                    <a
+                      href={`tel:${school.phone}`}
+                      className="text-gray-200 hover:text-white"
+                    >
+                      {school.phone}
+                    </a>
+                  </div>
+                )}
+                {school.website_url && (
+                  <div className="text-sm">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Website</div>
+                    <a
+                      href={school.website_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-200 hover:text-blue-100 underline"
+                    >
+                      Visit →
+                    </a>
+                  </div>
+                )}
+                {school.principal && (
+                  <div className="text-sm">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Principal</div>
+                    <div className="text-gray-200">{school.principal}</div>
+                  </div>
+                )}
+                {school.athletic_director && (
+                  <div className="text-sm">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Athletic Director</div>
+                    <div className="text-gray-200">{school.athletic_director}</div>
+                  </div>
+                )}
+                {school.founded_year && (
+                  <div className="text-sm">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Founded</div>
+                    <div className="text-gray-200">{school.founded_year}</div>
+                  </div>
+                )}
+                {school.enrollment && (
+                  <div className="text-sm">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Enrollment</div>
+                    <div className="text-gray-200">{school.enrollment.toLocaleString()}</div>
+                  </div>
                 )}
               </div>
 
@@ -238,59 +284,6 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 title={`${school.name} — PhillySportsPack`}
                 description={`Check out ${school.name}'s athletics profile on PhillySportsPack.com`}
               />
-            </div>
-          </div>
-
-          {/* Stats Strip */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-10 max-w-4xl">
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div
-                className="text-2xl font-bold text-white"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              >
-                {totalChampionships}
-              </div>
-              <div className="text-xs text-gray-400">Championships</div>
-            </div>
-
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div
-                className="text-2xl font-bold text-white"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              >
-                {totalWins}-{totalLosses}{totalTies > 0 ? `-${totalTies}` : ""}
-              </div>
-              <div className="text-xs text-gray-400">All-Time Record</div>
-            </div>
-
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div
-                className="text-2xl font-bold text-white"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              >
-                {totalPlayers}
-              </div>
-              <div className="text-xs text-gray-400">Players</div>
-            </div>
-
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div
-                className="text-2xl font-bold text-white"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              >
-                {totalNextLevel}
-              </div>
-              <div className="text-xs text-gray-400">Next Level</div>
-            </div>
-
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div
-                className="text-2xl font-bold text-white"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              >
-                {sportsStats.length}
-              </div>
-              <div className="text-xs text-gray-400">Sports</div>
             </div>
           </div>
         </div>
@@ -305,12 +298,17 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
             {/* All Sports Section */}
             {sportsStats.length > 0 && (
               <div>
-                <h2
-                  className="text-2xl font-bold mb-6"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
-                >
-                  Sports ({sportsStats.length})
-                </h2>
+                <div className="mb-6">
+                  <h2
+                    className="text-2xl font-bold mb-2"
+                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  >
+                    Sports ({sportsStats.length})
+                  </h2>
+                  <p className="text-sm text-gray-600">
+                    {totalChampionships} Championship{totalChampionships !== 1 ? "s" : ""} • {totalWins}-{totalLosses}{totalTies > 0 ? `-${totalTies}` : ""} All-Time • {totalPlayers} Player{totalPlayers !== 1 ? "s" : ""}
+                  </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {sportsStats.map((sport) => (
                     <Link
@@ -559,81 +557,60 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* School Info Card */}
+            {/* At a Glance Card */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
               <h3
                 className="font-bold text-sm uppercase tracking-wider mb-4"
                 style={{ color: "var(--psp-gray-400)" }}
               >
-                School Info
+                At a Glance
               </h3>
-              <dl className="space-y-4 text-sm">
-                {school.address && (
-                  <div>
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Address</dt>
-                    <dd className="text-sm mt-1" style={{ color: "var(--psp-navy)" }}>
-                      <a
-                        href={`https://maps.google.com/?q=${encodeURIComponent(school.address)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline"
-                      >
-                        {school.address} 📍
-                      </a>
-                    </dd>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <div
+                    className="text-2xl font-bold"
+                    style={{ color: "var(--psp-gold)", fontFamily: "Bebas Neue, sans-serif" }}
+                  >
+                    {totalChampionships}
                   </div>
-                )}
-                {school.phone && (
-                  <div>
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Phone</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
-                      <a href={`tel:${school.phone}`} className="hover:underline">
-                        {school.phone}
-                      </a>
-                    </dd>
+                  <div className="text-xs text-gray-500">Championships</div>
+                </div>
+                <div className="text-center">
+                  <div
+                    className="text-2xl font-bold"
+                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  >
+                    {totalWins}-{totalLosses}
                   </div>
-                )}
-                {school.principal && (
-                  <div>
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Principal</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
-                      {school.principal}
-                    </dd>
+                  <div className="text-xs text-gray-500">All-Time</div>
+                </div>
+                <div className="text-center">
+                  <div
+                    className="text-2xl font-bold"
+                    style={{ color: "var(--psp-blue)", fontFamily: "Bebas Neue, sans-serif" }}
+                  >
+                    {totalPlayers}
                   </div>
-                )}
-                {school.athletic_director && (
-                  <div>
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Athletic Director</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
-                      {school.athletic_director}
-                    </dd>
+                  <div className="text-xs text-gray-500">Players</div>
+                </div>
+                <div className="text-center">
+                  <div
+                    className="text-2xl font-bold"
+                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  >
+                    {totalNextLevel}
                   </div>
-                )}
-                {school.enrollment && (
-                  <div>
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Enrollment</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
-                      {school.enrollment.toLocaleString()}
-                    </dd>
+                  <div className="text-xs text-gray-500">Next Level</div>
+                </div>
+              </div>
+              {school.leagues && (
+                <div className="mt-4 pt-4 border-t border-gray-100 text-center">
+                  <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">League</div>
+                  <div className="text-sm font-medium" style={{ color: "var(--psp-navy)" }}>
+                    {school.leagues.name}
                   </div>
-                )}
-                {school.founded_year && (
-                  <div>
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Founded</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
-                      {school.founded_year}
-                    </dd>
-                  </div>
-                )}
-                {school.leagues && (
-                  <div>
-                    <dt style={{ color: "var(--psp-gray-500)" }}>League</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
-                      {school.leagues.name}
-                    </dd>
-                  </div>
-                )}
-              </dl>
+                </div>
+              )}
             </div>
 
             {/* Quick Links */}
