@@ -44,27 +44,12 @@ interface AggregateStats {
   yearsOfData: number;
 }
 
-interface TopSchool {
-  id: number;
-  slug: string;
-  name: string;
-  league: string | null;
-  colors: string | null;
-  secondary_color: string | null;
-  championships_count: number;
-  win_pct: number | null;
-  total_wins: number;
-  total_losses: number;
-  pro_count: number;
-  player_count: number;
-}
-
 interface Props {
   schools: SchoolData[];
   leagues: string[];
   risingPrograms: RisingProgram[];
   aggregateStats: AggregateStats;
-  topSchools: TopSchool[];
+  topSchools?: unknown[];
 }
 
 const LEAGUE_COLORS: Record<string, string> = {
@@ -130,7 +115,7 @@ const SORT_OPTIONS: { value: SortMode; label: string }[] = [
   { value: 'games', label: 'Most Games' },
 ];
 
-export default function SchoolsDirectory({ schools, leagues, risingPrograms, aggregateStats, topSchools }: Props) {
+export default function SchoolsDirectory({ schools, leagues, risingPrograms, aggregateStats }: Props) {
   const [showAllSchools, setShowAllSchools] = useState(false);
   const [selectedLeagueKey, setSelectedLeagueKey] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -293,135 +278,6 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
           </div>
         </div>
       </div>
-
-      {/* ========== TOP PROGRAMS SHOWCASE ========== */}
-      {topSchools.length > 0 && !selectedLeagueKey && !searchTerm && !selectedLetter && (
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 16 }}>
-            <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--psp-navy)', margin: 0, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5 }}>
-              Powerhouse Programs
-            </h2>
-            <span style={{ fontSize: 12, color: 'var(--g400)' }}>Top schools by all-time championships</span>
-          </div>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: 14,
-          }}>
-            {topSchools.map((school, i) => {
-              const primaryColor = school.colors && school.colors.startsWith('#') ? school.colors : getLeagueColor(school.league);
-              const secondaryColor = school.secondary_color && school.secondary_color.startsWith('#') ? school.secondary_color : null;
-              const record = school.total_wins > 0 || school.total_losses > 0
-                ? `${school.total_wins}-${school.total_losses}`
-                : null;
-              const rankColors = ['#f0a500', '#94a3b8', '#cd7f32'];
-              return (
-                <Link key={school.id} href={`/schools/${school.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div style={{
-                    background: 'var(--surface, #fff)',
-                    border: '1px solid var(--g100)',
-                    borderRadius: 12,
-                    overflow: 'hidden',
-                    transition: 'all .2s',
-                    cursor: 'pointer',
-                    height: '100%',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,.12)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
-                  >
-                    <div style={{
-                      background: secondaryColor
-                        ? `linear-gradient(135deg, ${primaryColor} 60%, ${secondaryColor})`
-                        : primaryColor,
-                      padding: '16px 16px 14px',
-                      color: '#fff',
-                      position: 'relative',
-                    }}>
-                      {/* Rank badge */}
-                      <div style={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 10,
-                        width: 28,
-                        height: 28,
-                        borderRadius: '50%',
-                        background: rankColors[i] || '#64748b',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 13,
-                        fontWeight: 800,
-                        color: i === 0 ? '#0a1628' : '#fff',
-                        boxShadow: '0 2px 6px rgba(0,0,0,.25)',
-                      }}>
-                        {i + 1}
-                      </div>
-
-                      <h3 style={{
-                        margin: 0,
-                        fontSize: 17,
-                        fontWeight: 700,
-                        fontFamily: "'Bebas Neue', sans-serif",
-                        letterSpacing: 0.5,
-                        lineHeight: 1.2,
-                        paddingRight: 36,
-                        textShadow: '0 1px 2px rgba(0,0,0,.3)',
-                      }}>
-                        {school.name}
-                      </h3>
-                      <div style={{ fontSize: 10, opacity: 0.8, marginTop: 3, fontWeight: 500, textShadow: '0 1px 1px rgba(0,0,0,.2)' }}>
-                        {school.league || 'Independent'}
-                      </div>
-                    </div>
-                    <div style={{ padding: '12px 16px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          fontSize: 18,
-                          fontWeight: 800,
-                          color: '#b45309',
-                          fontFamily: "'Bebas Neue', sans-serif",
-                        }}>
-                          🏆 {school.championships_count}
-                        </span>
-                        {record && (
-                          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--psp-navy)' }}>
-                            {record}
-                            {school.win_pct !== null && (
-                              <span style={{
-                                fontSize: 10,
-                                fontWeight: 600,
-                                marginLeft: 4,
-                                color: school.win_pct >= 60 ? '#16a34a' : school.win_pct >= 50 ? 'var(--psp-navy)' : '#dc2626',
-                              }}>
-                                ({school.win_pct}%)
-                              </span>
-                            )}
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        {school.pro_count > 0 && (
-                          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--psp-blue)' }}>
-                            {school.pro_count} Pro{school.pro_count !== 1 ? 's' : ''}
-                          </span>
-                        )}
-                        {school.player_count > 0 && (
-                          <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--g400)' }}>
-                            {formatNumber(school.player_count)} players
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {/* ========== LEAGUE TILES ========== */}
       <div style={{
