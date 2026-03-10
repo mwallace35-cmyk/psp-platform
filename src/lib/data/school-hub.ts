@@ -170,41 +170,36 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             champCountBySport.set(c.sport_id, (champCountBySport.get(c.sport_id) ?? 0) + 1);
           });
 
-          // Get player counts by sport (from player_seasons_misc and sport-specific tables)
-          const { data: fbPlayers } = await supabase
-            .from("football_player_seasons")
-            .select("player_id", { count: "exact", head: true })
-            .eq("school_id", schoolId);
+          // Get player counts by sport using distinct player_id
+          const [
+            { data: fbPlayers },
+            { data: bbPlayers },
+            { data: baseballPlayers },
+            { data: miscPlayers },
+          ] = await Promise.all([
+            supabase.from("football_player_seasons").select("player_id").eq("school_id", schoolId),
+            supabase.from("basketball_player_seasons").select("player_id").eq("school_id", schoolId),
+            supabase.from("baseball_player_seasons").select("player_id").eq("school_id", schoolId),
+            supabase.from("player_seasons_misc").select("player_id, sport_id").eq("school_id", schoolId),
+          ]);
 
-          const { data: bbPlayers } = await supabase
-            .from("basketball_player_seasons")
-            .select("player_id", { count: "exact", head: true })
-            .eq("school_id", schoolId);
-
-          const { data: baseballPlayers } = await supabase
-            .from("baseball_player_seasons")
-            .select("player_id", { count: "exact", head: true })
-            .eq("school_id", schoolId);
-
-          const { data: miscPlayers } = await supabase
-            .from("player_seasons_misc")
-            .select("player_id")
-            .eq("school_id", schoolId);
-
-          const playerCountByTeamSeason = new Map<string, Set<number>>();
+          const playerCountBySport = new Map<string, Set<number>>();
           [
             { sport: "football", data: fbPlayers },
             { sport: "basketball", data: bbPlayers },
             { sport: "baseball", data: baseballPlayers },
           ].forEach(({ sport, data: players }) => {
             const uniqueIds = new Set<number>();
-            players?.forEach((p: any) => uniqueIds.add(p.player_id));
-            playerCountByTeamSeason.set(sport, uniqueIds);
+            (players ?? []).forEach((p: any) => uniqueIds.add(p.player_id));
+            playerCountBySport.set(sport, uniqueIds);
           });
 
-          // Minor sports from player_seasons_misc
-          miscPlayers?.forEach((p: any) => {
-            // These are already grouped by sport in the team_seasons query
+          // Minor sports from player_seasons_misc — group by sport_id
+          (miscPlayers ?? []).forEach((p: any) => {
+            if (!playerCountBySport.has(p.sport_id)) {
+              playerCountBySport.set(p.sport_id, new Set());
+            }
+            playerCountBySport.get(p.sport_id)!.add(p.player_id);
           });
 
           // Map out the results with SPORT_META info
@@ -228,7 +223,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             const stats = sportMap.get(sportId)!;
             const champCount = champCountBySport.get(sportId) ?? 0;
             const seasonCount = teamSeasonData.filter((tsd: any) => tsd.sport_id === sportId).length;
-            const playerCount = playerCountByTeamSeason.get(sportId)?.size ?? 0;
+            const playerCount = playerCountBySport.get(sportId)?.size ?? 0;
 
             return {
               sport_id: sportId,
@@ -336,7 +331,7 @@ export const getSchoolAllChampionships = cache(async (schoolId: number) => {
 /**
  * Get recent team seasons across all sports
  */
-export const getSchoolRecentSeasons = cache(async (schoolId: number, limit = 5) => {
+export const getSchoolRecentSeasons = cache(async (schoolId: number, limit = 20) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -347,26 +342,27 @@ export const getSchoolRecentSeasons = cache(async (schoolId: number, limit = 5) 
             .select(
               `
               id, sport_id, wins, losses, ties, playoff_result,
-              seasons(label),
+              seasons(label, year_start),
               sports(name)
             `
             )
             .eq("school_id", schoolId)
-            .order("created_at", { ascending: false })
             .limit(limit);
 
           if (!data) return [];
 
-          return (data as any[]).map((ts) => ({
-            id: ts.id,
-            sport_id: ts.sport_id,
-            sport_name: ts.sports?.name ?? "Unknown",
-            season_label: ts.seasons?.label ?? "Unknown",
-            wins: ts.wins ?? 0,
-            losses: ts.losses ?? 0,
-            ties: ts.ties ?? 0,
-            playoff_result: ts.playoff_result,
-          })) as RecentSeasonData[];
+          return (data as any[])
+            .sort((a, b) => (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0))
+            .map((ts) => ({
+              id: ts.id,
+              sport_id: ts.sport_id,
+              sport_name: ts.sports?.name ?? "Unknown",
+              season_label: ts.seasons?.label ?? "Unknown",
+              wins: ts.wins ?? 0,
+              losses: ts.losses ?? 0,
+              ties: ts.ties ?? 0,
+              playoff_result: ts.playoff_result,
+            })) as RecentSeasonData[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );

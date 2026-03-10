@@ -87,7 +87,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
       getSchoolAllSportsStats(school.id),
       getSchoolNextLevel(school.id),
       getSchoolAllChampionships(school.id),
-      getSchoolRecentSeasons(school.id, 5),
+      getSchoolRecentSeasons(school.id, 20),
       getSchoolArticles(school.id, 10),
     ]);
 
@@ -316,113 +316,54 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                     <Link
                       key={sport.sport_id}
                       href={`/${sport.sport_id}/schools/${slug}`}
-                      className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6 hover:shadow-lg transition-shadow"
+                      className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-5 hover:shadow-lg transition-shadow block"
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <div className="text-3xl mb-2">{sport.sport_emoji}</div>
-                          <h3
-                            className="text-lg font-bold"
-                            style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
-                          >
-                            {sport.sport_name}
-                          </h3>
-                        </div>
-                        <div className="text-right">
-                          <div
-                            className="text-xl font-bold"
-                            style={{ color: "var(--psp-navy)" }}
-                          >
-                            {sport.wins}-{sport.losses}{sport.ties > 0 ? `-${sport.ties}` : ""}
-                          </div>
-                          <div className="text-xs text-gray-500">Record</div>
-                        </div>
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-2xl">{sport.sport_emoji}</span>
+                        <h3
+                          className="text-lg font-bold flex-1"
+                          style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                        >
+                          {sport.sport_name}
+                        </h3>
+                        <span
+                          className="text-lg font-bold tabular-nums"
+                          style={{ color: "var(--psp-navy)" }}
+                        >
+                          {sport.wins}-{sport.losses}{sport.ties > 0 ? `-${sport.ties}` : ""}
+                        </span>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 text-sm">
-                        <div>
-                          <div className="text-sm font-bold" style={{ color: "var(--psp-gold)" }}>
+                      <div className="flex gap-4 text-center border-t border-gray-100 pt-3">
+                        <div className="flex-1">
+                          <div className="text-base font-bold" style={{ color: "var(--psp-gold)" }}>
                             {sport.championship_count}
                           </div>
-                          <div className="text-xs text-gray-500">Championships</div>
+                          <div className="text-[11px] text-gray-500">Titles</div>
                         </div>
-                        <div>
-                          <div className="text-sm font-bold" style={{ color: "var(--psp-blue)" }}>
+                        <div className="flex-1">
+                          <div className="text-base font-bold" style={{ color: "var(--psp-blue)" }}>
                             {sport.season_count}
                           </div>
-                          <div className="text-xs text-gray-500">Seasons</div>
+                          <div className="text-[11px] text-gray-500">Seasons</div>
                         </div>
-                        <div>
-                          <div className="text-sm font-bold text-gray-600">
+                        <div className="flex-1">
+                          <div className="text-base font-bold text-gray-600">
                             {sport.player_count}
                           </div>
-                          <div className="text-xs text-gray-500">Players</div>
+                          <div className="text-[11px] text-gray-500">Players</div>
                         </div>
-                      </div>
-
-                      <div
-                        className="mt-4 text-sm font-medium"
-                        style={{ color: "var(--psp-blue)" }}
-                      >
-                        View Details →
+                        <div className="flex-1 flex items-center justify-end">
+                          <span
+                            className="text-xs font-medium"
+                            style={{ color: "var(--psp-blue)" }}
+                          >
+                            View →
+                          </span>
+                        </div>
                       </div>
                     </Link>
                   ))}
-                </div>
-              </div>
-            )}
-
-            {/* Next Level Alumni Section */}
-            {nextLevelAthletes.length > 0 && (
-              <div>
-                <h2
-                  className="text-2xl font-bold mb-4"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
-                >
-                  Next Level Alumni ({nextLevelAthletes.length})
-                </h2>
-                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Level</th>
-                          <th>Organization</th>
-                          <th>Sport</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {nextLevelAthletes.map((athlete) => (
-                          <tr
-                            key={athlete.id}
-                            className={athlete.pro_league ? "bg-amber-50" : ""}
-                          >
-                            <td className="font-medium">
-                              {athlete.person_name}
-                            </td>
-                            <td>
-                              <AchievementBadge
-                                type={athlete.pro_league ? "pro" : "college"}
-                                showLabel
-                              />
-                            </td>
-                            <td>
-                              <div className="text-sm">
-                                {athlete.pro_team || athlete.college || "—"}
-                              </div>
-                              {athlete.pro_league && (
-                                <div className="text-xs" style={{ color: "var(--psp-gold)" }}>
-                                  {athlete.pro_league}
-                                </div>
-                              )}
-                            </td>
-                            <td className="text-sm">{athlete.sport_id || "—"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
               </div>
             )}
@@ -436,34 +377,30 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 >
                   Championships ({championships.length})
                 </h2>
-                <div className="space-y-2">
-                  {championships.slice(0, 25).map((c) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {championships.slice(0, 12).map((c) => (
                     <div
                       key={c.id}
                       className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3"
                     >
-                      <span className="text-xl">🏆</span>
-                      <div>
-                        <span
-                          className="font-medium text-sm"
+                      <span className="text-lg">🏆</span>
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className="font-medium text-sm truncate"
                           style={{ color: "var(--psp-navy)" }}
                         >
-                          {c.year} — {c.sport_name}
-                        </span>
-                        <span
-                          className="text-xs ml-2"
-                          style={{ color: "var(--psp-gray-500)" }}
-                        >
-                          {c.level}
-                          {c.league_name ? ` • ${c.league_name}` : ""}
-                        </span>
+                          {c.year} {c.sport_name}
+                        </div>
+                        <div className="text-xs text-gray-500 truncate">
+                          {c.level}{c.league_name ? ` • ${c.league_name}` : ""}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                {championships.length > 25 && (
-                  <p className="text-sm text-gray-500 mt-4 text-center">
-                    Showing 25 of {championships.length} championships
+                {championships.length > 12 && (
+                  <p className="text-sm text-center mt-3" style={{ color: "var(--psp-blue)" }}>
+                    + {championships.length - 12} more championships
                   </p>
                 )}
               </div>
@@ -476,7 +413,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                   className="text-2xl font-bold mb-4"
                   style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
                 >
-                  Recent Seasons
+                  Season History ({recentSeasons.length})
                 </h2>
                 <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
                   <div className="overflow-x-auto">
@@ -492,32 +429,110 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                         </tr>
                       </thead>
                       <tbody>
-                        {recentSeasons.map((season) => (
-                          <tr key={season.id}>
-                            <td>
-                              <span className="font-medium">{season.sport_name}</span>
-                            </td>
-                            <td>
-                              <Link
-                                href={`/${season.sport_id}/teams/${slug}/${season.season_label}`}
-                                className="hover:underline"
-                                style={{ color: "var(--psp-blue)" }}
-                              >
-                                {season.season_label}
-                              </Link>
-                            </td>
-                            <td className="text-center font-medium">{season.wins}</td>
-                            <td className="text-center font-medium">{season.losses}</td>
-                            <td className="text-center text-sm">{season.ties || "—"}</td>
-                            <td className="text-xs">{season.playoff_result || "—"}</td>
-                          </tr>
-                        ))}
+                        {recentSeasons.map((season) => {
+                          const totalGames = season.wins + season.losses + (season.ties || 0);
+                          const winPct = totalGames > 0 ? (season.wins / totalGames * 100).toFixed(0) : "—";
+                          return (
+                            <tr key={season.id}>
+                              <td>
+                                <span className="font-medium">{season.sport_name}</span>
+                              </td>
+                              <td>
+                                <Link
+                                  href={`/${season.sport_id}/teams/${slug}/${season.season_label}`}
+                                  className="hover:underline"
+                                  style={{ color: "var(--psp-blue)" }}
+                                >
+                                  {season.season_label}
+                                </Link>
+                              </td>
+                              <td className="text-center font-medium">{season.wins}</td>
+                              <td className="text-center font-medium">{season.losses}</td>
+                              <td className="text-center text-sm">{season.ties || "—"}</td>
+                              <td className="text-xs">{season.playoff_result || `${winPct}%`}</td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
                 </div>
               </div>
             )}
+
+            {/* Next Level Alumni Section — collapsible, shows first 10 */}
+            {nextLevelAthletes.length > 0 && (() => {
+              // Sort: pros first, then college, alphabetical within
+              const sorted = [...nextLevelAthletes].sort((a, b) => {
+                if (a.pro_league && !b.pro_league) return -1;
+                if (!a.pro_league && b.pro_league) return 1;
+                return a.person_name.localeCompare(b.person_name);
+              });
+              const proCount = sorted.filter(a => a.pro_league).length;
+              const INITIAL_SHOW = 10;
+
+              return (
+                <div>
+                  <h2
+                    className="text-2xl font-bold mb-1"
+                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  >
+                    Next Level Alumni ({nextLevelAthletes.length})
+                  </h2>
+                  {proCount > 0 && (
+                    <p className="text-sm text-gray-500 mb-4">
+                      Including {proCount} professional athlete{proCount !== 1 ? "s" : ""}
+                    </p>
+                  )}
+                  <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="data-table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Level</th>
+                            <th>Organization</th>
+                            <th>Sport</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sorted.slice(0, INITIAL_SHOW).map((athlete) => (
+                            <tr
+                              key={athlete.id}
+                              className={athlete.pro_league ? "bg-amber-50" : ""}
+                            >
+                              <td className="font-medium">{athlete.person_name}</td>
+                              <td>
+                                <AchievementBadge
+                                  type={athlete.pro_league ? "pro" : "college"}
+                                  showLabel
+                                />
+                              </td>
+                              <td>
+                                <div className="text-sm">
+                                  {athlete.pro_team || athlete.college || "—"}
+                                </div>
+                                {athlete.pro_league && (
+                                  <div className="text-xs" style={{ color: "var(--psp-gold)" }}>
+                                    {athlete.pro_league}
+                                  </div>
+                                )}
+                              </td>
+                              <td className="text-sm capitalize">{athlete.sport_id || "—"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  {sorted.length > INITIAL_SHOW && (
+                    <p className="text-sm text-center mt-3" style={{ color: "var(--psp-blue)" }}>
+                      Showing {INITIAL_SHOW} of {sorted.length} alumni — view sport pages for full lists
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Sidebar */}
