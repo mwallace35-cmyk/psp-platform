@@ -34,6 +34,7 @@ interface SchoolData {
   state: string;
   league: string | null;
   colors: string | null;
+  secondary_color: string | null;
   championships_count: number;
   total_wins: number;
   total_losses: number;
@@ -41,6 +42,11 @@ interface SchoolData {
   sports: string[];
   award_count: number;
   closed_year: number | null;
+  player_count: number;
+  pro_count: number;
+  game_count: number;
+  sport_count: number;
+  win_pct: number | null;
 }
 
 async function fetchSchools() {
@@ -225,6 +231,100 @@ async function fetchAwardCounts() {
   }
 }
 
+async function fetchPlayerCounts() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('players')
+      .select('primary_school_id')
+      .is('deleted_at', null);
+
+    if (error) return {};
+
+    const counts: Record<number, number> = {};
+    (data || []).forEach((row: { primary_school_id: number | null }) => {
+      if (row.primary_school_id) {
+        counts[row.primary_school_id] = (counts[row.primary_school_id] || 0) + 1;
+      }
+    });
+    return counts;
+  } catch {
+    return {};
+  }
+}
+
+async function fetchProCounts() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('next_level_tracking')
+      .select('high_school_id');
+
+    if (error) return {};
+
+    const counts: Record<number, number> = {};
+    (data || []).forEach((row: { high_school_id: number | null }) => {
+      if (row.high_school_id) {
+        counts[row.high_school_id] = (counts[row.high_school_id] || 0) + 1;
+      }
+    });
+    return counts;
+  } catch {
+    return {};
+  }
+}
+
+async function fetchGameCounts() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('games')
+      .select('home_school_id, away_school_id');
+
+    if (error) return {};
+
+    const counts: Record<number, number> = {};
+    (data || []).forEach((row: { home_school_id: number | null; away_school_id: number | null }) => {
+      if (row.home_school_id) {
+        counts[row.home_school_id] = (counts[row.home_school_id] || 0) + 1;
+      }
+      if (row.away_school_id) {
+        counts[row.away_school_id] = (counts[row.away_school_id] || 0) + 1;
+      }
+    });
+    return counts;
+  } catch {
+    return {};
+  }
+}
+
+async function fetchSportCounts() {
+  try {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from('team_seasons')
+      .select('school_id, sport_id');
+
+    if (error) return {};
+
+    const schoolSports: Record<number, Set<number>> = {};
+    (data || []).forEach((row: { school_id: number | null; sport_id: number | null }) => {
+      if (row.school_id && row.sport_id) {
+        if (!schoolSports[row.school_id]) schoolSports[row.school_id] = new Set();
+        schoolSports[row.school_id].add(row.sport_id);
+      }
+    });
+
+    const counts: Record<number, number> = {};
+    for (const [schoolId, sports] of Object.entries(schoolSports)) {
+      counts[Number(schoolId)] = sports.size;
+    }
+    return counts;
+  } catch {
+    return {};
+  }
+}
+
 async function fetchTopSchoolsByChampionships() {
   try {
     const supabase = createStaticClient();
@@ -274,6 +374,10 @@ export default async function SchoolsPage() {
     baseballSchools,
     winLossData,
     awardCounts,
+    playerCounts,
+    proCounts,
+    gameCounts,
+    sportCounts,
   ] = await Promise.all([
     fetchSchools(),
     fetchChampionshipCounts(),
@@ -285,6 +389,10 @@ export default async function SchoolsPage() {
     fetchSchoolsWithBaseball(),
     fetchTeamSeasonWinLoss(),
     fetchAwardCounts(),
+    fetchPlayerCounts(),
+    fetchProCounts(),
+    fetchGameCounts(),
+    fetchSportCounts(),
   ]);
 
   const schools: SchoolData[] = schoolRows.map((s) => {
@@ -305,6 +413,10 @@ export default async function SchoolsPage() {
     const hasData = hasTeamSeasons || hasChampionships || hasAwards || hasPlayerStats;
 
     const wl = winLossData[s.id];
+    const wins = wl?.wins || 0;
+    const losses = wl?.losses || 0;
+    const totalGamesPlayed = wins + losses;
+    const winPct = totalGamesPlayed > 0 ? Math.round((wins / totalGamesPlayed) * 1000) / 10 : null;
 
     return {
       id: s.id,
@@ -316,13 +428,21 @@ export default async function SchoolsPage() {
       colors: s.colors && typeof s.colors === 'object' && 'primary' in s.colors
         ? (s.colors as { primary?: string }).primary || null
         : null,
+      secondary_color: s.colors && typeof s.colors === 'object' && 'secondary' in s.colors
+        ? (s.colors as { secondary?: string }).secondary || null
+        : null,
       championships_count: champCounts[s.id] || 0,
-      total_wins: wl?.wins || 0,
-      total_losses: wl?.losses || 0,
+      total_wins: wins,
+      total_losses: losses,
       has_data: hasData,
       sports,
       award_count: awardCounts[s.id] || 0,
       closed_year: s.closed_year || null,
+      player_count: playerCounts[s.id] || 0,
+      pro_count: proCounts[s.id] || 0,
+      game_count: gameCounts[s.id] || 0,
+      sport_count: sportCounts[s.id] || 0,
+      win_pct: winPct,
     };
   });
 

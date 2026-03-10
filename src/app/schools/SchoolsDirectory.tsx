@@ -11,6 +11,7 @@ interface SchoolData {
   state: string;
   league: string | null;
   colors: string | null;
+  secondary_color: string | null;
   championships_count: number;
   total_wins: number;
   total_losses: number;
@@ -18,6 +19,11 @@ interface SchoolData {
   sports: string[];
   award_count: number;
   closed_year: number | null;
+  player_count: number;
+  pro_count: number;
+  game_count: number;
+  sport_count: number;
+  win_pct: number | null;
 }
 
 interface RisingProgram {
@@ -364,7 +370,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
             {filtered.length > 0 ? (
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
                 gap: 14,
                 marginBottom: 16,
               }}>
@@ -410,7 +416,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
                     </div>
                     <div style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
                       gap: 14,
                     }}>
                       {leagueSchools.map(school => (
@@ -500,27 +506,43 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
 
 // ============ School Card Component ============
 
+function formatNumber(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return n.toString();
+}
+
+function getSchoolLink(school: SchoolData): string {
+  // Link to the primary sport the school has data for
+  if (school.sports.includes('football')) return `/football/schools/${school.slug}`;
+  if (school.sports.includes('basketball')) return `/basketball/schools/${school.slug}`;
+  if (school.sports.includes('baseball')) return `/baseball/schools/${school.slug}`;
+  return `/football/schools/${school.slug}`;
+}
+
 function SchoolCard({ school }: { school: SchoolData }) {
   const leagueColor = getLeagueColor(school.league);
   const primaryColor = school.colors && school.colors.startsWith('#') ? school.colors : leagueColor;
+  const secondaryColor = school.secondary_color && school.secondary_color.startsWith('#') ? school.secondary_color : null;
   const isClosed = !!school.closed_year;
   const record = school.total_wins > 0 || school.total_losses > 0
     ? `${school.total_wins}-${school.total_losses}`
     : null;
 
+  const hasRichData = school.player_count > 0 || school.game_count > 0 || school.pro_count > 0;
+
   return (
-    <Link href={`/football/schools/${school.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link href={getSchoolLink(school)} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div style={{
         background: 'var(--surface, #fff)',
         border: isClosed ? '1px solid #d6d3d1' : '1px solid var(--g100)',
-        borderRadius: 6,
+        borderRadius: 8,
         overflow: 'hidden',
         transition: 'all .2s',
         cursor: 'pointer',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        opacity: isClosed ? 0.9 : 1,
+        opacity: isClosed ? 0.85 : 1,
       }}
       onMouseEnter={e => {
         const el = e.currentTarget;
@@ -532,37 +554,65 @@ function SchoolCard({ school }: { school: SchoolData }) {
         const el = e.currentTarget;
         el.style.boxShadow = 'none';
         el.style.transform = 'translateY(0)';
-        el.style.opacity = isClosed ? '0.9' : '1';
+        el.style.opacity = isClosed ? '0.85' : '1';
       }}
       >
-        {/* Header with School Color */}
+        {/* Header with School Color + Diagonal Accent */}
         <div style={{
           background: isClosed
-            ? `linear-gradient(135deg, ${primaryColor}cc, ${primaryColor}99)`
-            : primaryColor,
-          padding: '12px 14px',
+            ? `linear-gradient(135deg, ${primaryColor}cc, ${primaryColor}88)`
+            : secondaryColor
+              ? `linear-gradient(135deg, ${primaryColor} 60%, ${secondaryColor})`
+              : primaryColor,
+          padding: '14px 14px 12px',
           color: '#fff',
-          borderLeft: school.championships_count > 0 ? `4px solid var(--psp-gold)` : 'none',
           position: 'relative',
+          minHeight: 56,
         }}>
+          {/* Championship gold stripe */}
+          {school.championships_count > 0 && (
+            <div style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: 4,
+              background: 'var(--psp-gold)',
+            }} />
+          )}
+
           <h3 style={{
             margin: 0,
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: 700,
             fontFamily: "'Bebas Neue', sans-serif",
-            letterSpacing: 0.3,
+            letterSpacing: 0.5,
             lineHeight: 1.2,
+            paddingRight: isClosed ? 70 : 0,
+            textShadow: '0 1px 2px rgba(0,0,0,.3)',
           }}>
             {school.name}
           </h3>
+
+          {/* Location under name in header */}
+          <div style={{
+            fontSize: 10,
+            opacity: 0.85,
+            marginTop: 3,
+            fontWeight: 500,
+            textShadow: '0 1px 1px rgba(0,0,0,.2)',
+          }}>
+            {school.city}{school.city && school.state ? ', ' : ''}{school.state}
+          </div>
+
           {isClosed && (
             <span style={{
               position: 'absolute',
-              top: 6,
+              top: 8,
               right: 8,
-              fontSize: 9,
+              fontSize: 8,
               fontWeight: 700,
-              background: 'rgba(0,0,0,0.4)',
+              background: 'rgba(0,0,0,0.45)',
               color: '#fff',
               padding: '2px 6px',
               borderRadius: 3,
@@ -572,52 +622,154 @@ function SchoolCard({ school }: { school: SchoolData }) {
               Closed {school.closed_year}
             </span>
           )}
+
+          {/* Pro badge in header corner */}
+          {school.pro_count > 0 && (
+            <span style={{
+              position: 'absolute',
+              bottom: 6,
+              right: 8,
+              fontSize: 9,
+              fontWeight: 700,
+              background: 'rgba(255,255,255,0.25)',
+              color: '#fff',
+              padding: '2px 6px',
+              borderRadius: 3,
+              backdropFilter: 'blur(4px)',
+            }}>
+              {school.pro_count} Pro{school.pro_count !== 1 ? 's' : ''}
+            </span>
+          )}
         </div>
 
         {/* Body */}
-        <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          {/* Location */}
-          <div style={{ fontSize: 11, color: 'var(--g400)', marginBottom: 8 }}>
-            {school.city}, {school.state}
+        <div style={{ padding: '10px 14px 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {/* League + Sports Row */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{
+              fontSize: 10,
+              fontWeight: 700,
+              color: leagueColor,
+              textTransform: 'uppercase',
+              letterSpacing: 0.3,
+              lineHeight: 1,
+            }}>
+              {school.league || 'Independent'}
+            </div>
+            {school.sports.length > 0 && (
+              <div style={{ display: 'flex', gap: 3 }}>
+                {school.sports.map(sport => (
+                  <span key={sport} title={sport.charAt(0).toUpperCase() + sport.slice(1)} style={{ fontSize: 14 }}>
+                    {SPORT_EMOJI[sport] || '•'}
+                  </span>
+                ))}
+                {school.sport_count > school.sports.length && (
+                  <span style={{ fontSize: 10, color: 'var(--g400)', fontWeight: 600, lineHeight: '14px' }}>
+                    +{school.sport_count - school.sports.length}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Sports Icons */}
-          {school.sports.length > 0 && (
-            <div style={{ display: 'flex', gap: 4, marginBottom: 10, flexWrap: 'wrap' }}>
-              {school.sports.map(sport => (
-                <span key={sport} title={sport} style={{ fontSize: 16 }}>
-                  {SPORT_EMOJI[sport] || '•'}
+          {/* Win Percentage Bar (if we have a record) */}
+          {school.win_pct !== null && record && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 3 }}>
+                <span style={{ fontSize: 10, color: 'var(--g400)', fontWeight: 600, textTransform: 'uppercase' }}>All-Time</span>
+                <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--psp-navy)' }}>
+                  {record} <span style={{ fontSize: 10, fontWeight: 600, color: school.win_pct >= 60 ? '#16a34a' : school.win_pct >= 50 ? 'var(--psp-navy)' : '#dc2626' }}>({school.win_pct}%)</span>
                 </span>
-              ))}
+              </div>
+              <div style={{
+                height: 4,
+                background: 'var(--g100)',
+                borderRadius: 2,
+                overflow: 'hidden',
+              }}>
+                <div style={{
+                  height: '100%',
+                  width: `${Math.min(school.win_pct, 100)}%`,
+                  background: school.win_pct >= 60 ? '#16a34a' : school.win_pct >= 50 ? 'var(--psp-blue)' : '#dc2626',
+                  borderRadius: 2,
+                  transition: 'width .3s',
+                }} />
+              </div>
             </div>
           )}
 
-          {/* League */}
-          <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--psp-navy)', marginBottom: 8, textTransform: 'uppercase', opacity: 0.8 }}>
-            {school.league || 'Independent'}
-          </div>
+          {/* Stat Pills */}
+          {hasRichData && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 'auto', paddingTop: 6 }}>
+              {school.championships_count > 0 && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 3,
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  background: 'rgba(240, 165, 0, 0.12)',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: '#b45309',
+                }}>
+                  🏆 {school.championships_count}
+                </span>
+              )}
+              {school.player_count > 0 && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 3,
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  background: 'rgba(59, 130, 246, 0.08)',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: 'var(--psp-blue)',
+                }}>
+                  {formatNumber(school.player_count)} players
+                </span>
+              )}
+              {school.game_count > 0 && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 3,
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  background: 'rgba(10, 22, 40, 0.06)',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: 'var(--psp-navy)',
+                }}>
+                  {formatNumber(school.game_count)} games
+                </span>
+              )}
+              {school.award_count > 0 && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 3,
+                  padding: '3px 8px',
+                  borderRadius: 4,
+                  background: 'rgba(124, 58, 237, 0.08)',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: '#7c3aed',
+                }}>
+                  {formatNumber(school.award_count)} awards
+                </span>
+              )}
+            </div>
+          )}
 
-          {/* Stats Row */}
-          <div style={{ display: 'flex', gap: 12, marginTop: 'auto', paddingTop: 10, borderTop: '1px solid var(--g100)' }}>
-            {record && (
-              <div>
-                <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', fontWeight: 600 }}>Record</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--psp-navy)' }}>{record}</div>
-              </div>
-            )}
-            {school.championships_count > 0 && (
-              <div>
-                <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', fontWeight: 600 }}>🏆</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--psp-gold)' }}>{school.championships_count}</div>
-              </div>
-            )}
-            {school.award_count > 0 && !school.championships_count && (
-              <div>
-                <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', fontWeight: 600 }}>Awards</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--psp-blue)' }}>{school.award_count}</div>
-              </div>
-            )}
-          </div>
+          {/* No-data fallback */}
+          {!hasRichData && !record && (
+            <div style={{ fontSize: 11, color: 'var(--g400)', fontStyle: 'italic', marginTop: 'auto' }}>
+              Opponent record only
+            </div>
+          )}
         </div>
       </div>
     </Link>
