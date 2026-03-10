@@ -17,9 +17,23 @@ interface GameRow {
   game_type: string | null;
   home_score: number | null;
   away_score: number | null;
+  notes: string | null;
   home_school: School | null;
   away_school: School | null;
 }
+
+interface ScrimmageGroup {
+  id: string;
+  game_date: string;
+  game_time: string | null;
+  notes: string;
+  teams: School[];
+  gameIds: number[];
+}
+
+type WeekItem =
+  | { type: "game"; game: GameRow }
+  | { type: "scrimmageGroup"; group: ScrimmageGroup };
 
 interface TeamInfo {
   id: number;
@@ -93,15 +107,69 @@ export default function ScheduleView({
     return result;
   }, [games, selectedTeam, gameTypeFilter]);
 
-  // Group by week (Mon-Sun)
-  const gamesByWeek = useMemo(() => {
-    const groups: { weekLabel: string; weekKey: string; games: GameRow[] }[] =
-      [];
-    const map = new Map<string, GameRow[]>();
-    const keyOrder: string[] = [];
+  // Group multi-team scrimmages by shared notes
+  const weekItems = useMemo(() => {
+    // Separate scrimmages with group notes from regular games
+    const scrimmageGroups = new Map<string, GameRow[]>();
+    const regularGames: GameRow[] = [];
 
     for (const g of filteredGames) {
-      const d = new Date(g.game_date + "T12:00:00");
+      if (g.game_type === "scrimmage" && g.notes && (g.notes.includes("-team") || g.notes.includes("scrimmage"))) {
+        const key = `${g.game_date}|${g.game_time ?? ""}|${g.notes}`;
+        if (!scrimmageGroups.has(key)) scrimmageGroups.set(key, []);
+        scrimmageGroups.get(key)!.push(g);
+      } else {
+        regularGames.push(g);
+      }
+    }
+
+    // Build WeekItems
+    const items: WeekItem[] = regularGames.map((g) => ({ type: "game" as const, game: g }));
+
+    for (const [, groupGames] of scrimmageGroups) {
+      // Collect unique teams from all pairings
+      const teamMap = new Map<number, School>();
+      for (const g of groupGames) {
+        if (g.home_school) teamMap.set(g.home_school.id, g.home_school);
+        if (g.away_school) teamMap.set(g.away_school.id, g.away_school);
+      }
+      const teams = [...teamMap.values()].sort((a, b) => a.name.localeCompare(b.name));
+      const first = groupGames[0];
+      items.push({
+        type: "scrimmageGroup" as const,
+        group: {
+          id: `scrimmage-${first.id}`,
+          game_date: first.game_date,
+          game_time: first.game_time,
+          notes: first.notes!,
+          teams,
+          gameIds: groupGames.map((g) => g.id),
+        },
+      });
+    }
+
+    // Sort all items by date then time
+    items.sort((a, b) => {
+      const dateA = a.type === "game" ? a.game.game_date : a.group.game_date;
+      const dateB = b.type === "game" ? b.game.game_date : b.group.game_date;
+      if (dateA !== dateB) return dateA.localeCompare(dateB);
+      const timeA = (a.type === "game" ? a.game.game_time : a.group.game_time) ?? "";
+      const timeB = (b.type === "game" ? b.game.game_time : b.group.game_time) ?? "";
+      return timeA.localeCompare(timeB);
+    });
+
+    return items;
+  }, [filteredGames]);
+
+  // Group by week (Mon-Sun)
+  const gamesByWeek = useMemo(() => {
+    const groups: { weekLabel: string; weekKey: string; items: WeekItem[] }[] = [];
+    const map = new Map<string, WeekItem[]>();
+    const keyOrder: string[] = [];
+
+    for (const item of weekItems) {
+      const dateStr = item.type === "game" ? item.game.game_date : item.group.game_date;
+      const d = new Date(dateStr + "T12:00:00");
       const day = d.getDay();
       const monday = new Date(d);
       monday.setDate(d.getDate() - ((day + 6) % 7));
@@ -110,7 +178,7 @@ export default function ScheduleView({
         map.set(key, []);
         keyOrder.push(key);
       }
-      map.get(key)!.push(g);
+      map.get(key)!.push(item);
     }
 
     for (const key of keyOrder) {
@@ -125,11 +193,11 @@ export default function ScheduleView({
         day: "numeric",
         year: "numeric",
       })}`;
-      groups.push({ weekLabel: label, weekKey: key, games: map.get(key)! });
+      groups.push({ weekLabel: label, weekKey: key, items: map.get(key)! });
     }
 
     return groups;
-  }, [filteredGames]);
+  }, [weekItems]);
 
   // Group by team
   const gamesByTeam = useMemo(() => {
@@ -269,29 +337,38 @@ export default function ScheduleView({
         ) : view === "week" ? (
           /* ======================== WEEK VIEW ======================== */
           <div className="space-y-8">
-            {gamesByWeek.map(({ weekLabel, weekKey, games: weekGames }) => (
+            {gamesByWeek.map(({ weekLabel, weekKey, items: weekItems }) => (
               <section key={weekKey}>
                 <div className="flex items-center gap-2 mb-3 pb-1 border-b-2 border-gold/40">
                   <h2 className="text-lg font-bebas text-navy">
                     <span className="text-gold">Week</span> {weekLabel}
                   </h2>
                   <span className="text-xs text-gray-400 ml-auto">
-                    {weekGames.length} game
-                    {weekGames.length !== 1 ? "s" : ""}
+                    {weekItems.length} event
+                    {weekItems.length !== 1 ? "s" : ""}
                   </span>
                 </div>
                 <div className="space-y-2">
-                  {weekGames.map((g) => (
-                    <GameCard
-                      key={g.id}
-                      game={g}
-                      sport={sport}
-                      seasonLabel={seasonLabel}
-                      highlightTeam={
-                        selectedTeam !== "all" ? selectedTeam : undefined
-                      }
-                    />
-                  ))}
+                  {weekItems.map((item) =>
+                    item.type === "game" ? (
+                      <GameCard
+                        key={item.game.id}
+                        game={item.game}
+                        sport={sport}
+                        seasonLabel={seasonLabel}
+                        highlightTeam={
+                          selectedTeam !== "all" ? selectedTeam : undefined
+                        }
+                      />
+                    ) : (
+                      <ScrimmageGroupCard
+                        key={item.group.id}
+                        group={item.group}
+                        sport={sport}
+                        seasonLabel={seasonLabel}
+                      />
+                    )
+                  )}
                 </div>
               </section>
             ))}
@@ -576,6 +653,90 @@ function GameCard({
             </Link>
           )
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ======================== ScrimmageGroupCard component ======================== */
+function ScrimmageGroupCard({
+  group,
+  sport,
+  seasonLabel,
+}: {
+  group: ScrimmageGroup;
+  sport: string;
+  seasonLabel: string;
+}) {
+  const d = new Date(group.game_date + "T12:00:00");
+  const dayStr = d.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+  const timeStr = group.game_time
+    ? (() => {
+        const [h, m] = group.game_time.split(":");
+        const hour = parseInt(h);
+        if (hour === 0) return "12:" + m + " AM";
+        if (hour < 12) return hour + ":" + m + " AM";
+        if (hour === 12) return "12:" + m + " PM";
+        return hour - 12 + ":" + m + " PM";
+      })()
+    : null;
+
+  // Location from notes (e.g. "4-team scrimmage at SPSS")
+  const atMatch = group.notes.match(/at\s+(.+)$/i);
+  const location = atMatch ? atMatch[1] : null;
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 hover:border-gold/50 transition">
+      <div className="flex items-start gap-3 px-4 py-3">
+        {/* Date + time */}
+        <div className="w-24 flex-shrink-0 text-center pt-1">
+          <p className="text-xs font-medium text-gray-500">{dayStr}</p>
+          {timeStr && (
+            <p className="text-[11px] text-gray-400">{timeStr}</p>
+          )}
+        </div>
+
+        {/* Multi-color bar */}
+        <div className="flex flex-col gap-0.5 flex-shrink-0 pt-1">
+          {group.teams.slice(0, 4).map((t) => (
+            <div
+              key={t.id}
+              className="w-1 h-2.5 rounded-full"
+              style={{ backgroundColor: t.colors?.primary || "#0a1628" }}
+            />
+          ))}
+        </div>
+
+        {/* Teams list */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm text-navy">
+            {group.teams.map((t, i) => (
+              <span key={t.id}>
+                {i > 0 && <span className="text-gray-400">{i === group.teams.length - 1 ? " & " : ", "}</span>}
+                <Link
+                  href={`/${sport}/teams/${t.slug}/${seasonLabel}`}
+                  className="font-medium hover:text-blue-600 transition"
+                >
+                  {t.name}
+                </Link>
+              </span>
+            ))}
+          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-200 text-gray-600">
+              {group.teams.length}-Team Scrimmage
+            </span>
+            {location && (
+              <span className="text-[10px] text-gray-400">
+                📍 {location}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -32,6 +32,7 @@ interface GameRow {
   game_type: string | null;
   home_score: number | null;
   away_score: number | null;
+  notes: string | null;
   home_school: {
     id: number;
     name: string;
@@ -86,7 +87,7 @@ export default async function SchedulePage({
   const { data: rawGames } = await supabase
     .from("games")
     .select(
-      "id, game_date, game_time, game_type, home_score, away_score, home_school:home_school_id(id, name, slug, colors), away_school:away_school_id(id, name, slug, colors)"
+      "id, game_date, game_time, game_type, home_score, away_score, notes, home_school:home_school_id(id, name, slug, colors), away_school:away_school_id(id, name, slug, colors)"
     )
     .eq("season_id", seasonData.id)
     .eq("sport_id", sportId)
