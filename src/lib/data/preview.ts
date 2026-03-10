@@ -8,6 +8,23 @@ import {
 } from "./common";
 
 // ============================================================================
+// TYPES: Roster-based Returning Players
+// ============================================================================
+
+export type RosterReturningPlayer = {
+  player_id: number;
+  player_name: string;
+  player_slug: string;
+  positions: string | null; // from roster (comma-separated)
+  jersey_number: string | null;
+  class_year: string | null; // from roster: senior/junior/sophomore/freshman
+  projected_class: string | null; // bumped up for next year
+  graduation_year: number | null;
+  height: string | null;
+  weight: number | null;
+};
+
+// ============================================================================
 // TYPES: Season Preview Data
 // ============================================================================
 
@@ -704,5 +721,83 @@ export async function getNextLevelAlumni(schoolId: number): Promise<NextLevelAlu
     [],
     "DATA_NEXT_LEVEL_ALUMNI",
     { schoolId }
+  );
+}
+
+// ============================================================================
+// DATA FETCHER: Roster-based Returning Players
+// ============================================================================
+
+const CLASS_BUMP: Record<string, string> = {
+  freshman: "Sophomore",
+  sophomore: "Junior",
+  junior: "Senior",
+};
+
+/**
+ * Get returning players by taking the previous season's roster
+ * and filtering out seniors (who graduated).
+ * Returns players sorted by projected class (Senior first) then name.
+ */
+export async function getReturningRosterFromRosters(
+  schoolId: number,
+  sportSlug: string,
+  previousSeasonId: number
+): Promise<RosterReturningPlayer[]> {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+
+          const { data } = await supabase
+            .from("rosters")
+            .select(
+              `id, player_id, position, jersey_number, class_year,
+               players!inner(id, name, slug, graduation_year, height, weight)`
+            )
+            .eq("school_id", schoolId)
+            .eq("season_id", previousSeasonId)
+            .not("class_year", "eq", "senior"); // exclude graduated seniors
+
+          if (!data) return [];
+
+          const returning: RosterReturningPlayer[] = data
+            .filter((row: any) => row.players)
+            .map((row: any) => {
+              const classYear = (row.class_year ?? "").toLowerCase();
+              const projectedClass = CLASS_BUMP[classYear] ?? null;
+
+              return {
+                player_id: row.players.id,
+                player_name: row.players.name,
+                player_slug: row.players.slug,
+                positions: row.position,
+                jersey_number: row.jersey_number,
+                class_year: row.class_year,
+                projected_class: projectedClass,
+                graduation_year: row.players.graduation_year,
+                height: row.players.height,
+                weight: row.players.weight,
+              };
+            });
+
+          // Sort: projected Senior first, then Junior, Sophomore, then alphabetical
+          const classOrder: Record<string, number> = { Senior: 1, Junior: 2, Sophomore: 3 };
+          returning.sort((a, b) => {
+            const aOrder = classOrder[a.projected_class ?? ""] ?? 4;
+            const bOrder = classOrder[b.projected_class ?? ""] ?? 4;
+            if (aOrder !== bOrder) return aOrder - bOrder;
+            return a.player_name.localeCompare(b.player_name);
+          });
+
+          return returning;
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_RETURNING_ROSTER_FROM_ROSTERS",
+    { schoolId, sportSlug, previousSeasonId }
   );
 }

@@ -11,6 +11,7 @@ import {
   getGamesWithBoxScores,
   isPreviewSeason,
   getReturningRoster,
+  getReturningRosterFromRosters,
   getLastSeasonRecap,
   getLeagueOutlook,
   getScheduleStrength,
@@ -22,6 +23,7 @@ import {
   type RosterPlayer,
   type Season,
   type ReturningPlayer,
+  type RosterReturningPlayer,
   type SeasonRecap,
   type LeagueStanding,
   type ScheduleStrength,
@@ -195,6 +197,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
   let scheduleStrength: ScheduleStrength[] = [];
   let matchupHistories: MatchupHistory[] = [];
   let nextLevelAlumni: NextLevelAlumnus[] = [];
+  let rosterReturning: RosterReturningPlayer[] = [];
   let previousSeasonId: number | null = null;
 
   if (isPreview) {
@@ -236,6 +239,15 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
       if (previewResults[3].status === "rejected") captureError(previewResults[3].reason, { sport, slug, season, fetch: "getScheduleStrength" });
       if (previewResults[4].status === "rejected") captureError(previewResults[4].reason, { sport, slug, season, fetch: "getMatchupHistory" });
       if (previewResults[5].status === "rejected") captureError(previewResults[5].reason, { sport, slug, season, fetch: "getNextLevelAlumni" });
+
+      // Fetch roster-based returning players separately (needs previousSeasonId)
+      if (previousSeasonId) {
+        try {
+          rosterReturning = await getReturningRosterFromRosters(school.id, sport, previousSeasonId);
+        } catch (e) {
+          captureError(e, { sport, slug, season, fetch: "getReturningRosterFromRosters" });
+        }
+      }
     } catch (error) {
       captureError(error, { sport, slug, season, context: "preview_data_fetching" });
     }
@@ -537,6 +549,81 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 ))}
             </div>
           </details>
+        )}
+
+        {/* Projected Returning Roster (Preview Mode) */}
+        {isPreview && rosterReturning.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              Projected {season} Roster
+            </h2>
+            <p className="text-sm text-gray-400 mb-6">
+              Based on {prevSeason} roster — seniors removed
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">#</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Name</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Position</th>
+                    <th className="text-center py-3 px-4 text-gray-400 font-semibold">Class</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rosterReturning.map((player: RosterReturningPlayer) => (
+                    <tr
+                      key={player.player_id}
+                      style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+                    >
+                      <td className="py-3 px-4 text-gray-400 font-mono">
+                        {player.jersey_number || "—"}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Link
+                          href={`/${sport}/players/${player.player_slug}`}
+                          className="text-blue-400 hover:underline"
+                        >
+                          {player.player_name}
+                        </Link>
+                      </td>
+                      <td className="py-3 px-4 text-gray-300">
+                        {player.positions || "—"}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        {player.projected_class ? (
+                          <span
+                            className="inline-block px-2 py-0.5 text-xs font-medium rounded"
+                            style={{
+                              background:
+                                player.projected_class === "Senior"
+                                  ? "rgba(240, 165, 0, 0.2)"
+                                  : player.projected_class === "Junior"
+                                  ? "rgba(59, 130, 246, 0.2)"
+                                  : "rgba(16, 185, 129, 0.2)",
+                              color:
+                                player.projected_class === "Senior"
+                                  ? "#f0a500"
+                                  : player.projected_class === "Junior"
+                                  ? "#3b82f6"
+                                  : "#10b981",
+                            }}
+                          >
+                            {player.projected_class}
+                          </span>
+                        ) : (
+                          <span className="text-gray-500">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 text-xs text-gray-500">
+              {rosterReturning.length} returning players
+            </div>
+          </section>
         )}
 
         {/* Last Season Recap Section (Preview Mode) */}
