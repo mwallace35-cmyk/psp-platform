@@ -512,11 +512,8 @@ function formatNumber(n: number): string {
 }
 
 function getSchoolLink(school: SchoolData): string {
-  // Link to the primary sport the school has data for
-  if (school.sports.includes('football')) return `/football/schools/${school.slug}`;
-  if (school.sports.includes('basketball')) return `/basketball/schools/${school.slug}`;
-  if (school.sports.includes('baseball')) return `/baseball/schools/${school.slug}`;
-  return `/football/schools/${school.slug}`;
+  // Link to the sport-agnostic school hub page
+  return `/schools/${school.slug}`;
 }
 
 function SchoolCard({ school }: { school: SchoolData }) {
