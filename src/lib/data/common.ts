@@ -206,9 +206,13 @@ export interface Championship {
   season_id: number;
   sport_id: string;
   level?: string;
+  championship_type?: string;
   result?: string;
   score?: string;
+  notes?: string;
+  venue?: string;
   opponent_id?: number;
+  league_id?: number;
   schools?: { name: string; slug: string };
   seasons?: Season;
   leagues?: { name: string };
