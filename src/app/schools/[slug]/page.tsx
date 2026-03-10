@@ -321,17 +321,23 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl">{sport.sport_emoji}</span>
                         <h3
-                          className="text-lg font-bold flex-1"
+                          className="text-lg font-bold flex-1 truncate"
                           style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
                         >
                           {sport.sport_name}
                         </h3>
-                        <span
-                          className="text-lg font-bold tabular-nums"
-                          style={{ color: "var(--psp-navy)" }}
-                        >
-                          {sport.wins}-{sport.losses}{sport.ties > 0 ? `-${sport.ties}` : ""}
-                        </span>
+                        {(sport.wins + sport.losses + sport.ties) > 0 ? (
+                          <span
+                            className="text-lg font-bold tabular-nums whitespace-nowrap"
+                            style={{ color: "var(--psp-navy)" }}
+                          >
+                            {sport.wins}-{sport.losses}{sport.ties > 0 ? `-${sport.ties}` : ""}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-gray-400 whitespace-nowrap">
+                            {sport.championship_count > 0 ? `${sport.championship_count} title${sport.championship_count !== 1 ? "s" : ""}` : "—"}
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex gap-4 text-center border-t border-gray-100 pt-3">
@@ -432,6 +438,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                         {recentSeasons.map((season) => {
                           const totalGames = season.wins + season.losses + (season.ties || 0);
                           const winPct = totalGames > 0 ? (season.wins / totalGames * 100).toFixed(0) : "—";
+                          const hasRecord = totalGames > 0;
                           return (
                             <tr key={season.id}>
                               <td>
@@ -446,10 +453,10 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                                   {season.season_label}
                                 </Link>
                               </td>
-                              <td className="text-center font-medium">{season.wins}</td>
-                              <td className="text-center font-medium">{season.losses}</td>
-                              <td className="text-center text-sm">{season.ties || "—"}</td>
-                              <td className="text-xs">{season.playoff_result || `${winPct}%`}</td>
+                              <td className="text-center font-medium">{hasRecord ? season.wins : "—"}</td>
+                              <td className="text-center font-medium">{hasRecord ? season.losses : "—"}</td>
+                              <td className="text-center text-sm">{hasRecord ? (season.ties || "—") : "—"}</td>
+                              <td className="text-xs">{season.playoff_result || (hasRecord ? `${winPct}%` : "—")}</td>
                             </tr>
                           );
                         })}
@@ -491,7 +498,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                           <tr>
                             <th>Name</th>
                             <th>Level</th>
-                            <th>Organization</th>
+                            <th>College / Organization</th>
                             <th>Sport</th>
                           </tr>
                         </thead>
@@ -509,16 +516,31 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                                 />
                               </td>
                               <td>
-                                <div className="text-sm">
-                                  {athlete.pro_team || athlete.college || "—"}
-                                </div>
-                                {athlete.pro_league && (
-                                  <div className="text-xs" style={{ color: "var(--psp-gold)" }}>
-                                    {athlete.pro_league}
+                                {athlete.pro_league ? (
+                                  <>
+                                    <div className="text-sm font-medium">
+                                      {athlete.pro_team || athlete.pro_league}
+                                    </div>
+                                    {athlete.pro_league && athlete.pro_team && (
+                                      <div className="text-xs" style={{ color: "var(--psp-gold)" }}>
+                                        {athlete.pro_league}
+                                      </div>
+                                    )}
+                                    {athlete.college && (
+                                      <div className="text-xs text-gray-400">
+                                        via {athlete.college}
+                                      </div>
+                                    )}
+                                  </>
+                                ) : (
+                                  <div className="text-sm">
+                                    {athlete.college || "—"}
                                   </div>
                                 )}
                               </td>
-                              <td className="text-sm capitalize">{athlete.sport_id || "—"}</td>
+                              <td className="text-sm capitalize">
+                                {athlete.sport_id?.replace("-", " ") || "—"}
+                              </td>
                             </tr>
                           ))}
                         </tbody>

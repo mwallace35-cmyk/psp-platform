@@ -238,7 +238,23 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             };
           });
 
-          return result.sort((a, b) => a.sport_name.localeCompare(b.sport_name));
+          // Sort: football first, basketball second, baseball third, then by season count desc
+          const SPORT_ORDER: Record<string, number> = {
+            football: 0,
+            basketball: 1,
+            baseball: 2,
+            soccer: 3,
+            lacrosse: 4,
+            "track-field": 5,
+            "cross-country": 6,
+            wrestling: 7,
+          };
+          return result.sort((a, b) => {
+            const orderA = SPORT_ORDER[a.sport_id] ?? 99;
+            const orderB = SPORT_ORDER[b.sport_id] ?? 99;
+            if (orderA !== orderB) return orderA - orderB;
+            return b.season_count - a.season_count;
+          });
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -351,8 +367,16 @@ export const getSchoolRecentSeasons = cache(async (schoolId: number, limit = 20)
 
           if (!data) return [];
 
+          const SEASON_SPORT_ORDER: Record<string, number> = {
+            football: 0, basketball: 1, baseball: 2, soccer: 3,
+            lacrosse: 4, "track-field": 5, "cross-country": 6, wrestling: 7,
+          };
           return (data as any[])
-            .sort((a, b) => (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0))
+            .sort((a, b) => {
+              const yearDiff = (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0);
+              if (yearDiff !== 0) return yearDiff;
+              return (SEASON_SPORT_ORDER[a.sport_id] ?? 99) - (SEASON_SPORT_ORDER[b.sport_id] ?? 99);
+            })
             .map((ts) => ({
               id: ts.id,
               sport_id: ts.sport_id,
