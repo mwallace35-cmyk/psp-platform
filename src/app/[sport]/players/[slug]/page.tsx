@@ -9,6 +9,8 @@ import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import { buildOgImageUrl } from "@/lib/og-utils";
+import GameLogAccordion from "@/components/game-log/GameLogAccordion";
+import type { MergedGameEntry, SeasonAward } from "@/components/game-log/GameLogAccordion";
 import type { Metadata } from "next";
 
 // Dynamic imports for heavy client components (below fold)
@@ -125,25 +127,6 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   const boxScoreByGameId = new Map<number, PlayerGameLog>();
   for (const g of gameLog) {
     if (g.games?.id) boxScoreByGameId.set(g.games.id, g);
-  }
-
-  interface MergedGameEntry {
-    gameId: number;
-    gameDate: string | null;
-    seasonLabel: string | null;
-    homeSchoolId: number | null;
-    awaySchoolId: number | null;
-    homeScore: number | null;
-    awayScore: number | null;
-    homeSchool: { id: number; name: string; slug: string } | null;
-    awaySchool: { id: number; name: string; slug: string } | null;
-    // Individual stats (null = no box score data for this game)
-    hasBoxScore: boolean;
-    rushYards: number | null;
-    passYards: number | null;
-    recYards: number | null;
-    points: number | null;
-    bbPoints: number | null;
   }
 
   const mergedGames: MergedGameEntry[] = teamGames.map((tg) => {
@@ -573,276 +556,22 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               </div>
             )}
 
-            {/* Football Game Log — shows ALL team games with individual stats where available */}
-            {mergedGames.length > 0 && sport === "football" && (() => {
-              const boxScoreCount = mergedGames.filter(g => g.hasBoxScore).length;
-              let lastSeason: string | null = null;
-              return (
-                <div>
-                  <h2 className="text-2xl font-bold mb-1" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                    Game Log ({mergedGames.length} games)
-                  </h2>
-                  {boxScoreCount < mergedGames.length && (
-                    <p className="text-xs text-gray-500 mb-4">
-                      Individual stats available for {boxScoreCount} of {mergedGames.length} games
-                    </p>
-                  )}
-                  {/* Desktop table */}
-                  <div className="hidden md:block overflow-x-auto">
-                    <table className="data-table" aria-label={`${player.name} game-by-game statistics`}>
-                      <thead>
-                        <tr>
-                          <th scope="col">Date</th>
-                          <th scope="col">Opponent</th>
-                          <th scope="col" className="text-center">Score</th>
-                          <th scope="col" className="text-right">Rush Yds</th>
-                          <th scope="col" className="text-right">Pass Yds</th>
-                          <th scope="col" className="text-right">Rec Yds</th>
-                          <th scope="col" className="text-right">PTS</th>
-                          <th scope="col" className="text-center"><span className="sr-only">Box Score</span></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {mergedGames.map((g) => {
-                          const isHome = g.homeSchoolId === player.primary_school_id;
-                          const opp = isHome ? g.awaySchool : g.homeSchool;
-                          const oppLabel = opp ? `${isHome ? "vs" : "at"} ${opp.name}` : "—";
-                          const dateStr = g.gameDate ? new Date(g.gameDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" }) : "—";
-                          const teamScore = isHome ? g.homeScore : g.awayScore;
-                          const oppScore = isHome ? g.awayScore : g.homeScore;
-                          const won = teamScore != null && oppScore != null ? teamScore > oppScore : null;
-                          const scoreStr = teamScore != null && oppScore != null ? `${teamScore}-${oppScore}` : "—";
-
-                          // Season separator
-                          const showSeasonHeader = g.seasonLabel !== lastSeason;
-                          lastSeason = g.seasonLabel;
-
-                          return (
-                            <React.Fragment key={g.gameId}>
-                              {showSeasonHeader && (
-                                <tr>
-                                  <td colSpan={8} className="py-2 px-2 text-xs font-bold uppercase tracking-wider" style={{ background: "var(--psp-navy)", color: "var(--psp-gold)" }}>
-                                    {g.seasonLabel} Season
-                                  </td>
-                                </tr>
-                              )}
-                              <tr className={g.hasBoxScore ? "" : "opacity-60"}>
-                                <td className="whitespace-nowrap text-xs text-gray-500">{dateStr}</td>
-                                <td className="whitespace-nowrap text-xs">
-                                  {opp ? (
-                                    <Link href={`/${sport}/schools/${opp.slug}`} className="hover:underline" style={{ color: "var(--psp-blue)" }}>
-                                      {oppLabel}
-                                    </Link>
-                                  ) : "—"}
-                                </td>
-                                <td className="text-center text-xs whitespace-nowrap">
-                                  {won != null ? (
-                                    <span className={won ? "font-bold text-green-700" : "text-red-600"}>
-                                      {won ? "W" : "L"} {scoreStr}
-                                    </span>
-                                  ) : scoreStr}
-                                </td>
-                                {g.hasBoxScore ? (
-                                  <>
-                                    <td className="text-right">{g.rushYards ?? "—"}</td>
-                                    <td className="text-right">{g.passYards ?? "—"}</td>
-                                    <td className="text-right">{g.recYards ?? "—"}</td>
-                                    <td className="text-right font-bold">{g.points ?? "—"}</td>
-                                  </>
-                                ) : (
-                                  <td colSpan={4} className="text-center text-xs text-gray-400 italic">no individual stats</td>
-                                )}
-                                <td className="text-center">
-                                  {g.hasBoxScore ? (
-                                    <Link
-                                      href={`/${sport}/games/${g.gameId}`}
-                                      className="text-xs px-3 py-1 rounded"
-                                      style={{ background: "var(--psp-blue)", color: "white" }}
-                                      aria-label={`Box score: ${oppLabel}, ${dateStr}`}
-                                    >
-                                      Box Score
-                                    </Link>
-                                  ) : (
-                                    <Link
-                                      href={`/${sport}/games/${g.gameId}`}
-                                      className="text-xs px-3 py-1 rounded border"
-                                      style={{ borderColor: "var(--psp-gray-300)", color: "var(--psp-gray-500)" }}
-                                      aria-label={`Game details: ${oppLabel}, ${dateStr}`}
-                                    >
-                                      Details
-                                    </Link>
-                                  )}
-                                </td>
-                              </tr>
-                            </React.Fragment>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                  {/* Mobile card layout */}
-                  <div className="md:hidden space-y-2">
-                    {(() => {
-                      let mobileSeason: string | null = null;
-                      return mergedGames.map((g) => {
-                        const isHome = g.homeSchoolId === player.primary_school_id;
-                        const opp = isHome ? g.awaySchool : g.homeSchool;
-                        const oppLabel = opp ? `${isHome ? "vs" : "at"} ${opp.name}` : "Unknown";
-                        const dateStr = g.gameDate ? new Date(g.gameDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" }) : "—";
-                        const teamScore = isHome ? g.homeScore : g.awayScore;
-                        const oppScore = isHome ? g.awayScore : g.homeScore;
-                        const won = teamScore != null && oppScore != null ? teamScore > oppScore : null;
-                        const scoreStr = teamScore != null && oppScore != null ? `${teamScore}-${oppScore}` : "";
-
-                        const showMobileHeader = g.seasonLabel !== mobileSeason;
-                        mobileSeason = g.seasonLabel;
-
-                        return (
-                          <React.Fragment key={g.gameId}>
-                            {showMobileHeader && (
-                              <div className="py-2 px-3 rounded-lg text-xs font-bold uppercase tracking-wider" style={{ background: "var(--psp-navy)", color: "var(--psp-gold)" }}>
-                                {g.seasonLabel} Season
-                              </div>
-                            )}
-                            <div className={`bg-white rounded-lg border border-gray-200 p-3 flex items-center gap-3 ${g.hasBoxScore ? "" : "opacity-60"}`}>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-baseline gap-2">
-                                  <span className="text-xs text-gray-400">{dateStr}</span>
-                                  {opp ? (
-                                    <Link href={`/${sport}/schools/${opp.slug}`} className="text-sm font-medium truncate hover:underline" style={{ color: "var(--psp-blue)" }}>
-                                      {oppLabel}
-                                    </Link>
-                                  ) : <span className="text-sm">Unknown</span>}
-                                </div>
-                                <div className="flex gap-3 mt-1 text-xs text-gray-500">
-                                  {won != null && (
-                                    <span className={won ? "font-bold text-green-700" : "text-red-600"}>
-                                      {won ? "W" : "L"} {scoreStr}
-                                    </span>
-                                  )}
-                                  {g.hasBoxScore && g.rushYards != null && <span>{g.rushYards} rush</span>}
-                                  {g.hasBoxScore && g.passYards != null && <span>{g.passYards} pass</span>}
-                                  {g.hasBoxScore && g.recYards != null && <span>{g.recYards} rec</span>}
-                                  {!g.hasBoxScore && <span className="italic text-gray-400">no stats</span>}
-                                </div>
-                              </div>
-                              {g.hasBoxScore && g.points != null && (
-                                <div className="text-lg font-bold" style={{ color: "var(--psp-navy)" }}>{g.points} pts</div>
-                              )}
-                              <Link
-                                href={`/${sport}/games/${g.gameId}`}
-                                className="text-xs px-2 py-1 rounded whitespace-nowrap"
-                                style={g.hasBoxScore ? { background: "var(--psp-blue)", color: "white" } : { border: "1px solid var(--psp-gray-300)", color: "var(--psp-gray-500)" }}
-                                aria-label={`${g.hasBoxScore ? "Box score" : "Game details"}: ${oppLabel}, ${dateStr}`}
-                              >
-                                {g.hasBoxScore ? "Box" : "Game"}
-                              </Link>
-                            </div>
-                          </React.Fragment>
-                        );
-                      });
-                    })()}
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Basketball Game Log — shows ALL team games with individual stats where available */}
-            {mergedGames.length > 0 && sport === "basketball" && (() => {
-              const boxScoreCount = mergedGames.filter(g => g.hasBoxScore).length;
-              let lastSeason: string | null = null;
-              return (
-                <div>
-                  <h2 className="text-2xl font-bold mb-1" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                    Game Log ({mergedGames.length} games)
-                  </h2>
-                  {boxScoreCount < mergedGames.length && (
-                    <p className="text-xs text-gray-500 mb-4">
-                      Individual stats available for {boxScoreCount} of {mergedGames.length} games
-                    </p>
-                  )}
-                  <div className="overflow-x-auto">
-                    <table className="data-table" aria-label={`${player.name} game-by-game statistics`}>
-                      <thead>
-                        <tr>
-                          <th scope="col">Date</th>
-                          <th scope="col">Opponent</th>
-                          <th scope="col" className="text-center">Score</th>
-                          <th scope="col" className="text-right">PTS</th>
-                          <th scope="col" className="text-center"><span className="sr-only">Box Score</span></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {mergedGames.map((g) => {
-                          const isHome = g.homeSchoolId === player.primary_school_id;
-                          const opp = isHome ? g.awaySchool : g.homeSchool;
-                          const oppLabel = opp ? `${isHome ? "vs" : "at"} ${opp.name}` : "—";
-                          const dateStr = g.gameDate ? new Date(g.gameDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" }) : "—";
-                          const teamScore = isHome ? g.homeScore : g.awayScore;
-                          const oppScore = isHome ? g.awayScore : g.homeScore;
-                          const won = teamScore != null && oppScore != null ? teamScore > oppScore : null;
-                          const scoreStr = teamScore != null && oppScore != null ? `${teamScore}-${oppScore}` : "—";
-
-                          const showSeasonHeader = g.seasonLabel !== lastSeason;
-                          lastSeason = g.seasonLabel;
-
-                          return (
-                            <React.Fragment key={g.gameId}>
-                              {showSeasonHeader && (
-                                <tr>
-                                  <td colSpan={5} className="py-2 px-2 text-xs font-bold uppercase tracking-wider" style={{ background: "var(--psp-navy)", color: "var(--psp-gold)" }}>
-                                    {g.seasonLabel} Season
-                                  </td>
-                                </tr>
-                              )}
-                              <tr className={g.hasBoxScore ? "" : "opacity-60"}>
-                                <td className="whitespace-nowrap text-xs text-gray-500">{dateStr}</td>
-                                <td className="whitespace-nowrap text-xs">
-                                  {opp ? (
-                                    <Link href={`/${sport}/schools/${opp.slug}`} className="hover:underline" style={{ color: "var(--psp-blue)" }}>
-                                      {oppLabel}
-                                    </Link>
-                                  ) : "—"}
-                                </td>
-                                <td className="text-center text-xs whitespace-nowrap">
-                                  {won != null ? (
-                                    <span className={won ? "font-bold text-green-700" : "text-red-600"}>
-                                      {won ? "W" : "L"} {scoreStr}
-                                    </span>
-                                  ) : scoreStr}
-                                </td>
-                                <td className="text-right font-bold">{g.hasBoxScore ? (g.bbPoints ?? "—") : <span className="text-gray-400 font-normal italic text-xs">—</span>}</td>
-                                <td className="text-center">
-                                  {g.hasBoxScore ? (
-                                    <Link
-                                      href={`/${sport}/games/${g.gameId}`}
-                                      className="text-xs px-3 py-1 rounded"
-                                      style={{ background: "var(--psp-blue)", color: "white" }}
-                                      aria-label={`Box score: ${oppLabel}, ${dateStr}`}
-                                    >
-                                      Box Score
-                                    </Link>
-                                  ) : (
-                                    <Link
-                                      href={`/${sport}/games/${g.gameId}`}
-                                      className="text-xs px-3 py-1 rounded border"
-                                      style={{ borderColor: "var(--psp-gray-300)", color: "var(--psp-gray-500)" }}
-                                      aria-label={`Game details: ${oppLabel}, ${dateStr}`}
-                                    >
-                                      Details
-                                    </Link>
-                                  )}
-                                </td>
-                              </tr>
-                            </React.Fragment>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              );
-            })()}
+            {/* Game Log Accordion — collapsible seasons with award badges */}
+            {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
+              <GameLogAccordion
+                games={mergedGames}
+                awards={(awards as Award[]).map(a => ({
+                  id: a.id,
+                  award_name: a.award_name,
+                  award_type: a.award_type,
+                  category: a.category,
+                  seasonLabel: a.seasons?.label,
+                }))}
+                sport={sport}
+                playerSchoolId={player.primary_school_id ?? null}
+                playerName={player.name}
+              />
+            )}
 
             {/* Awards */}
             {(awards as Award[]).length > 0 && (
