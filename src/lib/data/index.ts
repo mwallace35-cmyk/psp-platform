@@ -52,6 +52,21 @@ export {
   getSchoolChampionships,
 } from "./schools";
 
+// School hub functions
+export {
+  getSchoolHubData,
+  getSchoolAllSportsStats,
+  getSchoolNextLevel,
+  getSchoolAllChampionships,
+  getSchoolRecentSeasons,
+  getSchoolArticles,
+  type SchoolHubData,
+  type SchoolSportStats,
+  type NextLevelAthlete,
+  type SchoolChampionshipData,
+  type RecentSeasonData,
+} from "./school-hub";
+
 // Team and championship functions
 export {
   getRecentChampions,
