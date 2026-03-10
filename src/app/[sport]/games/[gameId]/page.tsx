@@ -24,7 +24,10 @@ export async function generateMetadata({
   if (!game) return { title: "Game Not Found" };
 
   const home = game.home_school?.name ?? "Home";
-  const away = game.away_school?.name ?? "Away";
+  const awayName = game.away_school?.name
+    ?? (game.notes ? game.notes.replace(/^Opponent:\s*/i, "").replace(/\s*\(.*\)\s*$/, "").trim() : null)
+    ?? "Away";
+  const away = awayName;
   const score =
     game.home_score != null && game.away_score != null
       ? ` ${game.home_score}-${game.away_score}`
@@ -350,6 +353,11 @@ export default async function GameDetailPage({
   const hasScore = game.home_score != null && game.away_score != null;
   const season = game.seasons;
 
+  // Extract opponent name from notes for games without away school (award-import pattern)
+  const opponentFromNotes = !away && game.notes
+    ? game.notes.replace(/^Opponent:\s*/i, "").replace(/\s*\(.*\)\s*$/, "").trim()
+    : null;
+
   // Determine winner
   let homeWon = false;
   let awayWon = false;
@@ -364,7 +372,7 @@ export default async function GameDetailPage({
       label: season?.label ?? "Season",
       href: home ? `/${sport}/schools/${home.slug}` : `/${sport}`,
     },
-    { label: `${away?.name ?? "Away"} vs ${home?.name ?? "Home"}` },
+    { label: `${opponentFromNotes ?? away?.name ?? "Away"} vs ${home?.name ?? "Home"}` },
   ];
 
   return (
@@ -384,7 +392,7 @@ export default async function GameDetailPage({
         {/* Score display */}
         <div className="px-6 py-8">
           <div className="grid grid-cols-3 items-center text-center">
-            {/* Away team */}
+            {/* Away team / Opponent */}
             <div>
               {away ? (
                 <Link
@@ -393,6 +401,10 @@ export default async function GameDetailPage({
                 >
                   {away.name}
                 </Link>
+              ) : opponentFromNotes ? (
+                <span className="text-lg md:text-xl font-bold text-gray-300 font-heading">
+                  {opponentFromNotes}
+                </span>
               ) : (
                 <span className="text-lg md:text-xl font-bold text-gray-400">Away</span>
               )}

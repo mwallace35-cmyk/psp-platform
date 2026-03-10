@@ -34,6 +34,8 @@ export interface GameDetail {
   away_school_id: number | null;
   home_score: number | null;
   away_score: number | null;
+  notes: string | null;
+  data_source: string | null;
   home_school: { id: number; name: string; slug: string } | null;
   away_school: { id: number; name: string; slug: string } | null;
   seasons: { label: string; year_start: number; year_end: number } | null;
@@ -51,7 +53,7 @@ export async function getGameById(gameId: number): Promise<GameDetail | null> {
           const { data } = await supabase
             .from("games")
             .select(
-              `id, sport_id, season_id, game_date, home_school_id, away_school_id, home_score, away_score,
+              `id, sport_id, season_id, game_date, home_school_id, away_school_id, home_score, away_score, notes, data_source,
                home_school:schools!games_home_school_id_fkey(id, name, slug),
                away_school:schools!games_away_school_id_fkey(id, name, slug),
                seasons(label, year_start, year_end)`

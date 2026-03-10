@@ -149,9 +149,9 @@ export function generatePageMetadata(params: SEOParams): Metadata {
       break;
 
     case "events":
-      title = `Events | ${SITE_NAME}`;
+      title = `The Pulse | ${SITE_NAME}`;
       description =
-        "Upcoming Philadelphia high school sports events, camps, and showcases.";
+        "The Pulse — upcoming Philadelphia high school sports events, camps, and showcases.";
       url = `${SITE_URL}/events`;
       break;
   }

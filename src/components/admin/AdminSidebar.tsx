@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: "📊" },
   { href: "/admin/articles", label: "Articles", icon: "📰" },
-  { href: "/admin/events", label: "Events", icon: "📅" },
+  { href: "/admin/events", label: "The Pulse", icon: "📅" },
   { href: "/admin/potw", label: "Player of Week", icon: "⭐" },
   { href: "/admin/import", label: "Import", icon: "📥" },
   { href: "/admin/data", label: "Data Browser", icon: "🔍" },

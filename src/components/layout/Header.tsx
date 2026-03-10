@@ -28,10 +28,12 @@ const MAIN_SPORTS = [
 ];
 
 const MORE_ITEMS = [
-  { href: "/events", label: "Events", type: "page" },
+  { href: "/events", label: "The Pulse", type: "page" },
+  { href: "/events/our-guys", label: "Our Guys", type: "page" },
+  { href: "/events/forum", label: "Forum", type: "page" },
+  { href: "/events/rankings", label: "Rankings", type: "page" },
   { href: "/articles", label: "News", type: "page" },
   { href: "/coaches", label: "Coaches", type: "page" },
-  { href: "/recruiting", label: "Recruiting", type: "page" },
 ];
 
 const MOBILE_EXTRA = [

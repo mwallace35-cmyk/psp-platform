@@ -33,7 +33,7 @@ export default function Footer() {
             <li><Link href="/recruiting">Recruiting</Link></li>
             <li><Link href="/coaches">Coaches</Link></li>
             <li><Link href="/articles">Articles</Link></li>
-            <li><Link href="/events">Events</Link></li>
+            <li><Link href="/events">The Pulse</Link></li>
             <li><Link href="/glossary">Glossary</Link></li>
           </ul>
         </nav>
