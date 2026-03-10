@@ -1,0 +1,1056 @@
+import { createStaticClient } from "@/lib/supabase/static";
+import { withErrorHandling } from "@/lib/errors";
+import { withRetry } from "@/lib/retry";
+import type { Player, School } from "@/lib/data/common";
+
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+export interface ComputedRecord {
+  stat_category: string; // "Rushing", "Passing", "Receiving", "Scoring", etc.
+  stat_name: string; // "Rush Yards", "Pass TDs", "Points", etc.
+  scope: "career" | "season"; // career or single-season
+  rank: number;
+  value: number;
+  display_value: string; // formatted: "2,847 yds" or "42 TDs"
+  player_name: string;
+  player_slug: string;
+  school_name: string;
+  school_slug: string;
+  season_label: string | null; // for season records: "2019-20"
+  year: number | null;
+  source: "computed";
+}
+
+export interface StatDefinition {
+  key: string; // column name from stats table
+  name: string; // display name
+  category: string; // grouping category
+  unit: string; // "yds", "TDs", "pts", etc.
+  scope: "career" | "season";
+  minGames?: number; // minimum games for rate stats
+  minValue?: number; // minimum value (e.g., 30 AB for batting avg)
+  orderDir: "desc" | "asc"; // desc for most, asc for lowest ERA
+  isRate?: boolean; // if true, value is already a rate (ppg, era, etc.)
+  format?: (val: number) => string; // custom formatter
+}
+
+interface RawStatRow {
+  player_id: number;
+  school_id: number;
+  player_name: string;
+  player_slug: string;
+  school_name: string;
+  school_slug: string;
+  season_id?: number;
+  season_label?: string;
+  year_start?: number;
+  stat_value: number;
+  games_played?: number;
+}
+
+// ============================================================================
+// STAT DEFINITIONS BY SPORT
+// ============================================================================
+
+const FB_STAT_DEFS: Record<string, StatDefinition> = {
+  // RUSHING
+  "rush-career": {
+    key: "rush_yards",
+    name: "Career Rushing Yards",
+    category: "Rushing",
+    unit: "yds",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} yds`,
+  },
+  "rush-career-td": {
+    key: "rush_td",
+    name: "Career Rushing TDs",
+    category: "Rushing",
+    unit: "TDs",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${v || 0} TDs`,
+  },
+  "rush-season": {
+    key: "rush_yards",
+    name: "Season Rushing Yards",
+    category: "Rushing",
+    unit: "yds",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} yds`,
+  },
+  "rush-season-td": {
+    key: "rush_td",
+    name: "Season Rushing TDs",
+    category: "Rushing",
+    unit: "TDs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${v || 0} TDs`,
+  },
+  "rush-season-carries": {
+    key: "rush_carries",
+    name: "Season Rushing Carries",
+    category: "Rushing",
+    unit: "carries",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${v || 0} carries`,
+  },
+  // PASSING
+  "pass-career": {
+    key: "pass_yards",
+    name: "Career Passing Yards",
+    category: "Passing",
+    unit: "yds",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} yds`,
+  },
+  "pass-career-td": {
+    key: "pass_td",
+    name: "Career Passing TDs",
+    category: "Passing",
+    unit: "TDs",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${v || 0} TDs`,
+  },
+  "pass-season": {
+    key: "pass_yards",
+    name: "Season Passing Yards",
+    category: "Passing",
+    unit: "yds",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} yds`,
+  },
+  "pass-season-td": {
+    key: "pass_td",
+    name: "Season Passing TDs",
+    category: "Passing",
+    unit: "TDs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${v || 0} TDs`,
+  },
+  "pass-season-comp": {
+    key: "pass_comp",
+    name: "Season Pass Completions",
+    category: "Passing",
+    unit: "comps",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${v || 0} comps`,
+  },
+  // RECEIVING
+  "rec-career": {
+    key: "rec_yards",
+    name: "Career Receiving Yards",
+    category: "Receiving",
+    unit: "yds",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} yds`,
+  },
+  "rec-career-td": {
+    key: "rec_td",
+    name: "Career Receiving TDs",
+    category: "Receiving",
+    unit: "TDs",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${v || 0} TDs`,
+  },
+  "rec-season": {
+    key: "rec_yards",
+    name: "Season Receiving Yards",
+    category: "Receiving",
+    unit: "yds",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} yds`,
+  },
+  "rec-season-td": {
+    key: "rec_td",
+    name: "Season Receiving TDs",
+    category: "Receiving",
+    unit: "TDs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${v || 0} TDs`,
+  },
+  "rec-season-receptions": {
+    key: "receptions",
+    name: "Season Receptions",
+    category: "Receiving",
+    unit: "receptions",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${v || 0} rec`,
+  },
+  // SCORING
+  "score-career-td": {
+    key: "total_td",
+    name: "Career Total TDs",
+    category: "Scoring",
+    unit: "TDs",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${v || 0} TDs`,
+  },
+  "score-career-points": {
+    key: "points",
+    name: "Career Points",
+    category: "Scoring",
+    unit: "pts",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} pts`,
+  },
+  "score-season-td": {
+    key: "total_td",
+    name: "Season Total TDs",
+    category: "Scoring",
+    unit: "TDs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${v || 0} TDs`,
+  },
+  "score-season-points": {
+    key: "points",
+    name: "Season Points",
+    category: "Scoring",
+    unit: "pts",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} pts`,
+  },
+  // DEFENSE
+  "def-career-tackles": {
+    key: "tackles",
+    name: "Career Tackles",
+    category: "Defense",
+    unit: "tackles",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} tackles`,
+  },
+  "def-career-sacks": {
+    key: "sacks",
+    name: "Career Sacks",
+    category: "Defense",
+    unit: "sacks",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} sacks`,
+  },
+  "def-career-int": {
+    key: "interceptions",
+    name: "Career Interceptions",
+    category: "Defense",
+    unit: "ints",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} ints`,
+  },
+  "def-season-tackles": {
+    key: "tackles",
+    name: "Season Tackles",
+    category: "Defense",
+    unit: "tackles",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} tackles`,
+  },
+  "def-season-sacks": {
+    key: "sacks",
+    name: "Season Sacks",
+    category: "Defense",
+    unit: "sacks",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} sacks`,
+  },
+  "def-season-int": {
+    key: "interceptions",
+    name: "Season Interceptions",
+    category: "Defense",
+    unit: "ints",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} ints`,
+  },
+};
+
+const BB_STAT_DEFS: Record<string, StatDefinition> = {
+  // SCORING
+  "score-career": {
+    key: "points",
+    name: "Career Points",
+    category: "Scoring",
+    unit: "pts",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} pts`,
+  },
+  "score-season": {
+    key: "points",
+    name: "Season Points",
+    category: "Scoring",
+    unit: "pts",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} pts`,
+  },
+  "score-season-ppg": {
+    key: "ppg",
+    name: "Season PPG",
+    category: "Scoring",
+    unit: "ppg",
+    scope: "season",
+    minGames: 10,
+    orderDir: "desc",
+    isRate: true,
+    format: (v) => `${(v || 0).toFixed(1)} ppg`,
+  },
+  // REBOUNDS
+  "reb-career": {
+    key: "rebounds",
+    name: "Career Rebounds",
+    category: "Rebounds",
+    unit: "rebs",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} rebs`,
+  },
+  "reb-season": {
+    key: "rebounds",
+    name: "Season Rebounds",
+    category: "Rebounds",
+    unit: "rebs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} rebs`,
+  },
+  "reb-season-rpg": {
+    key: "rpg",
+    name: "Season RPG",
+    category: "Rebounds",
+    unit: "rpg",
+    scope: "season",
+    minGames: 10,
+    orderDir: "desc",
+    isRate: true,
+    format: (v) => `${(v || 0).toFixed(1)} rpg`,
+  },
+  // ASSISTS
+  "ast-career": {
+    key: "assists",
+    name: "Career Assists",
+    category: "Assists",
+    unit: "asts",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} asts`,
+  },
+  "ast-season": {
+    key: "assists",
+    name: "Season Assists",
+    category: "Assists",
+    unit: "asts",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} asts`,
+  },
+  "ast-season-apg": {
+    key: "apg",
+    name: "Season APG",
+    category: "Assists",
+    unit: "apg",
+    scope: "season",
+    minGames: 10,
+    orderDir: "desc",
+    isRate: true,
+    format: (v) => `${(v || 0).toFixed(1)} apg`,
+  },
+  // STEALS
+  "steal-career": {
+    key: "steals",
+    name: "Career Steals",
+    category: "Steals",
+    unit: "steals",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} steals`,
+  },
+  "steal-season": {
+    key: "steals",
+    name: "Season Steals",
+    category: "Steals",
+    unit: "steals",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} steals`,
+  },
+  // BLOCKS
+  "block-career": {
+    key: "blocks",
+    name: "Career Blocks",
+    category: "Blocks",
+    unit: "blks",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} blks`,
+  },
+  "block-season": {
+    key: "blocks",
+    name: "Season Blocks",
+    category: "Blocks",
+    unit: "blks",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} blks`,
+  },
+  // SHOOTING
+  "shoot-season-fg": {
+    key: "fg_pct",
+    name: "Season FG%",
+    category: "Shooting",
+    unit: "%",
+    scope: "season",
+    minValue: 50,
+    orderDir: "desc",
+    isRate: true,
+    format: (v) => `${(v || 0).toFixed(1)}%`,
+  },
+  "shoot-season-ft": {
+    key: "ft_pct",
+    name: "Season FT%",
+    category: "Shooting",
+    unit: "%",
+    scope: "season",
+    minValue: 30,
+    orderDir: "desc",
+    isRate: true,
+    format: (v) => `${(v || 0).toFixed(1)}%`,
+  },
+  "shoot-season-3p": {
+    key: "three_pm",
+    name: "Season 3-Pointers",
+    category: "Shooting",
+    unit: "3PM",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} 3PM`,
+  },
+};
+
+const BASE_STAT_DEFS: Record<string, StatDefinition> = {
+  // BATTING
+  "bat-career-hits": {
+    key: "hits",
+    name: "Career Hits",
+    category: "Batting",
+    unit: "hits",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} hits`,
+  },
+  "bat-career-hr": {
+    key: "home_runs",
+    name: "Career Home Runs",
+    category: "Batting",
+    unit: "HRs",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} HRs`,
+  },
+  "bat-career-rbi": {
+    key: "rbi",
+    name: "Career RBIs",
+    category: "Batting",
+    unit: "RBIs",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} RBIs`,
+  },
+  "bat-season-avg": {
+    key: "batting_avg",
+    name: "Season Batting Avg",
+    category: "Batting",
+    unit: "avg",
+    scope: "season",
+    minValue: 30,
+    orderDir: "desc",
+    isRate: true,
+    format: (v) => `${(v || 0).toFixed(3)}`,
+  },
+  "bat-season-hits": {
+    key: "hits",
+    name: "Season Hits",
+    category: "Batting",
+    unit: "hits",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} hits`,
+  },
+  "bat-season-hr": {
+    key: "home_runs",
+    name: "Season Home Runs",
+    category: "Batting",
+    unit: "HRs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} HRs`,
+  },
+  "bat-season-rbi": {
+    key: "rbi",
+    name: "Season RBIs",
+    category: "Batting",
+    unit: "RBIs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} RBIs`,
+  },
+  "bat-season-runs": {
+    key: "runs",
+    name: "Season Runs",
+    category: "Batting",
+    unit: "runs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} runs`,
+  },
+  "bat-season-sb": {
+    key: "stolen_bases",
+    name: "Season Stolen Bases",
+    category: "Batting",
+    unit: "SBs",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} SBs`,
+  },
+  // PITCHING
+  "pit-career-wins": {
+    key: "wins",
+    name: "Career Wins",
+    category: "Pitching",
+    unit: "W",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} W`,
+  },
+  "pit-career-k": {
+    key: "strikeouts_p",
+    name: "Career Strikeouts",
+    category: "Pitching",
+    unit: "Ks",
+    scope: "career",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} Ks`,
+  },
+  "pit-season-wins": {
+    key: "wins",
+    name: "Season Wins",
+    category: "Pitching",
+    unit: "W",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} W`,
+  },
+  "pit-season-era": {
+    key: "era",
+    name: "Season ERA",
+    category: "Pitching",
+    unit: "ERA",
+    scope: "season",
+    minValue: 20,
+    orderDir: "asc",
+    isRate: true,
+    format: (v) => `${(v || 0).toFixed(2)}`,
+  },
+  "pit-season-k": {
+    key: "strikeouts_p",
+    name: "Season Strikeouts",
+    category: "Pitching",
+    unit: "Ks",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} Ks`,
+  },
+  "pit-season-saves": {
+    key: "saves",
+    name: "Season Saves",
+    category: "Pitching",
+    unit: "SV",
+    scope: "season",
+    orderDir: "desc",
+    format: (v) => `${(v || 0).toLocaleString()} SV`,
+  },
+};
+
+export const SPORT_STAT_DEFS: Record<string, Record<string, StatDefinition>> = {
+  football: FB_STAT_DEFS,
+  basketball: BB_STAT_DEFS,
+  baseball: BASE_STAT_DEFS,
+};
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+function formatStatValue(value: number | null | undefined, def: StatDefinition): string {
+  if (value === null || value === undefined) return "0";
+  if (def.format) return def.format(value);
+  if (def.unit === "yds") return `${(value || 0).toLocaleString()} yds`;
+  if (def.unit === "pts") return `${(value || 0).toLocaleString()} pts`;
+  if (def.unit === "TDs") return `${(value || 0)} TDs`;
+  if (def.unit === "%") return `${(value || 0).toFixed(1)}%`;
+  if (def.unit === "avg") return `${(value || 0).toFixed(3)}`;
+  return String(value);
+}
+
+async function aggregateCareerStats(
+  tableName: string,
+  statKey: string,
+  def: StatDefinition,
+  sportSlug: string,
+  limit: number = 25
+): Promise<ComputedRecord[]> {
+  const client = createStaticClient();
+
+  // Fetch all season records for the sport
+  const { data: seasons, error: seasonError } = await client
+    .from(tableName)
+    .select("season_id")
+    .order("season_id", { ascending: false })
+    .limit(1);
+
+  if (seasonError || !seasons?.length) {
+    return [];
+  }
+
+  // Get all player-season records — select * to avoid PostgREST template literal parsing issues
+  const { data: allRows, error } = await client
+    .from(tableName)
+    .select("*, players(id, name, slug), schools(id, name, slug)") as { data: any[] | null; error: any };
+
+  if (error || !allRows) {
+    return [];
+  }
+
+  // Aggregate by player_id
+  const aggregated = new Map<
+    number,
+    {
+      player_id: number;
+      school_id: number;
+      value: number;
+      player_name: string;
+      player_slug: string;
+      school_name: string;
+      school_slug: string;
+    }
+  >();
+
+  for (const row of allRows) {
+    const statValue = Number(row[statKey]) || 0;
+    const player = row.players as { id: number; name: string; slug: string } | null;
+    const school = row.schools as { id: number; name: string; slug: string } | null;
+
+    if (!player || !school) continue;
+
+    const key = row.player_id as number;
+    const existing = aggregated.get(key);
+
+    if (existing) {
+      existing.value += statValue;
+    } else {
+      aggregated.set(key, {
+        player_id: key,
+        school_id: row.school_id as number,
+        value: statValue,
+        player_name: player.name,
+        player_slug: player.slug,
+        school_name: school.name,
+        school_slug: school.slug,
+      });
+    }
+  }
+
+  // Sort and format
+  const sorted = Array.from(aggregated.values())
+    .sort((a, b) => (def.orderDir === "asc" ? a.value - b.value : b.value - a.value))
+    .slice(0, limit);
+
+  return sorted.map((item, idx) => ({
+    stat_category: def.category,
+    stat_name: def.name,
+    scope: "career",
+    rank: idx + 1,
+    value: item.value,
+    display_value: formatStatValue(item.value, def),
+    player_name: item.player_name,
+    player_slug: item.player_slug,
+    school_name: item.school_name,
+    school_slug: item.school_slug,
+    season_label: null,
+    year: null,
+    source: "computed",
+  }));
+}
+
+async function fetchSeasonLeaders(
+  tableName: string,
+  statKey: string,
+  def: StatDefinition,
+  sportSlug: string,
+  limit: number = 25
+): Promise<ComputedRecord[]> {
+  const client = createStaticClient();
+
+  // Build query with joins — select * to avoid PostgREST template literal parsing issues
+  const { data: rows, error } = await client
+    .from(tableName)
+    .select("*, players(name, slug), schools(name, slug), seasons(label, year_start)") as { data: any[] | null; error: any };
+
+  if (error || !rows) {
+    return [];
+  }
+
+  // Filter by minimum requirements
+  let filtered = rows.filter((row: any) => {
+    const val = row[statKey];
+    // Skip nulls and zeros (except for rate stats which may be 0.0)
+    if (val === null || val === undefined) return false;
+
+    // For rate stats, skip if games_played < minGames
+    if (def.minGames && row.games_played && row.games_played < def.minGames) {
+      return false;
+    }
+
+    // For min batting average (at_bats) or min ERA (IP), check against minValue
+    if (def.minValue) {
+      // For batting avg, minValue is at_bats; for ERA it's innings pitched
+      // Determine based on stat key
+      if (statKey === "batting_avg" && (row.at_bats || 0) < def.minValue) {
+        return false;
+      }
+      if (statKey === "era" && (row.innings_pitched || 0) < def.minValue) {
+        return false;
+      }
+      // For FG% (needs minValue FGA) and FT% (needs minValue FTA)
+      if (
+        statKey === "fg_pct" &&
+        (row.fga || 0) < def.minValue
+      ) {
+        return false;
+      }
+      if (
+        statKey === "ft_pct" &&
+        (row.fta || 0) < def.minValue
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  // Sort
+  filtered.sort((a: any, b: any) => {
+    const aVal = a[statKey] || 0;
+    const bVal = b[statKey] || 0;
+    return def.orderDir === "asc" ? aVal - bVal : bVal - aVal;
+  });
+
+  filtered = filtered.slice(0, limit);
+
+  return filtered.map((row: any, idx: number) => {
+    const player = row.players as Player | null;
+    const school = row.schools as School | null;
+    const season = row.seasons as any | null;
+    const statValue = row[statKey];
+
+    return {
+      stat_category: def.category,
+      stat_name: def.name,
+      scope: "season",
+      rank: idx + 1,
+      value: statValue || 0,
+      display_value: formatStatValue(statValue, def),
+      player_name: player?.name || "Unknown",
+      player_slug: player?.slug || "",
+      school_name: school?.name || "Unknown",
+      school_slug: school?.slug || "",
+      season_label: season?.label || null,
+      year: season?.year_start || null,
+      source: "computed",
+    };
+  });
+}
+
+// ============================================================================
+// PUBLIC API FUNCTIONS
+// ============================================================================
+
+/**
+ * Get career leaders for a specific stat (sum across all seasons for each player)
+ */
+export async function getComputedCareerLeaders(
+  sportSlug: string,
+  statKey: string,
+  limit: number = 25
+): Promise<ComputedRecord[]> {
+  return withErrorHandling(
+    async () => {
+      return withRetry(async () => {
+        const defs = SPORT_STAT_DEFS[sportSlug];
+        if (!defs) return [];
+
+        const def = defs[statKey];
+        if (!def || def.scope !== "career") return [];
+
+        let tableName = "";
+        if (sportSlug === "football") tableName = "football_player_seasons";
+        else if (sportSlug === "basketball") tableName = "basketball_player_seasons";
+        else if (sportSlug === "baseball") tableName = "baseball_player_seasons";
+        else return [];
+
+        return aggregateCareerStats(tableName, def.key, def, sportSlug, limit);
+      }, { maxRetries: 2, baseDelay: 500 });
+    },
+    [],
+    "COMPUTED_CAREER_LEADERS",
+    { sportSlug, statKey }
+  );
+}
+
+/**
+ * Get single-season leaders for a specific stat
+ */
+export async function getComputedSeasonLeaders(
+  sportSlug: string,
+  statKey: string,
+  limit: number = 25
+): Promise<ComputedRecord[]> {
+  return withErrorHandling(
+    async () => {
+      return withRetry(async () => {
+        const defs = SPORT_STAT_DEFS[sportSlug];
+        if (!defs) return [];
+
+        const def = defs[statKey];
+        if (!def || def.scope !== "season") return [];
+
+        let tableName = "";
+        if (sportSlug === "football") tableName = "football_player_seasons";
+        else if (sportSlug === "basketball") tableName = "basketball_player_seasons";
+        else if (sportSlug === "baseball") tableName = "baseball_player_seasons";
+        else return [];
+
+        return fetchSeasonLeaders(tableName, def.key, def, sportSlug, limit);
+      }, { maxRetries: 2, baseDelay: 500 });
+    },
+    [],
+    "COMPUTED_SEASON_LEADERS",
+    { sportSlug, statKey }
+  );
+}
+
+/**
+ * Get all computed records for a sport, organized by category
+ * Returns top 10 for each stat category
+ */
+export async function getAllComputedRecords(
+  sportSlug: string,
+  limit: number = 10
+): Promise<Record<string, ComputedRecord[]>> {
+  return withErrorHandling(
+    async () => {
+      const defs = SPORT_STAT_DEFS[sportSlug];
+      if (!defs) return {};
+
+      const result: Record<string, ComputedRecord[]> = {};
+
+      // Fetch all stat keys in parallel by category
+      const promises: Promise<void>[] = [];
+      for (const [key, def] of Object.entries(defs)) {
+        promises.push(
+          (async () => {
+            let records: ComputedRecord[] = [];
+            if (def.scope === "career") {
+              records = await getComputedCareerLeaders(sportSlug, key, limit);
+            } else {
+              records = await getComputedSeasonLeaders(sportSlug, key, limit);
+            }
+            if (records.length > 0) {
+              const category = def.category;
+              if (!result[category]) {
+                result[category] = [];
+              }
+              result[category].push(...records);
+            }
+          })()
+        );
+      }
+      await Promise.all(promises);
+
+      return result;
+    },
+    {},
+    "COMPUTED_ALL_RECORDS",
+    { sportSlug }
+  );
+}
+
+/**
+ * Get all computed records (career + season leaders) for a specific school
+ */
+export async function getSchoolRecordBook(
+  sportSlug: string,
+  schoolId: number
+): Promise<Record<string, ComputedRecord[]>> {
+  return withErrorHandling(
+    async () => {
+      const defs = SPORT_STAT_DEFS[sportSlug];
+      if (!defs) return {};
+
+      const client = createStaticClient();
+
+      let tableName = "";
+      if (sportSlug === "football") tableName = "football_player_seasons";
+      else if (sportSlug === "basketball") tableName = "basketball_player_seasons";
+      else if (sportSlug === "baseball") tableName = "baseball_player_seasons";
+      else return {};
+
+      // Fetch all seasons for this school — select * to avoid PostgREST template parsing issues
+      const { data: schoolSeasons, error } = await client
+        .from(tableName)
+        .select("*, players(name, slug), schools(name, slug), seasons(label, year_start)")
+        .eq("school_id", schoolId) as { data: any[] | null; error: any };
+
+      if (error || !schoolSeasons) {
+        return {};
+      }
+
+      const result: Record<string, ComputedRecord[]> = {};
+
+      // For each stat definition, compute leader for this school
+      for (const [key, def] of Object.entries(defs)) {
+        const category = def.category;
+        if (!result[category]) {
+          result[category] = [];
+        }
+
+        if (def.scope === "career") {
+          // Aggregate by player
+          const aggregated = new Map<
+            number,
+            { player_id: number; value: number; player_name: string; player_slug: string }
+          >();
+
+          for (const row of schoolSeasons) {
+            const statValue = (row as any)[def.key] || 0;
+            const player = (row as any).players as Player | null;
+            if (!player) continue;
+
+            const existing = aggregated.get(row.player_id);
+            if (existing) {
+              existing.value += statValue;
+            } else {
+              aggregated.set(row.player_id, {
+                player_id: row.player_id,
+                value: statValue,
+                player_name: player.name,
+                player_slug: player.slug,
+              });
+            }
+          }
+
+          // Sort and format
+          const sorted = Array.from(aggregated.values())
+            .sort((a, b) => (def.orderDir === "asc" ? a.value - b.value : b.value - a.value))
+            .slice(0, 3);
+
+          result[category].push(
+            ...sorted.map((item, idx) => ({
+              stat_category: def.category,
+              stat_name: def.name,
+              scope: "career" as const,
+              rank: idx + 1,
+              value: item.value,
+              display_value: formatStatValue(item.value, def),
+              player_name: item.player_name,
+              player_slug: item.player_slug,
+              school_name: schoolSeasons[0]?.schools?.name || "Unknown",
+              school_slug: schoolSeasons[0]?.schools?.slug || "",
+              season_label: null,
+              year: null,
+              source: "computed" as const,
+            }))
+          );
+        } else {
+          // Season leaders
+          const filtered = schoolSeasons.filter((row: any) => {
+            const val = (row as any)[def.key];
+            if (val === null || val === undefined) return false;
+
+            // Check minimums
+            if (def.minGames && (row as any).games_played < def.minGames) {
+              return false;
+            }
+            if (def.minValue) {
+              if (
+                (def.key === "batting_avg" && (row as any).at_bats < def.minValue) ||
+                (def.key === "era" && (row as any).innings_pitched < def.minValue)
+              ) {
+                return false;
+              }
+            }
+
+            return true;
+          });
+
+          filtered.sort((a: any, b: any) => {
+            const aVal = (a as any)[def.key] || 0;
+            const bVal = (b as any)[def.key] || 0;
+            return def.orderDir === "asc" ? aVal - bVal : bVal - aVal;
+          });
+
+          result[category].push(
+            ...filtered.slice(0, 3).map((row: any, idx: number) => {
+              const player = row.players as Player | null;
+              const season = row.seasons as any | null;
+              return {
+                stat_category: def.category,
+                stat_name: def.name,
+                scope: "season" as const,
+                rank: idx + 1,
+                value: (row as any)[def.key] || 0,
+                display_value: formatStatValue((row as any)[def.key], def),
+                player_name: player?.name || "Unknown",
+                player_slug: player?.slug || "",
+                school_name: schoolSeasons[0]?.schools?.name || "Unknown",
+                school_slug: schoolSeasons[0]?.schools?.slug || "",
+                season_label: season?.label || null,
+                year: season?.year_start || null,
+                source: "computed" as const,
+              };
+            })
+          );
+        }
+      }
+
+      return result;
+    },
+    {},
+    "COMPUTED_SCHOOL_RECORD_BOOK",
+    { sportSlug, schoolId }
+  );
+}
