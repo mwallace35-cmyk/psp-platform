@@ -624,84 +624,33 @@ async function aggregateCareerStats(
 ): Promise<ComputedRecord[]> {
   const client = createStaticClient();
 
-  // Fetch all season records for the sport
-  const { data: seasons, error: seasonError } = await client
-    .from(tableName)
-    .select("season_id")
-    .order("season_id", { ascending: false })
-    .limit(1);
+  // Use server-side RPC function for proper aggregation across ALL rows
+  const { data: rows, error } = await client.rpc("get_career_leaders", {
+    p_table_name: tableName,
+    p_stat_column: statKey,
+    p_order_dir: def.orderDir,
+    p_limit: limit,
+  });
 
-  if (seasonError || !seasons?.length) {
+  if (error || !rows) {
+    console.error(`Career leaders RPC error for ${tableName}.${statKey}:`, error);
     return [];
   }
 
-  // Get all player-season records — select * to avoid PostgREST template literal parsing issues
-  const { data: allRows, error } = await client
-    .from(tableName)
-    .select("*, players(id, name, slug), schools(id, name, slug)") as { data: any[] | null; error: any };
-
-  if (error || !allRows) {
-    return [];
-  }
-
-  // Aggregate by player_id
-  const aggregated = new Map<
-    number,
-    {
-      player_id: number;
-      school_id: number;
-      value: number;
-      player_name: string;
-      player_slug: string;
-      school_name: string;
-      school_slug: string;
-    }
-  >();
-
-  for (const row of allRows) {
-    const statValue = Number(row[statKey]) || 0;
-    const player = row.players as { id: number; name: string; slug: string } | null;
-    const school = row.schools as { id: number; name: string; slug: string } | null;
-
-    if (!player || !school) continue;
-
-    const key = row.player_id as number;
-    const existing = aggregated.get(key);
-
-    if (existing) {
-      existing.value += statValue;
-    } else {
-      aggregated.set(key, {
-        player_id: key,
-        school_id: row.school_id as number,
-        value: statValue,
-        player_name: player.name,
-        player_slug: player.slug,
-        school_name: school.name,
-        school_slug: school.slug,
-      });
-    }
-  }
-
-  // Sort and format
-  const sorted = Array.from(aggregated.values())
-    .sort((a, b) => (def.orderDir === "asc" ? a.value - b.value : b.value - a.value))
-    .slice(0, limit);
-
-  return sorted.map((item, idx) => ({
+  return (rows as any[]).map((row, idx) => ({
     stat_category: def.category,
     stat_name: def.name,
-    scope: "career",
+    scope: "career" as const,
     rank: idx + 1,
-    value: item.value,
-    display_value: formatStatValue(item.value, def),
-    player_name: item.player_name,
-    player_slug: item.player_slug,
-    school_name: item.school_name,
-    school_slug: item.school_slug,
+    value: Number(row.stat_value) || 0,
+    display_value: formatStatValue(Number(row.stat_value) || 0, def),
+    player_name: row.player_name || "Unknown",
+    player_slug: row.player_slug || "",
+    school_name: row.school_name || "Unknown",
+    school_slug: row.school_slug || "",
     season_label: null,
     year: null,
-    source: "computed",
+    source: "computed" as const,
   }));
 }
 
@@ -714,85 +663,35 @@ async function fetchSeasonLeaders(
 ): Promise<ComputedRecord[]> {
   const client = createStaticClient();
 
-  // Build query with joins — select * to avoid PostgREST template literal parsing issues
-  const { data: rows, error } = await client
-    .from(tableName)
-    .select("*, players(name, slug), schools(name, slug), seasons(label, year_start)") as { data: any[] | null; error: any };
+  // Use server-side RPC function for proper ordering across ALL rows
+  const { data: rows, error } = await client.rpc("get_season_leaders", {
+    p_table_name: tableName,
+    p_stat_column: statKey,
+    p_order_dir: def.orderDir,
+    p_limit: limit,
+    p_min_games: def.minGames || 0,
+  });
 
   if (error || !rows) {
+    console.error(`Season leaders RPC error for ${tableName}.${statKey}:`, error);
     return [];
   }
 
-  // Filter by minimum requirements
-  let filtered = rows.filter((row: any) => {
-    const val = row[statKey];
-    // Skip nulls and zeros (except for rate stats which may be 0.0)
-    if (val === null || val === undefined) return false;
-
-    // For rate stats, skip if games_played < minGames
-    if (def.minGames && row.games_played && row.games_played < def.minGames) {
-      return false;
-    }
-
-    // For min batting average (at_bats) or min ERA (IP), check against minValue
-    if (def.minValue) {
-      // For batting avg, minValue is at_bats; for ERA it's innings pitched
-      // Determine based on stat key
-      if (statKey === "batting_avg" && (row.at_bats || 0) < def.minValue) {
-        return false;
-      }
-      if (statKey === "era" && (row.innings_pitched || 0) < def.minValue) {
-        return false;
-      }
-      // For FG% (needs minValue FGA) and FT% (needs minValue FTA)
-      if (
-        statKey === "fg_pct" &&
-        (row.fga || 0) < def.minValue
-      ) {
-        return false;
-      }
-      if (
-        statKey === "ft_pct" &&
-        (row.fta || 0) < def.minValue
-      ) {
-        return false;
-      }
-    }
-
-    return true;
-  });
-
-  // Sort
-  filtered.sort((a: any, b: any) => {
-    const aVal = a[statKey] || 0;
-    const bVal = b[statKey] || 0;
-    return def.orderDir === "asc" ? aVal - bVal : bVal - aVal;
-  });
-
-  filtered = filtered.slice(0, limit);
-
-  return filtered.map((row: any, idx: number) => {
-    const player = row.players as Player | null;
-    const school = row.schools as School | null;
-    const season = row.seasons as any | null;
-    const statValue = row[statKey];
-
-    return {
-      stat_category: def.category,
-      stat_name: def.name,
-      scope: "season",
-      rank: idx + 1,
-      value: statValue || 0,
-      display_value: formatStatValue(statValue, def),
-      player_name: player?.name || "Unknown",
-      player_slug: player?.slug || "",
-      school_name: school?.name || "Unknown",
-      school_slug: school?.slug || "",
-      season_label: season?.label || null,
-      year: season?.year_start || null,
-      source: "computed",
-    };
-  });
+  return (rows as any[]).map((row, idx) => ({
+    stat_category: def.category,
+    stat_name: def.name,
+    scope: "season" as const,
+    rank: idx + 1,
+    value: Number(row.stat_value) || 0,
+    display_value: formatStatValue(Number(row.stat_value) || 0, def),
+    player_name: row.player_name || "Unknown",
+    player_slug: row.player_slug || "",
+    school_name: row.school_name || "Unknown",
+    school_slug: row.school_slug || "",
+    season_label: row.season_label || null,
+    year: row.year_start || null,
+    source: "computed" as const,
+  }));
 }
 
 // ============================================================================
