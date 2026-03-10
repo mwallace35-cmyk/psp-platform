@@ -34,10 +34,37 @@ interface RisingProgram {
   recentTitles: number;
 }
 
+interface AggregateStats {
+  totalSchools: number;
+  totalPlayers: number;
+  totalChampionships: number;
+  totalPros: number;
+  totalGames: number;
+  totalAwards: number;
+  yearsOfData: number;
+}
+
+interface TopSchool {
+  id: number;
+  slug: string;
+  name: string;
+  league: string | null;
+  colors: string | null;
+  secondary_color: string | null;
+  championships_count: number;
+  win_pct: number | null;
+  total_wins: number;
+  total_losses: number;
+  pro_count: number;
+  player_count: number;
+}
+
 interface Props {
   schools: SchoolData[];
   leagues: string[];
   risingPrograms: RisingProgram[];
+  aggregateStats: AggregateStats;
+  topSchools: TopSchool[];
 }
 
 const LEAGUE_COLORS: Record<string, string> = {
@@ -83,30 +110,39 @@ function getLeagueGroupKey(league: string | null, closedYear: number | null): 'c
   return 'independent';
 }
 
-type ViewMode = 'cards' | 'league';
+type SortMode = 'alpha' | 'championships' | 'win_pct' | 'players' | 'pro' | 'games';
+type ViewMode = 'cards' | 'league' | 'table';
 
 const MAIN_LEAGUES = [
-  { key: 'catholic', name: 'Philadelphia Catholic League', color: '#f0a500' },
-  { key: 'public', name: 'Philadelphia Public League', color: '#0a1628' },
-  { key: 'interac', name: 'Inter-Academic League', color: '#16a34a' },
-  { key: 'independent', name: 'Independent', color: '#64748b' },
-  { key: 'closed', name: 'Closed / Historic', color: '#78716c' },
+  { key: 'catholic', name: 'Catholic League', fullName: 'Philadelphia Catholic League', color: '#f0a500', icon: '⛪' },
+  { key: 'public', name: 'Public League', fullName: 'Philadelphia Public League', color: '#1e40af', icon: '🏫' },
+  { key: 'interac', name: 'Inter-Ac', fullName: 'Inter-Academic League', color: '#16a34a', icon: '🎓' },
+  { key: 'independent', name: 'Independent', fullName: 'Independent', color: '#64748b', icon: '🏠' },
+  { key: 'closed', name: 'Historic', fullName: 'Closed / Historic', color: '#78716c', icon: '📜' },
 ];
 
-export default function SchoolsDirectory({ schools, leagues, risingPrograms }: Props) {
+const SORT_OPTIONS: { value: SortMode; label: string }[] = [
+  { value: 'alpha', label: 'A → Z' },
+  { value: 'championships', label: 'Championships' },
+  { value: 'win_pct', label: 'Win %' },
+  { value: 'players', label: 'Most Players' },
+  { value: 'pro', label: 'Pro Athletes' },
+  { value: 'games', label: 'Most Games' },
+];
+
+export default function SchoolsDirectory({ schools, leagues, risingPrograms, aggregateStats, topSchools }: Props) {
   const [showAllSchools, setShowAllSchools] = useState(false);
   const [selectedLeagueKey, setSelectedLeagueKey] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLetter, setSelectedLetter] = useState<string>('');
   const [viewMode, setViewMode] = useState<ViewMode>('cards');
+  const [sortMode, setSortMode] = useState<SortMode>('alpha');
 
-  // Filter schools based on data availability
   const schoolsToShow = useMemo(() => {
     if (showAllSchools) return schools;
     return schools.filter(s => s.has_data);
   }, [schools, showAllSchools]);
 
-  // Apply filters
   const filtered = useMemo(() => {
     let result = schoolsToShow;
 
@@ -128,10 +164,25 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
       result = result.filter(s => s.name.toUpperCase().startsWith(selectedLetter));
     }
 
-    return result.sort((a, b) => a.name.localeCompare(b.name));
-  }, [schoolsToShow, selectedLeagueKey, searchTerm, selectedLetter]);
+    // Sort
+    return [...result].sort((a, b) => {
+      switch (sortMode) {
+        case 'championships':
+          return (b.championships_count - a.championships_count) || a.name.localeCompare(b.name);
+        case 'win_pct':
+          return ((b.win_pct ?? -1) - (a.win_pct ?? -1)) || a.name.localeCompare(b.name);
+        case 'players':
+          return (b.player_count - a.player_count) || a.name.localeCompare(b.name);
+        case 'pro':
+          return (b.pro_count - a.pro_count) || a.name.localeCompare(b.name);
+        case 'games':
+          return (b.game_count - a.game_count) || a.name.localeCompare(b.name);
+        default:
+          return a.name.localeCompare(b.name);
+      }
+    });
+  }, [schoolsToShow, selectedLeagueKey, searchTerm, selectedLetter, sortMode]);
 
-  // Get available letters from filtered schools
   const availableLetters = useMemo(() => {
     const letters = new Set<string>();
     schoolsToShow.forEach(s => {
@@ -141,12 +192,11 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
     return Array.from(letters).sort();
   }, [schoolsToShow]);
 
-  // Group by league for league view
   const groupedByLeague = useMemo(() => {
     const groups: Record<string, SchoolData[]> = {};
     filtered.forEach(s => {
       const groupKey = getLeagueGroupKey(s.league, s.closed_year);
-      const displayName = MAIN_LEAGUES.find(l => l.key === groupKey)?.name || 'Other Leagues';
+      const displayName = MAIN_LEAGUES.find(l => l.key === groupKey)?.fullName || 'Other Leagues';
       if (!groups[displayName]) groups[displayName] = [];
       groups[displayName].push(s);
     });
@@ -163,343 +213,660 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms }: P
     });
   }, [filtered]);
 
-  // Stats for league tiles
   const leagueStats = useMemo(() => {
-    const stats: Record<string, number> = {};
+    const stats: Record<string, { count: number; champs: number; pros: number; winPct: number | null }> = {};
     MAIN_LEAGUES.forEach(league => {
-      stats[league.key] = schoolsToShow.filter(s => getLeagueGroupKey(s.league, s.closed_year) === league.key).length;
+      const leagueSchools = schoolsToShow.filter(s => getLeagueGroupKey(s.league, s.closed_year) === league.key);
+      const totalChamps = leagueSchools.reduce((sum, s) => sum + s.championships_count, 0);
+      const totalPros = leagueSchools.reduce((sum, s) => sum + s.pro_count, 0);
+      const withWinPct = leagueSchools.filter(s => s.win_pct !== null);
+      const avgWinPct = withWinPct.length > 0
+        ? Math.round(withWinPct.reduce((sum, s) => sum + (s.win_pct || 0), 0) / withWinPct.length * 10) / 10
+        : null;
+      stats[league.key] = { count: leagueSchools.length, champs: totalChamps, pros: totalPros, winPct: avgWinPct };
     });
     return stats;
   }, [schoolsToShow]);
 
   return (
-    <div className="espn-container" style={{ flex: 1 }}>
-      <main>
-        {/* Compact Header */}
-        <div style={{ marginBottom: 24 }}>
-          <h1 style={{ fontSize: 32, fontWeight: 800, color: 'var(--psp-navy)', margin: '0 0 4px', fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5 }}>
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
+      {/* ========== HERO SECTION ========== */}
+      <div style={{
+        background: 'linear-gradient(135deg, var(--psp-navy) 0%, #0f2040 50%, #1a3060 100%)',
+        borderRadius: 16,
+        padding: '36px 32px 28px',
+        marginBottom: 28,
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Subtle pattern overlay */}
+        <div style={{
+          position: 'absolute', inset: 0, opacity: 0.04,
+          backgroundImage: 'radial-gradient(circle at 25% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 75% 50%, #fff 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h1 style={{
+            fontSize: 40,
+            fontWeight: 800,
+            color: '#fff',
+            margin: '0 0 4px',
+            fontFamily: "'Bebas Neue', sans-serif",
+            letterSpacing: 1,
+          }}>
             School Directory
           </h1>
-          <p style={{ fontSize: 14, color: 'var(--g400)', margin: 0 }}>
-            Browse Philadelphia-area high schools with complete historical data and statistics
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', margin: '0 0 24px', maxWidth: 600 }}>
+            Explore every Philadelphia-area high school — championships, player stats, win records, and pro alumni spanning {aggregateStats.yearsOfData}+ years.
           </p>
-        </div>
 
-        {/* League Browse Tiles */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 32 }}>
-          {MAIN_LEAGUES.map(league => (
+          {/* Stats strip */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+            gap: 16,
+            maxWidth: 800,
+          }}>
+            {[
+              { label: 'Schools', value: aggregateStats.totalSchools, icon: '🏫' },
+              { label: 'Players', value: aggregateStats.totalPlayers, icon: '👤' },
+              { label: 'Championships', value: aggregateStats.totalChampionships, icon: '🏆' },
+              { label: 'Pro Athletes', value: aggregateStats.totalPros, icon: '⭐' },
+              { label: 'Games', value: aggregateStats.totalGames, icon: '📊' },
+            ].map(stat => (
+              <div key={stat.label} style={{
+                background: 'rgba(255,255,255,0.08)',
+                borderRadius: 10,
+                padding: '12px 14px',
+                backdropFilter: 'blur(4px)',
+                borderLeft: '3px solid var(--psp-gold)',
+              }}>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
+                  {stat.icon} {stat.label}
+                </div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--psp-gold)', fontFamily: "'Bebas Neue', sans-serif" }}>
+                  {stat.value.toLocaleString()}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ========== TOP PROGRAMS SHOWCASE ========== */}
+      {topSchools.length > 0 && !selectedLeagueKey && !searchTerm && !selectedLetter && (
+        <div style={{ marginBottom: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--psp-navy)', margin: 0, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5 }}>
+              Powerhouse Programs
+            </h2>
+            <span style={{ fontSize: 12, color: 'var(--g400)' }}>Top schools by all-time championships</span>
+          </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gap: 14,
+          }}>
+            {topSchools.map((school, i) => {
+              const primaryColor = school.colors && school.colors.startsWith('#') ? school.colors : getLeagueColor(school.league);
+              const secondaryColor = school.secondary_color && school.secondary_color.startsWith('#') ? school.secondary_color : null;
+              const record = school.total_wins > 0 || school.total_losses > 0
+                ? `${school.total_wins}-${school.total_losses}`
+                : null;
+              const rankColors = ['#f0a500', '#94a3b8', '#cd7f32'];
+              return (
+                <Link key={school.id} href={`/schools/${school.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div style={{
+                    background: 'var(--surface, #fff)',
+                    border: '1px solid var(--g100)',
+                    borderRadius: 12,
+                    overflow: 'hidden',
+                    transition: 'all .2s',
+                    cursor: 'pointer',
+                    height: '100%',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,.12)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{
+                      background: secondaryColor
+                        ? `linear-gradient(135deg, ${primaryColor} 60%, ${secondaryColor})`
+                        : primaryColor,
+                      padding: '16px 16px 14px',
+                      color: '#fff',
+                      position: 'relative',
+                    }}>
+                      {/* Rank badge */}
+                      <div style={{
+                        position: 'absolute',
+                        top: 10,
+                        right: 10,
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        background: rankColors[i] || '#64748b',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 13,
+                        fontWeight: 800,
+                        color: i === 0 ? '#0a1628' : '#fff',
+                        boxShadow: '0 2px 6px rgba(0,0,0,.25)',
+                      }}>
+                        {i + 1}
+                      </div>
+
+                      <h3 style={{
+                        margin: 0,
+                        fontSize: 17,
+                        fontWeight: 700,
+                        fontFamily: "'Bebas Neue', sans-serif",
+                        letterSpacing: 0.5,
+                        lineHeight: 1.2,
+                        paddingRight: 36,
+                        textShadow: '0 1px 2px rgba(0,0,0,.3)',
+                      }}>
+                        {school.name}
+                      </h3>
+                      <div style={{ fontSize: 10, opacity: 0.8, marginTop: 3, fontWeight: 500, textShadow: '0 1px 1px rgba(0,0,0,.2)' }}>
+                        {school.league || 'Independent'}
+                      </div>
+                    </div>
+                    <div style={{ padding: '12px 16px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          fontSize: 18,
+                          fontWeight: 800,
+                          color: '#b45309',
+                          fontFamily: "'Bebas Neue', sans-serif",
+                        }}>
+                          🏆 {school.championships_count}
+                        </span>
+                        {record && (
+                          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--psp-navy)' }}>
+                            {record}
+                            {school.win_pct !== null && (
+                              <span style={{
+                                fontSize: 10,
+                                fontWeight: 600,
+                                marginLeft: 4,
+                                color: school.win_pct >= 60 ? '#16a34a' : school.win_pct >= 50 ? 'var(--psp-navy)' : '#dc2626',
+                              }}>
+                                ({school.win_pct}%)
+                              </span>
+                            )}
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        {school.pro_count > 0 && (
+                          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--psp-blue)' }}>
+                            {school.pro_count} Pro{school.pro_count !== 1 ? 's' : ''}
+                          </span>
+                        )}
+                        {school.player_count > 0 && (
+                          <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--g400)' }}>
+                            {formatNumber(school.player_count)} players
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ========== LEAGUE TILES ========== */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+        gap: 12,
+        marginBottom: 28,
+      }}>
+        {MAIN_LEAGUES.map(league => {
+          const stats = leagueStats[league.key];
+          const isActive = selectedLeagueKey === league.key;
+          return (
             <button
               key={league.key}
               onClick={() => {
-                setSelectedLeagueKey(selectedLeagueKey === league.key ? '' : league.key);
+                setSelectedLeagueKey(isActive ? '' : league.key);
                 setSelectedLetter('');
                 setSearchTerm('');
               }}
               style={{
-                background: selectedLeagueKey === league.key
+                background: isActive
                   ? league.color
                   : 'var(--surface, #fff)',
-                border: selectedLeagueKey === league.key
-                  ? 'none'
-                  : `1px solid var(--g100)`,
-                color: selectedLeagueKey === league.key ? '#fff' : 'var(--text)',
-                padding: 16,
-                borderRadius: 8,
+                border: isActive ? 'none' : '1px solid var(--g100)',
+                color: isActive ? '#fff' : 'var(--text)',
+                padding: '14px 16px',
+                borderRadius: 10,
                 cursor: 'pointer',
                 transition: 'all .2s',
                 textAlign: 'left',
+                position: 'relative',
+                overflow: 'hidden',
               }}
               onMouseEnter={e => {
-                if (selectedLeagueKey !== league.key) {
-                  (e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(0,0,0,.1)';
-                  (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+                if (!isActive) {
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,.1)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.borderColor = league.color;
                 }
               }}
               onMouseLeave={e => {
-                if (selectedLeagueKey !== league.key) {
-                  (e.target as HTMLElement).style.boxShadow = 'none';
-                  (e.target as HTMLElement).style.transform = 'translateY(0)';
+                if (!isActive) {
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.borderColor = 'var(--g100)';
                 }
               }}
             >
-              <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", marginBottom: 4 }}>
-                {league.name}
+              {/* Colored top accent */}
+              {!isActive && (
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 3,
+                  background: league.color,
+                }} />
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                <div style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  letterSpacing: 0.3,
+                }}>
+                  {league.icon} {league.name}
+                </div>
+                <div style={{
+                  fontSize: 22,
+                  fontWeight: 800,
+                  lineHeight: 1,
+                  fontFamily: "'Bebas Neue', sans-serif",
+                }}>
+                  {stats?.count || 0}
+                </div>
               </div>
-              <div style={{ fontSize: 20, fontWeight: 800 }}>
-                {leagueStats[league.key]}
+              <div style={{ display: 'flex', gap: 12, fontSize: 10, fontWeight: 600, opacity: 0.75 }}>
+                {(stats?.champs || 0) > 0 && (
+                  <span>🏆 {stats.champs}</span>
+                )}
+                {(stats?.pros || 0) > 0 && (
+                  <span>⭐ {stats.pros}</span>
+                )}
+                {stats?.winPct !== null && (
+                  <span>{stats.winPct}% avg</span>
+                )}
               </div>
-              <div style={{ fontSize: 10, fontWeight: 500, opacity: 0.8, marginTop: 4 }}>
-                {leagueStats[league.key] === 1 ? 'school' : 'schools'}
-              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ========== TOOLBAR: Search + Sort + View + Toggle ========== */}
+      <div style={{
+        display: 'flex',
+        gap: 10,
+        marginBottom: 16,
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        background: 'var(--surface, #fff)',
+        border: '1px solid var(--g100)',
+        borderRadius: 10,
+        padding: '10px 14px',
+      }}>
+        {/* Search */}
+        <div style={{ flex: 1, minWidth: 180, position: 'relative' }}>
+          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'var(--g400)', pointerEvents: 'none' }}>🔍</span>
+          <input
+            type="text"
+            placeholder="Search schools..."
+            value={searchTerm}
+            onChange={(e) => { setSearchTerm(e.target.value); setSelectedLetter(''); }}
+            style={{
+              width: '100%',
+              padding: '8px 12px 8px 32px',
+              fontSize: 13,
+              border: '1px solid var(--g100)',
+              borderRadius: 6,
+              fontFamily: 'inherit',
+              background: 'var(--surface, #fff)',
+              color: 'var(--text, #333)',
+              outline: 'none',
+            }}
+          />
+        </div>
+
+        {/* Sort */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--g400)', whiteSpace: 'nowrap' }}>Sort:</span>
+          <select
+            value={sortMode}
+            onChange={e => setSortMode(e.target.value as SortMode)}
+            style={{
+              padding: '8px 28px 8px 10px',
+              fontSize: 12,
+              border: '1px solid var(--g100)',
+              borderRadius: 6,
+              fontFamily: 'inherit',
+              fontWeight: 600,
+              background: 'var(--surface, #fff)',
+              color: 'var(--text, #333)',
+              cursor: 'pointer',
+              appearance: 'none',
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' fill='none' stroke='%2364748b' stroke-width='1.5'/%3E%3C/svg%3E")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'right 8px center',
+            }}
+          >
+            {SORT_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 1, height: 24, background: 'var(--g100)' }} />
+
+        {/* View mode */}
+        <div style={{ display: 'flex', gap: 4 }}>
+          {([
+            { mode: 'cards' as ViewMode, label: '▦', title: 'Card View' },
+            { mode: 'league' as ViewMode, label: '☰', title: 'League View' },
+            { mode: 'table' as ViewMode, label: '▤', title: 'Table View' },
+          ]).map(({ mode, label, title }) => (
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode)}
+              title={title}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 6,
+                border: 'none',
+                fontSize: 16,
+                cursor: 'pointer',
+                background: viewMode === mode ? 'var(--psp-gold)' : 'transparent',
+                color: viewMode === mode ? 'var(--psp-navy)' : 'var(--g400)',
+                transition: '.15s',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {label}
             </button>
           ))}
         </div>
 
-        {/* Search & View Mode */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'center', flexWrap: 'wrap' }}>
-          <input
-            type="text"
-            placeholder="Search by name or city..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setSelectedLetter('');
-            }}
-            style={{
-              flex: 1,
-              minWidth: 200,
-              padding: '10px 14px',
-              fontSize: 13,
-              border: '1px solid var(--g100)',
-              borderRadius: 4,
-              fontFamily: 'inherit',
-              background: 'var(--surface, #fff)',
-              color: 'var(--text, #333)',
-            }}
-          />
+        {/* Divider */}
+        <div style={{ width: 1, height: 24, background: 'var(--g100)' }} />
 
-          <div style={{ display: 'flex', gap: 6 }}>
-            {(['cards', 'league'] as const).map(mode => (
+        {/* Show all toggle */}
+        <button
+          onClick={() => setShowAllSchools(!showAllSchools)}
+          style={{
+            padding: '8px 12px',
+            borderRadius: 6,
+            border: showAllSchools ? 'none' : '1px solid var(--g100)',
+            fontSize: 11,
+            fontWeight: 600,
+            cursor: 'pointer',
+            background: showAllSchools ? 'var(--psp-blue)' : 'transparent',
+            color: showAllSchools ? '#fff' : 'var(--g400)',
+            transition: '.15s',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {showAllSchools ? '✓ All Schools' : 'Show All'}
+        </button>
+      </div>
+
+      {/* ========== ALPHABET QUICK-JUMP ========== */}
+      {!searchTerm && sortMode === 'alpha' && (
+        <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'].map(letter => {
+            const hasSchools = availableLetters.includes(letter);
+            return (
               <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
+                key={letter}
+                onClick={() => { setSelectedLetter(selectedLetter === letter ? '' : letter); setSearchTerm(''); }}
+                disabled={!hasSchools}
                 style={{
-                  padding: '10px 14px',
-                  borderRadius: 4,
-                  border: 'none',
+                  width: 30,
+                  height: 30,
+                  borderRadius: 6,
+                  border: selectedLetter === letter ? 'none' : '1px solid var(--g100)',
+                  background: selectedLetter === letter ? 'var(--psp-gold)' : hasSchools ? 'var(--surface, #fff)' : 'transparent',
+                  color: selectedLetter === letter ? 'var(--psp-navy)' : hasSchools ? 'var(--text)' : 'var(--g100)',
                   fontSize: 12,
                   fontWeight: 700,
-                  cursor: 'pointer',
-                  background: viewMode === mode ? 'var(--psp-gold)' : 'var(--psp-navy)',
-                  color: viewMode === mode ? 'var(--psp-navy)' : '#fff',
-                  transition: '.15s',
+                  cursor: hasSchools ? 'pointer' : 'default',
+                  transition: '.1s',
                 }}
               >
-                {mode === 'cards' ? '📊 Cards' : '📂 By League'}
+                {letter}
               </button>
-            ))}
-          </div>
+            );
+          })}
+          {selectedLetter && (
+            <button
+              onClick={() => setSelectedLetter('')}
+              style={{ marginLeft: 4, padding: '4px 8px', fontSize: 11, color: 'var(--g400)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      )}
 
+      {/* ========== RESULTS HEADER ========== */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--psp-navy)' }}>
+          {filtered.length} {filtered.length === 1 ? 'school' : 'schools'}
+          {selectedLeagueKey && ` in ${MAIN_LEAGUES.find(l => l.key === selectedLeagueKey)?.name}`}
+          {selectedLetter && ` starting with ${selectedLetter}`}
+          {sortMode !== 'alpha' && ` · sorted by ${SORT_OPTIONS.find(o => o.value === sortMode)?.label}`}
+        </span>
+        {(selectedLeagueKey || searchTerm || selectedLetter) && (
           <button
-            onClick={() => setShowAllSchools(!showAllSchools)}
-            style={{
-              padding: '10px 14px',
-              borderRadius: 4,
-              border: showAllSchools ? 'none' : '1px solid var(--g100)',
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: 'pointer',
-              background: showAllSchools ? 'var(--psp-blue)' : 'var(--surface, #fff)',
-              color: showAllSchools ? '#fff' : 'var(--text)',
-              transition: '.15s',
-            }}
+            onClick={() => { setSelectedLeagueKey(''); setSearchTerm(''); setSelectedLetter(''); }}
+            style={{ fontSize: 11, color: 'var(--psp-blue)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}
           >
-            {showAllSchools ? '✓ All Schools' : '↓ Show All'}
+            Clear filters
           </button>
-        </div>
+        )}
+      </div>
 
-        {/* Alphabet Quick-Jump */}
-        {!searchTerm && (
-          <div style={{ display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
-            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--g400)', marginRight: 4 }}>Jump:</span>
-            {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'].map(letter => {
-              const hasSchools = availableLetters.includes(letter);
+      {/* ========== CARDS VIEW ========== */}
+      {viewMode === 'cards' && (
+        <>
+          {filtered.length > 0 ? (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+              gap: 14,
+              marginBottom: 32,
+            }}>
+              {filtered.map((school, i) => (
+                <SchoolCard key={school.id} school={school} rank={sortMode !== 'alpha' ? i + 1 : undefined} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState searchTerm={searchTerm} selectedLetter={selectedLetter} />
+          )}
+        </>
+      )}
+
+      {/* ========== LEAGUE VIEW ========== */}
+      {viewMode === 'league' && (
+        <>
+          {groupedByLeague.length > 0 ? (
+            groupedByLeague.map(([leagueName, leagueSchools]) => {
+              const leagueConfig = MAIN_LEAGUES.find(l => l.fullName === leagueName);
+              const leagueColor = leagueConfig?.color || '#64748b';
               return (
-                <button
-                  key={letter}
-                  onClick={() => {
-                    setSelectedLetter(selectedLetter === letter ? '' : letter);
-                    setSearchTerm('');
-                  }}
-                  disabled={!hasSchools}
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 3,
-                    border: selectedLetter === letter ? 'none' : '1px solid var(--g100)',
-                    background: selectedLetter === letter
-                      ? 'var(--psp-gold)'
-                      : hasSchools
-                        ? 'var(--surface, #fff)'
-                        : 'var(--g100)',
-                    color: selectedLetter === letter ? 'var(--psp-navy)' : 'var(--text)',
-                    fontSize: 11,
-                    fontWeight: 700,
-                    cursor: hasSchools ? 'pointer' : 'default',
-                    opacity: hasSchools ? 1 : 0.5,
-                    transition: '.1s',
-                  }}
-                >
-                  {letter}
-                </button>
-              );
-            })}
-            {selectedLetter && (
-              <button
-                onClick={() => setSelectedLetter('')}
-                style={{
-                  marginLeft: 8,
-                  padding: '4px 8px',
-                  fontSize: 11,
-                  color: 'var(--g400)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  textDecoration: 'underline',
-                }}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Results Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--g100)' }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--psp-navy)', margin: 0, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5 }}>
-            {viewMode === 'league' ? 'Schools by League' : 'Schools'}
-          </h2>
-          <span style={{ fontSize: 12, color: 'var(--g400)' }}>
-            {filtered.length} {filtered.length === 1 ? 'school' : 'schools'} {showAllSchools && schoolsToShow.length < schools.length ? `of ${schoolsToShow.length} with data` : ''}
-          </span>
-        </div>
-
-        {/* Cards View */}
-        {viewMode === 'cards' && (
-          <>
-            {filtered.length > 0 ? (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                gap: 14,
-                marginBottom: 16,
-              }}>
-                {filtered.map(school => (
-                  <SchoolCard key={school.id} school={school} />
-                ))}
-              </div>
-            ) : (
-              <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--g400)' }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
-                <p style={{ fontSize: 14, margin: 0 }}>
-                  {searchTerm ? 'No schools match your search.' : selectedLetter ? `No schools starting with "${selectedLetter}".` : 'No schools found.'}
-                </p>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* League View */}
-        {viewMode === 'league' && (
-          <>
-            {groupedByLeague.length > 0 ? (
-              groupedByLeague.map(([leagueName, leagueSchools]) => {
-                const leagueConfig = MAIN_LEAGUES.find(l => l.name === leagueName);
-                const leagueColor = leagueConfig?.color || '#64748b';
-                return (
-                  <div key={leagueName} style={{ marginBottom: 32 }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12,
-                      marginBottom: 16,
-                      paddingBottom: 12,
-                      borderBottom: `3px solid ${leagueColor}`,
-                    }}>
-                      <div style={{ width: 14, height: 14, borderRadius: '50%', background: leagueColor }} />
-                      <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--psp-navy)', fontFamily: "'Bebas Neue', sans-serif", margin: 0, letterSpacing: 0.5 }}>
-                        {leagueName}
-                      </h3>
-                      <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--g400)', fontWeight: 600 }}>
-                        {leagueSchools.length} {leagueSchools.length === 1 ? 'school' : 'schools'}
-                      </span>
-                    </div>
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                      gap: 14,
-                    }}>
-                      {leagueSchools.map(school => (
-                        <SchoolCard key={school.id} school={school} />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--g400)' }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
-                <p style={{ fontSize: 14, margin: 0 }}>No schools found matching your filters.</p>
-              </div>
-            )}
-          </>
-        )}
-      </main>
-
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="widget">
-          <div className="w-head">League Breakdown</div>
-          <div className="w-body">
-            {MAIN_LEAGUES.map(league => {
-              const count = schoolsToShow.filter(s => getLeagueGroupKey(s.league, s.closed_year) === league.key).length;
-              return (
-                <div
-                  key={league.key}
-                  onClick={() => {
-                    setSelectedLeagueKey(selectedLeagueKey === league.key ? '' : league.key);
-                    setSelectedLetter('');
-                    setSearchTerm('');
-                  }}
-                  style={{
+                <div key={leagueName} style={{ marginBottom: 32 }}>
+                  <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8,
-                    padding: '8px 14px',
-                    borderBottom: '1px solid var(--g100)',
-                    cursor: 'pointer',
-                    background: selectedLeagueKey === league.key ? 'rgba(240, 165, 0, 0.1)' : 'transparent',
-                    transition: '.1s',
-                  }}
-                >
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: league.color, flexShrink: 0 }} />
-                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text)', flex: 1 }}>{league.name}</span>
-                  <span style={{ fontSize: 11, color: 'var(--g400)', fontWeight: 600 }}>{count}</span>
+                    gap: 10,
+                    marginBottom: 14,
+                    paddingBottom: 10,
+                    borderBottom: `3px solid ${leagueColor}`,
+                  }}>
+                    <div style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 8,
+                      background: leagueColor,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 16,
+                    }}>
+                      {leagueConfig?.icon || '🏫'}
+                    </div>
+                    <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--psp-navy)', fontFamily: "'Bebas Neue', sans-serif", margin: 0, letterSpacing: 0.5 }}>
+                      {leagueName}
+                    </h3>
+                    <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--g400)', fontWeight: 600 }}>
+                      {leagueSchools.length} {leagueSchools.length === 1 ? 'school' : 'schools'}
+                    </span>
+                  </div>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                    gap: 14,
+                  }}>
+                    {leagueSchools.map(school => (
+                      <SchoolCard key={school.id} school={school} />
+                    ))}
+                  </div>
                 </div>
               );
-            })}
-          </div>
-        </div>
+            })
+          ) : (
+            <EmptyState searchTerm={searchTerm} selectedLetter={selectedLetter} />
+          )}
+        </>
+      )}
 
-        <div className="widget">
-          <div className="w-head">Data Coverage</div>
-          <div className="w-body" style={{ fontSize: 12, color: 'var(--text)' }}>
-            <div style={{ marginBottom: 8 }}>
-              <strong>{schoolsToShow.filter(s => !s.closed_year).length}</strong> active schools with data
+      {/* ========== TABLE VIEW ========== */}
+      {viewMode === 'table' && (
+        <>
+          {filtered.length > 0 ? (
+            <div style={{
+              overflowX: 'auto',
+              marginBottom: 32,
+              border: '1px solid var(--g100)',
+              borderRadius: 10,
+            }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: 'var(--psp-navy)', color: '#fff' }}>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>#</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>School</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>League</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Record</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Win %</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>🏆</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Players</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Pros</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Games</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((school, i) => {
+                    const record = school.total_wins > 0 || school.total_losses > 0
+                      ? `${school.total_wins}-${school.total_losses}`
+                      : '—';
+                    const lcColor = getLeagueColor(school.league);
+                    return (
+                      <tr
+                        key={school.id}
+                        style={{
+                          borderBottom: '1px solid var(--g100)',
+                          transition: 'background .1s',
+                          cursor: 'pointer',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(240,165,0,0.06)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                        onClick={() => window.location.href = `/schools/${school.slug}`}
+                      >
+                        <td style={{ padding: '8px 14px', fontSize: 11, color: 'var(--g400)', fontWeight: 600 }}>{i + 1}</td>
+                        <td style={{ padding: '8px 14px' }}>
+                          <Link href={`/schools/${school.slug}`} style={{ textDecoration: 'none', color: 'var(--psp-navy)', fontWeight: 700 }}>
+                            <span style={{
+                              display: 'inline-block',
+                              width: 8,
+                              height: 8,
+                              borderRadius: '50%',
+                              background: school.colors || lcColor,
+                              marginRight: 8,
+                              verticalAlign: 'middle',
+                            }} />
+                            {school.name}
+                            {school.closed_year && <span style={{ fontSize: 10, color: 'var(--g400)', marginLeft: 4 }}>({school.closed_year})</span>}
+                          </Link>
+                        </td>
+                        <td style={{ padding: '8px 14px', fontSize: 11, color: lcColor, fontWeight: 600 }}>{school.league || 'Ind.'}</td>
+                        <td style={{ padding: '8px 14px', textAlign: 'center', fontWeight: 700, fontSize: 12 }}>{record}</td>
+                        <td style={{
+                          padding: '8px 14px',
+                          textAlign: 'center',
+                          fontWeight: 700,
+                          fontSize: 12,
+                          color: school.win_pct !== null
+                            ? school.win_pct >= 60 ? '#16a34a' : school.win_pct >= 50 ? 'var(--psp-navy)' : '#dc2626'
+                            : 'var(--g400)',
+                        }}>
+                          {school.win_pct !== null ? `${school.win_pct}%` : '—'}
+                        </td>
+                        <td style={{ padding: '8px 14px', textAlign: 'center', fontWeight: 800, color: school.championships_count > 0 ? '#b45309' : 'var(--g400)', fontSize: 13 }}>
+                          {school.championships_count || '—'}
+                        </td>
+                        <td style={{ padding: '8px 14px', textAlign: 'center', fontSize: 12 }}>{school.player_count > 0 ? formatNumber(school.player_count) : '—'}</td>
+                        <td style={{ padding: '8px 14px', textAlign: 'center', fontSize: 12, fontWeight: school.pro_count > 0 ? 700 : 400, color: school.pro_count > 0 ? 'var(--psp-blue)' : 'var(--g400)' }}>
+                          {school.pro_count || '—'}
+                        </td>
+                        <td style={{ padding: '8px 14px', textAlign: 'center', fontSize: 12 }}>{school.game_count > 0 ? formatNumber(school.game_count) : '—'}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-            <div style={{ marginBottom: 8 }}>
-              <strong>{schoolsToShow.filter(s => !!s.closed_year).length}</strong> historic/closed schools
-            </div>
-            <div style={{ marginBottom: 8 }}>
-              <strong>{schools.length}</strong> total in database
-            </div>
-            <p style={{ fontSize: 11, color: 'var(--g400)', margin: '12px 0 0' }}>
-              {showAllSchools ? 'Showing all opponent-only schools' : 'Showing only schools with statistics and records'}
-            </p>
-          </div>
-        </div>
+          ) : (
+            <EmptyState searchTerm={searchTerm} selectedLetter={selectedLetter} />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
 
-        <div className="widget">
-          <div className="w-head">Quick Links</div>
-          <div className="w-body">
-            <Link href="/football" className="w-link">↳ Football</Link>
-            <Link href="/basketball" className="w-link">↳ Basketball</Link>
-            <Link href="/baseball" className="w-link">↳ Baseball</Link>
-            <Link href="/search" className="w-link">↳ Player Search</Link>
-            <Link href="/compare" className="w-link">↳ Compare Players</Link>
-          </div>
-        </div>
-      </aside>
+// ============ Empty State ============
+
+function EmptyState({ searchTerm, selectedLetter }: { searchTerm: string; selectedLetter: string }) {
+  return (
+    <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--g400)' }}>
+      <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
+      <p style={{ fontSize: 14, margin: 0 }}>
+        {searchTerm ? 'No schools match your search.' : selectedLetter ? `No schools starting with "${selectedLetter}".` : 'No schools found.'}
+      </p>
     </div>
   );
 }
@@ -511,12 +878,7 @@ function formatNumber(n: number): string {
   return n.toString();
 }
 
-function getSchoolLink(school: SchoolData): string {
-  // Link to the sport-agnostic school hub page
-  return `/schools/${school.slug}`;
-}
-
-function SchoolCard({ school }: { school: SchoolData }) {
+function SchoolCard({ school, rank }: { school: SchoolData; rank?: number }) {
   const leagueColor = getLeagueColor(school.league);
   const primaryColor = school.colors && school.colors.startsWith('#') ? school.colors : leagueColor;
   const secondaryColor = school.secondary_color && school.secondary_color.startsWith('#') ? school.secondary_color : null;
@@ -528,11 +890,11 @@ function SchoolCard({ school }: { school: SchoolData }) {
   const hasRichData = school.player_count > 0 || school.game_count > 0 || school.pro_count > 0;
 
   return (
-    <Link href={getSchoolLink(school)} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link href={`/schools/${school.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div style={{
         background: 'var(--surface, #fff)',
         border: isClosed ? '1px solid #d6d3d1' : '1px solid var(--g100)',
-        borderRadius: 8,
+        borderRadius: 10,
         overflow: 'hidden',
         transition: 'all .2s',
         cursor: 'pointer',
@@ -554,7 +916,7 @@ function SchoolCard({ school }: { school: SchoolData }) {
         el.style.opacity = isClosed ? '0.85' : '1';
       }}
       >
-        {/* Header with School Color + Diagonal Accent */}
+        {/* Header */}
         <div style={{
           background: isClosed
             ? `linear-gradient(135deg, ${primaryColor}cc, ${primaryColor}88)`
@@ -564,18 +926,33 @@ function SchoolCard({ school }: { school: SchoolData }) {
           padding: '14px 14px 12px',
           color: '#fff',
           position: 'relative',
-          minHeight: 56,
+          minHeight: 54,
         }}>
           {/* Championship gold stripe */}
           {school.championships_count > 0 && (
+            <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 4, background: 'var(--psp-gold)' }} />
+          )}
+
+          {/* Rank badge */}
+          {rank !== undefined && rank <= 20 && (
             <div style={{
               position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 4,
-              background: 'var(--psp-gold)',
-            }} />
+              top: 8,
+              left: school.championships_count > 0 ? 12 : 8,
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
+              background: 'rgba(0,0,0,0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 10,
+              fontWeight: 800,
+              color: '#fff',
+              backdropFilter: 'blur(4px)',
+            }}>
+              {rank}
+            </div>
           )}
 
           <h3 style={{
@@ -585,19 +962,20 @@ function SchoolCard({ school }: { school: SchoolData }) {
             fontFamily: "'Bebas Neue', sans-serif",
             letterSpacing: 0.5,
             lineHeight: 1.2,
+            paddingLeft: rank !== undefined && rank <= 20 ? 28 : 0,
             paddingRight: isClosed ? 70 : 0,
             textShadow: '0 1px 2px rgba(0,0,0,.3)',
           }}>
             {school.name}
           </h3>
 
-          {/* Location under name in header */}
           <div style={{
             fontSize: 10,
             opacity: 0.85,
             marginTop: 3,
             fontWeight: 500,
             textShadow: '0 1px 1px rgba(0,0,0,.2)',
+            paddingLeft: rank !== undefined && rank <= 20 ? 28 : 0,
           }}>
             {school.city}{school.city && school.state ? ', ' : ''}{school.state}
           </div>
@@ -620,7 +998,6 @@ function SchoolCard({ school }: { school: SchoolData }) {
             </span>
           )}
 
-          {/* Pro badge in header corner */}
           {school.pro_count > 0 && (
             <span style={{
               position: 'absolute',
@@ -634,7 +1011,7 @@ function SchoolCard({ school }: { school: SchoolData }) {
               borderRadius: 3,
               backdropFilter: 'blur(4px)',
             }}>
-              {school.pro_count} Pro{school.pro_count !== 1 ? 's' : ''}
+              ⭐ {school.pro_count} Pro{school.pro_count !== 1 ? 's' : ''}
             </span>
           )}
         </div>
@@ -669,7 +1046,7 @@ function SchoolCard({ school }: { school: SchoolData }) {
             )}
           </div>
 
-          {/* Win Percentage Bar (if we have a record) */}
+          {/* Win Percentage Bar */}
           {school.win_pct !== null && record && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 3 }}>
@@ -678,12 +1055,7 @@ function SchoolCard({ school }: { school: SchoolData }) {
                   {record} <span style={{ fontSize: 10, fontWeight: 600, color: school.win_pct >= 60 ? '#16a34a' : school.win_pct >= 50 ? 'var(--psp-navy)' : '#dc2626' }}>({school.win_pct}%)</span>
                 </span>
               </div>
-              <div style={{
-                height: 4,
-                background: 'var(--g100)',
-                borderRadius: 2,
-                overflow: 'hidden',
-              }}>
+              <div style={{ height: 4, background: 'var(--g100)', borderRadius: 2, overflow: 'hidden' }}>
                 <div style={{
                   height: '100%',
                   width: `${Math.min(school.win_pct, 100)}%`,
@@ -700,60 +1072,40 @@ function SchoolCard({ school }: { school: SchoolData }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 'auto', paddingTop: 6 }}>
               {school.championships_count > 0 && (
                 <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 3,
-                  padding: '3px 8px',
-                  borderRadius: 4,
+                  display: 'inline-flex', alignItems: 'center', gap: 3,
+                  padding: '3px 8px', borderRadius: 4,
                   background: 'rgba(240, 165, 0, 0.12)',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: '#b45309',
+                  fontSize: 10, fontWeight: 700, color: '#b45309',
                 }}>
                   🏆 {school.championships_count}
                 </span>
               )}
               {school.player_count > 0 && (
                 <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 3,
-                  padding: '3px 8px',
-                  borderRadius: 4,
+                  display: 'inline-flex', alignItems: 'center', gap: 3,
+                  padding: '3px 8px', borderRadius: 4,
                   background: 'rgba(59, 130, 246, 0.08)',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: 'var(--psp-blue)',
+                  fontSize: 10, fontWeight: 700, color: 'var(--psp-blue)',
                 }}>
                   {formatNumber(school.player_count)} players
                 </span>
               )}
               {school.game_count > 0 && (
                 <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 3,
-                  padding: '3px 8px',
-                  borderRadius: 4,
+                  display: 'inline-flex', alignItems: 'center', gap: 3,
+                  padding: '3px 8px', borderRadius: 4,
                   background: 'rgba(10, 22, 40, 0.06)',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: 'var(--psp-navy)',
+                  fontSize: 10, fontWeight: 700, color: 'var(--psp-navy)',
                 }}>
                   {formatNumber(school.game_count)} games
                 </span>
               )}
               {school.award_count > 0 && (
                 <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 3,
-                  padding: '3px 8px',
-                  borderRadius: 4,
+                  display: 'inline-flex', alignItems: 'center', gap: 3,
+                  padding: '3px 8px', borderRadius: 4,
                   background: 'rgba(124, 58, 237, 0.08)',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: '#7c3aed',
+                  fontSize: 10, fontWeight: 700, color: '#7c3aed',
                 }}>
                   {formatNumber(school.award_count)} awards
                 </span>

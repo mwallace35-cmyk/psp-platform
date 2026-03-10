@@ -450,6 +450,38 @@ export default async function SchoolsPage() {
   schools.forEach((s) => { if (s.league) leagueSet.add(s.league); });
   const leagues = Array.from(leagueSet).sort();
 
+  // Aggregate stats for the hero section
+  const schoolsWithData = schools.filter(s => s.has_data);
+  const aggregateStats = {
+    totalSchools: schoolsWithData.length,
+    totalPlayers: schools.reduce((sum, s) => sum + s.player_count, 0),
+    totalChampionships: schools.reduce((sum, s) => sum + s.championships_count, 0),
+    totalPros: schools.reduce((sum, s) => sum + s.pro_count, 0),
+    totalGames: schools.reduce((sum, s) => sum + s.game_count, 0),
+    totalAwards: schools.reduce((sum, s) => sum + s.award_count, 0),
+    yearsOfData: 85, // 1937-2025
+  };
+
+  // Top schools by championships for the showcase
+  const topSchools = [...schoolsWithData]
+    .filter(s => s.championships_count > 0 && !s.closed_year)
+    .sort((a, b) => b.championships_count - a.championships_count)
+    .slice(0, 6)
+    .map(s => ({
+      id: s.id,
+      slug: s.slug,
+      name: s.name,
+      league: s.league,
+      colors: s.colors,
+      secondary_color: s.secondary_color,
+      championships_count: s.championships_count,
+      win_pct: s.win_pct,
+      total_wins: s.total_wins,
+      total_losses: s.total_losses,
+      pro_count: s.pro_count,
+      player_count: s.player_count,
+    }));
+
   return (
     <>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
@@ -459,6 +491,8 @@ export default async function SchoolsPage() {
         schools={schools}
         leagues={leagues}
         risingPrograms={risingPrograms}
+        aggregateStats={aggregateStats}
+        topSchools={topSchools}
       />
     </>
   );
