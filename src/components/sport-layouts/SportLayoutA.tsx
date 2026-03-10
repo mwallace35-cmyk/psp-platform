@@ -251,6 +251,14 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>League, state, and national titles</div>
             </div>
           </Link>
+          <Link href={`/${sport}/schedule`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>2026-27 Schedule</div>
+            <div style={{ padding: "12px" }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>📅</div>
+              <div style={{ fontWeight: 700, fontSize: 13 }}>Upcoming games</div>
+              <div style={{ fontSize: 11, color: "var(--g400)" }}>Week-by-week or filter by team</div>
+            </div>
+          </Link>
         </div>
 
         {/* Schools */}
@@ -320,6 +328,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
             <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="w-link">&#8594; Leaderboards</Link>
             <Link href={`/${sport}/championships`} className="w-link">&#8594; Championship History</Link>
             <Link href={`/${sport}/records`} className="w-link">&#8594; Records</Link>
+            <Link href={`/${sport}/schedule`} className="w-link">&#8594; 2026-27 Schedule</Link>
             <Link href={`/search?sport=${sport}`} className="w-link">&#8594; Player Search</Link>
             <Link href="/compare" className="w-link">&#8594; Compare Players</Link>
           </div>

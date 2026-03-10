@@ -29,6 +29,7 @@ const MAIN_SPORTS = [
 
 const MORE_ITEMS = [
   { href: "/pulse", label: "The Pulse", type: "page" },
+  { href: "/football/schedule", label: "Schedule", type: "page" },
   { href: "/articles", label: "News", type: "page" },
   { href: "/coaches", label: "Coaches", type: "page" },
   { href: "/recruiting", label: "Recruiting", type: "page" },

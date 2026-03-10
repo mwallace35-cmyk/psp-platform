@@ -21,6 +21,7 @@ import {
   type SchoolChampionshipData,
   type RecentSeasonData,
 } from "@/lib/data/school-hub";
+import { createStaticClient } from "@/lib/supabase/static";
 
 export const revalidate = 3600; // ISR: 1 hour
 
@@ -104,6 +105,21 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
     });
   } catch (error) {
     captureError(error, { slug, context: "school_hub_data_fetching" });
+  }
+
+  // Check for upcoming 2026-27 schedule
+  let upcomingGameCount = 0;
+  let upcomingSport = "football";
+  try {
+    const supabase = createStaticClient();
+    const { count } = await supabase
+      .from("games")
+      .select("id", { count: "exact", head: true })
+      .eq("season_id", 145)
+      .or(`home_school_id.eq.${school.id},away_school_id.eq.${school.id}`);
+    upcomingGameCount = count ?? 0;
+  } catch {
+    // silently fail
   }
 
   // Calculate aggregate stats
@@ -290,6 +306,29 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
       </section>
 
       <PSPPromo size="banner" variant={1} />
+
+      {/* Upcoming Schedule Banner */}
+      {upcomingGameCount > 0 && (
+        <div className="max-w-7xl mx-auto px-4 mt-6">
+          <Link
+            href={`/${upcomingSport}/teams/${slug}/2026-27`}
+            className="block bg-gradient-to-r from-[var(--psp-navy)] to-[#0f2040] rounded-xl p-4 hover:shadow-lg transition group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-[var(--psp-gold)]/20 flex items-center justify-center text-2xl flex-shrink-0">
+                📅
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[var(--psp-gold)] font-bebas text-xl">2026-27 Schedule Available</p>
+                <p className="text-gray-300 text-sm">{upcomingGameCount} game{upcomingGameCount !== 1 ? "s" : ""} scheduled — view the full {upcomingSport} schedule</p>
+              </div>
+              <span className="text-[var(--psp-gold)] text-sm font-medium group-hover:translate-x-1 transition-transform flex-shrink-0 hidden sm:block">
+                View Schedule →
+              </span>
+            </div>
+          </Link>
+        </div>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
