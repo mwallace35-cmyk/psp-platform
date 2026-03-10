@@ -159,9 +159,9 @@ export default async function PulsePage() {
     // Top programs by championship count (raw query, aggregate client-side)
     supabase
       .from('championships')
-      .select('school_id, schools!inner(id, name, slug, colors)')
-      .is('schools.deleted_at', null)
-      .limit(500),
+      .select('school_id, schools(id, name, slug, colors)')
+      .not('school_id', 'is', null)
+      .limit(1000),
     // Stats for Data Spotlight
     supabase.from('players').select('id', { count: 'exact', head: true }).is('deleted_at', null),
     supabase.from('games').select('id', { count: 'exact', head: true }),
