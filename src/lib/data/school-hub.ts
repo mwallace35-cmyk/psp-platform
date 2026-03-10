@@ -138,8 +138,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
               sports(id, name)
             `
             )
-            .eq("school_id", schoolId)
-            .is("deleted_at", null);
+            .eq("school_id", schoolId);
 
           if (!teamSeasonData || teamSeasonData.length === 0) {
             return [];
@@ -164,8 +163,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
           const { data: champData } = await supabase
             .from("championships")
             .select("sport_id")
-            .eq("school_id", schoolId)
-            .is("deleted_at", null);
+            .eq("school_id", schoolId);
 
           const champCountBySport = new Map<string, number>();
           champData?.forEach((c: any) => {
@@ -270,7 +268,6 @@ export const getSchoolNextLevel = cache(async (schoolId: number) => {
             .from("next_level_tracking")
             .select("id, person_name, current_level, college, pro_team, pro_league, draft_info, status, sport_id")
             .eq("high_school_id", schoolId)
-            .is("deleted_at", null)
             .order("pro_league", { ascending: false, nullsFirst: true })
             .order("college", { ascending: true, nullsFirst: true });
 
@@ -305,7 +302,6 @@ export const getSchoolAllChampionships = cache(async (schoolId: number) => {
             `
             )
             .eq("school_id", schoolId)
-            .is("deleted_at", null)
             .order("created_at", { ascending: false });
 
           if (!data) return [];
@@ -356,7 +352,6 @@ export const getSchoolRecentSeasons = cache(async (schoolId: number, limit = 5) 
             `
             )
             .eq("school_id", schoolId)
-            .is("deleted_at", null)
             .order("created_at", { ascending: false })
             .limit(limit);
 
