@@ -29,12 +29,6 @@ const SPORT_COLORS: Record<string, string> = {
   soccer: '#059669',
 };
 
-const TROPHY_SVG = (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="#f0a500">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
-  </svg>
-);
-
 function CareerTrajectoryChart({
   seasons,
   stat,
@@ -46,11 +40,12 @@ function CareerTrajectoryChart({
 }: CareerTrajectoryChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // Compute chart dimensions
-  const width = 100;
-  const padding = { top: 30, right: 20, bottom: 40, left: 40 };
-  const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
+  // Use a properly-sized viewBox so text renders at reasonable proportions
+  const vbWidth = 600;
+  const vbHeight = height;
+  const padding = { top: 30, right: 30, bottom: 50, left: 60 };
+  const chartWidth = vbWidth - padding.left - padding.right;
+  const chartHeight = vbHeight - padding.top - padding.bottom;
 
   // Find data bounds
   const allValues = [
@@ -112,16 +107,25 @@ function CareerTrajectoryChart({
       const value = minValue + (i / tickCount) * range;
       ticks.push({
         value,
-        label: Math.round(value).toString(),
+        label: Math.round(value).toLocaleString(),
       });
     }
     return ticks;
   }, [minValue, range]);
 
-  // Handle mobile-friendly responsiveness
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const fontSize = isMobile ? 10 : 12;
-  const labelSpacing = isMobile ? 2 : 1;
+  // Format year label: "2008-09" → "'08-09", "2020-21" → "'20-21"
+  const formatYear = (year: string) => {
+    if (year.includes('-')) {
+      const parts = year.split('-');
+      return `'${parts[0].slice(-2)}-${parts[1].slice(-2)}`;
+    }
+    return year.slice(-4);
+  };
+
+  // Build accessible description
+  const accessibleDesc = `Career trajectory chart for ${stat}: ${seasons.map(s => `${s.year}: ${Math.round(s.value).toLocaleString()}`).join(', ')}`;
+
+  const fontSize = 12;
 
   return (
     <div className="w-full bg-white rounded-lg border border-gray-200 p-4">
@@ -133,13 +137,15 @@ function CareerTrajectoryChart({
       <svg
         width="100%"
         height={height}
-        viewBox={`0 0 100 ${height}`}
+        viewBox={`0 0 ${vbWidth} ${vbHeight}`}
         preserveAspectRatio="xMidYMid meet"
         className="font-sans"
         role="img"
-        aria-label="Career trajectory chart showing stat progression across seasons"
+        aria-label={accessibleDesc}
       >
-        <title>Career Trajectory</title>
+        <title>Career Trajectory — {stat}</title>
+        <desc>{accessibleDesc}</desc>
+
         {/* Grid lines */}
         {yAxisTicks.map((tick) => {
           const y = padding.top + scaleY(tick.value);
@@ -151,8 +157,7 @@ function CareerTrajectoryChart({
               x2={padding.left + chartWidth}
               y2={y}
               stroke="#e5e7eb"
-              strokeWidth="0.5"
-              vectorEffect="non-scaling-stroke"
+              strokeWidth="1"
               opacity="0.5"
             />
           );
@@ -166,7 +171,6 @@ function CareerTrajectoryChart({
           y2={padding.top + chartHeight}
           stroke="#4b5563"
           strokeWidth="1"
-          vectorEffect="non-scaling-stroke"
         />
 
         {/* Y-axis labels */}
@@ -175,23 +179,22 @@ function CareerTrajectoryChart({
           return (
             <g key={`yaxis-${tick.value}`}>
               <text
-                x={padding.left - 4}
+                x={padding.left - 8}
                 y={y}
                 fontSize={fontSize}
                 textAnchor="end"
-                dy="0.3em"
+                dy="0.35em"
                 fill="#6b7280"
               >
                 {tick.label}
               </text>
               <line
-                x1={padding.left - 2}
+                x1={padding.left - 4}
                 y1={y}
                 x2={padding.left}
                 y2={y}
                 stroke="#4b5563"
                 strokeWidth="1"
-                vectorEffect="non-scaling-stroke"
               />
             </g>
           );
@@ -203,9 +206,8 @@ function CareerTrajectoryChart({
             d={leaguePathData}
             fill="none"
             stroke={leagueColor}
-            strokeWidth="1.5"
-            strokeDasharray="3,3"
-            vectorEffect="non-scaling-stroke"
+            strokeWidth="2"
+            strokeDasharray="6,4"
             opacity="0.7"
           />
         )}
@@ -215,21 +217,19 @@ function CareerTrajectoryChart({
           d={playerPathData}
           fill="none"
           stroke={sportColor}
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
-          vectorEffect="non-scaling-stroke"
         />
 
         {/* Peak season highlight */}
         <circle
           cx={peakX}
           cy={peakY}
-          r="3"
+          r="6"
           fill={sportColor}
           stroke="white"
-          strokeWidth="1"
-          vectorEffect="non-scaling-stroke"
+          strokeWidth="2"
         />
 
         {/* Data point circles and interaction areas */}
@@ -241,59 +241,50 @@ function CareerTrajectoryChart({
           return (
             <g key={`point-${i}`} onMouseEnter={() => setHoveredIndex(i)} onMouseLeave={() => setHoveredIndex(null)}>
               {/* Invisible hit area */}
-              <circle cx={x} cy={y} r="4" fill="transparent" style={{ cursor: 'pointer' }} />
+              <circle cx={x} cy={y} r="12" fill="transparent" style={{ cursor: 'pointer' }} />
 
               {/* Visible circle on hover */}
               {isHovered && (
                 <>
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r="5"
-                    fill={sportColor}
-                    opacity="0.2"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r="2.5"
-                    fill={sportColor}
-                    vectorEffect="non-scaling-stroke"
-                  />
+                  <circle cx={x} cy={y} r="10" fill={sportColor} opacity="0.15" />
+                  <circle cx={x} cy={y} r="5" fill={sportColor} />
                 </>
               )}
 
               {/* Championship trophy icon */}
               {season.isChampionship && (
-                <g transform={`translate(${x - 1.5}, ${y - 6})`} aria-label="Championship season">
-                  {TROPHY_SVG}
-                </g>
+                <text
+                  x={x}
+                  y={y - 14}
+                  textAnchor="middle"
+                  fontSize="14"
+                  aria-label="Championship season"
+                >
+                  🏆
+                </text>
               )}
 
               {/* Tooltip */}
               {isHovered && (
                 <g>
                   <rect
-                    x={x - 8}
-                    y={y - 20}
-                    width="16"
-                    height="14"
-                    rx="2"
+                    x={x - 40}
+                    y={y - 36}
+                    width="80"
+                    height="24"
+                    rx="4"
                     fill={sportColor}
                     opacity="0.95"
-                    vectorEffect="non-scaling-stroke"
                   />
                   <text
                     x={x}
-                    y={y - 10}
-                    fontSize={fontSize - 1}
+                    y={y - 20}
+                    fontSize={fontSize}
                     fontWeight="bold"
                     textAnchor="middle"
                     fill="white"
-                    vectorEffect="non-scaling-stroke"
                   >
-                    {Math.round(season.value)}
+                    {Math.round(season.value).toLocaleString()} ({formatYear(season.year)})
                   </text>
                 </g>
               )}
@@ -301,11 +292,8 @@ function CareerTrajectoryChart({
           );
         })}
 
-        {/* X-axis labels (every other year for mobile, every year for desktop) */}
+        {/* X-axis labels */}
         {seasons.map((season, i) => {
-          const shouldShow = isMobile ? i % 2 === 0 : true;
-          if (!shouldShow) return null;
-
           const x = padding.left + scaleX(i);
           return (
             <g key={`xaxis-${i}`}>
@@ -313,20 +301,18 @@ function CareerTrajectoryChart({
                 x1={x}
                 y1={padding.top + chartHeight}
                 x2={x}
-                y2={padding.top + chartHeight + 3}
+                y2={padding.top + chartHeight + 6}
                 stroke="#4b5563"
                 strokeWidth="1"
-                vectorEffect="non-scaling-stroke"
               />
               <text
                 x={x}
-                y={padding.top + chartHeight + 12}
+                y={padding.top + chartHeight + 22}
                 fontSize={fontSize}
                 textAnchor="middle"
                 fill="#6b7280"
-                transform={`rotate(${isMobile ? 45 : 0}, ${x}, ${padding.top + chartHeight + 12})`}
               >
-                {season.year.substring(0, 4)}
+                {formatYear(season.year)}
               </text>
             </g>
           );
@@ -340,29 +326,19 @@ function CareerTrajectoryChart({
           y2={padding.top + chartHeight}
           stroke="#4b5563"
           strokeWidth="1"
-          vectorEffect="non-scaling-stroke"
         />
 
         {/* Legend */}
-        <g transform={`translate(${padding.left}, 5)`}>
-          <circle cx="0" cy="0" r="1.5" fill={sportColor} vectorEffect="non-scaling-stroke" />
-          <text x="4" y="0" fontSize={fontSize} dy="0.3em" fill="#374151">
+        <g transform={`translate(${padding.left + 10}, 14)`}>
+          <circle cx="0" cy="0" r="4" fill={sportColor} />
+          <text x="10" y="0" fontSize={fontSize} dy="0.35em" fill="#374151">
             Player
           </text>
 
           {!hideAverage && leagueAvg && (
             <>
-              <line
-                x1="30"
-                y1="-1.5"
-                x2="35"
-                y2="-1.5"
-                stroke={leagueColor}
-                strokeWidth="1.5"
-                strokeDasharray="2,2"
-                vectorEffect="non-scaling-stroke"
-              />
-              <text x="38" y="0" fontSize={fontSize} dy="0.3em" fill="#6b7280">
+              <line x1="70" y1="0" x2="85" y2="0" stroke={leagueColor} strokeWidth="2" strokeDasharray="4,3" />
+              <text x="92" y="0" fontSize={fontSize} dy="0.35em" fill="#6b7280">
                 League Avg
               </text>
             </>
@@ -374,13 +350,13 @@ function CareerTrajectoryChart({
       <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-3 gap-4 text-sm">
         <div>
           <p className="text-gray-500 text-xs font-semibold uppercase">Peak</p>
-          <p className="text-lg font-bold text-navy">{Math.round(peakValue)}</p>
+          <p className="text-lg font-bold text-navy">{Math.round(peakValue).toLocaleString()}</p>
           <p className="text-xs text-gray-600">{seasons[peakIndex]?.year || 'N/A'}</p>
         </div>
         <div>
           <p className="text-gray-500 text-xs font-semibold uppercase">Average</p>
           <p className="text-lg font-bold text-navy">
-            {Math.round(seasons.reduce((sum, s) => sum + s.value, 0) / seasons.length)}
+            {Math.round(seasons.reduce((sum, s) => sum + s.value, 0) / seasons.length).toLocaleString()}
           </p>
         </div>
         <div>

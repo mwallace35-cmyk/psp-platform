@@ -85,6 +85,8 @@ export interface FootballPlayerSeason {
   player_id: number;
   season_id: number;
   school_id: number;
+  games_played?: number;
+  rush_carries?: number;
   rush_yards?: number;
   rush_td?: number;
   pass_yards?: number;
@@ -93,6 +95,8 @@ export interface FootballPlayerSeason {
   rec_td?: number;
   total_td?: number;
   total_yards?: number;
+  interceptions?: number;
+  points?: number;
   seasons?: Season;
   schools?: { name: string; slug: string };
   players?: Player;

@@ -149,9 +149,15 @@ export async function getPlayerGameLog(playerId: number): Promise<PlayerGameLog[
                  seasons(label)
                )`
             )
-            .eq("player_id", playerId)
-            .order("game_id");
-          return (data as unknown as PlayerGameLog[]) ?? [];
+            .eq("player_id", playerId);
+          // Sort by game_date descending (newest first) — PostgREST can't sort by nested relation fields
+          const sorted = (data as unknown as PlayerGameLog[]) ?? [];
+          sorted.sort((a, b) => {
+            const dateA = a.games?.game_date || '';
+            const dateB = b.games?.game_date || '';
+            return dateB.localeCompare(dateA);
+          });
+          return sorted;
         },
         { maxRetries: 2, baseDelay: 500 }
       );
