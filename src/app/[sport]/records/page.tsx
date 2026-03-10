@@ -70,43 +70,19 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
     season_label: rec.seasons?.label || null,
   }));
 
-  // Flatten computed records from nested structure into a single array
-  const computedRecords = Object.values(computedRecordsObj)
-    .flat()
-    .slice(0, 100); // Limit total computed records for display
+  // Count statistics for the subtitle
+  const totalCuratedRecords = curatedRecords.length;
+  const categoryCount = Object.keys(computedRecordsObj).length;
 
-  // Build school record books from top schools by data volume
-  const schoolRecordMap = new Map<string, { name: string; slug: string; count: number }>();
-  for (const record of computedRecords) {
-    const key = record.school_slug;
-    if (!schoolRecordMap.has(key)) {
-      schoolRecordMap.set(key, {
-        name: record.school_name,
-        slug: record.school_slug,
-        count: 0,
-      });
-    }
-    const school = schoolRecordMap.get(key)!;
-    school.count++;
-  }
-
-  const schoolRecordBooks = Array.from(schoolRecordMap.values())
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 50)
-    .map((school) => ({
-      school_name: school.name,
-      school_slug: school.slug,
-      records: computedRecords.filter((r) => r.school_slug === school.slug),
-    }));
-
-  // Count records by type for the subtitle
-  const individualRecords = curatedRecords.filter((r: any) => r.subcategory !== "Yards");
-  const schoolRecords = curatedRecords.filter((r: any) => r.subcategory === "Yards");
-  const totalCuratedRecords = individualRecords.length;
-  const totalComputedRecords = computedRecords.length;
-  const schoolCount = new Set(schoolRecords.map((r: any) => r.holder_school || r.school_name)).size;
-  const categoryCount = new Set(individualRecords.map((r: any) => r.category)).size;
-  const totalItems = totalCuratedRecords + totalComputedRecords;
+  // Count unique stat names across all computed records
+  const uniqueStatNames = new Set<string>();
+  Object.values(computedRecordsObj).forEach((records) => {
+    records.forEach((rec) => {
+      uniqueStatNames.add(rec.stat_name);
+    });
+  });
+  const computedStatCount = uniqueStatNames.size;
+  const totalItems = totalCuratedRecords + computedStatCount;
 
   return (
     <>
@@ -122,14 +98,13 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
             {meta.emoji} {meta.name} Records
           </h1>
           <p className="text-gray-300">
-            {totalCuratedRecords} curated records + {totalComputedRecords} computed leaderboard entries across {categoryCount} categories
-            {schoolCount > 0 && ` + ${schoolCount} school record books`}
+            {totalCuratedRecords} archive records + {computedStatCount} stat leaderboards across {categoryCount} categories
           </p>
         </div>
       </section>
 
       <main id="main-content" className="max-w-7xl mx-auto px-4 py-8" style={{ flex: 1 }}>
-        {curatedRecords.length === 0 && computedRecords.length === 0 ? (
+        {curatedRecords.length === 0 && computedStatCount === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-xl">
             <div className="text-4xl mb-4">📈</div>
             <p className="text-gray-500">No records data found for {meta.name} yet.</p>
@@ -138,8 +113,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
         ) : (
           <RecordsView
             curatedRecords={curatedRecords}
-            computedRecords={computedRecords}
-            schoolRecordBooks={schoolRecordBooks}
+            computedByCategory={computedRecordsObj}
             sport={sport}
             sportName={meta.name}
             sportColor={meta.color}
