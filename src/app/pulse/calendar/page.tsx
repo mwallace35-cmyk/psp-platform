@@ -28,6 +28,7 @@ interface GameRecord {
 const GAME_TYPE_LABELS: Record<string, { label: string; color: string }> = {
   scrimmage: { label: 'Scrimmage', color: 'bg-gray-100 text-gray-500' },
   'non-league': { label: 'Non-League', color: 'bg-blue-50 text-blue-600' },
+  regular: { label: 'League', color: 'bg-navy/10 text-navy' },
   league: { label: 'League', color: 'bg-navy/10 text-navy' },
   playoff: { label: 'Playoff', color: 'bg-gold/20 text-amber-700' },
   championship: { label: 'Championship', color: 'bg-gold text-navy' },
@@ -76,7 +77,7 @@ export default async function CalendarPage() {
 
   const totalGames = games.length;
   const scrimmages = games.filter(g => g.game_type === 'scrimmage').length;
-  const leagueGames = games.filter(g => !g.game_type || g.game_type === 'league').length;
+  const leagueGames = games.filter(g => !g.game_type || g.game_type === 'league' || g.game_type === 'regular').length;
   const nonLeague = games.filter(g => g.game_type === 'non-league').length;
 
   return (
