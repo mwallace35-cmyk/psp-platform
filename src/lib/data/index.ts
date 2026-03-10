@@ -108,7 +108,9 @@ export {
   getGameBoxScore,
   getGamesWithBoxScores,
   getPlayerGameLog,
+  getPlayerTeamGames,
   type GamePlayerStat,
   type GameDetail,
   type PlayerGameLog,
+  type TeamGame,
 } from "./games";

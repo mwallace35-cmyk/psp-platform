@@ -168,6 +168,88 @@ export async function getPlayerGameLog(playerId: number): Promise<PlayerGameLog[
   );
 }
 
+// ============================================================================
+// TEAM GAME LOG (ALL GAMES FOR A SCHOOL IN GIVEN SEASONS)
+// ============================================================================
+
+export interface TeamGame {
+  id: number;
+  sport_id: string;
+  game_date: string | null;
+  home_school_id: number | null;
+  away_school_id: number | null;
+  home_score: number | null;
+  away_score: number | null;
+  home_school: { id: number; name: string; slug: string } | null;
+  away_school: { id: number; name: string; slug: string } | null;
+  seasons: { label: string } | null;
+}
+
+/**
+ * Get all games for a school in a specific sport across given season IDs.
+ * Used to show a player's full team schedule alongside their individual box scores.
+ */
+export async function getPlayerTeamGames(
+  schoolId: number,
+  sportSlug: string,
+  seasonIds: number[]
+): Promise<TeamGame[]> {
+  if (seasonIds.length === 0) return [];
+
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          // Get games where the school is home
+          const { data: homeGames } = await supabase
+            .from("games")
+            .select(
+              `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
+               home_school:schools!games_home_school_id_fkey(id, name, slug),
+               away_school:schools!games_away_school_id_fkey(id, name, slug),
+               seasons(label)`
+            )
+            .eq("home_school_id", schoolId)
+            .eq("sport_id", sportSlug)
+            .in("season_id", seasonIds);
+
+          // Get games where the school is away
+          const { data: awayGames } = await supabase
+            .from("games")
+            .select(
+              `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
+               home_school:schools!games_home_school_id_fkey(id, name, slug),
+               away_school:schools!games_away_school_id_fkey(id, name, slug),
+               seasons(label)`
+            )
+            .eq("away_school_id", schoolId)
+            .eq("sport_id", sportSlug)
+            .in("season_id", seasonIds);
+
+          const all = [
+            ...((homeGames as unknown as TeamGame[]) ?? []),
+            ...((awayGames as unknown as TeamGame[]) ?? []),
+          ];
+
+          // Sort by game_date descending (newest first)
+          all.sort((a, b) => {
+            const dateA = a.game_date || "";
+            const dateB = b.game_date || "";
+            return dateB.localeCompare(dateA);
+          });
+
+          return all;
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_PLAYER_TEAM_GAMES",
+    { schoolId, sportSlug, seasonCount: seasonIds.length }
+  );
+}
+
 /**
  * Check if a game has box score data (for showing "Box Score" links)
  */
