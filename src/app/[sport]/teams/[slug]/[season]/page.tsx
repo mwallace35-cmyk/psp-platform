@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getSchoolBySlug, getTeamSeason, getGamesByTeamSeason, getTeamRosterBySeason, getAvailableTeamSeasons, type TeamSeason, type Game, type RosterPlayer, type Season } from "@/lib/data";
+import { isValidSport, SPORT_META, getSchoolBySlug, getTeamSeason, getGamesByTeamSeason, getTeamRosterBySeason, getAvailableTeamSeasons, getGamesWithBoxScores, type TeamSeason, type Game, type RosterPlayer, type Season } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -43,6 +43,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
   let games: Game[] = [];
   let roster: RosterPlayer[] = [];
   let availableSeasons: Season[] = [];
+  let gamesWithBoxScores = new Set<number>();
 
   try {
     const results = await Promise.allSettled([
@@ -62,6 +63,12 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
     if (results[0].status === "rejected") captureError(results[0].reason, { sport, slug, season, fetch: "getGamesByTeamSeason" });
     if (results[1].status === "rejected") captureError(results[1].reason, { sport, slug, season, fetch: "getTeamRosterBySeason" });
     if (results[2].status === "rejected") captureError(results[2].reason, { sport, slug, season, fetch: "getAvailableTeamSeasons" });
+
+    // Check which games have box score data
+    if (games.length > 0) {
+      const gameIds = games.map((g) => g.id);
+      gamesWithBoxScores = await getGamesWithBoxScores(gameIds);
+    }
   } catch (error) {
     captureError(error, { sport, slug, season, context: "data_fetching" });
   }
@@ -209,6 +216,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                     <th className="text-left py-3 px-4 text-gray-400 font-semibold">Opponent</th>
                     <th className="text-center py-3 px-4 text-gray-400 font-semibold">Result</th>
                     <th className="text-center py-3 px-4 text-gray-400 font-semibold">Score</th>
+                    <th className="text-center py-3 px-4 text-gray-400 font-semibold"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -253,6 +261,17 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         </td>
                         <td className="py-3 px-4 text-center text-gray-300">
                           {schoolScore !== null && opponentScore !== null ? `${schoolScore}-${opponentScore}` : "—"}
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          {gamesWithBoxScores.has(game.id) ? (
+                            <Link
+                              href={`/${sport}/games/${game.id}`}
+                              className="text-xs font-medium px-2 py-1 rounded"
+                              style={{ background: "var(--psp-blue, #3b82f6)", color: "white" }}
+                            >
+                              Box Score
+                            </Link>
+                          ) : null}
                         </td>
                       </tr>
                     );

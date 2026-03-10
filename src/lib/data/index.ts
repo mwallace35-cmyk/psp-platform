@@ -92,5 +92,23 @@ export {
   getDataFreshness,
   getFootballLeaders,
   getBasketballLeaders,
+  getSchoolWinsLeaderboard,
+  getSchoolChampionshipLeaderboard,
+  getSchoolStatProduction,
   type StatCategory,
+  type SchoolWinsRow,
+  type SchoolChampionshipRow,
+  type SchoolStatProductionRow,
+  type CareerLeaderRow,
 } from "./events";
+
+// Game detail and box score functions
+export {
+  getGameById,
+  getGameBoxScore,
+  getGamesWithBoxScores,
+  getPlayerGameLog,
+  type GamePlayerStat,
+  type GameDetail,
+  type PlayerGameLog,
+} from "./games";

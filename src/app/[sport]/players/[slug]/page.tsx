@@ -1,7 +1,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award } from "@/lib/data";
+import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import SparkLine from "@/components/ui/SparkLine";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -82,6 +82,12 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   else if (sport === "baseball") stats = (await getBaseballPlayerStats(player.id)) as BaseballPlayerSeason[];
 
   const awards = await getPlayerAwards(player.id);
+
+  // Get per-game stats (game log) if player has box score data
+  let gameLog: PlayerGameLog[] = [];
+  if (sport === "football" || sport === "basketball") {
+    gameLog = await getPlayerGameLog(player.id);
+  }
 
   // Football career totals
   const footballTotals = sport === "football" && stats.length > 0 ? {
@@ -357,6 +363,115 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                           <td className="text-right">{s.blocks ?? "—"}</td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Game Log */}
+            {gameLog.length > 0 && sport === "football" && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                  Game Log ({gameLog.length} games)
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Opponent</th>
+                        <th scope="col" className="text-right">Rush Yds</th>
+                        <th scope="col" className="text-right">Pass Yds</th>
+                        <th scope="col" className="text-right">Rec Yds</th>
+                        <th scope="col" className="text-right">PTS</th>
+                        <th scope="col" className="text-center"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {gameLog.map((g) => {
+                        const game = g.games;
+                        if (!game) return null;
+                        const isHome = game.home_school_id === player.primary_school_id;
+                        const opp = isHome ? game.away_school : game.home_school;
+                        const dateStr = game.game_date ? new Date(game.game_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" }) : "—";
+                        return (
+                          <tr key={g.id}>
+                            <td className="whitespace-nowrap text-xs text-gray-500">{dateStr}</td>
+                            <td className="whitespace-nowrap text-xs">
+                              {opp ? (
+                                <Link href={`/${sport}/schools/${opp.slug}`} className="hover:underline" style={{ color: "var(--psp-blue)" }}>
+                                  {isHome ? "vs " : "at "}{opp.name}
+                                </Link>
+                              ) : "—"}
+                            </td>
+                            <td className="text-right">{g.rush_yards ?? "—"}</td>
+                            <td className="text-right">{g.pass_yards ?? "—"}</td>
+                            <td className="text-right">{g.rec_yards ?? "—"}</td>
+                            <td className="text-right font-bold">{g.points ?? "—"}</td>
+                            <td className="text-center">
+                              <Link
+                                href={`/${sport}/games/${game.id}`}
+                                className="text-xs px-2 py-0.5 rounded"
+                                style={{ background: "var(--psp-blue)", color: "white" }}
+                              >
+                                Box Score
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {gameLog.length > 0 && sport === "basketball" && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                  Game Log ({gameLog.length} games)
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Opponent</th>
+                        <th scope="col" className="text-right">PTS</th>
+                        <th scope="col" className="text-center"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {gameLog.map((g) => {
+                        const game = g.games;
+                        if (!game) return null;
+                        const isHome = game.home_school_id === player.primary_school_id;
+                        const opp = isHome ? game.away_school : game.home_school;
+                        const dateStr = game.game_date ? new Date(game.game_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" }) : "—";
+                        return (
+                          <tr key={g.id}>
+                            <td className="whitespace-nowrap text-xs text-gray-500">{dateStr}</td>
+                            <td className="whitespace-nowrap text-xs">
+                              {opp ? (
+                                <Link href={`/${sport}/schools/${opp.slug}`} className="hover:underline" style={{ color: "var(--psp-blue)" }}>
+                                  {isHome ? "vs " : "at "}{opp.name}
+                                </Link>
+                              ) : "—"}
+                            </td>
+                            <td className="text-right font-bold">{g.points ?? "—"}</td>
+                            <td className="text-center">
+                              <Link
+                                href={`/${sport}/games/${game.id}`}
+                                className="text-xs px-2 py-0.5 rounded"
+                                style={{ background: "var(--psp-blue)", color: "white" }}
+                              >
+                                Box Score
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

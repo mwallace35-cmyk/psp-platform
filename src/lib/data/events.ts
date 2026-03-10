@@ -532,22 +532,36 @@ export async function getLeaderboard(stat: StatCategory, limit = 25): Promise<Le
 }
 
 /**
- * Get football career leaders by stat
+ * Get football career leaders from materialized view.
+ * Stat options: rushing, passing, receiving, scoring, total_yards (or raw column names)
  */
-export async function getFootballCareerLeaders(stat: string = "rush_yards", limit = 25) {
+export async function getFootballCareerLeaders(stat: string = "rushing", limit = 50): Promise<CareerLeaderRow[]> {
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+  // Map friendly stat keys to column names
+  const colMap: Record<string, string> = {
+    rushing: "career_rush_yards",
+    passing: "career_pass_yards",
+    receiving: "career_rec_yards",
+    scoring: "career_total_td",
+    total_yards: "career_total_yards",
+  };
+  const orderCol = colMap[stat] || stat;
+
   return withErrorHandling(
     async () => {
       const supabase = await createClient();
       const { data, error } = await supabase
         .from("football_career_leaders")
         .select("*")
-        .order(stat, { ascending: false, nullsFirst: false })
-        .limit(limit);
+        .not(orderCol, "is", null)
+        .gt(orderCol, 0)
+        .order(orderCol, { ascending: false, nullsFirst: false })
+        .limit(cappedLimit);
       if (error) {
-        console.warn("[PSP] football_career_leaders view query failed, falling back:", error.message);
+        console.warn("[PSP] football_career_leaders view query failed:", error.message);
         return [];
       }
-      return data ?? [];
+      return (data ?? []) as CareerLeaderRow[];
     },
     [],
     "DATA_FOOTBALL_CAREER_LEADERS",
@@ -556,22 +570,32 @@ export async function getFootballCareerLeaders(stat: string = "rush_yards", limi
 }
 
 /**
- * Get basketball career leaders by stat
+ * Get basketball career leaders from materialized view.
+ * Stat options: scoring, ppg (or raw column names)
  */
-export async function getBasketballCareerLeaders(stat: string = "points", limit = 25) {
+export async function getBasketballCareerLeaders(stat: string = "scoring", limit = 50): Promise<CareerLeaderRow[]> {
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+  const colMap: Record<string, string> = {
+    scoring: "career_points",
+    ppg: "career_ppg",
+  };
+  const orderCol = colMap[stat] || stat;
+
   return withErrorHandling(
     async () => {
       const supabase = await createClient();
       const { data, error } = await supabase
         .from("basketball_career_leaders")
         .select("*")
-        .order(stat, { ascending: false, nullsFirst: false })
-        .limit(limit);
+        .not(orderCol, "is", null)
+        .gt(orderCol, 0)
+        .order(orderCol, { ascending: false, nullsFirst: false })
+        .limit(cappedLimit);
       if (error) {
-        console.warn("[PSP] basketball_career_leaders view query failed, falling back:", error.message);
+        console.warn("[PSP] basketball_career_leaders view query failed:", error.message);
         return [];
       }
-      return data ?? [];
+      return (data ?? []) as CareerLeaderRow[];
     },
     [],
     "DATA_BASKETBALL_CAREER_LEADERS",
@@ -759,3 +783,299 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
     { stat, limit }
   );
 });
+
+// ─── Career Leaderboard Types ─────────────────────────────────────
+
+export interface CareerLeaderRow extends Record<string, unknown> {
+  player_id: number;
+  player_name: string;
+  player_slug: string;
+  graduation_year: number | null;
+  college: string | null;
+  pro_team?: string | null;
+  school_id: number;
+  school_name: string;
+  school_slug: string;
+  seasons_played: number;
+  first_year: number;
+  last_year: number;
+}
+
+// ─── School Leaderboard Fetchers ─────────────────────────────────────
+
+export interface SchoolWinsRow {
+  school_id: number;
+  school_slug: string;
+  school_name: string;
+  city: string | null;
+  mascot: string | null;
+  logo_url: string | null;
+  league_name: string | null;
+  sport_id: string;
+  total_seasons: number;
+  total_wins: number;
+  total_losses: number;
+  total_ties: number;
+  total_games: number;
+  win_pct: string;
+  championship_count: number;
+  total_points_for: number;
+  total_points_against: number;
+  first_year: number;
+  last_year: number;
+}
+
+export interface SchoolChampionshipRow {
+  school_id: number;
+  school_name: string;
+  school_slug: string;
+  total_championships: number;
+  fb_champs: number;
+  bb_champs: number;
+  base_champs: number;
+  other_champs: number;
+}
+
+export interface SchoolStatProductionRow {
+  school_id: number;
+  school_name: string;
+  school_slug: string;
+  league_name: string | null;
+  total_players: number;
+  [key: string]: unknown;
+}
+
+/**
+ * Get school win/loss leaderboard from team_alltime_records materialized view.
+ * Filterable by sport.
+ */
+export async function getSchoolWinsLeaderboard(sportId: string, orderBy: string = "total_wins", limit = 50): Promise<SchoolWinsRow[]> {
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+  const validOrders = ["total_wins", "win_pct", "total_games", "championship_count", "total_points_for"];
+  const orderCol = validOrders.includes(orderBy) ? orderBy : "total_wins";
+
+  return withErrorHandling(
+    async () => {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from("team_alltime_records")
+        .select("*")
+        .eq("sport_id", sportId)
+        .gt("total_games", 0)
+        .order(orderCol, { ascending: false, nullsFirst: false })
+        .limit(cappedLimit);
+      if (error) {
+        console.warn("[PSP] team_alltime_records query failed:", error.message);
+        return [];
+      }
+      return (data ?? []) as SchoolWinsRow[];
+    },
+    [],
+    "DATA_SCHOOL_WINS_LEADERBOARD",
+    { sportId, orderBy, limit }
+  );
+}
+
+/**
+ * Get school championship leaderboard (aggregated across all sports or filtered).
+ * Uses raw SQL via RPC since we need cross-sport aggregation.
+ */
+export async function getSchoolChampionshipLeaderboard(sportFilter?: string, limit = 50): Promise<SchoolChampionshipRow[]> {
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+
+  return withErrorHandling(
+    async () => {
+      const supabase = await createClient();
+
+      if (sportFilter && sportFilter !== "all") {
+        // Single sport
+        const { data, error } = await supabase
+          .from("championships")
+          .select("school_id, schools!inner(name, slug)")
+          .eq("sport_id", sportFilter)
+          .not("school_id", "is", null);
+
+        if (error) { console.warn("[PSP] champ query failed:", error.message); return []; }
+
+        // Aggregate in JS
+        const counts = new Map<number, { name: string; slug: string; count: number }>();
+        for (const row of (data ?? []) as any[]) {
+          const sid = row.school_id as number;
+          const existing = counts.get(sid);
+          if (existing) {
+            existing.count++;
+          } else {
+            counts.set(sid, {
+              name: row.schools?.name || "Unknown",
+              slug: row.schools?.slug || "",
+              count: 1,
+            });
+          }
+        }
+
+        return Array.from(counts.entries())
+          .map(([id, v]) => ({
+            school_id: id,
+            school_name: v.name,
+            school_slug: v.slug,
+            total_championships: v.count,
+            fb_champs: sportFilter === "football" ? v.count : 0,
+            bb_champs: sportFilter === "basketball" ? v.count : 0,
+            base_champs: sportFilter === "baseball" ? v.count : 0,
+            other_champs: !["football", "basketball", "baseball"].includes(sportFilter) ? v.count : 0,
+          }))
+          .sort((a, b) => b.total_championships - a.total_championships)
+          .slice(0, cappedLimit);
+      } else {
+        // All sports — aggregate
+        const { data, error } = await supabase
+          .from("championships")
+          .select("school_id, sport_id, schools!inner(name, slug)")
+          .not("school_id", "is", null);
+
+        if (error) { console.warn("[PSP] champ query failed:", error.message); return []; }
+
+        const counts = new Map<number, {
+          name: string; slug: string; total: number;
+          fb: number; bb: number; base: number; other: number;
+        }>();
+
+        for (const row of (data ?? []) as any[]) {
+          const sid = row.school_id as number;
+          const sport = row.sport_id as string;
+          const existing = counts.get(sid) || {
+            name: row.schools?.name || "Unknown",
+            slug: row.schools?.slug || "",
+            total: 0, fb: 0, bb: 0, base: 0, other: 0,
+          };
+          existing.total++;
+          if (sport === "football") existing.fb++;
+          else if (sport === "basketball") existing.bb++;
+          else if (sport === "baseball") existing.base++;
+          else existing.other++;
+          counts.set(sid, existing);
+        }
+
+        return Array.from(counts.entries())
+          .map(([id, v]) => ({
+            school_id: id,
+            school_name: v.name,
+            school_slug: v.slug,
+            total_championships: v.total,
+            fb_champs: v.fb,
+            bb_champs: v.bb,
+            base_champs: v.base,
+            other_champs: v.other,
+          }))
+          .sort((a, b) => b.total_championships - a.total_championships)
+          .slice(0, cappedLimit);
+      }
+    },
+    [],
+    "DATA_SCHOOL_CHAMPIONSHIP_LEADERBOARD",
+    { sportFilter, limit }
+  );
+}
+
+/**
+ * Get school stat production leaderboard (total stats produced by all players from that school).
+ */
+export async function getSchoolStatProduction(sport: string, orderBy: string = "total_yards", limit = 50): Promise<SchoolStatProductionRow[]> {
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+
+  return withErrorHandling(
+    async () => {
+      const supabase = await createClient();
+
+      if (sport === "football") {
+        // Use football_career_leaders view for aggregation
+        const { data, error } = await supabase
+          .from("football_career_leaders")
+          .select("school_id, school_name, school_slug, career_rush_yards, career_pass_yards, career_rec_yards, career_total_td, career_points, career_total_yards");
+
+        if (error) { console.warn("[PSP] fb career leaders query failed:", error.message); return []; }
+
+        // Aggregate by school
+        const schools = new Map<number, SchoolStatProductionRow>();
+        for (const row of (data ?? []) as any[]) {
+          const sid = row.school_id as number;
+          const existing = schools.get(sid);
+          if (existing) {
+            existing.total_players = (existing.total_players || 0) + 1;
+            existing.total_rush_yards = ((existing.total_rush_yards as number) || 0) + (row.career_rush_yards || 0);
+            existing.total_pass_yards = ((existing.total_pass_yards as number) || 0) + (row.career_pass_yards || 0);
+            existing.total_rec_yards = ((existing.total_rec_yards as number) || 0) + (row.career_rec_yards || 0);
+            existing.total_td = ((existing.total_td as number) || 0) + (row.career_total_td || 0);
+            existing.total_points = ((existing.total_points as number) || 0) + (row.career_points || 0);
+            existing.total_yards = ((existing.total_yards as number) || 0) + (row.career_total_yards || 0);
+          } else {
+            schools.set(sid, {
+              school_id: sid,
+              school_name: row.school_name,
+              school_slug: row.school_slug,
+              league_name: null,
+              total_players: 1,
+              total_rush_yards: row.career_rush_yards || 0,
+              total_pass_yards: row.career_pass_yards || 0,
+              total_rec_yards: row.career_rec_yards || 0,
+              total_td: row.career_total_td || 0,
+              total_points: row.career_points || 0,
+              total_yards: row.career_total_yards || 0,
+            });
+          }
+        }
+
+        const validOrders: Record<string, string> = {
+          total_yards: "total_yards",
+          total_rush_yards: "total_rush_yards",
+          total_pass_yards: "total_pass_yards",
+          total_td: "total_td",
+          total_points: "total_points",
+          total_players: "total_players",
+        };
+        const sortKey = validOrders[orderBy] || "total_yards";
+
+        return Array.from(schools.values())
+          .sort((a, b) => ((b[sortKey] as number) || 0) - ((a[sortKey] as number) || 0))
+          .slice(0, cappedLimit);
+
+      } else if (sport === "basketball") {
+        const { data, error } = await supabase
+          .from("basketball_career_leaders")
+          .select("school_id, school_name, school_slug, career_points, career_games, career_ppg");
+
+        if (error) { console.warn("[PSP] bb career leaders query failed:", error.message); return []; }
+
+        const schools = new Map<number, SchoolStatProductionRow>();
+        for (const row of (data ?? []) as any[]) {
+          const sid = row.school_id as number;
+          const existing = schools.get(sid);
+          if (existing) {
+            existing.total_players = (existing.total_players || 0) + 1;
+            existing.total_points = ((existing.total_points as number) || 0) + (row.career_points || 0);
+            existing.total_games = ((existing.total_games as number) || 0) + (row.career_games || 0);
+          } else {
+            schools.set(sid, {
+              school_id: sid,
+              school_name: row.school_name,
+              school_slug: row.school_slug,
+              league_name: null,
+              total_players: 1,
+              total_points: row.career_points || 0,
+              total_games: row.career_games || 0,
+            });
+          }
+        }
+
+        return Array.from(schools.values())
+          .sort((a, b) => ((b.total_points as number) || 0) - ((a.total_points as number) || 0))
+          .slice(0, cappedLimit);
+      }
+
+      return [];
+    },
+    [],
+    "DATA_SCHOOL_STAT_PRODUCTION",
+    { sport, orderBy, limit }
+  );
+}
