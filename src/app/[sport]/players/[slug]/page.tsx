@@ -191,8 +191,14 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     }
   }
 
-  // Sort merged games by date descending
-  mergedGames.sort((a, b) => (b.gameDate || "").localeCompare(a.gameDate || ""));
+  // Sort merged games by season descending, then by date descending within each season
+  mergedGames.sort((a, b) => {
+    // First sort by season label descending (e.g., "2011-12" > "2010-11")
+    const seasonCmp = (b.seasonLabel || "").localeCompare(a.seasonLabel || "");
+    if (seasonCmp !== 0) return seasonCmp;
+    // Within same season, sort by date descending
+    return (b.gameDate || "").localeCompare(a.gameDate || "");
+  });
 
   // Determine which columns to show for football (hide all-zero columns)
   const fbVis = sport === "football" && stats.length > 0 ? {
