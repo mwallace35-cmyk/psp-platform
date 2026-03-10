@@ -29,7 +29,7 @@ export default function Footer() {
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li><Link href="/search">Search database</Link></li>
             <li><Link href="/compare">Compare Players</Link></li>
-            <li><Link href="/our-guys">Our Guys</Link></li>
+            <li><Link href="/events/our-guys">Our Guys</Link></li>
             <li><Link href="/recruiting">Recruiting</Link></li>
             <li><Link href="/coaches">Coaches</Link></li>
             <li><Link href="/articles">Articles</Link></li>
