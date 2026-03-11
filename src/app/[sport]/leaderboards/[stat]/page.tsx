@@ -11,13 +11,12 @@ import {
 import type { CareerLeaderRow } from "@/lib/data/events";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import SortableTable, { SortableColumn } from "@/components/ui/SortableTable";
+import LeaderboardTable from "@/components/ui/LeaderboardTable";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
 import type { Metadata } from "next";
-import type React from "react";
 
 export const revalidate = 3600;
 
@@ -152,8 +151,6 @@ interface RawLeader {
   [key: string]: unknown;
 }
 
-type ColumnConfig = SortableColumn;
-
 interface TableRow {
   id: string;
   rank: number;
@@ -271,59 +268,11 @@ export default async function LeaderboardPage({
   const tableData = isCareer ? careerTableData : seasonTableData;
   const activeCols = isCareer ? (statConfig.careerCols || []) : statConfig.cols;
 
-  // Build columns
-  const columns: ColumnConfig[] = [
-    { key: "rank", label: "#", align: "center", sortable: false },
-    {
-      key: "playerName",
-      label: "Player",
-      sortable: true,
-      primary: true,
-      render: (value: unknown, row: Record<string, any>) => (
-        <div className="flex items-center gap-2">
-          {row?.pro_team && <span className="text-gold">⭐</span>}
-          <Link
-            href={`/${sport}/players/${row?.playerSlug || ""}`}
-            className="font-medium text-sm hover:underline"
-            style={{ color: "var(--psp-navy)" }}
-          >
-            {String(value)}
-          </Link>
-        </div>
-      ),
-    },
-    {
-      key: "schoolName",
-      label: "School",
-      sortable: true,
-      render: (value: unknown, row: Record<string, any>) => (
-        <Link
-          href={`/${sport}/schools/${row?.schoolSlug || ""}`}
-          className="hover:underline text-sm"
-          style={{ color: "var(--psp-gray-500)" }}
-        >
-          {String(value)}
-        </Link>
-      ),
-    },
-    {
-      key: "seasonLabel",
-      label: isCareer ? "Years" : "Season",
-      sortable: true,
-      hideOnMobile: true,
-    },
-  ];
-
-  for (const col of activeCols) {
-    columns.push({
-      key: col,
-      label: COL_LABELS[col] || col,
-      align: "right",
-      sortable: true,
-      hideOnMobile: false,
-      render: (value: unknown) => String(value ?? "—"),
-    });
-  }
+  // Build serializable stat column definitions for the client component
+  const statColumns = activeCols.map(col => ({
+    key: col,
+    label: COL_LABELS[col] || col,
+  }));
 
   // Extract filter values (season mode only)
   const uniqueSeasons = isCareer ? [] : Array.from(
@@ -474,9 +423,11 @@ export default async function LeaderboardPage({
                 Showing top {tableData.length} {modeLabel.toLowerCase()} {statConfig.label.toLowerCase()} leaders
               </p>
             </div>
-            <SortableTable
-              columns={columns}
+            <LeaderboardTable
               data={tableData}
+              sport={sport}
+              statColumns={statColumns}
+              isCareer={isCareer}
               highlightTop3={true}
               mobileCardMode={true}
               emptyMessage="No leaderboard data available"
