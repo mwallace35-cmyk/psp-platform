@@ -1,7 +1,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, type School, type TeamSeason, type Championship } from "@/lib/data";
+import { isValidSport, SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, getSchoolNotablePlayers, type School, type TeamSeason, type Championship, type NotablePlayer } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import WinLossBar from "@/components/ui/WinLossBar";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -9,6 +9,8 @@ import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import WinLossTrendChart from "@/components/charts/WinLossTrendChart";
+import DataSourceBadge from "@/components/ui/DataSourceBadge";
+import MethodologyNote from "@/components/ui/MethodologyNote";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import type { Metadata } from "next";
@@ -118,18 +120,22 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   // Get school data - use allSettled to prevent one failure from crashing the page
   let teamSeasons: TeamSeason[] = [];
   let championships: Championship[] = [];
+  let notablePlayers: NotablePlayer[] = [];
 
   try {
     const results = await Promise.allSettled([
       getSchoolTeamSeasons(school.id, sport),
       getSchoolChampionships(school.id, sport),
+      getSchoolNotablePlayers(school.id, sport, 10),
     ]);
 
     if (results[0].status === "fulfilled") teamSeasons = results[0].value;
     if (results[1].status === "fulfilled") championships = results[1].value;
+    if (results[2].status === "fulfilled") notablePlayers = results[2].value;
 
     if (results[0].status === "rejected") captureError(results[0].reason, { sport, slug, fetch: "getSchoolTeamSeasons" });
     if (results[1].status === "rejected") captureError(results[1].reason, { sport, slug, fetch: "getSchoolChampionships" });
+    if (results[2].status === "rejected") captureError(results[2].reason, { sport, slug, fetch: "getSchoolNotablePlayers" });
   } catch (error) {
     captureError(error, { sport, slug, context: "data_fetching" });
   }
@@ -236,6 +242,16 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Data Source Badge */}
+            <div className="flex flex-wrap items-center gap-3">
+              <DataSourceBadge
+                source="Ted Silary Archives + MaxPreps"
+                lastUpdated="2026-03-10"
+                confidence="verified"
+                detail="School historical data sourced from Ted Silary's archives and MaxPreps. Season records, championships, and statistics are aggregated from verified sources."
+              />
+            </div>
+
             {/* Dynasty Timeline */}
             {teamSeasons.length > 1 && (
               <ClientDynastyTimeline
@@ -400,12 +416,49 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               </div>
             </div>
 
-            {/* Notable Alumni */}
+            {/* Notable Players */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
               <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
-                Notable Alumni
+                Notable Players
               </h3>
-              <p className="text-sm text-gray-400">Notable players from {school.name} coming soon.</p>
+              {notablePlayers.length > 0 ? (
+                <ul className="space-y-3">
+                  {notablePlayers.map((player: NotablePlayer) => (
+                    <li key={player.id} className="text-sm">
+                      <Link
+                        href={`/${sport}/players/${player.slug}`}
+                        className="font-medium hover:underline"
+                        style={{ color: "var(--psp-blue, #3b82f6)" }}
+                      >
+                        {player.name}
+                      </Link>
+                      <div className="text-xs" style={{ color: "var(--psp-gray-500)" }}>
+                        {player.positions && (
+                          <span>
+                            {Array.isArray(player.positions)
+                              ? player.positions.join(", ")
+                              : player.positions}{" "}
+                            {player.graduation_year && `• Class of ${player.graduation_year}`}
+                          </span>
+                        )}
+                      </div>
+                      {(player.pro_team || player.college) && (
+                        <div className="text-xs mt-1" style={{ color: "var(--psp-gold)" }}>
+                          {player.pro_team && (
+                            <span>
+                              {player.pro_league ? `${player.pro_league} • ` : ""}{player.pro_team}
+                            </span>
+                          )}
+                          {player.pro_team && player.college && " • "}
+                          {player.college && !player.pro_team && <span>{player.college}</span>}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-400">No notable players with next-level data yet.</p>
+              )}
             </div>
 
             <RelatedArticles entityType="school" entityId={school.id} />

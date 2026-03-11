@@ -51,6 +51,8 @@ export {
   getSchoolBySlug,
   getSchoolTeamSeasons,
   getSchoolChampionships,
+  getSchoolNotablePlayers,
+  type NotablePlayer,
 } from "./schools";
 
 // School hub functions

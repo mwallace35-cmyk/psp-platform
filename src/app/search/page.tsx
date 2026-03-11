@@ -88,6 +88,17 @@ export default async function SearchPage({
     other: { label: "Other", icon: "📋" },
   };
 
+  // Map sport names to URL slugs
+  const sportSlugMap: Record<string, string> = {
+    'Football': 'football',
+    'Basketball': 'basketball',
+    'Baseball': 'baseball',
+    'Track & Field': 'track-field',
+    'Lacrosse': 'lacrosse',
+    'Wrestling': 'wrestling',
+    'Soccer': 'soccer',
+  };
+
   return (
     <main id="main-content">
       <BreadcrumbJsonLd items={[
@@ -136,23 +147,26 @@ export default async function SearchPage({
             </h3>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
               {risingPrograms.length > 0 ? (
-                risingPrograms.map((school, i) => (
-                  <Link key={school.id} href={`/football/schools/${school.slug}`} style={{ textDecoration: "none" }}>
-                    <div style={{
-                      background: "rgba(255,255,255,.08)",
-                      borderRadius: 6,
-                      padding: "14px 16px",
-                      borderLeft: `3px solid var(--psp-gold)`,
-                      transition: ".15s",
-                    }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-                        <span>{school.sport}</span>
-                        <span style={{ fontWeight: 700, fontSize: 13, color: "#fff" }}>{school.name}</span>
+                risingPrograms.map((school, i) => {
+                  const sportSlug = sportSlugMap[school.sportName] || 'football';
+                  return (
+                    <Link key={school.id} href={`/${sportSlug}/schools/${school.slug}`} style={{ textDecoration: "none" }}>
+                      <div style={{
+                        background: "rgba(255,255,255,.08)",
+                        borderRadius: 6,
+                        padding: "14px 16px",
+                        borderLeft: `3px solid var(--psp-gold)`,
+                        transition: ".15s",
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                          <span>{school.sport}</span>
+                          <span style={{ fontWeight: 700, fontSize: 13, color: "#fff" }}>{school.name}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,.6)" }}>Recent champion</div>
                       </div>
-                      <div style={{ fontSize: 11, color: "rgba(255,255,255,.6)" }}>Recent champion</div>
-                    </div>
-                  </Link>
-                ))
+                    </Link>
+                  );
+                })
               ) : (
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", gridColumn: "1 / -1", padding: "10px 0" }}>
                   No recent champions yet

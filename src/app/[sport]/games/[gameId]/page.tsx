@@ -59,10 +59,12 @@ function FootballBoxScore({
   stats,
   homeSchoolId,
   awaySchoolId,
+  sport,
 }: {
   stats: GamePlayerStat[];
   homeSchoolId: number | null;
   awaySchoolId: number | null;
+  sport: string;
 }) {
   const homeStats = stats.filter((s) => s.school_id === homeSchoolId);
   const awayStats = stats.filter((s) => s.school_id === awaySchoolId);
@@ -106,7 +108,7 @@ function FootballBoxScore({
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
                           <Link
-                            href={`/football/players/${s.players.slug}`}
+                            href={`/${sport}/players/${s.players.slug}`}
                             className="text-[var(--psp-blue)] hover:underline"
                           >
                             {s.player_name}
@@ -151,7 +153,7 @@ function FootballBoxScore({
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
                           <Link
-                            href={`/football/players/${s.players.slug}`}
+                            href={`/${sport}/players/${s.players.slug}`}
                             className="text-[var(--psp-blue)] hover:underline"
                           >
                             {s.player_name}
@@ -196,7 +198,7 @@ function FootballBoxScore({
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
                           <Link
-                            href={`/football/players/${s.players.slug}`}
+                            href={`/${sport}/players/${s.players.slug}`}
                             className="text-[var(--psp-blue)] hover:underline"
                           >
                             {s.player_name}
@@ -252,12 +254,14 @@ function BasketballBoxScore({
   awaySchoolId,
   homeScore,
   awayScore,
+  sport,
 }: {
   stats: GamePlayerStat[];
   homeSchoolId: number | null;
   awaySchoolId: number | null;
   homeScore: number | null;
   awayScore: number | null;
+  sport: string;
 }) {
   const homeStats = stats.filter((s) => s.school_id === homeSchoolId);
   const awayStats = stats.filter((s) => s.school_id === awaySchoolId);
@@ -295,7 +299,7 @@ function BasketballBoxScore({
                   <td className="py-1.5 pr-2">
                     {s.players?.slug ? (
                       <Link
-                        href={`/basketball/players/${s.players.slug}`}
+                        href={`/${sport}/players/${s.players.slug}`}
                         className="text-[var(--psp-blue)] hover:underline"
                       >
                         {s.player_name}
@@ -485,6 +489,7 @@ export default async function GameDetailPage({
                 stats={boxScore}
                 homeSchoolId={game.home_school_id}
                 awaySchoolId={game.away_school_id}
+                sport={sport}
               />
             ) : sport === "basketball" ? (
               <BasketballBoxScore
@@ -493,6 +498,7 @@ export default async function GameDetailPage({
                 awaySchoolId={game.away_school_id}
                 homeScore={game.home_score}
                 awayScore={game.away_score}
+                sport={sport}
               />
             ) : (
               <p className="text-gray-500 text-sm">
