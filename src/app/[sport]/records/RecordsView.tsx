@@ -175,36 +175,58 @@ export default function RecordsView({
     });
   }, [allComputedRecords, era]);
 
-  // Fix #1: Extract unique stat names for the active category
+  // Fix #1: Extract unique stat names for the active category, filtered by scope
   const statsInCategory = useMemo(() => {
-    const records = computedInEra.filter((r) => r.stat_category === initialCategory);
+    const records = computedInEra.filter((r) => {
+      if (r.stat_category !== initialCategory) return false;
+      // If user selected a computed scope (career/season), filter by it
+      if (activeScope === "career" || activeScope === "season") {
+        return r.scope === activeScope;
+      }
+      return true;
+    });
     const statNames = [...new Set(records.map((r) => r.stat_name))];
     return statNames.sort();
-  }, [computedInEra, initialCategory]);
+  }, [computedInEra, initialCategory, activeScope]);
 
   // Initialize active stat when category changes
   const activeStatForDisplay = activeStat || statsInCategory[0] || null;
 
-  // Fix #1: Filter leaderboard by active stat (one stat at a time)
+  // Fix #1: Filter leaderboard by active stat AND scope
   const leaderboardRecords = useMemo(() => {
-    const records = computedInEra.filter(
-      (r) => r.stat_category === initialCategory && r.stat_name === activeStatForDisplay
-    );
+    const records = computedInEra.filter((r) => {
+      if (r.stat_category !== initialCategory) return false;
+      if (r.stat_name !== activeStatForDisplay) return false;
+      // If user selected a computed scope (career/season), filter by it
+      if (activeScope === "career" || activeScope === "season") {
+        return r.scope === activeScope;
+      }
+      return true;
+    });
     return records.sort((a, b) => a.rank - b.rank).slice(0, 25);
-  }, [computedInEra, initialCategory, activeStatForDisplay]);
+  }, [computedInEra, initialCategory, activeStatForDisplay, activeScope]);
 
-  // Get normalized scopes for current category from curated records
+  // Get normalized scopes for current category from BOTH curated and computed records
   const availableScopes = useMemo(() => {
     const scopes = new Set<string>();
+    // Scopes from curated records
     recordsInEra
       .filter((r) => r.category === initialCategory)
       .forEach((r) => {
         if (r.scope) {
-          scopes.add(normalizeScope(r.scope)); // Fix #2: Normalize scope
+          scopes.add(normalizeScope(r.scope));
+        }
+      });
+    // Scopes from computed records (career / season)
+    computedInEra
+      .filter((r) => r.stat_category === initialCategory)
+      .forEach((r) => {
+        if (r.scope) {
+          scopes.add(r.scope);
         }
       });
     return Array.from(scopes).sort();
-  }, [recordsInEra, initialCategory]);
+  }, [recordsInEra, computedInEra, initialCategory]);
 
   // Initialize scope on category change
   const currentScope = activeScope || (availableScopes.length > 0 ? availableScopes[0] : null);
@@ -482,7 +504,7 @@ export default function RecordsView({
                   return (
                     <button
                       key={scope}
-                      onClick={() => setActiveScope(scope)}
+                      onClick={() => { setActiveScope(scope); setActiveStat(null); }}
                       style={{
                         padding: "6px 12px",
                         fontSize: 12,
