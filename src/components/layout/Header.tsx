@@ -27,24 +27,34 @@ const MAIN_SPORTS = [
   { href: "/baseball", label: "Baseball", color: "var(--base)" },
 ];
 
-const MORE_ITEMS = [
-  { href: "/pulse", label: "The Pulse", type: "page" },
-  { href: "/football/schedule", label: "Schedule", type: "page" },
-  { href: "/articles", label: "News", type: "page" },
-  { href: "/coaches", label: "Coaches", type: "page" },
-  { href: "/recruiting", label: "Recruiting", type: "page" },
-];
-
-const MOBILE_EXTRA = [
+const MINOR_SPORTS = [
   { href: "/track-field", label: "Track & Field", color: "var(--track)", type: "sport" },
   { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)", type: "sport" },
   { href: "/wrestling", label: "Wrestling", color: "var(--wrest)", type: "sport" },
   { href: "/soccer", label: "Soccer", color: "var(--soccer)", type: "sport" },
 ];
 
+const CONTENT_ITEMS = [
+  { href: "/pulse", label: "The Pulse", type: "page" },
+  { href: "/articles", label: "News", type: "page" },
+  { href: "/recruiting", label: "Recruiting", type: "page" },
+];
+
+const DATA_TOOLS = [
+  { href: "/compare", label: "Compare Players", type: "page" },
+  { href: "/glossary", label: "Glossary", type: "page" },
+  { href: "/challenge", label: "Stats Challenge", type: "page" },
+];
+
+const EXPLORE_ITEMS = [
+  { href: "/coaches", label: "Coaches", type: "page" },
+  { href: "/pulse/our-guys", label: "Our Guys", type: "page" },
+  { href: "/philly-everywhere", label: "Philly Everywhere", type: "page" },
+];
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const announcementRef = useRef<HTMLDivElement>(null);
@@ -53,17 +63,19 @@ export default function Header() {
   const isActive = useCallback((href: string) => pathname === href || pathname.startsWith(href + "/"), [pathname]);
 
   const handleMobileToggle = useCallback(() => setMobileOpen(prev => !prev), []);
-  const handleMoreOpen = useCallback(() => setMoreOpen(prev => !prev), []);
-  const handleMoreClose = useCallback(() => setMoreOpen(false), []);
+  const handleDropdownToggle = useCallback((name: string) => {
+    setOpenDropdown(prev => prev === name ? null : name);
+  }, []);
+  const handleDropdownClose = useCallback(() => setOpenDropdown(null), []);
 
   // Update aria-live announcement when dropdowns change
   useEffect(() => {
-    if (moreOpen) {
-      setAnnouncement("More menu opened with additional links");
+    if (openDropdown) {
+      setAnnouncement(`${openDropdown} menu opened`);
     } else {
       setAnnouncement("Menu closed");
     }
-  }, [moreOpen]);
+  }, [openDropdown]);
 
   // Focus trap for mobile menu
   useEffect(() => {
@@ -142,6 +154,7 @@ export default function Header() {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-2">
+            {/* Main Sports */}
             {MAIN_SPORTS.map((sport) => (
               <Link
                 key={sport.href}
@@ -154,39 +167,85 @@ export default function Header() {
               </Link>
             ))}
 
-            {/* More Dropdown */}
+            {/* More Sports Dropdown */}
             <div className="nav-dd">
               <button
                 className="nav-link"
                 style={{ background: "none", border: "none", cursor: "pointer" }}
                 aria-haspopup="menu"
-                aria-expanded={moreOpen}
-                aria-label="More menu"
+                aria-expanded={openDropdown === "sports"}
+                aria-label="More sports menu"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    handleMoreOpen();
+                    handleDropdownToggle("sports");
                   } else if (e.key === "Escape") {
-                    handleMoreClose();
+                    handleDropdownClose();
                   }
                 }}
-                onClick={handleMoreOpen}
-                onBlur={handleMoreClose}
+                onClick={() => handleDropdownToggle("sports")}
+                onBlur={handleDropdownClose}
               >
-                More &#9662;
+                More Sports &#9662;
               </button>
               <div
                 className="dd-menu"
                 role="menu"
-                aria-label="More menu"
-                style={{ display: moreOpen ? "block" : undefined }}
+                aria-label="More sports menu"
+                style={{ display: openDropdown === "sports" ? "block" : undefined }}
                 onKeyDown={(e) => {
                   if (e.key === "Escape") {
-                    setMoreOpen(false);
+                    handleDropdownClose();
                   }
                 }}
               >
-                {MORE_ITEMS.map((item) => (
+                {MINOR_SPORTS.map((item) => (
+                  <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
+                    <span className="nav-dot" style={{ background: item.color }} />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Schools */}
+            <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`} aria-current={isActive("/schools") ? "page" : undefined}>
+              Schools
+            </Link>
+
+            {/* Content Dropdown */}
+            <div className="nav-dd">
+              <button
+                className="nav-link"
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "content"}
+                aria-label="Content menu"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleDropdownToggle("content");
+                  } else if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+                onClick={() => handleDropdownToggle("content")}
+                onBlur={handleDropdownClose}
+              >
+                Content &#9662;
+              </button>
+              <div
+                className="dd-menu"
+                role="menu"
+                aria-label="Content menu"
+                style={{ display: openDropdown === "content" ? "block" : undefined }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+              >
+                {CONTENT_ITEMS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
                     {item.label}
                   </Link>
@@ -194,13 +253,85 @@ export default function Header() {
               </div>
             </div>
 
-            <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`} aria-current={isActive("/schools") ? "page" : undefined}>
-              Schools
-            </Link>
+            {/* Data & Tools Dropdown */}
+            <div className="nav-dd">
+              <button
+                className="nav-link"
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "tools"}
+                aria-label="Data tools menu"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleDropdownToggle("tools");
+                  } else if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+                onClick={() => handleDropdownToggle("tools")}
+                onBlur={handleDropdownClose}
+              >
+                Tools &#9662;
+              </button>
+              <div
+                className="dd-menu"
+                role="menu"
+                aria-label="Data tools menu"
+                style={{ display: openDropdown === "tools" ? "block" : undefined }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+              >
+                {DATA_TOOLS.map((item) => (
+                  <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-            <Link href="/search" className="nav-link" aria-label="Search players and teams" aria-current={isActive("/search") ? "page" : undefined}>
-              Search
-            </Link>
+            {/* Explore Dropdown */}
+            <div className="nav-dd">
+              <button
+                className="nav-link"
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "explore"}
+                aria-label="Explore menu"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleDropdownToggle("explore");
+                  } else if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+                onClick={() => handleDropdownToggle("explore")}
+                onBlur={handleDropdownClose}
+              >
+                Explore &#9662;
+              </button>
+              <div
+                className="dd-menu"
+                role="menu"
+                aria-label="Explore menu"
+                style={{ display: openDropdown === "explore" ? "block" : undefined }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+              >
+                {EXPLORE_ITEMS.map((item) => (
+                  <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             <Link href="/signup" className="nav-link" style={{ color: 'var(--psp-gold)' }} aria-current={isActive("/signup") ? "page" : undefined}>
               Sign Up
@@ -249,7 +380,7 @@ export default function Header() {
                   {sport.label}
                 </Link>
               ))}
-              {MOBILE_EXTRA.map((item) => (
+              {MINOR_SPORTS.map((item) => (
                 <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
                   <span className="nav-dot" style={{ background: item.color }} />
                   {item.label}
@@ -257,22 +388,35 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Pages Section */}
+            {/* Schools Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Pages</div>
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Data</div>
               <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
-              {MORE_ITEMS.map((item) => (
+              {DATA_TOOLS.map((item) => (
                 <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
                   {item.label}
                 </Link>
               ))}
             </div>
 
-            {/* Tools Section */}
+            {/* Content Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Tools</div>
-              <Link href="/search" onClick={handleMobileToggle}>Search</Link>
-              <Link href="/glossary" onClick={handleMobileToggle}>Glossary</Link>
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Content</div>
+              {CONTENT_ITEMS.map((item) => (
+                <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Explore Section */}
+            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Explore</div>
+              {EXPLORE_ITEMS.map((item) => (
+                <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
+                  {item.label}
+                </Link>
+              ))}
             </div>
 
             {/* Settings Section */}

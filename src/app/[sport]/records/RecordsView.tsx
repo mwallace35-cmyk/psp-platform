@@ -261,6 +261,63 @@ export default function RecordsView({
     return counts;
   }, [categories, recordsInEra, computedInEra]);
 
+  // Check if there's any data at all
+  const hasAnyData = curatedRecords.length > 0 || allComputedRecords.length > 0;
+
+  if (!hasAnyData) {
+    return (
+      <div style={{
+        textAlign: "center",
+        padding: "64px 24px",
+        borderRadius: 12,
+        border: "2px solid rgba(240, 165, 0, 0.2)",
+        background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)",
+      }}>
+        <div style={{ fontSize: 64, marginBottom: 16 }}>🏆</div>
+        <h3 style={{
+          fontSize: 24,
+          fontWeight: "bold",
+          marginBottom: 12,
+          color: "#fff",
+          fontFamily: "Bebas Neue, sans-serif",
+          letterSpacing: "0.05em",
+        }}>
+          Coming Soon
+        </h3>
+        <p style={{
+          fontSize: 18,
+          color: "#d1d5db",
+          marginBottom: 24,
+          maxWidth: 500,
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}>
+          We're building out {sportName.toLowerCase()} records. Check back soon!
+        </p>
+        <Link
+          href={`/${sport}`}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "12px 24px",
+            borderRadius: 8,
+            fontSize: 14,
+            fontWeight: 600,
+            background: sportColor,
+            color: "var(--psp-navy, #0a1628)",
+            textDecoration: "none",
+            transition: "opacity 200ms ease",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+        >
+          Back to {sportName} Hub
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Record of the Day Hero */}

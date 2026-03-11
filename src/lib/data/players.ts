@@ -171,3 +171,57 @@ export async function getPlayerStats(playerId: number, sportId: string) {
     { playerId, sportId }
   );
 }
+
+/**
+ * Get cross-sport player entries (same player in different sports)
+ */
+export async function getCrossSportPlayers(playerName: string, schoolId: number) {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+
+          // Find all players with same name and school in different sports
+          const { data } = await supabase
+            .from("players")
+            .select(
+              `
+              id,
+              name,
+              slug,
+              primary_school_id,
+              schools:schools!players_primary_school_id_fkey(name, slug),
+              football_player_seasons!left(id),
+              basketball_player_seasons!left(id),
+              baseball_player_seasons!left(id)
+              `
+            )
+            .eq("name", playerName)
+            .eq("primary_school_id", schoolId)
+            .is("deleted_at", null);
+
+          if (!data) return [];
+
+          // Transform data to include sports played
+          return data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            school_id: p.primary_school_id,
+            school: p.schools,
+            sports: [
+              p.football_player_seasons && p.football_player_seasons.length > 0 ? "football" : null,
+              p.basketball_player_seasons && p.basketball_player_seasons.length > 0 ? "basketball" : null,
+              p.baseball_player_seasons && p.baseball_player_seasons.length > 0 ? "baseball" : null,
+            ].filter(Boolean) as string[],
+          }));
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_CROSS_SPORT_PLAYERS",
+    { playerName, schoolId }
+  );
+}

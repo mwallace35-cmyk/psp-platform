@@ -41,6 +41,7 @@ export {
   getBaseballPlayerStats,
   getPlayerAwards,
   getPlayerStats,
+  getCrossSportPlayers,
 } from "./players";
 
 // School functions
@@ -166,3 +167,11 @@ export {
   type ScheduleStrength,
   type NextLevelAlumnus,
 } from "./preview";
+
+// Awards and All-City functions
+export {
+  getAllCityByYear,
+  getAllCitySummary,
+  type AwardRecord,
+  type AllCityYear,
+} from "./awards";

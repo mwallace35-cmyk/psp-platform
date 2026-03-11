@@ -442,36 +442,45 @@ export default async function LeaderboardPage({
             />
           </div>
         ) : (
-          <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
-            <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-lg font-medium mb-4" style={{ color: "var(--psp-navy)" }}>
-              {isCareer ? "Career " : ""}{statConfig.label} data is being collected
-            </h3>
-            <p className="text-sm mb-6">
-              We&apos;re working on gathering {isCareer ? "career " : ""}{statConfig.label.toLowerCase()} statistics. Check back soon!
-            </p>
+          <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
+            <div className="text-center">
+              <div className="text-6xl mb-4">📊</div>
+              <h3 className="text-2xl font-bold mb-3 text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                Coming Soon
+              </h3>
+              <p className="text-lg text-gray-300 mb-6 max-w-md mx-auto">
+                We&apos;re building out {isCareer ? "career " : ""}{statConfig.label.toLowerCase()} leaderboards for {meta.name.toLowerCase()}. Check back soon!
+              </p>
+              <Link
+                href={`/${sport}`}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition"
+                style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
+              >
+                Back to {meta.name} Hub
+              </Link>
 
-            {allStats.filter(s => isCareer ? s.hasCareerData : s.hasData !== false).length > 0 && (
-              <div className="bg-gray-50 rounded-lg p-6 inline-block">
-                <p className="text-sm font-medium mb-3" style={{ color: "var(--psp-navy)" }}>
-                  In the meantime, check out our available leaderboards:
-                </p>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {allStats
-                    .filter(s => isCareer ? s.hasCareerData : s.hasData !== false)
-                    .map(s => (
-                      <Link
-                        key={s.key}
-                        href={`/${sport}/leaderboards/${s.key}${isCareer ? "?mode=career" : ""}`}
-                        className="px-3 py-2 rounded bg-white border text-sm hover:bg-gray-100 transition-colors"
-                        style={{ borderColor: "var(--psp-navy)", color: "var(--psp-navy)", fontWeight: "500" }}
-                      >
-                        {s.label}
-                      </Link>
-                    ))}
+              {allStats.filter(s => isCareer ? s.hasCareerData : s.hasData !== false).length > 0 && (
+                <div className="mt-8 pt-8 border-t" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+                  <p className="text-sm font-medium mb-4 text-gray-300">
+                    In the meantime, check out our available leaderboards:
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {allStats
+                      .filter(s => isCareer ? s.hasCareerData : s.hasData !== false)
+                      .map(s => (
+                        <Link
+                          key={s.key}
+                          href={`/${sport}/leaderboards/${s.key}${isCareer ? "?mode=career" : ""}`}
+                          className="px-3 py-2 rounded text-sm font-medium transition-colors hover:opacity-90"
+                          style={{ background: "rgba(240, 165, 0, 0.15)", color: "var(--psp-gold)", border: "1px solid rgba(240, 165, 0, 0.3)" }}
+                        >
+                          {s.label}
+                        </Link>
+                      ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
 

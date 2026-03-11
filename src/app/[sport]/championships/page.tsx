@@ -261,10 +261,23 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             )}
 
             {championships.length === 0 && (
-              <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
-                <div className="text-4xl mb-4">🏆</div>
-                <h3 className="text-lg font-medium mb-2 text-white">No championship data yet</h3>
-                <p className="text-sm">Championship records are being compiled.</p>
+              <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
+                <div className="text-center">
+                  <div className="text-6xl mb-4">🏆</div>
+                  <h3 className="text-2xl font-bold mb-3 text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                    Coming Soon
+                  </h3>
+                  <p className="text-lg text-gray-300 mb-6 max-w-md mx-auto">
+                    We're building out {meta.name.toLowerCase()} championship records. Check back soon!
+                  </p>
+                  <Link
+                    href={`/${sport}`}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition"
+                    style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
+                  >
+                    Back to {meta.name} Hub
+                  </Link>
+                </div>
               </div>
             )}
           </div>

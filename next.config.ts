@@ -159,12 +159,12 @@ let config: NextConfig = {
       },
       {
         source: "/recruiting/",
-        destination: "/football",
+        destination: "/recruiting",
         permanent: true,
       },
       {
         source: "/next-level/",
-        destination: "/football",
+        destination: "/next-level",
         permanent: true,
       },
     ];

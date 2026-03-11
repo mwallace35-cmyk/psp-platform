@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
+import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
@@ -92,13 +92,14 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     .filter((id): id is number => id != null);
 
   // Parallelize remaining fetches
-  const [awards, gameLog, teamGames] = await Promise.all([
+  const [awards, gameLog, teamGames, crossSportPlayers] = await Promise.all([
     getPlayerAwards(player.id),
     (sport === "football" || sport === "basketball") ? getPlayerGameLog(player.id) : Promise.resolve([]),
     (sport === "football" || sport === "basketball") && player.primary_school_id && seasonIds.length > 0
       ? getPlayerTeamGames(player.primary_school_id, sport, seasonIds)
       : Promise.resolve([]),
-  ]) as [Award[], PlayerGameLog[], TeamGame[]];
+    player.primary_school_id ? getCrossSportPlayers(player.name, player.primary_school_id) : Promise.resolve([]),
+  ]) as [Award[], PlayerGameLog[], TeamGame[], any[]];
 
   // Football career totals
   const footballTotals = sport === "football" && stats.length > 0 ? (() => {
@@ -695,6 +696,34 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                     </div>
                   )}
                 </dl>
+              </div>
+            )}
+
+            {/* Cross-sport links */}
+            {crossSportPlayers && crossSportPlayers.length > 0 && (
+              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
+                <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+                  Also Plays
+                </h3>
+                <div className="space-y-3">
+                  {crossSportPlayers
+                    .filter((cp: any) => cp.sports && cp.sports.length > 0 && cp.sports.includes(sport) === false)
+                    .map((cp: any) => (
+                      <div key={`${cp.id}-${cp.sports[0]}`}>
+                        {cp.sports.map((s: string) => (
+                          <Link
+                            key={s}
+                            href={`/${s}/players/${cp.slug}`}
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-opacity hover:opacity-80 mr-2 mb-2"
+                            style={{ background: "rgba(240, 165, 0, 0.15)", color: "var(--psp-gold)", border: "1px solid rgba(240, 165, 0, 0.3)" }}
+                          >
+                            <span>{SPORT_META[s as keyof typeof SPORT_META]?.emoji || ""}</span>
+                            {SPORT_META[s as keyof typeof SPORT_META]?.name || s}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                </div>
               </div>
             )}
 

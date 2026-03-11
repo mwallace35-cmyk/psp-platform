@@ -42,6 +42,7 @@ export default function Footer() {
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li>Data compiled by <strong style={{ color: "var(--psp-gold)" }}>Ted Silary</strong></li>
             <li>Built by Mike Wallace</li>
+            <li><Link href="/feed">RSS Feed</Link></li>
             <li><Link href="/admin">Admin</Link></li>
           </ul>
         </div>

@@ -48,6 +48,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     });
 
+    // All-City pages (for sports that have all-city data)
+    entries.push({
+      url: `${baseUrl}/${sport}/all-city`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+
     // Leaderboard stat categories
     const statCategories =
       sport === "football"
@@ -71,7 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all entities in parallel using Promise.all with individual error handling
   try {
     const results = await Promise.allSettled([
-      // Fetch all schools in one query
+      // Fetch all schools with their sports
       supabase.from("team_seasons").select("sport_id, schools(slug)"),
       // Fetch all player IDs from sport-specific tables
       supabase
@@ -93,6 +101,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .select("slug, updated_at")
         .eq("status", "published")
         .order("slug"),
+      // Fetch all games with box scores
+      supabase
+        .from("games")
+        .select("id, sport_id")
+        .not("game_player_stats_count", "is", null),
     ]);
 
     const [
@@ -103,27 +116,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       miscPlayersSettled,
       coachesSettled,
       articlesSettled,
+      gamesSettled,
     ] = results;
 
-    // Process schools with error handling
+    // Process schools with error handling — group by sport
     if (schoolsSettled.status === "fulfilled" && schoolsSettled.value.data) {
       const schoolsResult = schoolsSettled.value;
-      const uniqueSlugs = new Set<string>();
-      const schoolsData = schoolsResult.data as unknown as Array<{ schools: { slug: string } | null }>;
+      const schoolsBySport = new Map<string, Set<string>>();
+      const schoolsData = schoolsResult.data as unknown as Array<{ sport_id: string; schools: { slug: string } | null }>;
+
       for (const ts of schoolsData) {
         const schoolData = ts.schools;
         if (schoolData?.slug) {
-          uniqueSlugs.add(schoolData.slug);
+          if (!schoolsBySport.has(ts.sport_id)) {
+            schoolsBySport.set(ts.sport_id, new Set<string>());
+          }
+          schoolsBySport.get(ts.sport_id)!.add(schoolData.slug);
         }
       }
 
-      for (const slug of uniqueSlugs) {
-        entries.push({
-          url: `${baseUrl}/football/schools/${slug}`,
-          lastModified: new Date(),
-          changeFrequency: "monthly",
-          priority: 0.8,
-        });
+      // Add school pages for each sport
+      for (const [sport, slugs] of schoolsBySport.entries()) {
+        for (const slug of slugs) {
+          entries.push({
+            url: `${baseUrl}/${sport}/schools/${slug}`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.8,
+          });
+        }
       }
     } else if (schoolsSettled.status === "rejected") {
       captureError(schoolsSettled.reason, { context: "sitemap", fetch: "schools" });
@@ -268,6 +289,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
       captureError(articlesSettled.reason, { context: "sitemap", fetch: "articles" });
     }
+
+    // Process games with box scores with error handling
+    if (gamesSettled.status === "fulfilled" && gamesSettled.value.data) {
+      for (const game of gamesSettled.value.data as Array<{ id: number; sport_id: string }>) {
+        entries.push({
+          url: `${baseUrl}/${game.sport_id}/games/${game.id}`,
+          lastModified: new Date(),
+          changeFrequency: "monthly",
+          priority: 0.5,
+        });
+      }
+    } else if (gamesSettled.status === "rejected") {
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to fetch games for sitemap:", gamesSettled.reason);
+      }
+      captureError(gamesSettled.reason, { context: "sitemap", fetch: "games" });
+    }
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error("Error during sitemap generation:", error);
@@ -277,22 +315,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Public content pages
   entries.push(
+    // Main content pages
     {
       url: `${baseUrl}/articles`,
       lastModified: new Date(),
       changeFrequency: "daily",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/pulse`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/potw`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
       priority: 0.8,
     },
     {
@@ -306,6 +333,115 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.6,
+    },
+    // Pulse / community pages
+    {
+      url: `${baseUrl}/pulse`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/pulse/our-guys`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/pulse/calendar`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/pulse/forum`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/pulse/rankings`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/pulse/outside-the-215`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
+    // Awards & recognition pages
+    {
+      url: `${baseUrl}/potw`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    // Information & reference pages
+    {
+      url: `${baseUrl}/glossary`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/schools`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    // Tools & features
+    {
+      url: `${baseUrl}/compare`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    // Community & engagement
+    {
+      url: `${baseUrl}/community`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/our-guys`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    // Content / special features
+    {
+      url: `${baseUrl}/recruiting`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/next-level`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/philly-everywhere`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/challenge`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    // Authentication
+    {
+      url: `${baseUrl}/signup`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.3,
     }
   );
 

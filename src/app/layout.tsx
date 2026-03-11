@@ -71,6 +71,9 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable}`}>
       <head>
+        {/* Feed autodiscovery */}
+        <link rel="alternate" type="application/rss+xml" title="PhillySportsPack RSS" href="/feed" />
+        <link rel="alternate" type="application/atom+xml" title="PhillySportsPack Atom" href="/rss" />
         {/* Preconnect to Google Fonts for faster font loading */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
