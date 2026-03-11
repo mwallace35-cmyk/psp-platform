@@ -28,28 +28,35 @@ const MAIN_SPORTS = [
 ];
 
 const MINOR_SPORTS = [
-  { href: "/track-field", label: "Track & Field", color: "var(--track)", type: "sport" },
-  { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)", type: "sport" },
-  { href: "/wrestling", label: "Wrestling", color: "var(--wrest)", type: "sport" },
-  { href: "/soccer", label: "Soccer", color: "var(--soccer)", type: "sport" },
+  { href: "/track-field", label: "Track & Field", color: "var(--track)" },
+  { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)" },
+  { href: "/wrestling", label: "Wrestling", color: "var(--wrest)" },
+  { href: "/soccer", label: "Soccer", color: "var(--soccer)" },
+];
+
+const PULSE_ITEMS = [
+  { href: "/pulse", label: "The Pulse Hub" },
+  { href: "/potw", label: "Player of the Week" },
+  { href: "/pulse/calendar", label: "Game Calendar" },
+  { href: "/pulse/forum", label: "Forum" },
+  { href: "/pulse/rankings", label: "Power Rankings" },
+  { href: "/pulse/our-guys", label: "Our Guys" },
+  { href: "/pulse/outside-the-215", label: "Outside the 215" },
 ];
 
 const CONTENT_ITEMS = [
-  { href: "/pulse", label: "The Pulse", type: "page" },
-  { href: "/articles", label: "News", type: "page" },
-  { href: "/recruiting", label: "Recruiting", type: "page" },
+  { href: "/articles", label: "News" },
+  { href: "/recruiting", label: "Recruiting" },
+  { href: "/next-level", label: "Next Level (Pro)" },
+  { href: "/coaches", label: "Coaches" },
+  { href: "/philly-everywhere", label: "Philly Everywhere" },
 ];
 
 const DATA_TOOLS = [
-  { href: "/compare", label: "Compare Players", type: "page" },
-  { href: "/glossary", label: "Glossary", type: "page" },
-  { href: "/challenge", label: "Stats Challenge", type: "page" },
-];
-
-const EXPLORE_ITEMS = [
-  { href: "/coaches", label: "Coaches", type: "page" },
-  { href: "/pulse/our-guys", label: "Our Guys", type: "page" },
-  { href: "/philly-everywhere", label: "Philly Everywhere", type: "page" },
+  { href: "/search", label: "Search" },
+  { href: "/compare", label: "Compare Players" },
+  { href: "/challenge", label: "Stats Challenge" },
+  { href: "/glossary", label: "Glossary" },
 ];
 
 export default function Header() {
@@ -213,6 +220,46 @@ export default function Header() {
               Schools
             </Link>
 
+            {/* The Pulse Dropdown */}
+            <div className="nav-dd">
+              <button
+                className="nav-link"
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "pulse"}
+                aria-label="The Pulse menu"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleDropdownToggle("pulse");
+                  } else if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+                onClick={() => handleDropdownToggle("pulse")}
+                onBlur={handleDropdownClose}
+              >
+                The Pulse &#9662;
+              </button>
+              <div
+                className="dd-menu"
+                role="menu"
+                aria-label="The Pulse menu"
+                style={{ display: openDropdown === "pulse" ? "block" : undefined }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+              >
+                {PULSE_ITEMS.map((item) => (
+                  <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
             {/* Content Dropdown */}
             <div className="nav-dd">
               <button
@@ -293,46 +340,6 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Explore Dropdown */}
-            <div className="nav-dd">
-              <button
-                className="nav-link"
-                style={{ background: "none", border: "none", cursor: "pointer" }}
-                aria-haspopup="menu"
-                aria-expanded={openDropdown === "explore"}
-                aria-label="Explore menu"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleDropdownToggle("explore");
-                  } else if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
-                onClick={() => handleDropdownToggle("explore")}
-                onBlur={handleDropdownClose}
-              >
-                Explore &#9662;
-              </button>
-              <div
-                className="dd-menu"
-                role="menu"
-                aria-label="Explore menu"
-                style={{ display: openDropdown === "explore" ? "block" : undefined }}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
-              >
-                {EXPLORE_ITEMS.map((item) => (
-                  <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
             <Link href="/signup" className="nav-link" style={{ color: 'var(--psp-gold)' }} aria-current={isActive("/signup") ? "page" : undefined}>
               Sign Up
             </Link>
@@ -388,11 +395,10 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Schools Section */}
+            {/* The Pulse Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Data</div>
-              <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
-              {DATA_TOOLS.map((item) => (
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>The Pulse</div>
+              {PULSE_ITEMS.map((item) => (
                 <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
                   {item.label}
                 </Link>
@@ -409,10 +415,11 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Explore Section */}
+            {/* Data & Tools Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Explore</div>
-              {EXPLORE_ITEMS.map((item) => (
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Data &amp; Tools</div>
+              <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
+              {DATA_TOOLS.map((item) => (
                 <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
                   {item.label}
                 </Link>
