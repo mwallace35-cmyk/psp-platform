@@ -112,7 +112,7 @@ function FootballBoxScore({
                             {s.player_name}
                           </Link>
                         ) : (
-                          s.player_name
+                          <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
                       <td className="text-center py-1.5 px-2 text-gray-400">
@@ -157,7 +157,7 @@ function FootballBoxScore({
                             {s.player_name}
                           </Link>
                         ) : (
-                          s.player_name
+                          <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
                       <td className="text-center py-1.5 px-2 text-gray-400">
@@ -202,7 +202,7 @@ function FootballBoxScore({
                             {s.player_name}
                           </Link>
                         ) : (
-                          s.player_name
+                          <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
                       <td className="text-center py-1.5 px-2 text-gray-400">
@@ -250,21 +250,34 @@ function BasketballBoxScore({
   stats,
   homeSchoolId,
   awaySchoolId,
+  homeScore,
+  awayScore,
 }: {
   stats: GamePlayerStat[];
   homeSchoolId: number | null;
   awaySchoolId: number | null;
+  homeScore: number | null;
+  awayScore: number | null;
 }) {
   const homeStats = stats.filter((s) => s.school_id === homeSchoolId);
   const awayStats = stats.filter((s) => s.school_id === awaySchoolId);
 
-  function TeamScoring({ teamStats, label }: { teamStats: GamePlayerStat[]; label: string }) {
-    const totalPts = teamStats.reduce((sum, s) => sum + (s.points ?? 0), 0);
+  function TeamScoring({
+    teamStats,
+    label,
+    gameScore,
+  }: {
+    teamStats: GamePlayerStat[];
+    label: string;
+    gameScore?: number | null;
+  }) {
+    // Use actual game score when available, fall back to summed box score stats
+    const displayPts = gameScore ?? teamStats.reduce((sum, s) => sum + (s.points ?? 0), 0);
 
     return (
       <div className="mb-8">
         <h3 className="text-lg font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase">
-          {label} {totalPts > 0 && <span className="text-white">({totalPts} pts)</span>}
+          {label} {displayPts > 0 && <span className="text-white">({displayPts} pts)</span>}
         </h3>
         <table className="w-full text-sm">
           <thead>
@@ -288,13 +301,15 @@ function BasketballBoxScore({
                         {s.player_name}
                       </Link>
                     ) : (
-                      s.player_name
+                      <span className="text-gray-200">{s.player_name}</span>
                     )}
                   </td>
                   <td className="text-center py-1.5 px-2 text-gray-400">
                     {s.jersey_number ?? ""}
                   </td>
-                  <td className="text-right py-1.5 pl-2 font-semibold">{s.points ?? 0}</td>
+                  <td className="text-right py-1.5 pl-2 font-semibold text-[var(--psp-gold)]">
+                    {s.points ?? 0}
+                  </td>
                 </tr>
               ))}
           </tbody>
@@ -311,7 +326,8 @@ function BasketballBoxScore({
 
   if (schoolIds.length === 1) {
     const schoolName = stats[0]?.schools?.name ?? "Team";
-    return <TeamScoring teamStats={stats} label={schoolName} />;
+    const singleScore = stats[0]?.school_id === homeSchoolId ? homeScore : awayScore;
+    return <TeamScoring teamStats={stats} label={schoolName} gameScore={singleScore} />;
   }
 
   return (
@@ -319,10 +335,12 @@ function BasketballBoxScore({
       <TeamScoring
         teamStats={awayStats}
         label={stats.find((s) => s.school_id === awaySchoolId)?.schools?.name ?? "Away"}
+        gameScore={awayScore}
       />
       <TeamScoring
         teamStats={homeStats}
         label={stats.find((s) => s.school_id === homeSchoolId)?.schools?.name ?? "Home"}
+        gameScore={homeScore}
       />
     </div>
   );
@@ -473,6 +491,8 @@ export default async function GameDetailPage({
                 stats={boxScore}
                 homeSchoolId={game.home_school_id}
                 awaySchoolId={game.away_school_id}
+                homeScore={game.home_score}
+                awayScore={game.away_score}
               />
             ) : (
               <p className="text-gray-500 text-sm">
