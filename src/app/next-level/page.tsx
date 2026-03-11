@@ -1,293 +1,251 @@
-import Link from 'next/link';
-import { createStaticClient } from '@/lib/supabase/static';
-import AdPlaceholder from '@/components/ads/AdPlaceholder';
+'use client';
 
-export const revalidate = 3600;
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useEffect } from 'react';
+import AdPlaceholder from '@/components/ads/AdPlaceholder';
+import { createProAthleteSlug } from '@/lib/slug-utils';
 
 interface ProAthlete {
   id: number;
-  name: string;
-  highSchool: string;
-  sport: string;
-  league: string;
-  team: string;
-  position?: string;
-  draftYear?: number;
-  draftInfo?: string;
-  hallOfFame?: boolean;
-  emoji: string;
+  person_name: string;
+  high_school_id: number | null;
+  sport_id: string | null;
+  pro_team: string | null;
+  pro_league: string | null;
+  draft_info: string | null;
+  college: string | null;
+  status: string;
+  schools?: {
+    name: string;
+    slug: string;
+  } | null;
 }
 
-const FALLBACK_ATHLETES: ProAthlete[] = [
-  {
-    id: 1,
-    name: 'Kobe Bryant',
-    highSchool: 'Lower Merion',
-    sport: 'Basketball',
-    league: 'NBA',
-    team: 'Los Angeles Lakers',
-    position: 'SG',
-    draftYear: 1996,
-    draftInfo: '13th pick (1996 Draft)',
-    hallOfFame: true,
-    emoji: '🏀',
-  },
-  {
-    id: 2,
-    name: 'Allen Iverson',
-    highSchool: 'Bethel High School',
-    sport: 'Basketball',
-    league: 'NBA',
-    team: 'Philadelphia 76ers',
-    position: 'PG',
-    draftYear: 1996,
-    hallOfFame: true,
-    emoji: '🏀',
-  },
-  {
-    id: 3,
-    name: 'Tyrese Maxey',
-    highSchool: 'Vaux High School',
-    sport: 'Basketball',
-    league: 'NBA',
-    team: 'Philadelphia 76ers',
-    position: 'PG',
-    draftYear: 2020,
-    draftInfo: '21st pick (2020 Draft)',
-    emoji: '🏀',
-  },
-  {
-    id: 101,
-    name: 'Marvin Harrison Jr.',
-    highSchool: 'St. Joseph\'s Prep',
-    sport: 'Football',
-    league: 'NFL',
-    team: 'Arizona Cardinals',
-    position: 'WR',
-    draftYear: 2023,
-    draftInfo: '4th pick (2023 Draft)',
-    emoji: '🏈',
-  },
-  {
-    id: 102,
-    name: 'Kyle Pitts',
-    highSchool: 'Archbishop Wood',
-    sport: 'Football',
-    league: 'NFL',
-    team: 'Atlanta Falcons',
-    position: 'TE',
-    draftYear: 2021,
-    draftInfo: '4th pick (2021 Draft)',
-    emoji: '🏈',
-  },
-  {
-    id: 201,
-    name: 'Mike Piazza',
-    highSchool: 'Phoenixville',
-    sport: 'Baseball',
-    league: 'MLB',
-    team: 'New York Mets',
-    position: 'C',
-    hallOfFame: true,
-    emoji: '⚾',
-  },
-  {
-    id: 202,
-    name: 'Reggie Jackson',
-    highSchool: 'Cheltenham',
-    sport: 'Baseball',
-    league: 'MLB',
-    team: 'Multiple Teams',
-    position: 'OF',
-    hallOfFame: true,
-    emoji: '⚾',
-  },
-  {
-    id: 203,
-    name: 'Roy Campanella',
-    highSchool: 'Simon Gratz',
-    sport: 'Baseball',
-    league: 'MLB',
-    team: 'Brooklyn Dodgers',
-    position: 'C',
-    hallOfFame: true,
-    emoji: '⚾',
-  },
-];
-
-async function fetchProAthletes(): Promise<ProAthlete[]> {
+async function fetchProAthletes(league?: string, search?: string): Promise<ProAthlete[]> {
   try {
-    const supabase = createStaticClient();
+    const params = new URLSearchParams();
+    if (league && league !== 'all') params.append('league', league);
+    if (search) params.append('search', search);
 
-    const { data, error } = await supabase
-      .from('next_level_tracking')
-      .select(`
-        id,
-        person_name,
-        current_org,
-        current_role,
-        sport_id,
-        pro_league,
-        pro_team,
-        draft_info,
-        schools!next_level_tracking_high_school_id_fkey(name)
-      `)
-      .in('current_level', ['pro', 'college'])
-      .eq('status', 'active')
-      .order('pro_league', { ascending: true })
-      .order('person_name', { ascending: true });
-
-    if (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error fetching pro athletes:', error);
-      }
-      return FALLBACK_ATHLETES;
-    }
-
-    if (!data || data.length === 0) {
-      return FALLBACK_ATHLETES;
-    }
-
-    // Map database records to ProAthlete interface
-    const athletes: ProAthlete[] = data.map((record: any, idx: number) => {
-      const sportEmojis: Record<string, string> = {
-        basketball: '🏀',
-        football: '🏈',
-        baseball: '⚾',
-        soccer: '⚽',
-        volleyball: '🏐',
-        lacrosse: '🥍',
-      };
-
-      return {
-        id: record.id || idx,
-        name: record.person_name || 'Unknown',
-        highSchool: record.schools?.name || record.current_org || 'Unknown',
-        sport: record.sport_id || 'Unknown',
-        league: record.pro_league || 'Unknown',
-        team: record.pro_team || 'Unknown',
-        draftInfo: record.draft_info || undefined,
-        emoji: sportEmojis[record.sport_id?.toLowerCase()] || '🏆',
-      };
-    });
-
-    return athletes;
+    const response = await fetch(`/api/next-level?${params.toString()}`);
+    if (!response.ok) return [];
+    const data = await response.json();
+    return data.athletes || [];
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error fetching pro athletes:', error);
-    }
-    return FALLBACK_ATHLETES;
+    console.error('Error fetching pro athletes:', error);
+    return [];
+  }
+}
+
+async function fetchProAthleteStats() {
+  try {
+    const response = await fetch('/api/next-level/stats');
+    if (!response.ok) return { nfl: 0, nba: 0, mlb: 0, wnba: 0, total: 0 };
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    return { nfl: 0, nba: 0, mlb: 0, wnba: 0, total: 0 };
   }
 }
 
 interface ProAthleteGridProps {
   athletes: ProAthlete[];
+  selectedLeague: string;
 }
 
-function ProAthleteGrid({ athletes }: ProAthleteGridProps) {
+function ProAthleteGrid({ athletes, selectedLeague }: ProAthleteGridProps) {
+  const leagueColors: Record<string, string> = {
+    NFL: '#003da5',
+    NBA: '#c4122e',
+    MLB: '#002d72',
+    WNBA: '#552583',
+  };
+
+  const sportEmojis: Record<string, string> = {
+    football: '🏈',
+    basketball: '🏀',
+    baseball: '⚾',
+    soccer: '⚽',
+    lacrosse: '🥍',
+  };
+
+  const filteredAthletes = selectedLeague === 'all'
+    ? athletes
+    : athletes.filter((a) => a.pro_league === selectedLeague);
+
+  if (filteredAthletes.length === 0) {
+    return (
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '40px 20px',
+          color: 'var(--g400)',
+        }}
+      >
+        <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No athletes found</div>
+        <div style={{ fontSize: 13 }}>Try adjusting your filters or search term</div>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: 12,
-        marginBottom: 16,
+        gap: 16,
+        marginBottom: 24,
       }}
     >
-      {athletes.map((athlete) => (
-        <div
-          key={athlete.id}
-          style={{
-            background: '#fff',
-            border: athlete.hallOfFame ? '2px solid var(--psp-gold)' : '1px solid var(--g100)',
-            borderRadius: 4,
-            overflow: 'hidden',
-            transition: '.15s',
-            boxShadow: athlete.hallOfFame ? '0 0 12px rgba(240,165,0,.2)' : 'none',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.boxShadow = athlete.hallOfFame
-              ? '0 0 16px rgba(240,165,0,.4)'
-              : '0 2px 8px rgba(0,0,0,.08)';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.boxShadow = athlete.hallOfFame
-              ? '0 0 12px rgba(240,165,0,.2)'
-              : 'none';
-          }}
-        >
-          {/* Header */}
-          <div
+      {filteredAthletes.map((athlete) => {
+        const leagueColor = leagueColors[athlete.pro_league || ''] || '#0a1628';
+        const sportEmoji = sportEmojis[athlete.sport_id?.toLowerCase() || ''] || '🏆';
+        const athleteSlug = createProAthleteSlug(athlete.person_name, athlete.id);
+
+        return (
+          <Link
+            key={athlete.id}
+            href={`/next-level/${athleteSlug}`}
             style={{
-              background: athlete.hallOfFame ? 'linear-gradient(135deg, var(--psp-gold), #f5c542)' : 'var(--psp-navy)',
-              padding: '12px 16px',
-              color: athlete.hallOfFame ? '#000' : '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
+              textDecoration: 'none',
+              color: 'inherit',
             }}
           >
-            <span style={{ fontSize: 24 }}>{athlete.emoji}</span>
-            <div>
-              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif" }}>
-                {athlete.name}
-              </h3>
-              {athlete.hallOfFame && (
-                <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.3px' }}>
-                  🏆 Hall of Fame
+            <div
+              style={{
+                background: '#fff',
+                border: '1px solid var(--g100)',
+                borderRadius: 8,
+                overflow: 'hidden',
+                transition: 'all .2s',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(0,0,0,.08)';
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+              }}
+            >
+              {/* Header */}
+              <div
+                style={{
+                  background: leagueColor,
+                  padding: '12px 16px',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                }}
+              >
+                <span style={{ fontSize: 20 }}>{sportEmoji}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 13,
+                      fontWeight: 700,
+                      fontFamily: "'Bebas Neue', sans-serif",
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {athlete.person_name}
+                  </h3>
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Body */}
-          <div style={{ padding: '12px 16px' }}>
-            <div style={{ fontSize: 11, color: 'var(--g400)', marginBottom: 8 }}>
-              {athlete.highSchool} • {athlete.sport}
-            </div>
-
-            {/* Pro Info */}
-            <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: '1px solid var(--g100)' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
-                {athlete.team}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--g400)' }}>
-                {athlete.position && `${athlete.position} • `}
-                {athlete.league}
-              </div>
-            </div>
 
-            {/* Draft Info */}
-            {athlete.draftInfo && (
-              <div>
-                <div style={{ fontSize: 9, color: 'var(--g400)', textTransform: 'uppercase', marginBottom: 3 }}>
-                  Draft
+              {/* Body */}
+              <div style={{ padding: '12px 16px' }}>
+                {/* HS & Sport */}
+                <div style={{ fontSize: 11, color: 'var(--g400)', marginBottom: 12 }}>
+                  {athlete.schools?.name || 'Unknown School'} •{' '}
+                  {athlete.sport_id || 'Unknown'}
                 </div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--psp-navy)' }}>
-                  {athlete.draftInfo}
+
+                {/* Pro Info */}
+                <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: '1px solid var(--g100)' }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
+                    {athlete.pro_team || 'Unknown Team'}
+                  </div>
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      background: leagueColor,
+                      color: '#fff',
+                      padding: '4px 8px',
+                      borderRadius: 4,
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {athlete.pro_league || 'N/A'}
+                  </div>
                 </div>
+
+                {/* College or Draft Info */}
+                {athlete.college && (
+                  <div style={{ fontSize: 11, color: 'var(--text)', marginBottom: 8 }}>
+                    <div style={{ color: 'var(--g400)', fontSize: 9, marginBottom: 2 }}>
+                      COLLEGE
+                    </div>
+                    <div style={{ fontWeight: 600 }}>{athlete.college}</div>
+                  </div>
+                )}
+
+                {athlete.draft_info && (
+                  <div style={{ fontSize: 10, color: 'var(--g400)', fontStyle: 'italic' }}>
+                    {athlete.draft_info}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      ))}
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }
 
-export default async function NextLevelPage() {
-  const athletes = await fetchProAthletes();
+export default function NextLevelPage() {
+  const [athletes, setAthletes] = useState<ProAthlete[]>([]);
+  const [selectedLeague, setSelectedLeague] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [stats, setStats] = useState({ nfl: 0, nba: 0, mlb: 0, wnba: 0, total: 0 });
+  const [loading, setLoading] = useState(true);
 
-  const leagues = ['All', 'NBA', 'NFL', 'MLB'];
-  const nbaCount = athletes.filter((a) => a.league === 'NBA').length;
-  const nflCount = athletes.filter((a) => a.league === 'NFL').length;
-  const mlbCount = athletes.filter((a) => a.league === 'MLB').length;
-  const hofCount = athletes.filter((a) => a.hallOfFame).length;
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      const [athletesData, statsData] = await Promise.all([
+        fetchProAthletes(selectedLeague, searchTerm),
+        fetchProAthleteStats(),
+      ]);
+      setAthletes(athletesData);
+      setStats(statsData);
+      setLoading(false);
+    };
+
+    const debounceTimer = setTimeout(loadData, searchTerm ? 300 : 0);
+    return () => clearTimeout(debounceTimer);
+  }, [selectedLeague, searchTerm]);
+
+  // Calculate filtered counts
+  const nflCount = athletes.filter((a) => a.pro_league === 'NFL').length || stats.nfl;
+  const nbaCount = athletes.filter((a) => a.pro_league === 'NBA').length || stats.nba;
+  const mlbCount = athletes.filter((a) => a.pro_league === 'MLB').length || stats.mlb;
+  const wnbaCount = athletes.filter((a) => a.pro_league === 'WNBA').length || stats.wnba;
 
   // Top producer schools
   const schoolCounts: Record<string, number> = {};
   athletes.forEach((athlete) => {
-    schoolCounts[athlete.highSchool] = (schoolCounts[athlete.highSchool] || 0) + 1;
+    if (athlete.schools?.name) {
+      schoolCounts[athlete.schools.name] = (schoolCounts[athlete.schools.name] || 0) + 1;
+    }
   });
 
   const topSchools = Object.entries(schoolCounts)
@@ -296,104 +254,160 @@ export default async function NextLevelPage() {
 
   return (
     <div className="espn-container" style={{ flex: 1 }}>
-        <main>
-          {/* Hero Card */}
-          <div className="hero-card">
-            <div className="hero-tag">Next Level</div>
-            <div
-              className="hero-img"
-              style={{
-                background: 'linear-gradient(180deg,#1a365d 0%,rgba(10,22,40,.95) 100%)',
-              }}
-            >
-              <div>
-                <h2>Philly Pro Athletes</h2>
-                <div className="hero-sub">
-                  <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--psp-gold)' }}>
-                    {athletes.length}
-                  </span>{' '}
-                  high school alumni playing professional sports: <strong>{nflCount} NFL</strong> •{' '}
-                  <strong>{nbaCount} NBA</strong> • <strong>{mlbCount} MLB</strong>
-                </div>
+      <main>
+        {/* Hero Card */}
+        <div className="hero-card">
+          <div className="hero-tag">Next Level</div>
+          <div
+            className="hero-img"
+            style={{
+              background: 'linear-gradient(180deg,#1a365d 0%,rgba(10,22,40,.95) 100%)',
+            }}
+          >
+            <div>
+              <h2>Philly Pro Athletes</h2>
+              <div className="hero-sub">
+                <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--psp-gold)' }}>
+                  {stats.total || athletes.length}
+                </span>{' '}
+                high school alumni playing professional sports
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Filter Tabs */}
+        {/* Filter Controls */}
+        <div style={{ marginBottom: 24 }}>
+          {/* League Tabs */}
           <div className="subnav" style={{ background: 'transparent', borderBottom: 'none', padding: 0, margin: '16px 0 0 0' }}>
             <div className="subnav-inner" style={{ padding: 0, gap: 0 }}>
-              {leagues.map((league) => {
+              {['all', 'NFL', 'NBA', 'MLB', 'WNBA'].map((league) => {
                 const count =
-                  league === 'All'
-                    ? athletes.length
+                  league === 'all'
+                    ? stats.total
                     : league === 'NBA'
                       ? nbaCount
                       : league === 'NFL'
                         ? nflCount
-                        : mlbCount;
+                        : league === 'MLB'
+                          ? mlbCount
+                          : wnbaCount;
 
                 return (
-                  <div
+                  <button
                     key={league}
+                    onClick={() => setSelectedLeague(league)}
                     style={{
                       padding: '12px 20px',
                       fontSize: 13,
                       fontWeight: 600,
-                      color: 'var(--g500)',
-                      borderBottom: '3px solid transparent',
+                      color: selectedLeague === league ? 'var(--psp-gold)' : 'var(--g500)',
+                      background: 'transparent',
+                      border: 'none',
+                      borderBottom: selectedLeague === league ? '3px solid var(--psp-gold)' : '3px solid transparent',
+                      cursor: 'pointer',
+                      transition: '.15s',
                     }}
                   >
-                    {league} ({count})
-                  </div>
+                    {league === 'all' ? 'All' : league} ({count})
+                  </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Section Header */}
-          <div className="sec-head">
-            <h2>Professional Athletes</h2>
-            <span style={{ fontSize: 11, color: 'var(--g400)', marginLeft: 'auto' }}>
-              {athletes.length} athletes
-            </span>
+          {/* Search */}
+          <div style={{ marginTop: 16 }}>
+            <input
+              type="text"
+              placeholder="Search athletes by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px 14px',
+                borderRadius: 6,
+                border: '1px solid var(--g200)',
+                background: '#fff',
+                fontSize: 13,
+                fontFamily: 'inherit',
+              }}
+            />
           </div>
+        </div>
 
-          {/* Athlete Cards Grid */}
-          <ProAthleteGrid athletes={athletes} />
-        </main>
+        {/* Section Header */}
+        <div className="sec-head">
+          <h2>Professional Athletes</h2>
+          <span style={{ fontSize: 11, color: 'var(--g400)', marginLeft: 'auto' }}>
+            {selectedLeague === 'all'
+              ? athletes.length
+              : athletes.filter((a) => a.pro_league === selectedLeague).length}{' '}
+            athletes
+          </span>
+        </div>
 
-        {/* Sidebar */}
-        <aside className="sidebar">
-          {/* Overview Stats */}
-          <div className="widget">
-            <div className="w-head">Pro Athletes Summary</div>
-            <div className="w-body">
-              <div className="w-row">
-                <span className="name">Total Athletes</span>
-                <span className="val">{athletes.length}</span>
-              </div>
-              <div className="w-row">
-                <span className="name">NBA Players</span>
-                <span className="val">{nbaCount}</span>
-              </div>
-              <div className="w-row">
-                <span className="name">NFL Players</span>
-                <span className="val">{nflCount}</span>
-              </div>
-              <div className="w-row">
-                <span className="name">MLB Players</span>
-                <span className="val">{mlbCount}</span>
-              </div>
-              <div className="w-row">
-                <span className="name">Hall of Famers</span>
-                <span className="val" style={{ color: 'var(--psp-gold)' }}>
-                  {hofCount}
-                </span>
-              </div>
+        {/* Loading State */}
+        {loading && (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: 16,
+              marginBottom: 24,
+            }}
+          >
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                style={{
+                  background: 'var(--g100)',
+                  borderRadius: 8,
+                  height: 220,
+                  animation: 'pulse 1.5s infinite',
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Athlete Cards Grid */}
+        {!loading && (
+          <ProAthleteGrid athletes={athletes} selectedLeague={selectedLeague} />
+        )}
+      </main>
+
+      {/* Sidebar */}
+      <aside className="sidebar">
+        {/* Overview Stats */}
+        <div className="widget">
+          <div className="w-head">Pro Athletes Summary</div>
+          <div className="w-body">
+            <div className="w-row">
+              <span className="name">Total Athletes</span>
+              <span className="val">{stats.total}</span>
+            </div>
+            <div className="w-row">
+              <span className="name">NFL Players</span>
+              <span className="val">{nflCount}</span>
+            </div>
+            <div className="w-row">
+              <span className="name">NBA Players</span>
+              <span className="val">{nbaCount}</span>
+            </div>
+            <div className="w-row">
+              <span className="name">MLB Players</span>
+              <span className="val">{mlbCount}</span>
+            </div>
+            <div className="w-row">
+              <span className="name">WNBA Players</span>
+              <span className="val">{wnbaCount}</span>
             </div>
           </div>
+        </div>
 
-          {/* Top Producer Schools */}
+        {/* Top Producer Schools */}
+        {topSchools.length > 0 && (
           <div className="widget">
             <div className="w-head">Top Producer Schools</div>
             <div className="w-body">
@@ -406,47 +420,55 @@ export default async function NextLevelPage() {
               ))}
             </div>
           </div>
+        )}
 
-          {/* Notable Info */}
-          <div className="widget">
-            <div className="w-head">Notable Facts</div>
-            <div className="w-body">
-              <div style={{ padding: '10px 14px', fontSize: 11, lineHeight: 1.6, color: 'var(--text)' }}>
-                <div style={{ marginBottom: 8 }}>
-                  <strong>🏆 Hall of Famers:</strong> Wilt Chamberlain, Kobe Bryant, Mike Piazza, Reggie Jackson & more
-                </div>
-                <div style={{ marginBottom: 8 }}>
-                  <strong>🏀 NBA Pipeline:</strong> Roman Catholic has 8 NBA players in history
-                </div>
-                <div>
-                  <strong>🏈 SJP Dominance:</strong> St. Joseph's Prep leads NFL production with 12+ players
-                </div>
+        {/* Notable Info */}
+        <div className="widget">
+          <div className="w-head">Notable Achievements</div>
+          <div className="w-body">
+            <div style={{ padding: '10px 14px', fontSize: 11, lineHeight: 1.6, color: 'var(--text)' }}>
+              <div style={{ marginBottom: 8 }}>
+                <strong>🏆 Hall of Famers:</strong> Wilt Chamberlain, Kobe Bryant, Mike Piazza, Reggie Jackson
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <strong>🏀 NBA Pipeline:</strong> Roman Catholic & Neumann-Goretti lead historically
+              </div>
+              <div>
+                <strong>🏈 SJP Dominance:</strong> St. Joseph's Prep leads NFL production
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Quick Links */}
-          <div className="widget">
-            <div className="w-head">Quick Links</div>
-            <div className="w-body">
-              <Link href="/football" className="w-link">
-                &#8594; Football
-              </Link>
-              <Link href="/basketball" className="w-link">
-                &#8594; Basketball
-              </Link>
-              <Link href="/baseball" className="w-link">
-                &#8594; Baseball
-              </Link>
-              <Link href="/search" className="w-link">
-                &#8594; Player Search
-              </Link>
-            </div>
+        {/* Quick Links */}
+        <div className="widget">
+          <div className="w-head">Quick Links</div>
+          <div className="w-body">
+            <Link href="/football" className="w-link">
+              ↦ Football
+            </Link>
+            <Link href="/basketball" className="w-link">
+              ↦ Basketball
+            </Link>
+            <Link href="/baseball" className="w-link">
+              ↦ Baseball
+            </Link>
+            <Link href="/search" className="w-link">
+              ↦ Player Search
+            </Link>
           </div>
+        </div>
 
-          {/* Ad Space */}
-          <AdPlaceholder size="sidebar-rect" id="psp-nextlevel-rail" />
-        </aside>
+        {/* Ad Space */}
+        <AdPlaceholder size="sidebar-rect" id="psp-nextlevel-rail" />
+      </aside>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 }

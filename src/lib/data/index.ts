@@ -175,3 +175,17 @@ export {
   type AwardRecord,
   type AllCityYear,
 } from "./awards";
+
+// Next Level / Pro Athletes functions
+export {
+  getProAthletes,
+  getProAthleteBySlug,
+  getProAthletesBySchool,
+  getProAthletesByLeague,
+  getFeaturedProAthletes,
+  getCollegePlacements,
+  getProAthleteStats,
+  type ProAthlete,
+  type ProAthleteDetail,
+  type CollegePlacement,
+} from "./next-level";
