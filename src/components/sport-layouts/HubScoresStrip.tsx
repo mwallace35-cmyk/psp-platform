@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState, useCallback } from "react";
 
 export interface HubGame {
@@ -97,13 +98,16 @@ export default function HubScoresStrip({ games, sportColor, sport }: HubScoresSt
           const borderColor = isRivalry ? "#D4A843" : sportColor;
 
           return (
-            <div
+            <Link
               key={game.id}
+              href={`/${sport}/games/${game.id}`}
               className="hub-score-chip"
               style={{
                 borderLeftColor: borderColor,
                 borderLeftWidth: "4px",
                 borderLeftStyle: "solid",
+                textDecoration: "none",
+                color: "inherit",
               }}
             >
               {isFirstGame && (
@@ -149,7 +153,7 @@ export default function HubScoresStrip({ games, sportColor, sport }: HubScoresSt
                   UPSET
                 </div>
               )}
-            </div>
+            </Link>
           );
         })}
       </div>
