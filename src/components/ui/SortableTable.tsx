@@ -232,7 +232,7 @@ function SortableTable({
                   onKeyDown={(e) => col.sortable !== false && handleHeaderKeyDown(e, col.key)}
                   aria-sort={col.sortable !== false ? getAriaSort(col.key) : undefined}
                   aria-label={getHeaderAriaLabel(col)}
-                  className={`px-4 py-3 text-left font-semibold border-b border-gray-300 transition min-h-[44px] flex items-center ${
+                  className={`px-4 py-3 text-left font-semibold border-b border-gray-300 transition ${
                     col.sortable !== false ? 'cursor-pointer hover:bg-gray-800 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400' : ''
                   }`}
                   style={{
@@ -285,7 +285,7 @@ function SortableTable({
                   .map((col) => (
                     <td
                       key={col.key}
-                      className="px-4 py-3 min-h-[44px] flex items-center"
+                      className="px-4 py-3"
                       style={{
                         textAlign: col.align || 'left',
                       }}
