@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { isValidSport } from "@/lib/data";
+import SportNav from "@/components/sport/SportNav";
 
 export default async function SportLayout({
   children,
@@ -13,5 +14,10 @@ export default async function SportLayout({
     notFound();
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <SportNav sport={sport} />
+      {children}
+    </>
+  );
 }

@@ -10,6 +10,7 @@ import AdPlaceholder, { LeaderboardAd } from '@/components/ads/AdPlaceholder';
 import CommentSection from '@/components/comments/CommentSection';
 import { sanitizeHtml } from '@/lib/sanitize';
 import ShareButtons from '@/components/social/ShareButtons';
+import JoinCTA from '@/components/ui/JoinCTA';
 
 export const revalidate = 3600;
 
@@ -178,8 +179,13 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             />
           </div>
 
+          {/* Join CTA before Comments */}
+          <JoinCTA action="comment" context="this article" compact />
+
           {/* Comments */}
-          <CommentSection articleId={article.id} />
+          <div className="mt-8">
+            <CommentSection articleId={article.id} />
+          </div>
         </div>
 
         {/* Sidebar */}

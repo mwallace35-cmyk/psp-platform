@@ -75,6 +75,85 @@ export default function Header() {
   }, []);
   const handleDropdownClose = useCallback(() => setOpenDropdown(null), []);
 
+  // Handle menu navigation with arrow keys
+  const handleMenuKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      handleDropdownClose();
+      return;
+    }
+
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) {
+      return;
+    }
+
+    e.preventDefault();
+
+    const menuDiv = e.currentTarget;
+    const menuItems = Array.from(menuDiv.querySelectorAll<HTMLElement>('[role="menuitem"]'));
+
+    if (menuItems.length === 0) return;
+
+    const activeElement = document.activeElement as HTMLElement;
+    const currentIndex = menuItems.indexOf(activeElement);
+
+    let nextIndex = currentIndex;
+
+    switch (e.key) {
+      case "ArrowDown":
+        nextIndex = currentIndex < 0 || currentIndex === menuItems.length - 1 ? 0 : currentIndex + 1;
+        break;
+      case "ArrowUp":
+        nextIndex = currentIndex <= 0 ? menuItems.length - 1 : currentIndex - 1;
+        break;
+      case "Home":
+        nextIndex = 0;
+        break;
+      case "End":
+        nextIndex = menuItems.length - 1;
+        break;
+    }
+
+    menuItems[nextIndex]?.focus();
+  }, [handleDropdownClose]);
+
+  // Handle arrow key from dropdown trigger button
+  const handleDropdownTriggerKeyDown = useCallback((e: React.KeyboardEvent<HTMLButtonElement>, dropdownName: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleDropdownToggle(dropdownName);
+      // After opening, focus the first menu item
+      setTimeout(() => {
+        const nextSibling = (e.currentTarget as HTMLElement).nextElementSibling as HTMLElement | null;
+        if (nextSibling) {
+          const firstMenuItem = nextSibling.querySelector<HTMLElement>('[role="menuitem"]');
+          firstMenuItem?.focus();
+        }
+      }, 0);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (openDropdown !== dropdownName) {
+        setOpenDropdown(dropdownName);
+        // After opening, focus the first menu item
+        setTimeout(() => {
+          const nextSibling = (e.currentTarget as HTMLElement).nextElementSibling as HTMLElement | null;
+          if (nextSibling) {
+            const firstMenuItem = nextSibling.querySelector<HTMLElement>('[role="menuitem"]');
+            firstMenuItem?.focus();
+          }
+        }, 0);
+      } else {
+        // Menu already open, focus first item
+        const nextSibling = (e.currentTarget as HTMLElement).nextElementSibling as HTMLElement | null;
+        if (nextSibling) {
+          const firstMenuItem = nextSibling.querySelector<HTMLElement>('[role="menuitem"]');
+          firstMenuItem?.focus();
+        }
+      }
+    } else if (e.key === "Escape") {
+      handleDropdownClose();
+    }
+  }, [openDropdown, handleDropdownToggle, handleDropdownClose]);
+
   // Update aria-live announcement when dropdowns change
   useEffect(() => {
     if (openDropdown) {
@@ -182,14 +261,7 @@ export default function Header() {
                 aria-haspopup="menu"
                 aria-expanded={openDropdown === "sports"}
                 aria-label="More sports menu"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleDropdownToggle("sports");
-                  } else if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "sports")}
                 onClick={() => handleDropdownToggle("sports")}
                 onBlur={handleDropdownClose}
               >
@@ -200,11 +272,7 @@ export default function Header() {
                 role="menu"
                 aria-label="More sports menu"
                 style={{ display: openDropdown === "sports" ? "block" : undefined }}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
+                onKeyDown={handleMenuKeyDown}
               >
                 {MINOR_SPORTS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
@@ -228,14 +296,7 @@ export default function Header() {
                 aria-haspopup="menu"
                 aria-expanded={openDropdown === "pulse"}
                 aria-label="The Pulse menu"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleDropdownToggle("pulse");
-                  } else if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "pulse")}
                 onClick={() => handleDropdownToggle("pulse")}
                 onBlur={handleDropdownClose}
               >
@@ -246,11 +307,7 @@ export default function Header() {
                 role="menu"
                 aria-label="The Pulse menu"
                 style={{ display: openDropdown === "pulse" ? "block" : undefined }}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
+                onKeyDown={handleMenuKeyDown}
               >
                 {PULSE_ITEMS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
@@ -268,14 +325,7 @@ export default function Header() {
                 aria-haspopup="menu"
                 aria-expanded={openDropdown === "content"}
                 aria-label="Content menu"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleDropdownToggle("content");
-                  } else if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "content")}
                 onClick={() => handleDropdownToggle("content")}
                 onBlur={handleDropdownClose}
               >
@@ -286,11 +336,7 @@ export default function Header() {
                 role="menu"
                 aria-label="Content menu"
                 style={{ display: openDropdown === "content" ? "block" : undefined }}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
+                onKeyDown={handleMenuKeyDown}
               >
                 {CONTENT_ITEMS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
@@ -308,14 +354,7 @@ export default function Header() {
                 aria-haspopup="menu"
                 aria-expanded={openDropdown === "tools"}
                 aria-label="Data tools menu"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleDropdownToggle("tools");
-                  } else if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "tools")}
                 onClick={() => handleDropdownToggle("tools")}
                 onBlur={handleDropdownClose}
               >
@@ -326,11 +365,7 @@ export default function Header() {
                 role="menu"
                 aria-label="Data tools menu"
                 style={{ display: openDropdown === "tools" ? "block" : undefined }}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    handleDropdownClose();
-                  }
-                }}
+                onKeyDown={handleMenuKeyDown}
               >
                 {DATA_TOOLS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>

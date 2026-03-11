@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SPORT_META } from '@/lib/sports';
 import PulseNav from '@/components/pulse/PulseNav';
+import JoinCTA from '@/components/ui/JoinCTA';
 
 export const revalidate = 60;
 
@@ -143,6 +144,11 @@ export default async function ForumPage({
                 Start a Topic
               </Link>
               <p className="text-xs text-gray-500 mt-2">Sign in to post</p>
+            </div>
+
+            {/* Join CTA */}
+            <div className="mt-4">
+              <JoinCTA action="post" context="the forum" compact />
             </div>
           </div>
 

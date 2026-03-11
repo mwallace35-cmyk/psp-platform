@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { SPORT_META } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
 import PotwVoteButton from '@/components/potw/PotwVoteButton';
+import JoinCTA from '@/components/ui/JoinCTA';
 
 export const metadata: Metadata = {
   title: 'Player of the Week | PhillySportsPack.com',
@@ -143,6 +144,7 @@ export default async function PotwPage() {
                     </div>
                   );
                 })}
+                <JoinCTA action="vote" context="Player of the Week" />
               </div>
             )}
           </div>
