@@ -14,6 +14,8 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import SortableTable, { SortableColumn } from "@/components/ui/SortableTable";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
+import DataSourceBadge from "@/components/ui/DataSourceBadge";
+import MethodologyNote from "@/components/ui/MethodologyNote";
 import type { Metadata } from "next";
 import type React from "react";
 
@@ -22,19 +24,13 @@ export const revalidate = 3600;
 type PageParams = { sport: string; stat: string };
 
 export function generateStaticParams() {
-  return [
-    { sport: "football", stat: "rushing" },
-    { sport: "football", stat: "passing" },
-    { sport: "football", stat: "receiving" },
-    { sport: "football", stat: "scoring" },
-    { sport: "basketball", stat: "scoring" },
-    { sport: "basketball", stat: "ppg" },
-    { sport: "basketball", stat: "rebounds" },
-    { sport: "basketball", stat: "assists" },
-    { sport: "baseball", stat: "batting" },
-    { sport: "baseball", stat: "pitching" },
-    { sport: "baseball", stat: "home-runs" },
-  ];
+  const params: { sport: string; stat: string }[] = [];
+  for (const [sport, stats] of Object.entries(SPORT_STAT_MAP)) {
+    for (const s of stats) {
+      params.push({ sport, stat: s.key });
+    }
+  }
+  return params;
 }
 
 export async function generateMetadata({ params, searchParams }: { params: Promise<PageParams>; searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {
@@ -106,6 +102,43 @@ const BASKETBALL_STATS: StatConfig[] = [
   { key: "assists", label: "Assists", cols: ["assists", "apg", "games_played"], hasData: false },
 ];
 
+const BASEBALL_STATS: StatConfig[] = [
+  { key: "batting", label: "Batting", cols: ["avg", "hits", "home_runs", "rbi", "games_played"], hasData: false },
+  { key: "pitching", label: "Pitching", cols: ["era", "wins", "strikeouts", "saves", "innings_pitched"], hasData: false },
+  { key: "home-runs", label: "Home Runs", cols: ["home_runs", "at_bats", "games_played"], hasData: false },
+];
+
+const TRACK_FIELD_STATS: StatConfig[] = [
+  { key: "sprints", label: "Sprints", cols: ["event_100m", "event_200m", "event_400m"], hasData: false },
+  { key: "distance", label: "Distance", cols: ["event_800m", "event_1600m", "event_3200m"], hasData: false },
+  { key: "field", label: "Field Events", cols: ["long_jump", "high_jump", "shot_put", "discus"], hasData: false },
+];
+
+const LACROSSE_STATS: StatConfig[] = [
+  { key: "goals", label: "Goals", cols: ["goals", "games_played"], hasData: false },
+  { key: "assists", label: "Assists", cols: ["assists", "games_played"], hasData: false },
+];
+
+const WRESTLING_STATS: StatConfig[] = [
+  { key: "wins", label: "Wins", cols: ["wins", "losses", "win_pct"], hasData: false },
+  { key: "pins", label: "Pins", cols: ["pins", "matches"], hasData: false },
+];
+
+const SOCCER_STATS: StatConfig[] = [
+  { key: "goals", label: "Goals", cols: ["goals", "games_played"], hasData: false },
+  { key: "assists", label: "Assists", cols: ["assists", "games_played"], hasData: false },
+];
+
+const SPORT_STAT_MAP: Record<string, StatConfig[]> = {
+  football: FOOTBALL_STATS,
+  basketball: BASKETBALL_STATS,
+  baseball: BASEBALL_STATS,
+  "track-field": TRACK_FIELD_STATS,
+  lacrosse: LACROSSE_STATS,
+  wrestling: WRESTLING_STATS,
+  soccer: SOCCER_STATS,
+};
+
 interface RawLeader {
   id: string;
   players?: {
@@ -139,6 +172,15 @@ const COL_LABELS: Record<string, string> = {
   rec_yards: "Rec Yds", receptions: "Rec", rec_td: "Rec TD",
   total_td: "Total TD", points: "Points",
   ppg: "PPG", games_played: "GP", rebounds: "REB", rpg: "RPG", assists: "AST", apg: "APG",
+  // Baseball
+  avg: "AVG", hits: "H", home_runs: "HR", rbi: "RBI", at_bats: "AB",
+  era: "ERA", wins: "W", strikeouts: "K", saves: "SV", innings_pitched: "IP",
+  // Track & Field
+  event_100m: "100m", event_200m: "200m", event_400m: "400m",
+  event_800m: "800m", event_1600m: "1600m", event_3200m: "3200m",
+  long_jump: "LJ", high_jump: "HJ", shot_put: "SP", discus: "Discus",
+  // Lacrosse / Soccer / Wrestling
+  goals: "Goals", win_pct: "Win%", losses: "L", pins: "Pins", matches: "Matches",
   // Career columns
   career_rush_yards: "Rush Yds", career_rush_carries: "Carries", career_rush_td: "Rush TD",
   career_pass_yards: "Pass Yds", career_pass_comp: "Comp", career_pass_att: "Att",
@@ -163,7 +205,7 @@ export default async function LeaderboardPage({
   if (!isValidSport(sport)) notFound();
   const meta = SPORT_META[sport];
 
-  const allStats = sport === "football" ? FOOTBALL_STATS : sport === "basketball" ? BASKETBALL_STATS : [];
+  const allStats = SPORT_STAT_MAP[sport] || [];
   const statConfig = allStats.find(s => s.key === stat) || allStats[0];
   if (!statConfig) notFound();
 
@@ -485,6 +527,35 @@ export default async function LeaderboardPage({
         )}
 
         <PSPPromo size="banner" variant={3} />
+
+        {/* Data Source & Methodology */}
+        <div className="mt-12 pt-8 border-t" style={{ borderColor: "var(--psp-gray-200)" }}>
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <DataSourceBadge
+              source="Ted Silary Archives + MaxPreps"
+              lastUpdated="2026-03-10"
+              confidence="verified"
+              detail={`${isCareer ? "Career" : "Single-season"} statistics sourced from Ted Silary's archives (1937-2022) and MaxPreps (2015-present). All data cross-referenced and verified.`}
+            />
+          </div>
+
+          <MethodologyNote title="How we calculate these leaderboards">
+            <div className="space-y-2">
+              <p>
+                <strong>Ranking:</strong> {isCareer ? "Career statistics are ranked by total output (total yards, touchdowns, points) across all seasons played." : "Single-season leaderboards rank players by performance in a specific year."} Tied values are listed in alphabetical order by player name.
+              </p>
+              <p>
+                <strong>Minimum thresholds:</strong> Players must have appeared in at least one recorded game to qualify. For career rankings, players must have stats from multiple seasons.
+              </p>
+              <p>
+                <strong>Data sources:</strong> Ted Silary's archives provide comprehensive historical data (1937-2022). MaxPreps data (2015-present) is automated and real-time. Earlier periods may have incomplete coverage.
+              </p>
+              <p>
+                <strong>Updates:</strong> Leaderboards are updated daily to reflect the latest scores and statistics from MaxPreps.
+              </p>
+            </div>
+          </MethodologyNote>
+        </div>
       </div>
 
       <script

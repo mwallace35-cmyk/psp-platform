@@ -209,8 +209,10 @@ export async function getAvailableTeamSeasons(schoolId: number, sportId: string)
 
 /**
  * Get recent games for a sport (for the hub score banner).
- * Joins home_school and away_school names — filters out games
- * where BOTH school names are missing (orphaned rows).
+ * Finds the most recent season with completed games, then returns
+ * the latest results from that season. Filters out games where
+ * either school name is missing (TBD / deleted school).
+ * Deduplicates games that appear twice (same teams + same scores).
  * Returns most recent games first, limited to `limit`.
  */
 export async function getRecentGamesBySport(sportId: string, limit = 20) {
@@ -219,6 +221,23 @@ export async function getRecentGamesBySport(sportId: string, limit = 20) {
       return withRetry(
         async () => {
           const supabase = await createClient();
+
+          // Step 1: Find the most recent season that has completed games
+          const { data: latestSeasonData } = await supabase
+            .from("games")
+            .select("season_id, seasons(id, label, year_start)")
+            .eq("sport_id", sportId)
+            .not("home_score", "is", null)
+            .not("away_score", "is", null)
+            .not("season_id", "is", null)
+            .order("game_date", { ascending: false })
+            .limit(1);
+
+          const latestSeasonId = latestSeasonData?.[0]?.season_id;
+          if (!latestSeasonId) return [];
+
+          // Step 2: Fetch completed games from that season only
+          // Over-fetch to have room after filtering
           const { data } = await supabase
             .from("games")
             .select(
@@ -228,16 +247,33 @@ export async function getRecentGamesBySport(sportId: string, limit = 20) {
               "seasons(label)"
             )
             .eq("sport_id", sportId)
+            .eq("season_id", latestSeasonId)
             .not("home_score", "is", null)
             .not("away_score", "is", null)
             .order("game_date", { ascending: false })
-            .limit(limit);
+            .limit(limit * 3);
 
-          // Filter out games where both schools are missing
-          const filtered = (data ?? []).filter(
-            (g: any) => g.home_school?.name || g.away_school?.name
+          // Step 3: Filter — require BOTH teams to have names (no TBD)
+          const withBothTeams = (data ?? []).filter(
+            (g: any) => g.home_school?.name && g.away_school?.name
           );
-          return filtered;
+
+          // Step 4: Deduplicate (same two teams + same scores = duplicate import)
+          const seen = new Set<string>();
+          const deduped = withBothTeams.filter((g: any) => {
+            const key = [
+              Math.min(g.home_school?.id ?? 0, g.away_school?.id ?? 0),
+              Math.max(g.home_school?.id ?? 0, g.away_school?.id ?? 0),
+              Math.min(g.home_score ?? 0, g.away_score ?? 0),
+              Math.max(g.home_score ?? 0, g.away_score ?? 0),
+              g.game_date,
+            ].join("|");
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+
+          return deduped.slice(0, limit);
         },
         { maxRetries: 2, baseDelay: 500 }
       );

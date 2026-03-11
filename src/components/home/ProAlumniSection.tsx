@@ -96,7 +96,7 @@ export default function ProAlumniSection({ alumni }: ProAlumniSectionProps) {
 
           {/* Filter by sport */}
           <Link
-            href="/football/leaderboards/pro-athletes"
+            href="/next-level"
             className="group p-6 sm:p-8 bg-white [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-lg transition-shadow"
           >
             <div className="text-3xl sm:text-4xl mb-3">🎯</div>

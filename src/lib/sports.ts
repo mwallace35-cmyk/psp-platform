@@ -9,8 +9,8 @@ export function isValidSport(sport: string): sport is SportId {
 // Sport metadata
 export const SPORT_META: Record<SportId, { name: string; emoji: string; color: string; statCategories: string[] }> = {
   football: { name: "Football", emoji: "🏈", color: "#16a34a", statCategories: ["rushing", "passing", "receiving", "scoring"] },
-  basketball: { name: "Basketball", emoji: "🏀", color: "#ea580c", statCategories: ["scoring", "rebounds", "assists"] },
-  baseball: { name: "Baseball", emoji: "⚾", color: "#dc2626", statCategories: ["batting", "pitching"] },
+  basketball: { name: "Basketball", emoji: "🏀", color: "#ea580c", statCategories: ["scoring", "ppg", "rebounds", "assists"] },
+  baseball: { name: "Baseball", emoji: "⚾", color: "#dc2626", statCategories: ["batting", "pitching", "home-runs"] },
   "track-field": { name: "Track & Field", emoji: "🏃", color: "#7c3aed", statCategories: ["sprints", "distance", "field"] },
   lacrosse: { name: "Lacrosse", emoji: "🥍", color: "#0891b2", statCategories: ["goals", "assists"] },
   wrestling: { name: "Wrestling", emoji: "🤼", color: "#ca8a04", statCategories: ["wins", "pins"] },

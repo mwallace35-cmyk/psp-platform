@@ -95,7 +95,7 @@ export default function ContributorLeaderboard({
       )}
 
       <div className={styles.footer}>
-        <a href="/community/leaderboard" className={styles.viewAllLink}>
+        <a href="/pulse" className={styles.viewAllLink}>
           View Full Leaderboard →
         </a>
       </div>
