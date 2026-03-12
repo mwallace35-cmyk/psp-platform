@@ -106,12 +106,12 @@ function classifySide(position?: string | null): "offense" | "defense" | "specia
  * Map a raw JSON award row to AwardRecord format
  */
 function mapAwardRow(row: any): AwardRecord {
-  // Resolve display name: prefer linked player, then direct player_name, then award_name
+  // Resolve display name: prefer linked player, then direct player_name
+  // Do NOT fall through to award_name — it's the award publication (e.g. "Daily News All-City"), not a player
   const displayName =
     (row.player_id ? row.player_name : null) ||
     row.direct_player_name ||
-    row.award_name ||
-    "Unknown Player";
+    "Name Not Available";
 
   // Resolve school: COALESCE already handled in RPC (player school > direct school)
   const schoolId = row.school_id;

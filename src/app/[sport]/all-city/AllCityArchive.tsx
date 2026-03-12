@@ -59,6 +59,7 @@ function PlayerRow({ award, sport }: { award: AwardRecord; sport: string }) {
   const name = award.displayName;
   const school = award.school;
   const position = award.position;
+  const isNameMissing = name === "Name Not Available";
 
   return (
     <div className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-white/5 transition-colors">
@@ -75,7 +76,7 @@ function PlayerRow({ award, sport }: { award: AwardRecord; sport: string }) {
             {name}
           </Link>
         ) : (
-          <span className="text-gray-200 font-medium text-sm truncate block">
+          <span className={`font-medium text-sm truncate block ${isNameMissing ? "text-gray-500 italic" : "text-gray-200"}`}>
             {name}
           </span>
         )}
