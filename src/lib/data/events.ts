@@ -447,12 +447,29 @@ export async function getTeamsWithRecords(sportId: string, page = 1, pageSize = 
   );
 }
 
+export interface SchoolTeamStat {
+  school: {
+    id: number;
+    name: string;
+    slug: string;
+    city: string | null;
+    state: string | null;
+  };
+  league: string;
+  totalWins: number;
+  totalLosses: number;
+  totalTies: number;
+  seasonCount: number;
+  championships: number;
+}
+
 /**
  * Get aggregated team stats by school (all-time records, championships, seasons)
  * Used for the teams directory page to show school-level statistics.
- * Rewrote to use parallel flat queries instead of N+1 nested embeds.
+ * Uses a SQL RPC function to aggregate in the database, avoiding the
+ * Supabase PostgREST 1000-row default limit on raw table queries.
  */
-export async function getSchoolTeamStats(sportId: string, page = 1, pageSize = 500) {
+export async function getSchoolTeamStats(sportId: string, page = 1, pageSize = 500): Promise<PaginatedResult<SchoolTeamStat>> {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -460,83 +477,32 @@ export async function getSchoolTeamStats(sportId: string, page = 1, pageSize = 5
           const supabase = await createClient();
           const offset = (page - 1) * pageSize;
 
-          // 1. Get all team_seasons for this sport with school + league data (flat queries)
-          // IMPORTANT: Supabase PostgREST has a default 1000-row limit.
-          // team_seasons can have 2700+ rows, schools 1300+, so we must
-          // use .range() to fetch all rows (up to 10000).
-          const [teamSeasonsRes, champsRes, schoolsRes] = await Promise.all([
-            supabase
-              .from("team_seasons")
-              .select("school_id, wins, losses, ties")
-              .eq("sport_id", sportId)
-              .range(0, 9999),
-            supabase
-              .from("championships")
-              .select("school_id")
-              .eq("sport_id", sportId)
-              .range(0, 9999),
-            supabase
-              .from("schools")
-              .select("id, name, slug, city, state, league_id, leagues(name)")
-              .is("deleted_at", null)
-              .range(0, 9999),
-          ]);
-
-          const teamSeasons = teamSeasonsRes.data ?? [];
-          const championships = champsRes.data ?? [];
-          const allSchools = schoolsRes.data ?? [];
-
-          // 2. Build school lookup map
-          const schoolMap = new Map<number, any>();
-          for (const s of allSchools) {
-            schoolMap.set(s.id, s);
-          }
-
-          // 3. Aggregate team seasons by school
-          const schoolStats = new Map<number, {
-            totalWins: number; totalLosses: number; totalTies: number;
-            seasonCount: number; championships: number;
-          }>();
-
-          for (const ts of teamSeasons) {
-            const sid = ts.school_id;
-            if (!schoolMap.has(sid)) continue; // skip deleted schools
-            const existing = schoolStats.get(sid) || {
-              totalWins: 0, totalLosses: 0, totalTies: 0, seasonCount: 0, championships: 0,
-            };
-            existing.totalWins += ts.wins || 0;
-            existing.totalLosses += ts.losses || 0;
-            existing.totalTies += ts.ties || 0;
-            existing.seasonCount += 1;
-            schoolStats.set(sid, existing);
-          }
-
-          // 4. Count championships per school
-          for (const c of championships) {
-            const sid = c.school_id;
-            const existing = schoolStats.get(sid);
-            if (existing) existing.championships += 1;
-          }
-
-          // 5. Build result array
-          const teamStatsArray = Array.from(schoolStats.entries()).map(([schoolId, stats]) => {
-            const school = schoolMap.get(schoolId);
-            return {
-              school: school || { id: schoolId, name: "Unknown", slug: "", city: null, state: null },
-              league: (school?.leagues as any)?.name || "Independent",
-              ...stats,
-            };
+          // Use RPC function that aggregates in SQL (returns ~71 rows for football,
+          // well under the 1000-row PostgREST limit, vs 2763+ raw team_season rows)
+          const { data: rpcData, error } = await supabase.rpc("get_school_team_stats", {
+            p_sport_id: sportId,
           });
 
-          // 6. Sort by win percentage, then by wins
-          teamStatsArray.sort((a, b) => {
-            const aTotal = a.totalWins + a.totalLosses + a.totalTies;
-            const bTotal = b.totalWins + b.totalLosses + b.totalTies;
-            const aWinPct = aTotal > 0 ? a.totalWins / aTotal : 0;
-            const bWinPct = bTotal > 0 ? b.totalWins / bTotal : 0;
-            if (bWinPct !== aWinPct) return bWinPct - aWinPct;
-            return b.totalWins - a.totalWins;
-          });
+          if (error) {
+            console.warn("[PSP] get_school_team_stats RPC failed:", error.message);
+            return { data: [] as SchoolTeamStat[], total: 0, page, pageSize, hasMore: false };
+          }
+
+          const teamStatsArray: SchoolTeamStat[] = (rpcData ?? []).map((row: any) => ({
+            school: {
+              id: row.school_id,
+              name: row.school_name,
+              slug: row.school_slug,
+              city: row.city,
+              state: row.state,
+            },
+            league: row.league_name || "Independent",
+            totalWins: Number(row.total_wins) || 0,
+            totalLosses: Number(row.total_losses) || 0,
+            totalTies: Number(row.total_ties) || 0,
+            seasonCount: Number(row.season_count) || 0,
+            championships: Number(row.championships) || 0,
+          }));
 
           const totalCount = teamStatsArray.length;
           const paginatedStats = teamStatsArray.slice(offset, offset + pageSize);
