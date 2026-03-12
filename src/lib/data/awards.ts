@@ -7,7 +7,8 @@ import {
 } from "./common";
 
 /**
- * Award record with all relations
+ * Award record with all relations — uses direct fields from awards table
+ * plus linked player/school data when available
  */
 export interface AwardRecord {
   id: number;
@@ -16,7 +17,15 @@ export interface AwardRecord {
   category?: string;
   position?: string;
   source?: string;
-  created_at?: string;
+  award_tier?: string;
+  /** Player name — from linked player or direct award field */
+  displayName: string;
+  /** School info — from linked player's school or direct award school_id */
+  school?: {
+    id: number;
+    name: string;
+    slug: string;
+  } | null;
   players?: {
     id: number;
     name: string;
@@ -57,9 +66,58 @@ async function fetchAllCityAwardsJson(sport: string) {
 }
 
 /**
+ * Normalize award_tier to consistent format
+ */
+function normalizeTier(tier?: string | null, category?: string | null): string | undefined {
+  const raw = tier || category || "";
+  const lower = raw.toLowerCase().replace(/[- ]/g, "");
+  if (lower.includes("first")) return "First Team";
+  if (lower.includes("second")) return "Second Team";
+  if (lower.includes("third")) return "Third Team";
+  if (lower.includes("honorable")) return "Honorable Mention";
+  if (lower === "offense") return undefined; // Not a tier
+  if (lower === "defense") return undefined; // Not a tier
+  return undefined;
+}
+
+/**
+ * Classify position as offense or defense for post-1969 display
+ */
+function classifySide(position?: string | null): "offense" | "defense" | "special" | null {
+  if (!position) return null;
+  const pos = position.toUpperCase().replace(/[.\s]/g, "");
+  // Offense positions
+  if (["QB", "RB", "HB", "FB", "WR", "REC", "TE", "OL", "T", "G", "C", "E", "L", "B", "MP", "IL", "AP", "ATH", "MULTI-PURPOSE", "MULTIPURPOSE"].includes(pos)) {
+    // L, B, E, IL are ambiguous (could be offensive or defensive linemen/backs/ends)
+    // We'll handle these as "both" and let the category/award_tier context decide
+    if (["L", "B", "E", "IL"].includes(pos)) return null; // ambiguous
+    return "offense";
+  }
+  // Defense positions
+  if (["DL", "LB", "ILB", "DB", "DE", "DT", "S", "CB", "NG"].includes(pos)) return "defense";
+  // Special teams
+  if (["K", "P", "KR", "SPEC"].includes(pos)) return "special";
+  // Two-way players
+  if (pos.includes("-") || pos.includes("/")) return null;
+  return null;
+}
+
+/**
  * Map a raw JSON award row to AwardRecord format
  */
 function mapAwardRow(row: any): AwardRecord {
+  // Resolve display name: prefer linked player, then direct player_name, then award_name
+  const displayName =
+    (row.player_id ? row.player_name : null) ||
+    row.direct_player_name ||
+    row.award_name ||
+    "Unknown Player";
+
+  // Resolve school: COALESCE already handled in RPC (player school > direct school)
+  const schoolId = row.school_id;
+  const schoolName = row.school_name;
+  const schoolSlug = row.school_slug;
+
   return {
     id: row.award_id,
     award_type: row.award_type,
@@ -67,6 +125,11 @@ function mapAwardRow(row: any): AwardRecord {
     category: row.category,
     position: row.award_position,
     source: row.award_source,
+    award_tier: normalizeTier(row.award_tier, row.category),
+    displayName,
+    school: schoolId
+      ? { id: schoolId, name: schoolName, slug: schoolSlug }
+      : null,
     players: row.player_id
       ? {
           id: row.player_id,
@@ -141,6 +204,7 @@ export const getAllCitySummary = cache(async (sport: string) => {
             if (row.year_start) {
               yearsSet.add(row.year_start);
             }
+            // Use COALESCE'd school_slug from RPC
             if (row.school_slug) {
               schoolsSet.add(row.school_slug);
               if (!schoolCounts[row.school_slug]) {

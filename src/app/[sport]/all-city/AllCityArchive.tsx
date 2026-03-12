@@ -15,6 +15,85 @@ interface AllCityArchiveProps {
   sport: string;
 }
 
+/** Tier badge colors and labels */
+const TIER_CONFIG: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  "First Team": { label: "1ST TEAM", bg: "bg-[#f0a500]/15", text: "text-[#f0a500]", border: "border-[#f0a500]/30" },
+  "Second Team": { label: "2ND TEAM", bg: "bg-blue-500/15", text: "text-blue-400", border: "border-blue-500/30" },
+  "Third Team": { label: "3RD TEAM", bg: "bg-gray-500/15", text: "text-gray-400", border: "border-gray-500/30" },
+  "Honorable Mention": { label: "HON. MENTION", bg: "bg-gray-600/15", text: "text-gray-500", border: "border-gray-600/30" },
+};
+
+/** Readable position labels */
+const POSITION_LABELS: Record<string, string> = {
+  QB: "Quarterback", RB: "Running Back", HB: "Halfback", FB: "Fullback",
+  WR: "Wide Receiver", TE: "Tight End", OL: "Offensive Line",
+  T: "Tackle", G: "Guard", C: "Center", E: "End",
+  L: "Lineman", B: "Back", IL: "Interior Line",
+  DL: "Defensive Line", LB: "Linebacker", ILB: "Inside Linebacker",
+  DB: "Defensive Back", DE: "Defensive End", DT: "Defensive Tackle",
+  K: "Kicker", P: "Punter", KR: "Kick Returner",
+  MP: "Multi-Purpose", AP: "All-Purpose", ATH: "Athlete",
+  "MULTI-PURPOSE": "Multi-Purpose", SPEC: "Specialist",
+  "Rec": "Receiver", "Rec.": "Receiver",
+};
+
+function TierBadge({ tier }: { tier: string }) {
+  const config = TIER_CONFIG[tier] || TIER_CONFIG["Honorable Mention"];
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-bold tracking-wider rounded border ${config.bg} ${config.text} ${config.border}`}>
+      {config.label}
+    </span>
+  );
+}
+
+function PositionPill({ position }: { position: string }) {
+  return (
+    <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-medium text-gray-400 bg-gray-700/50 rounded">
+      {position}
+    </span>
+  );
+}
+
+function PlayerRow({ award, sport }: { award: AwardRecord; sport: string }) {
+  const hasLink = !!award.players?.slug;
+  const name = award.displayName;
+  const school = award.school;
+  const position = award.position;
+
+  return (
+    <div className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-white/5 transition-colors">
+      {/* Position */}
+      {position && <PositionPill position={position} />}
+
+      {/* Player name */}
+      <div className="flex-1 min-w-0">
+        {hasLink ? (
+          <Link
+            href={`/${sport}/players/${award.players!.slug}`}
+            className="text-blue-400 hover:text-blue-300 font-medium text-sm truncate block"
+          >
+            {name}
+          </Link>
+        ) : (
+          <span className="text-gray-200 font-medium text-sm truncate block">
+            {name}
+          </span>
+        )}
+      </div>
+
+      {/* School */}
+      {school && (
+        <Link
+          href={`/${sport}/schools/${school.slug}`}
+          className="text-gray-500 hover:text-gray-400 text-xs truncate max-w-[140px] hidden sm:block"
+        >
+          {school.name}
+        </Link>
+      )}
+    </div>
+  );
+}
+
 export default function AllCityArchive({ years, sport }: AllCityArchiveProps) {
   const [selectedDecade, setSelectedDecade] = useState<string | null>(null);
 
@@ -43,20 +122,54 @@ export default function AllCityArchive({ years, sport }: AllCityArchiveProps) {
     return years.filter((y) => y.yearStart >= start && y.yearStart <= end);
   }, [years, selectedDecade]);
 
-  // Group awards by position/category
-  const groupAwardsByCategory = (awards: AwardRecord[]) => {
+  // Group awards by tier within a year
+  const groupByTier = (awards: AwardRecord[]) => {
+    const tierOrder = ["First Team", "Second Team", "Third Team", "Honorable Mention"];
+    const groups: Record<string, AwardRecord[]> = {};
+    const noTier: AwardRecord[] = [];
+
+    for (const award of awards) {
+      if (award.award_tier) {
+        if (!groups[award.award_tier]) groups[award.award_tier] = [];
+        groups[award.award_tier].push(award);
+      } else {
+        noTier.push(award);
+      }
+    }
+
+    // Return ordered groups + ungrouped at end
+    const result: { tier: string | null; awards: AwardRecord[] }[] = [];
+    for (const tier of tierOrder) {
+      if (groups[tier]?.length) {
+        result.push({ tier, awards: groups[tier] });
+      }
+    }
+    if (noTier.length) {
+      result.push({ tier: null, awards: noTier });
+    }
+    return result;
+  };
+
+  // Group awards by award_type for mixed years
+  const groupByAwardType = (awards: AwardRecord[]) => {
     const groups: Record<string, AwardRecord[]> = {};
     for (const award of awards) {
-      const key = award.position ? `${award.position}` : award.category || "Other";
+      const key = award.award_type;
       if (!groups[key]) groups[key] = [];
       groups[key].push(award);
     }
-    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+    return groups;
   };
 
-  // Determine if this is pre-1969 (no offense/defense split)
-  const hasOffenseDefenseSplit = (awards: AwardRecord[]) => {
-    return awards.some((a) => a.position?.includes("Offense") || a.position?.includes("Defense"));
+  const AWARD_TYPE_LABELS: Record<string, string> = {
+    "all-city": "All-City",
+    "all-scholastic": "All-Scholastic",
+    "all-state": "All-State",
+    "all-catholic": "All-Catholic",
+    "all-public": "All-Public",
+    "all-inter-ac": "All-Inter-Ac",
+    "all-decade": "All-Decade",
+    "all-era": "All-Era",
   };
 
   return (
@@ -91,117 +204,54 @@ export default function AllCityArchive({ years, sport }: AllCityArchiveProps) {
       )}
 
       {/* Years Accordion */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {filteredYears.map((yearData) => {
-          const offenseDefenseSplit = hasOffenseDefenseSplit(yearData.awards);
-          const groupedAwards = groupAwardsByCategory(yearData.awards);
+          const awardTypeGroups = groupByAwardType(yearData.awards);
+          const hasMultipleTypes = Object.keys(awardTypeGroups).length > 1;
 
           return (
             <details
               key={yearData.label}
-              className="group bg-gray-800 border border-gray-700 rounded-lg overflow-hidden"
+              className="group bg-gray-800/80 border border-gray-700/60 rounded-lg overflow-hidden"
             >
-              <summary className="bg-gray-800 hover:bg-gray-750 cursor-pointer px-4 py-3 flex items-center justify-between transition-all">
-                <h3 className="text-white font-bebas text-lg">{yearData.label}</h3>
-                <span className="text-gray-400 text-sm group-open:hidden">
-                  {yearData.awards.length} selections
-                </span>
-                <span className="text-[#f0a500] group-open:rotate-180 transition-transform">
+              <summary className="cursor-pointer px-4 py-3 flex items-center justify-between hover:bg-gray-750/50 transition-all">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-white font-bebas text-xl tracking-wide">{yearData.label}</h3>
+                  <span className="text-gray-500 text-xs font-medium">
+                    {yearData.awards.length} selections
+                  </span>
+                </div>
+                <span className="text-[#f0a500] text-sm group-open:rotate-180 transition-transform duration-200">
                   ▼
                 </span>
               </summary>
 
-              <div className="border-t border-gray-700 p-4 bg-black/20 space-y-6">
-                {!offenseDefenseSplit ? (
-                  // Pre-1969: Unified list
-                  <div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {yearData.awards.map((award) => (
-                        <div
-                          key={award.id}
-                          className="flex items-center gap-2 text-sm"
-                        >
-                          <span className="text-[#f0a500]">•</span>
-                          {award.players?.slug ? (
-                            <Link
-                              href={`/${sport}/players/${award.players.slug}`}
-                              className="text-blue-400 hover:text-blue-300"
-                            >
-                              {award.players.name}
-                            </Link>
-                          ) : (
-                            <span className="text-gray-300">{award.award_name || "Player"}</span>
-                          )}
-                          {award.players?.schools && (
-                            <>
-                              <span className="text-gray-500">,</span>
-                              <Link
-                                href={`/${sport}/schools/${award.players.schools.slug}`}
-                                className="text-gray-400 hover:text-gray-300 text-xs"
-                              >
-                                {award.players.schools.name}
-                              </Link>
-                            </>
-                          )}
+              <div className="border-t border-gray-700/50 bg-[#0a1628]/40">
+                {/* If multiple award types in this year, show sub-headers */}
+                {hasMultipleTypes ? (
+                  Object.entries(awardTypeGroups).map(([type, typeAwards]) => {
+                    const tierGroups = groupByTier(typeAwards);
+                    return (
+                      <div key={type} className="border-b border-gray-700/30 last:border-b-0">
+                        <div className="px-4 py-2 bg-gray-800/40">
+                          <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                            {AWARD_TYPE_LABELS[type] || type}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                        <div className="px-4 pb-4">
+                          {tierGroups.map(({ tier, awards }, idx) => (
+                            <TierSection key={tier || `ungrouped-${idx}`} tier={tier} awards={awards} sport={sport} />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })
                 ) : (
-                  // Post-1969: Offense/Defense split
-                  groupedAwards.map(([category, categoryAwards]) => (
-                    <div key={category}>
-                      <div className="flex items-center gap-2 mb-3">
-                        {category.includes("Offense") ? (
-                          <span className="inline-block px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded">
-                            OFFENSE
-                          </span>
-                        ) : category.includes("Defense") ? (
-                          <span className="inline-block px-2 py-1 bg-red-600 text-white text-xs font-bold rounded">
-                            DEFENSE
-                          </span>
-                        ) : (
-                          <span className="inline-block px-2 py-1 bg-gray-600 text-white text-xs font-bold rounded">
-                            {category.toUpperCase()}
-                          </span>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-4">
-                        {categoryAwards.map((award) => (
-                          <div
-                            key={award.id}
-                            className="flex items-center gap-2 text-sm"
-                          >
-                            <span className="text-[#f0a500]">•</span>
-                            <div className="flex-1">
-                              {award.players?.slug ? (
-                                <Link
-                                  href={`/${sport}/players/${award.players.slug}`}
-                                  className="text-blue-400 hover:text-blue-300 font-medium"
-                                >
-                                  {award.players.name}
-                                </Link>
-                              ) : (
-                                <span className="text-gray-300 font-medium">
-                                  {award.award_name || "Player"}
-                                </span>
-                              )}
-                              {award.players?.schools && (
-                                <div className="text-gray-400 text-xs">
-                                  <Link
-                                    href={`/${sport}/schools/${award.players.schools.slug}`}
-                                    className="hover:text-gray-300"
-                                  >
-                                    {award.players.schools.name}
-                                  </Link>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))
+                  <div className="px-4 pb-4">
+                    {groupByTier(yearData.awards).map(({ tier, awards }, idx) => (
+                      <TierSection key={tier || `ungrouped-${idx}`} tier={tier} awards={awards} sport={sport} />
+                    ))}
+                  </div>
                 )}
               </div>
             </details>
@@ -214,6 +264,29 @@ export default function AllCityArchive({ years, sport }: AllCityArchiveProps) {
           <p className="text-gray-300">No All-City selections for this decade.</p>
         </div>
       )}
+    </div>
+  );
+}
+
+/** Section for a single tier (First Team, Second Team, etc.) */
+function TierSection({ tier, awards, sport }: { tier: string | null; awards: AwardRecord[]; sport: string }) {
+  return (
+    <div className="mt-3">
+      {/* Tier header */}
+      {tier && (
+        <div className="flex items-center gap-2 mb-2">
+          <TierBadge tier={tier} />
+          <div className="flex-1 h-px bg-gray-700/50" />
+          <span className="text-gray-600 text-xs">{awards.length}</span>
+        </div>
+      )}
+
+      {/* Player grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+        {awards.map((award) => (
+          <PlayerRow key={award.id} award={award} sport={sport} />
+        ))}
+      </div>
     </div>
   );
 }
