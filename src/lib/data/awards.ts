@@ -42,56 +42,67 @@ export interface AllCityYear {
 }
 
 /**
- * Get all-city awards by year for a sport — uses RPC to bypass PostgREST 1000-row limit
+ * Helper: fetch all awards via JSON RPC (returns single JSONB row, bypasses PostgREST max_rows)
+ */
+async function fetchAllCityAwardsJson(sport: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_all_city_awards_json", {
+    p_sport_id: sport,
+  });
+  if (error) {
+    console.warn("[PSP] get_all_city_awards_json RPC failed:", error.message);
+    return null;
+  }
+  return data as { awards: any[]; total_count: number } | null;
+}
+
+/**
+ * Map a raw JSON award row to AwardRecord format
+ */
+function mapAwardRow(row: any): AwardRecord {
+  return {
+    id: row.award_id,
+    award_type: row.award_type,
+    award_name: row.award_name,
+    category: row.category,
+    position: row.award_position,
+    source: row.award_source,
+    players: row.player_id
+      ? {
+          id: row.player_id,
+          name: row.player_name,
+          slug: row.player_slug,
+          primary_school_id: row.school_id,
+          schools: row.school_id
+            ? {
+                id: row.school_id,
+                name: row.school_name,
+                slug: row.school_slug,
+              }
+            : null,
+        }
+      : null,
+    seasons: row.year_start
+      ? {
+          year_start: row.year_start,
+          year_end: row.year_end,
+          label: row.season_label,
+        }
+      : null,
+  };
+}
+
+/**
+ * Get all-city awards by year for a sport — uses JSON RPC to bypass PostgREST 1000-row limit
  */
 export const getAllCityByYear = cache(async (sport: string) => {
   return withErrorHandling(
     async () => {
       return withRetry(
         async () => {
-          const supabase = await createClient();
-
-          const { data, error } = await supabase.rpc("get_all_city_awards", {
-            p_sport_id: sport,
-          });
-
-          if (error) {
-            console.warn("[PSP] get_all_city_awards RPC failed:", error.message);
-            return [];
-          }
-
-          // Map RPC rows to AwardRecord format expected by page
-          return ((data ?? []) as any[]).map((row) => ({
-            id: row.award_id,
-            award_type: row.award_type,
-            award_name: row.award_name,
-            category: row.category,
-            position: row.award_position,
-            source: row.award_source,
-            players: row.player_id
-              ? {
-                  id: row.player_id,
-                  name: row.player_name,
-                  slug: row.player_slug,
-                  primary_school_id: row.school_id,
-                  schools: row.school_id
-                    ? {
-                        id: row.school_id,
-                        name: row.school_name,
-                        slug: row.school_slug,
-                      }
-                    : null,
-                }
-              : null,
-            seasons: row.year_start
-              ? {
-                  id: 0,
-                  year_start: row.year_start,
-                  year_end: row.year_end,
-                  label: row.season_label,
-                }
-              : null,
-          })) as AwardRecord[];
+          const result = await fetchAllCityAwardsJson(sport);
+          if (!result?.awards) return [];
+          return result.awards.map(mapAwardRow);
         },
         { maxRetries: 3 }
       );
@@ -103,21 +114,15 @@ export const getAllCityByYear = cache(async (sport: string) => {
 });
 
 /**
- * Get all-city summary stats — computed from the same RPC data
+ * Get all-city summary stats — computed from the same JSON RPC data
  */
 export const getAllCitySummary = cache(async (sport: string) => {
   return withErrorHandling(
     async () => {
       return withRetry(
         async () => {
-          const supabase = await createClient();
-
-          const { data, error } = await supabase.rpc("get_all_city_awards", {
-            p_sport_id: sport,
-          });
-
-          if (error) {
-            console.warn("[PSP] get_all_city_awards RPC (summary) failed:", error.message);
+          const result = await fetchAllCityAwardsJson(sport);
+          if (!result?.awards) {
             return {
               totalSelections: 0,
               yearsSpanned: { min: 0, max: 0 },
@@ -126,7 +131,7 @@ export const getAllCitySummary = cache(async (sport: string) => {
             };
           }
 
-          const awards = (data ?? []) as any[];
+          const awards = result.awards;
           const totalSelections = awards.length;
           const yearsSet = new Set<number>();
           const schoolsSet = new Set<string>();
