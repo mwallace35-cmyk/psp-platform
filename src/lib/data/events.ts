@@ -461,19 +461,25 @@ export async function getSchoolTeamStats(sportId: string, page = 1, pageSize = 5
           const offset = (page - 1) * pageSize;
 
           // 1. Get all team_seasons for this sport with school + league data (flat queries)
+          // IMPORTANT: Supabase PostgREST has a default 1000-row limit.
+          // team_seasons can have 2700+ rows, schools 1300+, so we must
+          // use .range() to fetch all rows (up to 10000).
           const [teamSeasonsRes, champsRes, schoolsRes] = await Promise.all([
             supabase
               .from("team_seasons")
               .select("school_id, wins, losses, ties")
-              .eq("sport_id", sportId),
+              .eq("sport_id", sportId)
+              .range(0, 9999),
             supabase
               .from("championships")
               .select("school_id")
-              .eq("sport_id", sportId),
+              .eq("sport_id", sportId)
+              .range(0, 9999),
             supabase
               .from("schools")
               .select("id, name, slug, city, state, league_id, leagues(name)")
-              .is("deleted_at", null),
+              .is("deleted_at", null)
+              .range(0, 9999),
           ]);
 
           const teamSeasons = teamSeasonsRes.data ?? [];
