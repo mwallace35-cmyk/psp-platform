@@ -42,7 +42,7 @@ export interface AllCityYear {
 }
 
 /**
- * Get all-city awards by year for a sport
+ * Get all-city awards by year for a sport — uses RPC to bypass PostgREST 1000-row limit
  */
 export const getAllCityByYear = cache(async (sport: string) => {
   return withErrorHandling(
@@ -51,36 +51,47 @@ export const getAllCityByYear = cache(async (sport: string) => {
         async () => {
           const supabase = await createClient();
 
-          // Query awards with type matching all-city, all-state, all-public, all-catholic, or all-inter-ac
-          const { data } = await supabase
-            .from("awards")
-            .select(
-              `
-              id,
-              award_type,
-              award_name,
-              category,
-              position,
-              source,
-              created_at,
-              players(
-                id,
-                name,
-                slug,
-                primary_school_id,
-                schools(id, name, slug)
-              ),
-              seasons(id, year_start, year_end, label)
-            `
-            )
-            .limit(2000)
-            .eq("sport_id", sport)
-            .or(
-              `award_type.eq.all-city,award_type.eq.all-state,award_type.eq.all-public,award_type.eq.all-catholic,award_type.eq.all-inter-ac,award_type.eq.all-scholastic,award_type.eq.all-decade,award_type.eq.all-era`
-            )
-            .order("seasons(year_start)", { ascending: false });
+          const { data, error } = await supabase.rpc("get_all_city_awards", {
+            p_sport_id: sport,
+          });
 
-          return (data || []) as unknown as AwardRecord[];
+          if (error) {
+            console.warn("[PSP] get_all_city_awards RPC failed:", error.message);
+            return [];
+          }
+
+          // Map RPC rows to AwardRecord format expected by page
+          return ((data ?? []) as any[]).map((row) => ({
+            id: row.award_id,
+            award_type: row.award_type,
+            award_name: row.award_name,
+            category: row.category,
+            position: row.award_position,
+            source: row.award_source,
+            players: row.player_id
+              ? {
+                  id: row.player_id,
+                  name: row.player_name,
+                  slug: row.player_slug,
+                  primary_school_id: row.school_id,
+                  schools: row.school_id
+                    ? {
+                        id: row.school_id,
+                        name: row.school_name,
+                        slug: row.school_slug,
+                      }
+                    : null,
+                }
+              : null,
+            seasons: row.year_start
+              ? {
+                  id: 0,
+                  year_start: row.year_start,
+                  year_end: row.year_end,
+                  label: row.season_label,
+                }
+              : null,
+          })) as AwardRecord[];
         },
         { maxRetries: 3 }
       );
@@ -92,7 +103,7 @@ export const getAllCityByYear = cache(async (sport: string) => {
 });
 
 /**
- * Get all-city summary stats
+ * Get all-city summary stats — computed from the same RPC data
  */
 export const getAllCitySummary = cache(async (sport: string) => {
   return withErrorHandling(
@@ -101,58 +112,36 @@ export const getAllCitySummary = cache(async (sport: string) => {
         async () => {
           const supabase = await createClient();
 
-          // Get all All-City awards with player/school info
-          const { data } = await supabase
-            .from("awards")
-            .select(
-              `
-              id,
-              award_type,
-              players(primary_school_id, schools(name, slug)),
-              seasons(year_start)
-            `
-            )
-            .eq("sport_id", sport)
-            .or(
-              `award_type.eq.all-city,award_type.eq.all-state,award_type.eq.all-public,award_type.eq.all-catholic,award_type.eq.all-inter-ac,award_type.eq.all-scholastic,award_type.eq.all-decade,award_type.eq.all-era`
-            )
-            .limit(2000);
+          const { data, error } = await supabase.rpc("get_all_city_awards", {
+            p_sport_id: sport,
+          });
 
-          interface AwardRecord {
-            seasons?: { year_start: number };
-            players?: { schools?: { slug: string } };
-            [key: string]: unknown;
+          if (error) {
+            console.warn("[PSP] get_all_city_awards RPC (summary) failed:", error.message);
+            return {
+              totalSelections: 0,
+              yearsSpanned: { min: 0, max: 0 },
+              schoolsRepresented: 0,
+              topSchools: [] as { name: string; count: number }[],
+            };
           }
-          const awards = (data || []) as unknown as AwardRecord[];
 
-          // Calculate summary stats
+          const awards = (data ?? []) as any[];
           const totalSelections = awards.length;
           const yearsSet = new Set<number>();
           const schoolsSet = new Set<string>();
-
-          for (const award of awards) {
-            if (award.seasons?.year_start) {
-              yearsSet.add(award.seasons.year_start);
-            }
-            if (award.players?.schools?.slug) {
-              schoolsSet.add(award.players.schools.slug);
-            }
-          }
-
-          // Top schools by selection count
           const schoolCounts: Record<string, { name: string; count: number }> = {};
-          for (const award of awards) {
-            const schools = award.players?.schools as unknown as any[];
-            if (Array.isArray(schools)) {
-              for (const school of schools) {
-                if (school?.name && school?.slug) {
-                  const key = school.slug;
-                  if (!schoolCounts[key]) {
-                    schoolCounts[key] = { name: school.name, count: 0 };
-                  }
-                  schoolCounts[key].count++;
-                }
+
+          for (const row of awards) {
+            if (row.year_start) {
+              yearsSet.add(row.year_start);
+            }
+            if (row.school_slug) {
+              schoolsSet.add(row.school_slug);
+              if (!schoolCounts[row.school_slug]) {
+                schoolCounts[row.school_slug] = { name: row.school_name, count: 0 };
               }
+              schoolCounts[row.school_slug].count++;
             }
           }
 

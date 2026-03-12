@@ -44,15 +44,16 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
   const awards = (await getAllCityByYear(sport)) || [];
   const summary = await getAllCitySummary(sport);
 
-  // Group awards by year
+  // Group awards by year (skip awards with no valid season)
   const byYear: Record<string, { label: string; yearStart: number; awards: AwardRecord[] }> = {};
   for (const award of awards) {
     const season = award.seasons;
-    const yearKey = season?.year_start?.toString() || "unknown";
+    if (!season?.year_start) continue; // Skip awards with no season data
+    const yearKey = season.year_start.toString();
     if (!byYear[yearKey]) {
       byYear[yearKey] = {
-        label: season?.label || yearKey,
-        yearStart: season?.year_start ?? 0,
+        label: season.label || yearKey,
+        yearStart: season.year_start,
         awards: [],
       };
     }

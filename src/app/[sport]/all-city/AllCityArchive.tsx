@@ -18,11 +18,12 @@ interface AllCityArchiveProps {
 export default function AllCityArchive({ years, sport }: AllCityArchiveProps) {
   const [selectedDecade, setSelectedDecade] = useState<string | null>(null);
 
-  // Generate decade options
+  // Generate decade options (filter out invalid years < 1900)
   const decades = useMemo(() => {
-    if (years.length === 0) return [];
-    const minYear = Math.min(...years.map((y) => y.yearStart));
-    const maxYear = Math.max(...years.map((y) => y.yearStart));
+    const validYears = years.filter((y) => y.yearStart >= 1900);
+    if (validYears.length === 0) return [];
+    const minYear = Math.min(...validYears.map((y) => y.yearStart));
+    const maxYear = Math.max(...validYears.map((y) => y.yearStart));
 
     const decadeList: { decade: string; start: number; end: number }[] = [];
     for (let d = Math.floor(minYear / 10) * 10; d <= maxYear; d += 10) {
