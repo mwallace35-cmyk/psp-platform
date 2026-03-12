@@ -98,7 +98,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <>
             <div className="sec-head">
               {sport === "baseball" ? <BilingualHeader english={`Latest ${meta.name} Stories`} spanish={baseballSpanish["Latest Stories"]} /> : <h2>Latest {meta.name} Stories</h2>}
-              <Link href="/articles" className="more">All Articles &#8594;</Link>
+              <Link href="/articles" className="more" aria-label="View all articles">All Articles &#8594;</Link>
             </div>
             <div className="stories">
               {moreStories.map((article: FeaturedArticle) => (
@@ -129,7 +129,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <>
             <div className="sec-head">
               <h2>Recent Games</h2>
-              <Link href={`/${sport}/teams`} className="more">Full Schedule →</Link>
+              <Link href={`/${sport}/teams`} className="more" aria-label={`View full ${meta.name} schedule`}>Full Schedule →</Link>
             </div>
             <div style={{
               display: "grid",
@@ -173,11 +173,11 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <>
             <div className="sec-head">
               {sport === "baseball" ? <BilingualHeader english="Recent Champions" spanish={baseballSpanish["Campeones Recientes"]} /> : <h2>Recent Champions</h2>}
-              <Link href={`/${sport}/championships`} className="more">All Championships &#8594;</Link>
+              <Link href={`/${sport}/championships`} className="more" aria-label={`View all ${meta.name} championships`}>All Championships &#8594;</Link>
             </div>
             <div className="rank-table">
               <div className="rt-head">Championship History</div>
-              {champions.map((champ: any, i: number) => (
+              {champions.map((champ: Championship, i: number) => (
                 <div key={champ.id} className="rt-row">
                   <div className="rt-num" style={{ background: i < 3 ? sportColor : "var(--g300)" }}>{i + 1}</div>
                   <div className="rt-info">
@@ -201,7 +201,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <h2 style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ color: sportColor }}>●</span> The Pulse
           </h2>
-          <Link href="/community" className="more">Join the Conversation →</Link>
+          <Link href="/community" className="more" aria-label="Join the community conversation">Join the Conversation →</Link>
         </div>
         <PulseHotTakes sport={sport} />
 
@@ -210,7 +210,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <>
             <div className="sec-head">
               {sport === "baseball" ? <BilingualHeader english="League Standings" spanish={baseballSpanish["League Standings"]} /> : <h2>League Standings</h2>}
-              <Link href={`/${sport}/teams`} className="more">Full Standings →</Link>
+              <Link href={`/${sport}/teams`} className="more" aria-label={`View full ${meta.name} league standings`}>Full Standings →</Link>
             </div>
             <LeagueStandings
               standings={standings}
@@ -267,6 +267,30 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>All-City and All-Scholastic selections</div>
             </div>
           </Link>
+          <Link href={`/${sport}/rivalries`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="ldr-head" style={{ background: sportColor }}>Rivalries</div>
+            <div style={{ padding: "12px" }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>🔥</div>
+              <div style={{ fontWeight: 700, fontSize: 13 }}>Head-to-head records</div>
+              <div style={{ fontSize: 11, color: "var(--g400)" }}>Historic matchups & series</div>
+            </div>
+          </Link>
+          <Link href={`/${sport}/eras`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="ldr-head" style={{ background: "var(--psp-blue)" }}>Statistical Eras</div>
+            <div style={{ padding: "12px" }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>📊</div>
+              <div style={{ fontWeight: 700, fontSize: 13 }}>How the game changed</div>
+              <div style={{ fontSize: 11, color: "var(--g400)" }}>Stats trends across decades</div>
+            </div>
+          </Link>
+          <Link href={`/${sport}/breakouts`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>Breakout Alerts</div>
+            <div style={{ padding: "12px" }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>⚡</div>
+              <div style={{ fontWeight: 700, fontSize: 13 }}>Rising stars</div>
+              <div style={{ fontSize: 11, color: "var(--g400)" }}>Year-over-year stat jumps</div>
+            </div>
+          </Link>
         </div>
 
         {/* Schools */}
@@ -274,7 +298,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <>
             <div className="sec-head"><h2>Schools</h2></div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 16 }}>
-              {schools.map((school: any) => (
+              {schools.map((school) => (
                 <Link
                   key={school.id}
                   href={`/${sport}/schools/${school.slug}`}
@@ -337,6 +361,9 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
             <Link href={`/${sport}/championships`} className="w-link">&#8594; Championship History</Link>
             <Link href={`/${sport}/records`} className="w-link">&#8594; Records</Link>
             <Link href={`/${sport}/all-city`} className="w-link">&#8594; All-City Teams</Link>
+            <Link href={`/${sport}/rivalries`} className="w-link">&#8594; Rivalries</Link>
+            <Link href={`/${sport}/eras`} className="w-link">&#8594; Statistical Eras</Link>
+            <Link href={`/${sport}/breakouts`} className="w-link">&#8594; Breakout Alerts</Link>
             <Link href={`/${sport}/schedule`} className="w-link">&#8594; 2026-27 Schedule</Link>
             <Link href={`/search?sport=${sport}`} className="w-link">&#8594; Player Search</Link>
             <Link href="/compare" className="w-link">&#8594; Compare Players</Link>

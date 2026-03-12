@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Breadcrumb } from '@/components/ui';
-import DailyChallenge from '@/components/challenge/DailyChallenge';
+import DailyChallenge from '@/components/challenge/DailyChallengeLazy';
 import StreakCounter from '@/components/challenge/StreakCounter';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 

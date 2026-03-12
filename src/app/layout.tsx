@@ -6,6 +6,7 @@ import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 import { WebVitalsReporter } from "@/app/web-vitals-reporter";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import MobileBottomNav from "@/components/nav/MobileBottomNav";
 import "./globals.css";
 import "./type-scale.css";
 
@@ -125,11 +126,12 @@ export default async function RootLayout({
         <WebVitalsReporter />
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <Header />
-          <main id="main-content" style={{ flex: 1 }}>
+          <main id="main-content" style={{ flex: 1, paddingBottom: "80px" }} className="md:pb-0">
             {children}
           </main>
           <Footer />
         </div>
+        <MobileBottomNav />
       </body>
     </html>
   );

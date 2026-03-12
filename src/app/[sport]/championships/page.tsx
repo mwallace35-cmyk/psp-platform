@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
-import { isValidSport, SPORT_META, getChampionshipsBySport, type Championship } from "@/lib/data";
+import DataSourceBadge from "@/components/ui/DataSourceBadge";
+import MethodologyNote from "@/components/ui/MethodologyNote";
+import { SPORT_META, getChampionshipsBySport, getChampionshipGamesWithBoxScores, type Championship } from "@/lib/data";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
@@ -11,8 +14,8 @@ export const revalidate = 86400;
 type PageParams = { sport: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const { sport } = await params;
-  if (!isValidSport(sport)) return {};
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   return {
     title: `Championships — ${SPORT_META[sport].name} — PhillySportsPack`,
     description: `Championship history and dynasty tracker for Philadelphia high school ${SPORT_META[sport].name.toLowerCase()}.`,
@@ -46,11 +49,11 @@ function getLevelConfig(level: string) {
 }
 
 export default async function ChampionshipsPage({ params }: { params: Promise<PageParams> }) {
-  const { sport } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
 
   const meta = SPORT_META[sport];
   const champData = await getChampionshipsBySport(sport);
+  const champGamesMap = await getChampionshipGamesWithBoxScores(sport);
   const championships = (champData ?? []) as Championship[];
 
   // Dynasty analysis — count titles per school, split by level
@@ -153,6 +156,35 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Data Source Badge & Methodology */}
+            <div>
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <DataSourceBadge
+                  source="PIAA + Ted Silary Archives"
+                  lastUpdated="2026-03-10"
+                  confidence="verified"
+                  detail="Championship data sourced from PIAA (state championships) and Ted Silary archives (historical records dating back to 1903). All city and league championships cross-referenced against multiple sources."
+                />
+              </div>
+
+              <MethodologyNote title="How we track championships">
+                <div className="space-y-2">
+                  <p>
+                    <strong>Championship levels:</strong> We track State (PIAA-sanctioned), City (regional/city tournaments), and League (regular-season conference titles).
+                  </p>
+                  <p>
+                    <strong>Coverage:</strong> State championships date back to 1903 in some sports. City and league championships are documented from available historical records.
+                  </p>
+                  <p>
+                    <strong>Verification:</strong> PIAA official records take precedence. Historical records are verified against newspaper archives and school records.
+                  </p>
+                  <p>
+                    <strong>Dynasty tracker:</strong> Schools are ranked by total state championship count (most meaningful), but can also be sorted by city or league titles.
+                  </p>
+                </div>
+              </MethodologyNote>
+            </div>
+
             {displayYears.map((yearData) => (
               <div key={yearData.label} className="rounded-xl overflow-hidden border"
                 style={{ borderColor: "var(--psp-gray-700, #374151)" }}>
@@ -169,57 +201,97 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
 
                 {/* Championship rows */}
                 <div style={{ background: "var(--psp-navy-mid, #0f2040)" }}>
-                  {yearData.champs.map((c, idx) => (
-                    <div key={c.id} className="flex items-center gap-3 px-5 py-3"
-                      style={{
-                        borderBottom: idx < yearData.champs.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
-                      }}>
-                      {/* Level badge */}
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-bold flex-shrink-0 whitespace-nowrap"
-                        style={{
-                          background: getLevelConfig(c.level || "").bg,
-                          color: getLevelConfig(c.level || "").text,
-                          minWidth: "70px",
-                          justifyContent: "center",
-                        }}>
-                        {getLevelConfig(c.level || "").label}
-                      </span>
+                  {yearData.champs.map((c, idx) => {
+                    // Try to find the championship game using season_id (not season object id)
+                    const champGame = c.season_id ? champGamesMap[`${c.season_id}|${c.school_id}|${c.opponent_id}`] : null;
 
-                      {/* Champion */}
-                      <div className="flex-1 min-w-0">
-                        {c.schools?.name ? (
-                          <Link href={`/${sport}/schools/${c.schools.slug}`}
-                            className="font-semibold text-sm hover:underline truncate block"
-                            style={{ color: "var(--psp-gold)" }}>
-                            {c.schools.name}
-                          </Link>
-                        ) : (
-                          <span className="text-sm text-gray-500 italic">Unknown</span>
-                        )}
-                        {/* Notes / league info */}
-                        {(c.notes || c.leagues?.name) && (
-                          <span className="text-xs block truncate" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
-                            {c.notes || c.leagues?.name}
+                    return (
+                      <div key={c.id} className="flex flex-col px-5 py-3"
+                        style={{
+                          borderBottom: idx < yearData.champs.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
+                        }}>
+                        {/* Main row */}
+                        <div className="flex items-center gap-3">
+                          {/* Level badge */}
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-bold flex-shrink-0 whitespace-nowrap"
+                            style={{
+                              background: getLevelConfig(c.level || "").bg,
+                              color: getLevelConfig(c.level || "").text,
+                              minWidth: "70px",
+                              justifyContent: "center",
+                            }}>
+                            {getLevelConfig(c.level || "").label}
                           </span>
+
+                          {/* Champion */}
+                          <div className="flex-1 min-w-0">
+                            {c.schools?.name ? (
+                              <Link href={`/${sport}/schools/${c.schools.slug}`}
+                                className="font-semibold text-sm hover:underline truncate block"
+                                style={{ color: "var(--psp-gold)" }}>
+                                {c.schools.name}
+                              </Link>
+                            ) : (
+                              <span className="text-sm text-gray-500 italic">Unknown</span>
+                            )}
+                            {/* Notes / league info */}
+                            {(c.notes || c.leagues?.name) && (
+                              <span className="text-xs block truncate" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
+                                {c.notes || c.leagues?.name}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Score from championship record if available */}
+                          {c.score && (
+                            <span className="text-xs font-mono px-2 py-0.5 rounded flex-shrink-0"
+                              style={{ background: "rgba(255,255,255,0.05)", color: "var(--psp-gray-300, #d1d5db)" }}>
+                              {c.score}
+                            </span>
+                          )}
+
+                          {/* Opponent if available */}
+                          {c.opponent?.name && (
+                            <span className="text-xs flex-shrink-0" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
+                              vs {c.opponent.name}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Game details row (if game found) */}
+                        {champGame && (
+                          <div className="flex items-center gap-2 mt-2 pl-[78px] text-xs">
+                            {/* Game score */}
+                            {champGame.home_score !== null && champGame.away_score !== null && (
+                              <span className="font-mono px-2 py-0.5 rounded flex-shrink-0"
+                                style={{ background: "rgba(240, 165, 0, 0.15)", color: "var(--psp-gold)" }}>
+                                {champGame.home_school?.name === c.schools?.name
+                                  ? `${champGame.home_score}-${champGame.away_score}`
+                                  : `${champGame.away_score}-${champGame.home_score}`}
+                              </span>
+                            )}
+
+                            {/* Game date */}
+                            {champGame.game_date && (
+                              <span style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
+                                {new Date(champGame.game_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </span>
+                            )}
+
+                            {/* Box score link */}
+                            {champGame.hasBoxScore && (
+                              <Link
+                                href={`/${sport}/games/${champGame.id}`}
+                                className="px-2 py-0.5 rounded text-xs font-semibold flex-shrink-0 hover:underline"
+                                style={{ background: "var(--psp-blue)", color: "white" }}>
+                                📊 Box Score
+                              </Link>
+                            )}
+                          </div>
                         )}
                       </div>
-
-                      {/* Score if available */}
-                      {c.score && (
-                        <span className="text-xs font-mono px-2 py-0.5 rounded flex-shrink-0"
-                          style={{ background: "rgba(255,255,255,0.05)", color: "var(--psp-gray-300, #d1d5db)" }}>
-                          {c.score}
-                        </span>
-                      )}
-
-                      {/* Opponent if available */}
-                      {c.opponent?.name && (
-                        <span className="text-xs flex-shrink-0" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
-                          vs {c.opponent.name}
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}

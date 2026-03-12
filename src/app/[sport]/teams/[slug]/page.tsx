@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META } from "@/lib/sports";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import { SPORT_META } from "@/lib/sports";
 import {
   getSchoolBySlug,
   getSchoolTeamSeasons,
@@ -18,17 +19,21 @@ export default async function TeamDetailPage({ params }: PageProps) {
   const { sport, slug } = await params;
 
   // Validate sport
-  if (!isValidSport(sport)) {
+  if (!(sport)) {
     notFound();
   }
 
   const sportMeta = SPORT_META[sport as keyof typeof SPORT_META];
 
   // Fetch school data
-  const school = await getSchoolBySlug(slug);
-  if (!school) {
+  const schoolData = await getSchoolBySlug(slug);
+  if (!schoolData) {
     notFound();
   }
+  const school = {
+    ...schoolData,
+    leagues: Array.isArray(schoolData.leagues) ? schoolData.leagues[0] : schoolData.leagues,
+  };
 
   // Map sport name to sport_id for database queries
   const sportIdMap: Record<string, string> = {
@@ -39,14 +44,24 @@ export default async function TeamDetailPage({ params }: PageProps) {
   const sportId = sportIdMap[sport] || sport;
 
   // Fetch team seasons, championships, and alumni in parallel
-  const [teamSeasons, championships, alumni] = await Promise.all([
+  const [teamSeasons, championshipsData, alumni] = await Promise.all([
     getSchoolTeamSeasons(school.id, sportId),
     getSchoolChampionships(school.id, sportId),
     getTrackedAlumni({ sport: sportId }, 6),
   ]);
+  // Type cast to match TeamPageClient's local Championship type
+  const championships = championshipsData as unknown as any[];
 
   // Get the most recent team season
   const latestSeason = teamSeasons?.[0] || null;
+
+  // Get league and coach names, handling potential array returns from Supabase
+  const leagueName = Array.isArray(school.leagues)
+    ? school.leagues[0]?.name
+    : (school.leagues as any)?.name;
+  const coachName = Array.isArray(latestSeason?.coaches)
+    ? latestSeason?.coaches[0]?.name
+    : (latestSeason?.coaches as any)?.name;
 
   // Prepare team data for client component
   const teamData = {
@@ -55,9 +70,9 @@ export default async function TeamDetailPage({ params }: PageProps) {
     slug: school.slug,
     city: school.city || "",
     state: school.state || "PA",
-    league: school.leagues?.name || "Independent",
+    league: leagueName || "Independent",
     founded_year: school.founded_year || 0,
-    coach: latestSeason?.coaches?.name || "TBA",
+    coach: coachName || "TBA",
     currentRecord: {
       wins: latestSeason?.wins || 0,
       losses: latestSeason?.losses || 0,
@@ -78,7 +93,7 @@ export default async function TeamDetailPage({ params }: PageProps) {
       school={school}
       teamSeasons={teamSeasons}
       championships={championships}
-      alumni={alumni}
+      alumni={alumni as unknown as any[]}
       sport={sport}
       sportMeta={sportMeta}
     />

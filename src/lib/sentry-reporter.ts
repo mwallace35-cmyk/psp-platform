@@ -34,9 +34,18 @@ function getCategoryTag(category: ErrorCategory): string {
 /**
  * Sentry error reporter for server and client-side error tracking
  */
+type SentryModule = {
+  captureException?: (error: unknown, context?: Record<string, unknown>) => void;
+  setUser?: (user: { id: string } | null) => void;
+  getCurrentHub?: () => { setUser: (user: { id: string } | null) => void } | null;
+  addBreadcrumb?: (breadcrumb: Record<string, unknown>) => void;
+  setTag?: (key: string, value: string) => void;
+  setContext?: (name: string, context: Record<string, unknown>) => void;
+};
+
 export class SentryReporter implements ErrorReporter {
   private initialized = false;
-  private sentryModule: any = null;
+  private sentryModule: SentryModule | null = null;
 
   async init(): Promise<void> {
     if (this.initialized) {
@@ -48,16 +57,19 @@ export class SentryReporter implements ErrorReporter {
       if (typeof window !== "undefined") {
         // Client-side: Sentry should be initialized via sentry.client.config.ts
         // The module is injected by the Sentry SDK
-        if ((window as any).Sentry) {
-          this.sentryModule = (window as any).Sentry;
+        const windowWithSentry = window as Window & { Sentry?: SentryModule };
+        if (windowWithSentry.Sentry) {
+          this.sentryModule = windowWithSentry.Sentry;
           this.initialized = true;
         }
       } else {
         // Server-side: Import the Sentry NextJS SDK
         try {
           // Use optional chaining and nullish coalescing for graceful degradation
-          const sentryModule: any = await import(/* webpackIgnore: true */ "@sentry/nextjs").catch(() => null);
-          if (sentryModule?.getClient) {
+          const sentryModule = (await import(/* webpackIgnore: true */ "@sentry/nextjs").catch(
+            () => null
+          )) as SentryModule | null;
+          if (sentryModule && "getClient" in sentryModule) {
             this.sentryModule = sentryModule;
             this.initialized = true;
           }
@@ -79,7 +91,7 @@ export class SentryReporter implements ErrorReporter {
       category?: ErrorCategory;
       severity?: ErrorSeverity;
       tags?: Record<string, string>;
-      contexts?: Record<string, any>;
+      contexts?: Record<string, unknown>;
     }
   ): void {
     try {
@@ -148,7 +160,7 @@ export class SentryReporter implements ErrorReporter {
    */
   addBreadcrumb(
     message: string,
-    data?: Record<string, any>,
+    data?: Record<string, unknown>,
     level: "debug" | "info" | "warning" | "error" = "info"
   ): void {
     try {
@@ -181,7 +193,7 @@ export class SentryReporter implements ErrorReporter {
   /**
    * Set context data in Sentry
    */
-  setContext(name: string, context: Record<string, any>): void {
+  setContext(name: string, context: Record<string, unknown>): void {
     try {
       if (this.sentryModule && this.sentryModule.setContext) {
         this.sentryModule.setContext(name, context);

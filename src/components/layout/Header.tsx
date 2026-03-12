@@ -37,7 +37,7 @@ const MINOR_SPORTS = [
 const PULSE_ITEMS = [
   { href: "/pulse", label: "The Pulse Hub" },
   { href: "/potw", label: "Player of the Week" },
-  { href: "/pulse/calendar", label: "Game Calendar" },
+  { href: "/pulse/calendar", label: "Master Schedule" },
   { href: "/pulse/forum", label: "Forum" },
   { href: "/pulse/rankings", label: "Power Rankings" },
   { href: "/pulse/our-guys", label: "Our Guys" },
@@ -54,6 +54,8 @@ const CONTENT_ITEMS = [
 
 const DATA_TOOLS = [
   { href: "/search", label: "Search" },
+  { href: "/scores", label: "Scores & Schedules" },
+  { href: "/awards", label: "Awards" },
   { href: "/compare", label: "Compare Players" },
   { href: "/challenge", label: "Stats Challenge" },
   { href: "/glossary", label: "Glossary" },
@@ -64,6 +66,7 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
   const announcementRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
@@ -163,9 +166,13 @@ export default function Header() {
     }
   }, [openDropdown]);
 
-  // Focus trap for mobile menu
+  // Focus trap for mobile menu with focus return
   useEffect(() => {
-    if (!mobileOpen) return;
+    if (!mobileOpen) {
+      // Return focus to hamburger button when menu closes
+      hamburgerRef.current?.focus();
+      return;
+    }
 
     const panel = mobileMenuRef.current;
     if (!panel) return;
@@ -181,6 +188,7 @@ export default function Header() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setMobileOpen(false);
+        // Focus will return via the effect cleanup
         return;
       }
       if (e.key !== "Tab") return;
@@ -382,12 +390,15 @@ export default function Header() {
 
           {/* Mobile Hamburger */}
           <button
+            ref={hamburgerRef}
             onClick={handleMobileToggle}
             className="md:hidden"
             style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 20 }}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
+            min-height="44px"
+            min-width="44px"
           >
             &#9776;
           </button>

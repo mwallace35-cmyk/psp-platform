@@ -30,3 +30,18 @@ export const SPORT_COLORS_HEX: Record<string, string> = {
   wrestling: "#ca8a04",
   soccer: "#059669",
 };
+
+/**
+ * Sport-specific gradient backgrounds for hero sections
+ * Each sport gets a unique color gradient for visual differentiation
+ * Format: Tailwind gradient classes for use in className
+ */
+export const SPORT_GRADIENTS: Record<string, string> = {
+  football: "from-[#0a1628] to-[#16a34a]",
+  basketball: "from-[#0a1628] to-[#ea580c]",
+  baseball: "from-[#0a1628] to-[#dc2626]",
+  "track-field": "from-[#0a1628] to-[#7c3aed]",
+  lacrosse: "from-[#0a1628] to-[#0891b2]",
+  wrestling: "from-[#0a1628] to-[#ca8a04]",
+  soccer: "from-[#0a1628] to-[#059669]",
+};

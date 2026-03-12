@@ -202,8 +202,21 @@ export default function SearchTypeahead() {
     setIsOpen(false);
   }, [query, router]);
 
+  // Announce search results count to screen readers
+  const resultsAnnouncement = isOpen && query.length >= 2
+    ? `${results.length} search results found`
+    : '';
+
   return (
     <div ref={containerRef} className="relative">
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {resultsAnnouncement}
+      </div>
       <SearchInput
         ref={inputRef}
         value={query}

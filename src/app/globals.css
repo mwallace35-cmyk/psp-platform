@@ -20,23 +20,19 @@
   --psp-gray-800: #1e293b;
   --psp-gray-900: #0f172a;
 
-  /* ESPN Design System */
-  --espn-dark: #111111;
-  --espn-darker: #0a0a0a;
+  /* Legacy system variables - kept for component compatibility */
   --bg: #f5f5f5;
   --g100: #e8e8e8;
   --g200: #d1d1d1;
   --g300: #4a5568;
   --g400: #4a5568;
   --g500: #4a5568;
-  --g600: #333;
   --text: #1a1a1a;
   --text-secondary: #4a5568;
   --link: #3b82f6;
 
   /* Interactive Accent Colors */
   --psp-blue: #3b82f6;
-  --psp-blue-light: #60a5fa;
 
   /* Sport Colors */
   --fb: #16a34a;
@@ -46,21 +42,6 @@
   --lac: #0891b2;
   --wrest: #ca8a04;
   --soccer: #059669;
-
-  /* Sport Colors - Text Safe (WCAG AA 4.5:1 on white background) */
-  --fb-text: #0d5a1f; /* Football - darker green */
-  --bb-text: #a83f00; /* Basketball - darker orange */
-  --base-text: #8b0000; /* Baseball - dark red */
-  --track-text: #4a1f7f; /* Track - darker purple */
-  --lac-text: #005f7f; /* Lacrosse - darker cyan */
-  --wrest-text: #804700; /* Wrestling - darker gold-brown */
-  --soccer-text: #034f30; /* Soccer - darker green */
-
-  /* Semantic Colors */
-  --psp-success: #22c55e;
-  --psp-warning: #f59e0b;
-  --psp-error: #ef4444;
-  --psp-info: #3b82f6;
 
   /* ===== DESIGN TOKENS ===== */
 
@@ -135,26 +116,20 @@
   --psp-gray-500: #cbd5e1;
   --psp-gray-600: #e2e8f0;
   --psp-gray-700: #f1f5f9;
-  --psp-gray-800: #f8fafc;
-  --psp-gray-900: #ffffff;
 
-  /* ESPN Design System */
-  --espn-dark: #1a2a3a;
-  --espn-darker: #0f1820;
+  /* Legacy system variables - kept for component compatibility */
   --bg: #0a1628;
   --g100: #1e293b;
   --g200: #334155;
   --g300: #475569;
   --g400: #64748b;
   --g500: #94a3b8;
-  --g600: #cbd5e1;
   --text: #e2e8f0;
   --text-secondary: #94a3b8;
   --link: #60a5fa;
 
   /* Interactive Accent Colors */
   --psp-blue: #60a5fa;
-  --psp-blue-light: #93c5fd;
 
   /* Sport Colors */
   --fb: #22c55e;
@@ -164,12 +139,6 @@
   --lac: #06b6d4;
   --wrest: #eab308;
   --soccer: #10b981;
-
-  /* Semantic Colors */
-  --psp-success: #4ade80;
-  --psp-warning: #fbbf24;
-  --psp-error: #f87171;
-  --psp-info: #60a5fa;
 }
 
 /* ===== DARK MODE OVERRIDES ===== */
@@ -2028,4 +1997,16 @@ select:focus {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Safari and Chrome */
+}
+
+/* ===== ACCESSIBILITY: PREFERS REDUCED MOTION ===== */
+/* Respects user's accessibility preference for reduced motion */
+/* This improves experience for users with vestibular disorders or motion sensitivity */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

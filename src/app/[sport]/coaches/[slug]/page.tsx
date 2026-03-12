@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META } from "@/lib/data";
+import { SPORT_META } from "@/lib/data";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { createStaticClient } from "@/lib/supabase/static";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
@@ -54,8 +55,9 @@ async function getCoachingStints(coachId: number, sportId?: string): Promise<Coa
 }
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const { sport, slug } = await params;
-  if (!isValidSport(sport)) return {};
+  const { slug } = await params;
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   const coach = await getCoachBySlug(slug);
   if (!coach) return {};
   return {
@@ -68,8 +70,8 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 }
 
 export default async function CoachProfilePage({ params }: { params: Promise<PageParams> }) {
-  const { sport, slug } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
+  const { slug } = await params;
 
   const coach = await getCoachBySlug(slug);
   if (!coach) notFound();

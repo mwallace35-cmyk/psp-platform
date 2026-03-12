@@ -326,7 +326,7 @@ export function predictAllCityProbability(
   seasonYear: number,
   peers?: Record<string, number | null | undefined>[]
 ): AllCityPrediction | null {
-  const playerName = (playerStats as any).name || "Unknown Player";
+  const playerName = (playerStats as Record<string, unknown>).name as string || "Unknown Player";
   const reasoning: string[] = [];
   let probabilityScore = 0;
 

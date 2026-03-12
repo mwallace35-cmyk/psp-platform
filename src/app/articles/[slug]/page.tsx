@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation';
 import { SPORT_META } from '@/lib/sports';
 import { ArticleJsonLd } from '@/components/seo/JsonLd';
 import AdPlaceholder, { LeaderboardAd } from '@/components/ads/AdPlaceholder';
-import CommentSection from '@/components/comments/CommentSection';
+import CommentSectionLazy from '@/components/comments/CommentSectionLazy';
 import { sanitizeHtml } from '@/lib/sanitize';
 import ShareButtons from '@/components/social/ShareButtons';
 import JoinCTA from '@/components/ui/JoinCTA';
@@ -184,7 +184,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
           {/* Comments */}
           <div className="mt-8">
-            <CommentSection articleId={article.id} />
+            <CommentSectionLazy articleId={article.id} />
           </div>
         </div>
 

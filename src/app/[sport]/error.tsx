@@ -180,7 +180,7 @@ export default function SportError({ error, reset }: ErrorProps) {
             </button>
           </Link>
 
-          <Link href="/basketball" style={{ textDecoration: "none" }}>
+          <Link href="/" style={{ textDecoration: "none" }}>
             <button
               style={{
                 padding: "12px 24px",

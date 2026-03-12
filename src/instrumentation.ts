@@ -76,7 +76,7 @@ export async function register() {
         },
 
         // Filter out certain errors that we don't want to track
-        beforeSend(event: any, hint: any) {
+        beforeSend(event: Record<string, unknown>, hint: { originalException?: unknown }) {
           // Ignore network errors from client-side navigation
           if (event.exception) {
             const error = hint.originalException;

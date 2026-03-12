@@ -1,12 +1,12 @@
-import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { isValidSport, SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, getTeamsWithRecords, getTrackedAlumni, type Championship } from "@/lib/data";
+import { SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, getTeamsWithRecords, getTrackedAlumni, type Championship } from "@/lib/data";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher";
 import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScoresStrip";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
-import { SPORT_COLORS, SPORT_COLORS_HEX } from "@/lib/constants/sports";
+import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -58,8 +58,8 @@ interface TrackedAlumni {
 }
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const { sport } = await params;
-  if (!isValidSport(sport)) return {};
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   const meta = SPORT_META[sport];
   const ogImageUrl = buildOgImageUrl({
     title: `${meta.name} — Stats, Schools & Championships`,
@@ -109,12 +109,12 @@ export async function generateStaticParams() {
 }
 
 export default async function SportHubPage({ params }: { params: Promise<PageParams> }) {
-  const { sport } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
 
   const meta = SPORT_META[sport];
   const sportColor = SPORT_COLORS[sport] || "var(--fb)";
   const sportColorHex = SPORT_COLORS_HEX[sport] || "#16a34a";
+  const sportGradient = SPORT_GRADIENTS[sport] || "from-[#0a1628] to-[#16a34a]";
 
   // Fallback data for graceful degradation if any fetch fails
   const defaultOverview: SportOverview = { schools: 0, players: 0, seasons: 0, championships: 0 };
@@ -225,6 +225,19 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     // Page will degrade gracefully with fallback data already set above
   }
 
+  // Sport-specific editorial intros
+  const sportIntros: Record<string, string> = {
+    football: "From the Catholic League's storied rivalry games at Franklin Field to the Public League's Friday night lights, Philadelphia football has produced NFL legends and forged lifelong bonds. Explore the statistics and stories that defined generations of champions.",
+    basketball: "The Catholic League's dynasties, the Public League's talent pipeline, and the Inter-Ac's proud traditions. Philadelphia basketball has given the world Hall of Famers and inspired countless athletes. Discover the players and programs that built this legacy.",
+    baseball: "From All-City award winners to PIAA state champions, Philadelphia's baseball tradition runs deep. Explore the schools, players, and seasons that have made Philly a baseball hotbed.",
+    soccer: "Philadelphia's soccer programs have built increasingly competitive traditions across multiple leagues. Discover the schools, players, and championships shaping this growing sport.",
+    lacrosse: "Elite programs like Haverford, Conestoga, and Episcopal have put Philadelphia on the lacrosse map nationally. Explore the history, champions, and rising stars of Philly lacrosse.",
+    'track-field': "From sprinters to distance runners, from jumpers to throwers — Philadelphia's track and field athletes have set records that inspire. Discover the individual achievements and team championships.",
+    wrestling: "Malvern Prep's national ranking, PAISWT champions, and a tradition of toughness defines Philadelphia wrestling. Explore the wrestlers and programs building this legacy.",
+  };
+
+  const sportIntro = sportIntros[sport] || "Explore the history, statistics, and champions of Philadelphia high school sports.";
+
   return (
     <main id="main-content">
       {/* Breadcrumb JSON-LD */}
@@ -236,18 +249,34 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       {/* Breadcrumb */}
       <Breadcrumb items={[{label: meta.name}]} />
 
-      {/* Sport Header */}
-      <div className="sport-hdr" style={{ borderBottomColor: sportColor }}>
-        <div className="sport-hdr-inner">
-          <span style={{ fontSize: 28 }} aria-hidden="true">{meta.emoji}</span>
-          <h1>{meta.name}</h1>
-          <div className="stat-pills">
-            <div className="pill"><strong>{overview.players.toLocaleString()}</strong> players</div>
-            <div className="pill"><strong>{overview.schools.toLocaleString()}</strong> schools</div>
-            <div className="pill"><strong>{overview.championships.toLocaleString()}</strong> titles</div>
-            <span className="db-tag"><span className="dot" /> Supabase</span>
+      {/* Sport Hero with Gradient */}
+      <div className={`bg-gradient-to-r ${sportGradient} text-white py-12 px-4`}>
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-4">
+            <span style={{ fontSize: 48 }} aria-hidden="true">{meta.emoji}</span>
+            <h1 className="text-4xl md:text-5xl font-black" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+              {meta.name}
+            </h1>
+          </div>
+          <div className="flex flex-wrap gap-4 text-sm md:text-base">
+            <div className="bg-white/20 px-4 py-2 rounded-full"><strong>{overview.players.toLocaleString()}</strong> players</div>
+            <div className="bg-white/20 px-4 py-2 rounded-full"><strong>{overview.schools.toLocaleString()}</strong> schools</div>
+            <div className="bg-white/20 px-4 py-2 rounded-full"><strong>{overview.championships.toLocaleString()}</strong> titles</div>
           </div>
         </div>
+      </div>
+
+      {/* Editorial Intro */}
+      <div style={{
+        maxWidth: "900px",
+        margin: "2rem auto",
+        padding: "0 1.5rem",
+        fontSize: "1.1rem",
+        lineHeight: 1.7,
+        color: "var(--text-body)",
+        fontFamily: "var(--font-dm-sans)",
+      }}>
+        <p>{sportIntro}</p>
       </div>
 
       {/* Score Banner */}

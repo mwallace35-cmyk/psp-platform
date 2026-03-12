@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="espn-footer">
+    <footer className="espn-footer" aria-label="Site footer">
       <div className="footer-inner">
         <div style={{ flex: "1 1 200px" }}>
           <h5>PhillySportsPack</h5>

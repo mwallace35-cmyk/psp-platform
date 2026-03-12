@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import {
-  isValidSport,
   SPORT_META,
   getSchoolWinsLeaderboard,
   getSchoolChampionshipLeaderboard,
@@ -32,9 +32,10 @@ export async function generateMetadata({ params, searchParams }: {
   params: Promise<PageParams>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
-  const { sport } = await params;
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   const sp = await searchParams;
-  if (!isValidSport(sport)) return {};
+  // Validate sport param
   const meta = SPORT_META[sport];
   const tab = (sp?.tab as string) || "wins";
   const tabLabel = TABS.find(t => t.key === tab)?.label || "Rankings";
@@ -236,10 +237,10 @@ export default async function SchoolLeaderboardPage({
   params: Promise<PageParams>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { sport } = await params;
+  const sport = await validateSportParam(params);
   const sp = await searchParams;
 
-  if (!isValidSport(sport)) notFound();
+  // Sport param validated by validateSportParam
   const meta = SPORT_META[sport];
 
   const tab = ((sp?.tab as string) || "wins") as TabKey;

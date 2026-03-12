@@ -11,8 +11,29 @@ import {
   PlayerSearchResult,
 } from "./common";
 
+// Type guard for season data with proper typing
+interface SeasonData {
+  year_start: number;
+  year_end: number;
+  label: string;
+}
+
+interface PlayerSeasonRecord {
+  seasons: SeasonData | SeasonData[];
+  [key: string]: unknown;
+}
+
+function sortBySeasonYear<T extends PlayerSeasonRecord>(records: T[]): T[] {
+  return records.sort((a, b) => {
+    const aSeason = Array.isArray(a.seasons) ? a.seasons[0] : a.seasons;
+    const bSeason = Array.isArray(b.seasons) ? b.seasons[0] : b.seasons;
+    return (aSeason?.year_start ?? 0) - (bSeason?.year_start ?? 0);
+  });
+}
+
 /**
  * Get player by slug
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export async function getPlayerBySlug(slug: string) {
   return withErrorHandling(
@@ -22,7 +43,7 @@ export async function getPlayerBySlug(slug: string) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("players")
-            .select("*, schools:schools!players_primary_school_id_fkey(name, slug)")
+            .select("id, name, slug, primary_school_id, college, pro_team, pro_league, draft_info, bio, graduation_year, positions, height, weight, schools:schools!players_primary_school_id_fkey(name, slug)")
             .eq("slug", slug)
             .is("deleted_at", null)
             .single();
@@ -39,6 +60,7 @@ export async function getPlayerBySlug(slug: string) {
 
 /**
  * Get football player stats by player ID
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export async function getFootballPlayerStats(playerId: number) {
   return withErrorHandling(
@@ -48,13 +70,11 @@ export async function getFootballPlayerStats(playerId: number) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("football_player_seasons")
-            .select("*, seasons(year_start, year_end, label), schools!football_player_seasons_school_id_fkey(name, slug)")
+            .select("id, player_id, school_id, season_id, rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards, points_scored, seasons(year_start, year_end, label), schools!football_player_seasons_school_id_fkey(name, slug)")
             .eq("player_id", playerId)
             .order("created_at", { ascending: true });
           // Sort by season year client-side
-          return (data ?? []).sort((a: FootballPlayerSeason, b: FootballPlayerSeason) =>
-            ((a.seasons as Season | null)?.year_start ?? 0) - ((b.seasons as Season | null)?.year_start ?? 0)
-          );
+          return sortBySeasonYear((data ?? []) as unknown as PlayerSeasonRecord[]) as unknown as FootballPlayerSeason[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -67,6 +87,7 @@ export async function getFootballPlayerStats(playerId: number) {
 
 /**
  * Get basketball player stats by player ID
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export async function getBasketballPlayerStats(playerId: number) {
   return withErrorHandling(
@@ -76,12 +97,10 @@ export async function getBasketballPlayerStats(playerId: number) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("basketball_player_seasons")
-            .select("*, seasons(year_start, year_end, label), schools(name, slug)")
+            .select("id, player_id, school_id, season_id, games_played, points_scored, rebounds, assists, steals, blocks, seasons(year_start, year_end, label), schools(name, slug)")
             .eq("player_id", playerId)
             .order("created_at", { ascending: true });
-          return (data ?? []).sort((a: BasketballPlayerSeason, b: BasketballPlayerSeason) =>
-            ((a.seasons as Season | null)?.year_start ?? 0) - ((b.seasons as Season | null)?.year_start ?? 0)
-          );
+          return sortBySeasonYear((data ?? []) as unknown as PlayerSeasonRecord[]) as unknown as BasketballPlayerSeason[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -94,6 +113,7 @@ export async function getBasketballPlayerStats(playerId: number) {
 
 /**
  * Get baseball player stats by player ID
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export async function getBaseballPlayerStats(playerId: number) {
   return withErrorHandling(
@@ -103,12 +123,10 @@ export async function getBaseballPlayerStats(playerId: number) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("baseball_player_seasons")
-            .select("*, seasons(year_start, year_end, label), schools(name, slug)")
+            .select("id, player_id, school_id, season_id, games_played, at_bats, hits, doubles, triples, home_runs, runs_batted_in, seasons(year_start, year_end, label), schools(name, slug)")
             .eq("player_id", playerId)
             .order("created_at", { ascending: true });
-          return (data ?? []).sort((a: BaseballPlayerSeason, b: BaseballPlayerSeason) =>
-            ((a.seasons as Season | null)?.year_start ?? 0) - ((b.seasons as Season | null)?.year_start ?? 0)
-          );
+          return sortBySeasonYear((data ?? []) as unknown as PlayerSeasonRecord[]) as unknown as BaseballPlayerSeason[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -130,7 +148,8 @@ export async function getPlayerAwards(playerId: number) {
         .from("awards")
         .select("*, seasons(year_start, year_end, label)")
         .eq("player_id", playerId)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(50);
       return data ?? [];
     },
     [],
@@ -162,7 +181,8 @@ export async function getPlayerStats(playerId: number, sportId: string) {
         .from(statTable)
         .select("*")
         .eq("player_id", playerId)
-        .order("created_at", { ascending: true });
+        .order("created_at", { ascending: true })
+        .limit(100);
 
       return data ?? [];
     },
@@ -199,23 +219,38 @@ export async function getCrossSportPlayers(playerName: string, schoolId: number)
             )
             .eq("name", playerName)
             .eq("primary_school_id", schoolId)
-            .is("deleted_at", null);
+            .is("deleted_at", null)
+            .limit(20);
 
           if (!data) return [];
 
           // Transform data to include sports played
-          return data.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            slug: p.slug,
-            school_id: p.primary_school_id,
-            school: p.schools,
-            sports: [
-              p.football_player_seasons && p.football_player_seasons.length > 0 ? "football" : null,
-              p.basketball_player_seasons && p.basketball_player_seasons.length > 0 ? "basketball" : null,
-              p.baseball_player_seasons && p.baseball_player_seasons.length > 0 ? "baseball" : null,
-            ].filter(Boolean) as string[],
-          }));
+          interface PlayerWithSports {
+            id: number;
+            name: string;
+            slug: string;
+            primary_school_id: number;
+            schools: unknown;
+            football_player_seasons: unknown[];
+            basketball_player_seasons: unknown[];
+            baseball_player_seasons: unknown[];
+          }
+
+          return data.map((p) => {
+            const player = p as PlayerWithSports;
+            return {
+              id: player.id,
+              name: player.name,
+              slug: player.slug,
+              school_id: player.primary_school_id,
+              school: player.schools,
+              sports: [
+                Array.isArray(player.football_player_seasons) && player.football_player_seasons.length > 0 ? "football" : null,
+                Array.isArray(player.basketball_player_seasons) && player.basketball_player_seasons.length > 0 ? "basketball" : null,
+                Array.isArray(player.baseball_player_seasons) && player.baseball_player_seasons.length > 0 ? "baseball" : null,
+              ].filter(Boolean) as string[],
+            };
+          });
         },
         { maxRetries: 2, baseDelay: 500 }
       );

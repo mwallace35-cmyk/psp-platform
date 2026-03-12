@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META } from "@/lib/data";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import { SPORT_META } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
@@ -48,8 +49,8 @@ const STAT_CATEGORIES: Record<string, { slug: string; label: string; description
 };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const { sport } = await params;
-  if (!isValidSport(sport)) return {};
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   const meta = SPORT_META[sport];
   return {
     title: `${meta.name} Leaderboards — PhillySportsPack`,
@@ -58,8 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 }
 
 export default async function LeaderboardsIndex({ params }: { params: Promise<PageParams> }) {
-  const { sport } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
   const meta = SPORT_META[sport];
   const categories = STAT_CATEGORIES[sport] || [];
 

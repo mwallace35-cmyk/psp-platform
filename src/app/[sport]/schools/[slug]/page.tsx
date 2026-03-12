@@ -1,14 +1,16 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, getSchoolNotablePlayers, type School, type TeamSeason, type Championship, type NotablePlayer } from "@/lib/data";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import { SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, getSchoolNotablePlayers, type School, type TeamSeason, type Championship, type NotablePlayer } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import WinLossBar from "@/components/ui/WinLossBar";
+import BookmarkButton from "@/components/ui/BookmarkButton";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
-import WinLossTrendChart from "@/components/charts/WinLossTrendChart";
+import WinLossTrendChart from "@/components/charts/WinLossTrendChartLazy";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
 import { captureError } from "@/lib/error-tracking";
@@ -68,52 +70,57 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport, slug } = await params;
-  if (!isValidSport(sport)) return {};
+  const sportValidated = await validateSportParamForMetadata({ sport });
+  if (!sportValidated) return {};
+  // Validate sport param
   const school = await getSchoolBySlug(slug);
   if (!school) return {};
   const ogImageUrl = buildOgImageUrl({
     title: school.name,
-    subtitle: `${SPORT_META[sport].name} — School Profile`,
-    sport: sport,
+    subtitle: `${SPORT_META[sportValidated].name} — School Profile`,
+    sport: sportValidated,
     type: "school",
   });
   return {
-    title: `${school.name} ${SPORT_META[sport].name} — PhillySportsPack`,
-    description: `${school.name} ${SPORT_META[sport].name.toLowerCase()} statistics, season results, championships, and notable players.`,
+    title: `${school.name} ${SPORT_META[sportValidated].name} — PhillySportsPack`,
+    description: `${school.name} ${SPORT_META[sportValidated].name.toLowerCase()} statistics, season results, championships, and notable players.`,
     alternates: {
-      canonical: `https://phillysportspack.com/${sport}/schools/${slug}`,
+      canonical: `https://phillysportspack.com/${sportValidated}/schools/${slug}`,
     },
     openGraph: {
-      title: `${school.name} ${SPORT_META[sport].name} — PhillySportsPack`,
-      description: `${school.name} ${SPORT_META[sport].name.toLowerCase()} statistics, season results, championships, and notable players.`,
-      url: `https://phillysportspack.com/${sport}/schools/${slug}`,
+      title: `${school.name} ${SPORT_META[sportValidated].name} — PhillySportsPack`,
+      description: `${school.name} ${SPORT_META[sportValidated].name.toLowerCase()} statistics, season results, championships, and notable players.`,
+      url: `https://phillysportspack.com/${sportValidated}/schools/${slug}`,
       type: "website",
       images: [
         {
           url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: `${school.name} ${SPORT_META[sport].name}`,
+          alt: `${school.name} ${SPORT_META[sportValidated].name}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${school.name} ${SPORT_META[sport].name} — PhillySportsPack`,
-      description: `${school.name} ${SPORT_META[sport].name.toLowerCase()} statistics, season results, championships, and notable players.`,
+      title: `${school.name} ${SPORT_META[sportValidated].name} — PhillySportsPack`,
+      description: `${school.name} ${SPORT_META[sportValidated].name.toLowerCase()} statistics, season results, championships, and notable players.`,
       images: [ogImageUrl],
     },
   };
 }
 
 export default async function SchoolProfilePage({ params }: { params: Promise<PageParams> }) {
-  const { sport, slug } = await params;
-  if (!isValidSport(sport)) notFound();
+  const { sport: sportRaw, slug } = await params;
+  const sport = await validateSportParam({ sport: sportRaw });
 
   const schoolData = await getSchoolBySlug(slug);
   if (!schoolData) notFound();
 
-  const school: School = schoolData;
+  const school: School = {
+    ...schoolData,
+    leagues: Array.isArray(schoolData.leagues) ? schoolData.leagues[0] : schoolData.leagues,
+  };
 
   const meta = SPORT_META[sport];
 
@@ -178,12 +185,19 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               {meta.emoji}
             </div>
             <div className="flex-1">
-              <h1
-                className="text-4xl md:text-5xl text-white mb-2 tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              >
-                {school.name}
-              </h1>
+              <div className="flex items-center gap-3 mb-2">
+                <h1
+                  className="text-4xl md:text-5xl text-white tracking-wider flex-1"
+                  style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                >
+                  {school.name}
+                </h1>
+                <BookmarkButton
+                  schoolSlug={slug}
+                  schoolName={school.name}
+                  className="flex-shrink-0"
+                />
+              </div>
               <div className="flex flex-wrap gap-4 text-sm">
                 {school.leagues && (
                   <span style={{ color: "var(--psp-gold)" }}>{school.leagues?.name}</span>

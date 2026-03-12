@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import styles from '@/app/homepage.module.css';
 import ScrollIndicator from './ScrollIndicator';
+import EditorialTeaser from './EditorialTeaser';
 
 /**
  * Animated Counter Component
@@ -98,6 +99,9 @@ export default function HeroSectionNew({ stats }: HeroSectionProps) {
           <AnimatedCounter value={stats.championships} label="Championships" />
           <AnimatedCounter value={stats.years} label="Years of Data" suffix="+" />
         </div>
+
+        {/* Editorial Teaser */}
+        <EditorialTeaser />
       </div>
 
       {/* Scroll Indicator */}

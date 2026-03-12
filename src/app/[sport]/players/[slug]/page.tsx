@@ -2,7 +2,8 @@ import React from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
@@ -10,6 +11,8 @@ import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import GameLogAccordion from "@/components/game-log/GameLogAccordion";
+import DataSourceBadge from "@/components/ui/DataSourceBadge";
+import MethodologyNote from "@/components/ui/MethodologyNote";
 import type { MergedGameEntry, SeasonAward } from "@/components/game-log/GameLogAccordion";
 import type { Metadata } from "next";
 
@@ -22,43 +25,49 @@ const ClientCareerTrajectory = dynamic(() => import("@/components/viz/ClientCare
   loading: () => <div className="w-full bg-white rounded-lg border border-gray-200 p-4 h-[300px] animate-pulse" />,
 });
 
+const SimilarPlayers = dynamic(() => import("@/components/player/SimilarPlayers"), {
+  loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" />,
+});
+
 export const revalidate = 86400;
 
 type PageParams = { sport: string; slug: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport, slug } = await params;
-  if (!isValidSport(sport)) return {};
+  const validSport = await validateSportParamForMetadata({ sport });
+  if (!validSport) return {};
   const player = await getPlayerBySlug(slug);
   if (!player) return {};
 
   // Build dynamic description with actual stats
-  const school = player.schools?.name || "a Philadelphia school";
+  const schoolName = Array.isArray(player.schools) && player.schools.length > 0 ? player.schools[0].name : (typeof player.schools === 'object' && player.schools !== null && 'name' in player.schools ? (player.schools as any).name : "a Philadelphia school");
+  const school = schoolName || "a Philadelphia school";
   const classYear = player.graduation_year ? ` (Class of ${player.graduation_year})` : "";
   const description = `${player.name} career stats at ${school}${classYear}. Season-by-season breakdown, game log, awards, and honors on PhillySportsPack.com.`;
 
   const ogImageUrl = buildOgImageUrl({
     title: player.name,
-    subtitle: `${SPORT_META[sport].name} — Career Profile`,
-    sport: sport,
+    subtitle: `${SPORT_META[validSport].name} — Career Profile`,
+    sport: validSport,
     type: "player",
   });
   return {
-    title: `${player.name} — ${school} ${SPORT_META[sport].name} — PhillySportsPack`,
+    title: `${player.name} — ${school} ${SPORT_META[validSport].name} — PhillySportsPack`,
     description,
     alternates: {
-      canonical: `https://phillysportspack.com/${sport}/players/${slug}`,
+      canonical: `https://phillysportspack.com/${validSport}/players/${slug}`,
     },
     openGraph: {
-      title: `${player.name} — ${school} ${SPORT_META[sport].name} — PhillySportsPack`,
+      title: `${player.name} — ${school} ${SPORT_META[validSport].name} — PhillySportsPack`,
       description,
-      url: `https://phillysportspack.com/${sport}/players/${slug}`,
+      url: `https://phillysportspack.com/${validSport}/players/${slug}`,
       type: "profile",
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${player.name} profile` }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${player.name} — ${school} ${SPORT_META[sport].name} — PhillySportsPack`,
+      title: `${player.name} — ${school} ${SPORT_META[validSport].name} — PhillySportsPack`,
       description,
       images: [ogImageUrl],
     },
@@ -66,9 +75,9 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 }
 
 export default async function PlayerCareerPage({ params }: { params: Promise<PageParams> }) {
-  const { sport, slug } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
 
+  const { slug } = await params;
   const playerData = await getPlayerBySlug(slug);
   if (!playerData) notFound();
 
@@ -78,11 +87,11 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   // Fetch stats first (needed to derive season IDs for team games)
   const stats = await (
     sport === "football"
-      ? getFootballPlayerStats(player.id) as Promise<FootballPlayerSeason[]>
+      ? getFootballPlayerStats(player.id) as unknown as Promise<FootballPlayerSeason[]>
       : sport === "basketball"
-      ? getBasketballPlayerStats(player.id) as Promise<BasketballPlayerSeason[]>
+      ? getBasketballPlayerStats(player.id) as unknown as Promise<BasketballPlayerSeason[]>
       : sport === "baseball"
-      ? getBaseballPlayerStats(player.id) as Promise<BaseballPlayerSeason[]>
+      ? getBaseballPlayerStats(player.id) as unknown as Promise<BaseballPlayerSeason[]>
       : Promise.resolve([])
   ) as (FootballPlayerSeason | BasketballPlayerSeason | BaseballPlayerSeason)[];
 
@@ -326,6 +335,19 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Data Source Badge */}
+            <div className="flex flex-wrap items-center gap-3">
+              <DataSourceBadge
+                source={stats.length > 0 && stats.some(s => {
+                  const season = (s as any).seasons?.year_start;
+                  return season && season >= 2015;
+                }) ? "Ted Silary Archives + MaxPreps" : "Ted Silary Archives"}
+                lastUpdated="2026-03-10"
+                confidence="verified"
+                detail="Player statistics compiled from Ted Silary's historical archives and MaxPreps real-time data. All career statistics aggregated from season-by-season records in the database."
+              />
+            </div>
+
             {/* Career Trajectory Chart */}
             {sport === "football" && stats.length > 1 && (
               <ClientCareerTrajectory
@@ -669,6 +691,15 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             </div>
 
             <PSPPromo size="sidebar" variant={4} />
+
+            {/* Similar Players */}
+            {stats.length > 0 && (
+              <SimilarPlayers
+                playerId={player.id}
+                sportId={sport}
+                currentPlayerSlug={slug}
+              />
+            )}
 
             {/* Pro/college info */}
             {(player.college || player.pro_team) && (

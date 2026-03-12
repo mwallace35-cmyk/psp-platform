@@ -121,6 +121,7 @@ export const getSchoolHubData = cache(async (slug: string) => {
 /**
  * Get all sports stats for a school
  * Returns one entry per sport the school competes in
+ * OPTIMIZED: Runs all queries in parallel using Promise.all()
  */
 export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
   return withErrorHandling(
@@ -129,61 +130,85 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
         async () => {
           const supabase = await createClient();
 
-          // Get all team_seasons grouped by sport
-          const { data: teamSeasonData } = await supabase
-            .from("team_seasons")
-            .select(
-              `
-              id, sport_id, wins, losses, ties,
-              sports(id, name)
-            `
-            )
-            .eq("school_id", schoolId);
-
-          if (!teamSeasonData || teamSeasonData.length === 0) {
-            return [];
-          }
-
-          // Group by sport_id and aggregate stats
-          const sportMap = new Map<string, { wins: number; losses: number; ties: number; seasons: Set<string> }>();
-
-          teamSeasonData.forEach((ts: any) => {
-            const sportId = ts.sport_id;
-            if (!sportMap.has(sportId)) {
-              sportMap.set(sportId, { wins: 0, losses: 0, ties: 0, seasons: new Set() });
-            }
-            const stats = sportMap.get(sportId)!;
-            stats.wins += ts.wins ?? 0;
-            stats.losses += ts.losses ?? 0;
-            stats.ties += (ts.ties ?? 0);
-            // We'll count seasons by counting team_season records
-          });
-
-          // Get championships by sport
-          const { data: champData } = await supabase
-            .from("championships")
-            .select("sport_id")
-            .eq("school_id", schoolId);
-
-          const champCountBySport = new Map<string, number>();
-          champData?.forEach((c: any) => {
-            champCountBySport.set(c.sport_id, (champCountBySport.get(c.sport_id) ?? 0) + 1);
-          });
-
-          // Get player counts by sport using distinct player_id
+          // Run all queries in parallel (batched queries)
           const [
+            { data: teamSeasonData },
+            { data: champData },
             { data: fbPlayers },
             { data: bbPlayers },
             { data: baseballPlayers },
             { data: miscPlayers },
           ] = await Promise.all([
-            supabase.from("football_player_seasons").select("player_id").eq("school_id", schoolId),
-            supabase.from("basketball_player_seasons").select("player_id").eq("school_id", schoolId),
-            supabase.from("baseball_player_seasons").select("player_id").eq("school_id", schoolId),
-            supabase.from("player_seasons_misc").select("player_id, sport_id").eq("school_id", schoolId),
+            // 1. Team seasons with sport info
+            supabase
+              .from("team_seasons")
+              .select("id, sport_id, wins, losses, ties, sports(id, name)")
+              .eq("school_id", schoolId)
+              .is("deleted_at", null),
+            // 2. Championships grouped by sport
+            supabase
+              .from("championships")
+              .select("sport_id")
+              .eq("school_id", schoolId),
+            // 3. Football player seasons (select only player_id for efficiency)
+            supabase
+              .from("football_player_seasons")
+              .select("player_id")
+              .eq("school_id", schoolId)
+              .is("deleted_at", null),
+            // 4. Basketball player seasons
+            supabase
+              .from("basketball_player_seasons")
+              .select("player_id")
+              .eq("school_id", schoolId)
+              .is("deleted_at", null),
+            // 5. Baseball player seasons
+            supabase
+              .from("baseball_player_seasons")
+              .select("player_id")
+              .eq("school_id", schoolId)
+              .is("deleted_at", null),
+            // 6. Minor sports player seasons
+            supabase
+              .from("player_seasons_misc")
+              .select("player_id, sport_id")
+              .eq("school_id", schoolId)
+              .is("deleted_at", null),
           ]);
 
+          if (!teamSeasonData || teamSeasonData.length === 0) {
+            return [];
+          }
+
+          // Aggregate team_season stats by sport
+          const sportMap = new Map<string, { wins: number; losses: number; ties: number }>();
+          const sportNameMap = new Map<string, string>();
+
+          teamSeasonData.forEach((ts: any) => {
+            const sportId = ts.sport_id;
+            if (!sportMap.has(sportId)) {
+              sportMap.set(sportId, { wins: 0, losses: 0, ties: 0 });
+              // Store sport name for later use
+              if (ts.sports?.name) {
+                sportNameMap.set(sportId, ts.sports.name);
+              }
+            }
+            const stats = sportMap.get(sportId)!;
+            stats.wins += ts.wins ?? 0;
+            stats.losses += ts.losses ?? 0;
+            stats.ties += ts.ties ?? 0;
+          });
+
+          // Count championships by sport
+          const champCountBySport = new Map<string, number>();
+          champData?.forEach((c: any) => {
+            champCountBySport.set(c.sport_id, (champCountBySport.get(c.sport_id) ?? 0) + 1);
+          });
+
+          // Count unique players by sport
           const playerCountBySport = new Map<string, Set<number>>();
+
+          // Major sports (football, basketball, baseball)
           [
             { sport: "football", data: fbPlayers },
             { sport: "basketball", data: bbPlayers },
@@ -194,7 +219,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             playerCountBySport.set(sport, uniqueIds);
           });
 
-          // Minor sports from player_seasons_misc — group by sport_id
+          // Minor sports from player_seasons_misc
           (miscPlayers ?? []).forEach((p: any) => {
             if (!playerCountBySport.has(p.sport_id)) {
               playerCountBySport.set(p.sport_id, new Set());
@@ -202,7 +227,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             playerCountBySport.get(p.sport_id)!.add(p.player_id);
           });
 
-          // Map out the results with SPORT_META info
+          // Sport emoji mapping
           const SPORT_EMOJI: Record<string, string> = {
             football: "🏈",
             basketball: "🏀",
@@ -213,7 +238,19 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             soccer: "⚽",
           };
 
-          // Get unique sports from team_seasons
+          // Sport order for sorting
+          const SPORT_ORDER: Record<string, number> = {
+            football: 0,
+            basketball: 1,
+            baseball: 2,
+            soccer: 3,
+            lacrosse: 4,
+            "track-field": 5,
+            "cross-country": 6,
+            wrestling: 7,
+          };
+
+          // Get unique sports from team_seasons and build result
           const uniqueSports = Array.from(
             new Map(teamSeasonData.map((ts: any) => [ts.sport_id, ts])).values()
           );
@@ -227,7 +264,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
 
             return {
               sport_id: sportId,
-              sport_name: ts.sports?.name ?? sportId,
+              sport_name: sportNameMap.get(sportId) ?? ts.sports?.name ?? sportId,
               sport_emoji: SPORT_EMOJI[sportId] ?? "⚽",
               wins: stats.wins,
               losses: stats.losses,
@@ -238,17 +275,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             };
           });
 
-          // Sort: football first, basketball second, baseball third, then by season count desc
-          const SPORT_ORDER: Record<string, number> = {
-            football: 0,
-            basketball: 1,
-            baseball: 2,
-            soccer: 3,
-            lacrosse: 4,
-            "track-field": 5,
-            "cross-country": 6,
-            wrestling: 7,
-          };
+          // Sort by sport order, then by season count
           return result.sort((a, b) => {
             const orderA = SPORT_ORDER[a.sport_id] ?? 99;
             const orderB = SPORT_ORDER[b.sport_id] ?? 99;
@@ -313,7 +340,8 @@ export const getSchoolAllChampionships = cache(async (schoolId: number) => {
             `
             )
             .eq("school_id", schoolId)
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .limit(500);
 
           if (!data) return [];
 
@@ -363,6 +391,7 @@ export const getSchoolRecentSeasons = cache(async (schoolId: number, limit = 20)
             `
             )
             .eq("school_id", schoolId)
+            .is("deleted_at", null)
             .limit(limit);
 
           if (!data) return [];
@@ -431,5 +460,51 @@ export const getSchoolArticles = cache(async (schoolId: number, limit = 10) => {
     [],
     "DATA_SCHOOL_ARTICLES",
     { schoolId, limit }
+  );
+});
+
+/**
+ * Get schools grouped by league with championship counts
+ * Used for school directory and school discovery
+ */
+export const getSchoolsByLeague = cache(async () => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data } = await supabase
+            .from("schools")
+            .select(
+              `
+              id, slug, name, city, state, league_id,
+              leagues(id, name, short_name)
+            `
+            )
+            .is("deleted_at", null)
+            .order("name");
+
+          if (!data) return [];
+
+          // Fetch championship counts
+          const { data: champData } = await supabase
+            .from("championships")
+            .select("school_id");
+
+          const champCountMap = new Map<number, number>();
+          (champData || []).forEach((c: any) => {
+            champCountMap.set(c.school_id, (champCountMap.get(c.school_id) ?? 0) + 1);
+          });
+
+          return (data as any[]).map((school) => ({
+            ...school,
+            champ_count: champCountMap.get(school.id) ?? 0,
+          }));
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_SCHOOLS_BY_LEAGUE"
   );
 });

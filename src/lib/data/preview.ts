@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   createClient,
   withErrorHandling,
@@ -6,6 +7,67 @@ import {
   Game,
   TeamSeason,
 } from "./common";
+
+// Helper types for Supabase query results
+interface PlayerData {
+  id: number;
+  name: string;
+  slug: string;
+  graduation_year?: number;
+  height?: string;
+  weight?: number;
+  positions?: string[];
+}
+
+interface FootballSeasonData {
+  rush_yards?: number;
+  pass_yards?: number;
+  rec_yards?: number;
+  rush_td?: number;
+  pass_td?: number;
+  points?: number;
+  players: PlayerData;
+}
+
+interface BasketballSeasonData {
+  points?: number;
+  games_played?: number;
+  rebounds?: number;
+  assists?: number;
+  players: PlayerData;
+}
+
+interface GameWithSchools {
+  id: number;
+  home_school_id: number;
+  away_school_id: number;
+  home_school?: { id: number; name: string; slug: string };
+  away_school?: { id: number; name: string; slug: string };
+  game_date?: string;
+  home_score?: number;
+  away_score?: number;
+  game_type?: string;
+  playoff_round?: string;
+  [key: string]: unknown;
+}
+
+interface SchoolWithTeamSeasons {
+  id: number;
+  name: string;
+  slug: string;
+  leagues?: { name: string };
+  [key: string]: unknown;
+}
+
+interface TeamSeasonWithCoach {
+  schools?: SchoolWithTeamSeasons;
+  seasons?: Season;
+  coaches?: { name: string };
+  sport_id?: string;
+  wins?: number;
+  losses?: number;
+  [key: string]: unknown;
+}
 
 // ============================================================================
 // TYPES: Roster-based Returning Players
@@ -147,34 +209,36 @@ export function isPreviewSeason(seasonLabel: string): boolean {
  * For football: sorted by total_yards DESC (rushing + passing + receiving).
  * For basketball: sorted by points DESC.
  */
-export async function getReturningRoster(
-  schoolId: number,
-  sportId: string,
-  previousSeasonId: number,
-  currentGradYear: number
-): Promise<ReturningPlayer[]> {
-  return withErrorHandling(
-    async () => {
-      return withRetry(
-        async () => {
-          const supabase = await createClient();
+export const getReturningRoster = cache(
+  async (
+    schoolId: number,
+    sportId: string,
+    previousSeasonId: number,
+    currentGradYear: number
+  ): Promise<ReturningPlayer[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
 
-          if (sportId === "football") {
-            const { data } = await supabase
-              .from("football_player_seasons")
-              .select(
-                `id, player_id, rush_yards, rush_td, pass_yards, pass_td,
-                 rec_yards, points,
-                 players(id, name, slug, positions, graduation_year, height, weight)`
-              )
-              .eq("school_id", schoolId)
-              .eq("season_id", previousSeasonId);
+            if (sportId === "football") {
+              const { data } = await supabase
+                .from("football_player_seasons")
+                .select(
+                  `id, player_id, rush_yards, rush_td, pass_yards, pass_td,
+                   rec_yards, points,
+                   players(id, name, slug, positions, graduation_year, height, weight)`
+                )
+                .eq("school_id", schoolId)
+                .eq("season_id", previousSeasonId)
+                .is("deleted_at", null);
 
             if (!data) return [];
 
-            const returning: ReturningPlayer[] = data
-              .filter((row: any) => row.players) // Only include rows with valid player data
-              .map((row: any) => {
+            const result = ((data as unknown as FootballSeasonData[])
+              .filter((row) => row.players) // Only include rows with valid player data
+              .map((row) => {
                 const rushYards = row.rush_yards ?? 0;
                 const passYards = row.pass_yards ?? 0;
                 const recYards = row.rec_yards ?? 0;
@@ -200,11 +264,11 @@ export async function getReturningRoster(
                   is_senior: gradYear <= currentGradYear,
                   total_yards: totalYards,
                 };
-              });
+              })) as unknown as ReturningPlayer[];
 
             // Sort by total_yards descending
-            returning.sort((a, b) => b.total_yards - a.total_yards);
-            return returning;
+            result.sort((a, b) => b.total_yards - a.total_yards);
+            return result;
           } else if (sportId === "basketball") {
             const { data } = await supabase
               .from("basketball_player_seasons")
@@ -213,13 +277,14 @@ export async function getReturningRoster(
                  players(id, name, slug, positions, graduation_year, height, weight)`
               )
               .eq("school_id", schoolId)
-              .eq("season_id", previousSeasonId);
+              .eq("season_id", previousSeasonId)
+              .is("deleted_at", null);
 
             if (!data) return [];
 
-            const returning: ReturningPlayer[] = data
-              .filter((row: any) => row.players) // Only include rows with valid player data
-              .map((row: any) => {
+            const result = ((data as unknown as FootballSeasonData[])
+              .filter((row) => row.players) // Only include rows with valid player data
+              .map((row) => {
                 const gradYear = row.players.graduation_year ?? currentGradYear;
 
                 return {
@@ -236,16 +301,16 @@ export async function getReturningRoster(
                   pass_td: null,
                   rec_yards: null,
                   points: row.points,
-                  ppg: row.ppg,
+                  ppg: (row.points ?? 0),
                   total_points: row.points,
                   is_senior: gradYear <= currentGradYear,
                   total_yards: 0,
                 };
-              });
+              })) as unknown as ReturningPlayer[];
 
             // Sort by points descending
-            returning.sort((a, b) => (b.total_points ?? 0) - (a.total_points ?? 0));
-            return returning;
+            result.sort((a, b) => (b.total_points ?? 0) - (a.total_points ?? 0));
+            return result;
           }
 
           return [];
@@ -258,6 +323,7 @@ export async function getReturningRoster(
     { schoolId, sportId, previousSeasonId, currentGradYear }
   );
 }
+);
 
 // ============================================================================
 // DATA FETCHER: Matchup History
@@ -267,28 +333,31 @@ export async function getReturningRoster(
  * Get head-to-head history between a school and list of opponents.
  * Returns aggregated win/loss/tie stats and most recent game info.
  */
-export async function getMatchupHistory(
-  schoolId: number,
-  opponentIds: number[],
-  sportId: string
-): Promise<MatchupHistory[]> {
-  return withErrorHandling(
-    async () => {
-      return withRetry(
-        async () => {
-          const supabase = await createClient();
+export const getMatchupHistory = cache(
+  async (
+    schoolId: number,
+    opponentIds: number[],
+    sportId: string
+  ): Promise<MatchupHistory[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
 
-          // Fetch all games between schoolId and any of the opponents
-          const { data: games } = await supabase
-            .from("games")
-            .select(
-              `id, game_date, home_school_id, away_school_id, home_score, away_score,
-               home_school:schools!games_home_school_id_fkey(id, name, slug),
-               away_school:schools!games_away_school_id_fkey(id, name, slug)`
-            )
-            .eq("sport_id", sportId)
-            .not("home_score", "is", null)
-            .not("away_score", "is", null);
+            // Fetch all games between schoolId and any of the opponents
+            const { data: games } = await supabase
+              .from("games")
+              .select(
+                `id, game_date, home_school_id, away_school_id, home_score, away_score,
+                 home_school:schools!games_home_school_id_fkey(id, name, slug),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug)`
+              )
+              .eq("sport_id", sportId)
+              .not("home_score", "is", null)
+              .not("away_score", "is", null)
+              .is("deleted_at", null)
+              .limit(500);
 
           if (!games) return [];
 
@@ -366,6 +435,7 @@ export async function getMatchupHistory(
     { schoolId, opponentIds, sportId }
   );
 }
+);
 
 // ============================================================================
 // DATA FETCHER: Last Season Recap
@@ -374,24 +444,26 @@ export async function getMatchupHistory(
 /**
  * Get the most recent completed season's record and notable information.
  */
-export async function getLastSeasonRecap(
-  schoolId: number,
-  sportId: string
-): Promise<SeasonRecap | null> {
-  return withErrorHandling(
-    async () => {
-      return withRetry(
-        async () => {
-          const supabase = await createClient();
+export const getLastSeasonRecap = cache(
+  async (
+    schoolId: number,
+    sportId: string
+  ): Promise<SeasonRecap | null> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
 
-          // Get the most recent team season
-          const { data: teamSeasons } = await supabase
-            .from("team_seasons")
-            .select("*, seasons(label, year_start), coaches(name)")
-            .eq("school_id", schoolId)
-            .eq("sport_id", sportId)
-            .order("seasons.year_start", { ascending: false })
-            .limit(1);
+            // Get the most recent team season
+            const { data: teamSeasons } = await supabase
+              .from("team_seasons")
+              .select("*, seasons(label, year_start), coaches(name)")
+              .eq("school_id", schoolId)
+              .eq("sport_id", sportId)
+              .is("deleted_at", null)
+              .order("seasons.year_start", { ascending: false })
+              .limit(1);
 
           if (!teamSeasons || teamSeasons.length === 0) return null;
 
@@ -411,7 +483,9 @@ export async function getLastSeasonRecap(
             )
             .eq("season_id", seasonId)
             .eq("sport_id", sportId)
-            .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`);
+            .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+            .is("deleted_at", null)
+            .limit(500);
 
           // Find notable wins (games they won against winning teams)
           const notableWins: Array<{ opponent: string; score: string; date: string }> = [];
@@ -515,6 +589,7 @@ export async function getLastSeasonRecap(
     { schoolId, sportId }
   );
 }
+);
 
 // ============================================================================
 // DATA FETCHER: League Outlook
@@ -524,26 +599,28 @@ export async function getLastSeasonRecap(
  * Get all teams in the same league for the most recent season.
  * Returned sorted by win percentage (best to worst).
  */
-export async function getLeagueOutlook(
-  schoolId: number,
-  sportId: string,
-  leagueId: number | null
-): Promise<LeagueStanding[]> {
-  return withErrorHandling(
-    async () => {
-      return withRetry(
-        async () => {
-          const supabase = await createClient();
+export const getLeagueOutlook = cache(
+  async (
+    schoolId: number,
+    sportId: string,
+    leagueId: number | null
+  ): Promise<LeagueStanding[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
 
-          // Get the current school's league
-          let targetLeagueId = leagueId;
+            // Get the current school's league
+            let targetLeagueId = leagueId;
 
-          if (!targetLeagueId) {
-            const { data: schoolData } = await supabase
-              .from("schools")
-              .select("league_id")
-              .eq("id", schoolId)
-              .single();
+            if (!targetLeagueId) {
+              const { data: schoolData } = await supabase
+                .from("schools")
+                .select("league_id")
+                .eq("id", schoolId)
+                .is("deleted_at", null)
+                .single();
 
             targetLeagueId = (schoolData as any)?.league_id;
           }
@@ -568,7 +645,9 @@ export async function getLeagueOutlook(
             .select("school_id, wins, losses, ties, schools(id, name, slug)")
             .eq("sport_id", sportId)
             .eq("season_id", recentSeason.id)
-            .eq("schools.league_id", targetLeagueId);
+            .eq("schools.league_id", targetLeagueId)
+            .is("deleted_at", null)
+            .limit(500);
 
           if (!teamSeasons) return [];
 
@@ -602,6 +681,7 @@ export async function getLeagueOutlook(
     { schoolId, sportId, leagueId }
   );
 }
+);
 
 // ============================================================================
 // DATA FETCHER: Schedule Strength
@@ -611,33 +691,36 @@ export async function getLeagueOutlook(
  * Get strength of schedule info for upcoming opponents.
  * Returns each opponent's last season record.
  */
-export async function getScheduleStrength(
-  opponentIds: number[],
-  sportId: string
-): Promise<ScheduleStrength[]> {
-  return withErrorHandling(
-    async () => {
-      return withRetry(
-        async () => {
-          const supabase = await createClient();
+export const getScheduleStrength = cache(
+  async (
+    opponentIds: number[],
+    sportId: string
+  ): Promise<ScheduleStrength[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
 
-          // Get the most recent season
-          const { data: recentSeason } = await supabase
-            .from("seasons")
-            .select("id, year_start")
-            .order("year_start", { ascending: false })
-            .limit(1)
-            .single();
+            // Get the most recent season
+            const { data: recentSeason } = await supabase
+              .from("seasons")
+              .select("id, year_start")
+              .order("year_start", { ascending: false })
+              .limit(1)
+              .single();
 
-          if (!recentSeason) return [];
+            if (!recentSeason) return [];
 
-          // Get team_seasons for all opponents in the most recent season
-          const { data: teamSeasons } = await supabase
-            .from("team_seasons")
-            .select("school_id, wins, losses, ties, schools(id, name, slug)")
-            .eq("sport_id", sportId)
-            .eq("season_id", recentSeason.id)
-            .in("school_id", opponentIds);
+            // Get team_seasons for all opponents in the most recent season
+            const { data: teamSeasons } = await supabase
+              .from("team_seasons")
+              .select("school_id, wins, losses, ties, schools(id, name, slug)")
+              .eq("sport_id", sportId)
+              .eq("season_id", recentSeason.id)
+              .in("school_id", opponentIds)
+              .is("deleted_at", null)
+              .limit(500);
 
           if (!teamSeasons) return [];
 
@@ -671,6 +754,7 @@ export async function getScheduleStrength(
     { opponentIds, sportId }
   );
 }
+);
 
 // ============================================================================
 // DATA FETCHER: Next Level Alumni
@@ -680,33 +764,40 @@ export async function getScheduleStrength(
  * Get alumni who went on to play at college/pro levels.
  * Returns top 10, ordered by level (pro first, then college).
  */
-export async function getNextLevelAlumni(schoolId: number): Promise<NextLevelAlumnus[]> {
-  return withErrorHandling(
-    async () => {
-      return withRetry(
-        async () => {
-          const supabase = await createClient();
+export const getNextLevelAlumni = cache(
+  async (schoolId: number): Promise<NextLevelAlumnus[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
 
-          const { data } = await supabase
-            .from("next_level_tracking")
-            .select("*, players(id, name, slug)")
-            .eq("school_id", schoolId)
-            .in("level", ["professional", "college"])
-            .order("level", { ascending: false }) // professional first
-            .order("created_at", { ascending: false })
-            .limit(10);
+            const { data } = await supabase
+              .from("next_level_tracking")
+              .select("*, players(id, name, slug)")
+              .eq("school_id", schoolId)
+              .in("level", ["professional", "college"])
+              .order("level", { ascending: false }) // professional first
+              .order("created_at", { ascending: false })
+              .limit(10);
 
           if (!data) return [];
 
-          const alumni: NextLevelAlumnus[] = data
-            .filter((row: any) => row.players) // Only include rows with valid player data
-            .map((row: any) => {
+          interface NextLevelRecord {
+            players?: PlayerData;
+            level?: string;
+            organization?: string;
+            position?: string;
+          }
+          const alumni: NextLevelAlumnus[] = (data as NextLevelRecord[])
+            .filter((row) => row.players) // Only include rows with valid player data
+            .map((row) => {
               // Determine level display name
               const levelDisplay = row.level === "professional" ? "Professional" : "College";
 
               return {
-                player_name: row.players.name,
-                player_slug: row.players.slug,
+                player_name: row.players!.name,
+                player_slug: row.players!.slug,
                 level: levelDisplay,
                 organization: row.organization ?? "",
                 position: row.position ?? null,
@@ -723,6 +814,7 @@ export async function getNextLevelAlumni(schoolId: number): Promise<NextLevelAlu
     { schoolId }
   );
 }
+);
 
 // ============================================================================
 // DATA FETCHER: Roster-based Returning Players
@@ -739,26 +831,28 @@ const CLASS_BUMP: Record<string, string> = {
  * and filtering out seniors (who graduated).
  * Returns players sorted by projected class (Senior first) then name.
  */
-export async function getReturningRosterFromRosters(
-  schoolId: number,
-  sportSlug: string,
-  previousSeasonId: number
-): Promise<RosterReturningPlayer[]> {
-  return withErrorHandling(
-    async () => {
-      return withRetry(
-        async () => {
-          const supabase = await createClient();
+export const getReturningRosterFromRosters = cache(
+  async (
+    schoolId: number,
+    sportSlug: string,
+    previousSeasonId: number
+  ): Promise<RosterReturningPlayer[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
 
-          const { data } = await supabase
-            .from("rosters")
-            .select(
-              `id, player_id, position, jersey_number, class_year,
-               players!inner(id, name, slug, graduation_year, height, weight)`
-            )
-            .eq("school_id", schoolId)
-            .eq("season_id", previousSeasonId)
-            .not("class_year", "eq", "senior"); // exclude graduated seniors
+            const { data } = await supabase
+              .from("rosters")
+              .select(
+                `id, player_id, position, jersey_number, class_year,
+                 players!inner(id, name, slug, graduation_year, height, weight)`
+              )
+              .eq("school_id", schoolId)
+              .eq("season_id", previousSeasonId)
+              .not("class_year", "eq", "senior")
+              .limit(500); // exclude graduated seniors
 
           if (!data) return [];
 
@@ -801,3 +895,4 @@ export async function getReturningRosterFromRosters(
     { schoolId, sportSlug, previousSeasonId }
   );
 }
+);

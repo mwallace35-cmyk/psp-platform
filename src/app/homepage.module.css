@@ -1164,3 +1164,358 @@
     max-width: 100%;
   }
 }
+
+/* ============ MOBILE BOTTOM NAVIGATION ============ */
+
+.mobileBottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: var(--psp-white);
+  border-top: 2px solid var(--psp-gold);
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  z-index: 40;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mobileNavItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  flex: 1;
+  height: 100%;
+  padding: 0.5rem;
+  color: var(--psp-gray-600);
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+}
+
+.mobileNavItem:active {
+  background-color: rgba(240, 165, 0, 0.1);
+}
+
+.mobileNavItemActive {
+  color: var(--psp-gold);
+}
+
+.mobileNavIcon {
+  font-size: 1.5rem;
+}
+
+.mobileNavLabel {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mobileNavMenu {
+  position: relative;
+}
+
+.mobileMenuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.mobileMenu {
+  background: var(--psp-white);
+  padding: 1.5rem;
+  border-radius: 1rem 1rem 0 0;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.mobileMenuClose {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--psp-gray-600);
+  margin-bottom: 1rem;
+}
+
+.mobileMenuTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: var(--psp-navy);
+  margin: 0 0 1.5rem 0;
+}
+
+.mobileMenuNav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mobileMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  color: var(--psp-navy);
+  text-decoration: none;
+  border-bottom: 1px solid var(--psp-gray-200);
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.mobileMenuItem:active {
+  background-color: var(--psp-gray-50);
+}
+
+.mobileMenuItem:last-child {
+  border-bottom: none;
+}
+
+.mobileMenuItem span:first-child {
+  font-size: 1.5rem;
+  min-width: 2rem;
+}
+
+/* ============ MY SCHOOLS WIDGET ============ */
+
+.mySchoolsSection {
+  width: 100%;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, rgba(240, 165, 0, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+}
+
+.mySchoolsContainer {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.mySchoolsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.mySchoolsTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--psp-navy);
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+.mySchoolsSubtitle {
+  font-size: 1rem;
+  color: var(--psp-gray-600);
+  margin: 0.5rem 0 0 0;
+  line-height: 1.5;
+}
+
+.mySchoolsManage {
+  color: var(--psp-blue);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+.mySchoolsManage:hover {
+  color: var(--psp-gold);
+}
+
+.mySchoolsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.mySchoolCard,
+.suggestedSchoolCard {
+  padding: 1.5rem;
+  background: var(--psp-white);
+  border: 2px solid var(--psp-gray-200);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 140px;
+}
+
+.mySchoolCard:hover,
+.suggestedSchoolCard:hover {
+  border-color: var(--psp-gold);
+  box-shadow: 0 4px 12px rgba(240, 165, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.mySchoolCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.mySchoolCardName,
+.suggestedSchoolName {
+  font-weight: 700;
+  color: var(--psp-navy);
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+.mySchoolCardRemove {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--psp-gray-400);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  transition: color 0.2s ease;
+}
+
+.mySchoolCardRemove:hover {
+  color: #dc2626;
+}
+
+.mySchoolCardFooter {
+  color: var(--psp-blue);
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-top: auto;
+}
+
+.suggestedSchoolCard {
+  border-color: var(--psp-gray-300);
+  text-decoration: none;
+}
+
+.suggestedSchoolCTA {
+  color: var(--psp-blue);
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-top: auto;
+}
+
+.suggestedSchoolsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.mySchoolAddCard {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--psp-gold) 0%, var(--psp-blue) 100%);
+  border: 2px dashed var(--psp-gray-300);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--psp-white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  transition: all 0.3s ease;
+}
+
+.mySchoolAddCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(240, 165, 0, 0.2);
+}
+
+.mySchoolAddIcon {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.mySchoolAddLabel {
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.mySchoolsCTA {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.mySchoolsSearchLink {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: var(--psp-gold);
+  color: var(--psp-navy);
+  text-decoration: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid var(--psp-gold);
+}
+
+.mySchoolsSearchLink:hover {
+  background-color: transparent;
+  color: var(--psp-gold);
+}
+
+@media (max-width: 768px) {
+  .mySchoolsGrid,
+  .suggestedSchoolsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .mySchoolCard,
+  .suggestedSchoolCard,
+  .mySchoolAddCard {
+    min-height: 120px;
+    padding: 1rem;
+  }
+
+  .mySchoolsHeader {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .mySchoolsTitle {
+    font-size: 1.5rem;
+  }
+}

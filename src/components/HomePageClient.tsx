@@ -1,5 +1,3 @@
-'use client';
-
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -80,237 +78,118 @@ interface HomePageClientProps {
 
 export default function HomePageClient({ stats, articles, alumni, recentScores, potwNominees, hotTakes, websiteJsonLd }: HomePageClientProps) {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "var(--psp-white)" }}>
+    <div className="min-h-screen flex flex-col bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       <Header />
 
       <ErrorBoundary>
-        <main id="main-content" style={{ flex: 1, width: "100%" }}>
+        <main id="main-content" className="flex-1 w-full">
           <div id="content-updates" aria-live="polite" aria-atomic="true" className="sr-only"></div>
 
         {/* ============ HERO SECTION ============ */}
-        <section
-          style={{
-            width: "100%",
-            padding: "80px 20px",
-            background: "linear-gradient(135deg, var(--psp-navy) 0%, #1a4d8f 100%)",
-            color: "var(--psp-white)",
-            textAlign: "center",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <div style={{ maxWidth: "900px", margin: "0 auto", position: "relative", zIndex: 2 }}>
-            <h1 style={{ fontSize: "clamp(2.5rem, 8vw, 4rem)", fontWeight: 700, marginBottom: "16px", fontFamily: "var(--font-bebas)", letterSpacing: "1px" }}>
+        <section className="w-full px-5 py-20 md:py-40 bg-gradient-to-br from-[var(--psp-navy)] to-[#1a4d8f] text-white text-center relative overflow-hidden">
+          <div className="max-w-4xl mx-auto relative z-10">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-wide" style={{ fontFamily: "var(--font-bebas)" }}>
               Philadelphia&apos;s Home for High School Sports
             </h1>
-            <p style={{ fontSize: "clamp(1rem, 3vw, 1.25rem)", marginBottom: "32px", opacity: 0.95, maxWidth: "600px", margin: "0 auto 32px" }}>
+            <p className="text-lg md:text-xl mb-8 opacity-95 max-w-2xl mx-auto">
               Track the stats, celebrate the champions, and discover tomorrow&apos;s stars
             </p>
-            <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
+            <div className="flex gap-4 justify-center flex-wrap">
               <Link
                 href="/search"
-                style={{
-                  padding: "12px 32px",
-                  backgroundColor: "var(--psp-gold)",
-                  color: "var(--psp-navy)",
-                  textDecoration: "none",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                  border: "none",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.target as HTMLAnchorElement).style.backgroundColor = "var(--psp-gold-light)";
-                  (e.target as HTMLAnchorElement).style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.target as HTMLAnchorElement).style.backgroundColor = "var(--psp-gold)";
-                  (e.target as HTMLAnchorElement).style.transform = "translateY(0)";
-                }}
+                className="px-8 py-3 bg-[var(--psp-gold)] text-[var(--psp-navy)] rounded-lg font-semibold text-base transition-all duration-300 hover:bg-[var(--psp-gold-light)] hover:-translate-y-1"
               >
                 Explore Database
               </Link>
               <Link
                 href="/football"
-                style={{
-                  padding: "12px 32px",
-                  backgroundColor: "transparent",
-                  color: "var(--psp-white)",
-                  textDecoration: "none",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                  border: "2px solid var(--psp-white)",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.target as HTMLAnchorElement).style.backgroundColor = "var(--psp-white)";
-                  (e.target as HTMLAnchorElement).style.color = "var(--psp-navy)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.target as HTMLAnchorElement).style.backgroundColor = "transparent";
-                  (e.target as HTMLAnchorElement).style.color = "var(--psp-white)";
-                }}
+                className="px-8 py-3 transparent text-white rounded-lg font-semibold text-base border-2 border-white transition-all duration-300 hover:bg-white hover:text-[var(--psp-navy)]"
               >
                 View Sports
               </Link>
             </div>
           </div>
           <div
-            style={{
-              position: "absolute",
-              top: "-50%",
-              right: "-10%",
-              width: "400px",
-              height: "400px",
-              backgroundColor: "rgba(240, 165, 0, 0.1)",
-              borderRadius: "50%",
-              zIndex: 1,
-            }}
+            className="absolute -top-1/2 -right-1/4 w-96 h-96 rounded-full z-0"
+            style={{ backgroundColor: "rgba(240, 165, 0, 0.1)" }}
           />
         </section>
 
         {/* ============ SOCIAL PROOF BAR ============ */}
-        <section
-          style={{
-            width: "100%",
-            padding: "40px 20px",
-            backgroundColor: "var(--psp-gray-50)",
-            borderTop: "1px solid var(--psp-gray-200)",
-            borderBottom: "1px solid var(--psp-gray-200)",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: "1200px",
-              margin: "0 auto",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "24px",
-              textAlign: "center",
-            }}
-          >
+        <section className="w-full px-5 py-10 bg-gray-50 border-y border-gray-200">
+          <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div style={{ fontSize: "2.5rem", fontWeight: 700, color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+              <div className="text-4xl font-bold text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
                 {stats.players.toLocaleString()}+
               </div>
-              <div style={{ fontSize: "0.95rem", color: "var(--psp-gray-600)", marginTop: "8px" }}>Players Tracked</div>
+              <div className="text-sm text-gray-600 mt-2">Players Tracked</div>
             </div>
             <div>
-              <div style={{ fontSize: "2.5rem", fontWeight: 700, color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+              <div className="text-4xl font-bold text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
                 {stats.schools.toLocaleString()}+
               </div>
-              <div style={{ fontSize: "0.95rem", color: "var(--psp-gray-600)", marginTop: "8px" }}>Schools</div>
+              <div className="text-sm text-gray-600 mt-2">Schools</div>
             </div>
             <div>
-              <div style={{ fontSize: "2.5rem", fontWeight: 700, color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>3</div>
-              <div style={{ fontSize: "0.95rem", color: "var(--psp-gray-600)", marginTop: "8px" }}>Sports Covered</div>
+              <div className="text-4xl font-bold text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>3</div>
+              <div className="text-sm text-gray-600 mt-2">Sports Covered</div>
             </div>
             <div>
-              <div style={{ fontSize: "2.5rem", fontWeight: 700, color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>50+</div>
-              <div style={{ fontSize: "0.95rem", color: "var(--psp-gray-600)", marginTop: "8px" }}>Years of Data</div>
+              <div className="text-4xl font-bold text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>50+</div>
+              <div className="text-sm text-gray-600 mt-2">Years of Data</div>
             </div>
           </div>
         </section>
 
         {/* ============ RECENT SCORES TICKER ============ */}
-        <section style={{ width: "100%", padding: "40px 20px", backgroundColor: "var(--psp-navy)" }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "24px", color: "var(--psp-white)", fontFamily: "var(--font-bebas)" }}>
+        <section className="w-full px-5 py-10 bg-[var(--psp-navy)]">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-2xl font-bold mb-6 text-white" style={{ fontFamily: "var(--font-bebas)" }}>
               Recent Scores
             </h2>
-            <div
-              style={{
-                display: "flex",
-                overflowX: "auto",
-                gap: "16px",
-                paddingBottom: "12px",
-                WebkitOverflowScrolling: "touch",
-              }}
-            >
+            <div className="flex overflow-x-auto gap-4 pb-3" style={{ WebkitOverflowScrolling: "touch" }}>
               {recentScores.length > 0 ? (
                 recentScores.map((score) => {
                   const isHomeWin = score.homeScore > score.awayScore;
                   return (
                     <div
                       key={score.id}
+                      className="flex-shrink-0 w-72 p-4 rounded-lg border flex flex-col gap-3"
                       style={{
-                        flexShrink: 0,
-                        width: "280px",
-                        padding: "16px",
                         backgroundColor: "rgba(240, 165, 0, 0.1)",
-                        borderRadius: "8px",
-                        border: "1px solid rgba(240, 165, 0, 0.3)",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "12px",
+                        borderColor: "rgba(240, 165, 0, 0.3)",
                       }}
                     >
-                      <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--psp-gold)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      <div className="text-xs font-semibold text-[var(--psp-gold)] uppercase tracking-wider">
                         {score.sportId}
                       </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div style={{ flex: 1 }}>
-                          <div
-                            style={{
-                              fontSize: "0.9rem",
-                              fontWeight: isHomeWin ? 700 : 500,
-                              color: "var(--psp-white)",
-                              marginBottom: "4px",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
+                      <div className="flex justify-between items-center">
+                        <div className="flex-1">
+                          <div className={`text-sm font-${isHomeWin ? 'bold' : 'medium'} text-white mb-1 overflow-hidden text-ellipsis whitespace-nowrap`}>
                             {score.homeTeam}
                           </div>
-                          <div
-                            style={{
-                              fontSize: "0.9rem",
-                              fontWeight: !isHomeWin ? 700 : 500,
-                              color: "var(--psp-white)",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
+                          <div className={`text-sm font-${!isHomeWin ? 'bold' : 'medium'} text-white overflow-hidden text-ellipsis whitespace-nowrap`}>
                             {score.awayTeam}
                           </div>
                         </div>
-                        <div style={{ textAlign: "right" }}>
-                          <div
-                            style={{
-                              fontSize: "1.5rem",
-                              fontWeight: 700,
-                              color: isHomeWin ? "var(--psp-gold)" : "var(--psp-white)",
-                              marginBottom: "4px",
-                            }}
-                          >
+                        <div className="text-right">
+                          <div className={`text-2xl font-bold mb-1 ${isHomeWin ? 'text-[var(--psp-gold)]' : 'text-white'}`}>
                             {score.homeScore}
                           </div>
-                          <div
-                            style={{
-                              fontSize: "1.5rem",
-                              fontWeight: 700,
-                              color: !isHomeWin ? "var(--psp-gold)" : "var(--psp-white)",
-                            }}
-                          >
+                          <div className={`text-2xl font-bold ${!isHomeWin ? 'text-[var(--psp-gold)]' : 'text-white'}`}>
                             {score.awayScore}
                           </div>
                         </div>
                       </div>
-                      <div style={{ fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.7)", paddingTop: "8px", borderTop: "1px solid rgba(240, 165, 0, 0.2)" }}>
+                      <div className="text-xs text-white/70 pt-2 border-t border-[rgba(240,165,0,0.2)]">
                         {formatTimeAgo(score.gameDate)}
                       </div>
                     </div>
                   );
                 })
               ) : (
-                <div style={{ color: "var(--psp-white)", fontSize: "0.95rem", padding: "24px 16px" }}>
+                <div className="text-white text-sm px-4 py-6">
                   No recent scores available
                 </div>
               )}
@@ -319,64 +198,35 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         </section>
 
         {/* ============ FEATURED CONTENT GRID ============ */}
-        <section style={{ width: "100%", padding: "60px 20px" }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "32px", color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+        <section className="w-full px-5 py-12">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold mb-8 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
               Latest Coverage
             </h2>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                gap: "24px",
-              }}
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.map((article, idx) => (
                 <Link
                   key={idx}
                   href={`/articles/${article.slug}`}
-                  style={{
-                    textDecoration: "none",
-                    color: "inherit",
-                    display: "flex",
-                    flexDirection: "column",
-                    borderRadius: "12px",
-                    overflow: "hidden",
-                    backgroundColor: "var(--psp-white)",
-                    border: "1px solid var(--psp-gray-200)",
-                    transition: "all 0.3s ease",
-                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
-                    (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-4px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.06)";
-                    (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
-                  }}
+                  className="flex flex-col rounded-xl overflow-hidden bg-white border border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
                 >
                   <div
+                    className="w-full h-48 bg-gray-200 bg-cover bg-center"
                     style={{
-                      width: "100%",
-                      height: "200px",
-                      backgroundColor: "var(--psp-gray-200)",
                       backgroundImage: article.featured_image_url ? `url(${article.featured_image_url})` : undefined,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
                     }}
                   />
-                  <div style={{ padding: "20px", display: "flex", flexDirection: "column", flex: 1 }}>
-                    <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--psp-gold)", textTransform: "uppercase", marginBottom: "8px" }}>
+                  <div className="p-5 flex flex-col flex-1">
+                    <span className="text-xs font-semibold text-[var(--psp-gold)] uppercase mb-2">
                       {article.sport_id}
                     </span>
-                    <h3 style={{ fontSize: "1.1rem", fontWeight: 600, marginBottom: "8px", color: "var(--psp-navy)", lineHeight: "1.4" }}>
+                    <h3 className="text-lg font-semibold mb-2 text-[var(--psp-navy)] leading-relaxed">
                       {article.title}
                     </h3>
-                    <p style={{ fontSize: "0.95rem", color: "var(--psp-gray-600)", marginBottom: "12px", lineHeight: "1.5", flex: 1 }}>
+                    <p className="text-sm text-gray-600 mb-3 leading-relaxed flex-1">
                       {article.excerpt}
                     </p>
-                    <span style={{ fontSize: "0.85rem", color: "var(--psp-gray-500)" }}>
+                    <span className="text-xs text-gray-500">
                       {formatTimeAgo(article.published_at)}
                     </span>
                   </div>
@@ -387,12 +237,12 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         </section>
 
         {/* ============ SPORT NAVIGATION CARDS ============ */}
-        <section style={{ width: "100%", padding: "60px 20px", backgroundColor: "var(--psp-gray-50)" }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "32px", color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+        <section className="w-full px-5 py-12 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold mb-8 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
               Explore by Sport
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px" }}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { name: "Football", color: "#16a34a", icon: "🏈", href: "/football", desc: "120+ schools, 5,000+ players tracked" },
                 { name: "Basketball", color: "#ea580c", icon: "🏀", href: "/basketball", desc: "120+ schools, 5,000+ players tracked" },
@@ -401,36 +251,14 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                 <Link
                   key={idx}
                   href={sport.href}
-                  style={{
-                    textDecoration: "none",
-                    color: "var(--psp-white)",
-                    padding: "40px 24px",
-                    borderRadius: "12px",
-                    backgroundColor: sport.color,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textAlign: "center",
-                    gap: "16px",
-                    transition: "all 0.3s ease",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                    minHeight: "200px",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-8px)";
-                    (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 12px 24px rgba(0, 0, 0, 0.15)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
-                    (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
-                  }}
+                  className="px-6 py-10 rounded-xl text-white text-center flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg min-h-52"
+                  style={{ backgroundColor: sport.color }}
                 >
-                  <span style={{ fontSize: "3rem" }}>{sport.icon}</span>
-                  <h3 style={{ fontSize: "1.5rem", fontWeight: 600, margin: 0, fontFamily: "var(--font-bebas)" }}>
+                  <span className="text-6xl">{sport.icon}</span>
+                  <h3 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-bebas)" }}>
                     {sport.name}
                   </h3>
-                  <p style={{ fontSize: "0.9rem", opacity: 0.9, margin: 0 }}>
+                  <p className="text-sm opacity-90">
                     {sport.desc}
                   </p>
                 </Link>
@@ -440,115 +268,62 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         </section>
 
         {/* ============ POTW SPOTLIGHT ============ */}
-        <section style={{ width: "100%", padding: "60px 20px", backgroundColor: "var(--psp-white)" }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "32px", color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+        <section className="w-full px-5 py-12 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold mb-8 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
               Player of the Week Spotlight
             </h2>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gap: "24px",
-              }}
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {potwNominees.length > 0 ? (
                 potwNominees.map((nominee) => (
                   <div
                     key={nominee.id}
-                    style={{
-                      padding: "24px",
-                      backgroundColor: "var(--psp-white)",
-                      border: "2px solid var(--psp-gold)",
-                      borderRadius: "12px",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "16px",
-                      transition: "all 0.3s ease",
-                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
-                    }}
+                    className="p-6 bg-white border-2 border-[var(--psp-gold)] rounded-xl flex flex-col gap-4 transition-all duration-300 hover:shadow-md"
                   >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: "12px" }}>
-                      <div style={{ flex: 1 }}>
-                        <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 4px 0", color: "var(--psp-navy)" }}>
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold mb-1 text-[var(--psp-navy)]">
                           {nominee.playerName}
                         </h3>
-                        <p style={{ fontSize: "0.9rem", color: "var(--psp-gold)", margin: "0 0 4px 0", fontWeight: 500 }}>
+                        <p className="text-sm text-[var(--psp-gold)] mb-1 font-medium">
                           {nominee.schoolName}
                         </p>
-                        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--psp-gray-600)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
                           {nominee.sportId}
                         </span>
                       </div>
-                      <div style={{ textAlign: "right", minWidth: "60px" }}>
-                        <div style={{ fontSize: "1.8rem", fontWeight: 700, color: "var(--psp-gold)" }}>
+                      <div className="text-right min-w-fit">
+                        <div className="text-2xl font-bold text-[var(--psp-gold)]">
                           {nominee.votes}
                         </div>
-                        <div style={{ fontSize: "0.75rem", color: "var(--psp-gray-600)", fontWeight: 500 }}>
+                        <div className="text-xs text-gray-600 font-medium">
                           votes
                         </div>
                       </div>
                     </div>
-                    <div style={{ padding: "12px", backgroundColor: "var(--psp-gray-50)", borderRadius: "6px" }}>
-                      <p style={{ fontSize: "0.9rem", color: "var(--psp-navy)", margin: 0, fontStyle: "italic" }}>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm text-[var(--psp-navy)] italic">
                         {nominee.statLine}
                       </p>
                     </div>
                     <Link
                       href="/potw"
-                      style={{
-                        padding: "10px 16px",
-                        backgroundColor: "var(--psp-gold)",
-                        color: "var(--psp-navy)",
-                        textDecoration: "none",
-                        borderRadius: "6px",
-                        fontWeight: 600,
-                        fontSize: "0.9rem",
-                        textAlign: "center",
-                        transition: "all 0.3s ease",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-gold-light)";
-                        (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-gold)";
-                        (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
-                      }}
+                      className="px-4 py-2 bg-[var(--psp-gold)] text-[var(--psp-navy)] rounded-lg font-semibold text-sm text-center transition-all duration-300 hover:bg-[var(--psp-gold-light)] hover:-translate-y-1"
                     >
                       Vote Now
                     </Link>
                   </div>
                 ))
               ) : (
-                <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 20px", color: "var(--psp-gray-600)" }}>
-                  <p style={{ fontSize: "0.95rem" }}>No POTW nominees available at this time</p>
+                <div className="col-span-full text-center py-10 text-gray-600">
+                  <p className="text-sm">No POTW nominees available at this time</p>
                 </div>
               )}
             </div>
-            <div style={{ marginTop: "32px", textAlign: "center" }}>
+            <div className="text-center">
               <Link
                 href="/potw"
-                style={{
-                  padding: "12px 28px",
-                  backgroundColor: "var(--psp-navy)",
-                  color: "var(--psp-white)",
-                  textDecoration: "none",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  display: "inline-block",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#1a4d8f";
-                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-navy)";
-                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
-                }}
+                className="px-7 py-3 bg-[var(--psp-navy)] text-white rounded-lg font-semibold inline-block transition-all duration-300 hover:bg-[#1a4d8f] hover:-translate-y-1"
               >
                 View All Nominees
               </Link>
@@ -557,57 +332,21 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         </section>
 
         {/* ============ NEWSLETTER CTA ============ */}
-        <section
-          style={{
-            width: "100%",
-            padding: "60px 20px",
-            background: "linear-gradient(135deg, var(--psp-navy) 0%, #1a4d8f 100%)",
-            color: "var(--psp-white)",
-          }}
-        >
-          <div style={{ maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
-            <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "16px", fontFamily: "var(--font-bebas)" }}>
+        <section className="w-full px-5 py-12 bg-gradient-to-br from-[var(--psp-navy)] to-[#1a4d8f] text-white">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-bebas)" }}>
               Stay Updated
             </h2>
-            <p style={{ fontSize: "1rem", marginBottom: "32px", opacity: 0.95, lineHeight: "1.6" }}>
+            <p className="text-base mb-8 opacity-95 leading-relaxed">
               Get the latest Philadelphia high school sports news, rankings, and player highlights delivered to your inbox
             </p>
-            <div style={{ display: "flex", gap: "12px", maxWidth: "500px", margin: "0 auto", flexWrap: "wrap", justifyContent: "center" }}>
+            <div className="flex gap-3 max-w-md mx-auto flex-col sm:flex-row justify-center">
               <input
                 type="email"
                 placeholder="Enter your email"
-                style={{
-                  flex: "1",
-                  minWidth: "200px",
-                  padding: "12px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  fontSize: "1rem",
-                  backgroundColor: "var(--psp-white)",
-                  color: "var(--psp-navy)",
-                }}
+                className="flex-1 min-w-0 px-4 py-3 rounded-lg border-none text-base bg-white text-[var(--psp-navy)]"
               />
-              <button
-                style={{
-                  padding: "12px 32px",
-                  backgroundColor: "var(--psp-gold)",
-                  color: "var(--psp-navy)",
-                  border: "none",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.target as HTMLButtonElement).style.backgroundColor = "var(--psp-gold-light)";
-                  (e.target as HTMLButtonElement).style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.target as HTMLButtonElement).style.backgroundColor = "var(--psp-gold)";
-                  (e.target as HTMLButtonElement).style.transform = "translateY(0)";
-                }}
-              >
+              <button className="px-8 py-3 bg-[var(--psp-gold)] text-[var(--psp-navy)] rounded-lg font-semibold text-base transition-all duration-300 hover:bg-[var(--psp-gold-light)] hover:-translate-y-1">
                 Subscribe
               </button>
             </div>
@@ -615,57 +354,38 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         </section>
 
         {/* ============ QUICK COMMUNITY PULSE ============ */}
-        <section style={{ width: "100%", padding: "60px 20px", backgroundColor: "var(--psp-gray-50)" }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "16px", color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+        <section className="w-full px-5 py-12 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold mb-4 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
               Community Hot Takes
             </h2>
-            <p style={{ fontSize: "0.95rem", color: "var(--psp-gray-600)", marginBottom: "32px", maxWidth: "600px" }}>
+            <p className="text-sm text-gray-600 mb-8 max-w-2xl">
               What the community is talking about this week. Share your takes and join the conversation.
             </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                gap: "24px",
-                marginBottom: "32px",
-              }}
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {hotTakes.map((take) => {
-                const totalVotes = take.upvotes + take.downvotes;
-                const upvotePercent = totalVotes > 0 ? Math.round((take.upvotes / totalVotes) * 100) : 0;
                 return (
                   <div
                     key={take.id}
-                    style={{
-                      padding: "20px",
-                      backgroundColor: "var(--psp-white)",
-                      borderRadius: "12px",
-                      border: "1px solid var(--psp-gray-200)",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "16px",
-                      transition: "all 0.3s ease",
-                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
-                    }}
+                    className="p-5 bg-white rounded-xl border border-gray-200 flex flex-col gap-4 transition-all duration-300 hover:shadow-md"
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span style={{ fontSize: "1.5rem" }}>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">
                         {take.type === "take" ? "🔥" : take.type === "prediction" ? "🔮" : "💬"}
                       </span>
-                      <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--psp-navy)" }}>
+                      <span className="text-sm font-semibold text-[var(--psp-navy)]">
                         {take.userHandle}
                       </span>
                     </div>
-                    <p style={{ fontSize: "0.95rem", color: "var(--psp-navy)", margin: 0, lineHeight: "1.5" }}>
+                    <p className="text-sm text-[var(--psp-navy)] leading-relaxed">
                       {take.content}
                     </p>
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px", paddingTop: "8px", borderTop: "1px solid var(--psp-gray-200)" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem", color: "var(--psp-gray-600)" }}>
+                    <div className="flex items-center gap-3 pt-2 border-t border-gray-200">
+                      <div className="flex items-center gap-2 text-xs text-gray-600">
                         <span>👍 {take.upvotes}</span>
                         <span>👎 {take.downvotes}</span>
                       </div>
-                      <div style={{ marginLeft: "auto", fontSize: "0.8rem", color: "var(--psp-gray-500)" }}>
+                      <div className="ml-auto text-xs text-gray-500">
                         {formatTimeAgo(take.createdAt)}
                       </div>
                     </div>
@@ -673,27 +393,10 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                 );
               })}
             </div>
-            <div style={{ textAlign: "center" }}>
+            <div className="text-center">
               <Link
                 href="/community"
-                style={{
-                  padding: "12px 28px",
-                  backgroundColor: "var(--psp-navy)",
-                  color: "var(--psp-white)",
-                  textDecoration: "none",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  display: "inline-block",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#1a4d8f";
-                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-navy)";
-                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
-                }}
+                className="px-7 py-3 bg-[var(--psp-navy)] text-white rounded-lg font-semibold inline-block transition-all duration-300 hover:bg-[#1a4d8f] hover:-translate-y-1"
               >
                 Join The Pulse
               </Link>
@@ -702,66 +405,37 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         </section>
 
         {/* ============ PHILLY EVERYWHERE (ALUMNI) ============ */}
-        <section style={{ width: "100%", padding: "60px 20px" }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <h2 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "32px", color: "var(--psp-navy)", fontFamily: "var(--font-bebas)" }}>
+        <section className="w-full px-5 py-12 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold mb-8 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
               Philly Everywhere
             </h2>
-            <p style={{ fontSize: "1rem", color: "var(--psp-gray-600)", marginBottom: "32px", maxWidth: "600px" }}>
+            <p className="text-base text-gray-600 mb-8 max-w-2xl">
               Track Philadelphia&apos;s next-level athletes competing at the highest levels of college and professional sports
             </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
-                gap: "16px",
-              }}
-            >
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
               {alumni.slice(0, 12).map((alumnus, idx) => (
                 <div
                   key={idx}
-                  style={{
-                    padding: "16px",
-                    backgroundColor: "var(--psp-gray-50)",
-                    borderRadius: "8px",
-                    border: "1px solid var(--psp-gray-200)",
-                    textAlign: "center",
-                  }}
+                  className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center"
                 >
-                  <div style={{ fontSize: "2rem", marginBottom: "8px" }}>{alumnus.emoji}</div>
-                  <h4 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--psp-navy)", margin: "0 0 4px 0", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <div className="text-4xl mb-2">{alumnus.emoji}</div>
+                  <h4 className="text-sm font-semibold text-[var(--psp-navy)] mb-1 truncate">
                     {alumnus.name}
                   </h4>
-                  <p style={{ fontSize: "0.8rem", color: "var(--psp-gold)", margin: "0 0 4px 0", fontWeight: 500 }}>
+                  <p className="text-xs text-[var(--psp-gold)] mb-1 font-medium">
                     {alumnus.team}
                   </p>
-                  <p style={{ fontSize: "0.75rem", color: "var(--psp-gray-600)", margin: 0 }}>
+                  <p className="text-xs text-gray-600">
                     {alumnus.hs}
                   </p>
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: "32px", textAlign: "center" }}>
+            <div className="text-center">
               <Link
                 href="/search"
-                style={{
-                  padding: "12px 24px",
-                  backgroundColor: "var(--psp-navy)",
-                  color: "var(--psp-white)",
-                  textDecoration: "none",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  display: "inline-block",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#1a4d8f";
-                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--psp-navy)";
-                  (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
-                }}
+                className="px-6 py-3 bg-[var(--psp-navy)] text-white rounded-lg font-semibold inline-block transition-all duration-300 hover:bg-[#1a4d8f] hover:-translate-y-1"
               >
                 View All Alumni
               </Link>

@@ -74,6 +74,7 @@ export {
 export {
   getRecentChampions,
   getChampionshipsBySport,
+  getChampionshipGamesWithBoxScores,
   getRecordsBySport,
   getTeamSeason,
   getGamesByTeamSeason,
@@ -103,6 +104,7 @@ export {
   getRecruitsByClass,
   getRecentCommitments,
   getTeamsWithRecords,
+  getSchoolTeamStats,
   getLeaderboard,
   getFootballCareerLeaders,
   getBasketballCareerLeaders,
@@ -170,6 +172,18 @@ export {
   type NextLevelAlumnus,
 } from "./preview";
 
+// Team page functions
+export {
+  getTeamHistory,
+  getNextGame,
+  getTeamArticles,
+  getRelatedTeams,
+  type TeamHistory,
+  type NextGame,
+  type LeagueStandingsRow,
+  type TeamArticle,
+} from "./team-page";
+
 // Awards and All-City functions
 export {
   getAllCityByYear,
@@ -177,6 +191,16 @@ export {
   type AwardRecord,
   type AllCityYear,
 } from "./awards";
+
+// Awards hub functions
+export {
+  getAwardsSummary,
+  getRecentAwards,
+  getTopAwardedSchools,
+  getAwardsByType,
+  type AwardDetail,
+  type AwardsSummary,
+} from "./awards-hub";
 
 // Next Level / Pro Athletes functions
 export {
@@ -191,3 +215,121 @@ export {
   type ProAthleteDetail,
   type CollegePlacement,
 } from "./next-level";
+
+// Dynasties functions
+export {
+  getDynastyRankings,
+  getDynastyTimeline,
+  getChampionshipStreaks,
+  type DynastyRanking,
+  type ChampionshipYear,
+} from "./dynasties";
+
+// Dynasty Tracker functions
+export {
+  getDynastyTrackerData,
+  getDynastyLeaders,
+  getAvailableDecades,
+  type DynastyDecadeData,
+  type DynastyLeader,
+} from "./dynasty-tracker";
+
+// Greatest Seasons functions
+export {
+  getGreatestFootballSeasons,
+  getGreatestBasketballSeasons,
+  getGreatestBaseballSeasons,
+  getGreatestSeasonCategories,
+  type GreatestSeason,
+} from "./greatest-seasons";
+
+// Position Leaders functions
+export {
+  getFootballPositionLeaders,
+  getBasketballPositionLeaders,
+  getPositionsForSport,
+  getPositionDisplayName,
+  type PositionLeader,
+} from "./position-leaders";
+
+// Rivalries functions
+export {
+  getTopRivalries,
+  getRivalryDetail,
+  getRivalryGames,
+  type RivalryRecord,
+  type RivalryGame,
+} from "./rivalries";
+
+// Standings functions
+export {
+  getLeagueStandings,
+  getAvailableStandingsSeasons,
+  type Standing,
+  type LeagueStandings,
+} from "./standings";
+
+// Rosters functions
+export {
+  getTeamRoster,
+  getRosterSeasons,
+  getRosterCount,
+  groupRosterByPosition,
+  type RosterEntry,
+  type RosterSeason,
+} from "./rosters";
+
+// Records and Trending functions
+export {
+  getFilteredRecords,
+  getRecordCategories,
+  getRecordStats,
+  getRecordCount,
+  type RecordWithDetails,
+  type RecordStats,
+  type RecordFilter,
+} from "./records";
+
+export * from "./computed-records";
+
+export {
+  getTrendingStats,
+  getRandomTrendingStat,
+  type TrendingStat,
+} from "./trending";
+
+// Eras (statistical trends by decade)
+export {
+  getStatByEra,
+  getStatTypes,
+  getEraSummary,
+  type EraStatistic,
+  type EraStatType,
+} from "./eras";
+
+// Breakout alerts (year-over-year stat jumps)
+export {
+  getBreakoutPlayers,
+  getSchoolBreakouts,
+  type BreakoutAlert,
+} from "./breakouts";
+
+// Pro players functions
+export {
+  getProPlayers,
+  getProPlayersBySchool,
+  getProPipeline,
+  getProPlayerDetail,
+  parseProLeague,
+  type ProPlayer,
+  type ProPipelineSchool,
+} from "./pro-players";
+
+// Similar players functions
+export {
+  getSimilarPlayers,
+  getSimilarFootballPlayers,
+  getSimilarBasketballPlayers,
+  getSimilarBaseballPlayers,
+  type SimilarPlayer,
+} from "./similar-players";

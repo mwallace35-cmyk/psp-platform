@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
 import HeroSectionNew from "@/components/home/HeroSectionNew";
 import LiveStatsStrip from "@/components/home/LiveStatsStrip";
+import TrendingStrip from "@/components/home/TrendingStrip";
 import SportNavigationGrid from "@/components/home/SportNavigationGrid";
 import SectionDivider from "@/components/home/SectionDivider";
 import PotwSpotlight from "@/components/home/PotwSpotlight";
@@ -15,6 +16,10 @@ import RecentScores from "@/components/home/RecentScores";
 import LatestArticles from "@/components/home/LatestArticles";
 import CommunityPulse from "@/components/home/CommunityPulse";
 import NewsletterCTA from "@/components/home/NewsletterCTA";
+import ThisDayInHistory from "@/components/home/ThisDayInHistory";
+import SponsorSlot from "@/components/ads/SponsorSlot";
+import PremiumBanner from "@/components/ads/PremiumBanner";
+import MySchoolsWidget from "@/components/home/MySchoolsWidget";
 
 // ============ DATA FETCHING FUNCTIONS ============
 
@@ -362,8 +367,23 @@ export default async function HomePage() {
           {/* SPRINT 1: Hero Section */}
           <HeroSectionNew stats={stats} />
 
+          {/* Trending Strip */}
+          <TrendingStrip />
+
           {/* SPRINT 2: Live Stats Strip */}
           <LiveStatsStrip />
+
+          {/* Section Divider */}
+          <SectionDivider />
+
+          {/* Personalized: My Schools Widget */}
+          <MySchoolsWidget />
+
+          {/* Section Divider */}
+          <SectionDivider />
+
+          {/* This Day in History */}
+          <ThisDayInHistory />
 
           {/* Section Divider */}
           <SectionDivider />
@@ -390,6 +410,14 @@ export default async function HomePage() {
 
           {/* SPRINT 7: Data Tools */}
           <DataToolsSection />
+
+          {/* Section Divider */}
+          <SectionDivider />
+
+          {/* Inline Sponsor Slot */}
+          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1rem' }}>
+            <SponsorSlot placement="inline" />
+          </div>
 
           {/* SPRINT 5: Recent Scores */}
           {displayScores.length > 0 && (
@@ -418,6 +446,9 @@ export default async function HomePage() {
           {/* SPRINT 5: Newsletter CTA */}
           <SectionDivider />
           <NewsletterCTA />
+
+          {/* Premium Banner */}
+          <PremiumBanner />
         </div>
       </ErrorBoundary>
     </>

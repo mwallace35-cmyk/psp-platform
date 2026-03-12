@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getTeamsWithRecords } from "@/lib/data";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import { SPORT_META, getSchoolTeamStats } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -11,8 +12,8 @@ export const revalidate = 3600; // ISR: hourly
 type PageParams = { sport: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const { sport } = await params;
-  if (!isValidSport(sport)) return {};
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   const meta = SPORT_META[sport];
   return {
     title: `${meta.name} Teams — PhillySportsPack`,
@@ -47,11 +48,10 @@ const LEAGUE_COLORS: Record<string, string> = {
 };
 
 export default async function TeamsPage({ params }: { params: Promise<PageParams> }) {
-  const { sport } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
 
   const meta = SPORT_META[sport];
-  const teamsResult = await getTeamsWithRecords(sport);
+  const teamsResult = await getSchoolTeamStats(sport);
   const teams = teamsResult.data;
 
   // Group by league

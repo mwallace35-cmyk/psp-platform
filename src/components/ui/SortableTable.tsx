@@ -39,6 +39,7 @@ function SortableTable({
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc' | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [sortAnnouncement, setSortAnnouncement] = useState('');
 
   // Memoize column lookup to prevent recalculations
   const visibleColumns = useMemo(() => columns.filter((c) => !c.hideOnMobile), [columns]);
@@ -63,12 +64,15 @@ function SortableTable({
 
         if (currentSortKey === key) {
           if (currentSortDir === 'asc') {
+            setSortAnnouncement(`Table sorted by ${col.label}, descending`);
             return 'desc';
           } else if (currentSortDir === 'desc') {
+            setSortAnnouncement(`Sorting cleared`);
             setSortKey(null);
             return null;
           }
         } else {
+          setSortAnnouncement(`Table sorted by ${col.label}, ascending`);
           setSortKey(key);
           return 'asc';
         }
@@ -217,8 +221,17 @@ function SortableTable({
 
   // Desktop table mode
   return (
-    <div className="overflow-x-auto border border-gray-200 rounded-lg">
-      <table className="w-full text-sm" aria-label={ariaLabel}>
+    <>
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {sortAnnouncement}
+      </div>
+      <div className="overflow-x-auto border border-gray-200 rounded-lg">
+        <table className="w-full text-sm" aria-label={ariaLabel}>
         <thead className="sticky top-0 z-10 bg-navy text-white">
           <tr>
             {visibleColumns
@@ -298,7 +311,8 @@ function SortableTable({
           })}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }
 

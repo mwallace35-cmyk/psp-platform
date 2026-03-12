@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { isValidSport, SPORT_META, getRecordsBySport } from "@/lib/data";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import { SPORT_META, getRecordsBySport } from "@/lib/data";
 import { getAllComputedRecords } from "@/lib/data/computed-records";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
@@ -23,8 +24,8 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const { sport } = await params;
-  if (!isValidSport(sport)) return {};
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   const meta = SPORT_META[sport];
 
   const rawRecords = await getRecordsBySport(sport);
@@ -40,8 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 }
 
 export default async function RecordsPage({ params }: { params: Promise<PageParams> }) {
-  const { sport } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
 
   const meta = SPORT_META[sport];
 

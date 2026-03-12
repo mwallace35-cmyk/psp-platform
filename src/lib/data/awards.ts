@@ -51,7 +51,7 @@ export const getAllCityByYear = cache(async (sport: string) => {
         async () => {
           const supabase = await createClient();
 
-          // Query awards with type matching All-City or All-Scholastic
+          // Query awards with type matching all-city, all-state, all-public, all-catholic, or all-inter-ac
           const { data } = await supabase
             .from("awards")
             .select(
@@ -73,14 +73,10 @@ export const getAllCityByYear = cache(async (sport: string) => {
               seasons(id, year_start, year_end, label)
             `
             )
+            .limit(2000)
             .eq("sport_id", sport)
-            .filter(
-              "award_type",
-              "ilike",
-              "%All-City%"
-            )
             .or(
-              `award_type.ilike.%All-Scholastic%,award_type.ilike.%All-League%,award_type.ilike.%All-State%`
+              `award_type.eq.all-city,award_type.eq.all-state,award_type.eq.all-public,award_type.eq.all-catholic,award_type.eq.all-inter-ac,award_type.eq.all-scholastic,award_type.eq.all-decade,award_type.eq.all-era`
             )
             .order("seasons(year_start)", { ascending: false });
 
@@ -117,16 +113,17 @@ export const getAllCitySummary = cache(async (sport: string) => {
             `
             )
             .eq("sport_id", sport)
-            .filter(
-              "award_type",
-              "ilike",
-              "%All-City%"
-            )
             .or(
-              `award_type.ilike.%All-Scholastic%,award_type.ilike.%All-League%,award_type.ilike.%All-State%`
-            );
+              `award_type.eq.all-city,award_type.eq.all-state,award_type.eq.all-public,award_type.eq.all-catholic,award_type.eq.all-inter-ac,award_type.eq.all-scholastic,award_type.eq.all-decade,award_type.eq.all-era`
+            )
+            .limit(2000);
 
-          const awards = (data || []) as unknown as any[];
+          interface AwardRecord {
+            seasons?: { year_start: number };
+            players?: { schools?: { slug: string } };
+            [key: string]: unknown;
+          }
+          const awards = (data || []) as unknown as AwardRecord[];
 
           // Calculate summary stats
           const totalSelections = awards.length;
@@ -145,13 +142,17 @@ export const getAllCitySummary = cache(async (sport: string) => {
           // Top schools by selection count
           const schoolCounts: Record<string, { name: string; count: number }> = {};
           for (const award of awards) {
-            const school = award.players?.schools;
-            if (school?.name && school?.slug) {
-              const key = school.slug;
-              if (!schoolCounts[key]) {
-                schoolCounts[key] = { name: school.name, count: 0 };
+            const schools = award.players?.schools as unknown as any[];
+            if (Array.isArray(schools)) {
+              for (const school of schools) {
+                if (school?.name && school?.slug) {
+                  const key = school.slug;
+                  if (!schoolCounts[key]) {
+                    schoolCounts[key] = { name: school.name, count: 0 };
+                  }
+                  schoolCounts[key].count++;
+                }
               }
-              schoolCounts[key].count++;
             }
           }
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import {
-  isValidSport,
   SPORT_META,
   getFootballLeaders,
   getBasketballLeaders,
@@ -33,10 +33,11 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params, searchParams }: { params: Promise<PageParams>; searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {
-  const { sport, stat } = await params;
+  const { stat } = await params;
+  const sport = await validateSportParamForMetadata(params);
   const sp = await searchParams;
   const isCareer = sp?.mode === "career";
-  if (!isValidSport(sport)) return {};
+  if (!sport) return {};
   const meta = SPORT_META[sport];
   const prefix = isCareer ? "Career " : "";
   return {
@@ -195,11 +196,11 @@ export default async function LeaderboardPage({
   params: Promise<PageParams>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { sport, stat } = await params;
+  const sport = await validateSportParam(params);
+  const { stat } = await params;
   const sp = await searchParams;
   const isCareer = sp?.mode === "career";
 
-  if (!isValidSport(sport)) notFound();
   const meta = SPORT_META[sport];
 
   const allStats = SPORT_STAT_MAP[sport] || [];

@@ -192,7 +192,7 @@ export default async function CoachesPage() {
 
   // Transform Supabase data into display format
   const transformedCoaches = coaches
-    .map((c) => transformCoachData(c as Coach, pipelineCountMap))
+    .map((c) => transformCoachData(c as unknown as Coach, pipelineCountMap))
     .filter(Boolean);
 
   const totalChampionships = transformedCoaches.reduce(

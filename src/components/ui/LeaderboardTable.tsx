@@ -80,7 +80,7 @@ export default function LeaderboardTable({
       key: 'seasonLabel',
       label: isCareer ? 'Years' : 'Season',
       sortable: true,
-      hideOnMobile: true,
+      hideOnMobile: false,
     },
   ];
 

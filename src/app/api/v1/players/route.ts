@@ -160,22 +160,25 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
       throw error;
     }
 
-    const players: PlayerResponse[] = (data || []).map((player: any) => ({
-      id: player.id,
-      slug: player.slug,
-      name: player.name,
-      college: player.college,
-      pro_team: player.pro_team,
-      graduation_year: player.graduation_year,
-      positions: player.positions,
-      school: player.schools
-        ? {
-            id: (player.schools as any).id,
-            name: (player.schools as any).name,
-            slug: (player.schools as any).slug,
-          }
-        : undefined,
-    }));
+    const players: PlayerResponse[] = (data || []).map((player: unknown) => {
+      const p = player as PlayerResponse & { schools?: PlayerResponse["school"] };
+      return {
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        college: p.college,
+        pro_team: p.pro_team,
+        graduation_year: p.graduation_year,
+        positions: p.positions,
+        school: p.schools
+          ? {
+              id: p.schools.id,
+              name: p.schools.name,
+              slug: p.schools.slug,
+            }
+          : undefined,
+      };
+    });
 
     const total = count || 0;
     const hasMore = offset + perPage < total;

@@ -4,13 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/check-bundle-size.js",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ci": "bash scripts/test-ci.sh",
-    "check-bundle": "bash scripts/check-bundle-size.sh",
+    "check-bundle": "node scripts/check-bundle-size.js",
     "analyze-bundle": "bash scripts/analyze-bundle.sh"
   },
   "dependencies": {

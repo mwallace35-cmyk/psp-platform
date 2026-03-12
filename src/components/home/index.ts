@@ -5,6 +5,7 @@ export { default as LatestCoverageSection } from './LatestCoverageSection';
 export { default as ProAlumniSection } from './ProAlumniSection';
 export { default as PlayerOfTheWeekSection } from './PlayerOfTheWeekSection';
 export { default as DataExplorerSection } from './DataExplorerSection';
+export { default as TrendingStrip } from './TrendingStrip';
 
 export type { HeroSectionProps } from './HeroSection';
 export type { RecentGamesSectionProps } from './RecentGamesSection';

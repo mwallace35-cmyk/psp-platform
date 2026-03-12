@@ -21,6 +21,12 @@ export default function DataToolsSection() {
       desc: 'Head-to-head career stat comparison',
       href: '/compare',
     },
+    {
+      icon: '⭐',
+      name: 'Before They Were Famous',
+      desc: 'NFL, NBA, MLB pros from Philly high schools',
+      href: '/pros',
+    },
   ];
 
   return (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import {
-  isValidSport,
   SPORT_META,
   getSchoolBySlug,
   getTeamSeason,
@@ -41,8 +41,10 @@ export const revalidate = 3600; // ISR: hourly (for preview pages that may have 
 type PageParams = { sport: string; slug: string; season: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const { sport, slug, season } = await params;
-  if (!isValidSport(sport)) return {};
+  const { sport: sportRaw, slug, season } = await params;
+  const sport = await validateSportParamForMetadata({ sport: sportRaw });
+  if (!sport) return {};
+  // Validate sport param
   const school = await getSchoolBySlug(slug);
   if (!school) return {};
   return {
@@ -55,8 +57,9 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 }
 
 export default async function TeamSeasonPage({ params }: { params: Promise<PageParams> }) {
-  const { sport, slug, season } = await params;
-  if (!isValidSport(sport)) notFound();
+  const { sport: sportRaw, slug, season } = await params;
+  const sport = await validateSportParam({ sport: sportRaw });
+  // Sport param validated by validateSportParam
 
   const school = await getSchoolBySlug(slug);
   if (!school) notFound();
@@ -107,7 +110,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
     if (gameSeasonId) {
       try {
         const gamesData = await getGamesByTeamSeason(school.id, sport, gameSeasonId);
-        games = gamesData as Game[];
+        games = gamesData as unknown as Game[];
       } catch (e) {
         captureError(e, { sport, slug, season, fetch: "getGamesByTeamSeason" });
       }
@@ -117,7 +120,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
     if (teamSeasonData) {
       try {
         const rosterData = await getTeamRosterBySeason(school.id, sport, teamSeasonData.season_id);
-        roster = rosterData as RosterPlayer[];
+        roster = rosterData as unknown as RosterPlayer[];
       } catch (e) {
         captureError(e, { sport, slug, season, fetch: "getTeamRosterBySeason" });
       }
@@ -141,7 +144,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
     notFound();
   }
 
-  const teamSeason: TeamSeason | null = teamSeasonData ?? null;
+  const teamSeason: TeamSeason | null = (teamSeasonData as unknown as TeamSeason) ?? null;
 
   // Calculate record and percentages (only if we have team_season data)
   const wins = teamSeason?.wins || 0;
@@ -730,10 +733,32 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         {/* Roster & Stats Section */}
         {!isPreview && (
           <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
-              Roster & Stats
-            </h2>
-            <p className="text-sm text-gray-400 mb-6">{roster.length} players on record</p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  Roster & Stats
+                </h2>
+                <p className="text-sm text-gray-400">{roster.length} players on record</p>
+              </div>
+              <Link
+                href={`/${sport}/teams/${school.slug}/roster?season=${season}`}
+                className="px-4 py-2 rounded-lg font-medium text-sm"
+                style={{
+                  background: "var(--psp-gold)",
+                  color: "var(--psp-navy)",
+                  textDecoration: "none",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = "0.9";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = "1";
+                }}
+              >
+                View Full Roster →
+              </Link>
+            </div>
 
           {roster.length > 0 ? (
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">

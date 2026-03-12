@@ -4,6 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import PSPPromo from "@/components/ads/PSPPromo";
+import TeamHeader from "@/components/team/TeamHeader";
+import TeamSchedule from "@/components/team/TeamSchedule";
+import TeamRoster from "@/components/team/TeamRoster";
+import TeamStats from "@/components/team/TeamStats";
 
 // Type definitions
 interface TeamDetail {
@@ -280,151 +284,75 @@ export default function TeamPageClient({
 
   return (
     <>
-      {/* Team Header */}
-      <section
-        className="py-12 md:py-16"
-        style={{ background: heroGradient }}
-      >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-            <Link href={`/${sport}`} className="hover:text-white transition-colors">
-              {sportMeta.name}
-            </Link>
-            <span>/</span>
-            <Link href={`/${sport}/teams`} className="hover:text-white transition-colors">
-              Teams
-            </Link>
-            <span>/</span>
-            <span className="text-white">{team.name}</span>
-          </div>
-
-          <div className="flex items-start gap-6">
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0"
-              style={{ background: `${sportMeta.color}20` }}
-            >
-              {sportMeta.emoji}
-            </div>
-            <div>
-              <h1
-                className="text-4xl md:text-5xl text-white mb-2 tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              >
-                {team.name}
-              </h1>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <span style={{ color: "var(--psp-gold)" }}>{team.league}</span>
-
-                <span className="text-gray-400">
-                  {team.city}, {team.state}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Stat bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-2xl">
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
-                {team.currentRecord.wins}-{team.currentRecord.losses}
-              </div>
-              <div className="text-xs text-gray-400">Current Record</div>
-            </div>
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
-                {winPct}%
-              </div>
-              <div className="text-xs text-gray-400">Win %</div>
-            </div>
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
-                {team.championships}
-              </div>
-              <div className="text-xs text-gray-400">Championships</div>
-            </div>
-            <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold" style={{ color: pointDiff > 0 ? "#22c55e" : "#ef4444", fontFamily: "Bebas Neue, sans-serif" }}>
-                {pointDiff > 0 ? "+" : ""}{pointDiff}
-              </div>
-              <div className="text-xs text-gray-400">Point Diff</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Team Header Component */}
+      <TeamHeader
+        team={team}
+        school={school}
+        sport={sport}
+        sportMeta={sportMeta}
+      />
 
       {/* Right Now Section */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div style={{
-          background: "#f9fafb",
-          borderRadius: 8,
-          overflow: "hidden",
-          border: "1px solid var(--g100)",
-        }}>
+        <div className="bg-gray-50 rounded-lg overflow-hidden border border-gray-300">
           {/* Header with navy background */}
-          <div style={{
-            background: "var(--psp-navy)",
-            padding: "12px 20px",
-            borderLeft: `4px solid ${school.primary_color || sportMeta.color}`,
-          }}>
-            <h3 style={{
-              fontSize: 14,
-              fontWeight: 700,
-              color: "var(--psp-white)",
-              textTransform: "uppercase",
-              letterSpacing: 1,
-              margin: 0,
-              fontFamily: "'Bebas Neue', sans-serif"
-            }}>
+          <div
+            className="bg-[var(--psp-navy)] px-5 py-3"
+            style={{
+              borderLeft: `4px solid ${school.primary_color || sportMeta.color}`,
+            }}
+          >
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
               Right Now
             </h3>
           </div>
 
           {/* Content */}
-          <div style={{ padding: "16px 20px" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 20 }}>
+          <div className="p-4 md:p-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {/* This Week's Game */}
               <div>
-                <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">
                   This Week's Game
                 </div>
-                <div style={{ fontSize: 13, color: "var(--psp-navy)", fontWeight: 600, marginBottom: 2 }}>
+                <div className="text-sm font-semibold text-[var(--psp-navy)] mb-1">
                   {SAMPLE_SCHEDULE.length > 0 ? SAMPLE_SCHEDULE[0].opponent : "TBA"}
                 </div>
-                <div style={{ fontSize: 11, color: "var(--g500)" }}>
+                <div className="text-xs text-gray-600">
                   {SAMPLE_SCHEDULE.length > 0 ? `${SAMPLE_SCHEDULE[0].homeAway === "H" ? "Home" : "Away"} • ${SAMPLE_SCHEDULE[0].date}` : "Season hasn't started yet"}
                 </div>
               </div>
 
               {/* Current Record */}
               <div>
-                <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">
                   Season Record
                 </div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: school.primary_color || sportMeta.color, fontFamily: "'Bebas Neue', sans-serif" }}>
+                <div className="text-xl font-black" style={{ color: school.primary_color || sportMeta.color, fontFamily: "'Bebas Neue', sans-serif" }}>
                   {team.currentRecord.wins}-{team.currentRecord.losses}{team.currentRecord.ties > 0 ? `-${team.currentRecord.ties}` : ""}
                 </div>
               </div>
 
               {/* League Standing */}
               <div>
-                <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">
                   League Standing
                 </div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: "var(--psp-gold)", fontFamily: "'Bebas Neue', sans-serif" }}>
+                <div className="text-xl font-black text-[var(--psp-gold)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
                   TBA
                 </div>
-                <div style={{ fontSize: 11, color: "var(--g500)", marginTop: 2 }}>in {team.league}</div>
+                <div className="text-xs text-gray-600 mt-1">in {team.league}</div>
               </div>
 
               {/* Next Opponent */}
               <div>
-                <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 6, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">
                   Next Opponent
                 </div>
-                <div style={{ fontSize: 13, color: "var(--psp-navy)", fontWeight: 600, marginBottom: 2 }}>
+                <div className="text-sm font-semibold text-[var(--psp-navy)] mb-1">
                   {SAMPLE_SCHEDULE.length > 1 ? SAMPLE_SCHEDULE[1].opponent : SAMPLE_SCHEDULE[0]?.opponent || "TBA"}
                 </div>
-                <div style={{ fontSize: 11, color: "var(--g500)" }}>
+                <div className="text-xs text-gray-600">
                   {SAMPLE_SCHEDULE.length > 1 ? SAMPLE_SCHEDULE[1].date : (SAMPLE_SCHEDULE[0]?.date || "TBA")}
                 </div>
               </div>
@@ -540,224 +468,22 @@ export default function TeamPageClient({
 
             {/* Stats Tab */}
             {activeTab === "stats" && (
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6">
-                  <h2
-                    className="text-xl font-bold mb-4"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
-                  >
-                    Team Statistics
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <tbody>
-                        <tr className="border-b border-[var(--psp-gray-200)]">
-                          <td className="py-2 font-medium" style={{ color: "var(--psp-navy)" }}>
-                            Record
-                          </td>
-                          <td className="py-2 text-right">
-                            {team.currentRecord.wins}-{team.currentRecord.losses}
-                          </td>
-                        </tr>
-                        <tr className="border-b border-[var(--psp-gray-200)]">
-                          <td className="py-2 font-medium" style={{ color: "var(--psp-navy)" }}>
-                            Points For
-                          </td>
-                          <td className="py-2 text-right">{team.pointsFor}</td>
-                        </tr>
-                        <tr className="border-b border-[var(--psp-gray-200)]">
-                          <td className="py-2 font-medium" style={{ color: "var(--psp-navy)" }}>
-                            Points Against
-                          </td>
-                          <td className="py-2 text-right">{team.pointsAgainst}</td>
-                        </tr>
-                        <tr>
-                          <td className="py-2 font-medium" style={{ color: "var(--psp-navy)" }}>
-                            Point Differential
-                          </td>
-                          <td
-                            className="py-2 text-right font-bold"
-                            style={{
-                              color: pointDiff > 0 ? "#22c55e" : "#ef4444",
-                            }}
-                          >
-                            {pointDiff > 0 ? "+" : ""}{pointDiff}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Leaders */}
-                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6">
-                  <h2
-                    className="text-xl font-bold mb-4"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
-                  >
-                    Statistical Leaders
-                  </h2>
-                  <div className="space-y-3">
-                    {[
-                      { name: "James Martinez", stat: "12 Passing TDs" },
-                      { name: "DeShawn Johnson", stat: "156 Rushing Yards" },
-                      { name: "Marcus White", stat: "8 Receiving Yards" },
-                    ].map((leader, idx) => (
-                      <div
-                        key={idx}
-                        className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
-                      >
-                        <span style={{ color: "var(--psp-navy)" }}>{leader.name}</span>
-                        <span className="font-bold" style={{ color: "var(--psp-gold)" }}>
-                          {leader.stat}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <TeamStats team={team} />
             )}
 
             {/* Schedule Tab */}
             {activeTab === "schedule" && (
-              <div className="space-y-4">
-                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr style={{ background: "var(--psp-navy)", color: "white" }}>
-                          <th className="px-4 py-3 text-left font-bold">Date</th>
-                          <th className="px-4 py-3 text-left font-bold">Opponent</th>
-                          <th className="px-4 py-3 text-center font-bold">H/A</th>
-                          <th className="px-4 py-3 text-center font-bold">Result</th>
-                          <th className="px-4 py-3 text-right font-bold">Score</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {SAMPLE_SCHEDULE.map((game, idx) => (
-                          <tr
-                            key={idx}
-                            className="border-b border-[var(--psp-gray-200)] hover:bg-gray-50 transition-colors"
-                          >
-                            <td className="px-4 py-3 font-medium text-gray-600">
-                              {game.date}
-                            </td>
-                            <td className="px-4 py-3">
-                              <span style={{ color: "var(--psp-navy)" }}>
-                                {game.opponent}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3 text-center text-xs font-bold">
-                              {game.homeAway}
-                            </td>
-                            <td
-                              className="px-4 py-3 text-center font-bold text-sm"
-                              style={{
-                                color: game.result === "W" ? "#22c55e" : "#ef4444",
-                              }}
-                            >
-                              {game.result}
-                            </td>
-                            <td className="px-4 py-3 text-right font-bold">
-                              {game.score}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
+              <TeamSchedule schedule={SAMPLE_SCHEDULE} />
             )}
 
             {/* Roster Tab */}
-            {activeTab === "roster" && (() => {
-              const roster = getSampleRoster(sport);
-              const positionGroups = getPositionGroups(sport);
-              const groupedRoster = groupRosterByPosition(roster, positionGroups);
-
-              return (
-                <div className="space-y-6">
-                  {Object.keys(positionGroups).map((groupName) => {
-                    const groupPlayers = groupedRoster[groupName] || [];
-                    const playerCount = groupPlayers.length;
-
-                    return (
-                      <div key={groupName} className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
-                        {/* Position Group Header */}
-                        <div
-                          style={{
-                            background: sportMeta.color,
-                            padding: "12px 16px",
-                            color: "white",
-                            fontWeight: "bold",
-                            fontSize: "14px",
-                            fontFamily: "'Bebas Neue', sans-serif",
-                            textTransform: "uppercase",
-                            letterSpacing: 0.5,
-                          }}
-                        >
-                          {groupName} ({playerCount})
-                        </div>
-
-                        {/* Players in Group */}
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr style={{ background: "#f9fafb" }}>
-                                <th className="px-4 py-3 text-left font-bold text-gray-700">Name</th>
-                                <th className="px-4 py-3 text-left font-bold text-gray-700">Position</th>
-                                <th className="px-4 py-3 text-center font-bold text-gray-700">Class</th>
-                                <th className="px-4 py-3 text-center font-bold text-gray-700">HT</th>
-                                <th className="px-4 py-3 text-center font-bold text-gray-700">WT</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {playerCount > 0 ? (
-                                groupPlayers.map((player, idx) => (
-                                  <tr
-                                    key={idx}
-                                    className="border-b border-[var(--psp-gray-200)] hover:bg-gray-50 transition-colors last:border-b-0"
-                                  >
-                                    <td className="px-4 py-3 font-medium">
-                                      <Link
-                                        href={`/${sport}/players/${player.slug}`}
-                                        className="hover:underline"
-                                        style={{ color: "var(--psp-navy)" }}
-                                      >
-                                        {player.name}
-                                      </Link>
-                                    </td>
-                                    <td className="px-4 py-3 text-xs font-semibold">
-                                      {player.position}
-                                    </td>
-                                    <td className="px-4 py-3 text-center text-xs font-bold">
-                                      {player.class}
-                                    </td>
-                                    <td className="px-4 py-3 text-center text-xs">
-                                      {player.height}
-                                    </td>
-                                    <td className="px-4 py-3 text-center text-xs">
-                                      {player.weight}
-                                    </td>
-                                  </tr>
-                                ))
-                              ) : (
-                                <tr>
-                                  <td colSpan={5} className="px-4 py-4 text-center text-gray-500">
-                                    No players in this position group
-                                  </td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })()}
+            {activeTab === "roster" && (
+              <TeamRoster
+                roster={getSampleRoster(sport)}
+                positionGroups={getPositionGroups(sport)}
+                sportMeta={sportMeta}
+              />
+            )}
 
             {/* Alumni Pipeline */}
             <div style={{ marginTop: 20 }}>

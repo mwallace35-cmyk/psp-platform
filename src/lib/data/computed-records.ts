@@ -832,7 +832,8 @@ export async function getSchoolRecordBook(
       const { data: schoolSeasons, error } = await client
         .from(tableName)
         .select("*, players(name, slug), schools(name, slug), seasons(label, year_start)")
-        .eq("school_id", schoolId) as { data: any[] | null; error: any };
+        .eq("school_id", schoolId)
+        .limit(500) as { data: any[] | null; error: any };
 
       if (error || !schoolSeasons) {
         return {};

@@ -99,8 +99,10 @@ export async function getArticlesForEntity(entityType: string, entityId: number,
 
           if (!data?.length) return [];
           // Extract articles from the mentions - filter out nulls
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          return (data as any[])
+          interface ArticleMention {
+            articles?: Record<string, unknown>;
+          }
+          return (data as unknown as ArticleMention[])
             .map((m) => m.articles)
             .filter(Boolean)
             .slice(0, limit);

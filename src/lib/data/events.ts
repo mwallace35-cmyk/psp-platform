@@ -20,6 +20,7 @@ export interface PaginatedResult<T> {
 
 /**
  * Search across schools, players, and coaches with pagination
+ * OPTIMIZED: Combines count with data queries using { count: 'exact' } option
  */
 export async function searchAll(query: string, page = 1, pageSize = 30) {
   return withErrorHandling(
@@ -33,48 +34,33 @@ export async function searchAll(query: string, page = 1, pageSize = 30) {
 
           const offset = (page - 1) * pageSize;
 
-          // Search schools, players, and coaches with pagination
-          // Optimized search: use prefix matching and word-start matching for index usage
-          const [schoolsRes, playersRes, coachesRes, totalRes] = await Promise.all([
+          // OPTIMIZED: Run all search queries in parallel with count included
+          // This eliminates the need for separate count-only queries
+          const [schoolsRes, playersRes, coachesRes] = await Promise.all([
+            // Schools: data + count in one query
             supabase
               .from("schools")
-              .select("id, slug, name, city, state")
+              .select("id, slug, name, city, state", { count: "exact" })
               .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
               .is("deleted_at", null)
               .order("name")
               .range(offset, offset + pageSize - 1),
+            // Players: data + count in one query
             supabase
               .from("players")
-              .select("id, slug, name, college, pro_team, primary_school_id, schools:schools!players_primary_school_id_fkey(name, slug)")
+              .select("id, slug, name, college, pro_team, primary_school_id, schools:schools!players_primary_school_id_fkey(name, slug)", { count: "exact" })
               .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
               .is("deleted_at", null)
               .order("name")
               .range(offset, offset + pageSize - 1),
+            // Coaches: data + count in one query
             supabase
               .from("coaches")
-              .select("id, slug, name")
+              .select("id, slug, name", { count: "exact" })
               .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
               .is("deleted_at", null)
               .order("name")
               .range(offset, offset + Math.floor(pageSize / 3) - 1),
-            // Get total count across all entities for hasMore calculation
-            Promise.all([
-              supabase
-                .from("schools")
-                .select("id", { count: "exact", head: true })
-                .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
-                .is("deleted_at", null),
-              supabase
-                .from("players")
-                .select("id", { count: "exact", head: true })
-                .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
-                .is("deleted_at", null),
-              supabase
-                .from("coaches")
-                .select("id", { count: "exact", head: true })
-                .or(`name.ilike.${sanitizedQuery}%,name.ilike.% ${sanitizedQuery}%`)
-                .is("deleted_at", null),
-            ]),
           ]);
 
           const results: SearchResult[] = [];
@@ -114,8 +100,9 @@ export async function searchAll(query: string, page = 1, pageSize = 30) {
             });
           }
 
-          const [schoolCount, playerCount, coachCount] = await totalRes;
-          const totalResults = (schoolCount.count ?? 0) + (playerCount.count ?? 0) + (coachCount.count ?? 0);
+          // Get total count from responses
+          const totalResults =
+            (schoolsRes.count ?? 0) + (playersRes.count ?? 0) + (coachesRes.count ?? 0);
 
           return {
             data: results,
@@ -137,6 +124,7 @@ export async function searchAll(query: string, page = 1, pageSize = 30) {
 /**
  * Get all coaches with their coaching stints (with pagination)
  * Cached to avoid redundant database queries within the same request
+ * OPTIMIZED: Explicit column selection instead of SELECT *, combined with count
  */
 export const getAllCoaches = cache(async (page = 1, pageSize = 50) => {
   return withErrorHandling(
@@ -146,25 +134,20 @@ export const getAllCoaches = cache(async (page = 1, pageSize = 50) => {
           const supabase = await createClient();
           const offset = (page - 1) * pageSize;
 
-          const [dataRes, countRes] = await Promise.all([
-            supabase
-              .from("coaches")
-              .select("*, coaching_stints(school_id, sport_id, start_year, end_year, role, record_wins, record_losses, record_ties, championships, schools(name, slug), sports(name))")
-              .is("deleted_at", null)
-              .order("name")
-              .range(offset, offset + pageSize - 1),
-            supabase
-              .from("coaches")
-              .select("id", { count: "exact", head: true })
-              .is("deleted_at", null),
-          ]);
+          // Combined query with count
+          const dataRes = await supabase
+            .from("coaches")
+            .select("id, name, slug, bio, photo_url, coaching_stints(school_id, sport_id, start_year, end_year, role, record_wins, record_losses, record_ties, championships, schools(name, slug), sports(name))", { count: "exact" })
+            .is("deleted_at", null)
+            .order("name")
+            .range(offset, offset + pageSize - 1);
 
           return {
             data: dataRes.data ?? [],
-            total: countRes.count ?? 0,
+            total: dataRes.count ?? 0,
             page,
             pageSize,
-            hasMore: (offset + pageSize) < (countRes.count ?? 0),
+            hasMore: (offset + pageSize) < (dataRes.count ?? 0),
           };
         },
         { maxRetries: 2, baseDelay: 500 }
@@ -179,6 +162,7 @@ export const getAllCoaches = cache(async (page = 1, pageSize = 50) => {
 /**
  * Get coaches for a specific sport (with pagination)
  * Cached to avoid redundant database queries within the same request
+ * OPTIMIZED: Explicit column selection instead of SELECT *, combined with count
  */
 export const getCoachesBySport = cache(async (sportId: string, page = 1, pageSize = 50) => {
   return withErrorHandling(
@@ -188,25 +172,20 @@ export const getCoachesBySport = cache(async (sportId: string, page = 1, pageSiz
           const supabase = await createClient();
           const offset = (page - 1) * pageSize;
 
-          const [dataRes, countRes] = await Promise.all([
-            supabase
-              .from("coaching_stints")
-              .select("*, coaches(id, name, slug, bio, photo_url), schools(name, slug), sports(name)")
-              .eq("sport_id", sportId)
-              .order("championships", { ascending: false })
-              .range(offset, offset + pageSize - 1),
-            supabase
-              .from("coaching_stints")
-              .select("id", { count: "exact", head: true })
-              .eq("sport_id", sportId),
-          ]);
+          // Combined query with count
+          const dataRes = await supabase
+            .from("coaching_stints")
+            .select("id, coach_id, school_id, sport_id, start_year, end_year, role, record_wins, record_losses, record_ties, championships, coaches(id, name, slug, bio, photo_url), schools(name, slug), sports(name)", { count: "exact" })
+            .eq("sport_id", sportId)
+            .order("championships", { ascending: false })
+            .range(offset, offset + pageSize - 1);
 
           return {
             data: dataRes.data ?? [],
-            total: countRes.count ?? 0,
+            total: dataRes.count ?? 0,
             page,
             pageSize,
-            hasMore: (offset + pageSize) < (countRes.count ?? 0),
+            hasMore: (offset + pageSize) < (dataRes.count ?? 0),
           };
         },
         { maxRetries: 2, baseDelay: 500 }
@@ -241,6 +220,7 @@ export const getCoachCount = cache(async () => {
 /**
  * Get tracked alumni ("Our Guys" - next level tracking)
  * Cached to avoid redundant database queries within the same request
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?: string; featured?: boolean }, limit = 100) => {
   return withErrorHandling(
@@ -250,7 +230,7 @@ export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?:
           const supabase = await createClient();
           let query = supabase
             .from("next_level_tracking")
-            .select("*, schools:high_school_id(name, slug)")
+            .select("id, person_name, current_level, college, pro_team, pro_league, draft_info, status, sport_id, featured, schools:high_school_id(name, slug)")
             .order("featured", { ascending: false })
             .order("person_name")
             .limit(limit);
@@ -272,6 +252,7 @@ export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?:
 /**
  * Get social posts from tracked alumni
  * Cached to avoid redundant database queries within the same request
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export const getSocialPosts = cache(async (limit = 20) => {
   return withErrorHandling(
@@ -281,7 +262,7 @@ export const getSocialPosts = cache(async (limit = 20) => {
           const supabase = await createClient();
           const { data } = await supabase
             .from("social_posts")
-            .select("*, next_level_tracking(person_name, current_org, current_role)")
+            .select("id, alumni_id, platform, post_url, text, curated_at, next_level_tracking(person_name, current_org, current_role)")
             .order("curated_at", { ascending: false })
             .limit(limit);
           return data ?? [];
@@ -462,6 +443,111 @@ export async function getTeamsWithRecords(sportId: string, page = 1, pageSize = 
     },
     { data: [], total: 0, page, pageSize, hasMore: false },
     "DATA_TEAMS_WITH_RECORDS",
+    { sportId, page, pageSize }
+  );
+}
+
+/**
+ * Get aggregated team stats by school (all-time records, championships, seasons)
+ * Used for the teams directory page to show school-level statistics.
+ * Rewrote to use parallel flat queries instead of N+1 nested embeds.
+ */
+export async function getSchoolTeamStats(sportId: string, page = 1, pageSize = 500) {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const offset = (page - 1) * pageSize;
+
+          // 1. Get all team_seasons for this sport with school + league data (flat queries)
+          const [teamSeasonsRes, champsRes, schoolsRes] = await Promise.all([
+            supabase
+              .from("team_seasons")
+              .select("school_id, wins, losses, ties")
+              .eq("sport_id", sportId),
+            supabase
+              .from("championships")
+              .select("school_id")
+              .eq("sport_id", sportId),
+            supabase
+              .from("schools")
+              .select("id, name, slug, city, state, league_id, leagues(name)")
+              .is("deleted_at", null),
+          ]);
+
+          const teamSeasons = teamSeasonsRes.data ?? [];
+          const championships = champsRes.data ?? [];
+          const allSchools = schoolsRes.data ?? [];
+
+          // 2. Build school lookup map
+          const schoolMap = new Map<number, any>();
+          for (const s of allSchools) {
+            schoolMap.set(s.id, s);
+          }
+
+          // 3. Aggregate team seasons by school
+          const schoolStats = new Map<number, {
+            totalWins: number; totalLosses: number; totalTies: number;
+            seasonCount: number; championships: number;
+          }>();
+
+          for (const ts of teamSeasons) {
+            const sid = ts.school_id;
+            if (!schoolMap.has(sid)) continue; // skip deleted schools
+            const existing = schoolStats.get(sid) || {
+              totalWins: 0, totalLosses: 0, totalTies: 0, seasonCount: 0, championships: 0,
+            };
+            existing.totalWins += ts.wins || 0;
+            existing.totalLosses += ts.losses || 0;
+            existing.totalTies += ts.ties || 0;
+            existing.seasonCount += 1;
+            schoolStats.set(sid, existing);
+          }
+
+          // 4. Count championships per school
+          for (const c of championships) {
+            const sid = c.school_id;
+            const existing = schoolStats.get(sid);
+            if (existing) existing.championships += 1;
+          }
+
+          // 5. Build result array
+          const teamStatsArray = Array.from(schoolStats.entries()).map(([schoolId, stats]) => {
+            const school = schoolMap.get(schoolId);
+            return {
+              school: school || { id: schoolId, name: "Unknown", slug: "", city: null, state: null },
+              league: (school?.leagues as any)?.name || "Independent",
+              ...stats,
+            };
+          });
+
+          // 6. Sort by win percentage, then by wins
+          teamStatsArray.sort((a, b) => {
+            const aTotal = a.totalWins + a.totalLosses + a.totalTies;
+            const bTotal = b.totalWins + b.totalLosses + b.totalTies;
+            const aWinPct = aTotal > 0 ? a.totalWins / aTotal : 0;
+            const bWinPct = bTotal > 0 ? b.totalWins / bTotal : 0;
+            if (bWinPct !== aWinPct) return bWinPct - aWinPct;
+            return b.totalWins - a.totalWins;
+          });
+
+          const totalCount = teamStatsArray.length;
+          const paginatedStats = teamStatsArray.slice(offset, offset + pageSize);
+
+          return {
+            data: paginatedStats,
+            total: totalCount,
+            page,
+            pageSize,
+            hasMore: (offset + pageSize) < totalCount,
+          };
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    { data: [], total: 0, page, pageSize, hasMore: false },
+    "DATA_SCHOOL_TEAM_STATS",
     { sportId, page, pageSize }
   );
 }
@@ -766,6 +852,8 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
             .select("*, players(name, slug, pro_team, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
+            .not("games_played", "is", null) // Exclude incomplete/aggregate records with no games data
+            .neq("season_id", 264) // Exclude "Career" aggregate season
             .order(orderCol, { ascending: false, nullsFirst: false })
             .limit(cappedLimit);
 
@@ -891,7 +979,7 @@ export async function getSchoolChampionshipLeaderboard(sportFilter?: string, lim
         // Single sport
         const { data, error } = await supabase
           .from("championships")
-          .select("school_id, schools!inner(name, slug)")
+          .select("school_id, schools!championships_school_id_fkey!inner(name, slug)")
           .eq("sport_id", sportFilter)
           .not("school_id", "is", null);
 
@@ -930,7 +1018,7 @@ export async function getSchoolChampionshipLeaderboard(sportFilter?: string, lim
         // All sports — aggregate
         const { data, error } = await supabase
           .from("championships")
-          .select("school_id, sport_id, schools!inner(name, slug)")
+          .select("school_id, sport_id, schools!championships_school_id_fkey!inner(name, slug)")
           .not("school_id", "is", null);
 
         if (error) { console.warn("[PSP] champ query failed:", error.message); return []; }

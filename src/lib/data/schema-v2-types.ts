@@ -247,7 +247,7 @@ export interface AwardStatSnapshot {
   rank?: number; // Rank in that stat category
   era?: string; // Era reference (e.g., '2020s')
   league?: string; // League reference (e.g., 'catholic-league')
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**

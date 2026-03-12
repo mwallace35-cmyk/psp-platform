@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
-import { isValidSport, SPORT_META, getAllCityByYear, getAllCitySummary, type AwardRecord } from "@/lib/data";
+import { SPORT_META, getAllCityByYear, getAllCitySummary, type AwardRecord } from "@/lib/data";
 import AllCityArchive from "./AllCityArchive";
 import type { Metadata } from "next";
 
@@ -12,8 +13,8 @@ export const revalidate = 86400; // 24 hours
 type PageParams = { sport: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
-  const { sport } = await params;
-  if (!isValidSport(sport)) return {};
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   const meta = SPORT_META[sport];
   return {
     title: `All-City Teams — ${meta.name} — PhillySportsPack`,
@@ -37,8 +38,7 @@ export function generateStaticParams() {
 }
 
 export default async function AllCityPage({ params }: { params: Promise<PageParams> }) {
-  const { sport } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
 
   const meta = SPORT_META[sport];
   const awards = (await getAllCityByYear(sport)) || [];

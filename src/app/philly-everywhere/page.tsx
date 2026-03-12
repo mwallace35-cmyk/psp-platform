@@ -38,7 +38,7 @@ export default async function PhillyEverywherePage() {
   let footballAlumni: TrackedAlumni[] = [];
   let basketballAlumni: TrackedAlumni[] = [];
   let baseballAlumni: TrackedAlumni[] = [];
-  let alumniCounts: any = null;
+  let alumniCounts: Record<string, number> | null = null;
 
   try {
     const results = await Promise.allSettled([
@@ -50,10 +50,12 @@ export default async function PhillyEverywherePage() {
 
     const [footballResult, basketballResult, baseballResult, countsResult] = results;
 
-    if (footballResult.status === "fulfilled") footballAlumni = footballResult.value as unknown as TrackedAlumni[];
-    if (basketballResult.status === "fulfilled") basketballAlumni = basketballResult.value as unknown as TrackedAlumni[];
-    if (baseballResult.status === "fulfilled") baseballAlumni = baseballResult.value as unknown as TrackedAlumni[];
-    if (countsResult.status === "fulfilled") alumniCounts = countsResult.value;
+    if (footballResult.status === "fulfilled") footballAlumni = Array.isArray(footballResult.value) ? footballResult.value as unknown as TrackedAlumni[] : [];
+    if (basketballResult.status === "fulfilled") basketballAlumni = Array.isArray(basketballResult.value) ? basketballResult.value as unknown as TrackedAlumni[] : [];
+    if (baseballResult.status === "fulfilled") baseballAlumni = Array.isArray(baseballResult.value) ? baseballResult.value as unknown as TrackedAlumni[] : [];
+    if (countsResult.status === "fulfilled" && typeof countsResult.value === "object" && countsResult.value !== null) {
+      alumniCounts = countsResult.value as Record<string, number>;
+    }
 
     // Log any failures
     if (footballResult.status === "rejected") {

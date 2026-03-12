@@ -42,13 +42,13 @@ export interface ProAthlete {
  * Pro athlete detail page data (includes linked player stats)
  */
 export interface ProAthleteDetail extends ProAthlete {
-  player?: any; // Linked player record if available
-  football_stats?: any[];
-  basketball_stats?: any[];
-  baseball_stats?: any[];
-  awards?: any[];
-  game_stats?: any[];
-  articles?: any[];
+  player?: Record<string, unknown>; // Linked player record if available
+  football_stats?: Record<string, unknown>[];
+  basketball_stats?: Record<string, unknown>[];
+  baseball_stats?: Record<string, unknown>[];
+  awards?: Record<string, unknown>[];
+  game_stats?: Record<string, unknown>[];
+  articles?: Record<string, unknown>[];
 }
 
 /**
@@ -192,7 +192,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
 
           if (!proDatum) return null;
 
-          const athlete = proDatum as any as ProAthleteDetail;
+          const athlete = proDatum as unknown as ProAthleteDetail;
 
           // If player_id exists, fetch linked player data
           if (proDatum.player_id) {
@@ -300,9 +300,12 @@ export async function getProAthleteBySlug(idOrSlug: string) {
               .order("articles(published_at)", { ascending: false })
               .limit(5);
             if (mentions) {
-              athlete.articles = mentions
-                .map((m: any) => m.articles)
-                .filter(Boolean);
+              interface ArticleMention {
+                articles?: Record<string, unknown>;
+              }
+              athlete.articles = (mentions as unknown as ArticleMention[])
+                .map((m) => m.articles)
+                .filter(Boolean) as Record<string, unknown>[];
             }
           }
 

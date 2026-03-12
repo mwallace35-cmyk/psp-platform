@@ -4,6 +4,7 @@ import { createStaticClient } from "@/lib/supabase/static";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
+import SearchFilters from "@/components/search/SearchFilters";
 
 export const metadata: Metadata = {
   title: "Search — PhillySportsPack",
@@ -284,14 +285,32 @@ export default async function SearchPage({
         </section>
       )}
 
+      {q.length >= 2 && <SearchFilters />}
+
       <main className="flex-1 max-w-7xl mx-auto px-4 py-8">
         <LeaderboardAd id="psp-search-banner" />
         {q.length >= 2 ? (
           results.length > 0 ? (
             <div className="space-y-8">
-              <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
-                {results.length} result{results.length !== 1 ? "s" : ""} for &quot;<strong>{q}</strong>&quot;
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
+                  {results.length} result{results.length !== 1 ? "s" : ""} for &quot;<strong>{q}</strong>&quot;
+                </p>
+                <div className="flex gap-1 text-xs">
+                  {Object.entries(grouped).map(([type, items]) => (
+                    <span
+                      key={type}
+                      className="px-2 py-1 rounded-full"
+                      style={{
+                        background: "rgba(240, 165, 0, 0.1)",
+                        color: "var(--psp-gold)",
+                      }}
+                    >
+                      {typeLabels[type]?.icon} {items.length}
+                    </span>
+                  ))}
+                </div>
+              </div>
               {Object.entries(grouped).map(([type, items]) => (
                 <div key={type}>
                   <h2 className="text-xl font-bold mb-3 flex items-center gap-2" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>

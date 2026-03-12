@@ -1,5 +1,6 @@
 import { createStaticClient } from "@/lib/supabase/static";
-import { isValidSport, SPORT_META } from "@/lib/data";
+import { SPORT_META } from "@/lib/data";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ScheduleView from "./ScheduleView";
@@ -13,8 +14,8 @@ export async function generateMetadata({
 }: {
   params: Promise<PageParams>;
 }): Promise<Metadata> {
-  const { sport } = await params;
-  if (!isValidSport(sport)) return {};
+  const sport = await validateSportParamForMetadata(params);
+  if (!sport) return {};
   const meta = SPORT_META[sport];
   return {
     title: `2026-27 ${meta.name} Schedule — PhillySportsPack`,
@@ -60,8 +61,7 @@ export default async function SchedulePage({
 }: {
   params: Promise<PageParams>;
 }) {
-  const { sport } = await params;
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
 
   const meta = SPORT_META[sport];
   const supabase = createStaticClient();

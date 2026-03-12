@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import {
-  isValidSport,
   SPORT_META,
   getGameById,
   getGameBoxScore,
@@ -19,7 +19,8 @@ export async function generateMetadata({
 }: {
   params: Promise<PageParams>;
 }): Promise<Metadata> {
-  const { sport, gameId } = await params;
+  const { gameId } = await params;
+  const sport = await validateSportParamForMetadata(params);
   const game = await getGameById(Number(gameId));
   if (!game) return { title: "Game Not Found" };
 
@@ -35,8 +36,8 @@ export async function generateMetadata({
   const season = game.seasons?.label ?? "";
 
   return {
-    title: `${away} at ${home}${score} | ${season} ${isValidSport(sport) ? SPORT_META[sport].name : sport}`,
-    description: `Box score and game details for ${away} vs ${home}${score}. ${season} Philadelphia high school ${sport}.`,
+    title: `${away} at ${home}${score} | ${season} ${(sport) ? SPORT_META[sport].name : "Game"}`,
+    description: `Box score and game details for ${away} vs ${home}${score}. ${season} Philadelphia high school${sport ? ` ${SPORT_META[sport].name}` : ""}.`,
   };
 }
 
@@ -355,9 +356,8 @@ export default async function GameDetailPage({
 }: {
   params: Promise<PageParams>;
 }) {
-  const { sport, gameId: gameIdStr } = await params;
-
-  if (!isValidSport(sport)) notFound();
+  const sport = await validateSportParam(params);
+  const { gameId: gameIdStr } = await params;
 
   const gameId = Number(gameIdStr);
   if (isNaN(gameId)) notFound();

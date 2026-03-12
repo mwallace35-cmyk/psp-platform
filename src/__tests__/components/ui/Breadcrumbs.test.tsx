@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 describe('Breadcrumbs Component', () => {
   it('renders navigation element with aria-label', () => {
     const { container } = render(
-      <Breadcrumbs items={[{ label: 'Products' }]} />
+      <Breadcrumb items={[{ label: 'Products' }]} />
     );
     const nav = container.querySelector('nav[aria-label="Breadcrumb"]');
     expect(nav).toBeInTheDocument();
@@ -13,14 +13,14 @@ describe('Breadcrumbs Component', () => {
 
   it('renders ordered list', () => {
     const { container } = render(
-      <Breadcrumbs items={[{ label: 'Products' }]} />
+      <Breadcrumb items={[{ label: 'Products' }]} />
     );
     const ol = container.querySelector('ol');
     expect(ol).toBeInTheDocument();
   });
 
   it('includes Home link at the beginning', () => {
-    render(<Breadcrumbs items={[{ label: 'Products' }]} />);
+    render(<Breadcrumb items={[{ label: 'Products' }]} />);
     const homeLink = screen.getByRole('link', { name: /Home/i });
     expect(homeLink).toBeInTheDocument();
     expect(homeLink).toHaveAttribute('href', '/');
@@ -28,7 +28,7 @@ describe('Breadcrumbs Component', () => {
 
   it('renders items with links (except last item which is current page)', () => {
     render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Products', href: '/products' },
           { label: 'Electronics', href: '/products/electronics' },
@@ -46,7 +46,7 @@ describe('Breadcrumbs Component', () => {
 
   it('renders current page (last item) as span without link', () => {
     const { container } = render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Products', href: '/products' },
           { label: 'Laptop' },
@@ -60,7 +60,7 @@ describe('Breadcrumbs Component', () => {
 
   it('applies aria-current="page" to last item only', () => {
     const { container } = render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Shop', href: '/shop' },
           { label: 'Category', href: '/shop/category' },
@@ -77,7 +77,7 @@ describe('Breadcrumbs Component', () => {
 
   it('renders separator between items', () => {
     const { container } = render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Home', href: '/' },
           { label: 'Products' },
@@ -91,7 +91,7 @@ describe('Breadcrumbs Component', () => {
 
   it('uses custom separator', () => {
     const { container } = render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Products', href: '/products' },
           { label: 'Electronics' },
@@ -106,7 +106,7 @@ describe('Breadcrumbs Component', () => {
 
   it('truncates middle items on mobile when exceeding maxItems', () => {
     const { container } = render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Level1', href: '/' },
           { label: 'Level2', href: '/level2' },
@@ -129,7 +129,7 @@ describe('Breadcrumbs Component', () => {
 
   it('does not truncate when mobile=false', () => {
     const { container } = render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Level1', href: '/' },
           { label: 'Level2', href: '/level2' },
@@ -148,7 +148,7 @@ describe('Breadcrumbs Component', () => {
 
   it('applies custom className', () => {
     const { container } = render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[{ label: 'Products' }]}
         className="custom-breadcrumbs"
       />
@@ -159,7 +159,7 @@ describe('Breadcrumbs Component', () => {
 
   it('renders multiple items correctly', () => {
     render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Sports', href: '/sports' },
           { label: 'Football', href: '/sports/football' },
@@ -177,7 +177,7 @@ describe('Breadcrumbs Component', () => {
 
   it('renders last item with font-medium class', () => {
     const { container } = render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Category', href: '/category' },
           { label: 'Current Page' },
@@ -191,7 +191,7 @@ describe('Breadcrumbs Component', () => {
 
   it('handles items without hrefs gracefully', () => {
     render(
-      <Breadcrumbs
+      <Breadcrumb
         items={[
           { label: 'Static Item 1' },
           { label: 'Static Item 2' },
@@ -208,13 +208,13 @@ describe('Breadcrumbs Component', () => {
 
   it('uses memoization for performance', () => {
     const { rerender } = render(
-      <Breadcrumbs items={[{ label: 'Products' }]} />
+      <Breadcrumb items={[{ label: 'Products' }]} />
     );
 
     const firstRender = screen.getByText('Products');
 
     // Re-render with same props
-    rerender(<Breadcrumbs items={[{ label: 'Products' }]} />);
+    rerender(<Breadcrumb items={[{ label: 'Products' }]} />);
 
     const secondRender = screen.getByText('Products');
 

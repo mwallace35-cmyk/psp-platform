@@ -232,6 +232,27 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
               <div style={{ fontWeight: 700, fontSize: 13 }}>Title history</div>
             </div>
           </Link>
+          <Link href={`/${sport}/rivalries`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="ldr-head" style={{ background: sportColor }}>Rivalries</div>
+            <div style={{ padding: "12px" }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>🔥</div>
+              <div style={{ fontWeight: 700, fontSize: 13 }}>Head-to-head</div>
+            </div>
+          </Link>
+          <Link href={`/${sport}/eras`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="ldr-head" style={{ background: "var(--psp-blue)" }}>Statistical Eras</div>
+            <div style={{ padding: "12px" }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>📊</div>
+              <div style={{ fontWeight: 700, fontSize: 13 }}>Stat trends</div>
+            </div>
+          </Link>
+          <Link href={`/${sport}/breakouts`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>Breakout Alerts</div>
+            <div style={{ padding: "12px" }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>⚡</div>
+              <div style={{ fontWeight: 700, fontSize: 13 }}>Rising stars</div>
+            </div>
+          </Link>
         </div>
 
         {/* Featured Stories */}
@@ -303,6 +324,9 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
             <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="w-link">&#8594; Leaderboards</Link>
             <Link href={`/${sport}/championships`} className="w-link">&#8594; Championship History</Link>
             <Link href={`/${sport}/records`} className="w-link">&#8594; Records</Link>
+            <Link href={`/${sport}/rivalries`} className="w-link">&#8594; Rivalries</Link>
+            <Link href={`/${sport}/eras`} className="w-link">&#8594; Statistical Eras</Link>
+            <Link href={`/${sport}/breakouts`} className="w-link">&#8594; Breakout Alerts</Link>
             <Link href={`/search?sport=${sport}`} className="w-link">&#8594; Player Search</Link>
             <Link href="/compare" className="w-link">&#8594; Compare Players</Link>
           </div>

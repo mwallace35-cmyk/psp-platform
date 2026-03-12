@@ -9,6 +9,23 @@ import {
   Championship,
 } from "./common";
 
+// Helper type for sorting season-joined data
+interface SeasonJoinedRecord {
+  seasons: Season | Season[];
+  year_start?: number;
+  [key: string]: unknown;
+}
+
+function sortBySeasonYear<T extends SeasonJoinedRecord>(records: T[]): T[] {
+  return records.sort((a, b) => {
+    const aSeason = Array.isArray(a.seasons) ? a.seasons[0] : a.seasons;
+    const bSeason = Array.isArray(b.seasons) ? b.seasons[0] : b.seasons;
+    const aYear = aSeason?.year_start ?? 0;
+    const bYear = bSeason?.year_start ?? 0;
+    return bYear - aYear;
+  });
+}
+
 /**
  * Get overview stats for a sport (schools, players, seasons, championships)
  * Cached to avoid redundant database queries within the same request
@@ -115,6 +132,7 @@ export const getSchoolsBySport = cache(async (sportId: string, page = 1, pageSiz
 /**
  * Get school by slug
  * Cached to avoid redundant database queries within the same request
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export const getSchoolBySlug = cache(async (slug: string) => {
   return withErrorHandling(
@@ -124,7 +142,7 @@ export const getSchoolBySlug = cache(async (slug: string) => {
           const supabase = await createClient();
           const { data } = await supabase
             .from("schools")
-            .select("*, leagues(name, short_name)")
+            .select("id, slug, name, short_name, city, state, league_id, mascot, closed_year, founded_year, website_url, colors, address, phone, principal, athletic_director, enrollment, piaa_class, school_type, leagues(name, short_name)")
             .eq("slug", slug)
             .is("deleted_at", null)
             .single();
@@ -142,6 +160,7 @@ export const getSchoolBySlug = cache(async (slug: string) => {
 /**
  * Get team seasons for a school and sport
  * Cached to avoid redundant database queries within the same request
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export const getSchoolTeamSeasons = cache(async (schoolId: number, sportId: string) => {
   return withErrorHandling(
@@ -151,17 +170,13 @@ export const getSchoolTeamSeasons = cache(async (schoolId: number, sportId: stri
           const supabase = await createClient();
           const { data } = await supabase
             .from("team_seasons")
-            .select("*, seasons(year_start, year_end, label), coaches(name, slug)")
+            .select("id, school_id, sport_id, season_id, coach_id, wins, losses, ties, playoff_result, notes, seasons(year_start, year_end, label), coaches(name, slug)")
             .eq("school_id", schoolId)
             .eq("sport_id", sportId)
             .order("created_at", { ascending: false });
           // NOTE: Supabase JS client doesn't support ORDER BY on joined columns (seasons.year_start).
           // Client-side sort is necessary here. The DB returns data in created_at order as a rough approximation.
-          return (data ?? []).sort((a: TeamSeason, b: TeamSeason) => {
-            const aYear = (a.seasons as Season | null)?.year_start ?? 0;
-            const bYear = (b.seasons as Season | null)?.year_start ?? 0;
-            return bYear - aYear;
-          });
+          return sortBySeasonYear((data ?? []) as unknown as SeasonJoinedRecord[]) as unknown as TeamSeason[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -175,6 +190,7 @@ export const getSchoolTeamSeasons = cache(async (schoolId: number, sportId: stri
 /**
  * Get championships for a school (optionally filtered by sport)
  * Cached to avoid redundant database queries within the same request
+ * OPTIMIZED: Explicit column selection instead of SELECT *
  */
 export const getSchoolChampionships = cache(async (schoolId: number, sportId?: string) => {
   return withErrorHandling(
@@ -184,17 +200,13 @@ export const getSchoolChampionships = cache(async (schoolId: number, sportId?: s
           const supabase = await createClient();
           let query = supabase
             .from("championships")
-            .select("*, seasons(year_start, year_end, label), leagues(name), opponent:schools!championships_opponent_id_fkey(name)")
+            .select("id, sport_id, school_id, opponent_id, season_id, level, league_id, score, notes, seasons(year_start, year_end, label), leagues(name), opponent:schools!championships_opponent_id_fkey(name)")
             .eq("school_id", schoolId);
           if (sportId) query = query.eq("sport_id", sportId);
           const { data } = await query.order("created_at", { ascending: false });
           // NOTE: Supabase JS client doesn't support ORDER BY on joined columns (seasons.year_start).
           // Client-side sort is necessary here. The DB returns data in created_at order as a rough approximation.
-          return (data ?? []).sort((a, b) => {
-            const aYear = (a.seasons as Season | null)?.year_start ?? 0;
-            const bYear = (b.seasons as Season | null)?.year_start ?? 0;
-            return bYear - aYear;
-          });
+          return sortBySeasonYear((data ?? []) as unknown as SeasonJoinedRecord[]) as unknown as Championship[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );
@@ -250,14 +262,24 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
               .order("person_name", { ascending: true })
               .limit(limit);
 
-            return (data ?? []).map((d: any) => ({
-              id: d.id,
-              name: d.person_name,
-              slug: "", // Not available from next_level_tracking directly
-              college: d.college,
-              pro_team: d.pro_team,
-              pro_league: d.pro_league,
-            }));
+            interface NextLevelRecord {
+              id: number;
+              person_name: string;
+              college?: string;
+              pro_team?: string;
+              pro_league?: string;
+            }
+            return (data ?? []).map((d) => {
+              const record = d as NextLevelRecord;
+              return {
+                id: record.id,
+                name: record.person_name,
+                slug: "", // Not available from next_level_tracking directly
+                college: record.college,
+                pro_team: record.pro_team,
+                pro_league: record.pro_league,
+              };
+            });
           }
 
           // For typed sports, fetch from player_seasons with next_level priority
@@ -275,15 +297,30 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
             `
             )
             .eq("school_id", schoolId)
+            .limit(25)
             .is("players.deleted_at", null)
             .order("players(name)", { ascending: true });
 
           if (!data) return [];
 
           // Group by player to get unique players, count seasons, and prioritize by next-level status
+          interface StatTableRecord {
+            player_id: number;
+            players: {
+              id: number;
+              name: string;
+              slug: string;
+              positions?: string[];
+              graduation_year?: number;
+              height?: string;
+              weight?: number;
+              next_level?: Array<{ college?: string; pro_team?: string; pro_league?: string }>;
+            };
+          }
+
           const playerMap = new Map<number, NotablePlayer & { hasNextLevel: boolean; seasonCount: number }>();
 
-          data.forEach((row: any) => {
+          (data as unknown as StatTableRecord[]).forEach((row) => {
             const p = row.players;
             if (!playerMap.has(p.id)) {
               const nextLevel = Array.isArray(p.next_level) ? p.next_level[0] : p.next_level;

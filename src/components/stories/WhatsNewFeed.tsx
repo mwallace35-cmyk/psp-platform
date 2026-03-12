@@ -117,6 +117,7 @@ export default function WhatsNewFeed({ items }: WhatsNewFeedProps) {
               key={`${item.type}-${idx}`}
               href={item.link}
               className="group block p-4 sm:p-6 bg-[var(--psp-gray-50)] [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-md hover:border-[var(--psp-gold)] [data-theme=dark]:hover:border-[var(--psp-gold)]/60 transition-all"
+              aria-label={`Read more about ${item.title}`}
             >
               {/* Top row: badges and timestamp */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
