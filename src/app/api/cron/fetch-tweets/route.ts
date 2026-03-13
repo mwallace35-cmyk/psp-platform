@@ -33,9 +33,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Use anon key — writes go through SECURITY DEFINER RPC functions
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    // Use service role key if available, otherwise anon key with SECURITY DEFINER RPCs
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      || 'https://uxshabfmgjsykurzvkcr.supabase.co';
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+      || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4c2hhYmZtZ2pzeWt1cnp2a2NyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzE4MDgsImV4cCI6MjA4ODE0NzgwOH0.7IkxEX5ya3AaZ-ZfK4-Qh1Sol9iKZeS4EgqXQUl_oIA';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Fetch active handles, prioritize least-recently-fetched (nulls first)
