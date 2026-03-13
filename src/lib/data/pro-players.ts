@@ -47,7 +47,7 @@ export const getProPlayers = cache(
             let query = supabase
               .from("players")
               .select(
-                "id, name, slug, primary_school_id, college, pro_team, pro_draft_info, pro_league, positions, graduation_year, schools!players_primary_school_id_fkey(name, slug)"
+                "id, name, slug, primary_school_id, college, pro_team, pro_draft_info, positions, graduation_year, schools!players_primary_school_id_fkey(name, slug)"
               )
               .is("deleted_at", null)
               .not("pro_team", "is", null);
@@ -106,7 +106,7 @@ export const getProPlayersBySchool = cache(
             const { data } = await supabase
               .from("players")
               .select(
-                "id, name, slug, primary_school_id, college, pro_team, pro_draft_info, pro_league, positions, graduation_year"
+                "id, name, slug, primary_school_id, college, pro_team, pro_draft_info, positions, graduation_year"
               )
               .eq("primary_school_id", school.id)
               .is("deleted_at", null)
@@ -234,7 +234,7 @@ export const getProPlayerDetail = cache(
             const { data: player } = await supabase
               .from("players")
               .select(
-                "id, name, slug, primary_school_id, college, pro_team, pro_draft_info, pro_league, positions, height, weight, graduation_year, schools!players_primary_school_id_fkey(name, slug)"
+                "id, name, slug, primary_school_id, college, pro_team, pro_draft_info, positions, height, weight, graduation_year, schools!players_primary_school_id_fkey(name, slug)"
               )
               .eq("slug", playerSlug)
               .is("deleted_at", null)

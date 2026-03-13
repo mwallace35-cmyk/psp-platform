@@ -43,7 +43,7 @@ export async function getPlayerBySlug(slug: string) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("players")
-            .select("id, name, slug, primary_school_id, college, pro_team, pro_league, draft_info, bio, graduation_year, positions, height, weight, schools:schools!players_primary_school_id_fkey(name, slug)")
+            .select("id, name, slug, primary_school_id, college, pro_team, pro_draft_info, bio, graduation_year, positions, height, weight, schools:schools!players_primary_school_id_fkey(name, slug)")
             .eq("slug", slug)
             .is("deleted_at", null)
             .single();
