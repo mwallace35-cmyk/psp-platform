@@ -6,13 +6,14 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-const BATCH_SIZE = 10; // Process 10 handles per cron run (rotate through all)
+const BATCH_SIZE = 10;
 const TWEETS_PER_HANDLE = 5;
 
 /**
  * Cron job: Fetch recent tweets from followed handles
  * Runs every 30 minutes via Vercel Cron
  * Processes BATCH_SIZE handles per run, prioritizing least-recently-fetched
+ * Uses anon key + SECURITY DEFINER RPCs (no service role key needed)
  */
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -32,10 +33,10 @@ export async function GET(request: Request) {
   }
 
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    // Use anon key — writes go through SECURITY DEFINER RPC functions
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Fetch active handles, prioritize least-recently-fetched (nulls first)
     const { data: handles, error: handleError } = await supabase
@@ -54,93 +55,70 @@ export async function GET(request: Request) {
     let totalInserted = 0;
     const errors: string[] = [];
 
-    // Process handles in parallel (all at once since batch is small)
+    // Process handles in parallel
     const results = await Promise.allSettled(
       handles.map(async (h) => {
         try {
-          // Resolve twitter_user_id if needed
           let userId = h.twitter_user_id;
           if (!userId) {
             const user = await getUserByUsername(h.handle);
             if (!user) {
-              return { handle: h.handle, tweets: [], userId: null, error: 'User not found' };
+              return { handle: h.handle, handleRecord: h, tweets: [], userId: null, error: 'User not found on Twitter' };
             }
             userId = user.id;
-            // Save the resolved user ID
-            await supabase
-              .from('social_handles')
-              .update({ twitter_user_id: userId, updated_at: new Date().toISOString() })
-              .eq('id', h.id);
           }
 
-          // Fetch tweets
           const sinceId = h.last_tweet_id || undefined;
           const tweets = await getUserTweets(userId, { max: TWEETS_PER_HANDLE, sinceId });
 
           return { handle: h.handle, handleRecord: h, tweets, userId, error: null };
         } catch (err) {
-          return { handle: h.handle, tweets: [], userId: null, error: String(err) };
+          return { handle: h.handle, handleRecord: h, tweets: [], userId: null, error: String(err) };
         }
       })
     );
 
-    // Process results and insert tweets
+    // Process results — insert tweets via RPC, update handles via RPC
     for (const result of results) {
       if (result.status === 'rejected') {
         errors.push(String(result.reason));
         continue;
       }
 
-      const { handle, handleRecord, tweets, error } = result.value;
+      const { handle, handleRecord, tweets, userId, error } = result.value;
 
       if (error) {
         errors.push(`${handle}: ${error}`);
       }
 
-      if (tweets.length > 0 && handleRecord) {
-        // Batch insert tweets
-        const postsToInsert = tweets.map((t: { id: string; text: string; created_at: string }) => ({
-          platform: 'twitter' as const,
-          post_url: `https://x.com/${handle.replace(/^@/, '')}/status/${t.id}`,
-          tweet_id: t.id,
-          source_handle: `@${handle.replace(/^@/, '')}`,
-          player_name: handleRecord.player_name || null,
-          school_name: handleRecord.school_name || null,
-          sport_id: handleRecord.sport_id || null,
-          caption: null,
-          active: true,
-          pinned: false,
-          display_order: 0,
-        }));
-
-        const { error: insertError, count } = await supabase
-          .from('social_posts')
-          .upsert(postsToInsert, { onConflict: 'tweet_id', ignoreDuplicates: true, count: 'exact' });
-
-        if (!insertError) {
-          totalInserted += count || postsToInsert.length;
+      // Insert each tweet via SECURITY DEFINER RPC
+      if (tweets.length > 0) {
+        for (const t of tweets) {
+          const { error: rpcErr } = await supabase.rpc('upsert_social_post', {
+            p_platform: 'twitter',
+            p_post_url: `https://x.com/${handle.replace(/^@/, '')}/status/${t.id}`,
+            p_tweet_id: t.id,
+            p_source_handle: `@${handle.replace(/^@/, '')}`,
+            p_player_name: handleRecord?.player_name || null,
+            p_school_name: handleRecord?.school_name || null,
+            p_sport_id: handleRecord?.sport_id || null,
+          });
+          if (!rpcErr) totalInserted++;
         }
-
         totalFetched += tweets.length;
+      }
 
-        // Update handle's last_fetched_at and last_tweet_id
-        const newestTweetId = tweets
-          .map((t: { id: string }) => t.id)
-          .sort((a: string, b: string) => b.localeCompare(a))[0];
+      // Update handle metadata via SECURITY DEFINER RPC
+      if (handleRecord) {
+        const newestTweetId = tweets.length > 0
+          ? tweets.map((t: { id: string }) => t.id).sort((a: string, b: string) => b.localeCompare(a))[0]
+          : null;
 
-        await supabase
-          .from('social_handles')
-          .update({
-            last_fetched_at: new Date().toISOString(),
-            last_tweet_id: newestTweetId,
-          })
-          .eq('id', handleRecord.id);
-      } else if (handleRecord) {
-        // No new tweets, but mark as fetched
-        await supabase
-          .from('social_handles')
-          .update({ last_fetched_at: new Date().toISOString() })
-          .eq('id', handleRecord.id);
+        await supabase.rpc('update_social_handle_fetch', {
+          p_handle_id: handleRecord.id,
+          p_twitter_user_id: userId || null,
+          p_last_tweet_id: newestTweetId,
+        });
       }
     }
 
