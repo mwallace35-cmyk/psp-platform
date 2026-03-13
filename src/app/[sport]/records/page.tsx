@@ -4,6 +4,7 @@ import { SPORT_META, getRecordsBySport } from "@/lib/data";
 import { getAllComputedRecords } from "@/lib/data/computed-records";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
+import RecordTimeline from "@/components/records/RecordTimeline";
 import RecordsView from "./RecordsView";
 import type { Metadata } from "next";
 
@@ -111,14 +112,26 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
             <p className="text-sm text-gray-400 mt-2">Records will be populated as more historical data is added.</p>
           </div>
         ) : (
-          <RecordsView
-            curatedRecords={curatedRecords}
-            computedByCategory={computedRecordsObj}
-            sport={sport}
-            sportName={meta.name}
-            sportColor={meta.color}
-            sportEmoji={meta.emoji}
-          />
+          <>
+            {/* Longest-Held Records Timeline */}
+            {curatedRecords.length > 0 && (
+              <RecordTimeline
+                records={curatedRecords}
+                sport={sport}
+                limit={10}
+              />
+            )}
+
+            {/* Main Records View */}
+            <RecordsView
+              curatedRecords={curatedRecords}
+              computedByCategory={computedRecordsObj}
+              sport={sport}
+              sportName={meta.name}
+              sportColor={meta.color}
+              sportEmoji={meta.emoji}
+            />
+          </>
         )}
       </main>
 

@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, getSchoolNotablePlayers, type School, type TeamSeason, type Championship, type NotablePlayer } from "@/lib/data";
-import { Breadcrumb } from "@/components/ui";
+import { Breadcrumb, TrendChart } from "@/components/ui";
 import WinLossBar from "@/components/ui/WinLossBar";
 import BookmarkButton from "@/components/ui/BookmarkButton";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -15,6 +15,8 @@ import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
+import { getSchoolRivalries } from "@/lib/data/games";
+import RivalryRecord from "@/components/school/RivalryRecord";
 import type { Metadata } from "next";
 import type { SeasonRecord } from "@/components/viz/types";
 import ClientDynastyTimeline from "@/components/viz/ClientDynastyTimeline";
@@ -128,21 +130,25 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   let teamSeasons: TeamSeason[] = [];
   let championships: Championship[] = [];
   let notablePlayers: NotablePlayer[] = [];
+  let rivalries: any[] = [];
 
   try {
     const results = await Promise.allSettled([
       getSchoolTeamSeasons(school.id, sport),
       getSchoolChampionships(school.id, sport),
       getSchoolNotablePlayers(school.id, sport, 10),
+      getSchoolRivalries(school.id, sport),
     ]);
 
     if (results[0].status === "fulfilled") teamSeasons = results[0].value;
     if (results[1].status === "fulfilled") championships = results[1].value;
     if (results[2].status === "fulfilled") notablePlayers = results[2].value;
+    if (results[3].status === "fulfilled") rivalries = results[3].value;
 
     if (results[0].status === "rejected") captureError(results[0].reason, { sport, slug, fetch: "getSchoolTeamSeasons" });
     if (results[1].status === "rejected") captureError(results[1].reason, { sport, slug, fetch: "getSchoolChampionships" });
     if (results[2].status === "rejected") captureError(results[2].reason, { sport, slug, fetch: "getSchoolNotablePlayers" });
+    if (results[3].status === "rejected") captureError(results[3].reason, { sport, slug, fetch: "getSchoolRivalries" });
   } catch (error) {
     captureError(error, { sport, slug, context: "data_fetching" });
   }
@@ -284,7 +290,29 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               />
             )}
 
-            {/* Championships */}
+
+            {/* Win-Loss Trend */}
+            {teamSeasons.length > 1 && (
+              <TrendChart
+                data={teamSeasons
+                  .sort((a, b) => {
+                    const aYear = parseInt(a.seasons?.label?.substring(0, 4) || "0");
+                    const bYear = parseInt(b.seasons?.label?.substring(0, 4) || "0");
+                    return aYear - bYear;
+                  })
+                  .map((ts) => ({
+                    label: ts.seasons?.label || "",
+                    value: (ts.wins || 0) + (ts.losses || 0) + (ts.ties || 0) > 0 
+                      ? Math.round(((ts.wins || 0) / ((ts.wins || 0) + (ts.losses || 0) + (ts.ties || 0))) * 100)
+                      : 0,
+                  }))}
+                title="Win Percentage by Season"
+                unit="%"
+                height={250}
+              />
+            )}
+
+                        {/* Championships */}
             {championships.length > 0 && (
               <div>
                 <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
@@ -313,6 +341,33 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               </div>
             )}
 
+            {/* Rivalries */}
+            {rivalries.length > 0 && (
+              <div id="rivalries">
+                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                  ⚔️ Head-to-Head Records ({rivalries.length})
+                </h2>
+                <RivalryRecord
+                  rivalries={rivalries.map((r) => ({
+                    opponentName: r.opponentName,
+                    opponentSlug: r.opponentSlug,
+                    wins: r.wins,
+                    losses: r.losses,
+                    ties: r.ties,
+                    totalGames: r.totalGames,
+                    lastResult: r.lastGameDate ? {
+                      date: r.lastGameDate,
+                      homeScore: r.lastGameHomeScore,
+                      awayScore: r.lastGameAwayScore,
+                      isHome: r.isLastGameHome,
+                    } : undefined,
+                  }))}
+                  sport={sport}
+                  schoolName={school.name}
+                />
+              </div>
+            )}
+
             {/* Season-by-season results */}
             {teamSeasons.length > 0 && (
               <div>
@@ -334,17 +389,22 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                       </tr>
                     </thead>
                     <tbody>
-                      {teamSeasons.map((ts: TeamSeason) => (
-                        <tr key={ts.id}>
+                      {teamSeasons.map((ts: TeamSeason) => {
+                        const hasChampionship = championships.some(c => c.seasons?.label === ts.seasons?.label);
+                        return (
+                        <tr key={ts.id} style={{ fontWeight: hasChampionship ? "600" : "normal" }}>
                           <td className="font-medium">
                             {ts.seasons?.label ? (
-                              <Link
-                                href={`/${sport}/teams/${slug}/${ts.seasons.label}`}
-                                className="hover:underline"
-                                style={{ color: "var(--psp-blue, #3b82f6)" }}
-                              >
-                                {ts.seasons.label}
-                              </Link>
+                              <>
+                                {hasChampionship && <span className="mr-1.5" aria-label="Championship">🏆</span>}
+                                <Link
+                                  href={`/${sport}/teams/${slug}/${ts.seasons.label}`}
+                                  className="hover:underline"
+                                  style={{ color: "var(--psp-blue, #3b82f6)" }}
+                                >
+                                  {ts.seasons.label}
+                                </Link>
+                              </>
                             ) : "—"}
                           </td>
                           <td className="text-center">{ts.wins ?? "—"}</td>
@@ -361,7 +421,8 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                             ) : "—"}
                           </td>
                         </tr>
-                      ))}
+                      );
+                    })}
                     </tbody>
                   </table>
                 </div>
@@ -419,13 +480,21 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               </h3>
               <div className="space-y-2">
                 <Link href={`/${sport}/leaderboards/rushing?school=${slug}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  📊 Stat Leaders
+                  📊 Stat Leaders at {school.name}
                 </Link>
-                <Link href={`/${sport}/championships`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  🏆 All Championships
+                <a href={`#championships`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
+                  🏆 {championships.length} Championship{championships.length !== 1 ? 's' : ''} Won
+                </a>
+                <Link href={`/search?q=${encodeURIComponent(school.name)}&type=players`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
+                  🔍 Search Players at {school.name}
                 </Link>
-                <Link href={`/search?q=${encodeURIComponent(school.name)}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  🔍 Search Players
+                {rivalries.length > 0 && (
+                  <a href={`#rivalries`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
+                    ⚔️ Head-to-Head Records ({rivalries.length})
+                  </a>
+                )}
+                <Link href={`/next-level?school=${slug}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
+                  🎓 Alumni Tracker
                 </Link>
               </div>
             </div>

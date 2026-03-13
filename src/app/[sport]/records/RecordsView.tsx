@@ -733,7 +733,16 @@ function RecordOfTheDayHero({
             {record.record_value || record.record_number?.toLocaleString() || "Record"}
           </h2>
           <div style={{ fontSize: 16, marginBottom: 12 }}>
-            <span style={{ fontWeight: 600 }}>{playerName}</span>
+            {record.player_slug ? (
+              <Link
+                href={`/${sport}/players/${record.player_slug}`}
+                style={{ color: "white", textDecoration: "none", fontWeight: 600, cursor: "pointer" }}
+              >
+                {playerName}
+              </Link>
+            ) : (
+              <span style={{ fontWeight: 600 }}>{playerName}</span>
+            )}
             <span style={{ color: "rgba(255,255,255,0.7)" }}> — </span>
             <Link
               href={`/${sport}/schools/${record.school_slug}`}

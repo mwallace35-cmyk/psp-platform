@@ -23,3 +23,5 @@ export { ToastContainer } from "./Toast";
 export { default as DataSourceBadge } from "./DataSourceBadge";
 export { default as MethodologyNote } from "./MethodologyNote";
 export { default as ShareStatButton } from "./ShareStatButton";
+export { default as TrendChart } from "./TrendChart";
+export { default as ShareableStatCard } from "./ShareableStatCard";

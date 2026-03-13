@@ -280,9 +280,15 @@ export default async function LeaderboardPage({
     new Set(seasonTableData.map(r => r.seasonLabel).filter(Boolean))
   ).sort().reverse();
 
-  const uniqueSchools = Array.from(
+  const uniqueSchoolsArray = Array.from(
     new Set(tableData.map(r => r.schoolName).filter(s => s && s !== "Unknown"))
   ).sort();
+
+  // Convert schools to objects with name and slug
+  const uniqueSchools = uniqueSchoolsArray.map(name => ({
+    name,
+    slug: name.toLowerCase().replace(/\s+/g, '-'),
+  }));
 
   const modeLabel = isCareer ? "All-Time Career" : "Single Season";
   const subtitle = isCareer
@@ -408,7 +414,7 @@ export default async function LeaderboardPage({
             >
               <option value="">All Schools</option>
               {uniqueSchools.map((school) => (
-                <option key={school} value={school}>{school}</option>
+                <option key={school.slug} value={school.name}>{school.name}</option>
               ))}
             </select>
           )}
@@ -429,10 +435,16 @@ export default async function LeaderboardPage({
               sport={sport}
               statColumns={statColumns}
               isCareer={isCareer}
+              primaryStatKey={statConfig.cols?.[0]}
               highlightTop3={true}
               mobileCardMode={true}
               emptyMessage="No leaderboard data available"
               ariaLabel={`${isCareer ? "Career " : ""}${statConfig.label} leaders leaderboard for Philadelphia high school ${meta.name}`}
+              seasons={uniqueSeasons}
+              schools={uniqueSchools}
+              positions={[]}
+              leagues={["Catholic League", "Public League", "Inter-Ac"]}
+              totalPlayers={tableData.length}
             />
           </div>
         ) : (

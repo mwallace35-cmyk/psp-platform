@@ -6,20 +6,14 @@ import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
 import HeroSectionNew from "@/components/home/HeroSectionNew";
 import LiveStatsStrip from "@/components/home/LiveStatsStrip";
-import TrendingStrip from "@/components/home/TrendingStrip";
 import SportNavigationGrid from "@/components/home/SportNavigationGrid";
 import SectionDivider from "@/components/home/SectionDivider";
 import PotwSpotlight from "@/components/home/PotwSpotlight";
 import PhillyEverywhere from "@/components/home/PhillyEverywhere";
-import DataToolsSection from "@/components/home/DataToolsSection";
 import RecentScores from "@/components/home/RecentScores";
 import LatestArticles from "@/components/home/LatestArticles";
-import CommunityPulse from "@/components/home/CommunityPulse";
 import NewsletterCTA from "@/components/home/NewsletterCTA";
-import ThisDayInHistory from "@/components/home/ThisDayInHistory";
 import SponsorSlot from "@/components/ads/SponsorSlot";
-import PremiumBanner from "@/components/ads/PremiumBanner";
-import MySchoolsWidget from "@/components/home/MySchoolsWidget";
 
 // ============ DATA FETCHING FUNCTIONS ============
 
@@ -364,70 +358,35 @@ export default async function HomePage() {
         <div style={{ width: "100%" }}>
           <div id="content-updates" aria-live="polite" aria-atomic="true" className="sr-only"></div>
 
-          {/* SPRINT 1: Hero Section */}
+          {/* SECTION 1: Hero Section */}
           <HeroSectionNew stats={stats} />
 
-          {/* Trending Strip */}
-          <TrendingStrip />
-
-          {/* SPRINT 2: Live Stats Strip */}
-          <LiveStatsStrip />
-
-          {/* Section Divider */}
-          <SectionDivider />
-
-          {/* Personalized: My Schools Widget */}
-          <MySchoolsWidget />
-
-          {/* Section Divider */}
-          <SectionDivider />
-
-          {/* This Day in History */}
-          <ThisDayInHistory />
-
-          {/* Section Divider */}
-          <SectionDivider />
-
-          {/* SPRINT 3: Sport Navigation Cards */}
-          <SportNavigationGrid sports={sports} />
-
-          {/* Section Divider */}
-          <SectionDivider />
-
-          {/* SPRINT 6: POTW Spotlight */}
-          <PotwSpotlight nominees={displayPotw} />
-
-          {/* Section Divider */}
-          <SectionDivider />
-
-          {/* SPRINT 7: Philly Everywhere / Alumni */}
-          {displayAlumni.length > 0 && (
-            <PhillyEverywhere alumni={displayAlumni} totalCount={stats.players} />
-          )}
-
-          {/* Section Divider */}
-          <SectionDivider />
-
-          {/* SPRINT 7: Data Tools */}
-          <DataToolsSection />
-
-          {/* Section Divider */}
-          <SectionDivider />
-
-          {/* Inline Sponsor Slot */}
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1rem' }}>
-            <SponsorSlot placement="inline" />
-          </div>
-
-          {/* SPRINT 5: Recent Scores */}
+          {/* SECTION 2: Live Scores (unified scores) */}
           {displayScores.length > 0 && (
             <>
               <SectionDivider />
+              <LiveStatsStrip />
               <RecentScores scores={displayScores} />
             </>
           )}
 
-          {/* SPRINT 5: Latest Articles */}
+          {/* SECTION 3: Sport Navigation Cards */}
+          <SectionDivider />
+          <SportNavigationGrid sports={sports} />
+
+          {/* SECTION 4: POTW Spotlight */}
+          <SectionDivider />
+          <PotwSpotlight nominees={displayPotw} />
+
+          {/* SECTION 5: Philly Everywhere / Alumni */}
+          {displayAlumni.length > 0 && (
+            <>
+              <SectionDivider />
+              <PhillyEverywhere alumni={displayAlumni} totalCount={stats.players} />
+            </>
+          )}
+
+          {/* SECTION 6: Latest Articles */}
           {displayArticles.length > 0 && (
             <>
               <SectionDivider />
@@ -435,20 +394,15 @@ export default async function HomePage() {
             </>
           )}
 
-          {/* SPRINT 6: Community Pulse */}
-          {displayHotTakes.length > 0 && (
-            <>
-              <SectionDivider />
-              <CommunityPulse takes={displayHotTakes} />
-            </>
-          )}
+          {/* Inline Sponsor Slot */}
+          <SectionDivider />
+          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1rem' }}>
+            <SponsorSlot placement="inline" />
+          </div>
 
-          {/* SPRINT 5: Newsletter CTA */}
+          {/* SECTION 7: Community + Newsletter (merged) */}
           <SectionDivider />
           <NewsletterCTA />
-
-          {/* Premium Banner */}
-          <PremiumBanner />
         </div>
       </ErrorBoundary>
     </>

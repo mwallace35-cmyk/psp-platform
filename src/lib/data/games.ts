@@ -460,3 +460,144 @@ export const getGamesBySportWithBoxScores = cache(
     );
   }
 );
+
+// ============================================================================
+// RIVALRY DATA
+// ============================================================================
+
+export interface RivalryRecord {
+  opponentId: number;
+  opponentName: string;
+  opponentSlug: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  totalGames: number;
+  lastGameDate: string | null;
+  lastGameHomeScore: number | null;
+  lastGameAwayScore: number | null;
+  isLastGameHome: boolean;
+}
+
+/**
+ * Get head-to-head rivalry records for a school in a given sport.
+ * Returns top 5 rivals by total games played (biggest rivalries).
+ * Includes win-loss record and most recent game result.
+ */
+export const getSchoolRivalries = cache(
+  async (schoolId: number, sportId: string): Promise<RivalryRecord[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // Get all games for this school (both home and away)
+            const { data: games } = await supabase
+              .from("games")
+              .select(
+                `id, game_date, home_school_id, away_school_id, home_score, away_score,
+                 home_school:schools!games_home_school_id_fkey(id, name, slug),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug)`
+              )
+              .eq("sport_id", sportId)
+              .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+              .order("game_date", { ascending: false });
+
+            if (!games || games.length === 0) {
+              return [];
+            }
+
+            // Group games by opponent and calculate records
+            const rivalryMap = new Map<number, {
+              opponentId: number;
+              opponentName: string;
+              opponentSlug: string;
+              wins: number;
+              losses: number;
+              ties: number;
+              totalGames: number;
+              lastGameDate: string | null;
+              lastGameHomeScore: number | null;
+              lastGameAwayScore: number | null;
+              isLastGameHome: boolean;
+            }>();
+
+            for (const game of games as any[]) {
+              const isHome = game.home_school_id === schoolId;
+              const opponentId = isHome ? game.away_school_id : game.home_school_id;
+              const opponentData = isHome ? game.away_school : game.home_school;
+
+              if (!opponentData) continue;
+
+              if (!rivalryMap.has(opponentId)) {
+                rivalryMap.set(opponentId, {
+                  opponentId,
+                  opponentName: opponentData.name,
+                  opponentSlug: opponentData.slug,
+                  wins: 0,
+                  losses: 0,
+                  ties: 0,
+                  totalGames: 0,
+                  lastGameDate: null,
+                  lastGameHomeScore: null,
+                  lastGameAwayScore: null,
+                  isLastGameHome: isHome,
+                });
+              }
+
+              const rivalry = rivalryMap.get(opponentId)!;
+              rivalry.totalGames++;
+
+              // Only count games with final scores
+              if (game.home_score !== null && game.away_score !== null) {
+                if (isHome) {
+                  if (game.home_score > game.away_score) {
+                    rivalry.wins++;
+                  } else if (game.home_score < game.away_score) {
+                    rivalry.losses++;
+                  } else {
+                    rivalry.ties++;
+                  }
+                  // Track last game (first iteration since sorted by date descending)
+                  if (!rivalry.lastGameDate) {
+                    rivalry.lastGameDate = game.game_date;
+                    rivalry.lastGameHomeScore = game.home_score;
+                    rivalry.lastGameAwayScore = game.away_score;
+                    rivalry.isLastGameHome = true;
+                  }
+                } else {
+                  if (game.away_score > game.home_score) {
+                    rivalry.wins++;
+                  } else if (game.away_score < game.home_score) {
+                    rivalry.losses++;
+                  } else {
+                    rivalry.ties++;
+                  }
+                  // Track last game (first iteration since sorted by date descending)
+                  if (!rivalry.lastGameDate) {
+                    rivalry.lastGameDate = game.game_date;
+                    rivalry.lastGameHomeScore = game.home_score;
+                    rivalry.lastGameAwayScore = game.away_score;
+                    rivalry.isLastGameHome = false;
+                  }
+                }
+              }
+            }
+
+            // Convert to array and sort by total games (most games = biggest rivalry)
+            const rivalries = Array.from(rivalryMap.values())
+              .sort((a, b) => b.totalGames - a.totalGames)
+              .slice(0, 5);
+
+            return rivalries as RivalryRecord[];
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_SCHOOL_RIVALRIES",
+      { schoolId, sportId }
+    );
+  }
+);

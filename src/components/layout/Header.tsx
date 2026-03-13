@@ -21,13 +21,10 @@ const SearchTypeahead = dynamic(() => import("../search/SearchTypeahead"), {
   ssr: false,
 });
 
-const MAIN_SPORTS = [
+const ALL_SPORTS = [
   { href: "/football", label: "Football", color: "var(--fb)" },
   { href: "/basketball", label: "Basketball", color: "var(--bb)" },
   { href: "/baseball", label: "Baseball", color: "var(--base)" },
-];
-
-const MINOR_SPORTS = [
   { href: "/track-field", label: "Track & Field", color: "var(--track)" },
   { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)" },
   { href: "/wrestling", label: "Wrestling", color: "var(--wrest)" },
@@ -37,28 +34,27 @@ const MINOR_SPORTS = [
 const PULSE_ITEMS = [
   { href: "/pulse", label: "The Pulse Hub" },
   { href: "/potw", label: "Player of the Week" },
-  { href: "/pulse/calendar", label: "Master Schedule" },
   { href: "/pulse/forum", label: "Forum" },
   { href: "/pulse/rankings", label: "Power Rankings" },
   { href: "/pulse/our-guys", label: "Our Guys" },
-  { href: "/pulse/outside-the-215", label: "Outside the 215" },
 ];
 
-const CONTENT_ITEMS = [
-  { href: "/articles", label: "News" },
+const MORE_ITEMS = [
   { href: "/recruiting", label: "Recruiting" },
   { href: "/next-level", label: "Next Level (Pro)" },
   { href: "/coaches", label: "Coaches" },
-  { href: "/philly-everywhere", label: "Philly Everywhere" },
+  { href: "/compare", label: "Compare Players" },
+  { href: "/glossary", label: "Glossary" },
+  { href: "/awards", label: "Awards" },
+  { href: "/challenge", label: "Stats Challenge" },
 ];
 
-const DATA_TOOLS = [
-  { href: "/search", label: "Search" },
-  { href: "/scores", label: "Scores & Schedules" },
-  { href: "/awards", label: "Awards" },
-  { href: "/compare", label: "Compare Players" },
-  { href: "/challenge", label: "Stats Challenge" },
-  { href: "/glossary", label: "Glossary" },
+const ACCOUNT_ITEMS = [
+  { href: "/signup", label: "Sign Up" },
+  { href: "/login", label: "Log In" },
+  { href: "/profile", label: "My Profile" },
+  { href: "/profile/schools", label: "My Schools" },
+  { href: "/profile/settings", label: "Settings" },
 ];
 
 export default function Header() {
@@ -248,41 +244,28 @@ export default function Header() {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-2">
-            {/* Main Sports */}
-            {MAIN_SPORTS.map((sport) => (
-              <Link
-                key={sport.href}
-                href={sport.href}
-                className={`nav-link ${isActive(sport.href) ? "active" : ""}`}
-                aria-current={isActive(sport.href) ? "page" : undefined}
-              >
-                <span className="nav-dot" style={{ background: sport.color }} />
-                {sport.label}
-              </Link>
-            ))}
-
-            {/* More Sports Dropdown */}
+            {/* Sports Dropdown */}
             <div className="nav-dd">
               <button
                 className="nav-link"
                 style={{ background: "none", border: "none", cursor: "pointer" }}
                 aria-haspopup="menu"
                 aria-expanded={openDropdown === "sports"}
-                aria-label="More sports menu"
+                aria-label="Sports menu"
                 onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "sports")}
                 onClick={() => handleDropdownToggle("sports")}
                 onBlur={handleDropdownClose}
               >
-                More Sports &#9662;
+                Sports &#9662;
               </button>
               <div
                 className="dd-menu"
                 role="menu"
-                aria-label="More sports menu"
+                aria-label="Sports menu"
                 style={{ display: openDropdown === "sports" ? "block" : undefined }}
                 onKeyDown={handleMenuKeyDown}
               >
-                {MINOR_SPORTS.map((item) => (
+                {ALL_SPORTS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
                     <span className="nav-dot" style={{ background: item.color }} />
                     {item.label}
@@ -291,9 +274,19 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Schools */}
+            {/* Schools Link */}
             <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`} aria-current={isActive("/schools") ? "page" : undefined}>
               Schools
+            </Link>
+
+            {/* Scores Link */}
+            <Link href="/scores" className={`nav-link ${isActive("/scores") ? "active" : ""}`} aria-current={isActive("/scores") ? "page" : undefined}>
+              Scores
+            </Link>
+
+            {/* News Link */}
+            <Link href="/articles" className={`nav-link ${isActive("/articles") ? "active" : ""}`} aria-current={isActive("/articles") ? "page" : undefined}>
+              News
             </Link>
 
             {/* The Pulse Dropdown */}
@@ -325,28 +318,28 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Content Dropdown */}
+            {/* More Dropdown */}
             <div className="nav-dd">
               <button
                 className="nav-link"
                 style={{ background: "none", border: "none", cursor: "pointer" }}
                 aria-haspopup="menu"
-                aria-expanded={openDropdown === "content"}
-                aria-label="Content menu"
-                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "content")}
-                onClick={() => handleDropdownToggle("content")}
+                aria-expanded={openDropdown === "more"}
+                aria-label="More menu"
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "more")}
+                onClick={() => handleDropdownToggle("more")}
                 onBlur={handleDropdownClose}
               >
-                Content &#9662;
+                More &#9662;
               </button>
               <div
                 className="dd-menu"
                 role="menu"
-                aria-label="Content menu"
-                style={{ display: openDropdown === "content" ? "block" : undefined }}
+                aria-label="More menu"
+                style={{ display: openDropdown === "more" ? "block" : undefined }}
                 onKeyDown={handleMenuKeyDown}
               >
-                {CONTENT_ITEMS.map((item) => (
+                {MORE_ITEMS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
                     {item.label}
                   </Link>
@@ -354,38 +347,46 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Data & Tools Dropdown */}
-            <div className="nav-dd">
-              <button
-                className="nav-link"
-                style={{ background: "none", border: "none", cursor: "pointer" }}
-                aria-haspopup="menu"
-                aria-expanded={openDropdown === "tools"}
-                aria-label="Data tools menu"
-                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "tools")}
-                onClick={() => handleDropdownToggle("tools")}
-                onBlur={handleDropdownClose}
-              >
-                Tools &#9662;
-              </button>
-              <div
-                className="dd-menu"
-                role="menu"
-                aria-label="Data tools menu"
-                style={{ display: openDropdown === "tools" ? "block" : undefined }}
-                onKeyDown={handleMenuKeyDown}
-              >
-                {DATA_TOOLS.map((item) => (
-                  <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <Link href="/signup" className="nav-link" style={{ color: 'var(--psp-gold)' }} aria-current={isActive("/signup") ? "page" : undefined}>
-              Sign Up
+            {/* Search Icon Button */}
+            <Link href="/search" className="nav-link" aria-current={isActive("/search") ? "page" : undefined} title="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
             </Link>
+
+            {/* Account Dropdown */}
+            <div className="nav-dd">
+              <button
+                className="nav-link"
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "account"}
+                aria-label="Account menu"
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "account")}
+                onClick={() => handleDropdownToggle("account")}
+                onBlur={handleDropdownClose}
+                title="Account"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </button>
+              <div
+                className="dd-menu"
+                role="menu"
+                aria-label="Account menu"
+                style={{ display: openDropdown === "account" ? "block" : undefined }}
+                onKeyDown={handleMenuKeyDown}
+              >
+                {ACCOUNT_ITEMS.map((item) => (
+                  <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Mobile Hamburger */}
@@ -427,18 +428,20 @@ export default function Header() {
             {/* Sports Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
               <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Sports</div>
-              {MAIN_SPORTS.map((sport) => (
+              {ALL_SPORTS.map((sport) => (
                 <Link key={sport.href} href={sport.href} onClick={handleMobileToggle}>
                   <span className="nav-dot" style={{ background: sport.color }} />
                   {sport.label}
                 </Link>
               ))}
-              {MINOR_SPORTS.map((item) => (
-                <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
-                  <span className="nav-dot" style={{ background: item.color }} />
-                  {item.label}
-                </Link>
-              ))}
+            </div>
+
+            {/* Quick Links Section */}
+            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Quick Links</div>
+              <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
+              <Link href="/scores" onClick={handleMobileToggle}>Scores</Link>
+              <Link href="/articles" onClick={handleMobileToggle}>News</Link>
             </div>
 
             {/* The Pulse Section */}
@@ -451,21 +454,20 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Content Section */}
+            {/* More Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Content</div>
-              {CONTENT_ITEMS.map((item) => (
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>More</div>
+              {MORE_ITEMS.map((item) => (
                 <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
                   {item.label}
                 </Link>
               ))}
             </div>
 
-            {/* Data & Tools Section */}
+            {/* Account Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Data &amp; Tools</div>
-              <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
-              {DATA_TOOLS.map((item) => (
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Account</div>
+              {ACCOUNT_ITEMS.map((item) => (
                 <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
                   {item.label}
                 </Link>
@@ -480,10 +482,6 @@ export default function Header() {
                 <ThemeToggle />
               </div>
             </div>
-
-            <Link href="/signup" onClick={handleMobileToggle} style={{ color: 'var(--psp-gold)', fontWeight: 700, display: "block", paddingTop: "12px" }}>
-              Sign Up
-            </Link>
           </div>
         </>
       )}

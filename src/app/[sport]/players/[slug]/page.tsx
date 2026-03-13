@@ -305,12 +305,21 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   </span>
                 )}
               </div>
-              <div className="mt-4">
+              <div className="mt-4 flex flex-wrap items-center gap-4">
                 <ShareButtons
                   url={`/${sport}/players/${slug}`}
                   title={`${player.name} — ${meta.name} Stats | PhillySportsPack`}
                   description={`Check out ${player.name}'s career stats on PhillySportsPack.com`}
                 />
+                <Link
+                  href={`/compare?players=${slug}&sport=${sport}`}
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
+                  style={{ background: "var(--psp-blue, #3b82f6)", color: "white" }}
+                  title="Compare with another player"
+                >
+                  <span>⚖️</span>
+                  Compare
+                </Link>
               </div>
             </div>
           </div>
@@ -319,15 +328,25 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           {footballTotals && (
             <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl">
               {[
-                { label: "Rush Yards", value: footballTotals.rushYards.toLocaleString() },
-                { label: "Rush TDs", value: footballTotals.rushTd },
-                ...(footballTotals.passYards > 0 ? [{ label: "Pass Yards", value: footballTotals.passYards.toLocaleString() }] : []),
-                ...(footballTotals.recYards > 0 ? [{ label: "Rec Yards", value: footballTotals.recYards.toLocaleString() }] : []),
-                { label: "Total TDs", value: footballTotals.totalTd },
+                { label: "Rush Yards", value: footballTotals.rushYards.toLocaleString(), stat: "rushing" },
+                { label: "Rush TDs", value: footballTotals.rushTd, stat: null },
+                ...(footballTotals.passYards > 0 ? [{ label: "Pass Yards", value: footballTotals.passYards.toLocaleString(), stat: "passing" }] : []),
+                ...(footballTotals.recYards > 0 ? [{ label: "Rec Yards", value: footballTotals.recYards.toLocaleString(), stat: "receiving" }] : []),
+                { label: "Total TDs", value: footballTotals.totalTd, stat: null },
               ].slice(0, 4).map((s) => (
-                <div key={s.label} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <div key={s.label} className="rounded-xl p-4 group cursor-pointer" style={{ background: "rgba(255,255,255,0.05)" }}>
                   <dt className="text-xs text-gray-400">{s.label}</dt>
                   <dd className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>{s.value}</dd>
+                  {s.stat && (
+                    <div className="mt-2 pt-2 border-t border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Link
+                        href={`/${sport}/leaderboards/${s.stat}`}
+                        className="text-xs text-blue-300 hover:text-blue-100 font-medium"
+                      >
+                        View Leaderboard →
+                      </Link>
+                    </div>
+                  )}
                 </div>
               ))}
             </dl>
@@ -337,14 +356,24 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           {basketballTotals && (
             <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl">
               {[
-                { label: "Career Points", value: basketballTotals.points.toLocaleString() },
-                { label: "PPG", value: basketballTotals.games > 0 ? (basketballTotals.points / basketballTotals.games).toFixed(1) : "—" },
-                { label: "Games", value: basketballTotals.games },
-                { label: "Rebounds", value: basketballTotals.rebounds },
+                { label: "Career Points", value: basketballTotals.points.toLocaleString(), stat: "scoring" },
+                { label: "PPG", value: basketballTotals.games > 0 ? (basketballTotals.points / basketballTotals.games).toFixed(1) : "—", stat: null },
+                { label: "Games", value: basketballTotals.games, stat: null },
+                { label: "Rebounds", value: basketballTotals.rebounds, stat: "rebounds" },
               ].map((s) => (
-                <div key={s.label} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <div key={s.label} className="rounded-xl p-4 group cursor-pointer" style={{ background: "rgba(255,255,255,0.05)" }}>
                   <dt className="text-xs text-gray-400">{s.label}</dt>
                   <dd className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>{s.value}</dd>
+                  {s.stat && (
+                    <div className="mt-2 pt-2 border-t border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Link
+                        href={`/${sport}/leaderboards/${s.stat}`}
+                        className="text-xs text-blue-300 hover:text-blue-100 font-medium"
+                      >
+                        View Leaderboard →
+                      </Link>
+                    </div>
+                  )}
                 </div>
               ))}
             </dl>
@@ -783,26 +812,92 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             <RelatedArticles entityType="player" entityId={player.id} />
 
-            {/* Career leaderboard context */}
+            {/* Career context & leaderboard positioning */}
             {sport === "football" && footballTotals && footballTotals.rushYards > 0 && (
               <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-                <h3 className="font-bold text-sm uppercase tracking-wider mb-3" style={{ color: "var(--psp-gray-400)" }}>
-                  Leaderboard
+                <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+                  Career Context
                 </h3>
-                <p className="text-sm text-gray-600 mb-3">
-                  {player.name} has {footballTotals.rushYards.toLocaleString()} career rushing yards.
-                </p>
-                <Link
-                  href={`/${sport}/records`}
-                  className="text-sm font-medium hover:underline"
-                  style={{ color: "var(--psp-blue)" }}
-                >
-                  View career rushing leaders →
-                </Link>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-semibold mb-2" style={{ color: "var(--psp-navy)" }}>
+                      Rushing Yards
+                    </p>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {player.name} totaled <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.rushYards.toLocaleString()}</span> career rushing yards.
+                    </p>
+                    <Link
+                      href={`/${sport}/leaderboards/rushing`}
+                      className="text-xs font-medium hover:underline"
+                      style={{ color: "var(--psp-blue)" }}
+                    >
+                      See rushing leaders →
+                    </Link>
+                  </div>
+                  {footballTotals.passYards > 0 && (
+                    <div>
+                      <p className="text-sm font-semibold mb-2" style={{ color: "var(--psp-navy)" }}>
+                        Passing Yards
+                      </p>
+                      <p className="text-sm text-gray-600 mb-3">
+                        {player.name} threw for <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.passYards.toLocaleString()}</span> career passing yards.
+                      </p>
+                      <Link
+                        href={`/${sport}/leaderboards/passing`}
+                        className="text-xs font-medium hover:underline"
+                        style={{ color: "var(--psp-blue)" }}
+                      >
+                        See passing leaders →
+                      </Link>
+                    </div>
+                  )}
+                  {footballTotals.recYards > 0 && (
+                    <div>
+                      <p className="text-sm font-semibold mb-2" style={{ color: "var(--psp-navy)" }}>
+                        Receiving Yards
+                      </p>
+                      <p className="text-sm text-gray-600 mb-3">
+                        {player.name} caught for <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.recYards.toLocaleString()}</span> career receiving yards.
+                      </p>
+                      <Link
+                        href={`/${sport}/leaderboards/receiving`}
+                        className="text-xs font-medium hover:underline"
+                        style={{ color: "var(--psp-blue)" }}
+                      >
+                        See receiving leaders →
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
-            <PSPPromo size="sidebar" variant={3} />
+            {/* Basketball career context */}
+            {sport === "basketball" && basketballTotals && basketballTotals.points > 0 && (
+              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
+                <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+                  Career Context
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold mb-2" style={{ color: "var(--psp-navy)" }}>
+                      Scoring
+                    </p>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {player.name} scored <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{basketballTotals.points.toLocaleString()} career points</span> at {player.schools?.name || "a Philadelphia school"}.
+                    </p>
+                    <Link
+                      href={`/${sport}/leaderboards/scoring`}
+                      className="text-xs font-medium hover:underline"
+                      style={{ color: "var(--psp-blue)" }}
+                    >
+                      See scoring leaders →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       </div>
