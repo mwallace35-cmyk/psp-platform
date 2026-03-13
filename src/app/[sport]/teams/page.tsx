@@ -54,9 +54,13 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
   const teamsResult = await getSchoolTeamStats(sport);
   const teams = teamsResult.data;
 
-  // Group by league
+  // Separate active and closed schools
+  const activeTeams = teams.filter((t) => !t.closedYear);
+  const closedTeams = teams.filter((t) => t.closedYear);
+
+  // Group active teams by league
   const leagueGroups: Record<string, typeof teams> = {};
-  for (const team of teams) {
+  for (const team of activeTeams) {
     const league = team.league || "Independent";
     if (!leagueGroups[league]) leagueGroups[league] = [];
     leagueGroups[league].push(team);
@@ -65,6 +69,12 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
   // Sort leagues: bigger leagues first
   const sortedLeagues = Object.entries(leagueGroups)
     .sort((a, b) => b[1].length - a[1].length);
+
+  // Sort closed schools by closed year (most recent first), then name
+  const sortedClosedTeams = [...closedTeams].sort((a, b) => {
+    if (b.closedYear !== a.closedYear) return (b.closedYear || 0) - (a.closedYear || 0);
+    return (a.school?.name || "").localeCompare(b.school?.name || "");
+  });
 
   return (
     <main id="main-content">
@@ -101,7 +111,8 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                 {meta.name} Teams
               </h1>
               <p className="text-sm text-gray-400 mt-1">
-                {teams.length} teams across {sortedLeagues.length} leagues
+                {activeTeams.length} teams across {sortedLeagues.length} leagues
+                {closedTeams.length > 0 && ` · ${closedTeams.length} closed programs`}
               </p>
             </div>
           </div>
@@ -198,6 +209,108 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                 </div>
               </div>
             ))}
+
+            {/* Closed Schools */}
+            {sortedClosedTeams.length > 0 && (
+              <div>
+                <h2
+                  className="text-2xl font-bold mb-2 pb-2 border-b-2"
+                  style={{
+                    color: "var(--psp-gray-400)",
+                    fontFamily: "Bebas Neue, sans-serif",
+                    borderColor: "#9ca3af",
+                  }}
+                >
+                  Closed Programs
+                  <span className="text-sm font-normal ml-2" style={{ color: "var(--psp-gray-400)" }}>
+                    ({sortedClosedTeams.length})
+                  </span>
+                </h2>
+                <p className="text-xs text-gray-400 mb-4">
+                  Schools no longer competing. Records preserved for historical reference.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {sortedClosedTeams.map((team) => {
+                    const school = team.school;
+                    if (!school) return null;
+                    const total = team.totalWins + team.totalLosses + team.totalTies;
+                    const winPct = total > 0 ? ((team.totalWins / total) * 100).toFixed(0) : "0";
+
+                    return (
+                      <Link
+                        key={school.id}
+                        href={`/${sport}/schools/${school.slug}`}
+                        className="group block rounded-lg border p-4 hover:shadow-lg transition-all"
+                        style={{
+                          background: "var(--psp-gray-50, #f9fafb)",
+                          borderColor: "var(--psp-gray-200, #e5e7eb)",
+                          opacity: 0.85,
+                        }}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3
+                              className="text-lg font-bold group-hover:text-[var(--psp-gold)] transition-colors"
+                              style={{ color: "var(--psp-gray-500, #6b7280)", fontFamily: "Bebas Neue, sans-serif" }}
+                            >
+                              {school.name}
+                            </h3>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {school.city}, {school.state}
+                              {team.closedYear && (
+                                <span className="ml-2 text-red-400 font-semibold">
+                                  Closed {team.closedYear}
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                          <span style={{ opacity: 0.3, fontSize: "1.5rem" }}>{meta.emoji}</span>
+                        </div>
+
+                        {team.league && team.league !== "Independent" && (
+                          <div
+                            className="text-xs font-bold px-2 py-1 rounded inline-block mb-3"
+                            style={{
+                              background: `${LEAGUE_COLORS[team.league] || "var(--psp-gold)"}10`,
+                              color: LEAGUE_COLORS[team.league] || "#9ca3af",
+                              opacity: 0.7,
+                            }}
+                          >
+                            {team.league}
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
+                            <div className="text-gray-400">All-Time</div>
+                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gray-500, #6b7280)" }}>
+                              {team.totalWins}-{team.totalLosses}
+                              {team.totalTies > 0 ? `-${team.totalTies}` : ""}
+                            </div>
+                          </div>
+                          <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
+                            <div className="text-gray-400">Win %</div>
+                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gray-500, #6b7280)" }}>
+                              {winPct}%
+                            </div>
+                          </div>
+                          <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
+                            <div className="text-gray-400">Titles</div>
+                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gold)" }}>
+                              {team.championships > 0 ? `🏆 ${team.championships}` : "—"}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-xs text-gray-400 mt-2">
+                          {team.seasonCount} seasons on record
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {teams.length === 0 && (
               <div className="text-center py-16">

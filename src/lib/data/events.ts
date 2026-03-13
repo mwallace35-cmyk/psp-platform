@@ -456,6 +456,7 @@ export interface SchoolTeamStat {
     state: string | null;
   };
   league: string;
+  closedYear: number | null;
   totalWins: number;
   totalLosses: number;
   totalTies: number;
@@ -497,6 +498,7 @@ export async function getSchoolTeamStats(sportId: string, page = 1, pageSize = 5
               state: row.state,
             },
             league: row.league_name || "Independent",
+            closedYear: row.closed_year || null,
             totalWins: Number(row.total_wins) || 0,
             totalLosses: Number(row.total_losses) || 0,
             totalTies: Number(row.total_ties) || 0,
