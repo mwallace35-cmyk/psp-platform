@@ -1,22 +1,22 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { fetchTweetsFromHandles } from '@/lib/twitter';
+import { getUserByUsername, getUserTweets } from '@/lib/twitter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 60; // 60s max for free tier cron
+export const maxDuration = 60;
+
+const BATCH_SIZE = 10; // Process 10 handles per cron run (rotate through all)
+const TWEETS_PER_HANDLE = 5;
 
 /**
- * Cron job: Fetch recent tweets from all followed handles
+ * Cron job: Fetch recent tweets from followed handles
  * Runs every 30 minutes via Vercel Cron
- * Also callable manually for testing
+ * Processes BATCH_SIZE handles per run, prioritizing least-recently-fetched
  */
 export async function GET(request: Request) {
-  // Verify cron secret (Vercel sends this header for cron jobs)
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
-
-  // Allow if: cron secret matches, or no secret configured (dev), or Vercel cron header present
   const isVercelCron = request.headers.get('x-vercel-cron') === '1';
   const isAuthorized = !cronSecret || authHeader === `Bearer ${cronSecret}` || isVercelCron;
 
@@ -24,7 +24,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Check for Twitter bearer token
   if (!process.env.TWITTER_BEARER_TOKEN) {
     return NextResponse.json({
       error: 'TWITTER_BEARER_TOKEN not configured',
@@ -33,107 +32,124 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Use service role for writes (bypasses RLS)
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // 1. Fetch all active handles
+    // Fetch active handles, prioritize least-recently-fetched (nulls first)
     const { data: handles, error: handleError } = await supabase
       .from('social_handles')
       .select('*')
-      .eq('active', true);
+      .eq('active', true)
+      .order('last_fetched_at', { ascending: true, nullsFirst: true })
+      .limit(BATCH_SIZE);
 
     if (handleError) throw handleError;
     if (!handles || handles.length === 0) {
       return NextResponse.json({ message: 'No active handles to fetch', fetched: 0 });
     }
 
-    // 2. Build sinceIds map (only fetch tweets newer than last fetch)
-    const sinceIds: Record<string, string> = {};
-    for (const h of handles) {
-      if (h.last_tweet_id) {
-        sinceIds[h.handle] = h.last_tweet_id;
-      }
-    }
+    let totalFetched = 0;
+    let totalInserted = 0;
+    const errors: string[] = [];
 
-    // 3. Fetch tweets from Twitter API
-    const { tweets, userIdUpdates } = await fetchTweetsFromHandles(
-      handles.map(h => ({
-        handle: h.handle,
-        twitter_user_id: h.twitter_user_id,
-        player_name: h.player_name,
-      })),
-      sinceIds
+    // Process handles in parallel (all at once since batch is small)
+    const results = await Promise.allSettled(
+      handles.map(async (h) => {
+        try {
+          // Resolve twitter_user_id if needed
+          let userId = h.twitter_user_id;
+          if (!userId) {
+            const user = await getUserByUsername(h.handle);
+            if (!user) {
+              return { handle: h.handle, tweets: [], userId: null, error: 'User not found' };
+            }
+            userId = user.id;
+            // Save the resolved user ID
+            await supabase
+              .from('social_handles')
+              .update({ twitter_user_id: userId, updated_at: new Date().toISOString() })
+              .eq('id', h.id);
+          }
+
+          // Fetch tweets
+          const sinceId = h.last_tweet_id || undefined;
+          const tweets = await getUserTweets(userId, { max: TWEETS_PER_HANDLE, sinceId });
+
+          return { handle: h.handle, handleRecord: h, tweets, userId, error: null };
+        } catch (err) {
+          return { handle: h.handle, tweets: [], userId: null, error: String(err) };
+        }
+      })
     );
 
-    // 4. Update twitter_user_ids for any new lookups
-    for (const [handle, userId] of Object.entries(userIdUpdates)) {
-      await supabase
-        .from('social_handles')
-        .update({ twitter_user_id: userId, updated_at: new Date().toISOString() })
-        .eq('handle', handle);
-    }
-
-    // 5. Insert new tweets into social_posts (skip duplicates)
-    let inserted = 0;
-    for (const tweet of tweets) {
-      // Find the handle record for metadata
-      const handleRecord = handles.find(
-        h => h.handle.replace(/^@/, '').toLowerCase() === tweet.author_handle.replace(/^@/, '').toLowerCase()
-      );
-
-      const { error: insertError } = await supabase
-        .from('social_posts')
-        .upsert(
-          {
-            platform: 'twitter',
-            post_url: tweet.post_url,
-            tweet_id: tweet.tweet_id,
-            source_handle: `@${tweet.author_handle.replace(/^@/, '')}`,
-            player_name: handleRecord?.player_name || null,
-            school_name: handleRecord?.school_name || null,
-            sport_id: handleRecord?.sport_id || null,
-            caption: null,
-            active: true,
-            pinned: false,
-            display_order: 0,
-          },
-          {
-            onConflict: 'tweet_id',
-            ignoreDuplicates: true,
-          }
-        );
-
-      if (!insertError) inserted++;
-    }
-
-    // 6. Update last_fetched_at and last_tweet_id for each handle
-    for (const h of handles) {
-      const handleTweets = tweets
-        .filter(t => t.author_handle.replace(/^@/, '').toLowerCase() === h.handle.replace(/^@/, '').toLowerCase())
-        .sort((a, b) => b.tweet_id.localeCompare(a.tweet_id)); // highest ID = newest
-
-      const updates: Record<string, unknown> = {
-        last_fetched_at: new Date().toISOString(),
-      };
-
-      if (handleTweets.length > 0) {
-        updates.last_tweet_id = handleTweets[0].tweet_id;
+    // Process results and insert tweets
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        errors.push(String(result.reason));
+        continue;
       }
 
-      await supabase
-        .from('social_handles')
-        .update(updates)
-        .eq('id', h.id);
+      const { handle, handleRecord, tweets, error } = result.value;
+
+      if (error) {
+        errors.push(`${handle}: ${error}`);
+      }
+
+      if (tweets.length > 0 && handleRecord) {
+        // Batch insert tweets
+        const postsToInsert = tweets.map((t: { id: string; text: string; created_at: string }) => ({
+          platform: 'twitter' as const,
+          post_url: `https://x.com/${handle.replace(/^@/, '')}/status/${t.id}`,
+          tweet_id: t.id,
+          source_handle: `@${handle.replace(/^@/, '')}`,
+          player_name: handleRecord.player_name || null,
+          school_name: handleRecord.school_name || null,
+          sport_id: handleRecord.sport_id || null,
+          caption: null,
+          active: true,
+          pinned: false,
+          display_order: 0,
+        }));
+
+        const { error: insertError, count } = await supabase
+          .from('social_posts')
+          .upsert(postsToInsert, { onConflict: 'tweet_id', ignoreDuplicates: true, count: 'exact' });
+
+        if (!insertError) {
+          totalInserted += count || postsToInsert.length;
+        }
+
+        totalFetched += tweets.length;
+
+        // Update handle's last_fetched_at and last_tweet_id
+        const newestTweetId = tweets
+          .map((t: { id: string }) => t.id)
+          .sort((a: string, b: string) => b.localeCompare(a))[0];
+
+        await supabase
+          .from('social_handles')
+          .update({
+            last_fetched_at: new Date().toISOString(),
+            last_tweet_id: newestTweetId,
+          })
+          .eq('id', handleRecord.id);
+      } else if (handleRecord) {
+        // No new tweets, but mark as fetched
+        await supabase
+          .from('social_handles')
+          .update({ last_fetched_at: new Date().toISOString() })
+          .eq('id', handleRecord.id);
+      }
     }
 
     return NextResponse.json({
-      message: `Fetched ${tweets.length} tweets, inserted ${inserted} new`,
-      handles: handles.length,
-      fetched: tweets.length,
-      inserted,
+      message: `Batch complete: ${totalFetched} tweets fetched, ${totalInserted} inserted`,
+      batch_size: handles.length,
+      fetched: totalFetched,
+      inserted: totalInserted,
+      errors: errors.length > 0 ? errors : undefined,
     });
   } catch (err) {
     console.error('Cron fetch-tweets error:', err);
