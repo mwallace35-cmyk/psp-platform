@@ -211,6 +211,8 @@ export {
   getFeaturedProAthletes,
   getCollegePlacements,
   getProAthleteStats,
+  getNextLevelPipeline,
+  getPipelineStats,
   type ProAthlete,
   type ProAthleteDetail,
   type CollegePlacement,
@@ -333,3 +335,14 @@ export {
   getSimilarBaseballPlayers,
   type SimilarPlayer,
 } from "./similar-players";
+
+// Social feed functions
+export {
+  getSocialFeedPosts,
+  getAllSocialPosts as getAllSocialFeedPosts,
+  extractTweetId,
+  getSocialHandles,
+  getAllSocialHandles,
+  type SocialPost,
+  type SocialHandle,
+} from "./social";

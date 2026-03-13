@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SPORT_META } from '@/lib/sports';
 import GotwVoteButton from '@/components/pulse/GotwVoteButton';
+import SocialFeed from '@/components/pulse/SocialFeed';
+import { getSocialFeedPosts } from '@/lib/data/social';
 
 export const revalidate = 300; // 5 min ISR
 
@@ -103,7 +105,10 @@ const LEAGUE_ICONS: Record<string, string> = {
 
 const SUB_NAV = [
   { label: 'Hub', href: '/pulse' },
+  { label: 'Recruiting', href: '/pulse/recruiting' },
   { label: 'Our Guys', href: '/pulse/our-guys' },
+  { label: 'Next Level', href: '/pulse/next-level' },
+  { label: 'Rankings', href: '/pulse/rankings' },
   { label: 'Outside the 215', href: '/pulse/outside-the-215' },
   { label: 'Calendar', href: '/pulse/calendar' },
 ];
@@ -167,6 +172,9 @@ export default async function PulsePage() {
     supabase.from('games').select('id', { count: 'exact', head: true }),
     supabase.from('seasons').select('id', { count: 'exact', head: true }),
   ]);
+
+  // Fetch social feed posts
+  const socialPosts = await getSocialFeedPosts(8);
 
   // Process alumni
   const alumni = (alumniRes.data ?? []).map((a: Record<string, unknown>) => ({
@@ -494,7 +502,17 @@ export default async function PulsePage() {
               )}
             </section>
 
-            {/* 4. DATA SPOTLIGHT */}
+            {/* 4. SOCIAL FEED */}
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bebas text-navy flex items-center gap-2">
+                  Social Feed <span className="text-lg">𝕏</span>
+                </h2>
+              </div>
+              <SocialFeed posts={socialPosts} />
+            </section>
+
+            {/* 5. DATA SPOTLIGHT */}
             <section>
               <h2 className="text-2xl font-bebas text-navy mb-4 flex items-center gap-2">
                 Data Spotlight <span className="text-lg">📊</span>

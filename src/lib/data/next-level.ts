@@ -493,6 +493,116 @@ export async function getCollegePlacements(options: {
 }
 
 /**
+ * Get all next-level athletes across the full pipeline (college, draft prospects, pro)
+ */
+export async function getNextLevelPipeline(options: {
+  sport?: string;
+  level?: string; // "college" | "pro" | "high_school" | "all"
+  pageSize?: number;
+} = {}) {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { sport, level = "all", pageSize = 500 } = options;
+
+          let query = supabase
+            .from("next_level_tracking")
+            .select(
+              `
+              id, person_name, high_school_id, sport_id,
+              current_level, current_org, current_role,
+              college, college_sport, pro_team, pro_league,
+              draft_info, social_twitter, social_instagram,
+              featured, bio_note, status, created_at, updated_at,
+              schools!next_level_tracking_high_school_id_fkey(id, name, slug, city, state)
+            `
+            )
+            .eq("status", "active");
+
+          if (level !== "all") {
+            query = query.eq("current_level", level);
+          }
+          if (sport) {
+            query = query.eq("sport_id", sport);
+          }
+
+          query = query
+            .order("current_level", { ascending: true })
+            .order("person_name", { ascending: true })
+            .limit(pageSize);
+
+          const { data, error } = await query;
+          if (error) throw error;
+          return (data ?? []) as unknown as ProAthlete[];
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_NEXT_LEVEL_PIPELINE",
+    options
+  );
+}
+
+/**
+ * Get pipeline summary stats (college signees, draft prospects, pro athletes)
+ */
+export async function getPipelineStats() {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+
+          const [collegeRes, proRes, hsRes, nflRes, nbaRes] =
+            await Promise.all([
+              supabase
+                .from("next_level_tracking")
+                .select("id", { count: "exact", head: true })
+                .eq("current_level", "college")
+                .eq("status", "active"),
+              supabase
+                .from("next_level_tracking")
+                .select("id", { count: "exact", head: true })
+                .eq("current_level", "pro")
+                .eq("status", "active"),
+              supabase
+                .from("next_level_tracking")
+                .select("id", { count: "exact", head: true })
+                .eq("current_level", "high_school")
+                .eq("status", "active"),
+              supabase
+                .from("next_level_tracking")
+                .select("id", { count: "exact", head: true })
+                .eq("pro_league", "NFL")
+                .eq("status", "active"),
+              supabase
+                .from("next_level_tracking")
+                .select("id", { count: "exact", head: true })
+                .eq("pro_league", "NBA")
+                .eq("status", "active"),
+            ]);
+
+          return {
+            college: collegeRes.count ?? 0,
+            pro: proRes.count ?? 0,
+            prospects: hsRes.count ?? 0,
+            nfl: nflRes.count ?? 0,
+            nba: nbaRes.count ?? 0,
+          };
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    { college: 0, pro: 0, prospects: 0, nfl: 0, nba: 0 },
+    "DATA_PIPELINE_STATS",
+    {}
+  );
+}
+
+/**
  * Get pro athlete stats summary
  */
 export async function getProAthleteStats() {

@@ -122,7 +122,7 @@ export default async function ProAthleteProfilePage({
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
-            { label: "Next Level", href: "/next-level" },
+            { label: "Next Level", href: "/pulse/next-level" },
             { label: athlete.person_name },
           ]}
         />
@@ -689,7 +689,7 @@ export default async function ProAthleteProfilePage({
             <div className="widget">
               <div className="w-head">Quick Links</div>
               <div className="w-body">
-                <Link href="/next-level" className="w-link">
+                <Link href="/pulse/next-level" className="w-link">
                   ↦ All Pro Athletes
                 </Link>
                 <Link href="/football" className="w-link">

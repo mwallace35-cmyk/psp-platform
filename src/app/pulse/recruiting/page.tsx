@@ -1,3 +1,4 @@
+import PulseNav from "@/components/pulse/PulseNav";
 import { Breadcrumb } from "@/components/ui";
 import { getRecruits, getRecentCommitments } from "@/lib/data";
 import RecruitingClient from "./RecruitingClient";
@@ -7,17 +8,16 @@ import type { Metadata } from "next";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Philly Recruiting Central | PhillySportsPack",
+  title: "Recruiting | The Pulse | PhillySportsPack",
   description: "Track Philadelphia area high school recruiting — star ratings, commitments, offers, and links to 247Sports, Rivals, On3, MaxPreps, and Hudl.",
   alternates: {
-    canonical: "https://phillysportspack.com/recruiting",
+    canonical: "https://phillysportspack.com/pulse/recruiting",
   },
 };
 
-export default async function RecruitingPage() {
-  // Use allSettled to prevent one failure from crashing the page
-  let recruits = [];
-  let commitments = [];
+export default async function PulseRecruitingPage() {
+  let recruits: any[] = [];
+  let commitments: any[] = [];
 
   try {
     const results = await Promise.allSettled([
@@ -28,15 +28,16 @@ export default async function RecruitingPage() {
     if (results[0].status === "fulfilled") recruits = results[0].value;
     if (results[1].status === "fulfilled") commitments = results[1].value;
 
-    if (results[0].status === "rejected") captureError(results[0].reason, { page: "recruiting", fetch: "getRecruits" });
-    if (results[1].status === "rejected") captureError(results[1].reason, { page: "recruiting", fetch: "getRecentCommitments" });
+    if (results[0].status === "rejected") captureError(results[0].reason, { page: "pulse/recruiting", fetch: "getRecruits" });
+    if (results[1].status === "rejected") captureError(results[1].reason, { page: "pulse/recruiting", fetch: "getRecentCommitments" });
   } catch (error) {
-    captureError(error, { page: "recruiting", context: "data_fetching" });
+    captureError(error, { page: "pulse/recruiting", context: "data_fetching" });
   }
 
   return (
     <main id="main-content">
-      <Breadcrumb items={[{ label: "Recruiting" }]} />
+      <PulseNav />
+      <Breadcrumb items={[{ label: "The Pulse", href: "/pulse" }, { label: "Recruiting" }]} />
       <RecruitingClient recruits={recruits} commitments={commitments} />
     </main>
   );
