@@ -20,6 +20,9 @@
   --psp-gray-800: #1e293b;
   --psp-gray-900: #0f172a;
 
+  /* ESPN-style dark backgrounds (always dark, used in nav/widgets) */
+  --espn-dark: #0a1628;
+
   /* Legacy system variables - kept for component compatibility */
   --bg: #f5f5f5;
   --g100: #e8e8e8;
@@ -116,6 +119,9 @@
   --psp-gray-500: #cbd5e1;
   --psp-gray-600: #e2e8f0;
   --psp-gray-700: #f1f5f9;
+
+  /* ESPN-style dark backgrounds (always dark, used in nav/widgets) */
+  --espn-dark: #0a1628;
 
   /* Legacy system variables - kept for component compatibility */
   --bg: #0a1628;
