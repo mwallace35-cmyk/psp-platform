@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { FootballGameTable, BasketballGameTable, type MergedGameEntry } from './GameLogTables';
+import { FootballGameTable, BasketballGameTable, type MergedGameEntry, formatDate, didPlayerWin, getOpponent } from './GameLogTables';
 
 // Re-export MergedGameEntry for use in parent components
 export type { MergedGameEntry };
@@ -78,21 +78,6 @@ function groupGamesBySeason(games: MergedGameEntry[]): { [key: string]: MergedGa
   return grouped;
 }
 
-// Determine if player's school won
-function didPlayerWin(game: MergedGameEntry, playerSchoolId: number | null): boolean | null {
-  if (!playerSchoolId || game.homeScore === null || game.awayScore === null) {
-    return null;
-  }
-
-  if (game.homeSchoolId === playerSchoolId) {
-    return game.homeScore > game.awayScore;
-  } else if (game.awaySchoolId === playerSchoolId) {
-    return game.awayScore > game.homeScore;
-  }
-
-  return null;
-}
-
 // Calculate season W-L record
 function calculateWLRecord(games: MergedGameEntry[], playerSchoolId: number | null): { wins: number; losses: number } {
   let wins = 0;
@@ -105,24 +90,6 @@ function calculateWLRecord(games: MergedGameEntry[], playerSchoolId: number | nu
   }
 
   return { wins, losses };
-}
-
-// Format date
-function formatDate(dateString: string | null): string {
-  if (!dateString) return 'N/A';
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  } catch {
-    return 'N/A';
-  }
-}
-
-// Get opponent info
-function getOpponent(game: MergedGameEntry, playerSchoolId: number | null) {
-  const isHome = game.homeSchoolId === playerSchoolId;
-  const opponent = isHome ? game.awaySchool : game.homeSchool;
-  return opponent;
 }
 
 // Format stat display for season totals

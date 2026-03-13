@@ -18,7 +18,8 @@ export interface MergedGameEntry {
   bbPoints: number | null;
 }
 
-function formatDate(dateString: string | null): string {
+// Exported utilities (also used by GameLogAccordion)
+export function formatDate(dateString: string | null): string {
   if (!dateString) return 'N/A';
   try {
     const date = new Date(dateString);
@@ -28,7 +29,7 @@ function formatDate(dateString: string | null): string {
   }
 }
 
-function didPlayerWin(game: MergedGameEntry, playerSchoolId: number | null): boolean | null {
+export function didPlayerWin(game: MergedGameEntry, playerSchoolId: number | null): boolean | null {
   if (!playerSchoolId || game.homeScore === null || game.awayScore === null) {
     return null;
   }
@@ -42,7 +43,7 @@ function didPlayerWin(game: MergedGameEntry, playerSchoolId: number | null): boo
   return null;
 }
 
-function getOpponent(game: MergedGameEntry, playerSchoolId: number | null) {
+export function getOpponent(game: MergedGameEntry, playerSchoolId: number | null) {
   const isHome = game.homeSchoolId === playerSchoolId;
   const opponent = isHome ? game.awaySchool : game.homeSchool;
   return opponent;

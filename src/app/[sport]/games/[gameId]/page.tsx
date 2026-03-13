@@ -56,6 +56,34 @@ function formatDate(dateStr: string | null): string {
   }
 }
 
+function formatTime(timeStr: string | null): string {
+  if (!timeStr) return "";
+  try {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes);
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  } catch {
+    return timeStr;
+  }
+}
+
+function formatGameType(gameType: string | null): string {
+  if (!gameType) return "";
+  const mapping: Record<string, string> = {
+    regular: "Regular Season",
+    playoff: "Playoff",
+    championship: "Championship",
+    state: "State Championship",
+    league: "League Game",
+  };
+  return mapping[gameType] || gameType;
+}
+
 function FootballBoxScore({
   stats,
   homeSchoolId,
@@ -405,10 +433,13 @@ export default async function GameDetailPage({
       <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 overflow-hidden mb-8">
         {/* Sport banner */}
         <div
-          className="px-6 py-2 text-sm font-semibold uppercase tracking-wider"
+          className="px-6 py-2 text-sm font-semibold uppercase tracking-wider flex items-center justify-between"
           style={{ backgroundColor: meta?.color ?? "#0a1628", color: "#fff" }}
         >
-          {meta?.emoji} {meta?.name ?? sport} &middot; {season?.label ?? ""}
+          <span>{meta?.emoji} {meta?.name ?? sport} &middot; {season?.label ?? ""}</span>
+          {game.game_type && (
+            <span className="text-xs font-normal opacity-90">{formatGameType(game.game_type)}</span>
+          )}
         </div>
 
         {/* Score display */}
@@ -444,11 +475,16 @@ export default async function GameDetailPage({
             {/* Center */}
             <div className="flex flex-col items-center gap-2">
               {hasScore ? (
-                <span className="text-gray-500 text-sm uppercase tracking-wider">Final</span>
+                <span className="text-gray-500 text-sm uppercase tracking-wider">
+                  {game.playoff_round ? `${game.playoff_round}` : "Final"}
+                </span>
               ) : (
                 <span className="text-gray-500 text-sm">vs</span>
               )}
               <span className="text-gray-500 text-xs">{formatDate(game.game_date)}</span>
+              {game.game_time && (
+                <span className="text-gray-500 text-xs">{formatTime(game.game_time)}</span>
+              )}
             </div>
 
             {/* Home team */}
@@ -476,6 +512,32 @@ export default async function GameDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Period Scores (if available) */}
+      {game.period_scores && typeof game.period_scores === "object" && Object.keys(game.period_scores).length > 0 && (
+        <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-4 mb-6">
+          <h3 className="text-sm font-semibold text-[var(--psp-gold)] uppercase mb-3">Scoring by Period</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {Object.entries(game.period_scores as Record<string, any>).map(([period, scores]) => {
+              const scoreObj = typeof scores === "object" ? scores : { home: scores };
+              return (
+                <div key={period} className="border border-gray-700 rounded p-3 text-center">
+                  <div className="text-xs text-gray-400 uppercase tracking-wide mb-2">{period}</div>
+                  {scoreObj.home !== undefined && scoreObj.away !== undefined ? (
+                    <>
+                      <div className="text-sm text-gray-300">{scoreObj.home}</div>
+                      <div className="text-xs text-gray-500 my-1">—</div>
+                      <div className="text-sm text-gray-300">{scoreObj.away}</div>
+                    </>
+                  ) : (
+                    <div className="text-sm text-gray-400">{JSON.stringify(scores)}</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Box Score */}
       {boxScore.length > 0 ? (
@@ -513,10 +575,27 @@ export default async function GameDetailPage({
         </section>
       ) : (
         <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-8 text-center">
-          <p className="text-gray-400">No box score data available for this game.</p>
-          <p className="text-gray-600 text-sm mt-2">
-            Individual player statistics are available for select games from the archive.
+          <p className="text-gray-400 font-semibold">No detailed box score available for this game.</p>
+          <p className="text-gray-500 text-sm mt-2 mb-4">
+            Individual player statistics are available for select games from our archive.
           </p>
+          <p className="text-gray-600 text-sm">
+            {hasScore ? (
+              <>Final score: <span className="text-[var(--psp-gold)] font-semibold">{game.home_score} - {game.away_score}</span></>
+            ) : (
+              "Score information is not yet available for this game."
+            )}
+          </p>
+          {home && sport && (
+            <div className="mt-4">
+              <Link
+                href={`/${sport}/schools/${home.slug}/${season?.label ? season.label.split("-")[0] : ""}`}
+                className="text-xs px-3 py-2 rounded inline-block border border-gray-700 text-[var(--psp-blue)] hover:bg-gray-800 transition"
+              >
+                View {home.name} Schedule
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </main>

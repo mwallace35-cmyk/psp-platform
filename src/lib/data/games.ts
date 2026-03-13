@@ -31,10 +31,14 @@ export interface GameDetail {
   sport_id: string;
   season_id: number;
   game_date: string | null;
+  game_time: string | null;
   home_school_id: number | null;
   away_school_id: number | null;
   home_score: number | null;
   away_score: number | null;
+  period_scores: Record<string, unknown> | null;
+  game_type: string | null;
+  playoff_round: string | null;
   notes: string | null;
   data_source: string | null;
   home_school: { id: number; name: string; slug: string } | null;
@@ -55,7 +59,7 @@ export const getGameById = cache(
             const { data } = await supabase
               .from("games")
               .select(
-                `id, sport_id, season_id, game_date, home_school_id, away_school_id, home_score, away_score, notes, data_source,
+                `id, sport_id, season_id, game_date, game_time, home_school_id, away_school_id, home_score, away_score, period_scores, game_type, playoff_round, notes, data_source,
                  home_school:schools!games_home_school_id_fkey(id, name, slug),
                  away_school:schools!games_away_school_id_fkey(id, name, slug),
                  seasons(label, year_start, year_end)`
