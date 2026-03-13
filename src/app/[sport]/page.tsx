@@ -5,6 +5,7 @@ import { validateSportParam, validateSportParamForMetadata } from "@/lib/validat
 import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher";
 import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScoresStrip";
 import QuickNavigation from "@/components/sport-layouts/QuickNavigation";
+import PlayoffPreview from "@/components/sport-layouts/PlayoffPreview";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
@@ -279,6 +280,9 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       }}>
         <p>{sportIntro}</p>
       </div>
+
+      {/* Playoff Preview (basketball only, March 2026) */}
+      {sport === "basketball" && <PlayoffPreview />}
 
       {/* Score Banner */}
       <HubScoresStrip games={recentGames} sportColor={sportColorHex} sport={sport} />
