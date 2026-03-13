@@ -29,9 +29,32 @@ const SimilarPlayers = dynamic(() => import("@/components/player/SimilarPlayers"
   loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" />,
 });
 
-export const revalidate = 86400;
+export const revalidate = 86400; // ISR: daily
+export const dynamicParams = true; // Allow ISR for slugs not in generateStaticParams
 
 type PageParams = { sport: string; slug: string };
+
+/**
+ * Pre-render a curated set of notable/high-traffic player profiles at build time.
+ * All other players are generated on first request via ISR.
+ * With 52,000+ players, generating all at build time is impractical.
+ */
+export async function generateStaticParams() {
+  return [
+    // Football notable players
+    { sport: "football", slug: "curtis-brinkley-2004" },
+    { sport: "football", slug: "kyle-mccord" },
+    { sport: "football", slug: "marvin-harrison-sr" },
+    { sport: "football", slug: "abdul-carter-2882" },
+
+    // Basketball notable players
+    { sport: "basketball", slug: "reggie-jackson" },
+    { sport: "basketball", slug: "alvin-williams" },
+
+    // Baseball notable players
+    { sport: "baseball", slug: "al-brancato-7065" },
+  ];
+}
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport, slug } = await params;

@@ -4,6 +4,7 @@ import { SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, ge
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher";
 import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScoresStrip";
+import QuickNavigation from "@/components/sport-layouts/QuickNavigation";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
@@ -281,6 +282,9 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
 
       {/* Score Banner */}
       <HubScoresStrip games={recentGames} sportColor={sportColorHex} sport={sport} />
+
+      {/* Quick Navigation */}
+      <QuickNavigation sport={sport} sportColor={sportColorHex} />
 
       {/* Layout Switcher (Client Component) */}
       <SportLayoutSwitcher
