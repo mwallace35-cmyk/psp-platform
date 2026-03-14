@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
-import { SPORT_META, getSchoolTeamStats } from "@/lib/data";
+import { SPORT_META, getSchoolTeamStats, getDiscontinuedSchools } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -51,7 +51,10 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
   const sport = await validateSportParam(params);
 
   const meta = SPORT_META[sport];
-  const teamsResult = await getSchoolTeamStats(sport);
+  const [teamsResult, discontinuedSchools] = await Promise.all([
+    getSchoolTeamStats(sport),
+    getDiscontinuedSchools(sport),
+  ]);
   const teams = teamsResult.data;
 
   // Separate active and closed schools
@@ -118,6 +121,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
               <p className="text-sm text-gray-400 mt-1">
                 {sortedLeagues.reduce((sum, [, t]) => sum + t.length, 0)} teams across {sortedLeagues.length} leagues
                 {closedTeams.length > 0 && ` · ${closedTeams.length} closed programs`}
+                {discontinuedSchools.length > 0 && ` · ${discontinuedSchools.length} discontinued`}
               </p>
             </div>
           </div>
@@ -313,6 +317,77 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                       </Link>
                     );
                   })}
+                </div>
+              </div>
+            )}
+
+            {/* Discontinued Programs — schools that dropped this sport */}
+            {discontinuedSchools.length > 0 && (
+              <div>
+                <h2
+                  className="text-2xl font-bold mb-2 pb-2 border-b-2"
+                  style={{
+                    color: "var(--psp-gray-400)",
+                    fontFamily: "Bebas Neue, sans-serif",
+                    borderColor: "#d97706",
+                  }}
+                >
+                  No Longer Active
+                  <span className="text-sm font-normal ml-2" style={{ color: "var(--psp-gray-400)" }}>
+                    ({discontinuedSchools.length})
+                  </span>
+                </h2>
+                <p className="text-xs text-gray-400 mb-4">
+                  Schools that still exist but no longer field a {meta.name.toLowerCase()} team. Historical records preserved.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {discontinuedSchools.map((school) => (
+                    <Link
+                      key={school.id}
+                      href={`/${sport}/schools/${school.slug}`}
+                      className="group block rounded-lg border p-4 hover:shadow-lg transition-all"
+                      style={{
+                        background: "var(--psp-gray-50, #f9fafb)",
+                        borderColor: "var(--psp-gray-200, #e5e7eb)",
+                        opacity: 0.85,
+                      }}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3
+                            className="text-lg font-bold group-hover:text-[var(--psp-gold)] transition-colors"
+                            style={{ color: "var(--psp-gray-500, #6b7280)", fontFamily: "Bebas Neue, sans-serif" }}
+                          >
+                            {school.name}
+                          </h3>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {school.city}, {school.state}
+                            <span className="ml-2 text-amber-500 font-semibold">
+                              Program Discontinued
+                            </span>
+                          </p>
+                        </div>
+                        <span style={{ opacity: 0.3, fontSize: "1.5rem" }}>{meta.emoji}</span>
+                      </div>
+
+                      {school.league && (
+                        <div
+                          className="text-xs font-bold px-2 py-1 rounded inline-block mb-3"
+                          style={{
+                            background: `${LEAGUE_COLORS[school.league] || "var(--psp-gold)"}10`,
+                            color: LEAGUE_COLORS[school.league] || "#9ca3af",
+                            opacity: 0.7,
+                          }}
+                        >
+                          {school.league}
+                        </div>
+                      )}
+
+                      <div className="text-xs text-gray-400 mt-1">
+                        View historical records →
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}

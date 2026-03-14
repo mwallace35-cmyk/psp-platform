@@ -105,6 +105,8 @@ export {
   getRecentCommitments,
   getTeamsWithRecords,
   getSchoolTeamStats,
+  getDiscontinuedSchools,
+  type DiscontinuedSchool,
   getLeaderboard,
   getFootballCareerLeaders,
   getBasketballCareerLeaders,

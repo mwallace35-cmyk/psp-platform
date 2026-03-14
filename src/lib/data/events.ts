@@ -527,6 +527,62 @@ export async function getSchoolTeamStats(sportId: string, page = 1, pageSize = 5
 }
 
 /**
+ * Discontinued programs: schools that still exist but no longer field a team
+ * in a given sport. These have historical player_season data but no recent
+ * team_seasons. Hardcoded IDs per sport for now.
+ */
+const DISCONTINUED_SCHOOL_IDS: Record<string, number[]> = {
+  football: [143, 983, 4669, 4828], // Prep Charter, Nueva Esperanza, Bracetti, Vaux
+};
+
+export interface DiscontinuedSchool {
+  id: number;
+  name: string;
+  slug: string;
+  city: string | null;
+  state: string | null;
+  league: string | null;
+}
+
+export async function getDiscontinuedSchools(sportId: string): Promise<DiscontinuedSchool[]> {
+  const ids = DISCONTINUED_SCHOOL_IDS[sportId];
+  if (!ids || ids.length === 0) return [];
+
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data, error } = await supabase
+            .from("schools")
+            .select("id, name, slug, city, state, leagues(name)")
+            .in("id", ids)
+            .is("deleted_at", null);
+
+          if (error) {
+            console.warn("[PSP] getDiscontinuedSchools failed:", error.message);
+            return [];
+          }
+
+          return (data ?? []).map((row: any) => ({
+            id: row.id,
+            name: row.name,
+            slug: row.slug,
+            city: row.city,
+            state: row.state,
+            league: row.leagues?.name || null,
+          }));
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_DISCONTINUED_SCHOOLS",
+    { sportId }
+  );
+}
+
+/**
  * Get leaderboard entries (cross-sport abstraction)
  */
 export type StatCategory = "rushing" | "passing" | "receiving" | "scoring" | "points" | "ppg" | "rebounds" | "assists" | "batting_avg" | "home_runs" | "era";
