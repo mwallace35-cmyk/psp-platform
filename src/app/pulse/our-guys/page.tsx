@@ -54,14 +54,15 @@ export default async function OurGuysPage() {
       .select('id, person_name, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, schools:high_school_id(name, slug)')
       .order('featured', { ascending: false })
       .order('person_name')
-      .limit(200),
+      .limit(500),
     Promise.all([
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }),
+      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'pro').eq('status', 'active'),
+      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'pro').neq('status', 'active'),
+      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'college'),
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('pro_league', 'NFL'),
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('pro_league', 'NBA'),
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('pro_league', 'MLB'),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'college'),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'coaching'),
     ]),
   ]);
 
@@ -69,12 +70,13 @@ export default async function OurGuysPage() {
     ...a,
     schools: Array.isArray(a.schools) ? a.schools[0] : a.schools,
   })) as AlumniRecord[];
-  const [total, nfl, nba, mlb, college, coaching] = countsRes;
+  const [total, activePro, retiredPro, college, nfl, nba, mlb] = countsRes;
 
   // Group by level
-  const proAlumni = alumni.filter(a => a.current_level === 'pro');
+  const activePros = alumni.filter(a => a.current_level === 'pro' && a.status === 'active');
+  const retiredPros = alumni.filter(a => a.current_level === 'pro' && a.status !== 'active');
   const collegeAlumni = alumni.filter(a => a.current_level === 'college');
-  const coachingAlumni = alumni.filter(a => a.current_level === 'coaching');
+  const coachingAlumni = alumni.filter(a => a.current_level === 'coaching' || a.current_level === 'coach' || a.current_level === 'referee');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -87,11 +89,12 @@ export default async function OurGuysPage() {
           <div className="flex flex-wrap gap-4 mt-6">
             {[
               { label: 'Total Tracked', count: total.count ?? 0, color: 'text-white' },
+              { label: 'Active Pros', count: activePro.count ?? 0, color: 'text-green-400' },
+              { label: 'Former Pros', count: retiredPro.count ?? 0, color: 'text-gray-300' },
+              { label: 'College', count: college.count ?? 0, color: 'text-gold' },
               { label: 'NFL', count: nfl.count ?? 0, color: 'text-green-400' },
               { label: 'NBA', count: nba.count ?? 0, color: 'text-orange-400' },
               { label: 'MLB', count: mlb.count ?? 0, color: 'text-blue-400' },
-              { label: 'College', count: college.count ?? 0, color: 'text-gold' },
-              { label: 'Coaching', count: coaching.count ?? 0, color: 'text-gray-300' },
             ].map(s => (
               <div key={s.label} className="text-center">
                 <p className={`text-2xl font-bold ${s.color}`}>{s.count}</p>
@@ -105,14 +108,15 @@ export default async function OurGuysPage() {
       <PulseNav />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* PRO Section */}
-        {proAlumni.length > 0 && (
+        {/* ACTIVE PROS Section */}
+        {activePros.length > 0 && (
           <section className="mb-10">
             <h2 className="text-2xl font-bebas text-navy mb-4 pb-2 border-b-2 border-gold">
-              In the Pros
+              Active Pros
+              <span className="text-sm font-normal ml-2 text-gray-400">({activePros.length})</span>
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {proAlumni.map((a) => {
+              {activePros.map((a) => {
                 const league = a.pro_league ? LEAGUE_BADGES[a.pro_league] : null;
                 return (
                   <div key={a.id} className="bg-white rounded-lg border border-gray-200 p-5 hover:border-gold hover:shadow-md transition">
@@ -144,6 +148,41 @@ export default async function OurGuysPage() {
                         </a>
                       )}
                     </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* FORMER / RETIRED PROS Section */}
+        {retiredPros.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-2xl font-bebas text-navy mb-4 pb-2 border-b-2 border-gray-300">
+              Former Pros
+              <span className="text-sm font-normal ml-2 text-gray-400">({retiredPros.length})</span>
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {retiredPros.map((a) => {
+                const league = a.pro_league ? LEAGUE_BADGES[a.pro_league] : null;
+                return (
+                  <div key={a.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:border-gray-400 transition" style={{ opacity: 0.85 }}>
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-bold text-gray-700">{a.person_name}</h3>
+                      {league && (
+                        <span className={`px-2 py-0.5 rounded text-xs font-bold ${league.color}`} style={{ opacity: 0.7 }}>
+                          {league.icon} {a.pro_league}
+                        </span>
+                      )}
+                    </div>
+                    {a.current_org && <p className="text-sm text-gray-600">{a.current_org}</p>}
+                    {a.current_role && <p className="text-sm text-gray-500">{a.current_role}</p>}
+                    {a.schools && (
+                      <Link href={`/football/schools/${a.schools.slug}`} className="text-xs text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                        {a.schools.name}
+                      </Link>
+                    )}
+                    {a.bio_note && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{a.bio_note}</p>}
                   </div>
                 );
               })}
