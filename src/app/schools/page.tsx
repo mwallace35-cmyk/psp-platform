@@ -120,9 +120,15 @@ export default async function SchoolsPage() {
     captureError(error, { function: 'SchoolsPage', context: 'schools_directory' });
   }
 
-  const leagueSet = new Set<string>();
-  schools.forEach((s) => { if (s.league) leagueSet.add(s.league); });
-  const leagues = Array.from(leagueSet).sort();
+  // Only show schools from the three core leagues
+  const CORE_LEAGUES = [
+    'Philadelphia Catholic League',
+    'Philadelphia Public League',
+    'Inter-Academic League',
+  ];
+  schools = schools.filter((s) => s.league && CORE_LEAGUES.includes(s.league));
+
+  const leagues = CORE_LEAGUES;
 
   // Aggregate stats for the hero section
   const schoolsWithData = schools.filter(s => s.has_data);
