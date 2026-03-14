@@ -91,6 +91,17 @@ interface TopProgram {
   championship_count: number;
 }
 
+interface ArticleRecord {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  author_name: string | null;
+  sport_id: string | null;
+  featured_image_url: string | null;
+  published_at: string | null;
+}
+
 /* ────── Constants ────── */
 
 const LEVEL_BADGES: Record<string, { label: string; color: string }> = {
@@ -128,6 +139,7 @@ export default async function PulsePage() {
     totalPlayersRes,
     totalGamesRes,
     totalSeasonsRes,
+    articlesRes,
   ] = await Promise.all([
     // Featured alumni — pros first, then college
     supabase
@@ -170,10 +182,21 @@ export default async function PulsePage() {
     supabase.from('players').select('id', { count: 'exact', head: true }).is('deleted_at', null),
     supabase.from('games').select('id', { count: 'exact', head: true }),
     supabase.from('seasons').select('id', { count: 'exact', head: true }),
+    // Top articles across all sports
+    supabase
+      .from('articles')
+      .select('id, slug, title, excerpt, author_name, sport_id, featured_image_url, published_at')
+      .eq('status', 'published')
+      .is('deleted_at', null)
+      .order('published_at', { ascending: false })
+      .limit(12),
   ]);
 
   // Fetch social feed posts
   const socialPosts = await getSocialFeedPosts(8);
+
+  // Process articles
+  const articles = (articlesRes.data ?? []) as ArticleRecord[];
 
   // Process alumni
   const alumni = (alumniRes.data ?? []).map((a: Record<string, unknown>) => ({
@@ -296,6 +319,108 @@ export default async function PulsePage() {
 
           {/* === LEFT COLUMN (2/3) === */}
           <div className="lg:col-span-2 space-y-8">
+
+            {/* 0. TOP STORIES — Scrolling Articles */}
+            {articles.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bebas text-navy flex items-center gap-2">
+                    Top Stories <span className="text-lg">📰</span>
+                  </h2>
+                  <Link href="/articles" className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                    All Articles &rarr;
+                  </Link>
+                </div>
+
+                {/* Featured hero article */}
+                {articles[0] && (
+                  <Link
+                    href={`/articles/${articles[0].slug}`}
+                    className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md hover:border-gold/40 transition group mb-4"
+                  >
+                    {articles[0].featured_image_url && (
+                      <div className="h-48 bg-navy-mid overflow-hidden">
+                        <img
+                          src={articles[0].featured_image_url}
+                          alt={articles[0].title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        {articles[0].sport_id && SPORT_META[articles[0].sport_id as keyof typeof SPORT_META] && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-navy/10 text-navy font-medium">
+                            {SPORT_META[articles[0].sport_id as keyof typeof SPORT_META].emoji} {SPORT_META[articles[0].sport_id as keyof typeof SPORT_META].name}
+                          </span>
+                        )}
+                        {articles[0].published_at && (
+                          <span className="text-xs text-gray-400">
+                            {new Date(articles[0].published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-lg font-bold text-navy group-hover:text-gold transition-colors line-clamp-2">{articles[0].title}</h3>
+                      {articles[0].excerpt && (
+                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{articles[0].excerpt}</p>
+                      )}
+                      {articles[0].author_name && (
+                        <p className="text-xs text-gray-400 mt-2">By {articles[0].author_name}</p>
+                      )}
+                    </div>
+                  </Link>
+                )}
+
+                {/* Horizontally scrolling article cards */}
+                <div className="relative">
+                  <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide snap-x snap-mandatory">
+                    {articles.slice(1).map((article) => {
+                      const sportMeta = article.sport_id ? SPORT_META[article.sport_id as keyof typeof SPORT_META] : null;
+                      return (
+                        <Link
+                          key={article.id}
+                          href={`/articles/${article.slug}`}
+                          className="flex-shrink-0 w-64 bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md hover:border-gold/40 transition group snap-start"
+                        >
+                          {article.featured_image_url ? (
+                            <div className="h-32 bg-gray-100 overflow-hidden">
+                              <img
+                                src={article.featured_image_url}
+                                alt={article.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-32 bg-gradient-to-br from-navy to-navy-mid flex items-center justify-center">
+                              <span className="text-4xl opacity-30">{sportMeta?.emoji || '📰'}</span>
+                            </div>
+                          )}
+                          <div className="p-3">
+                            <div className="flex items-center gap-1.5 mb-1.5">
+                              {sportMeta && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-navy/10 text-navy font-medium">
+                                  {sportMeta.emoji} {sportMeta.name}
+                                </span>
+                              )}
+                              {article.published_at && (
+                                <span className="text-[10px] text-gray-400">
+                                  {new Date(article.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </span>
+                              )}
+                            </div>
+                            <h3 className="text-sm font-bold text-navy group-hover:text-gold transition-colors line-clamp-2 leading-snug">
+                              {article.title}
+                            </h3>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                  {/* Scroll fade hint */}
+                  <div className="absolute right-0 top-0 bottom-3 w-8 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none" />
+                </div>
+              </section>
+            )}
 
             {/* 1. GAME SCHEDULE */}
             <section>
