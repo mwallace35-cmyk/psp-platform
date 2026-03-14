@@ -102,8 +102,6 @@ const MAIN_LEAGUES = [
   { key: 'catholic', name: 'Catholic League', fullName: 'Philadelphia Catholic League', color: '#f0a500', icon: '⛪' },
   { key: 'public', name: 'Public League', fullName: 'Philadelphia Public League', color: '#1e40af', icon: '🏫' },
   { key: 'interac', name: 'Inter-Ac', fullName: 'Inter-Academic League', color: '#16a34a', icon: '🎓' },
-  { key: 'independent', name: 'Independent', fullName: 'Independent', color: '#64748b', icon: '🏠' },
-  { key: 'closed', name: 'Historic', fullName: 'Closed / Historic', color: '#78716c', icon: '📜' },
 ];
 
 const SORT_OPTIONS: { value: SortMode; label: string }[] = [
@@ -116,17 +114,15 @@ const SORT_OPTIONS: { value: SortMode; label: string }[] = [
 ];
 
 export default function SchoolsDirectory({ schools, leagues, risingPrograms, aggregateStats }: Props) {
-  const [showAllSchools, setShowAllSchools] = useState(false);
   const [selectedLeagueKey, setSelectedLeagueKey] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLetter, setSelectedLetter] = useState<string>('');
-  const [viewMode, setViewMode] = useState<ViewMode>('cards');
+  const [viewMode, setViewMode] = useState<ViewMode>('league');
   const [sortMode, setSortMode] = useState<SortMode>('alpha');
 
   const schoolsToShow = useMemo(() => {
-    if (showAllSchools) return schools;
     return schools.filter(s => s.has_data);
-  }, [schools, showAllSchools]);
+  }, [schools]);
 
   const filtered = useMemo(() => {
     let result = schoolsToShow;
@@ -467,27 +463,6 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
           ))}
         </div>
 
-        {/* Divider */}
-        <div style={{ width: 1, height: 24, background: 'var(--g100)' }} />
-
-        {/* Show all toggle */}
-        <button
-          onClick={() => setShowAllSchools(!showAllSchools)}
-          style={{
-            padding: '8px 12px',
-            borderRadius: 6,
-            border: showAllSchools ? 'none' : '1px solid var(--g100)',
-            fontSize: 11,
-            fontWeight: 600,
-            cursor: 'pointer',
-            background: showAllSchools ? 'var(--psp-blue)' : 'transparent',
-            color: showAllSchools ? '#fff' : 'var(--g400)',
-            transition: '.15s',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {showAllSchools ? '✓ All Schools' : 'Show All'}
-        </button>
       </div>
 
       {/* ========== ALPHABET QUICK-JUMP ========== */}
