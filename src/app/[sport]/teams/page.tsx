@@ -58,17 +58,22 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
   const activeTeams = teams.filter((t) => !t.closedYear);
   const closedTeams = teams.filter((t) => t.closedYear);
 
-  // Group active teams by league
+  // Only show the three core Philly leagues
+  const CORE_LEAGUES = ["Philadelphia Catholic League", "Philadelphia Public League", "Inter-Academic League"];
+
+  // Group active teams by league (core leagues only)
   const leagueGroups: Record<string, typeof teams> = {};
   for (const team of activeTeams) {
     const league = team.league || "Independent";
+    if (!CORE_LEAGUES.includes(league)) continue;
     if (!leagueGroups[league]) leagueGroups[league] = [];
     leagueGroups[league].push(team);
   }
 
-  // Sort leagues: bigger leagues first
+  // Sort leagues: Catholic, Public, Inter-Ac
+  const leagueOrder = CORE_LEAGUES;
   const sortedLeagues = Object.entries(leagueGroups)
-    .sort((a, b) => b[1].length - a[1].length);
+    .sort((a, b) => leagueOrder.indexOf(a[0]) - leagueOrder.indexOf(b[0]));
 
   // Sort closed schools by closed year (most recent first), then name
   const sortedClosedTeams = [...closedTeams].sort((a, b) => {
@@ -111,7 +116,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                 {meta.name} Teams
               </h1>
               <p className="text-sm text-gray-400 mt-1">
-                {activeTeams.length} teams across {sortedLeagues.length} leagues
+                {sortedLeagues.reduce((sum, [, t]) => sum + t.length, 0)} teams across {sortedLeagues.length} leagues
                 {closedTeams.length > 0 && ` · ${closedTeams.length} closed programs`}
               </p>
             </div>
