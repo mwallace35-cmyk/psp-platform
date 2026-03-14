@@ -35,7 +35,6 @@ const PULSE_ITEMS = [
   { href: "/pulse", label: "The Pulse Hub" },
   { href: "/pulse/recruiting", label: "Recruiting" },
   { href: "/pulse/our-guys", label: "Our Guys" },
-  { href: "/pulse/next-level", label: "Next Level (Pro)" },
   { href: "/pulse/rankings", label: "Power Rankings" },
   { href: "/pulse/forum", label: "Forum" },
   { href: "/potw", label: "Player of the Week" },

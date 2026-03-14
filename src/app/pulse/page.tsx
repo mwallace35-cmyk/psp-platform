@@ -107,7 +107,6 @@ const SUB_NAV = [
   { label: 'Hub', href: '/pulse' },
   { label: 'Recruiting', href: '/pulse/recruiting' },
   { label: 'Our Guys', href: '/pulse/our-guys' },
-  { label: 'Next Level', href: '/pulse/next-level' },
   { label: 'Rankings', href: '/pulse/rankings' },
   { label: 'Outside the 215', href: '/pulse/outside-the-215' },
   { label: 'Calendar', href: '/pulse/calendar' },
