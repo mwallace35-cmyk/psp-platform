@@ -67,7 +67,11 @@ export default async function SchoolsPage() {
 
         const champCount = Number(row.championship_count) || 0;
         const awardCount = Number(row.award_count) || 0;
-        const hasData = totalGames > 0 || champCount > 0 || awardCount > 0 || sports.length > 0;
+        const playerCount = Number(row.player_count) || 0;
+        const sportCount = Number(row.sport_count) || 0;
+        // A school needs real substance to show by default — not just game appearances as an opponent.
+        // Require: league membership, player records, team season W-L, championships, or sport-specific stats.
+        const hasData = !!row.league_name || playerCount > 0 || sportCount > 0 || champCount > 0 || sports.length > 0;
 
         const colors = row.colors && typeof row.colors === 'object' && 'primary' in row.colors
           ? (row.colors as { primary?: string }).primary || null
@@ -92,10 +96,10 @@ export default async function SchoolsPage() {
           sports,
           award_count: awardCount,
           closed_year: row.closed_year || null,
-          player_count: Number(row.player_count) || 0,
+          player_count: playerCount,
           pro_count: Number(row.pro_count) || 0,
           game_count: Number(row.game_count) || 0,
-          sport_count: Number(row.sport_count) || 0,
+          sport_count: sportCount,
           win_pct: winPct,
         };
       });
