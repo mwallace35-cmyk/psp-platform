@@ -88,19 +88,58 @@ export const getGameBoxScore = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
-            const { data } = await supabase
+            const { data, error } = await supabase
               .from("game_player_stats")
               .select(
                 `id, game_id, player_id, school_id, sport_id, player_name, jersey_number,
                  rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards,
-                 points, stats_json, source_type,
-                 players(id, name, slug),
-                 schools(id, name, slug)`
+                 points, stats_json, source_type`
               )
               .eq("game_id", gameId)
               .order("school_id")
               .order("player_name");
-            return (data as unknown as GamePlayerStat[]) ?? [];
+
+            if (error) {
+              console.error(`[DATA_GAME_BOX_SCORE] Query error for game ${gameId}:`, error);
+              throw error;
+            }
+
+            console.log(`[DATA_GAME_BOX_SCORE] Retrieved ${(data as unknown as GamePlayerStat[])?.length ?? 0} stats for game ${gameId}`);
+
+            // Fetch player and school details separately and attach to stats
+            const stats = (data as unknown as GamePlayerStat[]) ?? [];
+            if (stats.length === 0) {
+              return [];
+            }
+
+            const playerIds = [...new Set(stats.map(s => s.player_id).filter(id => id !== null))];
+            const schoolIds = [...new Set(stats.map(s => s.school_id))];
+
+            const playersMap = new Map();
+            const schoolsMap = new Map();
+
+            if (playerIds.length > 0) {
+              const { data: players } = await supabase
+                .from("players")
+                .select("id, name, slug")
+                .in("id", playerIds as number[]);
+              players?.forEach(p => playersMap.set(p.id, p));
+            }
+
+            if (schoolIds.length > 0) {
+              const { data: schools } = await supabase
+                .from("schools")
+                .select("id, name, slug")
+                .in("id", schoolIds);
+              schools?.forEach(s => schoolsMap.set(s.id, s));
+            }
+
+            // Attach the fetched data to the stats
+            return stats.map(stat => ({
+              ...stat,
+              players: stat.player_id ? playersMap.get(stat.player_id) ?? null : null,
+              schools: schoolsMap.get(stat.school_id) ?? null,
+            }));
           },
           { maxRetries: 2, baseDelay: 500 }
         );
