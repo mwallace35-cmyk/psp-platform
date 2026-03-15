@@ -1,10 +1,10 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { getRecentScores, getGamesWithBoxScores } from "@/lib/data/games";
 import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
 import { SPORT_META, VALID_SPORTS } from "@/lib/sports";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import SportIcon from "@/components/ui/SportIcon";
+import { createStaticClient } from "@/lib/supabase/static";
 
 export const metadata: Metadata = {
   title: "Scores | PhillySportsPack",
@@ -22,23 +22,51 @@ interface ScoresPageProps {
   searchParams: Promise<{ sport?: string }>;
 }
 
-export default async function ScoresPage({
-  searchParams,
-}: ScoresPageProps) {
+interface ScoreGame {
+  id: number;
+  sport_id: string;
+  game_date: string | null;
+  home_score: number | null;
+  away_score: number | null;
+  home_school: { name: string; slug: string } | null;
+  away_school: { name: string; slug: string } | null;
+  seasons: { label: string } | null;
+}
+
+export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const params = await searchParams;
   const selectedSport = params.sport || "all";
 
-  // Fetch recent scores
-  const allScores = selectedSport === "all"
-    ? await getRecentScores(undefined, 100)
-    : await getRecentScores(selectedSport, 100);
+  // Direct lightweight query — only recent games with scores, limit 50
+  let allScores: ScoreGame[] = [];
+  try {
+    const supabase = createStaticClient();
+    let query = supabase
+      .from("games")
+      .select(
+        `id, sport_id, game_date, home_score, away_score,
+         home_school:schools!games_home_school_id_fkey(name, slug),
+         away_school:schools!games_away_school_id_fkey(name, slug),
+         seasons(label)`
+      )
+      .not("home_score", "is", null)
+      .not("away_score", "is", null)
+      .not("game_date", "is", null)
+      .order("game_date", { ascending: false })
+      .limit(50);
 
-  // Get games with box scores
-  const gameIds = allScores.map((g) => g.id);
-  const gamesWithBoxScores = await getGamesWithBoxScores(gameIds);
+    if (selectedSport !== "all") {
+      query = query.eq("sport_id", selectedSport);
+    }
+
+    const { data } = await query;
+    allScores = (data as unknown as ScoreGame[]) ?? [];
+  } catch {
+    // fail gracefully — show empty state
+  }
 
   // Group by date
-  const groupedByDate = new Map<string, typeof allScores>();
+  const groupedByDate = new Map<string, ScoreGame[]>();
   allScores.forEach((game) => {
     const date = game.game_date || "No Date";
     if (!groupedByDate.has(date)) {
@@ -69,7 +97,7 @@ export default async function ScoresPage({
           Scores
         </h1>
         <p style={{ fontSize: "1.1rem", color: "#ccc", marginBottom: "1.5rem" }}>
-          Recent & live scores from Philadelphia high school sports
+          Recent scores from Philadelphia high school sports
         </p>
 
         {/* Sport Filter Pills */}
@@ -117,7 +145,7 @@ export default async function ScoresPage({
       </div>
 
       {/* Scores List */}
-      <div className="container" style={{ maxWidth: "900px", margin: "0 auto" }}>
+      <div className="container" style={{ maxWidth: "900px", margin: "0 auto", padding: "0 1rem 2rem" }}>
         {sortedDates.length === 0 ? (
           <div
             style={{
@@ -141,7 +169,7 @@ export default async function ScoresPage({
         ) : (
           sortedDates.map((date) => {
             const games = groupedByDate.get(date) || [];
-            const dateObj = new Date(date);
+            const dateObj = new Date(date + "T12:00:00");
             const dateLabel = new Intl.DateTimeFormat("en-US", {
               weekday: "short",
               month: "short",
@@ -164,16 +192,15 @@ export default async function ScoresPage({
                   {dateLabel}
                 </h2>
 
-                <div style={{ display: "grid", gap: "1rem" }}>
+                <div style={{ display: "grid", gap: "0.75rem" }}>
                   {games.map((game) => {
                     const homeWin = game.home_score !== null && game.away_score !== null && game.home_score > game.away_score;
                     const awayWin = game.away_score !== null && game.home_score !== null && game.away_score > game.home_score;
-                    const hasBoxScore = gamesWithBoxScores.has(game.id);
-                    const sportMeta = SPORT_META[game.sport_id as keyof typeof SPORT_META];
 
                     return (
-                      <div
+                      <Link
                         key={game.id}
+                        href={`/${game.sport_id}/games/${game.id}`}
                         style={{
                           background: "linear-gradient(135deg, #1a1a1a 0%, #222 100%)",
                           border: "1px solid #333",
@@ -184,6 +211,9 @@ export default async function ScoresPage({
                           justifyContent: "space-between",
                           alignItems: "center",
                           gap: "1rem",
+                          textDecoration: "none",
+                          cursor: "pointer",
+                          transition: "border-color 0.2s ease",
                         }}
                       >
                         {/* Sport Badge */}
@@ -192,11 +222,11 @@ export default async function ScoresPage({
                             display: "flex",
                             alignItems: "center",
                             gap: "0.5rem",
-                            minWidth: "100px",
+                            minWidth: "90px",
                           }}
                         >
                           <SportIcon sport={game.sport_id} size="sm" />
-                          <span style={{ fontSize: "0.8rem", color: "#999", fontWeight: 600 }}>
+                          <span style={{ fontSize: "0.75rem", color: "#999", fontWeight: 600 }}>
                             {SPORT_META[game.sport_id as keyof typeof SPORT_META]?.name || game.sport_id}
                           </span>
                         </div>
@@ -208,22 +238,20 @@ export default async function ScoresPage({
                             display: "grid",
                             gridTemplateColumns: "1fr auto 1fr",
                             alignItems: "center",
-                            gap: "1rem",
+                            gap: "0.75rem",
                             textAlign: "center",
                           }}
                         >
                           {/* Away School */}
-                          <Link
-                            href={game.away_school ? `/football/schools/${game.away_school.slug}` : "#"}
+                          <span
                             style={{
-                              textDecoration: "none",
                               color: awayWin ? "var(--psp-gold)" : "#ccc",
                               fontWeight: awayWin ? 700 : 500,
-                              fontSize: "0.95rem",
+                              fontSize: "0.9rem",
                             }}
                           >
                             {game.away_school?.name || "TBD"}
-                          </Link>
+                          </span>
 
                           {/* Score */}
                           <div
@@ -239,45 +267,24 @@ export default async function ScoresPage({
                             <span style={{ color: awayWin ? "var(--psp-gold)" : "#999" }}>
                               {game.away_score ?? "-"}
                             </span>
-                            <span style={{ color: "#666", fontSize: "1rem" }}>vs</span>
+                            <span style={{ color: "#666", fontSize: "1rem" }}>–</span>
                             <span style={{ color: homeWin ? "var(--psp-gold)" : "#999" }}>
                               {game.home_score ?? "-"}
                             </span>
                           </div>
 
                           {/* Home School */}
-                          <Link
-                            href={game.home_school ? `/football/schools/${game.home_school.slug}` : "#"}
+                          <span
                             style={{
-                              textDecoration: "none",
                               color: homeWin ? "var(--psp-gold)" : "#ccc",
                               fontWeight: homeWin ? 700 : 500,
-                              fontSize: "0.95rem",
+                              fontSize: "0.9rem",
                             }}
                           >
                             {game.home_school?.name || "TBD"}
-                          </Link>
+                          </span>
                         </div>
-
-                        {/* Box Score Link */}
-                        {hasBoxScore && (
-                          <Link
-                            href={`/${game.sport_id}/games/${game.id}`}
-                            style={{
-                              padding: "0.5rem 1rem",
-                              background: "var(--psp-blue)",
-                              color: "white",
-                              borderRadius: "6px",
-                              textDecoration: "none",
-                              fontWeight: 600,
-                              fontSize: "0.85rem",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            Box Score
-                          </Link>
-                        )}
-                      </div>
+                      </Link>
                     );
                   })}
                 </div>
