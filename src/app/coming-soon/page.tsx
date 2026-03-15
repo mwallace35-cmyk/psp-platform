@@ -41,6 +41,78 @@ const FEATURES = [
   },
 ];
 
+function PasswordGate() {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleUnlock(e: FormEvent) {
+    e.preventDefault();
+    if (!password) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/preview-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
+        window.location.href = "/";
+      } else {
+        setError("Incorrect password");
+        setPassword("");
+      }
+    } catch {
+      setError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleUnlock} style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
+      <input
+        type="password"
+        placeholder="Site password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{
+          padding: "10px 16px",
+          borderRadius: 8,
+          border: "1px solid rgba(255,255,255,0.15)",
+          background: "rgba(255,255,255,0.06)",
+          color: "#fff",
+          fontSize: 14,
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          outline: "none",
+          width: 180,
+        }}
+      />
+      <button
+        type="submit"
+        disabled={loading}
+        style={{
+          padding: "10px 20px",
+          borderRadius: 8,
+          border: "1px solid rgba(240,165,0,0.4)",
+          background: "transparent",
+          color: "#f0a500",
+          fontSize: 13,
+          fontWeight: 600,
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          cursor: loading ? "wait" : "pointer",
+          opacity: loading ? 0.6 : 1,
+          transition: "all 0.2s ease",
+        }}
+      >
+        {loading ? "..." : "Enter Site"}
+      </button>
+      {error && <div style={{ width: "100%", textAlign: "center", color: "#f87171", fontSize: 12, marginTop: 4 }}>{error}</div>}
+    </form>
+  );
+}
+
 function SignupForm() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -457,6 +529,22 @@ export default function ComingSoonPage() {
           </svg>
           @phillysportspack
         </a>
+      </div>
+
+      {/* Password Gate — for authorized users */}
+      <div
+        style={{
+          marginBottom: 32,
+          padding: "20px 28px",
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: 12,
+        }}
+      >
+        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginBottom: 10, textTransform: "uppercase", letterSpacing: "1.5px", fontWeight: 600 }}>
+          Authorized Access
+        </div>
+        <PasswordGate />
       </div>
 
       {/* Credit */}

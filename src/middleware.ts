@@ -73,7 +73,7 @@ function checkRateLimit(
 }
 
 const BYPASS_COOKIE = "psp_preview";
-const BYPASS_KEY = process.env.PSP_PREVIEW_KEY || "";
+const BYPASS_KEY = process.env.SITE_PASSWORD || process.env.PSP_PREVIEW_KEY || "";
 const ALLOWED_IPS = (process.env.PSP_ALLOWED_IPS || "")
   .split(",")
   .map((ip) => ip.trim())
