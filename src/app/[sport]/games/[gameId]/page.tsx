@@ -10,7 +10,7 @@ import {
 import { Breadcrumb } from "@/components/ui";
 import type { Metadata } from "next";
 
-export const revalidate = 86400; // ISR: daily
+export const revalidate = 3600; // ISR: hourly (games get new box scores frequently)
 
 type PageParams = { sport: string; gameId: string };
 
