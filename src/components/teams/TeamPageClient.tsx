@@ -569,7 +569,66 @@ export default function TeamPageClient({
               </div>
             )}
 
-            {/* Program History */}
+            {/* Season History — clickable links to each year */}
+            {teamSeasons && teamSeasons.length > 0 && (
+              <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
+                <div className="bg-[var(--psp-navy)] px-5 py-3" style={{ borderLeft: `4px solid var(--psp-gold)` }}>
+                  <h2 className="text-sm font-bold text-white uppercase tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                    Season History
+                  </h2>
+                </div>
+                <div className="divide-y divide-gray-100">
+                  {teamSeasons
+                    .filter((ts) => ts.seasons?.label)
+                    .sort((a, b) => (b.seasons?.year_start || 0) - (a.seasons?.year_start || 0))
+                    .map((ts) => {
+                      const label = ts.seasons!.label;
+                      const w = ts.wins ?? 0;
+                      const l = ts.losses ?? 0;
+                      const t = ts.ties ?? 0;
+                      const total = w + l;
+                      const pct = total > 0 ? ((w / total) * 100).toFixed(0) : "—";
+                      const isChampYear = championships.some(
+                        (c) => c.season_id === ts.season_id
+                      );
+                      return (
+                        <Link
+                          key={ts.id}
+                          href={`/${sport}/teams/${team.slug}/${label}`}
+                          className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            {isChampYear && (
+                              <span className="text-base" title="Championship season">🏆</span>
+                            )}
+                            <span className="font-semibold text-sm" style={{ color: "var(--psp-navy)" }}>
+                              {label}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm font-bold" style={{ color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif" }}>
+                              {w}-{l}{t > 0 ? `-${t}` : ""}
+                            </span>
+                            <span className="text-xs text-gray-400 w-10 text-right">{pct}%</span>
+                            <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">→</span>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                </div>
+                <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
+                  <Link
+                    href={`/${sport}/schools/${team.slug}`}
+                    className="text-xs font-semibold hover:underline"
+                    style={{ color: "var(--psp-navy)" }}
+                  >
+                    View full program profile →
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* Program History Timeline */}
             <div style={{ marginTop: 20 }}>
               <h2 style={{ fontSize: "1.25rem", fontWeight: "bold", marginBottom: 16, color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif" }}>Program History</h2>
               <div style={{

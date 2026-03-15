@@ -1,5 +1,6 @@
 import { createStaticClient } from "@/lib/supabase/static";
 import { SPORT_META } from "@/lib/data";
+import { getCurrentSeasonLabel } from "@/lib/sports";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -17,9 +18,10 @@ export async function generateMetadata({
   const sport = await validateSportParamForMetadata(params);
   if (!sport) return {};
   const meta = SPORT_META[sport];
+  const seasonLabel = getCurrentSeasonLabel();
   return {
-    title: `2026-27 ${meta.name} Schedule — PhillySportsPack`,
-    description: `Complete 2026-27 Philadelphia high school ${meta.name.toLowerCase()} schedule. View week-by-week or filter by team.`,
+    title: `${seasonLabel} ${meta.name} Schedule — PhillySportsPack`,
+    description: `Complete ${seasonLabel} Philadelphia high school ${meta.name.toLowerCase()} schedule. View week-by-week or filter by team.`,
     alternates: {
       canonical: `https://phillysportspack.com/${sport}/schedule`,
     },
@@ -65,12 +67,13 @@ export default async function SchedulePage({
 
   const meta = SPORT_META[sport];
   const supabase = createStaticClient();
+  const seasonLabel = getCurrentSeasonLabel();
 
-  // Get current/upcoming season (145 = 2026-27)
+  // Get current/upcoming season
   const { data: seasonData } = await supabase
     .from("seasons")
     .select("id, label")
-    .eq("label", "2026-27")
+    .eq("label", seasonLabel)
     .single();
 
   if (!seasonData) notFound();
@@ -155,7 +158,7 @@ export default async function SchedulePage({
           <div className="flex items-center gap-3 mb-2">
             <span className="text-3xl">{meta.emoji}</span>
             <h1 className="text-4xl md:text-5xl font-bebas text-white">
-              2026-27 {meta.name} Schedule
+              {seasonLabel} {meta.name} Schedule
             </h1>
           </div>
           <p className="text-gray-300 text-lg">
@@ -198,7 +201,7 @@ export default async function SchedulePage({
         games={JSON.parse(JSON.stringify(games))}
         teams={JSON.parse(JSON.stringify(teams))}
         sport={sport}
-        seasonLabel="2026-27"
+        seasonLabel={seasonLabel}
       />
     </div>
   );

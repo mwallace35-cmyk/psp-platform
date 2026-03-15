@@ -51,9 +51,9 @@ export default function SportQuickNav({ sport, activePage }: SportQuickNavProps)
     ...(sport === 'football'
       ? [
           {
-            label: 'All-City',
-            href: `/${sport}/all-city`,
-            id: 'all-city',
+            label: 'Awards',
+            href: `/${sport}/awards`,
+            id: 'awards',
             icon: '⭐',
           },
         ]

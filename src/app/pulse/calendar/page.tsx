@@ -1,4 +1,5 @@
 import { createStaticClient } from '@/lib/supabase/static';
+import { getCurrentSeasonLabel } from '@/lib/sports';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -43,12 +44,22 @@ const SUB_NAV = [
 
 export default async function CalendarPage() {
   const supabase = createStaticClient();
+  const seasonLabel = getCurrentSeasonLabel();
 
-  // Fetch upcoming games (2026-27 season = id 145)
+  // Get the current season ID
+  const { data: seasonData } = await supabase
+    .from('seasons')
+    .select('id')
+    .eq('label', seasonLabel)
+    .single();
+
+  const seasonId = seasonData?.id ?? 145; // fallback to 145 if not found
+
+  // Fetch upcoming games for current season
   const { data: rawGames } = await supabase
     .from('games')
     .select('id, game_date, game_time, game_type, sport_id, home_score, away_score, home_school:home_school_id(name, slug, colors), away_school:away_school_id(name, slug, colors), seasons:season_id(label)')
-    .eq('season_id', 145)
+    .eq('season_id', seasonId)
     .order('game_date', { ascending: true })
     .order('game_time', { ascending: true })
     .limit(200);
@@ -85,7 +96,7 @@ export default async function CalendarPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">2026-27 Game Schedule</h1>
+          <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">{seasonLabel} Game Schedule</h1>
           <p className="text-gray-300 text-lg">Full football schedule for Public League and area schools</p>
           <div className="flex flex-wrap gap-6 mt-4 text-sm">
             <div><span className="text-gold font-bold text-xl">{totalGames}</span> <span className="text-gray-400">Total Games</span></div>
@@ -186,7 +197,7 @@ export default async function CalendarPage() {
                           ) : (
                             g.home_school?.slug && (
                               <Link
-                                href={`/football/teams/${g.home_school.slug}/2026-27`}
+                                href={`/football/teams/${g.home_school.slug}/${seasonLabel}`}
                                 className="text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition flex-shrink-0"
                               >
                                 Preview &rarr;

@@ -37,6 +37,12 @@ interface SchoolData {
   win_pct: number | null;
 }
 
+const CORE_LEAGUES = [
+  'Philadelphia Catholic League',
+  'Philadelphia Public League',
+  'Inter-Academic League',
+];
+
 export default async function SchoolsPage() {
   let schools: SchoolData[] = [];
   let risingPrograms: { id: number; slug: string; name: string; league: string; recentTitles: number }[] = [];
@@ -44,35 +50,18 @@ export default async function SchoolsPage() {
   try {
     const supabase = createStaticClient();
 
-    // Two RPC calls replace 14 truncated PostgREST queries
-    const [directoryResult, risingResult] = await Promise.all([
-      supabase.rpc('get_school_directory'),
-      supabase.rpc('get_rising_programs', { p_since_year: 2020 }),
-    ]);
+    // Single fast query against the pre-aggregated materialized view
+    const { data, error } = await supabase
+      .from('school_directory_mv')
+      .select('*')
+      .in('league_name', CORE_LEAGUES)
+      .order('name', { ascending: true });
 
-    if (directoryResult.error) {
-      captureError(directoryResult.error, { function: 'get_school_directory', context: 'schools_page' });
-      console.warn('[PSP] get_school_directory RPC failed:', directoryResult.error.message);
-    } else {
-      schools = (directoryResult.data ?? []).map((row: any) => {
-        const wins = Number(row.total_wins) || 0;
-        const losses = Number(row.total_losses) || 0;
-        const totalGames = wins + losses;
-        const winPct = totalGames > 0 ? Math.round((wins / totalGames) * 1000) / 10 : null;
-
-        const sports: string[] = [];
-        if (row.has_football) sports.push('football');
-        if (row.has_basketball) sports.push('basketball');
-        if (row.has_baseball) sports.push('baseball');
-
-        const champCount = Number(row.championship_count) || 0;
-        const awardCount = Number(row.award_count) || 0;
-        const playerCount = Number(row.player_count) || 0;
-        const sportCount = Number(row.sport_count) || 0;
-        // A school needs real substance to show by default — not just game appearances as an opponent.
-        // Require: league membership, player records, team season W-L, championships, or sport-specific stats.
-        const hasData = !!row.league_name || playerCount > 0 || sportCount > 0 || champCount > 0 || sports.length > 0;
-
+    if (error) {
+      captureError(error, { function: 'schools_page', context: 'schools_fetch' });
+      console.warn('[PSP] Schools directory fetch failed:', error.message);
+    } else if (data && Array.isArray(data)) {
+      schools = data.map((row: any) => {
         const colors = row.colors && typeof row.colors === 'object' && 'primary' in row.colors
           ? (row.colors as { primary?: string }).primary || null
           : null;
@@ -80,53 +69,53 @@ export default async function SchoolsPage() {
           ? (row.colors as { secondary?: string }).secondary || null
           : null;
 
+        const hasData = !!row.league_name || row.player_count > 0 || row.championships_count > 0;
+
+        // Infer sports from available data
+        const sports: string[] = [];
+        if (row.player_count > 0 || row.team_season_count > 0) {
+          sports.push('football', 'basketball', 'baseball');
+        }
+
         return {
-          id: row.school_id,
-          slug: row.school_slug,
-          name: row.school_name,
+          id: row.id,
+          slug: row.slug,
+          name: row.name,
           city: row.city || '',
           state: row.state || 'PA',
-          league: row.league_name || null,
+          league: row.league_name,
           colors,
           secondary_color: secondaryColor,
-          championships_count: champCount,
-          total_wins: wins,
-          total_losses: losses,
+          championships_count: row.championships_count,
+          total_wins: row.total_wins,
+          total_losses: row.total_losses,
           has_data: hasData,
           sports,
-          award_count: awardCount,
-          closed_year: row.closed_year || null,
-          player_count: playerCount,
-          pro_count: Number(row.pro_count) || 0,
-          game_count: Number(row.game_count) || 0,
-          sport_count: sportCount,
-          win_pct: winPct,
+          award_count: row.award_count,
+          closed_year: row.closed_year,
+          player_count: row.player_count,
+          pro_count: row.pro_count,
+          game_count: 0,
+          sport_count: sports.length,
+          win_pct: row.win_pct ? Number(row.win_pct) : null,
         };
       });
-    }
 
-    if (risingResult.error) {
-      console.warn('[PSP] get_rising_programs RPC failed:', risingResult.error.message);
-    } else {
-      risingPrograms = (risingResult.data ?? []).map((row: any) => ({
-        id: row.school_id,
-        slug: row.school_slug,
-        name: row.school_name,
-        league: row.league_name || 'Unknown',
-        recentTitles: Number(row.recent_titles) || 0,
-      }));
+      // Rising programs = schools with recent championships (since 2020)
+      risingPrograms = data
+        .filter((row: any) => row.recent_championships > 0)
+        .map((row: any) => ({
+          id: row.id,
+          slug: row.slug,
+          name: row.name,
+          league: row.league_name || 'Unknown',
+          recentTitles: row.recent_championships,
+        }))
+        .sort((a, b) => b.recentTitles - a.recentTitles);
     }
   } catch (error) {
     captureError(error, { function: 'SchoolsPage', context: 'schools_directory' });
   }
-
-  // Only show schools from the three core leagues
-  const CORE_LEAGUES = [
-    'Philadelphia Catholic League',
-    'Philadelphia Public League',
-    'Inter-Academic League',
-  ];
-  schools = schools.filter((s) => s.league && CORE_LEAGUES.includes(s.league));
 
   const leagues = CORE_LEAGUES;
 

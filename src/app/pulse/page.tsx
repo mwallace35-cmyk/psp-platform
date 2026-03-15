@@ -1,7 +1,7 @@
 import { createStaticClient } from '@/lib/supabase/static';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SPORT_META } from '@/lib/sports';
+import { SPORT_META, getCurrentSeasonLabel } from '@/lib/sports';
 import GotwVoteButton from '@/components/pulse/GotwVoteButton';
 import SocialFeed from '@/components/pulse/SocialFeed';
 import { getSocialFeedPosts } from '@/lib/data/social';
@@ -127,6 +127,15 @@ const SUB_NAV = [
 
 export default async function PulsePage() {
   const supabase = createStaticClient();
+  const seasonLabel = getCurrentSeasonLabel();
+
+  // Look up current season ID dynamically
+  const { data: seasonRow } = await supabase
+    .from('seasons')
+    .select('id')
+    .eq('label', seasonLabel)
+    .single();
+  const currentSeasonId = seasonRow?.id;
 
   const [
     alumniRes,
@@ -161,21 +170,23 @@ export default async function PulsePage() {
     supabase.from('potw_nominees').select('*').order('votes', { ascending: false }).limit(5),
     // GOTW nominees
     supabase.from('gotw_nominees').select('*').order('vote_count', { ascending: false }).limit(4),
-    // Upcoming games (2026-27 season)
-    supabase
-      .from('games')
-      .select('id, game_date, game_time, game_type, sport_id, home_school:home_school_id(name, slug, colors), away_school:away_school_id(name, slug, colors)')
-      .eq('season_id', 145)
-      .gte('game_date', new Date().toISOString().split('T')[0])
-      .order('game_date', { ascending: true })
-      .order('game_time', { ascending: true })
-      .limit(6),
+    // Upcoming games (current season)
+    currentSeasonId
+      ? supabase
+          .from('games')
+          .select('id, game_date, game_time, game_type, sport_id, home_school:home_school_id(name, slug, colors), away_school:away_school_id(name, slug, colors)')
+          .eq('season_id', currentSeasonId)
+          .gte('game_date', new Date().toISOString().split('T')[0])
+          .order('game_date', { ascending: true })
+          .order('game_time', { ascending: true })
+          .limit(6)
+      : Promise.resolve({ data: [], error: null }),
     // Active daily poll
     supabase.from('daily_polls').select('*').eq('active', true).limit(1).single(),
     // Top programs by championship count (raw query, aggregate client-side)
     supabase
       .from('championships')
-      .select('school_id, schools(id, name, slug, colors)')
+      .select('school_id, schools!championships_school_id_fkey(id, name, slug, colors)')
       .not('school_id', 'is', null)
       .limit(1000),
     // Stats for Data Spotlight
@@ -436,8 +447,8 @@ export default async function PulsePage() {
               {upcomingGames.length === 0 ? (
                 <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
                   <p className="text-2xl mb-2">🏈</p>
-                  <p className="text-gray-700 font-medium">2026-27 Season Schedule Loaded</p>
-                  <p className="text-gray-500 text-sm mt-1">128 games ready. First scrimmages kick off August 22, 2026.</p>
+                  <p className="text-gray-700 font-medium">{seasonLabel} Season Schedule Loaded</p>
+                  <p className="text-gray-500 text-sm mt-1">Games ready. Check back soon for upcoming matchups.</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -470,7 +481,7 @@ export default async function PulsePage() {
                         {/* Link to team */}
                         {g.home_school?.slug && (
                           <Link
-                            href={`/football/teams/${g.home_school.slug}/2026-27`}
+                            href={`/football/teams/${g.home_school.slug}/${seasonLabel}`}
                             className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition font-medium"
                           >
                             Preview

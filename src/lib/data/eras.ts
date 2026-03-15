@@ -83,6 +83,7 @@ export const getStatTypes = (sportSlug: string): EraStatType[] => {
 
 /**
  * Get statistics by era (decade) for a specific stat type
+ * OPTIMIZED: Uses PostgREST queries instead of dropped execute_raw_sql RPC
  */
 export const getStatByEra = cache(
   async (
@@ -95,75 +96,88 @@ export const getStatByEra = cache(
           async () => {
             const supabase = await createClient();
 
-            // Determine table and column based on sport and stat type
-            let query = `
-              SELECT
-                FLOOR(s.year_start / 10) * 10 as decade,
-                COUNT(*) as sample_size,
-                ROUND(AVG(COALESCE(x.stat_value, 0))::numeric, 2) as avg_value,
-                MAX(COALESCE(x.stat_value, 0)) as max_value,
-                MIN(COALESCE(x.stat_value, 0)) as min_value,
-                ROUND(STDDEV(COALESCE(x.stat_value, 0))::numeric, 2) as stddev
-              FROM (
-            `;
-
-            // Build the stat value subquery based on sport
+            // Determine table based on sport
+            let tableName = "";
             if (sportSlug === "football") {
-              query += `
-                SELECT fps.season_id, fps.${statType} as stat_value
-                FROM football_player_seasons fps
-                WHERE fps.${statType} IS NOT NULL AND fps.${statType} > 0
-              `;
+              tableName = "football_player_seasons";
             } else if (sportSlug === "basketball") {
-              query += `
-                SELECT bps.season_id, bps.${statType} as stat_value
-                FROM basketball_player_seasons bps
-                WHERE bps.${statType} IS NOT NULL AND bps.${statType} > 0
-              `;
+              tableName = "basketball_player_seasons";
             } else if (sportSlug === "baseball") {
-              query += `
-                SELECT bsp.season_id, bsp.${statType} as stat_value
-                FROM baseball_player_seasons bsp
-                WHERE bsp.${statType} IS NOT NULL AND bsp.${statType} > 0
-              `;
+              tableName = "baseball_player_seasons";
             } else {
               return [];
             }
 
-            query += `
-              ) x
-              JOIN seasons s ON x.season_id = s.id
-              WHERE s.label NOT LIKE '%-%' OR s.label LIKE '%-__'
-              GROUP BY decade
-              ORDER BY decade DESC
-            `;
-
-            const { data, error } = await supabase.rpc("execute_raw_sql", {
-              sql: query,
-            });
+            // Fetch all player seasons with season info
+            const { data: rawData, error } = await supabase
+              .from(tableName)
+              .select(
+                `${statType}, season_id, seasons(id, year_start, year_end, label)`
+              )
+              .not(statType, "is", null);
 
             if (error) {
-              // Fallback: try direct query via REST API for simple case
-              console.error("Raw SQL error:", error);
+              console.error("Era query error:", error);
               return [];
             }
 
-            if (!data || !Array.isArray(data)) return [];
+            if (!rawData || !Array.isArray(rawData)) return [];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const data = rawData as any[];
+
+            // Group by decade
+            const decadeStats = new Map<
+              number,
+              { values: number[]; years: Set<number> }
+            >();
+
+            for (const row of data) {
+              const seasonData = (row.seasons as any) || {};
+              const yearStart = seasonData.year_start as number;
+              const statValue = row[statType as keyof typeof row] as number;
+
+              if (!yearStart || statValue === null || statValue === undefined || statValue <= 0) {
+                continue;
+              }
+
+              const decade = Math.floor(yearStart / 10) * 10;
+              if (!decadeStats.has(decade)) {
+                decadeStats.set(decade, { values: [], years: new Set() });
+              }
+
+              const stats = decadeStats.get(decade)!;
+              stats.values.push(statValue);
+              stats.years.add(yearStart);
+            }
+
+            // Calculate statistics for each decade
+            const eras: EraStatistic[] = [];
+
+            for (const [decade, stats] of decadeStats) {
+              if (stats.values.length === 0) continue;
+
+              const values = stats.values.sort((a, b) => a - b);
+              const mean = values.reduce((a, b) => a + b, 0) / values.length;
+              const variance =
+                values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) /
+                values.length;
+              const stdDev = Math.sqrt(variance);
+
+              eras.push({
+                decade,
+                decade_label: `${decade}s`,
+                sample_size: values.length,
+                avg_value: Math.round(mean * 100) / 100,
+                max_value: Math.max(...values),
+                min_value: Math.min(...values),
+                stddev: Math.round(stdDev * 100) / 100,
+              });
+            }
+
+            // Sort by decade descending
+            eras.sort((a, b) => b.decade - a.decade);
 
             // Calculate trends
-            const eras: EraStatistic[] = data.map(
-              (row: Record<string, unknown>) => ({
-                decade: row.decade as number,
-                decade_label: `${row.decade}s`,
-                sample_size: row.sample_size as number,
-                avg_value: parseFloat(row.avg_value as string) || 0,
-                max_value: row.max_value as number,
-                min_value: row.min_value as number,
-                stddev: parseFloat(row.stddev as string) || 0,
-              })
-            );
-
-            // Add trends
             for (let i = 0; i < eras.length - 1; i++) {
               const current = eras[i];
               const previous = eras[i + 1];

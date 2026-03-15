@@ -30,7 +30,7 @@ function buildTabs(sport: string, icon: string, defaultLeaderboardStat: string, 
 
 const SPORT_TAB_CONFIG: Record<string, Tab[]> = {
   football: buildTabs('football', '🏈', 'rushing', [
-    { href: '/football/all-city', label: 'All-City', icon: '⭐' },
+    { href: '/football/awards', label: 'Awards', icon: '⭐' },
   ]),
   basketball: buildTabs('basketball', '🏀', 'scoring'),
   baseball: buildTabs('baseball', '⚾', 'batting'),

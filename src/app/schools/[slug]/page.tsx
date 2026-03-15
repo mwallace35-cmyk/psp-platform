@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SPORT_META } from "@/lib/sports";
+import { SPORT_META, getCurrentSeasonLabel } from "@/lib/sports";
 import { Breadcrumb, AchievementBadge, Badge } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
@@ -135,15 +135,26 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
     captureError(error, { slug, context: "school_hub_data_fetching" });
   }
 
-  // Check for upcoming 2026-27 schedule
+  // Check for upcoming schedule
   let upcomingGameCount = 0;
   const upcomingSport = "football";
+  const seasonLabel = getCurrentSeasonLabel();
   try {
     const supabase = createStaticClient();
+
+    // Get the season ID for current season
+    const { data: seasonData } = await supabase
+      .from("seasons")
+      .select("id")
+      .eq("label", seasonLabel)
+      .single();
+
+    const seasonId = seasonData?.id ?? 145; // fallback to 145 if not found
+
     const { count } = await supabase
       .from("games")
       .select("id", { count: "exact", head: true })
-      .eq("season_id", 145)
+      .eq("season_id", seasonId)
       .or(`home_school_id.eq.${school.id},away_school_id.eq.${school.id}`);
     upcomingGameCount = count ?? 0;
   } catch {
@@ -327,7 +338,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
       {upcomingGameCount > 0 && (
         <div className="max-w-7xl mx-auto px-4 mt-6">
           <Link
-            href={`/${upcomingSport}/teams/${slug}/2026-27`}
+            href={`/${upcomingSport}/teams/${slug}/${seasonLabel}`}
             className="block bg-gradient-to-r from-[var(--psp-navy)] to-[#0f2040] rounded-xl p-4 hover:shadow-lg transition group"
           >
             <div className="flex items-center gap-4">
@@ -335,7 +346,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 📅
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[var(--psp-gold)] font-bebas text-xl">2026-27 Schedule Available</p>
+                <p className="text-[var(--psp-gold)] font-bebas text-xl">{seasonLabel} Schedule Available</p>
                 <p className="text-gray-300 text-sm">{upcomingGameCount} game{upcomingGameCount !== 1 ? "s" : ""} scheduled — view the full {upcomingSport} schedule</p>
               </div>
               <span className="text-[var(--psp-gold)] text-sm font-medium group-hover:translate-x-1 transition-transform flex-shrink-0 hidden sm:block">
@@ -673,7 +684,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                   </h2>
                   {sportsStats.some((s) => s.sport_id === "football") && (
                     <Link
-                      href="/football/all-city"
+                      href="/football/awards"
                       className="text-xs hover:underline"
                       style={{ color: "var(--psp-blue)" }}
                     >
@@ -911,7 +922,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 <div className="border-t border-gray-100 pt-2 mt-2 space-y-2">
                   {sportsStats.some((s) => s.sport_id === "football") && (
                     <Link
-                      href="/football/all-city"
+                      href="/football/awards"
                       className="block text-sm py-1 hover:underline"
                       style={{ color: "var(--psp-blue)" }}
                     >

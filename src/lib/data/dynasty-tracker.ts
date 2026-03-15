@@ -55,7 +55,7 @@ export const getDynastyTrackerData = cache(
               .from("championships")
               .select(
                 `id, school_id, season_id, level,
-                 schools(id, name, slug, school_colors),
+                 schools!championships_school_id_fkey(id, name, slug, school_colors),
                  seasons(year_start, year_end, label)`
               )
               .eq("sport_id", sportSlug)
@@ -144,7 +144,7 @@ export const getDynastyLeaders = cache(
               .from("championships")
               .select(
                 `id, school_id, level,
-                 schools(id, name, slug, school_colors),
+                 schools!championships_school_id_fkey(id, name, slug, school_colors),
                  seasons(year_start, year_end, label)`
               )
               .eq("sport_id", sportSlug)

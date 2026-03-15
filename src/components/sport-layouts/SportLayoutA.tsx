@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { SkeletonCard, SkeletonText } from "@/components/ui/Skeleton";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { getCurrentSeasonLabel } from "@/lib/sports";
 import LeagueStandings from "./LeagueStandings";
 import StatLeadersSidebar from "./StatLeadersSidebar";
 import ContextAwareHero from "./ContextAwareHero";
@@ -72,6 +73,7 @@ interface SportLayoutAProps {
 export default function SportLayoutA({ sport, sportColor, meta, overview, champions, schools, featured, freshness, recentGames, standings, trackedAlumni }: SportLayoutAProps) {
   const topStory = featured?.[0];
   const moreStories = featured?.slice(1) || [];
+  const seasonLabel = getCurrentSeasonLabel();
 
   return (
     <div className="espn-container">
@@ -252,15 +254,15 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
             </div>
           </Link>
           <Link href={`/${sport}/schedule`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
-            <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>2026-27 Schedule</div>
+            <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>{seasonLabel} Schedule</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }}>📅</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Upcoming games</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Week-by-week or filter by team</div>
             </div>
           </Link>
-          <Link href={`/${sport}/all-city`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
-            <div className="ldr-head" style={{ background: sportColor }}>All-City Teams</div>
+          <Link href={`/${sport}/awards`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="ldr-head" style={{ background: sportColor }}>Awards & Honors</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }}>🌟</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Honor rolls</div>
@@ -360,11 +362,11 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
             <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="w-link">&#8594; Leaderboards</Link>
             <Link href={`/${sport}/championships`} className="w-link">&#8594; Championship History</Link>
             <Link href={`/${sport}/records`} className="w-link">&#8594; Records</Link>
-            <Link href={`/${sport}/all-city`} className="w-link">&#8594; All-City Teams</Link>
+            <Link href={`/${sport}/awards`} className="w-link">&#8594; Awards & Honors</Link>
             <Link href={`/${sport}/rivalries`} className="w-link">&#8594; Rivalries</Link>
             <Link href={`/${sport}/eras`} className="w-link">&#8594; Statistical Eras</Link>
             <Link href={`/${sport}/breakouts`} className="w-link">&#8594; Breakout Alerts</Link>
-            <Link href={`/${sport}/schedule`} className="w-link">&#8594; 2026-27 Schedule</Link>
+            <Link href={`/${sport}/schedule`} className="w-link">&#8594; {seasonLabel} Schedule</Link>
             <Link href={`/search?sport=${sport}`} className="w-link">&#8594; Player Search</Link>
             <Link href="/compare" className="w-link">&#8594; Compare Players</Link>
           </div>

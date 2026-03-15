@@ -26,6 +26,7 @@ export interface BreakoutAlert {
 /**
  * Get breakout players for a sport (current season vs previous season)
  * Calculates year-over-year stat jumps
+ * OPTIMIZED: Uses PostgREST queries instead of dropped execute_raw_sql RPC
  */
 export const getBreakoutPlayers = cache(
   async (sportSlug: string, limit = 10): Promise<BreakoutAlert[]> => {
@@ -41,11 +42,11 @@ export const getBreakoutPlayers = cache(
             let statLabel = "";
 
             if (sportSlug === "football") {
-              statColumn = "rush_yards"; // Primary stat
+              statColumn = "rush_yards";
               tableName = "football_player_seasons";
               statLabel = "Rushing Yards";
             } else if (sportSlug === "basketball") {
-              statColumn = "points"; // Primary stat
+              statColumn = "points";
               tableName = "basketball_player_seasons";
               statLabel = "Points";
             } else if (sportSlug === "baseball") {
@@ -56,65 +57,110 @@ export const getBreakoutPlayers = cache(
               return [];
             }
 
-            // Build query to find year-over-year stat jumps
-            const query = `
-              SELECT
-                p.id as player_id,
-                p.name as player_name,
-                p.slug as player_slug,
-                p.primary_school_id as school_id,
-                sc.name as school_name,
-                sc.slug as school_slug,
-                '${sportSlug}' as sport_id,
-                s_curr.label as current_season,
-                s_prev.label as previous_season,
-                COALESCE(curr.${statColumn}, 0) as current_stat,
-                COALESCE(prev.${statColumn}, 0) as previous_stat,
-                CASE
-                  WHEN COALESCE(prev.${statColumn}, 0) = 0 THEN 999
-                  ELSE ROUND((COALESCE(curr.${statColumn}, 0) - COALESCE(prev.${statColumn}, 0)) / COALESCE(prev.${statColumn}, 1) * 100)
-                END as pct_increase,
-                CASE
-                  WHEN COALESCE(curr.games_played, 1) > 0 THEN ROUND(COALESCE(curr.${statColumn}, 0) / COALESCE(curr.games_played, 1), 1)
-                  ELSE 0
-                END as avg_per_game,
-                CASE
-                  WHEN COALESCE(curr.games_played, 1) > 0 THEN ROUND(COALESCE(curr.${statColumn}, 0) / COALESCE(curr.games_played, 1) * 11)
-                  ELSE 0
-                END as projected_total,
-                '${statLabel}' as stat_label
-              FROM ${tableName} curr
-              JOIN ${tableName} prev ON curr.player_id = prev.player_id
-                AND curr.school_id = prev.school_id
-                AND curr.season_id = prev.season_id + 1
-              JOIN players p ON curr.player_id = p.id
-              JOIN schools sc ON curr.school_id = sc.id
-              JOIN seasons s_curr ON curr.season_id = s_curr.id
-              JOIN seasons s_prev ON prev.season_id = s_prev.id
-              WHERE p.deleted_at IS NULL
-                AND sc.deleted_at IS NULL
-                AND COALESCE(curr.games_played, 0) >= 5
-                AND COALESCE(prev.${statColumn}, 0) > 0
-                AND COALESCE(curr.${statColumn}, 0) - COALESCE(prev.${statColumn}, 0) > 0
-              ORDER BY pct_increase DESC, current_stat DESC
-              LIMIT ${Math.min(limit, 50)}
-            `;
-
-            const { data, error } = await supabase.rpc("execute_raw_sql", {
-              sql: query,
-            });
+            // Fetch all seasons for the sport with relations
+            const { data: rawSeasons, error } = await supabase
+              .from(tableName)
+              .select(
+                `id, player_id, school_id, season_id,
+                 ${statColumn}, games_played,
+                 players(id, name, slug),
+                 schools(id, name, slug),
+                 seasons(id, label)`
+              )
+              .not(`${statColumn}`, "is", null);
 
             if (error) {
               console.error("Breakouts query error:", error);
               return [];
             }
 
-            if (!data || !Array.isArray(data)) return [];
+            if (!rawSeasons || !Array.isArray(rawSeasons)) return [];
 
-            // Filter for minimum 100% increase
-            return (data as BreakoutAlert[]).filter(
-              (alert) => alert.pct_increase >= 100
-            );
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const allSeasons = rawSeasons as any[];
+
+            // Build map of player+school → season data
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const playerSchoolSeasons = new Map<string, Record<number, any>>();
+
+            for (const season of allSeasons) {
+              const key = `${season.player_id}-${season.school_id}`;
+              if (!playerSchoolSeasons.has(key)) {
+                playerSchoolSeasons.set(key, {});
+              }
+              playerSchoolSeasons.get(key)![season.season_id] = season;
+            }
+
+            // Calculate breakouts
+            const breakouts: BreakoutAlert[] = [];
+
+            for (const [key, seasons] of playerSchoolSeasons) {
+              const seasonIds = Object.keys(seasons)
+                .map(Number)
+                .sort((a, b) => a - b);
+
+              // Check each consecutive pair
+              for (let i = 0; i < seasonIds.length - 1; i++) {
+                const prevSeasonId = seasonIds[i];
+                const currSeasonId = seasonIds[i + 1];
+
+                const prev = seasons[prevSeasonId];
+                const curr = seasons[currSeasonId];
+
+                // Must be consecutive seasons
+                if (curr.season_id !== prev.season_id + 1) continue;
+
+                const prevStat = (prev[statColumn as keyof typeof prev] as number) || 0;
+                const currStat = (curr[statColumn as keyof typeof curr] as number) || 0;
+                const gamesPlayed = curr.games_played || 0;
+
+                // Filter criteria
+                if (gamesPlayed < 5) continue;
+                if (prevStat <= 0) continue;
+                if (currStat <= prevStat) continue;
+
+                const pctIncrease = ((currStat - prevStat) / prevStat) * 100;
+
+                // Only include if >= 100% increase
+                if (pctIncrease < 100) continue;
+
+                const avgPerGame = gamesPlayed > 0 ? currStat / gamesPlayed : 0;
+                const projectedTotal =
+                  gamesPlayed > 0 ? (currStat / gamesPlayed) * 11 : 0;
+
+                const playerData = curr.players as any;
+                const schoolData = curr.schools as any;
+                const seasonData = curr.seasons as any;
+
+                breakouts.push({
+                  player_id: curr.player_id,
+                  player_name: playerData?.name || "Unknown",
+                  player_slug: playerData?.slug || "",
+                  school_id: curr.school_id,
+                  school_name: schoolData?.name || "Unknown",
+                  school_slug: schoolData?.slug || "",
+                  sport_id: sportSlug,
+                  current_season: seasonData?.label || "",
+                  previous_season: (seasons[prevSeasonId].seasons as any)?.label || "",
+                  current_stat: currStat,
+                  previous_stat: prevStat,
+                  pct_increase: Math.round(pctIncrease),
+                  avg_per_game: Math.round(avgPerGame * 10) / 10,
+                  projected_total: Math.round(projectedTotal),
+                  stat_label: statLabel,
+                });
+              }
+            }
+
+            // Sort by pct_increase DESC, then current_stat DESC
+            return breakouts
+              .sort((a, b) => {
+                if (b.pct_increase !== a.pct_increase) {
+                  return b.pct_increase - a.pct_increase;
+                }
+                return b.current_stat - a.current_stat;
+              })
+              .slice(0, Math.min(limit, 50));
           },
           { maxRetries: 2, baseDelay: 500 }
         );

@@ -80,7 +80,7 @@ export async function GET() {
     let atomXml = `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>PhillySportsPack - Philadelphia High School Sports</title>
-  <id>tag:phillysportspack.com,2024:feed</id>
+  <id>tag:phillysportspack.com,2026:feed</id>
   <link href="${baseUrl}/" rel="alternate" type="text/html" />
   <link href="${baseUrl}/rss" rel="self" type="application/atom+xml" />
   <updated>${now}</updated>
@@ -109,7 +109,7 @@ export async function GET() {
 
         atomXml += `  <entry>
     <title>${title}</title>
-    <id>tag:phillysportspack.com,2024:articles/${article.id}</id>
+    <id>tag:phillysportspack.com,2026:articles/${article.id}</id>
     <link href="${articleUrl}" rel="alternate" type="text/html" />
     <published>${published}</published>
     <updated>${published}</updated>

@@ -11,15 +11,7 @@ export const revalidate = 86400; // 24 hours - static historical data
 interface GameData {
   year: number;
   score: string;
-  mvps?: Array<{ name: string; position?: string; school?: string }>;
-  notables?: string[];
-  team_stats?: Record<
-    string,
-    Record<string, string | number>
-  >;
-  rushing?: Array<{ team: string; name: string; school?: string | null; carries_yards: string }>;
-  passing?: Array<{ team: string; name: string; school?: string | null; completions_attempts_yards: string }>;
-  receiving?: Array<{ team: string; name: string; school?: string | null; catches_yards: string }>;
+  [key: string]: unknown;
 }
 
 interface CombinedData {
@@ -29,61 +21,47 @@ interface CombinedData {
     year_range: { start: number; end: number };
   };
   games: GameData[];
+  td_leaders?: unknown[];
+  rosters?: Record<string, unknown>;
 }
 
 interface RecordsData {
-  individual_records?: {
-    rushing?: Record<string, unknown>;
-    passing?: Record<string, unknown>;
-    receiving?: Record<string, unknown>;
-    kicking?: Record<string, unknown>;
-    miscellaneous?: Record<string, unknown>;
-  };
+  individual_records?: Record<string, unknown>;
 }
-
-type PageParams = Record<string, never>;
 
 export const metadata: Metadata = {
   title: "City All-Star Game — Philadelphia Football — PhillySportsPack",
   description:
-    "Complete history of the Philadelphia City All-Star Game (Public League vs. Non-Public, 1975-2019). Game recaps, box scores, records, and standout performances.",
+    "Complete history of the Philadelphia City All-Star Game (Public League vs. Non-Public, 1975-2019). Game recaps, rosters, records, TD scorers, and standout performances across 45 games.",
   alternates: {
     canonical: "https://phillysportspack.com/football/city-all-star-game",
   },
   openGraph: {
     title: "City All-Star Game",
-    description: "Philadelphia City All-Star Game (1975-2019) - Public League vs. Non-Public",
+    description:
+      "Philadelphia City All-Star Game (1975-2019) - Public League vs. Non-Public. 45 games, full recaps, rosters, and records.",
     type: "website",
   },
 };
 
 export default async function CityAllStarGamePage() {
-  // Load game data at build time
-  const gamesPath = path.join(
-    process.cwd(),
-    "public/data/city-allstar-games.json"
-  );
-  const recordsPath = path.join(
-    process.cwd(),
-    "public/data/city-allstar-records.json"
-  );
+  const gamesPath = path.join(process.cwd(), "public/data/city-allstar-games.json");
+  const recordsPath = path.join(process.cwd(), "public/data/city-allstar-records.json");
 
   let gamesData: CombinedData = {
-    metadata: { title: "", total_games: 0, year_range: { start: 0, end: 0 } },
+    metadata: { title: "", total_games: 0, year_range: { start: 1975, end: 2019 } },
     games: [],
   };
   let recordsData: RecordsData = {};
 
   try {
-    const gamesRaw = fs.readFileSync(gamesPath, "utf-8");
-    gamesData = JSON.parse(gamesRaw);
+    gamesData = JSON.parse(fs.readFileSync(gamesPath, "utf-8"));
   } catch (e) {
     console.warn("Failed to load games data:", e);
   }
 
   try {
-    const recordsRaw = fs.readFileSync(recordsPath, "utf-8");
-    recordsData = JSON.parse(recordsRaw);
+    recordsData = JSON.parse(fs.readFileSync(recordsPath, "utf-8"));
   } catch (e) {
     console.warn("Failed to load records data:", e);
   }
@@ -98,36 +76,38 @@ export default async function CityAllStarGamePage() {
     const parts = scoreUpper.split(",").map((p) => p.trim());
 
     if (parts.length === 2) {
-      const firstTeam = parts[0].split(" ")[0];
-      const firstScore = parseInt(
-        parts[0].split(" ").pop() || "0",
-        10
-      );
-      const secondScore = parseInt(parts[1].split(" ").pop() || "0", 10);
+      const firstWords = parts[0].split(" ");
+      const secondWords = parts[1].split(" ");
+      const firstScore = parseInt(firstWords[firstWords.length - 1] || "0", 10);
+      const secondScore = parseInt(secondWords[secondWords.length - 1] || "0", 10);
+      const firstName = firstWords.slice(0, -1).join(" ").trim();
 
       if (firstScore > secondScore) {
-        if (firstTeam === "PUBLIC") publicWins++;
-        else if (firstTeam === "NON-PUBLIC") nonPublicWins++;
+        if (firstName === "PUBLIC") publicWins++;
+        else nonPublicWins++;
       } else if (secondScore > firstScore) {
-        if (firstTeam === "PUBLIC") nonPublicWins++;
-        else if (firstTeam === "NON-PUBLIC") publicWins++;
+        if (firstName === "PUBLIC") nonPublicWins++;
+        else publicWins++;
       } else {
         ties++;
       }
     }
   }
 
-  // Quick stats
   const totalGames = gamesData.games.length;
-  const yearRange = gamesData.metadata.year_range || {
-    start: 1975,
-    end: 2019,
-  };
+  const totalTds = gamesData.games.reduce(
+    (sum, g) => sum + ((g.touchdowns as unknown[])?.length || 0),
+    0
+  );
+  const rosterYears = gamesData.games.filter((g) => g.rosters).length;
 
   const breadcrumbs = [
     { name: "Home", url: "https://phillysportspack.com/" },
-    { name: "Football", url: "https://phillysportspack.com/" },
-    { name: "City All-Star Game", url: "https://phillysportspack.com/football/city-all-star-game" },
+    { name: "Football", url: "https://phillysportspack.com/football" },
+    {
+      name: "City All-Star Game",
+      url: "https://phillysportspack.com/football/city-all-star-game",
+    },
   ];
 
   return (
@@ -137,11 +117,11 @@ export default async function CityAllStarGamePage() {
       {/* Breadcrumbs */}
       <div className="border-b border-[var(--psp-gold)]/20">
         <div className="container mx-auto px-4 py-4">
-          <Breadcrumb items={breadcrumbs.map(b => ({ label: b.name, href: b.url }))} />
+          <Breadcrumb items={breadcrumbs.map((b) => ({ label: b.name, href: b.url }))} />
         </div>
       </div>
 
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="border-b border-[var(--psp-gold)]/30 bg-gradient-to-b from-[var(--psp-navy-mid)] to-[var(--psp-navy)]">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl">
@@ -152,64 +132,50 @@ export default async function CityAllStarGamePage() {
               Public League vs Non-Public • 1975–2019 • 45 Games
             </p>
             <p className="text-gray-300 text-base leading-relaxed max-w-2xl">
-              The Philadelphia City All-Star Game is an annual exhibition football
-              game between the Public League's best and the Non-Public League's
-              finest. For 45 years, this matchup showcased elite talent from the
-              region's premier high schools.
+              The Daily News-Eagles City All-Star Football Game, first played in 1975,
+              matches Public and Non-Public squads (seniors only) from Philadelphia&apos;s
+              20 Public League schools and 10 Non-Public schools. For 45 years, this
+              matchup showcased the region&apos;s elite talent — many of whom went on to
+              play college and professional football.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Series Record Summary */}
+      {/* Stats Strip */}
       <section className="border-b border-[var(--psp-gold)]/30">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-6">
-              <p className="text-[var(--psp-gold)] text-sm font-semibold mb-2">
-                SERIES RECORD
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
+              <p className="text-[var(--psp-gold)] text-xs font-semibold mb-1">SERIES</p>
+              <p className="font-bebas-neue text-2xl font-bold">
+                {nonPublicWins}–{publicWins}{ties > 0 ? `–${ties}` : ""}
               </p>
-              <p className="font-bebas-neue text-3xl font-bold">
-                {nonPublicWins}–{publicWins}
-                {ties > 0 ? `–${ties}` : ""}
-              </p>
-              <p className="text-gray-400 text-sm mt-1">
-                Non-Public leads
+              <p className="text-gray-400 text-xs">Non-Public leads</p>
+            </div>
+            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
+              <p className="text-[var(--psp-gold)] text-xs font-semibold mb-1">GAMES</p>
+              <p className="font-bebas-neue text-2xl font-bold">{totalGames}</p>
+              <p className="text-gray-400 text-xs">1975–2019</p>
+            </div>
+            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
+              <p className="text-blue-400 text-xs font-semibold mb-1">PUBLIC</p>
+              <p className="font-bebas-neue text-2xl font-bold">{publicWins}</p>
+              <p className="text-gray-400 text-xs">
+                {totalGames > 0 ? ((publicWins / totalGames) * 100).toFixed(0) : 0}% win rate
               </p>
             </div>
-
-            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-6">
-              <p className="text-[var(--psp-gold)] text-sm font-semibold mb-2">
-                TOTAL GAMES
-              </p>
-              <p className="font-bebas-neue text-3xl font-bold">
-                {totalGames}
-              </p>
-              <p className="text-gray-400 text-sm mt-1">1975–2019</p>
-            </div>
-
-            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-6">
-              <p className="text-[var(--psp-gold)] text-sm font-semibold mb-2">
-                PUBLIC WINS
-              </p>
-              <p className="font-bebas-neue text-3xl font-bold">
-                {publicWins}
-              </p>
-              <p className="text-gray-400 text-sm mt-1">
-                {((publicWins / totalGames) * 100).toFixed(1)}%
+            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
+              <p className="text-purple-400 text-xs font-semibold mb-1">NON-PUBLIC</p>
+              <p className="font-bebas-neue text-2xl font-bold">{nonPublicWins}</p>
+              <p className="text-gray-400 text-xs">
+                {totalGames > 0 ? ((nonPublicWins / totalGames) * 100).toFixed(0) : 0}% win rate
               </p>
             </div>
-
-            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-6">
-              <p className="text-[var(--psp-gold)] text-sm font-semibold mb-2">
-                NON-PUBLIC WINS
-              </p>
-              <p className="font-bebas-neue text-3xl font-bold">
-                {nonPublicWins}
-              </p>
-              <p className="text-gray-400 text-sm mt-1">
-                {((nonPublicWins / totalGames) * 100).toFixed(1)}%
-              </p>
+            <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
+              <p className="text-[var(--psp-gold)] text-xs font-semibold mb-1">TOUCHDOWNS</p>
+              <p className="font-bebas-neue text-2xl font-bold">{totalTds}</p>
+              <p className="text-gray-400 text-xs">All-time scored</p>
             </div>
           </div>
         </div>
@@ -218,20 +184,25 @@ export default async function CityAllStarGamePage() {
       {/* Main Archive Component */}
       <section className="container mx-auto px-4 py-12">
         <AllStarArchive
-          games={gamesData.games}
+          games={gamesData.games as any}
           records={recordsData.individual_records as any}
+          tdLeaders={gamesData.td_leaders as any}
+          rosters={gamesData.rosters as any}
         />
       </section>
 
-      {/* Back to Football */}
+      {/* Footer */}
       <section className="border-t border-[var(--psp-gold)]/30 mt-12 py-8">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 text-center space-y-2">
           <Link
-            href="/"
+            href="/football"
             className="inline-flex items-center gap-2 text-[var(--psp-blue)] hover:text-[var(--psp-gold)] transition-colors font-semibold"
           >
             ← Back to Football
           </Link>
+          <p className="text-gray-500 text-xs">
+            Source: tedsilary.com — Philadelphia Scholastic Sports Archives
+          </p>
         </div>
       </section>
     </main>

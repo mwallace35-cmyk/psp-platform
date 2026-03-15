@@ -34,9 +34,9 @@ const explorerTiles: DataExplorerTile[] = [
   },
   {
     icon: '🏅',
-    title: 'All-City Teams',
-    description: 'Complete archive of All-City award winners',
-    href: '/football/all-city',
+    title: 'Awards & Honors',
+    description: 'All-City, league, state, and individual awards archive',
+    href: '/football/awards',
   },
   {
     icon: '📖',

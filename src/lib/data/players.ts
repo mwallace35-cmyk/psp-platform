@@ -123,7 +123,7 @@ export async function getBaseballPlayerStats(playerId: number) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("baseball_player_seasons")
-            .select("id, player_id, school_id, season_id, games_played, at_bats, hits, doubles, triples, home_runs, runs_batted_in, seasons(year_start, year_end, label), schools(name, slug)")
+            .select("id, player_id, school_id, season_id, games_played, at_bats, hits, doubles, triples, home_runs, rbi, seasons(year_start, year_end, label), schools(name, slug)")
             .eq("player_id", playerId)
             .order("created_at", { ascending: true });
           return sortBySeasonYear((data ?? []) as unknown as PlayerSeasonRecord[]) as unknown as BaseballPlayerSeason[];

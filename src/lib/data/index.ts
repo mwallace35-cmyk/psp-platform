@@ -190,8 +190,13 @@ export {
 export {
   getAllCityByYear,
   getAllCitySummary,
+  getAwardsPageData,
+  normalizeAwardType,
+  AWARD_TAB_CATEGORIES,
   type AwardRecord,
   type AllCityYear,
+  type AwardsPageData,
+  type AwardTabCategory,
 } from "./awards";
 
 // Awards hub functions

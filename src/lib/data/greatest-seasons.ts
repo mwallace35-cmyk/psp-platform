@@ -300,7 +300,7 @@ export const getGreatestBaseballSeasons = cache(
               .from("baseball_player_seasons")
               .select(
                 `id, player_id, season_id, school_id,
-                 hits, home_runs, runs_batted_in, at_bats,
+                 hits, home_runs, rbi, at_bats,
                  players(id, name, slug),
                  schools(id, name, slug),
                  seasons(id, year_start, year_end, label)`
@@ -315,7 +315,7 @@ export const getGreatestBaseballSeasons = cache(
             const allSeasons = seasons ?? [];
             const processedSeasons: GreatestSeason[] = [];
 
-            type StatKey = "hits" | "home_runs" | "runs_batted_in";
+            type StatKey = "hits" | "home_runs" | "rbi";
             const categories: Array<{
               key: StatKey;
               label: string;
@@ -332,9 +332,9 @@ export const getGreatestBaseballSeasons = cache(
                 compute: (s) => s.home_runs || 0,
               },
               {
-                key: "runs_batted_in",
+                key: "rbi",
                 label: "RBIs",
-                compute: (s) => s.runs_batted_in || 0,
+                compute: (s) => s.rbi || 0,
               },
             ];
 

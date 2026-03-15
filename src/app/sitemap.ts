@@ -48,9 +48,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     });
 
-    // All-City pages (for sports that have all-city data)
+    // Awards & Honors pages
     entries.push({
-      url: `${baseUrl}/${sport}/all-city`,
+      url: `${baseUrl}/${sport}/awards`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,

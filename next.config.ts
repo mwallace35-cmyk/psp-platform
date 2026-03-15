@@ -136,6 +136,12 @@ let config: NextConfig = {
         destination: "/pulse",
         permanent: true,
       },
+      // /[sport]/all-city → /[sport]/awards redirects (route rename)
+      {
+        source: "/:sport/all-city",
+        destination: "/:sport/awards",
+        permanent: true,
+      },
       // /events → /pulse redirects (route rename)
       {
         source: "/events",

@@ -51,18 +51,69 @@ export interface AllCityYear {
 }
 
 /**
- * Helper: fetch all awards via JSON RPC (returns single JSONB row, bypasses PostgREST max_rows)
+ * Helper: fetch all All-City awards for a sport using PostgREST
+ * OPTIMIZED: Uses standard .from().select() instead of dropped RPC
  */
 async function fetchAllCityAwardsJson(sport: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("get_all_city_awards_json", {
-    p_sport_id: sport,
-  });
-  if (error) {
-    console.warn("[PSP] get_all_city_awards_json RPC failed:", error.message);
+
+  try {
+    // Fetch awards for All-City category, ordered by season descending
+    const { data, error, count } = await supabase
+      .from("awards")
+      .select(
+        `id,
+         award_type,
+         award_name,
+         category,
+         position,
+         source,
+         award_tier,
+         player_id,
+         player_name,
+         school_id,
+         players(id, name, slug),
+         schools(id, name, slug),
+         seasons(year_start, year_end, label)`,
+        { count: "exact" }
+      )
+      .eq("award_type", `${sport}-all-city`)
+      .order("created_at", { ascending: false })
+      .limit(5000);
+
+    if (error) {
+      console.warn("[PSP] All-City awards query failed:", error.message);
+      return null;
+    }
+
+    if (!data || !Array.isArray(data)) return null;
+
+    // Transform data to match expected format
+    const awards = data.map((row: any) => ({
+      award_id: row.id,
+      award_type: row.award_type,
+      award_name: row.award_name,
+      category: row.category,
+      award_position: row.position,
+      award_source: row.source,
+      award_tier: row.award_tier,
+      player_id: row.player_id,
+      direct_player_name: row.player_name || null,
+      player_name: row.players?.name || null,
+      player_slug: row.players?.slug || null,
+      school_id: row.schools?.id || null,
+      school_name: row.schools?.name || null,
+      school_slug: row.schools?.slug || null,
+      year_start: row.seasons?.year_start || null,
+      year_end: row.seasons?.year_end || null,
+      season_label: row.seasons?.label || null,
+    }));
+
+    return { awards, total_count: count || 0 };
+  } catch (err) {
+    console.warn("[PSP] All-City awards fetch error:", err);
     return null;
   }
-  return data as { awards: any[]; total_count: number } | null;
 }
 
 /**
@@ -156,7 +207,7 @@ function mapAwardRow(row: any): AwardRecord {
 }
 
 /**
- * Get all-city awards by year for a sport — uses JSON RPC to bypass PostgREST 1000-row limit
+ * Get all-city awards by year for a sport — uses PostgREST to bypass timeout issues
  */
 export const getAllCityByYear = cache(async (sport: string) => {
   return withErrorHandling(
@@ -177,7 +228,7 @@ export const getAllCityByYear = cache(async (sport: string) => {
 });
 
 /**
- * Get all-city summary stats — computed from the same JSON RPC data
+ * Get all-city summary stats — computed from the same PostgREST data
  */
 export const getAllCitySummary = cache(async (sport: string) => {
   return withErrorHandling(
@@ -238,6 +289,297 @@ export const getAllCitySummary = cache(async (sport: string) => {
       topSchools: [],
     },
     "getAllCitySummary",
+    { sport }
+  );
+});
+
+// ─── Awards & Honors Page (All Types) ───────────────────────────────────────
+
+/**
+ * Tab category definitions for the Awards & Honors page
+ */
+export interface AwardTabCategory {
+  id: string;
+  label: string;
+  shortLabel: string;
+  matchTypes: string[];
+  description: string;
+}
+
+export const AWARD_TAB_CATEGORIES: AwardTabCategory[] = [
+  {
+    id: "all-city",
+    label: "All-City / All-Scholastic",
+    shortLabel: "All-City",
+    matchTypes: ["all-city", "all-scholastic"],
+    description: "Philadelphia All-City and All-Scholastic selections",
+  },
+  {
+    id: "all-catholic",
+    label: "All-Catholic",
+    shortLabel: "Catholic",
+    matchTypes: ["all-catholic"],
+    description: "Catholic League All-Star selections",
+  },
+  {
+    id: "all-public",
+    label: "All-Public",
+    shortLabel: "Public",
+    matchTypes: ["all-public"],
+    description: "Public League All-Star selections",
+  },
+  {
+    id: "all-inter-ac",
+    label: "All-Inter-Ac",
+    shortLabel: "Inter-Ac",
+    matchTypes: ["all-inter-ac"],
+    description: "Inter-Academic League All-Star selections",
+  },
+  {
+    id: "all-state",
+    label: "All-State",
+    shortLabel: "State",
+    matchTypes: ["all-state"],
+    description: "Pennsylvania All-State selections",
+  },
+  {
+    id: "poty",
+    label: "Player of the Year",
+    shortLabel: "POTY",
+    matchTypes: ["player-of-year"],
+    description: "Player of the Year and top individual awards",
+  },
+  {
+    id: "all-era",
+    label: "All-Decade / All-Era",
+    shortLabel: "All-Era",
+    matchTypes: ["all-decade", "all-era"],
+    description: "All-Decade and All-Era team selections",
+  },
+  {
+    id: "stat-leaders",
+    label: "Stat Leaders & All-League",
+    shortLabel: "Leaders",
+    matchTypes: ["stat-leader", "all-league", "coaches-all-league"],
+    description: "Statistical leaders and coaches All-League selections",
+  },
+];
+
+/**
+ * Normalize award_type by stripping the sport prefix if present
+ * e.g. "football-all-city" → "all-city", "all-catholic" → "all-catholic"
+ */
+export function normalizeAwardType(awardType: string, sport: string): string {
+  const prefix = `${sport}-`;
+  if (awardType.startsWith(prefix)) {
+    return awardType.slice(prefix.length);
+  }
+  return awardType;
+}
+
+/**
+ * Match a normalized award_type to a tab category ID
+ */
+function matchAwardToTab(normalizedType: string): string | null {
+  for (const tab of AWARD_TAB_CATEGORIES) {
+    if (tab.matchTypes.includes(normalizedType)) {
+      return tab.id;
+    }
+  }
+  return null;
+}
+
+/**
+ * Grouped awards data for the Awards & Honors page
+ */
+export interface AwardsPageData {
+  tabs: {
+    id: string;
+    label: string;
+    shortLabel: string;
+    description: string;
+    count: number;
+    awards: AwardRecord[];
+  }[];
+  totalCount: number;
+  topSchools: { name: string; slug: string; count: number }[];
+  yearsSpanned: { min: number; max: number };
+  schoolsRepresented: number;
+}
+
+/**
+ * Helper: fetch ALL awards for a sport using PostgREST
+ */
+async function fetchAllAwardsForSport(sport: string) {
+  const supabase = await createClient();
+
+  try {
+    // Use OR filter: sport_id matches OR award_type starts with sport-
+    const { data, error, count } = await supabase
+      .from("awards")
+      .select(
+        `id,
+         award_type,
+         award_name,
+         category,
+         position,
+         source,
+         award_tier,
+         player_id,
+         player_name,
+         school_id,
+         players(id, name, slug),
+         schools(id, name, slug),
+         seasons(year_start, year_end, label)`,
+        { count: "exact" }
+      )
+      .or(`sport_id.eq.${sport},award_type.like.${sport}-%`)
+      .order("created_at", { ascending: false })
+      .limit(15000);
+
+    if (error) {
+      console.warn("[PSP] All awards query failed:", error.message);
+      return null;
+    }
+
+    if (!data || !Array.isArray(data)) return null;
+
+    // Transform to flat format
+    // direct_player_name = player_name column (for awards without player_id link)
+    const awards = data.map((row: any) => ({
+      award_id: row.id,
+      award_type: row.award_type,
+      award_name: row.award_name,
+      category: row.category,
+      award_position: row.position,
+      award_source: row.source,
+      award_tier: row.award_tier,
+      player_id: row.player_id,
+      direct_player_name: row.player_name || null,
+      player_name: row.players?.name || null,
+      player_slug: row.players?.slug || null,
+      school_id: row.schools?.id || null,
+      school_name: row.schools?.name || null,
+      school_slug: row.schools?.slug || null,
+      year_start: row.seasons?.year_start || null,
+      year_end: row.seasons?.year_end || null,
+      season_label: row.seasons?.label || null,
+    }));
+
+    return { awards, total_count: count || 0 };
+  } catch (err) {
+    console.warn("[PSP] All awards fetch error:", err);
+    return null;
+  }
+}
+
+/**
+ * Get all awards for a sport, grouped by tab category — for the Awards & Honors page
+ */
+export const getAwardsPageData = cache(async (sport: string): Promise<AwardsPageData> => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const result = await fetchAllAwardsForSport(sport);
+          if (!result?.awards) {
+            return {
+              tabs: AWARD_TAB_CATEGORIES.map((tab) => ({
+                ...tab,
+                count: 0,
+                awards: [],
+              })),
+              totalCount: 0,
+              topSchools: [],
+              yearsSpanned: { min: 0, max: 0 },
+              schoolsRepresented: 0,
+            };
+          }
+
+          // Map all awards and group by tab
+          const tabAwards: Record<string, AwardRecord[]> = {};
+          for (const tab of AWARD_TAB_CATEGORIES) {
+            tabAwards[tab.id] = [];
+          }
+          const uncategorized: AwardRecord[] = [];
+
+          // Summary stats
+          const yearsSet = new Set<number>();
+          const schoolsSet = new Set<string>();
+          const schoolCounts: Record<string, { name: string; slug: string; count: number }> = {};
+
+          // Deduplicate by award ID (OR filter might return overlapping results)
+          const seenIds = new Set<number>();
+
+          for (const rawAward of result.awards) {
+            if (seenIds.has(rawAward.award_id)) continue;
+            seenIds.add(rawAward.award_id);
+
+            const award = mapAwardRow(rawAward);
+            const normalizedType = normalizeAwardType(rawAward.award_type, sport);
+            const tabId = matchAwardToTab(normalizedType);
+
+            if (tabId && tabAwards[tabId]) {
+              tabAwards[tabId].push(award);
+            } else {
+              uncategorized.push(award);
+            }
+
+            // Track summary stats
+            if (rawAward.year_start) {
+              yearsSet.add(rawAward.year_start);
+            }
+            if (rawAward.school_slug) {
+              schoolsSet.add(rawAward.school_slug);
+              if (!schoolCounts[rawAward.school_slug]) {
+                schoolCounts[rawAward.school_slug] = {
+                  name: rawAward.school_name,
+                  slug: rawAward.school_slug,
+                  count: 0,
+                };
+              }
+              schoolCounts[rawAward.school_slug].count++;
+            }
+          }
+
+          // If uncategorized awards exist, append to stat-leaders tab
+          if (uncategorized.length > 0 && tabAwards["stat-leaders"]) {
+            tabAwards["stat-leaders"].push(...uncategorized);
+          }
+
+          const topSchools = Object.values(schoolCounts)
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 15);
+
+          return {
+            tabs: AWARD_TAB_CATEGORIES.map((tab) => ({
+              id: tab.id,
+              label: tab.label,
+              shortLabel: tab.shortLabel,
+              description: tab.description,
+              count: tabAwards[tab.id]?.length || 0,
+              awards: tabAwards[tab.id] || [],
+            })).filter((tab) => tab.count > 0), // Only include tabs with data
+            totalCount: seenIds.size,
+            topSchools,
+            yearsSpanned: {
+              min: yearsSet.size > 0 ? Math.min(...Array.from(yearsSet)) : 0,
+              max: yearsSet.size > 0 ? Math.max(...Array.from(yearsSet)) : 0,
+            },
+            schoolsRepresented: schoolsSet.size,
+          };
+        },
+        { maxRetries: 3 }
+      );
+    },
+    {
+      tabs: [],
+      totalCount: 0,
+      topSchools: [],
+      yearsSpanned: { min: 0, max: 0 },
+      schoolsRepresented: 0,
+    },
+    "getAwardsPageData",
     { sport }
   );
 });

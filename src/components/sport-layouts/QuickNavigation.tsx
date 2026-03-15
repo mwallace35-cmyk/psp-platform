@@ -50,9 +50,9 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
       ? [
           {
             icon: "⭐",
-            label: "All-City Teams",
-            description: "Historic All-City selections",
-            href: `/${sport}/all-city`,
+            label: "Awards & Honors",
+            description: "All-City, league, state & individual awards",
+            href: `/${sport}/awards`,
           },
           {
             icon: "🎯",
