@@ -17,6 +17,7 @@ export interface AwardDetail {
   position?: string;
   sport_id: string;
   year?: number;
+  player_name?: string;
   players?: {
     id: number;
     name: string;
@@ -52,78 +53,56 @@ export const getAwardsSummary = cache(async () => {
         async () => {
           const supabase = await createClient();
 
-          // Fetch all awards with aggregated data
-          const { data } = await supabase
+          // Get total count efficiently
+          const { count: total, error: countErr } = await supabase
             .from("awards")
-            .select(
-              `
-              id,
-              award_type,
-              sport_id,
-              seasons(year_start),
-              players(
-                primary_school_id,
-                schools(id, name, slug)
-              )
-            `
-            )
-            .is("deleted_at", null);
+            .select("id", { count: "exact", head: true });
 
-          interface AwardRecord {
-            award_type?: string;
-            sport_id?: string;
-            seasons?: { year_start?: number };
-            players?: {
-              primary_school_id?: number;
-              schools?: { id: number; name: string; slug: string };
-            };
+          if (countErr) {
+            console.error("[getAwardsSummary] count error:", countErr);
           }
 
-          const awards = (data || []) as unknown as AwardRecord[];
-          const summary: AwardsSummary = {
-            total: awards.length,
-            byType: {},
-            byYear: {},
-            topSchools: [],
-            yearRange: { min: 9999, max: 0 },
-          };
+          // Get distinct award types with counts using a lighter query
+          const { data: typeData, error: typeErr } = await supabase
+            .from("awards")
+            .select("award_type")
+            .limit(25000);
 
-          const schoolCounts: Record<number, { name: string; slug: string; count: number }> = {};
-
-          for (const award of awards) {
-            // Count by type
-            const type = award.award_type || "other";
-            summary.byType[type] = (summary.byType[type] || 0) + 1;
-
-            // Count by year
-            const year = award.seasons?.year_start;
-            if (year) {
-              summary.byYear[year] = (summary.byYear[year] || 0) + 1;
-              summary.yearRange.min = Math.min(summary.yearRange.min, year);
-              summary.yearRange.max = Math.max(summary.yearRange.max, year);
-            }
-
-            // Count by school
-            if (award.players?.schools?.id) {
-              const schoolId = award.players.schools.id;
-              if (!schoolCounts[schoolId]) {
-                schoolCounts[schoolId] = {
-                  name: award.players.schools.name,
-                  slug: award.players.schools.slug,
-                  count: 0,
-                };
-              }
-              schoolCounts[schoolId].count++;
-            }
+          if (typeErr) {
+            console.error("[getAwardsSummary] type error:", typeErr);
           }
 
-          // Sort top schools
-          summary.topSchools = Object.entries(schoolCounts)
-            .map(([id, school]) => ({ id: parseInt(id), ...school }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 20);
+          const byType: Record<string, number> = {};
+          for (const row of (typeData || []) as { award_type: string }[]) {
+            const t = row.award_type || "other";
+            byType[t] = (byType[t] || 0) + 1;
+          }
 
-          return summary;
+          // Get year range from seasons join — just grab a sample
+          const { data: yearData } = await supabase
+            .from("awards")
+            .select("seasons(year_start)")
+            .not("season_id", "is", null)
+            .order("season_id", { ascending: true })
+            .limit(1);
+
+          const { data: yearDataMax } = await supabase
+            .from("awards")
+            .select("seasons(year_start)")
+            .not("season_id", "is", null)
+            .order("season_id", { ascending: false })
+            .limit(1);
+
+          const minYear = (yearData?.[0] as any)?.seasons?.year_start || 1932;
+          const maxYear = (yearDataMax?.[0] as any)?.seasons?.year_start || 2025;
+
+          return {
+            total: total || 0,
+            byType,
+            byYear: {},  // Skip per-year breakdown for performance
+            topSchools: [], // Fetched separately by getTopAwardedSchools
+            yearRange: { min: minYear, max: maxYear },
+          } as AwardsSummary;
         },
         { maxRetries: 3 }
       );
@@ -150,7 +129,7 @@ export const getRecentAwards = cache(async (limit = 50) => {
         async () => {
           const supabase = await createClient();
 
-          const { data } = await supabase
+          const { data, error } = await supabase
             .from("awards")
             .select(
               `
@@ -160,6 +139,8 @@ export const getRecentAwards = cache(async (limit = 50) => {
               category,
               position,
               sport_id,
+              season_id,
+              player_name,
               players(
                 id,
                 name,
@@ -170,9 +151,12 @@ export const getRecentAwards = cache(async (limit = 50) => {
               seasons(id, year_start, year_end, label)
             `
             )
-            .is("deleted_at", null)
             .order("created_at", { ascending: false })
             .limit(Math.min(limit, 500));
+
+          if (error) {
+            console.error("[getRecentAwards] Supabase error:", error);
+          }
 
           return (data || []) as unknown as AwardDetail[];
         },
@@ -195,8 +179,8 @@ export const getTopAwardedSchools = cache(async (limit = 15) => {
         async () => {
           const supabase = await createClient();
 
-          // Fetch awards with school info
-          const { data } = await supabase
+          // Use a lighter query — just get school_id from the join
+          const { data, error } = await supabase
             .from("awards")
             .select(
               `
@@ -206,7 +190,12 @@ export const getTopAwardedSchools = cache(async (limit = 15) => {
               )
             `
             )
-            .is("deleted_at", null);
+            .not("player_id", "is", null)
+            .limit(25000);
+
+          if (error) {
+            console.error("[getTopAwardedSchools] Supabase error:", error);
+          }
 
           interface AwardRecord {
             players?: { schools?: { id: number; name: string; slug: string } };
@@ -264,6 +253,7 @@ export const getAwardsByType = cache(
                 category,
                 position,
                 sport_id,
+                player_name,
                 players(
                   id,
                   name,
@@ -273,21 +263,24 @@ export const getAwardsByType = cache(
                 ),
                 seasons(id, year_start, year_end, label)
               `
-              )
-              .is("deleted_at", null);
+              );
 
-            // Filter by type - support multiple types like "all-city" patterns
+            // Filter by type - support multiple types
             if (awardType === "all-city") {
               query = query.or(
-                "award_type.eq.all-city,award_type.eq.all-state,award_type.eq.all-public,award_type.eq.all-catholic,award_type.eq.all-inter-ac"
+                "award_type.eq.all-city,award_type.eq.all-state,award_type.eq.all-public,award_type.eq.all-catholic,award_type.eq.all-inter-ac,award_type.eq.all-scholastic"
               );
             } else if (awardType === "player-of-year") {
-              query = query.eq("award_type", "player-of-year");
+              query = query.or(
+                "award_type.eq.player-of-year,award_type.eq.daily-news-player-of-year,award_type.eq.daily-news-pitcher-of-year,award_type.eq.pitcher-of-year,award_type.eq.coaches-mvp,award_type.eq.markward"
+              );
             } else if (awardType === "hall-of-fame") {
-              query = query.eq("award_type", "hall-of-fame");
+              query = query.or(
+                "award_type.eq.hall-of-fame,award_type.eq.all-era,award_type.eq.all-decade"
+              );
             } else if (awardType === "all-league") {
               query = query.or(
-                "award_type.eq.all-league,award_type.eq.all-decade"
+                "award_type.eq.all-league,award_type.eq.coaches-all-league,award_type.eq.stat-leader"
               );
             }
 
@@ -295,9 +288,17 @@ export const getAwardsByType = cache(
               query = query.eq("sport_id", sport);
             }
 
-            const { data } = await query
-              .order("seasons(year_start)", { ascending: false })
+            const { data, error } = await query
+              .order("season_id", { ascending: false })
               .limit(Math.min(limit, 500));
+
+            if (error) {
+              console.error("[getAwardsByType] Supabase error:", {
+                error,
+                awardType,
+                sport,
+              });
+            }
 
             return (data || []) as unknown as AwardDetail[];
           },

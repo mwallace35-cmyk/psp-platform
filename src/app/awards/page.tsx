@@ -222,8 +222,10 @@ export default async function AwardsPage({ searchParams }: AwardsPageProps) {
                               >
                                 {award.players.name}
                               </Link>
+                            ) : award.player_name ? (
+                              <span className="font-medium">{award.player_name}</span>
                             ) : (
-                              <span>Unknown</span>
+                              <span className="text-gray-600 italic">Name not available</span>
                             )}
                           </td>
                           <td className="p-4 text-gray-300">
