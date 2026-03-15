@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export const revalidate = 1800; // 30 minutes
 
 interface ScoresPageProps {
-  searchParams: Promise<{ sport?: string; season?: string; school?: string }>;
+  searchParams: Promise<{ sport?: string; season?: string; school?: string; page?: string }>;
 }
 
 interface ScoreGame {
@@ -48,6 +48,9 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const selectedSport = params.sport || "all";
   const selectedSeason = params.season || "all";
   const selectedSchool = params.school || "";
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10) || 1);
+  const PAGE_SIZE = 100;
+  const hasFilters = selectedSport !== "all" || selectedSeason !== "all" || !!selectedSchool;
 
   const supabase = createStaticClient();
 
@@ -76,6 +79,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
   // Build the scores query with filters
   let allScores: ScoreGame[] = [];
+  let totalCount = 0;
   try {
     let query = supabase
       .from("games")
@@ -83,13 +87,14 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
         `id, sport_id, game_date, home_score, away_score, home_school_id, away_school_id,
          home_school:schools!games_home_school_id_fkey(name, slug),
          away_school:schools!games_away_school_id_fkey(name, slug),
-         seasons(label)`
+         seasons(label)`,
+        { count: "exact" }
       )
       .not("home_score", "is", null)
       .not("away_score", "is", null)
       .not("game_date", "is", null)
       .order("game_date", { ascending: false })
-      .limit(75);
+      .range((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE - 1);
 
     if (selectedSport !== "all") {
       query = query.eq("sport_id", selectedSport);
@@ -121,8 +126,9 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       }
     }
 
-    const { data } = await query;
+    const { data, count } = await query;
     allScores = (data as unknown as ScoreGame[]) ?? [];
+    totalCount = count ?? allScores.length;
   } catch {
     // fail gracefully
   }
@@ -200,9 +206,11 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
           }}
         >
           <p style={{ color: "#999", fontSize: "0.85rem" }}>
-            {allScores.length === 0
+            {totalCount === 0
               ? "No games found"
-              : `${allScores.length} game${allScores.length !== 1 ? "s" : ""} found`}
+              : totalCount <= PAGE_SIZE
+              ? `${totalCount} game${totalCount !== 1 ? "s" : ""} found`
+              : `Showing ${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, totalCount)} of ${totalCount} games`}
           </p>
           <Link
             href="/scores/schedule"
@@ -383,6 +391,40 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
             );
           })
         )}
+
+        {/* Pagination */}
+        {totalCount > PAGE_SIZE && (() => {
+          const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+          const baseParams = new URLSearchParams();
+          if (selectedSport !== "all") baseParams.set("sport", selectedSport);
+          if (selectedSeason !== "all") baseParams.set("season", selectedSeason);
+          if (selectedSchool) baseParams.set("school", selectedSchool);
+
+          function pageUrl(page: number) {
+            const p = new URLSearchParams(baseParams);
+            if (page > 1) p.set("page", String(page));
+            const qs = p.toString();
+            return `/scores${qs ? `?${qs}` : ""}`;
+          }
+
+          return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.75rem", marginTop: "2rem", paddingBottom: "1rem" }}>
+              {currentPage > 1 && (
+                <Link href={pageUrl(currentPage - 1)} style={{ color: "var(--psp-gold)", textDecoration: "none", fontWeight: 600, fontSize: "0.9rem", padding: "0.5rem 1rem", border: "1px solid #444", borderRadius: "6px" }}>
+                  ← Previous
+                </Link>
+              )}
+              <span style={{ color: "#999", fontSize: "0.85rem" }}>
+                Page {currentPage} of {totalPages}
+              </span>
+              {currentPage < totalPages && (
+                <Link href={pageUrl(currentPage + 1)} style={{ color: "var(--psp-gold)", textDecoration: "none", fontWeight: 600, fontSize: "0.9rem", padding: "0.5rem 1rem", border: "1px solid #444", borderRadius: "6px" }}>
+                  Next →
+                </Link>
+              )}
+            </div>
+          );
+        })()}
       </div>
     </main>
   );
