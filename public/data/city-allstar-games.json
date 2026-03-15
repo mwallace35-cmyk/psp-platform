@@ -1,0 +1,3709 @@
+{
+  "metadata": {
+    "title": "Philadelphia City All-Star Football Game Database",
+    "description": "Comprehensive historical records of Public vs. Non-Public All-Star games (1975-2019)",
+    "source": "Compiled from OCR, text scraping, and historical records",
+    "total_games": 45,
+    "year_range": {
+      "start": 1975,
+      "end": 2019
+    },
+    "total_unique_players": 321,
+    "games_with_complete_data": 18,
+    "games_with_scores": 45
+  },
+  "games": [
+    {
+      "year": 1975,
+      "score": "NON-PUBLIC 13, PUBLIC 8",
+      "team_stats": {
+        "public": {
+          "rushes_yards": "110-40",
+          "passing_yards": "17",
+          "return_yards": "7",
+          "total_yards": "28.6",
+          "punting": "9",
+          "first_downs": "3.35",
+          "turnovers": "0"
+        },
+        "parochial": {
+          "rushes_yards": "83-46",
+          "passing_yards": "82",
+          "return_yards": "30",
+          "total_yards": "5.26.8",
+          "punting": "10",
+          "first_downs": "3.35",
+          "turnovers": "2"
+        }
+      },
+      "scoring_summary": [
+        "Public-Safery (Nedley and Tuck tackled Daley in end zone)",
+        "Parochial-Citrone 8 run (Kick failed)",
+        "Public-Murphy 5 run (run failed)"
+      ],
+      "rushing": [
+        {
+          "team": "Public",
+          "name": "Murphy",
+          "school": null,
+          "carries_yards": "11-30"
+        },
+        {
+          "team": "Public",
+          "name": "Fecnim",
+          "school": null,
+          "carries_yards": "4-7"
+        },
+        {
+          "team": "Public",
+          "name": "Empson",
+          "school": null,
+          "carries_yards": "1-31"
+        },
+        {
+          "team": "Public",
+          "name": "Campbell",
+          "school": null,
+          "carries_yards": "3-4"
+        },
+        {
+          "team": "Public",
+          "name": "Hagen",
+          "school": null,
+          "carries_yards": "9-27"
+        },
+        {
+          "team": "Public",
+          "name": "Crescenzo",
+          "school": null,
+          "carries_yards": "1-1"
+        },
+        {
+          "team": "Public",
+          "name": "Pavlion",
+          "school": null,
+          "carries_yards": "1-0"
+        },
+        {
+          "team": "Parochial",
+          "name": "Maley",
+          "school": null,
+          "carries_yards": "3-14-19"
+        },
+        {
+          "team": "Parochial",
+          "name": "Harrington",
+          "school": null,
+          "carries_yards": "12-53"
+        },
+        {
+          "team": "Parochial",
+          "name": "McVey",
+          "school": null,
+          "carries_yards": "1-1(-1)"
+        },
+        {
+          "team": "Parochial",
+          "name": "Cistrone",
+          "school": null,
+          "carries_yards": "5-19"
+        },
+        {
+          "team": "Parochial",
+          "name": "Mishkin",
+          "school": null,
+          "carries_yards": "1-1(-1)"
+        },
+        {
+          "team": "Parochial",
+          "name": "Robbins",
+          "school": null,
+          "carries_yards": "9-10"
+        },
+        {
+          "team": "Parochial",
+          "name": "Bryant",
+          "school": null,
+          "carries_yards": "1-0"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Public",
+          "name": "Murphy",
+          "school": null,
+          "completions_attempts_yards": "3-5, 12"
+        },
+        {
+          "team": "Public",
+          "name": "Pavlion",
+          "school": null,
+          "completions_attempts_yards": "0-3, 0"
+        },
+        {
+          "team": "Public",
+          "name": "Jacobs",
+          "school": null,
+          "completions_attempts_yards": "1-1, 0"
+        },
+        {
+          "team": "Parochial",
+          "name": "Maley",
+          "school": null,
+          "completions_attempts_yards": "3-6, 79"
+        },
+        {
+          "team": "Parochial",
+          "name": "Campbell",
+          "school": null,
+          "completions_attempts_yards": "1-2, 3"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Public",
+          "name": "Empson",
+          "school": null,
+          "catches_yards": "1-12"
+        },
+        {
+          "team": "Public",
+          "name": "Cave",
+          "school": null,
+          "catches_yards": "1-0"
+        },
+        {
+          "team": "Public",
+          "name": "Crescenzo",
+          "school": null,
+          "catches_yards": "1-(-5)"
+        },
+        {
+          "team": "Public",
+          "name": "Wattenmaker",
+          "school": null,
+          "catches_yards": "1-5"
+        },
+        {
+          "team": "Parochial",
+          "name": "Coyle",
+          "school": null,
+          "catches_yards": "1-9"
+        },
+        {
+          "team": "Parochial",
+          "name": "Harrington",
+          "school": null,
+          "catches_yards": "1-3"
+        },
+        {
+          "team": "Parochial",
+          "name": "Morris",
+          "school": null,
+          "catches_yards": "1-41"
+        },
+        {
+          "team": "Parochial",
+          "name": "McVey",
+          "school": null,
+          "catches_yards": "1-15"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Public",
+          "name": "Goode",
+          "school": null,
+          "returns_yards": "7-29"
+        },
+        {
+          "team": "Public",
+          "name": "Day",
+          "school": null,
+          "returns_yards": "2-31"
+        },
+        {
+          "team": "Public",
+          "name": "Moreland",
+          "school": null,
+          "returns_yards": "1-(-1)"
+        },
+        {
+          "team": "Public",
+          "name": "Kramer",
+          "school": null,
+          "returns_yards": "5"
+        },
+        {
+          "team": "Parochial",
+          "name": "Moffat",
+          "school": null,
+          "returns_yards": "1-15"
+        },
+        {
+          "team": "Parochial",
+          "name": "McVey",
+          "school": null,
+          "returns_yards": "1-15"
+        }
+      ],
+      "tackling": [
+        {
+          "team": "Public",
+          "name": "Jacobs",
+          "school": null,
+          "tackles": "7.8-6"
+        },
+        {
+          "team": "Public",
+          "name": "Sheridan",
+          "school": null,
+          "tackles": "4.29-7"
+        },
+        {
+          "team": "Parochial",
+          "name": "Esposito",
+          "school": null,
+          "tackles": "1-11.0"
+        }
+      ],
+      "mvps": null,
+      "notes": "Parochial-Morrin 41 pass from Maley (Sheridan extra point) - Parochial-Citrone 8 run (Kick failed) - Public-Murphy 5 run (run failed)",
+      "mvp": "Not specified",
+      "venue": "Northeast High School",
+      "highlights": "Overflow crowd of 14,426 attended. Jack Maley (Penn Charter) passed 3-for-6 for 79 yards and first TD in All-Star history, a 41-yard pass to Mike Morrin (North Catholic). John Citrone (Roman) scored on 8-yard run.",
+      "score_parsed": {
+        "public": 13,
+        "nonpublic": 13
+      }
+    },
+    {
+      "year": 1976,
+      "score": "PUBLIC 14, NON-PUBLIC 6",
+      "team_stats": {
+        "parochial": {
+          "first_downs": "4",
+          "rushes_yards": "41-(-45)",
+          "passing_yards": "31",
+          "total_yards": "-14",
+          "return_yards": "111",
+          "passes": "3-13-2",
+          "fumbles_lost": "4",
+          "punting": "6-33.3",
+          "penalties": "2-13"
+        },
+        "public": {
+          "first_downs": "4",
+          "rushes_yards": "30-82",
+          "passing_yards": "37",
+          "total_yards": "119",
+          "return_yards": "35",
+          "passes": "3-12-1",
+          "fumbles_lost": "1",
+          "punting": "10-30.5",
+          "penalties": "4-18"
+        }
+      },
+      "scoring_summary": [
+        "Parochial - 0 0 6 0 = 6",
+        "Public - 7 0 0 7 = 14",
+        "Pub-Benson 1 run (Freiling kick)",
+        "Par-Kearns 10 pass from McKay (pass failed)",
+        "Pub-Montgomery 7 run (Freiling kick)"
+      ],
+      "rushing": [
+        {
+          "team": "Parochial",
+          "name": "DeLuca",
+          "school": null,
+          "carries_yards": "4-(-26)"
+        },
+        {
+          "team": "Parochial",
+          "name": "McKay",
+          "school": null,
+          "carries_yards": "6-(-31)"
+        },
+        {
+          "team": "Parochial",
+          "name": "Dugan",
+          "school": null,
+          "carries_yards": "5-7"
+        },
+        {
+          "team": "Parochial",
+          "name": "Rowan",
+          "school": null,
+          "carries_yards": "6-(-47)"
+        },
+        {
+          "team": "Parochial",
+          "name": "Reid",
+          "school": null,
+          "carries_yards": "9-27"
+        },
+        {
+          "team": "Parochial",
+          "name": "Shelinsky",
+          "school": null,
+          "carries_yards": "1-1"
+        },
+        {
+          "team": "Parochial",
+          "name": "Riley",
+          "school": null,
+          "carries_yards": "2-3"
+        },
+        {
+          "team": "Parochial",
+          "name": "Lillie",
+          "school": null,
+          "carries_yards": "3-8"
+        },
+        {
+          "team": "Public",
+          "name": "Hudson",
+          "school": null,
+          "carries_yards": "1-(-10)"
+        },
+        {
+          "team": "Public",
+          "name": "Benson",
+          "school": null,
+          "carries_yards": "6-15"
+        },
+        {
+          "team": "Public",
+          "name": "Wilkins",
+          "school": null,
+          "carries_yards": "1-3"
+        },
+        {
+          "team": "Public",
+          "name": "Montgomery",
+          "school": null,
+          "carries_yards": "1-35"
+        },
+        {
+          "team": "Public",
+          "name": "Smallbolle",
+          "school": null,
+          "carries_yards": "9-29"
+        },
+        {
+          "team": "Public",
+          "name": "Choice",
+          "school": null,
+          "carries_yards": "5-(-5)"
+        },
+        {
+          "team": "Public",
+          "name": "Holley",
+          "school": null,
+          "carries_yards": "2-6"
+        },
+        {
+          "team": "Public",
+          "name": "Horan",
+          "school": null,
+          "carries_yards": "1-4"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Parochial",
+          "name": "DeLuca",
+          "school": null,
+          "completions_attempts_yards": "1-6-7 yards"
+        },
+        {
+          "team": "Parochial",
+          "name": "McKay",
+          "school": null,
+          "completions_attempts_yards": "2-4-24"
+        },
+        {
+          "team": "Parochial",
+          "name": "Rowan",
+          "school": null,
+          "completions_attempts_yards": "0-3"
+        },
+        {
+          "team": "Public",
+          "name": "Hudson",
+          "school": null,
+          "completions_attempts_yards": "2-8-24"
+        },
+        {
+          "team": "Public",
+          "name": "Wilkins",
+          "school": null,
+          "completions_attempts_yards": "1-4-13"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Parochial",
+          "name": "Kearns",
+          "school": null,
+          "catches_yards": "1-10"
+        },
+        {
+          "team": "Parochial",
+          "name": "Fullford",
+          "school": null,
+          "catches_yards": "1-14"
+        },
+        {
+          "team": "Parochial",
+          "name": "Alston",
+          "school": null,
+          "catches_yards": "1-7"
+        },
+        {
+          "team": "Public",
+          "name": "Keels",
+          "school": null,
+          "catches_yards": "3-37"
+        }
+      ],
+      "returns": null,
+      "tackling": null,
+      "mvps": null,
+      "notes": "Pub-Benson 1 run (Freiling kick); Par-Kearns 10 pass from McKay (pass failed); Pub-Montgomery 7 run (Freiling kick)",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Stellar defense limited Non-Public to minus-14 yards total offense. Nate Montgomery (Lincoln) rushed 14 times for 53 yards and clinching TD with 43 seconds left. Bob Keels (Central) made three catches for 37 yards.",
+      "score_parsed": {
+        "public": 14,
+        "nonpublic": 6
+      }
+    },
+    {
+      "year": 1977,
+      "score": "PUBLIC 8, NON-PUBLIC 8 (TIE)",
+      "team_stats": {
+        "public": {
+          "first_downs": 11,
+          "rushing_yards": "50-184",
+          "passing_yards": "6",
+          "passes": "1-9-1",
+          "return_yards": "55",
+          "total_offense": "190",
+          "fumbles_lost": "1",
+          "punting": "7-32.8",
+          "penalties": "6-40"
+        },
+        "non_public": {
+          "first_downs": 9,
+          "rushing_yards": "35-92",
+          "passing_yards": "62",
+          "passes": "6-12-0",
+          "return_yards": "38",
+          "total_offense": "154",
+          "fumbles_lost": "2",
+          "punting": "7-20.8",
+          "penalties": "2-20"
+        }
+      },
+      "scoring_summary": [
+        "Public - 8 0 0 0 = 8",
+        "Non-Public - 0 0 0 8 = 8",
+        "P - McClelland 15 run (White pass from Hodges)",
+        "NP - Lafferty 17 pass from Paulone (Smith pass from Paulone)"
+      ],
+      "rushing": [
+        {
+          "team": "Public",
+          "name": "McClelland",
+          "school": null,
+          "carries_yards": "19-85"
+        },
+        {
+          "team": "Public",
+          "name": "Gold",
+          "school": null,
+          "carries_yards": "18-51"
+        },
+        {
+          "team": "Public",
+          "name": "Wittington",
+          "school": null,
+          "carries_yards": "2-22"
+        },
+        {
+          "team": "Public",
+          "name": "White",
+          "school": null,
+          "carries_yards": "7-20"
+        },
+        {
+          "team": "Public",
+          "name": "Linton",
+          "school": null,
+          "carries_yards": "5-14"
+        },
+        {
+          "team": "Public",
+          "name": "Bozelli",
+          "school": null,
+          "carries_yards": "2-7"
+        },
+        {
+          "team": "Public",
+          "name": "Pirrone",
+          "school": null,
+          "carries_yards": "2-2"
+        },
+        {
+          "team": "Public",
+          "name": "Steed",
+          "school": null,
+          "carries_yards": "2-0"
+        },
+        {
+          "team": "Public",
+          "name": "Hodges",
+          "school": null,
+          "carries_yards": "1-(-7)"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Shelinsky",
+          "school": null,
+          "carries_yards": "11-36"
+        },
+        {
+          "team": "Non-Public",
+          "name": "M. Mallon",
+          "school": null,
+          "carries_yards": "5-30"
+        },
+        {
+          "team": "Non-Public",
+          "name": "McCardle",
+          "school": null,
+          "carries_yards": "7-24"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Paulone",
+          "school": null,
+          "carries_yards": "5-10"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Sigmand",
+          "school": null,
+          "carries_yards": "3-5"
+        },
+        {
+          "team": "Non-Public",
+          "name": "McAnany",
+          "school": null,
+          "carries_yards": "1-2"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Salicondro",
+          "school": null,
+          "carries_yards": "1-2"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Cafrino",
+          "school": null,
+          "carries_yards": "2-(-17)"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Public",
+          "name": "Hodges",
+          "school": null,
+          "completions_attempts_yards": "1-3, 0"
+        },
+        {
+          "team": "Public",
+          "name": "White",
+          "school": null,
+          "completions_attempts_yards": "0-4, 0"
+        },
+        {
+          "team": "Public",
+          "name": "Gray",
+          "school": null,
+          "completions_attempts_yards": "0-2, 0"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Paulone",
+          "school": null,
+          "completions_attempts_yards": "5-10, 46"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Cafrino",
+          "school": null,
+          "completions_attempts_yards": "2-5, 16"
+        },
+        {
+          "team": "Non-Public",
+          "name": "McCardle",
+          "school": null,
+          "completions_attempts_yards": "0-1, 0"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Public",
+          "name": "McClelland",
+          "school": null,
+          "catches_yards": "1-6"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Smith",
+          "school": null,
+          "catches_yards": "3-40"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Lafferty",
+          "school": null,
+          "catches_yards": "1-17"
+        },
+        {
+          "team": "Non-Public",
+          "name": "McAnany",
+          "school": null,
+          "catches_yards": "2-5"
+        }
+      ],
+      "returns": null,
+      "tackling": null,
+      "mvps": null,
+      "officials": "Tom (Goalpost) Elliott, Charles Allen, Bob Bram, Ralph McNally, Frank Monaco, Paul Baker",
+      "attendance": 13402,
+      "notes": "P - McClelland 15 run (White pass from Hodges); NP - Lafferty 17 pass from Paulone (Smith pass from Paulone)",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Non-Public tied game in fourth quarter. Mike Paulone (Pennsylvania School for the Deaf) completed 17-yard TD pass to Paul Lafferty (Judge) and conversion to Jerry Smith (Neumann). Leo McClelland (Mastbaum) rushed 19 times for 85 yards.",
+      "score_parsed": {
+        "raw": "PUBLIC 8, NON-PUBLIC 8 (TIE)"
+      }
+    },
+    {
+      "year": 1978,
+      "score": "NON-PUBLIC 36, PUBLIC 8",
+      "team_stats": {
+        "public": {
+          "first_downs": 10,
+          "rushing_yards": "52-77",
+          "passing_yards": "117",
+          "passes": "5-18-3",
+          "return_yards": "106",
+          "total_offense": "194",
+          "fumbles_lost": "2",
+          "punts_average": "7-31.1",
+          "penalties_yards": "10-90"
+        },
+        "non_public": {
+          "first_downs": 17,
+          "rushing_yards": "46-179",
+          "passing_yards": "143",
+          "passes": "5-9-0",
+          "return_yards": "32",
+          "total_offense": "372",
+          "fumbles_lost": "4",
+          "punts_average": "3-46.0",
+          "penalties_yards": "5-48"
+        }
+      },
+      "scoring_summary": [
+        "Public - 0 0 8 0 = 8",
+        "Non-Public - 14 7 0 15 = 26",
+        "NP - Gramlich 29 pass from Clark (Bushheck kick)",
+        "NP - Wistar 7 pass from Loughery (Bushheck kick)",
+        "NP - Gramlich 14 pass from Loughery (Bushheck kick)",
+        "P - Gualieri 1 run (Coleman run)",
+        "NP - Ewell 2 run (Ewell run)",
+        "NP - Powers 42 pass from Loscalzo (Bushheck kick)"
+      ],
+      "rushing": [
+        {
+          "team": "Public",
+          "name": "David Cooper",
+          "school": "Olney",
+          "carries_yards": "9-(-12)"
+        },
+        {
+          "team": "Public",
+          "name": "Frank Pacifico",
+          "school": "Lincoln",
+          "carries_yards": "3-1-19"
+        },
+        {
+          "team": "Public",
+          "name": "Porto Gualieri",
+          "school": "Central",
+          "carries_yards": "5-14"
+        },
+        {
+          "team": "Public",
+          "name": "Clarence Norwood",
+          "school": "Bartram",
+          "carries_yards": "6-7"
+        },
+        {
+          "team": "Public",
+          "name": "Bufus Outlaw",
+          "school": "Mastbaum",
+          "carries_yards": "3-11"
+        },
+        {
+          "team": "Public",
+          "name": "David Youmg",
+          "school": "Franklin",
+          "carries_yards": "3-32"
+        },
+        {
+          "team": "Public",
+          "name": "Derek Coleman",
+          "school": "Lincoln",
+          "carries_yards": "3-1"
+        },
+        {
+          "team": "Public",
+          "name": "John Meade",
+          "school": "Lincoln",
+          "carries_yards": "3-1"
+        },
+        {
+          "team": "Public",
+          "name": "Dwayne Wilson",
+          "school": "Central",
+          "carries_yards": "1-(-2)"
+        },
+        {
+          "team": "Public",
+          "name": "Ken MacIntosh",
+          "school": "Roxborough",
+          "carries_yards": "1-2"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Brian Ewell",
+          "school": "Chestnut Hill",
+          "carries_yards": "11-car"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Ken Vecchio",
+          "school": "Ryan",
+          "carries_yards": "3-7"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Brian Tierney",
+          "school": "Judge",
+          "carries_yards": "4-1"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Joe Rabuck",
+          "school": "SJPrep",
+          "carries_yards": "5-1"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Rick Roberts",
+          "school": "Dougherty",
+          "carries_yards": "8-19"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Bob Loscaito",
+          "school": "Dougherty",
+          "carries_yards": "4-1-6"
+        },
+        {
+          "team": "Non-Public",
+          "name": "John Loughery",
+          "school": "Penn Charter",
+          "carries_yards": "1-1(-1)"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Public",
+          "name": "Derek Coleman",
+          "school": "West",
+          "completions_attempts_yards": "1 completion-8 attempts, 35 yards"
+        },
+        {
+          "team": "Public",
+          "name": "Frank Pacifico",
+          "school": "Lincoln",
+          "completions_attempts_yards": "completion-0"
+        },
+        {
+          "team": "Public",
+          "name": "John Loughery",
+          "school": "Penn Charter",
+          "completions_attempts_yards": "3-4, 72"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Ed Clark",
+          "school": "Judge",
+          "completions_attempts_yards": "1 completion-3 attempts, 29 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Jim Gramlich",
+          "school": "Roman",
+          "completions_attempts_yards": "2 catches-78 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Dennis Wiater",
+          "school": "Ryan",
+          "completions_attempts_yards": "1-7"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Mike Powers",
+          "school": "Roman",
+          "completions_attempts_yards": "1-2"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Joe Rabuck",
+          "school": "SJ Prep",
+          "completions_attempts_yards": "1-1-6"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Public",
+          "name": "Axel Smith",
+          "school": "Penn",
+          "catches_yards": "2 catches-30 yards"
+        },
+        {
+          "team": "Public",
+          "name": "Bill Cook",
+          "school": "Lincoln",
+          "catches_yards": "1-39"
+        },
+        {
+          "team": "Public",
+          "name": "Daryl Wood",
+          "school": "West",
+          "catches_yards": "1-15"
+        },
+        {
+          "team": "Public",
+          "name": "Ray Wolkiewicz",
+          "school": "Frankford",
+          "catches_yards": "1-11"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Jim Gramlich",
+          "school": "Roman",
+          "catches_yards": "2 catches-78 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Dennis Wiater",
+          "school": "Ryan",
+          "catches_yards": "1-7"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Mike Powers",
+          "school": "Roman",
+          "catches_yards": "1-2"
+        }
+      ],
+      "returns": null,
+      "tackling": null,
+      "mvps": null,
+      "notes": "Public: Derek Coleman (West, 1 completion-8 attempts, 35 yards); Non-Public: Ed Clark (Judge, 1 completion-3 attempts, 29 yards); Bob Loscaito (Dougherty, 4-1-6 carries-yards)",
+      "mvp": "Not specified",
+      "venue": "Franklin Field",
+      "highlights": "28,432 fans attended. John Loughery (Penn Charter) completed 3-for-4 for 72 yards and two TDs. Tim Gramlich (Roman) had two catches for 78 yards and two TDs. Brian Ewell (Chestnut Hill) rushed 13 times for 79 yards and TD.",
+      "score_parsed": {
+        "public": 36,
+        "nonpublic": 36
+      }
+    },
+    {
+      "year": 1979,
+      "score": "NON-PUBLIC 14, PUBLIC 6",
+      "team_stats": {
+        "non_public": {
+          "first_downs": 16,
+          "rushing_yards": "57-213",
+          "passing_yards": "139",
+          "passes": "4-8-1",
+          "return_yards": "21",
+          "total_offense": "373",
+          "fumbles_lost": "3",
+          "punts_average": "3-30.0",
+          "penalties_yards": "3-45"
+        },
+        "public": {
+          "first_downs": 10,
+          "rushing_yards": "34-150",
+          "passing_yards": "23",
+          "passes": "3-13-2",
+          "return_yards": "51",
+          "total_offense": "173",
+          "fumbles_lost": "0",
+          "punts_average": "5-29.8",
+          "penalties_yards": "7-55"
+        }
+      },
+      "scoring_summary": [
+        "Non-Public - 0 7 7 0 = 14",
+        "Public - 0 0 6 0 = 6",
+        "NP - Ulmer 2 run (Cowley kick)",
+        "P - Taylor 18 pass from Speller (pass failed)",
+        "NP - McIneman 2 run (Cowley kick)"
+      ],
+      "rushing": [
+        {
+          "team": "Non-Public",
+          "name": "George Bailey",
+          "school": "Chestnut Hill",
+          "carries_yards": "13-car"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Joe McErlean",
+          "school": "SJ Prep",
+          "carries_yards": "6-28"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Garrett",
+          "school": "SJ Prep",
+          "carries_yards": "5-29"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Harry Ulmer",
+          "school": "North Catholic",
+          "carries_yards": "1-16"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Fran Wilson",
+          "school": "West Catholic",
+          "carries_yards": "6-1-1"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Harry Confer",
+          "school": "St Catholic",
+          "carries_yards": "14-18"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Bob Verrachio",
+          "school": "Dougherty",
+          "carries_yards": "13-51"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Mark Everitt",
+          "school": "Judge",
+          "carries_yards": "7-18"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Ted Trippleman",
+          "school": "Chestnut Hill",
+          "carries_yards": "1-7"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Del Evens",
+          "school": "Friends Central",
+          "carries_yards": "8-18"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Joe Devlin",
+          "school": "West Catholic",
+          "carries_yards": "5-8"
+        },
+        {
+          "team": "Public",
+          "name": "Kevin Duckett",
+          "school": "Northeast",
+          "carries_yards": "14-60"
+        },
+        {
+          "team": "Public",
+          "name": "Kevin Bennant",
+          "school": "Southern",
+          "carries_yards": "2-8"
+        },
+        {
+          "team": "Public",
+          "name": "Paul Davis",
+          "school": "Frankford",
+          "carries_yards": "1-2"
+        },
+        {
+          "team": "Public",
+          "name": "Don Speller",
+          "school": "Bartram",
+          "carries_yards": "10-58"
+        },
+        {
+          "team": "Public",
+          "name": "Harold Coleman",
+          "school": "Bartram",
+          "carries_yards": "3-15"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Non-Public",
+          "name": "Fran Wilson",
+          "school": "West Catholic",
+          "completions_attempts_yards": "2 completions-3 attempts, 19 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Bob Verrachio",
+          "school": "Penn Charter",
+          "completions_attempts_yards": "1-2-19"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Ed Hughes",
+          "school": "Ryan",
+          "completions_attempts_yards": null
+        },
+        {
+          "team": "Public",
+          "name": "Don Speller",
+          "school": "Bartram",
+          "completions_attempts_yards": "2-9-21"
+        },
+        {
+          "team": "Public",
+          "name": "Dud Clemmer",
+          "school": "Southern",
+          "carries_yards": "1-2"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Non-Public",
+          "name": "Mike McCloskey",
+          "school": "Judge",
+          "catches_yards": "2 catches-41 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Joe McErlean",
+          "school": "SJ Prep",
+          "catches_yards": "1-9"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Andy Baratta",
+          "school": "1-1-1",
+          "catches_yards": null
+        },
+        {
+          "team": "Public",
+          "name": "Vaughn Taylor",
+          "school": "Franklin",
+          "catches_yards": "2-21"
+        },
+        {
+          "team": "Public",
+          "name": "Allan Peaks",
+          "school": "Central",
+          "catches_yards": "1-2"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Non-Public",
+          "name": "Joe McErlean",
+          "school": "SJ Prep",
+          "returns_yards": "3 returns-3 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Mark Everitt",
+          "school": "Judge",
+          "returns_yards": "1-(-2)"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Harry Ulmer",
+          "school": "North Catholic",
+          "returns_yards": "1-16"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Bob McGarrity",
+          "school": "Dougherty",
+          "returns_yards": "punt return"
+        },
+        {
+          "team": "Public",
+          "name": "Bruce Carther",
+          "school": "Lincoln",
+          "returns_yards": "4-53"
+        },
+        {
+          "team": "Public",
+          "name": "Fred Dukes",
+          "school": "Franklin",
+          "returns_yards": "1-(-2)"
+        },
+        {
+          "team": "Public",
+          "name": "Miscellaneous",
+          "school": null,
+          "returns_yards": "punt return"
+        }
+      ],
+      "tackling": null,
+      "mvps": null,
+      "notes": "NP - Ulmer 2 run (Cowley kick); P - Taylor 18 pass from Speller (pass failed); NP - McIneman 2 run (Cowley kick)",
+      "mvp": "Not specified",
+      "venue": "Franklin Field",
+      "highlights": "Harry Ulmer (North Catholic) rushed 14 times for 138 yards and TD (rushing yardage record). Joe McErlean (SJ Prep) ran for other TD. Don Speller (Bartram) threw 18-yard TD pass.",
+      "score_parsed": {
+        "public": 14,
+        "nonpublic": 14
+      }
+    },
+    {
+      "year": 1980,
+      "score": "PUBLIC 13, NON-PUBLIC 12",
+      "team_stats": {
+        "non_public": {
+          "first_downs": 10,
+          "rushing_yards": "42-124",
+          "passing_yards": "95",
+          "passes": "4-13-0",
+          "return_yards": "65",
+          "total_offense": "219",
+          "fumbles_lost": "1",
+          "punts_average": "5-29.3",
+          "penalties_yards": "5-59"
+        },
+        "public": {
+          "first_downs": 12,
+          "rushing_yards": "49-100",
+          "passing_yards": "45",
+          "passes": "3-8-0",
+          "return_yards": "6",
+          "total_offense": "175",
+          "fumbles_lost": "0",
+          "punts_average": "6-30.0",
+          "penalties_yards": "24"
+        }
+      },
+      "scoring_summary": [
+        "Non-Public - 6 0 0 = 12",
+        "Public - 0 0 0 = 13",
+        "NP - J. Pawloski 29 pass from (kick)",
+        "P - Crawford 10 run (Single kick)",
+        "P - Twyman 3 pass from Ingram (gram kick failed)"
+      ],
+      "rushing": [
+        {
+          "team": "Non-Public",
+          "name": "John Cason",
+          "school": "Roman",
+          "carries_yards": "8 carries-15 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Nick Russo",
+          "school": "Ryan",
+          "carries_yards": "8-26"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Dave Shipton",
+          "school": "North Catholic",
+          "carries_yards": "5-11"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Owen O'Donnell",
+          "school": "SJ Prep",
+          "carries_yards": "6-25"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Joe Jachetti",
+          "school": "Neumann",
+          "carries_yards": "2-7"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Scott Strongowski",
+          "school": "Judge",
+          "carries_yards": "1-3"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Joe Jagen",
+          "school": "Neumann",
+          "carries_yards": "2-1"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Brian Donnelly",
+          "school": "Ryan",
+          "carries_yards": "4-(-2)"
+        },
+        {
+          "team": "Public",
+          "name": "Kevin Duckett",
+          "school": "Northeast",
+          "carries_yards": "14-67"
+        },
+        {
+          "team": "Public",
+          "name": "Jeff Gould",
+          "school": "Bartram",
+          "carries_yards": "6-40"
+        },
+        {
+          "team": "Public",
+          "name": "Wendell Birch",
+          "school": "Lincoln",
+          "carries_yards": "6-40"
+        },
+        {
+          "team": "Public",
+          "name": "Duane Robinson",
+          "school": "West Phila",
+          "carries_yards": "1-3"
+        },
+        {
+          "team": "Public",
+          "name": "Jim Jonathan",
+          "school": "1-5",
+          "carries_yards": null
+        },
+        {
+          "team": "Public",
+          "name": "Kevin Ingram",
+          "school": "Dobbins",
+          "carries_yards": "6-25"
+        },
+        {
+          "team": "Public",
+          "name": "Victor Moore",
+          "school": "King",
+          "carries_yards": "3-1-2"
+        },
+        {
+          "team": "Public",
+          "name": "Kevin Dixon",
+          "school": "Dobbins",
+          "carries_yards": "1-3"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Non-Public",
+          "name": "Don Bradley",
+          "school": "Roman",
+          "completions_attempts_yards": "3 completions-0 attempts, 5 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "John Corey",
+          "school": "Ryan",
+          "completions_attempts_yards": "1 completion-9 attempts, 0"
+        },
+        {
+          "team": "Public",
+          "name": "Wendell Birch",
+          "school": "Lincoln",
+          "completions_attempts_yards": "2-4"
+        },
+        {
+          "team": "Public",
+          "name": "Kevin Ingram",
+          "school": "Dobbins",
+          "completions_attempts_yards": "1-4"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Non-Public",
+          "name": "Jim Pawloski",
+          "school": "SJ Prep",
+          "catches_yards": "1 catch-7 yards"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Dave Shipton",
+          "school": "Roman",
+          "catches_yards": "1-3"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Jim Pawloski",
+          "school": "SJ Prep",
+          "catches_yards": "1-3"
+        },
+        {
+          "team": "Non-Public",
+          "name": "John Cason",
+          "school": "Roman",
+          "catches_yards": "1-car"
+        },
+        {
+          "team": "Public",
+          "name": "Robert Crawford",
+          "school": "Central",
+          "catches_yards": "1-21"
+        },
+        {
+          "team": "Public",
+          "name": "Tyler Price",
+          "school": "Southern",
+          "catches_yards": "1-5"
+        },
+        {
+          "team": "Public",
+          "name": "Alan Twyman",
+          "school": "Central",
+          "catches_yards": "1-3"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Non-Public",
+          "name": "Tim Dougherty",
+          "school": "Dougherty",
+          "returns_yards": "recovered opponent's fumble"
+        },
+        {
+          "team": "Non-Public",
+          "name": "Mark Kowal",
+          "school": null,
+          "returns_yards": "Punt"
+        },
+        {
+          "team": "Public",
+          "name": "Cosmo Losco",
+          "school": "Judge",
+          "catches_yards": "4 returns-50 yards"
+        },
+        {
+          "team": "Public",
+          "name": "Glenn LeGroade",
+          "school": "West Catholic",
+          "catches_yards": "1-9"
+        },
+        {
+          "team": "Public",
+          "name": "Roosevelt Jenkins",
+          "school": "Frankford",
+          "catches_yards": "2-2"
+        },
+        {
+          "team": "Public",
+          "name": "Corey McEveeh",
+          "school": "Lincoln",
+          "catches_yards": "1-3"
+        },
+        {
+          "team": "Public",
+          "name": "Robert Crawford",
+          "school": "Central",
+          "catches_yards": "1-7"
+        }
+      ],
+      "tackling": null,
+      "mvps": null,
+      "notes": "NP - J. Pawloski 29 pass from (kick); P - Crawford 10 run (Single kick); P - Twyman 3 pass from Ingram (gram kick failed)",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Robert Crawford (Central) ran 10 yards for TD. Kevin Ingram (Dobbins) passed 3 yards to Alan Twyman (Central) for TD. Karl Siegle (Northeast) kicked PAT. Jim Pawloski (Ryan) made two receptions for 74 yards.",
+      "score_parsed": {
+        "public": 13,
+        "nonpublic": 12
+      }
+    },
+    {
+      "year": 1981,
+      "score": "NON-PUBLIC 10, PUBLIC 0",
+      "team_stats": {
+        "Non-Public": {
+          "first_downs": 8,
+          "rushes_yards": "50-177",
+          "passing_yards": 0,
+          "total_offense": 177,
+          "return_yards": "3-10",
+          "punts": "8-31.3",
+          "fumbles_lost": 1,
+          "penalties_yards": "3-23"
+        },
+        "Public": {
+          "first_downs": 9,
+          "rushes_yards": "37-37",
+          "passing_yards": 36,
+          "total_offense": 73,
+          "return_yards": "7-18",
+          "punts": "7-28.3",
+          "fumbles_lost": 2,
+          "penalties_yards": "2-10"
+        }
+      },
+      "scoring_summary": [
+        "Non-Public: FG Hudak 26, FG Stephani 27 (Hudak 2 attempts)"
+      ],
+      "rushing": [
+        {
+          "team": "Non-Public",
+          "leader": "Ben Hall, Penn Charter",
+          "carries": 5,
+          "yards": 10
+        },
+        {
+          "team": "Non-Public",
+          "player": "Paul Shoop, SJ Prep",
+          "carries": 4,
+          "yards": 12
+        },
+        {
+          "team": "Non-Public",
+          "player": "John Ledanski, Roman, S 3-4: Kevin Judko, 9-3; Eric Rutherford, West, 2-0; Jim Gannon, North, 2-7"
+        },
+        {
+          "team": "Public",
+          "leader": "Tony Crawford, Penn, 11-2",
+          "carries": 11,
+          "yards": 2
+        },
+        {
+          "team": "Public",
+          "player": "Bob Henni, Frankford, 7-(1); Eldridge Corner, West, 6-17; Jim Henlow, Washington, West; 6-17; Ted Drossos, Washington, 2-(12); Bethany, Central, 2-1"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Non-Public",
+          "leader": "John McGoshan",
+          "completions": 1,
+          "attempts": 4,
+          "yards": 18,
+          "touchdowns": 0,
+          "interceptions": 0
+        },
+        {
+          "team": "Public",
+          "leader": "Scott Croft, Frankford, 1-4",
+          "completions": 1,
+          "attempts": 4,
+          "yards": 14,
+          "touchdowns": 0,
+          "interceptions": 0
+        },
+        {
+          "team": "Public",
+          "player": "Su Drossinas, Washington, 0-14 (8)"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Non-Public",
+          "leader": "Bob McAnilly, Penn Charter, 1-11",
+          "receptions": 1,
+          "yards": 11
+        },
+        {
+          "team": "Public",
+          "leader": "Victor Bellamy, Central, 2-5",
+          "receptions": 2,
+          "yards": 5
+        },
+        {
+          "team": "Public",
+          "player": "Tony Crawford, Penn, 2-9; Eric Rutherford, West, 1-5; Jim Hardy, Frankford, 1-5"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Non-Public",
+          "player": "Paul Rogers, Ryan, 2-(1)",
+          "yards": -1
+        },
+        {
+          "team": "Non-Public",
+          "player": "Jay Guico, Penn Charter, 1-11"
+        },
+        {
+          "team": "Public",
+          "player": "Mark Hisanusi, North, 1-0"
+        },
+        {
+          "team": "Public",
+          "player": "VD. Bellamy, Lincoln, 1-2; Mark Hollis, North, 1-2"
+        }
+      ],
+      "tackles": [
+        {
+          "team": "Non-Public",
+          "player": "Craig Dudley, Dougherty, 6-1; Kevin Malone, Dougherty, 5; Paul Necci, Northeast, 5"
+        },
+        {
+          "team": "Public",
+          "player": "Steve Kelly, Washington, 7; Scott Merks, King, 5; John Adams, Northeast, 5; Paul Asaci, Hauborough"
+        }
+      ],
+      "mvps": {
+        "rushing": "Ben Hall (Non-Public)",
+        "passing": "John McGoshan (Non-Public)",
+        "receiving": "Victor Bellamy (Public)"
+      },
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Game played in driving rainstorm. Bob Hudoka (Dougherty) kicked 26-yard field goal. John McGeehan (Roman) ran 2 yards for TD. Jay Curcio (Penn Charter) intercepted; Tim Dronson recovered fumble.",
+      "score_parsed": {
+        "public": 10,
+        "nonpublic": 10
+      },
+      "tackling": null,
+      "notes": null
+    },
+    {
+      "year": 1982,
+      "score": "NON-PUBLIC 18, PUBLIC 6",
+      "team_stats": {
+        "Non-Public": {
+          "first_downs": 11,
+          "rushes_yards": "52-153",
+          "passing_yards": 14,
+          "total_yards": 167,
+          "return_yards": 31,
+          "punts": "3-9.0",
+          "fumbles_lost": 1,
+          "penalties_yards": "4-23.7"
+        },
+        "Public": {
+          "first_downs": 11,
+          "rushes_yards": "38-114",
+          "passing_yards": 51,
+          "total_yards": 165,
+          "return_yards": 91,
+          "punts": "4-23.7",
+          "fumbles_lost": 1,
+          "penalties_yards": "4-14.0"
+        }
+      },
+      "scoring_summary": [
+        "Dion Williams, Dougherty, 7-(1-2-0) 19 yards; Stacey Davis, Dougherty, 2-13-0 1-0",
+        "Thomas Empson, Dougherty, 5-45",
+        "by. D-1-0 0",
+        "Tom O'Neill, West Catholic, 1-2; Brian McCloskey, Penn Charter, 3-5; John 23 -Bob Lewis, Germantown, 1-8-3; George Heineman, Frankford, 1-1-0, 26"
+      ],
+      "rushing": [
+        {
+          "team": "Non-Public",
+          "leader": "Jerry Magallanes",
+          "yards": 85
+        },
+        {
+          "team": "Non-Public",
+          "player": "Joe Dougherty, 1-9; Roman, 3-34; Stacey Davis, Dougherty"
+        },
+        {
+          "team": "Public",
+          "leader": "Anthony Smith, Frankford, 10-46",
+          "carries": 10,
+          "yards": 46
+        },
+        {
+          "team": "Public",
+          "player": "Kevin Reed, Dobbins, 5-22; Vincent Williams, Gratz, 4-13; Darryl Taylor, King, 4-13; Cordell Chapman, Central, 3-11; Craig Davis, Gratz, 3-1; Bob Lewis, Germantown, 3-(1-17); George Heineman, Frankford, 2-3; Mike Doughton, Imhotep, 2-(1); Norman Saunders, Washington, 2-1; David Valley, Bartram, 1-5"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Non-Public",
+          "leader": "John Higgins, Judge, 2 completions-5 attempts-0 interceptions, 3 yards"
+        },
+        {
+          "team": "Public",
+          "leader": "Brian McCloskey, Penn Charter, 2-0"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Non-Public",
+          "player": "Mike Schmids, Dougherty, 1-11; Tom O'Neill, West Catholic, 1-3"
+        },
+        {
+          "team": "Public",
+          "leader": "Darryl Taylor, King, 1-26",
+          "receptions": 1,
+          "yards": 26
+        },
+        {
+          "team": "Public",
+          "player": "Wayne Hinton, Gratz, 1-18; Jeff Pinkins, Southern, 1-5; Tom O'Neill, West Catholic"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Non-Public",
+          "player": "Charles Doyle, Dougherty, 2-19; Doug McLaughlin, Ryan, 1-5; Tom Speranza, Roman, 1-2"
+        },
+        {
+          "team": "Public",
+          "player": "Matt Catholic, 5; Tony Fara, Lincoln, 10; Chris D'Amico, Southern, 5"
+        }
+      ],
+      "tackles": [
+        {
+          "team": "Non-Public",
+          "player": "Paul Harris, Dougherty, 6; Fran Grev, SJ Prep, 5; Tom Cilmore, North"
+        },
+        {
+          "team": "Public",
+          "player": "Tony Fara, Lincoln, 10; Chris D'Amico, Southern, 5; Brian Ramsay, Frankford, 5; Joe Salawski, Washington, 5; Percy Warfield, Franklin, 5"
+        }
+      ],
+      "miscellaneous": {
+        "Non-Public": "Charles Davis, Dougherty, had two interceptions. Doug McLaughlin, Ryan, Tom Speranza, Roman, Matt Donnelly, Judge, Greg Gallagher, Judge, Tom Bilish, Ryan, had one interception apiece. Joe Masi, Ryan, recovered opponent's fumble",
+        "Public": "Wayne Hinton, Gratz, Bill Culman, Central, had two recovered opponent's fumbles"
+      },
+      "mvps": null,
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Ultra-windy conditions affected play. Charles Coyle (Dougherty) made two interceptions. Jerry Magallanes (Judge) rushed 12 times for 36 yards and two TDs. Public's rushing defense netted minus-9 yards.",
+      "score_parsed": {
+        "public": 18,
+        "nonpublic": 18
+      },
+      "tackling": null,
+      "notes": null
+    },
+    {
+      "year": 1983,
+      "score": "PUBLIC 31, NON-PUBLIC 14",
+      "team_stats": {
+        "Non-Public": {
+          "first_downs": 13,
+          "rushes_yards": "44-218",
+          "passing_yards": 42,
+          "total_offense": 266,
+          "return_yards": 123,
+          "passes": "5-14-1",
+          "punts": "2-37.5",
+          "fumbles_lost": 2,
+          "penalties_yards": "2-13"
+        },
+        "Public": {
+          "first_downs": 13,
+          "rushes_yards": "65-328",
+          "passing_yards": 140,
+          "total_offense": 468,
+          "return_yards": 31,
+          "passes": "11-21-1",
+          "punts": "2-13.5",
+          "fumbles_lost": 1,
+          "penalties_yards": "1-5"
+        }
+      },
+      "scoring_summary": [
+        "Rich Gannon, St. Joseph's, 2-4-1, 22",
+        "Bil Hartigan, Judge, 2-4-0, 18",
+        "Kenny Young, King, 8-17-1, 31"
+      ],
+      "rushing": [
+        {
+          "team": "Non-Public",
+          "leader": "John Smith, Penn Charter",
+          "carries": 20,
+          "yards": 115
+        },
+        {
+          "team": "Non-Public",
+          "player": "Ed Malandro, Penn Charter, 7-3; Rich Gannon, St. Joseph's, 5-4; Ralph DiMeo, Neumann, 3-17; Mike Collignon, Judge, 3-7; Bill Hartigan, Judge, 3-4; Brian Reidy, Judge, 2-3; Bob Senske, Ryan, 1-3; Keith Reiser, Dougherty, 1-1; Kenny Rivers, St. Joseph's, 1-1"
+        },
+        {
+          "team": "Public",
+          "leader": "Steve Duncan, Germantown, 27-107",
+          "carries": 27,
+          "yards": 107
+        },
+        {
+          "team": "Public",
+          "player": "David Boone, Bartram, 13-77; Charles Thomas, Frankford, 3-112; Joe Stevenson, Roxborough, 8-17; James Nicholson, Southern, 3-10; Rodney Jennings, Edison, 2-6; Alex Basolla, Olney, 1-3; Kenny Young, King, 1-1; Chris Croft, Frankford, 1-(-3)"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Non-Public",
+          "leader": "Bob Senske, Ryan, 1 completion-6 attempts-0 interceptions, 8 yards"
+        },
+        {
+          "team": "Public",
+          "leader": "Kenny Young, King (statistics not fully visible)"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Non-Public",
+          "leader": "Jim Sheahan, West Catholic, 1 reception-13 yards"
+        },
+        {
+          "team": "Public",
+          "leader": "Robert Lewis, Northeast, 3-51",
+          "receptions": 3,
+          "yards": 51
+        },
+        {
+          "team": "Public",
+          "player": "James Johnson, Germantown, 2-30; Rodney Jennings, Edison, 2-3; Mac Deberry, Central, 2-20; Richard Kershaw, Frankford, 1-3; Gary Pattilo, Frankford, 1-7"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Non-Public",
+          "leader": "Brian Reidy, Judge, 4-55",
+          "returns": 4,
+          "yards": 55
+        },
+        {
+          "team": "Non-Public",
+          "player": "Keith Rieser, Dougherty, 3-37; Jim Knowles, St. Joseph's, 1-2"
+        },
+        {
+          "team": "Public",
+          "leader": "Robert Lewis, Northeast, 1-14",
+          "returns": 1,
+          "yards": 14
+        },
+        {
+          "team": "Public",
+          "player": "Nate Glover, Franklin, 1-9; Allen Bell, King, 1-5"
+        }
+      ],
+      "tackles": [
+        {
+          "team": "Non-Public",
+          "player": "Jim Casey, Judge, 9; Eric Lowe, Roman, 8; Steve Holkins, Dougherty, 8; Harry Swandy, Dougherty, 7; Jimmies Willnar, West Catholic, 7"
+        },
+        {
+          "team": "Public",
+          "player": "John Adams, King, 8; Brian Davis, Central, 8; Chris Crupman, Dougherty, 6; JJ McGee, Washington, 6; Gary Moran, Dobbins, 6"
+        }
+      ],
+      "miscellaneous": {
+        "Non-Public": "Jim Knowles, St. Joseph's, had one interception. Deron Lower, Roman, Darian Norman, West Catholic, and Jim Hopse, Penn Charter recovered fumbles",
+        "Public": "Allen Ball, King, had an interception. Chris Croft, Frankford (total) and Kevin DeWall, Bartram, recovered opponent's fumbles"
+      },
+      "mvps": null,
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Steve Duncan (Germantown) rushed 27 times for 107 yards. Charles Thomas (Frankford) rushed nine times for 112 yards with 90-yard TD. Kenny Young (King) passed 8-for-17 for 91 yards and score.",
+      "score_parsed": {
+        "public": 31,
+        "nonpublic": 14
+      },
+      "tackling": null,
+      "notes": null
+    },
+    {
+      "year": 1984,
+      "score": "PUBLIC 13, NON-PUBLIC 3",
+      "team_stats": {
+        "Non-Public": {
+          "first_downs": 14,
+          "rushes_yards": "53-194",
+          "passing_yards": 73,
+          "total_offense": 267,
+          "return_yards": 56,
+          "passes": "6-18-2",
+          "punts": "5-22.0",
+          "fumbles_lost": 3,
+          "penalties_yards": "2-14"
+        },
+        "Public": {
+          "first_downs": 13,
+          "rushes_yards": "45-135",
+          "passing_yards": 95,
+          "total_offense": 230,
+          "return_yards": 66,
+          "passes": "8-14-0",
+          "punts": "6-32.2",
+          "fumbles_lost": 3,
+          "penalties_yards": "3-25"
+        }
+      },
+      "scoring_summary": [
+        "Jimmy Wilson, Central, 16-67; Hector Scott, Bartram, 13-59",
+        "Kevin Aiken, Germantown, 9-7; Joe Osherow, Northeast, 4-14; Brian Oetzel, Olney, 2-(1)",
+        "James Parker, Dobbins, 1-0"
+      ],
+      "rushing": [
+        {
+          "team": "Non-Public",
+          "leader": "Mike Liontrio, Judge",
+          "carries": 11,
+          "yards": 39
+        },
+        {
+          "team": "Non-Public",
+          "player": "Rich Ashby, Dougherty, 11-8-1; Lan Nelson, Neumann, 8-26; Vernon Smith, Dougherty, 6-28; Lance Toomer, Dougherty, 4-45; Kevin Kelly, Neumann, 4-16; Mike Mouldin, Judge, 3-8; Ed Small, Penn Charter, 3-8; John Connor, Roman, 2-11"
+        },
+        {
+          "team": "Public",
+          "leader": "Jimmy Wilson, Central, 16-67",
+          "carries": 16,
+          "yards": 67
+        },
+        {
+          "team": "Public",
+          "player": "Hector Scott, Bartram, 13-59; Kevin Aiken, Germantown, 9-7; Joe Osherow, Northeast, 4-14; Brian Oetzel, Olney, 2-(1); James Parker, Dobbins, 1-0"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Non-Public",
+          "leader": "John Connor, Roman, 3 completions-4 attempts-1 interception, 34 yards"
+        },
+        {
+          "team": "Public",
+          "leader": "Ed Ashby, Dougherty, 17-0: Rich Ashby, Dougherty, 1-1-0, 22",
+          "completions": 8,
+          "attempts": 14,
+          "yards": 95
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Non-Public",
+          "leader": "Andy Garczynski, Dougherty, 2 receptions-43 yards",
+          "receptions": 2,
+          "yards": 43
+        },
+        {
+          "team": "Non-Public",
+          "player": "Jeff McFachen, Ryan, 2-19; Jim Kearney, Dougherty, 2-11"
+        },
+        {
+          "team": "Public",
+          "leader": "Billy Teal, King, 3-27",
+          "receptions": 3,
+          "yards": 27
+        },
+        {
+          "team": "Public",
+          "player": "Curt Bellamy, Central, 2-33; Bob Browne, Mastbaum, 2-28; Hector Scott, Bartram, 1-7"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Non-Public",
+          "player": "Andy Garczynski, Dougherty, 3-75; Dave Wilson, SJ Prep, 1-15; Mike Flannery, Roman, 1-(1)"
+        },
+        {
+          "team": "Public",
+          "player": "Cliff Hubbard, Frankford, 2-5; Jimmy Wilson, Central, 1-16; Scott Farnesi, Southern, 1-1"
+        }
+      ],
+      "tackles": [
+        {
+          "team": "Non-Public",
+          "player": "Dave Winkle, North Catholic, 8; Steve D'Ambra, Dougherty, 7; Tony Wilson, SJ Prep, 6; Mike Flannery, Roman, 6"
+        },
+        {
+          "team": "Public",
+          "player": "Mark Barnum, Washington, 11; John Downing, Washington, 10; Steve Cullmann, Northeast, 10; Drew Cornod, Frankford, 9; Rick Graner, Roxborough, and Bob Miller, Lincoln, 5 each"
+        }
+      ],
+      "miscellaneous": {
+        "Non-Public": "John Fabbi, Penn Charter, and Dave Winkle, North Catholic, recovered opponent's fumbles",
+        "Public": "Rick Graner, Roxborough, and Steve Passo, Roxborough, recovered opponent's fumbles. Cliff Hubbard, Frankford, had two interceptions"
+      },
+      "mvps": null,
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Jimmy Wilson (Central) and Hector Scott (Bartram, TD) led rushing attack. James Parker (Dobbins) passed 7-for-12 for 88 yards. Mark Barnum (Washington) led defense with 11 tackles.",
+      "score_parsed": {
+        "public": 13,
+        "nonpublic": 3
+      },
+      "tackling": null,
+      "notes": null
+    },
+    {
+      "year": 1985,
+      "score": "PUBLIC 33, NON-PUBLIC 13",
+      "team_stats": {
+        "Non-Public": {
+          "first_downs": 9,
+          "rushes_yards": "42-59",
+          "passing_yards": 175,
+          "total_offense": 234,
+          "return_yards": 130,
+          "passes": "11-27-4",
+          "punts": "2-40.5",
+          "fumbles_lost": 0,
+          "penalties_yards": "1-5"
+        },
+        "Public": {
+          "first_downs": 15,
+          "rushes_yards": "45-251",
+          "passing_yards": 94,
+          "total_offense": 345,
+          "return_yards": 103,
+          "passes": "5-15-2",
+          "punts": "3-37.3",
+          "fumbles_lost": 0,
+          "penalties_yards": "8-98"
+        }
+      },
+      "scoring_summary": [
+        "West Catholic, 4-(1-24); Mark Ewing, West Catholic, 3-9; Al DiMascia, North Catholic, 2-(1); John Rabbit, Central, 8-12; Gary Boyd, Glen Hassett, Washington, 3-28",
+        "Reggie Barnes, West Phila, 8-38; John Rabbit, Central, 8-12; Glen Hassett, Washington, 3-28; Glen Fry, 3-10; Jose Vizcardondo, Olney, 3-10"
+      ],
+      "rushing": [
+        {
+          "team": "Non-Public",
+          "leader": "Ed Tamasitis, Judge",
+          "carries": 7,
+          "yards": 11
+        },
+        {
+          "team": "Non-Public",
+          "player": "Ed Pickett, West Catholic, 1-7; John Erbly, Southern, 1-5-0, 3; Gary Boyd, Northeast, 1-3-2-10"
+        },
+        {
+          "team": "Public",
+          "leader": "Jose Vizcardondo, Olney, 3",
+          "carries": 3,
+          "yards": "7-0"
+        },
+        {
+          "team": "Public",
+          "player": "81; John Erbly, Southern, 1-5-0, 3; Gary Boyd, Northeast, 1-3-2-10"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Non-Public",
+          "leader": "Ed Tamasitis, Judge, 7 completions-13 attempts-1 interception, 119 yards"
+        },
+        {
+          "team": "Public",
+          "leader": "Dene Waskewicz, Judge, 5 receptions-94 yards",
+          "completions": 5,
+          "attempts": 15,
+          "interceptions": 2,
+          "yards": 94
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Non-Public",
+          "player": "Dene Waskewicz, Judge, 5 receptions-94 yards; Brian Dulin, Dougherty, 1-15; Chritsy Stuhl, North Catholic, 1-19; David Whaley, Chestnut Hill, 1-18; Mike Cooper, Ryan, 1-8; Blair Thomas, Frankford, 1-18"
+        },
+        {
+          "team": "Public",
+          "leader": "Daryl Davis, Germantown, 1-7",
+          "receptions": 1,
+          "yards": 7
+        },
+        {
+          "team": "Public",
+          "player": "Marc Foster, Lincoln, 1-46; Chris Stephens, Roxborough, had one interception and Darren Harris, Dobbins, blocked a punt"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Non-Public",
+          "leader": "Brian Djin, Judge, 3-67",
+          "returns": 3,
+          "yards": 67
+        },
+        {
+          "team": "Non-Public",
+          "player": "Ralph Schwartz, SJ Prep, 3-33; George Nosito, SJ Prep, 3-0; Mike Cocoran, 1-10"
+        },
+        {
+          "team": "Public",
+          "leader": "Blair Thomas, Frankford, 3-34",
+          "returns": 3,
+          "yards": 34
+        },
+        {
+          "team": "Public",
+          "player": "Vinessi Basile, Northeast, 2-16-1; Chris Stephens, Roxborough, 1-1"
+        }
+      ],
+      "tackles": [
+        {
+          "team": "Non-Public",
+          "player": "Rich Schnewolf, Ryan, 9; David Stone, Frankford, 7; Darren Harris, Dobbins, 10; Vinessi Basile, Northeast, 9; Darryl Gardner, Franklin, 6"
+        },
+        {
+          "team": "Public",
+          "player": "Tom Robinson, Judge, 8; Rich Bruin, Ryan, 6; Jim Combs, SJ Prep, 5; Paul Braun, Judge, 5 (includes unspecified end zone entries)"
+        }
+      ],
+      "miscellaneous": {
+        "Non-Public": "Tom Robinson, Judge, had 6 receptions. Tony Leneihan, Judge, blocked a pass. Jim Cunningham, 5J Prep, and Paul Braun, Judge, recovered opponent's fumbles. Vinessi Basile, Northeast (total) and Chris Stephens, Roxborough, had one interception each. Darryl Gardner, Franklin; Calvin Jones, Dobbins, Daryl Owens, 1-0; Mike Williams, Box recovered opponent's fumbles. Vinessi Basile, Northeast, and Ronald Stokes, Germantown, and B. Darryl Gardner, Franklin, 6 (includes note)"
+      },
+      "mvps": null,
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Cary Boyd (Northeast) ran for one TD and passed for another. Dave Parkinson (Northeast) kicked 32 and 35-yard field goals. Blair Thomas (Frankford) rushed 11 times for 48 yards and TD.",
+      "score_parsed": {
+        "public": 33,
+        "nonpublic": 13
+      },
+      "tackling": null,
+      "notes": null
+    },
+    {
+      "year": 1986,
+      "score": "PUBLIC 12, NON-PUBLIC 6",
+      "team_stats": {
+        "Non-Public": {
+          "first_downs": 9,
+          "rushes_yards": "45-96",
+          "passing_yards": 95,
+          "total_offense": 191,
+          "return_yards": 125,
+          "passes": "4-33.3",
+          "punts": "4-33.3",
+          "fumbles_lost": 0,
+          "penalties_yards": "10-66"
+        },
+        "Public": {
+          "first_downs": 12,
+          "rushes_yards": "49-179",
+          "passing_yards": 201,
+          "total_offense": 380,
+          "return_yards": 64,
+          "passes": "4-11-1",
+          "punts": "6-35.0",
+          "fumbles_lost": 2,
+          "penalties_yards": "6-49"
+        }
+      },
+      "scoring_summary": [
+        "TD",
+        "Non-Public: FG Hollawell 1 run (kick failed)",
+        "Public: Bryant 2 pass from Thompson (kick failed)"
+      ],
+      "rushing": [
+        {
+          "team": "Non-Public",
+          "leader": "Tics Hollawell, Ryan, 20 carries-80 yards"
+        },
+        {
+          "team": "Non-Public",
+          "player": "Mike Sharper, Penn Charter, 4-(1); Dan Stifferer, Roman, 2-(1); Ed Smith, Ryan, 3-1; Hocky Hagen, King, 2-8; Mike Burke, Chestnut Hill, 1-1"
+        },
+        {
+          "team": "Public",
+          "leader": "Todd Mitchell, King, 20 yards-97; Terry Glasgow, Bok, 13-42",
+          "carries": 20,
+          "yards": 97
+        },
+        {
+          "team": "Public",
+          "player": "DeWayne Moss, West Phila, 3-33; Cliff Smith, Bartram, 4-(1); Adrian Smith, Central, 1-(1)"
+        }
+      ],
+      "passing": [
+        {
+          "team": "Non-Public",
+          "leader": "Joe Gonick, Judge, 5 completions-7 attempts-0 interceptions, 1 yards"
+        },
+        {
+          "team": "Non-Public",
+          "player": "Dan Stifferer, Roman, 2-(1); Ed Smith, Ryan, 2-0; Mark Smith, Ryan, 2-0"
+        },
+        {
+          "team": "Public",
+          "leader": "Cliff Smith, Bartram, 2-7-0, 16; Keith Singleton, Washington, 2-4-1, 6"
+        },
+        {
+          "team": "Public",
+          "player": "Jody Fytrowitz, SJ Prep, 1-16; Jerry Langton, Judge, 1-11; Kevin Pompey, Dougherty, 1-8"
+        }
+      ],
+      "receiving": [
+        {
+          "team": "Non-Public",
+          "leader": "Ricks Hollawell, R-100; Mike Sharper, Penn Charter, 1-2-1; Kevin Pompey, Dougherty, 1-8"
+        },
+        {
+          "team": "Public",
+          "leader": "Todd Mitchell, King, 2-15; Anthony Taylor, Franklin, 1-52; Clayton Walker, Roxborough, 1-(-1)"
+        }
+      ],
+      "returns": [
+        {
+          "team": "Non-Public",
+          "leader": "Vince Gomas, North Catholic, 2-15"
+        },
+        {
+          "team": "Public",
+          "leader": "Todd Mitchell, King, 2-15; Anthony Taylor, Franklin, 1-52; Clayton Walker, Roxborough, 1-(-1)"
+        }
+      ],
+      "tackles": [
+        {
+          "team": "Non-Public",
+          "player": "Vince Gomas, North Catholic, 9; Victor Grevison, West Catholic, 7; Dan Honarity, North Catholic, 8"
+        },
+        {
+          "team": "Public",
+          "leader": "Kenyatta Rush, Central, 8; Jorga Quenelle, Olney, 8",
+          "tackles": 8
+        },
+        {
+          "team": "Public",
+          "player": "James Thompson, Bartram, and Anthony Thomas, North (incomplete entry)"
+        }
+      ],
+      "miscellaneous": null,
+      "mvps": null,
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Ron Bryant (King) caught 2-yard TD pass from Keith Singleton (Washington) with 2:23 left breaking 6-6 tie. Todd Mitchell (King) rushed 20 times for 97 yards. Kenyatta Rush (Central) led defense with eight tackles.",
+      "score_parsed": {
+        "public": 12,
+        "nonpublic": 6
+      },
+      "tackling": null,
+      "notes": null
+    },
+    {
+      "score": "NON-PUBLIC 16, PUBLIC 14",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Al Settembrino (Ryan) rushed 26 times for 114 yards and two TDs. Tim Cunniff (Ryan) kicked decisive 20-yard field goal with 3:28 remaining. Rich Ritchie (Roman) forced fumble on Public's final possession.",
+      "year": 1987,
+      "score_parsed": {
+        "public": 16,
+        "nonpublic": 16
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "PUBLIC 7, NON-PUBLIC 0",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "First All-Star game played at night. Jerome Bailey (Bok) scored only TD on 1-yard run 2:57 before halftime. Harun Reed (Frankford) recorded 10 tackles and interception. Roger Talley (Dobbins) made three interceptions.",
+      "year": 1988,
+      "score_parsed": {
+        "public": 7,
+        "nonpublic": 0
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "NON-PUBLIC 36, PUBLIC 15",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Jeff Simmins (Judge) rushed nine times for 56 yards and two TDs despite seasonal high of 50 yards. Frank Wycheck (Ryan) added 68 yards and TD on 11 carries. Patrick Tomosky (Roxborough) passed 5-for-10 for 129 yards.",
+      "year": 1989,
+      "score_parsed": {
+        "public": 36,
+        "nonpublic": 36
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "PUBLIC 13, NON-PUBLIC 12",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Public scored first 13 points. Charles Way (Northeast) made seven tackles to key defense forcing five turnovers. Dave MacDonald (Lincoln) passed for two TDs. Frank Costa (SJ Prep) completed 10-for-20 for 83 yards.",
+      "year": 1990,
+      "score_parsed": {
+        "public": 13,
+        "nonpublic": 12
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "NON-PUBLIC 34, PUBLIC 6",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Two Non-Public TDs came on defense. Darrin MacMillan (Dougherty) recovered fumble in end zone; Mike Conway (Dougherty) ran 7 yards with fumble for TD. Mica Dawkins (Gratz) scored on 89-yard kickoff return for Public.",
+      "year": 1991,
+      "score_parsed": {
+        "public": 34,
+        "nonpublic": 34
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "PUBLIC 14, NON-PUBLIC 0",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Scotty Mack (Roxborough) rushed nine times for 116 yards and two TDs (20 and 56 yards). Non-Public rushing attack netted minus-9 yards on 30 carries. Stacey Lane (Olney) led defense with seven tackles.",
+      "year": 1992,
+      "score_parsed": {
+        "public": 14,
+        "nonpublic": 0
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 1993,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file (cityallstarbox93.jpg) on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1993-96.htm",
+      "score": "NON-PUBLIC 22, PUBLIC 19",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "First All-Star game played in May (previous 18 in April). Brian Kennedy (Judge) scored winning 1-yard TD with 24 seconds remaining. Troy Kersey (Dougherty) caught six passes for 100 yards.",
+      "score_parsed": {
+        "public": 22,
+        "nonpublic": 22
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 1994,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file (cityallstarbox94.jpg) on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1993-96.htm",
+      "score": "NON-PUBLIC 23, PUBLIC 12",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Jess Sodaski (SJ Prep) rushed nine times for 57 yards and TD, passed 4-for-7. Lance Shaw (SJ Prep) rushed 20 times for 100 yards and two TDs. Jonathan Perry (Gratz) made 11 tackles including four for losses.",
+      "score_parsed": {
+        "public": 23,
+        "nonpublic": 23
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 1995,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file (cityallstarbox95.jpg) on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1993-96.htm",
+      "score": "PUBLIC 21, NON-PUBLIC 20",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Spencer Whetts (Germantown) scored first TD on 1-yard sneak and passed for another to Javer Dillard. Hassan Brockman (Dobbins) scored winning TD on 38-yard reverse with 3:20 left.",
+      "score_parsed": {
+        "public": 21,
+        "nonpublic": 20
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 1996,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file (cityallstarbox96.jpg) on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1993-96.htm",
+      "score": "NON-PUBLIC 10, PUBLIC 6",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Tim Dumas (Ryan) converted holder-to-TD trick play, scampering 12 yards with 2:30 remaining from trailing 6-3. Scott Palanjian (SJ Prep) kicked 37-yard field goal. Chris Kennedy (Ryan) rushed 18 times for 69 yards.",
+      "score_parsed": {
+        "public": 10,
+        "nonpublic": 10
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 1997,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file (cityallstarbox97.jpg) on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1997-00.htm",
+      "score": "PUBLIC 23, NON-PUBLIC 6",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "George Radu (Washington) set game record with three field goals (27, 37, 31 yards). Ed Giddings (University City) scored on 80-yard flanker reverse TD. Steve Szydlik (Frankford) passed 10-for-17 for 101 yards.",
+      "score_parsed": {
+        "public": 23,
+        "nonpublic": 6
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 1998,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file (cityallstarbox98.jpg) on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1997-00.htm",
+      "score": "NON-PUBLIC 9, PUBLIC 6",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Jeff Moore (Ryan) scored winning 1-yard TD with 1:18 remaining. Mike Prince (Dougherty) made five receptions for 90 yards. Joe Corsanico (Ryan) passed 4-for-9 for 89 yards.",
+      "score_parsed": {
+        "public": 9,
+        "nonpublic": 9
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 1999,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file (cityallstarbox99.jpg) on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1997-00.htm",
+      "score": "PUBLIC 14, NON-PUBLIC 11",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Game ended dramatically with defensive stop at 6-inch line on fourth-and-goal from the 2. Andre Davis (Dobbins) contributed 95-yard fumble return TD. Edvard Jean (Washington) threw TD pass to David Kenner.",
+      "score_parsed": {
+        "public": 14,
+        "nonpublic": 11
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 2000,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file (cityallstar00.jpg) on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1997-00.htm",
+      "score": "NON-PUBLIC 17, PUBLIC 10",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Ben Dever (Dougherty) and Kevin Stefanski (SJ Prep) combined for 10-for-18, 137 yards passing. Non-Public defense limited Public to 56 yards on 33 plays. Angel Moultair (Germantown) led with 19 tackles.",
+      "score_parsed": {
+        "public": 17,
+        "nonpublic": 17
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 2001,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox2001-04.htm",
+      "score": "PUBLIC 13, NON-PUBLIC 0",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Public posted fourth series shutout. Teddy Lipford (Central) hit Jose Pagan (Edison) with 80-yard TD pass (record). Roger Price (Washington) kicked 44-yard field goal and earlier 22-yarder.",
+      "score_parsed": {
+        "public": 13,
+        "nonpublic": 0
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 2002,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox2001-04.htm",
+      "score": "NON-PUBLIC 16, PUBLIC 14",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Non-Public rallied from 14-0 deficit. SJ Prep teammates Jim Lachman and Pete Chromiak caught TD passes. Justin O'Brien (Judge) kicked game-winning 31-yard field goal.",
+      "score_parsed": {
+        "public": 16,
+        "nonpublic": 16
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 2003,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox2001-04.htm",
+      "score": "NON-PUBLIC 20, PUBLIC 3",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Pat Kaiser (SJ Prep) rushed 22 times for 75 yards and two TDs. Johnny Ortiz (Roman) scored TD on 3-yard pass from Matt Ryan (Penn Charter) with 20 seconds before halftime. Non-Public forced five turnovers.",
+      "score_parsed": {
+        "public": 20,
+        "nonpublic": 20
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 2004,
+      "status": "IMAGE_ONLY",
+      "note": "Boxscore exists as image file on tedsilary.com but content is not text-extractable",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox2001-04.htm",
+      "score": "NON-PUBLIC 33, PUBLIC 21",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Curtis Brinkley (West Catholic) scored three TDs rushing, first All-Star player to do so. Andre Sloan-El (Roman) shattered passing yards record with 175 on 13-for-16. Game disrupted by gunshots in parking lot with 2:21 remaining.",
+      "score_parsed": {
+        "public": 33,
+        "nonpublic": 33
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "year": 2005,
+      "public_score": 30,
+      "nonpublic_score": 0,
+      "venue": "Not specified",
+      "public_roster": [
+        {
+          "name": "Jerry Butler",
+          "school": "Washington",
+          "jersey": null,
+          "position": "RB",
+          "notes": "13.3 yards per carry, 3 rushing TDs"
+        },
+        {
+          "name": "Frank Jubilee",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "William Brownlee",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Devon Johnson",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Terrell Denson",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Markies Tavares",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Joe Marshall",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Rodney Sykes",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Damon Griffin",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "John McFillin",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Dominique Curry",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Cory Moultrie",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Sammy Tranks",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Cameo Ali",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Stefan Ruff",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "James Morgan",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Kevin Reeder",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Joe DiGrazio",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Cornelius Bunch",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Chris Banks",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Malik Walker",
+          "school": null,
+          "jersey": null,
+          "position": null
+        }
+      ],
+      "nonpublic_roster": [
+        {
+          "name": "Evin Jones",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Chris Diaferio",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Joe Waclawski",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Rob Deery",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Jim McCormick",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Kelven Quick",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Bruce Holloman",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Steve Quinn",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Pat Taylor",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Shane McNamara",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Marcus Williams",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Sean Matthews",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Joe Jackson",
+          "school": null,
+          "jersey": null,
+          "position": null
+        }
+      ],
+      "rushing": [
+        {
+          "name": "Jerry Butler",
+          "school": "Washington",
+          "carries": null,
+          "yards": null,
+          "avg_per_carry": 13.3,
+          "td": 3
+        }
+      ],
+      "passing": [],
+      "receiving": [],
+      "scoring_summary": "Public 30, Non-Public 0",
+      "mvp": "Not specified",
+      "notes": "Jerry Butler (Washington) recorded 13.3 yards per carry with 3 rushing TDs",
+      "score": "PUBLIC 30, NON-PUBLIC 0",
+      "highlights": "Public shutout Non-Public. Jerry Butler (Washington) rushed for record-tying three TDs including 79-yard score. Sammy Tranks (King) set record with 67-yard TD from interception return.",
+      "score_parsed": {
+        "public": 30,
+        "nonpublic": 0
+      },
+      "team_stats": null,
+      "returns": null,
+      "tackling": null
+    },
+    {
+      "year": 2006,
+      "public_score": 13,
+      "nonpublic_score": 42,
+      "venue": "Not specified",
+      "public_roster": [],
+      "nonpublic_roster": [
+        {
+          "name": "Bill Edger",
+          "school": "St. Joseph's Prep",
+          "jersey": null,
+          "position": "WR"
+        },
+        {
+          "name": "Mike Varanavage",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Colin Wixted",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Daniel Chavis",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Justin DeCristofaro",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Mike Davis",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "John Maddox",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Aaron Washington",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Maurice Dantzler",
+          "school": null,
+          "jersey": null,
+          "position": null
+        }
+      ],
+      "rushing": [],
+      "passing": [],
+      "receiving": [
+        {
+          "name": "Bill Edger",
+          "school": "St. Joseph's Prep",
+          "catches": 6,
+          "yards": 128,
+          "td": null
+        }
+      ],
+      "scoring_summary": "Non-Public 42, Public 13",
+      "mvp": "Not specified",
+      "notes": "Bill Edger (SJP) caught 6 passes for 128 yards",
+      "score": "NON-PUBLIC 42, PUBLIC 13",
+      "highlights": "Bill Edger (SJ Prep) set receiving yardage record with 128 yards on six catches, including 42-yard TD. Mike Varanavage (Ryan) rushed 21 times for 103 yards and two TDs despite not expected to carry ball.",
+      "score_parsed": {
+        "public": 42,
+        "nonpublic": 42
+      },
+      "team_stats": null,
+      "returns": null,
+      "tackling": null
+    },
+    {
+      "year": 2007,
+      "public_score": 30,
+      "nonpublic_score": 24,
+      "venue": "Not specified",
+      "note": "Overtime game",
+      "public_roster": [
+        {
+          "name": "Kendell Coleman",
+          "school": "King",
+          "jersey": null,
+          "position": "WR/RS"
+        },
+        {
+          "name": "Mark Hatty",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Jerrick Jenkins",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Daryl Robinson",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Chris Whitney",
+          "school": null,
+          "jersey": null,
+          "position": null
+        }
+      ],
+      "nonpublic_roster": [],
+      "rushing": [],
+      "passing": [],
+      "receiving": [
+        {
+          "name": "Kendell Coleman",
+          "school": "King",
+          "catches": 4,
+          "yards": 135,
+          "td": null
+        }
+      ],
+      "punt_return": [
+        {
+          "name": "Kendell Coleman",
+          "school": "King",
+          "return_yards": 64,
+          "td": 1
+        }
+      ],
+      "scoring_summary": "Public 30, Non-Public 24 (OT)",
+      "mvp": "Not specified",
+      "notes": "Kendell Coleman (King) received 4 passes for 135 yards and recorded a 64-yard punt return TD",
+      "score": "PUBLIC 30, NON-PUBLIC 24 (OT)",
+      "highlights": "Public forced overtime with late TD, won on fourth-down run by Calvin Spires (Frankford). Kendell Coleman (King) had 215 yards on 14 touches with two TD runs. Jaelen Strong-Rankin broke receiving record with 237 yards for Non-Public.",
+      "score_parsed": {
+        "raw": "PUBLIC 30, NON-PUBLIC 24 (OT)"
+      },
+      "team_stats": null,
+      "returns": null,
+      "tackling": null
+    },
+    {
+      "year": 2008,
+      "public_score": 7,
+      "nonpublic_score": 48,
+      "venue": "Not specified",
+      "public_roster": [
+        {
+          "name": "Jamir Livingston",
+          "school": null,
+          "jersey": null,
+          "position": null
+        }
+      ],
+      "nonpublic_roster": [
+        {
+          "name": "Mike Mattei",
+          "school": "Chestnut Hill",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "Al Desiderio",
+          "school": "Roman",
+          "jersey": null,
+          "position": "WR"
+        },
+        {
+          "name": "Chris Fioravanti",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Shahid Paulhill",
+          "school": null,
+          "jersey": null,
+          "position": null
+        },
+        {
+          "name": "Pete Sellecchia",
+          "school": null,
+          "jersey": null,
+          "position": null
+        }
+      ],
+      "rushing": [],
+      "passing": [
+        {
+          "name": "Mike Mattei",
+          "school": "Chestnut Hill",
+          "comp": null,
+          "att": null,
+          "yards": null,
+          "td": 3
+        }
+      ],
+      "receiving": [
+        {
+          "name": "Al Desiderio",
+          "school": "Roman",
+          "catches": 4,
+          "yards": 140,
+          "td": 2
+        }
+      ],
+      "scoring_summary": "Non-Public 48, Public 7",
+      "mvp": "Not specified",
+      "notes": "Mike Mattei (Chestnut Hill) passed for 3 TDs; Al Desiderio (Roman) caught 4 passes for 140 yards with 2 TD receptions",
+      "score": "NON-PUBLIC 48, PUBLIC 7",
+      "highlights": "Easiest victory in all-star history. Al Desiderio (Roman) set receiving yardage record with 140 yards on four catches. Mike Mattei (Chestnut Hill) passed 7-for-9 for 148 yards and three TDs.",
+      "score_parsed": {
+        "public": 48,
+        "nonpublic": 48
+      },
+      "team_stats": null,
+      "returns": null,
+      "tackling": null
+    },
+    {
+      "year": 2009,
+      "public_score": 0,
+      "nonpublic_score": 40,
+      "venue": "Not specified",
+      "public_roster": [
+        {
+          "name": "Stacey Hill",
+          "school": "Communications Technology",
+          "jersey": null,
+          "position": "RB"
+        },
+        {
+          "name": "TBD Public Players",
+          "school": "Various",
+          "jersey": null,
+          "position": "TBD"
+        }
+      ],
+      "nonpublic_roster": [
+        {
+          "name": "Mark Giubilato",
+          "school": "St. Joseph's Prep",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "Raymond Maples",
+          "school": "West Catholic",
+          "jersey": null,
+          "position": "RB"
+        },
+        {
+          "name": "Rob Hollomon",
+          "school": "West Catholic",
+          "jersey": null,
+          "position": "RB"
+        },
+        {
+          "name": "TBD Non-Public Players",
+          "school": "Various",
+          "jersey": null,
+          "position": "TBD"
+        }
+      ],
+      "rushing": [
+        {
+          "player": "Raymond Maples",
+          "school": "West Catholic",
+          "carries": 10,
+          "yards": 74,
+          "tds": 1
+        },
+        {
+          "player": "Rob Hollomon",
+          "school": "West Catholic",
+          "carries": 13,
+          "yards": 43,
+          "tds": 1
+        }
+      ],
+      "passing": [
+        {
+          "player": "Mark Giubilato",
+          "school": "St. Joseph's Prep",
+          "completions": 8,
+          "attempts": 13,
+          "yards": 175,
+          "tds": 2
+        }
+      ],
+      "receiving": [],
+      "scoring_summary": "Non-Public dominated 40-0 with first six possessions producing TDs. Mercy rule invoked with 7:34 remaining in 3Q.",
+      "mvp": "Mark Giubilato (Non-Public)",
+      "notes": "Judge players left at halftime for prom after 33-0 lead established.",
+      "score": "NON-PUBLIC 40, PUBLIC 0",
+      "highlights": "Non-Public dominated with shutout; mercy rule invoked with 7:34 remaining in third quarter. First six possessions produced TDs. Judge players left at halftime for prom after 33-0 lead established.",
+      "score_parsed": {
+        "public": 40,
+        "nonpublic": 40
+      },
+      "team_stats": null,
+      "returns": null,
+      "tackling": null
+    },
+    {
+      "year": 2010,
+      "public_score": 15,
+      "nonpublic_score": 16,
+      "venue": "Lincoln Financial Field",
+      "public_roster": [
+        {
+          "name": "Tarik Bey",
+          "school": "Bartram",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "Malik Stokes",
+          "school": "Northeast",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "TBD Public Players",
+          "school": "Various",
+          "jersey": null,
+          "position": "TBD"
+        }
+      ],
+      "nonpublic_roster": [
+        {
+          "name": "Will Huff",
+          "school": "Neumann-Goretti",
+          "jersey": null,
+          "position": "K"
+        },
+        {
+          "name": "Curt Wortham",
+          "school": "Father Judge",
+          "jersey": null,
+          "position": "RB"
+        },
+        {
+          "name": "Jarred Evans",
+          "school": "West Catholic",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "Pete Hurley",
+          "school": "St. Joseph's Prep",
+          "jersey": null,
+          "position": "WR"
+        },
+        {
+          "name": "TBD Non-Public Players",
+          "school": "Various",
+          "jersey": null,
+          "position": "TBD"
+        }
+      ],
+      "rushing": [
+        {
+          "player": "Curt Wortham",
+          "school": "Father Judge",
+          "carries": 21,
+          "yards": 115,
+          "tds": 0
+        }
+      ],
+      "passing": [
+        {
+          "player": "Tarik Bey",
+          "school": "Bartram",
+          "completions": null,
+          "attempts": null,
+          "yards": null,
+          "tds": 1
+        },
+        {
+          "player": "Jarred Evans",
+          "school": "West Catholic",
+          "completions": null,
+          "attempts": null,
+          "yards": null,
+          "tds": 1
+        }
+      ],
+      "receiving": [
+        {
+          "player": "Ramadan Abdullah",
+          "school": "Germantown",
+          "catches": 1,
+          "yards": 77,
+          "tds": 1
+        },
+        {
+          "player": "Pete Hurley",
+          "school": "St. Joseph's Prep",
+          "catches": 1,
+          "yards": 17,
+          "tds": 1
+        }
+      ],
+      "scoring_summary": "Non-Public won 16-15. Will Huff tied FG record with 3 makes (27, 28, 33 yds). Attendance: 4,936.",
+      "mvp": "Will Huff (Non-Public)",
+      "notes": "First meeting at Lincoln Financial Field with 4,936 attendance.",
+      "score": "NON-PUBLIC 16, PUBLIC 15",
+      "highlights": "First meeting at Lincoln Financial Field with 4,936 attendance. Will Huff (Neumann-Goretti) tied field goal record with three makes and game-winning PAT. Pete Hurley (SJ Prep) caught 17-yard TD pass.",
+      "score_parsed": {
+        "public": 16,
+        "nonpublic": 16
+      },
+      "team_stats": null,
+      "returns": null,
+      "tackling": null
+    },
+    {
+      "year": 2011,
+      "public_score": 30,
+      "nonpublic_score": 20,
+      "venue": "Lincoln Financial Field",
+      "public_roster": [
+        {
+          "name": "Claudy Mathieu",
+          "school": "Washington",
+          "jersey": null,
+          "position": "LB"
+        },
+        {
+          "name": "Camille Max",
+          "school": "Northeast",
+          "jersey": null,
+          "position": "DB"
+        },
+        {
+          "name": "Daquan Cooper",
+          "school": "Washington",
+          "jersey": null,
+          "position": "DB"
+        },
+        {
+          "name": "Tyree Rucker",
+          "school": "Fels",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "Tony Smith",
+          "school": "Washington",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "TBD Public Players",
+          "school": "Various",
+          "jersey": null,
+          "position": "TBD"
+        }
+      ],
+      "nonpublic_roster": [
+        {
+          "name": "Jaelen Strong-Rankin",
+          "school": "West Catholic",
+          "jersey": null,
+          "position": "WR"
+        },
+        {
+          "name": "John Loughery",
+          "school": "Penn Charter",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "TBD Non-Public Players",
+          "school": "Various",
+          "jersey": null,
+          "position": "TBD"
+        }
+      ],
+      "rushing": [],
+      "passing": [
+        {
+          "player": "Tyree Rucker",
+          "school": "Fels",
+          "completions": null,
+          "attempts": null,
+          "yards": null,
+          "tds": 1
+        },
+        {
+          "player": "Tony Smith",
+          "school": "Washington",
+          "completions": null,
+          "attempts": null,
+          "yards": null,
+          "tds": 1
+        },
+        {
+          "player": "John Loughery",
+          "school": "Penn Charter",
+          "completions": null,
+          "attempts": null,
+          "yards": null,
+          "tds": 2
+        }
+      ],
+      "receiving": [
+        {
+          "player": "Jaelen Strong-Rankin",
+          "school": "West Catholic",
+          "catches": 7,
+          "yards": 237,
+          "tds": 2
+        }
+      ],
+      "scoring_summary": "Public reversed 20-16 deficit with two INT return TDs in final 8 minutes. Camille Max 51-yd pick-6; Daquan Cooper 95-yd return TD.",
+      "mvp": "Daquan Cooper (Public)",
+      "notes": "Public achieved major comeback with defensive scores.",
+      "score": "PUBLIC 30, NON-PUBLIC 20",
+      "highlights": "Public reversed 20-16 deficit with two interception return TDs in final eight minutes. Camille Max (Northeast) scored 51-yard pick six; Daquan Cooper (Washington) added 95-yard return TD. Jaelen Strong-Rankin (West Catholic) set receiving record with 237 yards.",
+      "score_parsed": {
+        "public": 30,
+        "nonpublic": 20
+      },
+      "team_stats": null,
+      "returns": null,
+      "tackling": null
+    },
+    {
+      "year": 2012,
+      "public_score": 29,
+      "nonpublic_score": 22,
+      "venue": "Lincoln Financial Field",
+      "public_roster": [
+        {
+          "name": "Sharif Smith",
+          "school": "Furness",
+          "jersey": null,
+          "position": "RB"
+        },
+        {
+          "name": "Shakur NeSmith",
+          "school": "TBD",
+          "jersey": null,
+          "position": "TBD"
+        },
+        {
+          "name": "Marquise Brown",
+          "school": "Bok",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "TBD Public Players",
+          "school": "Various",
+          "jersey": null,
+          "position": "TBD"
+        }
+      ],
+      "nonpublic_roster": [
+        {
+          "name": "Rob Daniels",
+          "school": "Father Judge",
+          "jersey": null,
+          "position": "QB"
+        },
+        {
+          "name": "Marcus Kelly",
+          "school": "Roman Catholic",
+          "jersey": null,
+          "position": "RB"
+        },
+        {
+          "name": "TBD Non-Public Players",
+          "school": "Various",
+          "jersey": null,
+          "position": "TBD"
+        }
+      ],
+      "rushing": [
+        {
+          "player": "Sharif Smith",
+          "school": "Furness",
+          "carries": null,
+          "yards": null,
+          "tds": 2
+        },
+        {
+          "player": "Marcus Kelly",
+          "school": "Roman Catholic",
+          "carries": 8,
+          "yards": 50,
+          "tds": 1
+        }
+      ],
+      "passing": [
+        {
+          "player": "Rob Daniels",
+          "school": "Father Judge",
+          "completions": 13,
+          "attempts": 24,
+          "yards": 116,
+          "tds": 0
+        },
+        {
+          "player": "Marquise Brown",
+          "school": "Bok",
+          "completions": null,
+          "attempts": null,
+          "yards": null,
+          "tds": 2
+        }
+      ],
+      "receiving": [],
+      "scoring_summary": "Public won 29-22. Sharif Smith scored two 1-yard TDs. Multiple special rules violations.",
+      "mvp": "Sharif Smith (Public)",
+      "notes": "Public achieved second consecutive win. Shakur NeSmith ejected in Q2 but reinstated at halftime.",
+      "score": "PUBLIC 29, NON-PUBLIC 22",
+      "highlights": "Public achieved second consecutive win. Sharif Smith (Furness) scored two 1-yard TDs. Shakur NeSmith ejected in second quarter but reinstated at halftime following coach agreement. Game featured multiple special rules violations.",
+      "score_parsed": {
+        "public": 29,
+        "nonpublic": 22
+      },
+      "team_stats": null,
+      "returns": null,
+      "tackling": null
+    },
+    {
+      "score": "PUBLIC 21, NON-PUBLIC 7",
+      "mvp": "Not specified",
+      "venue": "Northeast High School",
+      "highlights": "Public claimed third consecutive win. Vittorio Goggins (Bok) recorded 15 tackles with five for loss. Antoine Whitney (Bok) scored 79-yard TD on lateral kickoff return. Non-Public suited only 28 players.",
+      "year": 2013,
+      "score_parsed": {
+        "public": 21,
+        "nonpublic": 7
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "NON-PUBLIC 34, PUBLIC 20",
+      "mvp": "Kendall Singleton, Chris Gary",
+      "venue": "Not specified",
+      "highlights": "Non-Public allowed suburban Catholic school players for first time; newcomers accounted for all five TDs. Joseph Walker (King) set passing yards record with 183 despite four interceptions. Game had 27 penalties for 265 yards.",
+      "year": 2014,
+      "score_parsed": {
+        "public": 34,
+        "nonpublic": 34
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "NON-PUBLIC 34, PUBLIC 33",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Dramatic finish with Non-Public TD with 0.8 seconds remaining. Paul Dooley (SCH Academy) hit John Hall (Wood) for TD; 35-yard PAT succeeded after special violations penalty. Alex Arcangeli (Wood) broke rushing yardage record with 193 yards.",
+      "year": 2015,
+      "score_parsed": {
+        "public": 34,
+        "nonpublic": 34
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "PUBLIC 58, NON-PUBLIC 34",
+      "mvp": "James Gillespie (offense), Gianni Cruel (defense), Anthony Russo (sportsmanship)",
+      "venue": "Not specified",
+      "highlights": "Public scored record-tying 58 points. Shayne Smith (Del-Val) passed for 305 yards and three TDs. DeJason Ellis (Mastery North) set PAT record with seven conversions. Game featured 857 scrimmage yards.",
+      "year": 2016,
+      "score_parsed": {
+        "public": 58,
+        "nonpublic": 34
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "NON-PUBLIC 33, PUBLIC 12",
+      "mvp": "Not specified",
+      "venue": "Northeast High School",
+      "highlights": "Non-Public built 19-point third quarter lead after slim halftime advantage. Three consecutive TDs in third quarter all covered 34 yards. Nasir Boykin (Imhotep) passed 11-for-27 for 238 yards for Public.",
+      "year": 2017,
+      "score_parsed": {
+        "public": 33,
+        "nonpublic": 33
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "PUBLIC 38, NON-PUBLIC 20",
+      "mvp": "Not specified",
+      "venue": "Northeast High School",
+      "highlights": "Public outscored Non-Public 26-0 in final three quarters. Mahmud Dioubate (Bartram) tied record with three passing TDs on 6-for-12, 104 yards. Talid Crippen (Mastery North) scored on unusual fumble return TD spanning 47 yards.",
+      "year": 2018,
+      "score_parsed": {
+        "public": 38,
+        "nonpublic": 20
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    },
+    {
+      "score": "PUBLIC 14, NON-PUBLIC 13",
+      "mvp": "Not specified",
+      "venue": "Not specified",
+      "highlights": "Public won with a two-point conversion in final 45 seconds. Tarik Bey (Bartram) scored on QB sneak; Jordan Price (Frankford) added winning conversion. Bey completed 9-for-16 for 108 yards and 28-yard TD pass to Yusuf Terry (Imhotep).",
+      "year": 2019,
+      "score_parsed": {
+        "public": 14,
+        "nonpublic": 13
+      },
+      "team_stats": null,
+      "rushing": null,
+      "passing": null,
+      "receiving": null,
+      "returns": null,
+      "tackling": null,
+      "scoring_summary": null,
+      "notes": null
+    }
+  ],
+  "summary": {
+    "games_by_decade": {
+      "1970s": 5,
+      "1980s": 10,
+      "1990s": 10,
+      "2000s": 10,
+      "2010s": 10
+    },
+    "gaps": []
+  },
+  "players_sample": [
+    "81; John Erbly, Southern, 1-5-0, 3; Gary Boyd, Northeast, 1-3-2-10",
+    "Aaron Washington",
+    "Ahmad Kent",
+    "Al Desiderio",
+    "Al Settembrino",
+    "Alan Twyman",
+    "Alex Arcangeli",
+    "Allan Peaks",
+    "Alston",
+    "Amir Gillis",
+    "Andre Davis",
+    "Andy Baratta",
+    "Andy Garczynski, Dougherty, 3-75; Dave Wilson, SJ Prep, 1-15; Mike Flannery, Roman, 1-(1)",
+    "Anthony Butler",
+    "Anthony Russo",
+    "Antoine Whitney",
+    "Axel Smith",
+    "Benson",
+    "Bill Cook",
+    "Bill Edger",
+    "Blair Thomas",
+    "Bob Henni, Frankford, 7-(1); Eldridge Corner, West, 6-17; Jim Henlow, Washington, West; 6-17; Ted Drossos, Washington, 2-(12); Bethany, Central, 2-1",
+    "Bob Loscaito",
+    "Bob McGarrity",
+    "Bob Verrachio",
+    "Bozelli",
+    "Brian Donnelly",
+    "Brian Ewell",
+    "Brian Tierney",
+    "Bruce Carther",
+    "Bruce Holloman",
+    "Bryant",
+    "Bufus Outlaw",
+    "Cafrino",
+    "Calvin Spires",
+    "Cameo Ali",
+    "Camille Max",
+    "Campbell",
+    "Cary Boyd",
+    "Cave",
+    "Charles Doyle, Dougherty, 2-19; Doug McLaughlin, Ryan, 1-5; Tom Speranza, Roman, 1-2",
+    "Charles Thomas",
+    "Choice",
+    "Chris Banks",
+    "Chris Diaferio",
+    "Chris Fioravanti",
+    "Chris Gary",
+    "Chris Whitney",
+    "Cistrone",
+    "Clarence Norwood",
+    "Claudy Mathieu",
+    "Cliff Hubbard, Frankford, 2-5; Jimmy Wilson, Central, 1-16; Scott Farnesi, Southern, 1-1",
+    "Colin Wixted",
+    "Corey McEveeh",
+    "Cornelius Bunch",
+    "Cory Moultrie",
+    "Cosmo Losco",
+    "Coyle",
+    "Crescenzo",
+    "Curt Bellamy, Central, 2-33; Bob Browne, Mastbaum, 2-28; Hector Scott, Bartram, 1-7",
+    "Curt Wortham",
+    "Curtis Brinkley",
+    "Dahmir Ruffin",
+    "Damon Griffin",
+    "Dan Stifferer, Roman, 2-(1); Ed Smith, Ryan, 2-0; Mark Smith, Ryan, 2-0",
+    "Daniel Chavis",
+    "Daquan Cooper",
+    "Darrin MacMillan",
+    "Daryl Robinson",
+    "Daryl Wood",
+    "Dave Shipton",
+    "David Boone, Bartram, 13-77; Charles Thomas, Frankford, 3-112; Joe Stevenson, Roxborough, 8-17; James Nicholson, Southern, 3-10; Rodney Jennings, Edison, 2-6; Alex Basolla, Olney, 1-3; Kenny Young, King, 1-1; Chris Croft, Frankford, 1-(-3)",
+    "David Cooper",
+    "David Kenner",
+    "David Youmg",
+    "Day",
+    "DeLuca",
+    "DeWayne Moss, West Phila, 3-33; Cliff Smith, Bartram, 4-(1); Adrian Smith, Central, 1-(1)",
+    "Del Evens",
+    "Dene Waskewicz, Judge, 5 receptions-94 yards; Brian Dulin, Dougherty, 1-15; Chritsy Stuhl, North Catholic, 1-19; David Whaley, Chestnut Hill, 1-18; Mike Cooper, Ryan, 1-8; Blair Thomas, Frankford, 1-18",
+    "Dennis Wiater",
+    "Derek Coleman",
+    "Devin Darden",
+    "Devon Johnson",
+    "Dominique Curry",
+    "Don Bradley",
+    "Don Speller",
+    "Duane Robinson",
+    "Dud Clemmer",
+    "Dugan",
+    "Dwayne Wilson",
+    "Ed Clark",
+    "Ed Giddings",
+    "Ed Hughes",
+    "Ed Malandro, Penn Charter, 7-3; Rich Gannon, St. Joseph's, 5-4; Ralph DiMeo, Neumann, 3-17; Mike Collignon, Judge, 3-7; Bill Hartigan, Judge, 3-4; Brian Reidy, Judge, 2-3; Bob Senske, Ryan, 1-3; Keith Reiser, Dougherty, 1-1; Kenny Rivers, St. Joseph's, 1-1",
+    "Ed Pickett, West Catholic, 1-7; John Erbly, Southern, 1-5-0, 3; Gary Boyd, Northeast, 1-3-2-10",
+    "Empson",
+    "Esposito",
+    "Evin Jones",
+    "Fecnim"
+  ]
+}

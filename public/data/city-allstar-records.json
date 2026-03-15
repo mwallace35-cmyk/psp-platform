@@ -1,0 +1,407 @@
+{
+  "title": "Philadelphia City All-Star Football Game Records",
+  "description": "Complete data from tedsilary.com City All-Star Game records (1975-2019)",
+  "data_source": "http://www.tedsilary.com/cityallstargamerecords.htm",
+  "years_covered": {
+    "start_year": 1975,
+    "end_year": 2019,
+    "total_years": 45
+  },
+  "individual_records": {
+    "rushing": {
+      "most_carries": {
+        "value": 27,
+        "player": "Steve Duncan",
+        "school": "Germantown",
+        "division": "Public",
+        "year": 1983
+      },
+      "most_yards": {
+        "value": 193,
+        "player": "Alex Arcangeli",
+        "school": "Archbishop Wood",
+        "division": "Non-Public",
+        "year": 2015
+      },
+      "most_yards_per_carry_10_min": {
+        "value": 13.8,
+        "carries": 14,
+        "yards": 193,
+        "player": "Alex Arcangeli",
+        "school": "Archbishop Wood",
+        "division": "Non-Public",
+        "year": 2015
+      },
+      "most_touchdowns": {
+        "value": 3,
+        "players": [
+          {
+            "name": "Curtis Brinkley",
+            "school": "West Catholic",
+            "year": 2004
+          },
+          {
+            "name": "Jerry Butler",
+            "school": "Washington",
+            "division": "Public",
+            "year": 2005
+          }
+        ]
+      },
+      "longest_touchdown": {
+        "value": 90,
+        "yards": 90,
+        "player": "Charles Thomas",
+        "school": "Frankford",
+        "division": "Public",
+        "year": 1983
+      }
+    },
+    "passing": {
+      "most_attempts": {
+        "value": 36,
+        "player": "Anthony Russo",
+        "school": "Archbishop Wood",
+        "division": "Non-Public",
+        "year": 2016
+      },
+      "most_completions": {
+        "value": 22,
+        "player": "Anthony Russo",
+        "school": "Archbishop Wood",
+        "division": "Non-Public",
+        "year": 2016
+      },
+      "most_yards": {
+        "value": 347,
+        "player": "Kevin Caldwell",
+        "school": "Franklin",
+        "division": "Public",
+        "year": 2015
+      },
+      "most_yards_per_attempt_10_min": {
+        "value": 18.2,
+        "attempts": 19,
+        "yards": 347,
+        "player": "Kevin Caldwell",
+        "school": "Franklin",
+        "division": "Public",
+        "year": 2015
+      },
+      "most_touchdowns": {
+        "value": 3,
+        "players": [
+          {
+            "name": "Mike Mattei",
+            "school": "Chestnut Hill",
+            "division": "Non-Public",
+            "year": 2008
+          },
+          {
+            "name": "Kevin Caldwell",
+            "school": "Franklin",
+            "division": "Public",
+            "year": 2015
+          },
+          {
+            "name": "Shayne Smith",
+            "school": "Delaware Valley",
+            "division": "Public",
+            "year": 2016
+          },
+          {
+            "name": "Mahmud Dioubate",
+            "school": "Bartram",
+            "division": "Public",
+            "year": 2018
+          }
+        ]
+      },
+      "longest_touchdown": {
+        "value": 83,
+        "yards": 83,
+        "player": "Rich McFillin",
+        "school": "Washington",
+        "division": "Public",
+        "year": 2004
+      },
+      "best_completion_percentage_10_min": {
+        "value": 81.3,
+        "completions": 13,
+        "attempts": 16,
+        "player": "Andre Sloan-El",
+        "school": "Roman Catholic",
+        "division": "Non-Public",
+        "year": 2004
+      }
+    },
+    "receiving": {
+      "most_receptions": {
+        "value": 7,
+        "players": [
+          {
+            "name": "Matt Parkhurst",
+            "school": "St. Joseph's Prep",
+            "division": "Non-Public",
+            "year": 2004
+          },
+          {
+            "name": "Jaelen Strong-Rankin",
+            "school": "West Catholic",
+            "division": "Non-Public",
+            "year": 2011
+          }
+        ]
+      },
+      "most_yards": {
+        "value": 237,
+        "player": "Jaelen Strong-Rankin",
+        "school": "West Catholic",
+        "division": "Non-Public",
+        "year": 2011
+      },
+      "most_touchdowns": {
+        "value": 2,
+        "players": [
+          {
+            "name": "Tim Gramlich",
+            "school": "Roman Catholic",
+            "division": "Non-Public",
+            "year": 1978
+          },
+          {
+            "name": "Michael Washington",
+            "school": "Frankford",
+            "division": "Public",
+            "year": 2004
+          },
+          {
+            "name": "Daryl Robinson",
+            "school": "North Catholic",
+            "division": "Non-Public",
+            "year": 2007
+          },
+          {
+            "name": "Al Desiderio",
+            "school": "Roman Catholic",
+            "division": "Non-Public",
+            "year": 2008
+          },
+          {
+            "name": "Jaelen Strong-Rankin",
+            "school": "West Catholic",
+            "division": "Non-Public",
+            "year": 2011
+          },
+          {
+            "name": "Naseir 'Pop' Upshur",
+            "school": "Imhotep",
+            "division": "Public",
+            "year": 2016
+          }
+        ]
+      },
+      "longest_touchdown": {
+        "value": 83,
+        "yards": 83,
+        "player": "Michael Washington",
+        "school": "Frankford",
+        "division": "Public",
+        "year": 2004
+      },
+      "most_yards_per_reception_3_min": {
+        "value": 48.0,
+        "receptions": 3,
+        "yards": 144,
+        "player": "Jylil Reeder",
+        "school": "Samuel Fels",
+        "division": "Public",
+        "year": 2014
+      }
+    },
+    "kicking": {
+      "most_pat": {
+        "value": 7,
+        "player": "DeJason Ellis",
+        "school": "Mastery Charter North",
+        "division": "Public",
+        "year": 2016
+      },
+      "most_field_goals": {
+        "value": 3,
+        "players": [
+          {
+            "name": "George Radu",
+            "school": "Washington",
+            "division": "Public",
+            "year": 1997
+          },
+          {
+            "name": "Will Huff",
+            "school": "Neumann-Goretti",
+            "division": "Non-Public",
+            "year": 2010
+          }
+        ]
+      },
+      "most_points": {
+        "value": 11,
+        "field_goals": 3,
+        "pat": 2,
+        "player": "George Radu",
+        "school": "Washington",
+        "division": "Public",
+        "year": 1997
+      },
+      "longest_field_goal": {
+        "value": 44,
+        "yards": 44,
+        "player": "Roger Price",
+        "school": "Washington",
+        "division": "Public",
+        "year": 2001
+      }
+    },
+    "miscellaneous": {
+      "longest_interception_return": {
+        "value": 95,
+        "yards": 95,
+        "player": "Daquan Cooper",
+        "school": "Washington",
+        "division": "Public",
+        "year": 2011
+      },
+      "longest_kickoff_return": {
+        "value": 89,
+        "yards": 89,
+        "player": "Mica Dawkins",
+        "school": "Simon Gratz",
+        "division": "Public",
+        "year": 1991
+      },
+      "longest_blocked_punt_return": {
+        "value": 1,
+        "yards": 1,
+        "player": "Rockeed McCarter",
+        "school": "Roman Catholic",
+        "division": "Non-Public",
+        "year": 2006,
+        "note": "Also blocked the ball; gained control just before entering end zone"
+      },
+      "longest_fumble_return": {
+        "value": 95,
+        "yards": 95,
+        "player": "Andre Davis",
+        "school": "Dobbins",
+        "division": "Public",
+        "year": 1999
+      },
+      "most_interceptions": {
+        "value": 3,
+        "players": [
+          {
+            "name": "Virnest Beale",
+            "school": "Northeast",
+            "division": "Public",
+            "year": 1985
+          },
+          {
+            "name": "Roger Talley",
+            "school": "Dobbins",
+            "division": "Public",
+            "year": 1988
+          }
+        ]
+      },
+      "most_points_scored": {
+        "value": 18,
+        "players": [
+          {
+            "name": "Curtis Brinkley",
+            "school": "West Catholic",
+            "division": "Non-Public",
+            "year": 2004
+          },
+          {
+            "name": "Jerry Butler",
+            "school": "Washington",
+            "division": "Public",
+            "year": 2005
+          }
+        ]
+      }
+    }
+  },
+  "series_records": {
+    "through_year": 2019,
+    "note": "Overall series results and win-loss records not explicitly provided on main records page, but recaps contain year-by-year scores"
+  },
+  "boxscore_pages": [
+    {
+      "era": "1975-1980",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1975-80.htm"
+    },
+    {
+      "era": "1981-1984",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1981-84.htm"
+    },
+    {
+      "era": "1985-1988",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1985-88.htm"
+    },
+    {
+      "era": "1989-1992",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1989-92.htm"
+    },
+    {
+      "era": "1993-1996",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1993-96.htm"
+    },
+    {
+      "era": "1997-2000",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox1997-00.htm"
+    },
+    {
+      "era": "2001-2004",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox2001-04.htm"
+    },
+    {
+      "era": "2005-2008",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox2005-08.htm"
+    },
+    {
+      "era": "2009-2012",
+      "url": "http://www.tedsilary.com/archive/cityallstarFBbox2009-12.htm"
+    },
+    {
+      "era": "2013-2016",
+      "url": "http://www.tedsilary.com/archive/cityallstarFOBbox2013-16.htm"
+    },
+    {
+      "era": "2017-2020",
+      "url": "http://www.tedsilary.com/archive/cityallstarFOBbox2017-20.htm"
+    }
+  ],
+  "related_pages": [
+    {
+      "title": "TD Scorers List",
+      "url": "http://www.tedsilary.com/cityallstarFBTDs.htm",
+      "description": "Touchdown scorers by year and division"
+    },
+    {
+      "title": "TD Passes Thrown",
+      "url": "http://www.tedsilary.com/cityallstarFBTDpasses.htm",
+      "description": "Quarterbacks who threw touchdown passes by year"
+    },
+    {
+      "title": "Year-by-Year Recaps",
+      "url": "http://www.tedsilary.com/cityallstarFBrecaps.htm",
+      "description": "Detailed game recaps for all games 1975-2019"
+    }
+  ],
+  "game_results_summary": {
+    "note": "Complete game-by-game results extracted from recaps page",
+    "coverage": "1975-2019 (45 games)",
+    "divisions": ["Public League", "Non-Public League"]
+  }
+}

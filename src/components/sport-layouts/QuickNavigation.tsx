@@ -54,6 +54,12 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
             description: "Historic All-City selections",
             href: `/${sport}/all-city`,
           },
+          {
+            icon: "🎯",
+            label: "City All-Star Game",
+            description: "Public vs Non-Public rivalry (1975–2019)",
+            href: `/${sport}/city-all-star-game`,
+          },
         ]
       : []),
     {
