@@ -464,6 +464,204 @@ export const getSchoolArticles = cache(async (schoolId: number, limit = 10) => {
 });
 
 /**
+ * Coach at a school
+ */
+export interface SchoolCoach {
+  id: number;
+  name: string;
+  slug: string;
+  sport_id: string;
+  sport_name: string;
+  start_year: number;
+  end_year: number | null;
+  role: string;
+  record_wins: number;
+  record_losses: number;
+  record_ties: number;
+  championships: number;
+}
+
+/**
+ * Award for a school player
+ */
+export interface SchoolAward {
+  id: number;
+  player_name: string;
+  player_slug: string | null;
+  award_name: string;
+  sport_id: string;
+  year: number;
+  season_label: string;
+  tier: string | null;
+}
+
+/**
+ * Recent game result
+ */
+export interface SchoolGame {
+  id: number;
+  sport_id: string;
+  game_date: string | null;
+  season_label: string;
+  home_school_id: number;
+  home_school_name: string;
+  home_school_slug: string;
+  away_school_id: number;
+  away_school_name: string;
+  away_school_slug: string;
+  home_score: number | null;
+  away_score: number | null;
+}
+
+/**
+ * Get coaches who coached at this school
+ */
+export const getSchoolCoaches = cache(async (schoolId: number) => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data } = await supabase
+            .from("coaching_stints")
+            .select(
+              `
+              id, sport_id, start_year, end_year, role,
+              record_wins, record_losses, record_ties, championships,
+              coaches(id, name, slug),
+              sports(name)
+            `
+            )
+            .eq("school_id", schoolId)
+            .order("start_year", { ascending: false })
+            .limit(50);
+
+          if (!data) return [];
+
+          return (data as any[]).map((stint) => ({
+            id: stint.coaches?.id ?? stint.id,
+            name: stint.coaches?.name ?? "Unknown",
+            slug: stint.coaches?.slug ?? "",
+            sport_id: stint.sport_id,
+            sport_name: stint.sports?.name ?? stint.sport_id,
+            start_year: stint.start_year,
+            end_year: stint.end_year,
+            role: stint.role ?? "Head Coach",
+            record_wins: stint.record_wins ?? 0,
+            record_losses: stint.record_losses ?? 0,
+            record_ties: stint.record_ties ?? 0,
+            championships: stint.championships ?? 0,
+          })) as SchoolCoach[];
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_SCHOOL_COACHES",
+    { schoolId }
+  );
+});
+
+/**
+ * Get awards for players at this school (All-City, POY, etc.)
+ */
+export const getSchoolAwards = cache(async (schoolId: number, limit = 30) => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data } = await supabase
+            .from("awards")
+            .select(
+              `
+              id, award_name, sport_id, tier, player_name,
+              players(name, slug),
+              seasons(label, year_start)
+            `
+            )
+            .eq("school_id", schoolId)
+            .is("deleted_at", null)
+            .order("created_at", { ascending: false })
+            .limit(limit);
+
+          if (!data) return [];
+
+          return (data as any[])
+            .sort((a, b) => (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0))
+            .map((a) => ({
+              id: a.id,
+              player_name: a.players?.name ?? a.player_name ?? "Unknown",
+              player_slug: a.players?.slug ?? null,
+              award_name: a.award_name ?? "Award",
+              sport_id: a.sport_id ?? "football",
+              year: a.seasons?.year_start ?? 0,
+              season_label: a.seasons?.label ?? "Unknown",
+              tier: a.tier,
+            })) as SchoolAward[];
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_SCHOOL_AWARDS",
+    { schoolId, limit }
+  );
+});
+
+/**
+ * Get recent games for a school (across all sports)
+ */
+export const getSchoolRecentGames = cache(async (schoolId: number, limit = 15) => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data } = await supabase
+            .from("games")
+            .select(
+              `
+              id, sport_id, game_date, home_score, away_score,
+              home_school_id, away_school_id,
+              home_school:schools!games_home_school_id_fkey(name, slug),
+              away_school:schools!games_away_school_id_fkey(name, slug),
+              seasons(label)
+            `
+            )
+            .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+            .not("home_score", "is", null)
+            .not("away_score", "is", null)
+            .order("game_date", { ascending: false })
+            .limit(limit);
+
+          if (!data) return [];
+
+          return (data as any[]).map((g) => ({
+            id: g.id,
+            sport_id: g.sport_id,
+            game_date: g.game_date,
+            season_label: g.seasons?.label ?? "",
+            home_school_id: g.home_school_id,
+            home_school_name: g.home_school?.name ?? "TBD",
+            home_school_slug: g.home_school?.slug ?? "",
+            away_school_id: g.away_school_id,
+            away_school_name: g.away_school?.name ?? "TBD",
+            away_school_slug: g.away_school?.slug ?? "",
+            home_score: g.home_score,
+            away_score: g.away_score,
+          })) as SchoolGame[];
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_SCHOOL_RECENT_GAMES",
+    { schoolId, limit }
+  );
+});
+
+/**
  * Get schools grouped by league with championship counts
  * Used for school directory and school discovery
  */
