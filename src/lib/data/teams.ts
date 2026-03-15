@@ -142,7 +142,7 @@ export const getTeamSeason = cache(
             .select("id, school_id, sport_id, season_id, coach_id, wins, losses, ties, playoff_result, notes, seasons(year_start, year_end, label), schools(name, slug), coaches(id, name, slug)")
             .eq("school_id", schoolId)
             .eq("sport_id", sportId)
-            .match({ "seasons.label": seasonLabel })
+            .filter("seasons.label", "eq", seasonLabel)
             .single();
           return data;
         },
