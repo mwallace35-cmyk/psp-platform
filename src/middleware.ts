@@ -89,6 +89,7 @@ const PASSTHROUGH_PREFIXES = [
   "/robots",
   "/sitemap",
   "/manifest",
+  "/scores",
 ];
 
 /**
