@@ -33,6 +33,7 @@ import {
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
+import SeasonSelector from "@/components/scores/SeasonSelector";
 import { captureError } from "@/lib/error-tracking";
 import type { Metadata } from "next";
 
@@ -308,7 +309,17 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                   </span>
                 )}
               </div>
-              <h2 className="text-xl text-gray-300 mb-4">{season}</h2>
+              <div className="flex flex-wrap items-center gap-4 mb-4">
+                <h2 className="text-xl text-gray-300">{season}</h2>
+                {availableSeasons.length > 1 && (
+                  <SeasonSelector
+                    seasons={availableSeasons.map((s: Season) => ({ label: s.label, year_start: parseInt(s.label.split("-")[0], 10) }))}
+                    currentSeason={season}
+                    sport={sport}
+                    schoolSlug={school.slug}
+                  />
+                )}
+              </div>
               <div className="flex flex-wrap gap-4 text-sm">
                 <span className="text-gray-400">{school.city}, {school.state}</span>
               </div>
