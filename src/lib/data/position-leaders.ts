@@ -82,8 +82,7 @@ export const getFootballPositionLeaders = cache(
                  seasons(year_start, year_end, label),
                  schools(id, name, slug, leagues(name))`
               )
-              .in("player_id", playerIds)
-              .is("deleted_at", null);
+              .in("player_id", playerIds);
 
             if (seasonError || !seasons) {
               console.error("Position leaders season query error:", seasonError);
@@ -212,8 +211,7 @@ export const getBasketballPositionLeaders = cache(
                  seasons(year_start, year_end, label),
                  schools(id, name, slug, leagues(name))`
               )
-              .in("player_id", playerIds)
-              .is("deleted_at", null);
+              .in("player_id", playerIds);
 
             if (seasonError || !seasons) {
               console.error("Position leaders season query error:", seasonError);

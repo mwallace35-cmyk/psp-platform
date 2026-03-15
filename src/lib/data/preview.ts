@@ -231,8 +231,7 @@ export const getReturningRoster = cache(
                    players(id, name, slug, positions, graduation_year, height, weight)`
                 )
                 .eq("school_id", schoolId)
-                .eq("season_id", previousSeasonId)
-                .is("deleted_at", null);
+                .eq("season_id", previousSeasonId);
 
             if (!data) return [];
 
@@ -277,8 +276,7 @@ export const getReturningRoster = cache(
                  players(id, name, slug, positions, graduation_year, height, weight)`
               )
               .eq("school_id", schoolId)
-              .eq("season_id", previousSeasonId)
-              .is("deleted_at", null);
+              .eq("season_id", previousSeasonId);
 
             if (!data) return [];
 
@@ -356,7 +354,6 @@ export const getMatchupHistory = cache(
               .eq("sport_id", sportId)
               .not("home_score", "is", null)
               .not("away_score", "is", null)
-              .is("deleted_at", null)
               .limit(500);
 
           if (!games) return [];
@@ -461,7 +458,6 @@ export const getLastSeasonRecap = cache(
               .select("*, seasons(label, year_start), coaches(name)")
               .eq("school_id", schoolId)
               .eq("sport_id", sportId)
-              .is("deleted_at", null)
               .order("seasons.year_start", { ascending: false })
               .limit(1);
 
@@ -484,7 +480,6 @@ export const getLastSeasonRecap = cache(
             .eq("season_id", seasonId)
             .eq("sport_id", sportId)
             .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
-            .is("deleted_at", null)
             .limit(500);
 
           // Find notable wins (games they won against winning teams)
@@ -646,7 +641,6 @@ export const getLeagueOutlook = cache(
             .eq("sport_id", sportId)
             .eq("season_id", recentSeason.id)
             .eq("schools.league_id", targetLeagueId)
-            .is("deleted_at", null)
             .limit(500);
 
           if (!teamSeasons) return [];
@@ -719,7 +713,6 @@ export const getScheduleStrength = cache(
               .eq("sport_id", sportId)
               .eq("season_id", recentSeason.id)
               .in("school_id", opponentIds)
-              .is("deleted_at", null)
               .limit(500);
 
           if (!teamSeasons) return [];

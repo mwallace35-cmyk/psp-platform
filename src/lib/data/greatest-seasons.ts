@@ -48,7 +48,6 @@ export const getGreatestFootballSeasons = cache(
                  schools(id, name, slug),
                  seasons(id, year_start, year_end, label)`
               )
-              .is("deleted_at", null)
               .limit(5000);
 
             if (error) {
@@ -183,7 +182,6 @@ export const getGreatestBasketballSeasons = cache(
                  schools(id, name, slug),
                  seasons(id, year_start, year_end, label)`
               )
-              .is("deleted_at", null)
               .limit(5000);
 
             if (error) {
@@ -307,7 +305,6 @@ export const getGreatestBaseballSeasons = cache(
                  schools(id, name, slug),
                  seasons(id, year_start, year_end, label)`
               )
-              .is("deleted_at", null)
               .limit(5000);
 
             if (error) {

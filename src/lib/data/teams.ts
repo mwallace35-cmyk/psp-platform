@@ -44,7 +44,6 @@ export const getRecentChampions = cache(
               .select("id, sport_id, school_id, opponent_id, season_id, level, league_id, score, notes, schools!championships_school_id_fkey(name, slug), seasons(year_start, year_end, label), leagues(name)")
               .eq("sport_id", sportId)
               .not("season_id", "is", null)
-              .is("deleted_at", null)
               .order("created_at", { ascending: false })
               .limit(Math.min(limit, 200));
             return data ?? [];
@@ -112,7 +111,6 @@ export const getRecordsBySport = cache(
               .from("records")
               .select("id, sport_id, category, record_number, player_id, school_id, season_id, scope, notes, players(name, slug), schools(name, slug), seasons(label)")
               .eq("sport_id", sportId)
-              .is("deleted_at", null)
               .order("category")
               .order("record_number", { ascending: false })
               .limit(200);
@@ -145,7 +143,6 @@ export const getTeamSeason = cache(
             .eq("school_id", schoolId)
             .eq("sport_id", sportId)
             .match({ "seasons.label": seasonLabel })
-            .is("deleted_at", null)
             .single();
           return data;
         },
@@ -176,7 +173,6 @@ export const getGamesByTeamSeason = cache(
               .eq("season_id", seasonId)
               .eq("sport_id", sportId)
               .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
-              .is("deleted_at", null)
               .order("game_date")
               .limit(500);
             return data ?? [];
@@ -237,7 +233,6 @@ export const getAvailableTeamSeasons = cache(
             .select("id, season_id, seasons(year_start, year_end, label)")
             .eq("school_id", schoolId)
             .eq("sport_id", sportId)
-            .is("deleted_at", null)
             .order("seasons.year_start", { ascending: false })
             .limit(200);
           return data ?? [];
@@ -278,7 +273,6 @@ export const getRecentGamesBySport = cache(
               .not("away_score", "is", null)
               .not("season_id", "is", null)
               .or("home_score.gt.0,away_score.gt.0")
-              .is("deleted_at", null)
               .order("game_date", { ascending: false })
               .limit(1);
 
@@ -301,7 +295,6 @@ export const getRecentGamesBySport = cache(
               .not("home_score", "is", null)
               .not("away_score", "is", null)
               .or("home_score.gt.0,away_score.gt.0")
-              .is("deleted_at", null)
               .order("game_date", { ascending: false })
               .limit(Math.min(limit * 3, 500));
 

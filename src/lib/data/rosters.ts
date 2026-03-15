@@ -109,7 +109,6 @@ export const getRosterSeasons = cache(
               )
               .eq("school_id", schoolId)
               .eq("sport_id", sportId)
-              .is("deleted_at", null)
               .order("seasons.year_start", { ascending: false })
               .limit(200);
 

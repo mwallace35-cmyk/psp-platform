@@ -59,7 +59,6 @@ export const getDynastyTrackerData = cache(
                  seasons(year_start, year_end, label)`
               )
               .eq("sport_id", sportSlug)
-              .is("deleted_at", null)
               .limit(5000);
 
             if (error) {
@@ -149,7 +148,6 @@ export const getDynastyLeaders = cache(
                  seasons(year_start, year_end, label)`
               )
               .eq("sport_id", sportSlug)
-              .is("deleted_at", null)
               .limit(5000);
 
             if (error) {

@@ -143,8 +143,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             supabase
               .from("team_seasons")
               .select("id, sport_id, wins, losses, ties, sports(id, name)")
-              .eq("school_id", schoolId)
-              .is("deleted_at", null),
+              .eq("school_id", schoolId),
             // 2. Championships grouped by sport
             supabase
               .from("championships")
@@ -154,26 +153,22 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             supabase
               .from("football_player_seasons")
               .select("player_id")
-              .eq("school_id", schoolId)
-              .is("deleted_at", null),
+              .eq("school_id", schoolId),
             // 4. Basketball player seasons
             supabase
               .from("basketball_player_seasons")
               .select("player_id")
-              .eq("school_id", schoolId)
-              .is("deleted_at", null),
+              .eq("school_id", schoolId),
             // 5. Baseball player seasons
             supabase
               .from("baseball_player_seasons")
               .select("player_id")
-              .eq("school_id", schoolId)
-              .is("deleted_at", null),
+              .eq("school_id", schoolId),
             // 6. Minor sports player seasons
             supabase
               .from("player_seasons_misc")
               .select("player_id, sport_id")
-              .eq("school_id", schoolId)
-              .is("deleted_at", null),
+              .eq("school_id", schoolId),
           ]);
 
           if (!teamSeasonData || teamSeasonData.length === 0) {
@@ -391,7 +386,6 @@ export const getSchoolRecentSeasons = cache(async (schoolId: number, limit = 20)
             `
             )
             .eq("school_id", schoolId)
-            .is("deleted_at", null)
             .limit(limit);
 
           if (!data) return [];
@@ -581,7 +575,6 @@ export const getSchoolAwards = cache(async (schoolId: number, limit = 30) => {
             `
             )
             .eq("school_id", schoolId)
-            .is("deleted_at", null)
             .order("created_at", { ascending: false })
             .limit(limit);
 

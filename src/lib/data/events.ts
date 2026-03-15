@@ -138,7 +138,6 @@ export const getAllCoaches = cache(async (page = 1, pageSize = 50) => {
           const dataRes = await supabase
             .from("coaches")
             .select("id, name, slug, bio, photo_url, coaching_stints(school_id, sport_id, start_year, end_year, role, record_wins, record_losses, record_ties, championships, schools(name, slug), sports(name))", { count: "exact" })
-            .is("deleted_at", null)
             .order("name")
             .range(offset, offset + pageSize - 1);
 
@@ -207,8 +206,7 @@ export const getCoachCount = cache(async () => {
       const supabase = await createClient();
       const { count } = await supabase
         .from("coaches")
-        .select("id", { count: "exact", head: true })
-        .is("deleted_at", null);
+        .select("id", { count: "exact", head: true });
       return count ?? 0;
     },
     0,
