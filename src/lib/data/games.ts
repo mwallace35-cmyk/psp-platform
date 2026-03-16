@@ -501,6 +501,196 @@ export const getGamesBySportWithBoxScores = cache(
 );
 
 // ============================================================================
+// TEAM SEASON ROSTER/STATS (fallback for games without box scores)
+// ============================================================================
+
+export interface TeamSeasonPlayer {
+  player_id: number;
+  player_name: string;
+  player_slug: string;
+  jersey_number: string | null;
+  position: string | null;
+  // Basketball
+  points: number | null;
+  ppg: number | null;
+  games_played: number | null;
+  rebounds: number | null;
+  assists: number | null;
+  // Football
+  rush_yards: number | null;
+  rush_carries: number | null;
+  pass_yards: number | null;
+  pass_completions: number | null;
+  rec_yards: number | null;
+  rec_catches: number | null;
+  // Baseball
+  batting_avg: number | null;
+  hits: number | null;
+  at_bats: number | null;
+  rbi: number | null;
+  home_runs: number | null;
+  era: number | null;
+  wins: number | null;
+  losses: number | null;
+}
+
+export interface TeamSeasonStats {
+  schoolId: number;
+  schoolName: string;
+  schoolSlug: string;
+  players: TeamSeasonPlayer[];
+}
+
+/**
+ * Get season roster/stats for both teams in a game.
+ * Falls back to this when no game_player_stats (box score) data exists.
+ * Returns player season stats from sport-specific tables.
+ */
+export const getTeamSeasonStats = cache(
+  async (
+    sport: string,
+    seasonId: number,
+    homeSchoolId: number | null,
+    awaySchoolId: number | null
+  ): Promise<{ home: TeamSeasonStats | null; away: TeamSeasonStats | null }> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+            const result: { home: TeamSeasonStats | null; away: TeamSeasonStats | null } = {
+              home: null,
+              away: null,
+            };
+
+            async function fetchTeamStats(schoolId: number): Promise<TeamSeasonPlayer[]> {
+              if (sport === "basketball") {
+                const { data } = await supabase
+                  .from("basketball_player_seasons")
+                  .select("player_id, points, ppg, games_played, rebounds, rpg, assists, jersey_number, players(id, name, slug, positions)")
+                  .eq("school_id", schoolId)
+                  .eq("season_id", seasonId)
+                  .order("points", { ascending: false, nullsFirst: false })
+                  .limit(20);
+                return (data ?? []).map((r: any) => ({
+                  player_id: r.player_id,
+                  player_name: r.players?.name ?? "Unknown",
+                  player_slug: r.players?.slug ?? "",
+                  jersey_number: r.jersey_number,
+                  position: r.players?.positions?.[0] ?? null,
+                  points: r.points,
+                  ppg: r.ppg,
+                  games_played: r.games_played,
+                  rebounds: r.rebounds,
+                  assists: r.assists,
+                  rush_yards: null, rush_carries: null, pass_yards: null, pass_completions: null,
+                  rec_yards: null, rec_catches: null,
+                  batting_avg: null, hits: null, at_bats: null, rbi: null, home_runs: null,
+                  era: null, wins: null, losses: null,
+                }));
+              } else if (sport === "football") {
+                const { data } = await supabase
+                  .from("football_player_seasons")
+                  .select("player_id, rush_yards, rush_carries, pass_yards, pass_completions, rec_yards, rec_catches, jersey_number, players(id, name, slug, positions)")
+                  .eq("school_id", schoolId)
+                  .eq("season_id", seasonId)
+                  .limit(30);
+                return (data ?? []).map((r: any) => ({
+                  player_id: r.player_id,
+                  player_name: r.players?.name ?? "Unknown",
+                  player_slug: r.players?.slug ?? "",
+                  jersey_number: r.jersey_number,
+                  position: r.players?.positions?.[0] ?? null,
+                  points: null,
+                  ppg: null,
+                  games_played: null,
+                  rebounds: null,
+                  assists: null,
+                  rush_yards: r.rush_yards,
+                  rush_carries: r.rush_carries,
+                  pass_yards: r.pass_yards,
+                  pass_completions: r.pass_completions,
+                  rec_yards: r.rec_yards,
+                  rec_catches: r.rec_catches,
+                  batting_avg: null, hits: null, at_bats: null, rbi: null, home_runs: null,
+                  era: null, wins: null, losses: null,
+                }));
+              } else if (sport === "baseball") {
+                const { data } = await supabase
+                  .from("baseball_player_seasons")
+                  .select("player_id, batting_avg, hits, at_bats, rbi, home_runs, era, wins, losses, jersey_number, players(id, name, slug, positions)")
+                  .eq("school_id", schoolId)
+                  .eq("season_id", seasonId)
+                  .limit(25);
+                return (data ?? []).map((r: any) => ({
+                  player_id: r.player_id,
+                  player_name: r.players?.name ?? "Unknown",
+                  player_slug: r.players?.slug ?? "",
+                  jersey_number: r.jersey_number,
+                  position: r.players?.positions?.[0] ?? null,
+                  points: null, ppg: null, games_played: null, rebounds: null, assists: null,
+                  rush_yards: null, rush_carries: null, pass_yards: null, pass_completions: null,
+                  rec_yards: null, rec_catches: null,
+                  batting_avg: r.batting_avg,
+                  hits: r.hits,
+                  at_bats: r.at_bats,
+                  rbi: r.rbi,
+                  home_runs: r.home_runs,
+                  era: r.era,
+                  wins: r.wins,
+                  losses: r.losses,
+                }));
+              }
+              return [];
+            }
+
+            // Fetch school names
+            const schoolIds = [homeSchoolId, awaySchoolId].filter((id): id is number => id !== null);
+            const { data: schools } = await supabase
+              .from("schools")
+              .select("id, name, slug")
+              .in("id", schoolIds);
+            const schoolMap = new Map((schools ?? []).map((s: any) => [s.id, s]));
+
+            if (homeSchoolId) {
+              const players = await fetchTeamStats(homeSchoolId);
+              const school = schoolMap.get(homeSchoolId);
+              if (school) {
+                result.home = {
+                  schoolId: homeSchoolId,
+                  schoolName: school.name,
+                  schoolSlug: school.slug,
+                  players,
+                };
+              }
+            }
+
+            if (awaySchoolId) {
+              const players = await fetchTeamStats(awaySchoolId);
+              const school = schoolMap.get(awaySchoolId);
+              if (school) {
+                result.away = {
+                  schoolId: awaySchoolId,
+                  schoolName: school.name,
+                  schoolSlug: school.slug,
+                  players,
+                };
+              }
+            }
+
+            return result;
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      { home: null, away: null },
+      "DATA_TEAM_SEASON_STATS",
+      { sport, seasonId, homeSchoolId, awaySchoolId }
+    );
+  }
+);
+
+// ============================================================================
 // RIVALRY DATA
 // ============================================================================
 

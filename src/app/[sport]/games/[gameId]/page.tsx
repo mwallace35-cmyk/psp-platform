@@ -5,7 +5,9 @@ import {
   SPORT_META,
   getGameById,
   getGameBoxScore,
+  getTeamSeasonStats,
   type GamePlayerStat,
+  type TeamSeasonStats,
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import type { Metadata } from "next";
@@ -397,6 +399,11 @@ export default async function GameDetailPage({
 
   if (!game || game.sport_id !== sport) notFound();
 
+  // Fetch team season stats as fallback when no box score exists
+  const teamSeasonData = boxScore.length === 0
+    ? await getTeamSeasonStats(sport, game.season_id, game.home_school_id, game.away_school_id)
+    : null;
+
   const meta = SPORT_META[sport];
   const home = game.home_school;
   const away = game.away_school;
@@ -573,26 +580,121 @@ export default async function GameDetailPage({
             </p>
           </div>
         </section>
+      ) : teamSeasonData && (teamSeasonData.home?.players.length || teamSeasonData.away?.players.length) ? (
+        <section>
+          <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">
+            Season Stats
+          </h2>
+          <p className="text-gray-500 text-sm mb-4">
+            {season?.label ?? ""} season statistics for players on each team
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[teamSeasonData.away, teamSeasonData.home].filter(Boolean).map((team) => {
+              const t = team as TeamSeasonStats;
+              return (
+                <div key={t.schoolId} className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-5">
+                  <h3 className="text-lg font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase">
+                    <Link href={`/${sport}/schools/${t.schoolSlug}`} className="hover:underline">
+                      {t.schoolName}
+                    </Link>
+                  </h3>
+                  {t.players.length > 0 ? (
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-gray-400 border-b border-gray-700">
+                          <th className="text-left py-1 pr-2">Player</th>
+                          {sport === "basketball" && (
+                            <>
+                              <th className="text-right py-1 px-1">GP</th>
+                              <th className="text-right py-1 px-1">Pts</th>
+                              <th className="text-right py-1 px-1">PPG</th>
+                              <th className="text-right py-1 pl-1">Reb</th>
+                            </>
+                          )}
+                          {sport === "football" && (
+                            <>
+                              <th className="text-right py-1 px-1">Rush</th>
+                              <th className="text-right py-1 px-1">Pass</th>
+                              <th className="text-right py-1 pl-1">Rec</th>
+                            </>
+                          )}
+                          {sport === "baseball" && (
+                            <>
+                              <th className="text-right py-1 px-1">AVG</th>
+                              <th className="text-right py-1 px-1">H</th>
+                              <th className="text-right py-1 px-1">RBI</th>
+                              <th className="text-right py-1 pl-1">HR</th>
+                            </>
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {t.players.map((p) => (
+                          <tr key={p.player_id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
+                            <td className="py-1.5 pr-2">
+                              {p.player_slug ? (
+                                <Link href={`/${sport}/players/${p.player_slug}`} className="text-[var(--psp-blue)] hover:underline">
+                                  {p.player_name}
+                                </Link>
+                              ) : (
+                                <span className="text-gray-200">{p.player_name}</span>
+                              )}
+                            </td>
+                            {sport === "basketball" && (
+                              <>
+                                <td className="text-right py-1.5 px-1 text-gray-400">{p.games_played ?? "-"}</td>
+                                <td className="text-right py-1.5 px-1 font-semibold text-[var(--psp-gold)]">{p.points ?? "-"}</td>
+                                <td className="text-right py-1.5 px-1">{p.ppg != null ? p.ppg.toFixed(1) : "-"}</td>
+                                <td className="text-right py-1.5 pl-1 text-gray-400">{p.rebounds ?? "-"}</td>
+                              </>
+                            )}
+                            {sport === "football" && (
+                              <>
+                                <td className="text-right py-1.5 px-1">{p.rush_yards != null ? `${p.rush_yards}` : "-"}</td>
+                                <td className="text-right py-1.5 px-1">{p.pass_yards != null ? `${p.pass_yards}` : "-"}</td>
+                                <td className="text-right py-1.5 pl-1">{p.rec_yards != null ? `${p.rec_yards}` : "-"}</td>
+                              </>
+                            )}
+                            {sport === "baseball" && (
+                              <>
+                                <td className="text-right py-1.5 px-1">{p.batting_avg != null ? p.batting_avg.toFixed(3) : "-"}</td>
+                                <td className="text-right py-1.5 px-1">{p.hits ?? "-"}</td>
+                                <td className="text-right py-1.5 px-1">{p.rbi ?? "-"}</td>
+                                <td className="text-right py-1.5 pl-1">{p.home_runs ?? "-"}</td>
+                              </>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p className="text-gray-500 text-sm italic">No season stats available</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-xs text-gray-600 mt-4">
+            Showing season-level stats, not game-specific box score &middot; Source: PhillySportsPack.com
+          </p>
+        </section>
       ) : (
         <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-8 text-center">
-          <p className="text-gray-400 font-semibold">No detailed box score available for this game.</p>
+          <p className="text-gray-400 font-semibold">No detailed statistics available for this game.</p>
           <p className="text-gray-500 text-sm mt-2 mb-4">
-            Individual player statistics are available for select games from our archive.
-          </p>
-          <p className="text-gray-600 text-sm">
             {hasScore ? (
-              <>Final score: <span className="text-[var(--psp-gold)] font-semibold">{game.home_score} - {game.away_score}</span></>
+              <>Final score: <span className="text-[var(--psp-gold)] font-semibold">{game.away_score} - {game.home_score}</span></>
             ) : (
-              "Score information is not yet available for this game."
+              "Score information is not yet available."
             )}
           </p>
           {home && sport && (
             <div className="mt-4">
               <Link
-                href={`/${sport}/schools/${home.slug}/${season?.label ? season.label.split("-")[0] : ""}`}
+                href={`/${sport}/schools/${home.slug}`}
                 className="text-xs px-3 py-2 rounded inline-block border border-gray-700 text-[var(--psp-blue)] hover:bg-gray-800 transition"
               >
-                View {home.name} Schedule
+                View {home.name} Profile
               </Link>
             </div>
           )}

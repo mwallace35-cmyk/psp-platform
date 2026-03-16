@@ -128,11 +128,14 @@ export {
 export {
   getGameById,
   getGameBoxScore,
+  getTeamSeasonStats,
   getGamesWithBoxScores,
   getPlayerGameLog,
   getPlayerTeamGames,
   type GamePlayerStat,
   type GameDetail,
+  type TeamSeasonStats,
+  type TeamSeasonPlayer,
   type PlayerGameLog,
   type TeamGame,
 } from "./games";
@@ -205,8 +208,14 @@ export {
   getRecentAwards,
   getTopAwardedSchools,
   getAwardsByType,
+  getChampionshipsSummary,
+  getRecentChampionships,
+  getDynastyTracker,
+  getAwardsCountBySport,
+  getProAthletesCount,
   type AwardDetail,
   type AwardsSummary,
+  type ChampionshipHubRecord,
 } from "./awards-hub";
 
 // Next Level / Pro Athletes functions
