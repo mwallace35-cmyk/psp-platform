@@ -58,7 +58,8 @@ async function fetchAllCityAwardsJson(sport: string) {
   const supabase = await createClient();
 
   try {
-    // Fetch awards for All-City category, ordered by season descending
+    // Fetch awards for All-City category, ordered by year descending
+    // OPTIMIZED: Uses year column directly instead of seasons FK join
     const { data, error, count } = await supabase
       .from("awards")
       .select(
@@ -72,13 +73,13 @@ async function fetchAllCityAwardsJson(sport: string) {
          player_id,
          player_name,
          school_id,
+         year,
          players(id, name, slug),
-         schools(id, name, slug),
-         seasons(year_start, year_end, label)`,
+         schools(id, name, slug)`,
         { count: "exact" }
       )
       .eq("award_type", `${sport}-all-city`)
-      .order("created_at", { ascending: false })
+      .order("year", { ascending: false, nullsFirst: false })
       .limit(5000);
 
     if (error) {
@@ -88,7 +89,7 @@ async function fetchAllCityAwardsJson(sport: string) {
 
     if (!data || !Array.isArray(data)) return null;
 
-    // Transform data to match expected format
+    // Transform data using year column directly
     const awards = data.map((row: any) => ({
       award_id: row.id,
       award_type: row.award_type,
@@ -104,9 +105,9 @@ async function fetchAllCityAwardsJson(sport: string) {
       school_id: row.schools?.id || null,
       school_name: row.schools?.name || null,
       school_slug: row.schools?.slug || null,
-      year_start: row.seasons?.year_start || null,
-      year_end: row.seasons?.year_end || null,
-      season_label: row.seasons?.label || null,
+      year_start: row.year || null,
+      year_end: row.year ? row.year + 1 : null,
+      season_label: row.year ? yearToSeasonLabel(row.year) : null,
     }));
 
     return { awards, total_count: count || 0 };
@@ -408,13 +409,24 @@ export interface AwardsPageData {
 }
 
 /**
+ * Compute season label from year: e.g. 2024 → "2024-25"
+ */
+function yearToSeasonLabel(year: number): string {
+  const nextYear = year + 1;
+  return `${year}-${String(nextYear).slice(-2)}`;
+}
+
+/**
  * Helper: fetch ALL awards for a sport using PostgREST
+ * OPTIMIZED: Uses year column directly instead of seasons FK join to avoid timeouts
  */
 async function fetchAllAwardsForSport(sport: string) {
   const supabase = await createClient();
 
   try {
     // Use OR filter: sport_id matches OR award_type starts with sport-
+    // NOTE: Removed seasons() FK join — uses denormalized year column instead
+    // This reduces query complexity and prevents Supabase timeouts on 10K+ rows
     const { data, error, count } = await supabase
       .from("awards")
       .select(
@@ -428,13 +440,13 @@ async function fetchAllAwardsForSport(sport: string) {
          player_id,
          player_name,
          school_id,
+         year,
          players(id, name, slug),
-         schools(id, name, slug),
-         seasons(year_start, year_end, label)`,
+         schools(id, name, slug)`,
         { count: "exact" }
       )
       .or(`sport_id.eq.${sport},award_type.like.${sport}-%`)
-      .order("created_at", { ascending: false })
+      .order("year", { ascending: false, nullsFirst: false })
       .limit(15000);
 
     if (error) {
@@ -444,8 +456,7 @@ async function fetchAllAwardsForSport(sport: string) {
 
     if (!data || !Array.isArray(data)) return null;
 
-    // Transform to flat format
-    // direct_player_name = player_name column (for awards without player_id link)
+    // Transform to flat format using year column directly
     const awards = data.map((row: any) => ({
       award_id: row.id,
       award_type: row.award_type,
@@ -461,9 +472,9 @@ async function fetchAllAwardsForSport(sport: string) {
       school_id: row.schools?.id || null,
       school_name: row.schools?.name || null,
       school_slug: row.schools?.slug || null,
-      year_start: row.seasons?.year_start || null,
-      year_end: row.seasons?.year_end || null,
-      season_label: row.seasons?.label || null,
+      year_start: row.year || null,
+      year_end: row.year ? row.year + 1 : null,
+      season_label: row.year ? yearToSeasonLabel(row.year) : null,
     }));
 
     return { awards, total_count: count || 0 };
