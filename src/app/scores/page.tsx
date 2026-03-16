@@ -263,13 +263,34 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   let allScores: ScoreGame[] = [];
   let totalCount = 0;
   try {
-    // Build a query that also fetches league_id for both schools
+    // Resolve season/school filters first (in parallel if both present)
+    let seasonId: number | null = null;
+    let schoolId: number | null = null;
+
+    if (selectedSeason !== "all") {
+      const { data } = await supabase
+        .from("seasons")
+        .select("id")
+        .eq("label", selectedSeason)
+        .single();
+      seasonId = data?.id ?? null;
+    }
+    if (selectedSchool) {
+      const { data } = await supabase
+        .from("schools")
+        .select("id")
+        .eq("slug", selectedSchool)
+        .single();
+      schoolId = data?.id ?? null;
+    }
+
+    // Build simpler query — fetch school name/slug via FK but NOT league_id
     let query = supabase
       .from("games")
       .select(
         `id, sport_id, game_date, home_score, away_score, home_school_id, away_school_id,
-         home_school:schools!games_home_school_id_fkey(name, slug, league_id),
-         away_school:schools!games_away_school_id_fkey(name, slug, league_id),
+         home_school:schools!games_home_school_id_fkey(name, slug),
+         away_school:schools!games_away_school_id_fkey(name, slug),
          seasons(label)`,
         { count: "exact" }
       )
@@ -290,38 +311,39 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     if (selectedSport !== "all") {
       query = query.eq("sport_id", selectedSport);
     }
-
-    if (selectedSeason !== "all") {
-      const { data: seasonRow } = await supabase
-        .from("seasons")
-        .select("id")
-        .eq("label", selectedSeason)
-        .single();
-      if (seasonRow) {
-        query = query.eq("season_id", seasonRow.id);
-      }
+    if (seasonId) {
+      query = query.eq("season_id", seasonId);
     }
-
-    if (selectedSchool) {
-      const { data: schoolRow } = await supabase
-        .from("schools")
-        .select("id")
-        .eq("slug", selectedSchool)
-        .single();
-      if (schoolRow) {
-        query = query.or(
-          `home_school_id.eq.${schoolRow.id},away_school_id.eq.${schoolRow.id}`
-        );
-      }
+    if (schoolId) {
+      query = query.or(
+        `home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`
+      );
     }
 
     const { data, count } = await query;
+    const rawGames = (data as unknown as any[]) ?? [];
 
-    // Extract league_id from nested school objects
-    allScores = ((data as unknown as any[]) ?? []).map((g) => ({
+    // For round view, batch-fetch league_ids for all unique school IDs
+    let leagueMap = new Map<number, number | null>();
+    if (useRoundView && rawGames.length > 0) {
+      const schoolIds = new Set<number>();
+      for (const g of rawGames) {
+        if (g.home_school_id) schoolIds.add(g.home_school_id);
+        if (g.away_school_id) schoolIds.add(g.away_school_id);
+      }
+      const { data: schoolLeagues } = await supabase
+        .from("schools")
+        .select("id, league_id")
+        .in("id", Array.from(schoolIds));
+      for (const s of schoolLeagues ?? []) {
+        leagueMap.set(s.id, s.league_id);
+      }
+    }
+
+    allScores = rawGames.map((g) => ({
       ...g,
-      home_league_id: g.home_school?.league_id ?? null,
-      away_league_id: g.away_school?.league_id ?? null,
+      home_league_id: leagueMap.get(g.home_school_id) ?? null,
+      away_league_id: leagueMap.get(g.away_school_id) ?? null,
     }));
     totalCount = count ?? allScores.length;
   } catch {
