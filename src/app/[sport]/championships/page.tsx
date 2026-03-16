@@ -412,6 +412,54 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
               </div>
             </div>
 
+            {/* Related Pages */}
+            <div className="rounded-lg overflow-hidden" style={{ background: "rgba(15,32,64,0.8)", border: "1px solid rgba(59,130,246,0.3)" }}>
+              <div className="px-4 py-3 border-b" style={{ borderColor: "var(--psp-blue, #3b82f6)" }}>
+                <h3 className="font-bold text-sm uppercase tracking-wider" style={{ color: "var(--psp-blue, #3b82f6)" }}>
+                  Related Pages
+                </h3>
+              </div>
+              <div className="p-4 space-y-3">
+                <Link
+                  href={`/${sport}/awards`}
+                  className="flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: "var(--psp-gold)" }}
+                >
+                  <span>🏅</span> {meta.name} Awards & Honors
+                </Link>
+                <Link
+                  href={`/${sport}/records`}
+                  className="flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: "var(--psp-gold)" }}
+                >
+                  <span>📈</span> {meta.name} Records
+                </Link>
+                <Link
+                  href={`/${sport}/leaderboards/${meta.statCategories?.[0] || "scoring"}`}
+                  className="flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: "var(--psp-gold)" }}
+                >
+                  <span>📊</span> {meta.name} Leaderboards
+                </Link>
+                {sport === "football" && (
+                  <Link
+                    href="/football/all-city"
+                    className="flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
+                    style={{ color: "var(--psp-gold)" }}
+                  >
+                    <span>📋</span> All-City Archive
+                  </Link>
+                )}
+                <Link
+                  href="/awards"
+                  className="flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
+                  style={{ color: "rgba(255,255,255,0.6)" }}
+                >
+                  <span>🏅</span> All Sports Awards Hub
+                </Link>
+              </div>
+            </div>
+
             <PSPPromo size="sidebar" variant={4} />
           </div>
         </div>

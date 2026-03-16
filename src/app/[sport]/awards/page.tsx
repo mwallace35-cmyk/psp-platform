@@ -103,8 +103,91 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
         </div>
       </div>
 
+      {/* Sport-Specific Featured Section */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-2">
+        <div className="flex flex-wrap gap-3">
+          {/* All Awards Hub link */}
+          <Link
+            href="/awards"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+            style={{
+              border: "1px solid rgba(59,130,246,0.3)",
+              background: "rgba(59,130,246,0.08)",
+              color: "#3b82f6",
+            }}
+          >
+            ← All Sports Awards
+          </Link>
+          {/* Championships link */}
+          <Link
+            href={`/${sport}/championships`}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+            style={{
+              border: "1px solid rgba(240,165,0,0.3)",
+              background: "rgba(240,165,0,0.08)",
+              color: "#f0a500",
+            }}
+          >
+            🏆 Championships
+          </Link>
+          {/* Sport-specific deep links */}
+          {sport === "football" && (
+            <>
+              <Link
+                href="/football/all-city"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+                style={{
+                  border: "1px solid rgba(16,163,97,0.3)",
+                  background: "rgba(16,163,97,0.08)",
+                  color: "#10a361",
+                }}
+              >
+                📋 All-City Archive (1932–2018)
+              </Link>
+              <Link
+                href="/football/city-all-star-game"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+                style={{
+                  border: "1px solid rgba(168,85,247,0.3)",
+                  background: "rgba(168,85,247,0.08)",
+                  color: "#a855f7",
+                }}
+              >
+                🎯 City All-Star Game
+              </Link>
+            </>
+          )}
+          {sport === "basketball" && (
+            <Link
+              href="/basketball/leaderboards/scoring"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+              style={{
+                border: "1px solid rgba(234,88,12,0.3)",
+                background: "rgba(234,88,12,0.08)",
+                color: "#ea580c",
+              }}
+            >
+              📊 Scoring Leaders
+            </Link>
+          )}
+          {sport === "baseball" && (
+            <Link
+              href="/pros"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+              style={{
+                border: "1px solid rgba(220,38,38,0.3)",
+                background: "rgba(220,38,38,0.08)",
+                color: "#dc2626",
+              }}
+            >
+              ⚾ MLB Pipeline
+            </Link>
+          )}
+        </div>
+      </div>
+
       {/* Main Content */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-3">
@@ -112,6 +195,12 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
               <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
                 <p className="text-gray-300 text-lg">
                   No award data available for {meta.name.toLowerCase()} yet.
+                </p>
+                <p className="text-gray-500 text-sm mt-2">
+                  Check back soon or explore{" "}
+                  <Link href="/awards" className="text-blue-400 hover:underline">
+                    awards across all sports
+                  </Link>.
                 </p>
               </div>
             ) : (
@@ -144,6 +233,39 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
               </div>
             )}
 
+            {/* Related Pages */}
+            <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
+              <div className="bg-[#0a1628] border-b border-[#3b82f6] px-4 py-3">
+                <h3 className="text-white font-bebas text-xl">Related Pages</h3>
+              </div>
+              <div className="p-4 space-y-2">
+                <Link
+                  href={`/${sport}/championships`}
+                  className="flex items-center gap-2 py-2 text-sm text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  <span>🏆</span> {meta.name} Championships
+                </Link>
+                <Link
+                  href={`/${sport}/records`}
+                  className="flex items-center gap-2 py-2 text-sm text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  <span>📈</span> {meta.name} Records
+                </Link>
+                <Link
+                  href={`/${sport}/leaderboards/${meta.statCategories[0] || "scoring"}`}
+                  className="flex items-center gap-2 py-2 text-sm text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  <span>📊</span> {meta.name} Leaderboards
+                </Link>
+                <Link
+                  href="/awards"
+                  className="flex items-center gap-2 py-2 text-sm text-gray-300 hover:text-blue-400 transition-colors"
+                >
+                  <span>🏅</span> All Sports Awards Hub
+                </Link>
+              </div>
+            </div>
+
             {/* About */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
               <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
@@ -156,8 +278,8 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
                   and individual honors.
                 </p>
                 <p>
-                  Use the tabs to browse by award category. Each section is organized
-                  by year with decade filter pills for quick navigation.
+                  Browse by year or filter by award category. Use the year
+                  dropdown to jump to a specific season, or decade pills to narrow the range.
                 </p>
                 <p className="text-xs text-gray-400 mt-4">
                   Data compiled from historical archives and verified sources.

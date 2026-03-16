@@ -46,14 +46,14 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
       description: "Title winners through the years",
       href: `/${sport}/championships`,
     },
+    {
+      icon: "⭐",
+      label: "Awards & Honors",
+      description: "All-City, All-League, Player of the Year & more",
+      href: `/${sport}/awards`,
+    },
     ...(sport === "football"
       ? [
-          {
-            icon: "⭐",
-            label: "Awards & Honors",
-            description: "All-City, league, state & individual awards",
-            href: `/${sport}/awards`,
-          },
           {
             icon: "🎯",
             label: "City All-Star Game",

@@ -44,7 +44,6 @@ const MORE_ITEMS = [
   { href: "/coaches", label: "Coaches" },
   { href: "/compare", label: "Compare Players" },
   { href: "/glossary", label: "Glossary" },
-  { href: "/awards", label: "Awards" },
   { href: "/challenge", label: "Stats Challenge" },
 ];
 
@@ -270,8 +269,19 @@ export default function Header() {
                     {item.label}
                   </Link>
                 ))}
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "4px 0" }} />
+                {ALL_SPORTS.slice(0, 3).map((item) => (
+                  <Link key={`${item.href}/awards`} href={`${item.href}/awards`} role="menuitem" style={{ fontSize: "0.85em", opacity: 0.85 }}>
+                    🏆 {item.label} Awards
+                  </Link>
+                ))}
               </div>
             </div>
+
+            {/* Awards Link */}
+            <Link href="/awards" className={`nav-link ${isActive("/awards") ? "active" : ""}`} aria-current={isActive("/awards") ? "page" : undefined}>
+              Awards
+            </Link>
 
             {/* Schools Link */}
             <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`} aria-current={isActive("/schools") ? "page" : undefined}>
@@ -438,6 +448,7 @@ export default function Header() {
             {/* Quick Links Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
               <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Quick Links</div>
+              <Link href="/awards" onClick={handleMobileToggle}>🏆 Awards &amp; Honors</Link>
               <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
               <Link href="/scores" onClick={handleMobileToggle}>Scores</Link>
               <Link href="/articles" onClick={handleMobileToggle}>News</Link>

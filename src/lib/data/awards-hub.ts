@@ -311,3 +311,182 @@ export const getAwardsByType = cache(
     );
   }
 );
+
+/**
+ * Championship record for hub display
+ */
+export interface ChampionshipHubRecord {
+  id: number;
+  sport_id: string;
+  level: string;
+  championship_type: string;
+  result?: string;
+  score?: string;
+  venue?: string;
+  notes?: string;
+  schools?: { id: number; name: string; slug: string } | null;
+  seasons?: { year_start: number; year_end: number; label: string } | null;
+}
+
+/**
+ * Get championship counts by sport for the hub
+ */
+export const getChampionshipsSummary = cache(async () => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data, error } = await supabase
+            .from("championships")
+            .select("id, sport_id")
+            .limit(5000);
+
+          if (error) console.error("[getChampionshipsSummary] error:", error);
+
+          const bySport: Record<string, number> = {};
+          let total = 0;
+          for (const row of (data || []) as { id: number; sport_id: string }[]) {
+            bySport[row.sport_id] = (bySport[row.sport_id] || 0) + 1;
+            total++;
+          }
+          return { total, bySport };
+        },
+        { maxRetries: 2 }
+      );
+    },
+    { total: 0, bySport: {} },
+    "getChampionshipsSummary",
+    {}
+  );
+});
+
+/**
+ * Get recent championships across all sports
+ */
+export const getRecentChampionships = cache(async (limit = 50) => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data, error } = await supabase
+            .from("championships")
+            .select(`
+              id, sport_id, level, championship_type, result, score, venue, notes,
+              schools(id, name, slug),
+              seasons(year_start, year_end, label)
+            `)
+            .order("season_id", { ascending: false })
+            .limit(limit);
+
+          if (error) console.error("[getRecentChampionships] error:", error);
+          return (data || []) as unknown as ChampionshipHubRecord[];
+        },
+        { maxRetries: 2 }
+      );
+    },
+    [],
+    "getRecentChampionships",
+    { limit }
+  );
+});
+
+/**
+ * Dynasty tracker: top schools by championship count
+ */
+export const getDynastyTracker = cache(async (limit = 20) => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data, error } = await supabase
+            .from("championships")
+            .select("id, schools(id, name, slug)")
+            .limit(5000);
+
+          if (error) console.error("[getDynastyTracker] error:", error);
+
+          const schoolCounts: Record<number, { name: string; slug: string; count: number }> = {};
+          for (const row of (data || []) as any[]) {
+            const school = row.schools;
+            if (school?.id) {
+              if (!schoolCounts[school.id]) {
+                schoolCounts[school.id] = { name: school.name, slug: school.slug, count: 0 };
+              }
+              schoolCounts[school.id].count++;
+            }
+          }
+
+          return Object.entries(schoolCounts)
+            .map(([id, s]) => ({ id: parseInt(id), ...s }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, limit);
+        },
+        { maxRetries: 2 }
+      );
+    },
+    [],
+    "getDynastyTracker",
+    { limit }
+  );
+});
+
+/**
+ * Awards count by sport for the hub sport cards
+ */
+export const getAwardsCountBySport = cache(async () => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data, error } = await supabase
+            .from("awards")
+            .select("id, sport_id")
+            .limit(30000);
+
+          if (error) console.error("[getAwardsCountBySport] error:", error);
+
+          const bySport: Record<string, number> = {};
+          for (const row of (data || []) as { id: number; sport_id: string }[]) {
+            const sport = row.sport_id || "unknown";
+            bySport[sport] = (bySport[sport] || 0) + 1;
+          }
+          return bySport;
+        },
+        { maxRetries: 2 }
+      );
+    },
+    {},
+    "getAwardsCountBySport",
+    {}
+  );
+});
+
+/**
+ * Get pro athletes count for hub display
+ */
+export const getProAthletesCount = cache(async () => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { count, error } = await supabase
+            .from("next_level_tracking")
+            .select("id", { count: "exact", head: true })
+            .in("current_level", ["NFL", "NBA", "MLB", "ABA"]);
+
+          if (error) console.error("[getProAthletesCount] error:", error);
+          return count || 0;
+        },
+        { maxRetries: 2 }
+      );
+    },
+    0,
+    "getProAthletesCount",
+    {}
+  );
+});

@@ -295,13 +295,18 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   </span>
                 )}
                 {player.pro_team && (
-                  <span className="px-2 py-0.5 text-xs rounded-full" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
-                    Pro Athlete
+                  <span className="px-2 py-0.5 text-xs rounded-full font-semibold" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
+                    ⭐ Pro Athlete
                   </span>
                 )}
-                {player.college && (
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-blue-600 text-white">
-                    College
+                {player.college && !player.pro_team && (
+                  <span className="px-2 py-0.5 text-xs rounded-full font-semibold bg-blue-600 text-white">
+                    🎓 College
+                  </span>
+                )}
+                {(awards as Award[]).length > 0 && (
+                  <span className="px-2 py-0.5 text-xs rounded-full font-semibold" style={{ background: "rgba(240,165,0,0.2)", color: "var(--psp-gold)", border: "1px solid rgba(240,165,0,0.3)" }}>
+                    🏅 {(awards as Award[]).length} Award{(awards as Award[]).length !== 1 ? "s" : ""}
                   </span>
                 )}
               </div>
@@ -651,26 +656,63 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Awards */}
             {(awards as Award[]).length > 0 && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                  Honors & Awards
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                    Honors & Awards
+                  </h2>
+                  <Link
+                    href={`/${sport}/awards`}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
+                    style={{
+                      background: "rgba(59,130,246,0.1)",
+                      color: "var(--psp-blue, #3b82f6)",
+                      border: "1px solid rgba(59,130,246,0.2)",
+                    }}
+                  >
+                    All {meta.name} Awards →
+                  </Link>
+                </div>
                 <div className="space-y-2">
-                  {(awards as Award[]).map((a) => (
-                    <div key={a.id} className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3">
-                      <span className="text-xl" aria-hidden="true">🏅</span>
-                      <div>
-                        <span className="font-medium text-sm" style={{ color: "var(--psp-navy)" }}>
-                          {a.award_name || a.award_type}
-                        </span>
-                        {a.seasons?.label && (
-                          <span className="text-xs ml-2" style={{ color: "var(--psp-gray-500)" }}>{a.seasons.label}</span>
-                        )}
-                        {a.category && (
-                          <span className="text-xs ml-2" style={{ color: "var(--psp-gray-400)" }}>{a.category}</span>
-                        )}
+                  {(awards as Award[]).map((a) => {
+                    // Determine badge color by award type
+                    const awardType = (a.award_type || "").toLowerCase();
+                    const isAllCity = awardType.includes("all-city") || awardType.includes("all-scholastic");
+                    const isAllState = awardType.includes("all-state");
+                    const isPOTY = awardType.includes("player-of-year");
+                    const isAllDecade = awardType.includes("all-decade") || awardType.includes("all-era");
+                    const badgeEmoji = isPOTY ? "⭐" : isAllState ? "🏆" : isAllDecade ? "👑" : isAllCity ? "🏅" : "🎖️";
+
+                    // Build display label: prefer award_name, clean up redundant info
+                    let displayLabel = a.award_name || a.award_type || "Award";
+                    // Strip sport prefix from award_type fallback
+                    displayLabel = displayLabel.replace(/^(football|basketball|baseball|soccer|lacrosse|wrestling|track-field)-/, "");
+                    // Strip year+tier suffix from baseball-style names (e.g. "Daily News All-City Baseball Third Team 2018")
+                    displayLabel = displayLabel.replace(/\s+(First|Second|Third)\s+Team\s+\d{4}$/i, "");
+                    // Strip trailing tier info (e.g. "Coaches All-Public First Team")
+                    displayLabel = displayLabel.replace(/\s+(First|Second|Third)\s+Team$/i, "");
+                    // Convert remaining hyphens to spaces for award_type fallbacks
+                    if (!a.award_name) displayLabel = displayLabel.replace(/-/g, " ");
+
+                    // Build tier + category info
+                    const tierLabel = a.category;
+
+                    return (
+                      <div key={a.id} className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3">
+                        <span className="text-xl" aria-hidden="true">{badgeEmoji}</span>
+                        <div className="flex-1 min-w-0">
+                          <span className="font-medium text-sm capitalize" style={{ color: "var(--psp-navy)" }}>
+                            {displayLabel}
+                          </span>
+                          {tierLabel && (
+                            <span className="text-xs ml-2 capitalize" style={{ color: "var(--psp-gray-400)" }}>{tierLabel}</span>
+                          )}
+                          {a.seasons?.label && (
+                            <span className="text-xs ml-2" style={{ color: "var(--psp-gray-500)" }}>{a.seasons.label}</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}

@@ -315,9 +315,22 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                         {/* Championships */}
             {championships.length > 0 && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                  Championships ({championships.length})
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                    Championships ({championships.length})
+                  </h2>
+                  <Link
+                    href={`/${sport}/championships`}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
+                    style={{
+                      background: "rgba(59,130,246,0.1)",
+                      color: "var(--psp-blue, #3b82f6)",
+                      border: "1px solid rgba(59,130,246,0.2)",
+                    }}
+                  >
+                    All {meta.name} Championships →
+                  </Link>
+                </div>
                 <div className="space-y-2">
                   {championships.map((c: Championship) => (
                     <div key={c.id} className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3">
@@ -337,6 +350,16 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                       </div>
                     </div>
                   ))}
+                </div>
+                {/* Awards link */}
+                <div className="mt-4">
+                  <Link
+                    href={`/${sport}/awards`}
+                    className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:underline"
+                    style={{ color: "var(--psp-gold)" }}
+                  >
+                    🏅 View {meta.name} Awards & Honors →
+                  </Link>
                 </div>
               </div>
             )}

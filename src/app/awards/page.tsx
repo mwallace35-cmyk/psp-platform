@@ -2,365 +2,456 @@ import { Metadata } from "next";
 import Link from "next/link";
 import {
   getAwardsSummary,
-  getRecentAwards,
   getTopAwardedSchools,
-  getAwardsByType,
+  getChampionshipsSummary,
+  getRecentChampionships,
+  getDynastyTracker,
+  getAwardsCountBySport,
+  getProAthletesCount,
+  getRecentAwards,
 } from "@/lib/data/awards-hub";
 import { SPORT_META, VALID_SPORTS } from "@/lib/sports";
 import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import SportIcon from "@/components/ui/SportIcon";
+import PSPPromo from "@/components/ads/PSPPromo";
+import AwardsHubClient from "./AwardsHubClient";
 
 export const metadata: Metadata = {
-  title: "Awards & Honors | PhillySportsPack",
+  title: "Awards & Honors Hub | PhillySportsPack",
   description:
-    "Philadelphia high school sports awards, All-City selections, Hall of Famers, and athlete honors across all sports.",
+    "The complete archive of Philadelphia high school sports honors — All-City teams, championships, Player of the Year, dynasties, and pro athletes across all sports since 1887.",
   openGraph: {
-    title: "Awards & Honors | PhillySportsPack",
-    description: "Discover award-winning athletes and honors in Philadelphia high school sports.",
+    title: "Awards & Honors Hub | PhillySportsPack",
+    description:
+      "All-City teams, championships, Player of the Year, dynasties — the definitive archive of Philly HS sports honors.",
     url: "https://phillysportspack.com/awards",
   },
 };
 
 export const revalidate = 3600; // 1 hour
 
-interface AwardsPageProps {
-  searchParams: Promise<{
-    type?: string;
-    sport?: string;
-    year?: string;
-    page?: string;
-  }>;
-}
-
-export default async function AwardsPage({ searchParams }: AwardsPageProps) {
-  const params = await searchParams;
-  const selectedType = params.type || "all-city";
-  const selectedSport = params.sport || "football";
-  const selectedYear = params.year ? parseInt(params.year) : undefined;
-  const page = parseInt(params.page || "1");
-
-  // Fetch data
-  const [summary, topSchools, awards] = await Promise.all([
+export default async function AwardsHubPage() {
+  // Fetch all data in parallel
+  const [
+    summary,
+    topSchools,
+    champSummary,
+    recentChamps,
+    dynastyLeaders,
+    awardsBySport,
+    proCount,
+    recentAwards,
+  ] = await Promise.all([
     getAwardsSummary(),
     getTopAwardedSchools(15),
-    getAwardsByType(selectedType, selectedSport, 100),
+    getChampionshipsSummary(),
+    getRecentChampionships(20),
+    getDynastyTracker(15),
+    getAwardsCountBySport(),
+    getProAthletesCount(),
+    getRecentAwards(30),
   ]);
 
-  // Filter by year if specified
-  const filteredAwards = selectedYear
-    ? awards.filter((a) => a.seasons?.year_start === selectedYear)
-    : awards;
+  // Build sport card data
+  const sportCards = VALID_SPORTS.map((sport) => ({
+    id: sport,
+    name: SPORT_META[sport].name,
+    emoji: SPORT_META[sport].emoji,
+    color: SPORT_COLORS_HEX[sport] || "#f0a500",
+    awardCount: awardsBySport[sport] || 0,
+    champCount: champSummary.bySport[sport] || 0,
+  })).filter((s) => s.awardCount > 0 || s.champCount > 0);
 
-  // Paginate
-  const pageSize = 50;
-  const totalPages = Math.ceil(filteredAwards.length / pageSize);
-  const paginatedAwards = filteredAwards.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
-
-  const awardTypeLabel =
-    selectedType === "all-city"
-      ? "All-City"
-      : selectedType === "player-of-year"
-        ? "Player of the Year"
-        : selectedType === "hall-of-fame"
-          ? "Hall of Fame"
-          : selectedType === "all-league"
-            ? "All-League"
-            : selectedType;
+  // Compute years of history
+  const yearsOfHistory =
+    summary.yearRange.max > 0 && summary.yearRange.min > 0
+      ? summary.yearRange.max - summary.yearRange.min + 1
+      : 90;
 
   return (
-    <main id="main-content" className="flex-1">
-      <BreadcrumbJsonLd items={[
-        { name: "Home", url: "https://phillysportspack.com" },
-        { name: "Awards", url: "https://phillysportspack.com/awards" },
-      ]} />
-      <Breadcrumb items={[{ label: "Awards", href: "/awards" }]} />
+    <main id="main-content" className="flex-1 min-h-screen bg-gradient-to-b from-[#0a1628] to-[#0f2040]">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://phillysportspack.com" },
+          { name: "Awards & Honors", url: "https://phillysportspack.com/awards" },
+        ]}
+      />
 
       {/* Hero Section */}
-      <div
-        className="text-center py-8 px-4 mb-8"
-        style={{
-          background: "linear-gradient(135deg, var(--psp-navy) 0%, #1a3a52 100%)",
-        }}
+      <header
+        className="relative overflow-hidden border-b-4"
+        style={{ borderColor: "#f0a500" }}
       >
-        <h1 className="text-4xl font-bebas mb-2" style={{ fontFamily: "var(--font-bebas)" }}>
-          Awards &amp; Honors
-        </h1>
-        <p className="text-lg text-gray-400 mb-4">
-          Celebrating elite athletes across Philadelphia high school sports
-        </p>
-
-        {/* Stats Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mt-6">
-          <div className="p-4 rounded-lg" style={{ background: "rgba(240, 165, 0, 0.1)" }}>
-            <div className="text-3xl font-bold" style={{ color: "var(--psp-gold)" }}>
-              {summary.total.toLocaleString()}
-            </div>
-            <div className="text-xs text-gray-600 mt-1">Total Awards</div>
-          </div>
-          <div className="p-4 rounded-lg" style={{ background: "rgba(240, 165, 0, 0.1)" }}>
-            <div className="text-3xl font-bold" style={{ color: "var(--psp-gold)" }}>
-              {Object.keys(summary.byType).length}
-            </div>
-            <div className="text-xs text-gray-600 mt-1">Award Types</div>
-          </div>
-          <div className="p-4 rounded-lg" style={{ background: "rgba(240, 165, 0, 0.1)" }}>
-            <div className="text-3xl font-bold" style={{ color: "var(--psp-gold)" }}>
-              {summary.yearRange.max - summary.yearRange.min + 1}
-            </div>
-            <div className="text-xs text-gray-600 mt-1">Years Covered</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8 px-4">
-        {/* Main Content */}
-        <div>
-          {/* Award Type Tabs */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bebas mb-4 text-gray-300" style={{ fontFamily: "var(--font-bebas)" }}>
-              Award Categories
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { value: "all-city", label: "All-City" },
-                { value: "all-league", label: "All-League" },
-                { value: "player-of-year", label: "Player of the Year" },
-                { value: "hall-of-fame", label: "Hall of Fame" },
-              ].map((tab) => (
-                <Link
-                  key={tab.value}
-                  href={`/awards?type=${tab.value}&sport=${selectedSport}`}
-                  className="px-5 py-3 rounded text-sm font-semibold transition-all duration-200"
-                  style={{
-                    border: `2px solid ${selectedType === tab.value ? "var(--psp-gold)" : "#333"}`,
-                    background:
-                      selectedType === tab.value
-                        ? "var(--psp-gold)"
-                        : "transparent",
-                    color:
-                      selectedType === tab.value
-                        ? "var(--psp-navy)"
-                        : "var(--psp-gold)",
-                  }}
-                >
-                  {tab.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Sport Filter Pills */}
-          <div className="mb-8">
-            <h3 className="text-sm text-gray-500 mb-3 font-semibold uppercase">
-              Filter by Sport
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {VALID_SPORTS.map((sport) => (
-                <Link
-                  key={sport}
-                  href={`/awards?type=${selectedType}&sport=${sport}`}
-                  className="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 flex items-center gap-2"
-                  style={{
-                    border: `1px solid ${SPORT_COLORS_HEX[sport] || "var(--psp-gold)"}`,
-                    background:
-                      selectedSport === sport
-                        ? SPORT_COLORS_HEX[sport]
-                        : "transparent",
-                    color:
-                      selectedSport === sport
-                        ? "white"
-                        : SPORT_COLORS_HEX[sport],
-                  }}
-                >
-                  <SportIcon sport={sport} size="sm" />
-                  {SPORT_META[sport]?.name || sport}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Awards Table */}
-          <div className="mb-8">
-            {paginatedAwards.length === 0 ? (
-              <div className="text-center p-8 bg-gray-900 rounded-lg text-gray-500">
-                <p>No awards found for this filter.</p>
-              </div>
-            ) : (
-              <>
-                <div className="bg-gray-900 rounded-lg overflow-hidden">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b-2 border-gray-700">
-                        <th className="p-4 text-left text-sm font-semibold" style={{ color: "var(--psp-gold)" }}>
-                          Player
-                        </th>
-                        <th className="p-4 text-left text-sm font-semibold" style={{ color: "var(--psp-gold)" }}>
-                          School
-                        </th>
-                        <th className="p-4 text-left text-sm font-semibold" style={{ color: "var(--psp-gold)" }}>
-                          Year
-                        </th>
-                        <th className="p-4 text-left text-sm font-semibold" style={{ color: "var(--psp-gold)" }}>
-                          Award
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {paginatedAwards.map((award) => (
-                        <tr key={award.id} className="border-b border-gray-800">
-                          <td className="p-4 text-gray-300">
-                            {award.players ? (
-                              <Link
-                                href={`/${award.sport_id}/players/${award.players.slug}`}
-                                className="font-medium"
-                                style={{ color: "var(--psp-gold)" }}
-                              >
-                                {award.players.name}
-                              </Link>
-                            ) : award.player_name ? (
-                              <span className="font-medium">{award.player_name}</span>
-                            ) : (
-                              <span className="text-gray-600 italic">Name not available</span>
-                            )}
-                          </td>
-                          <td className="p-4 text-gray-300">
-                            {award.players?.schools ? (
-                              <Link
-                                href={`/${award.sport_id}/schools/${award.players.schools.slug}`}
-                                className="text-gray-300"
-                              >
-                                {award.players.schools.name}
-                              </Link>
-                            ) : (
-                              <span>—</span>
-                            )}
-                          </td>
-                          <td className="p-4 text-gray-500 text-sm">
-                            {award.seasons?.year_start || "—"}
-                          </td>
-                          <td className="p-4 text-gray-300 text-sm">
-                            <span
-                              className="inline-block px-3 py-1 rounded text-xs font-semibold"
-                              style={{
-                                background: "rgba(240, 165, 0, 0.15)",
-                                color: "var(--psp-gold)",
-                              }}
-                            >
-                              {award.award_name || award.award_type || "Award"}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex justify-center gap-2 mt-8">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                      <Link
-                        key={p}
-                        href={`/awards?type=${selectedType}&sport=${selectedSport}&page=${p}`}
-                        className="px-3 py-2 rounded text-sm"
-                        style={{
-                          border:
-                            page === p
-                              ? "2px solid var(--psp-gold)"
-                              : "1px solid #333",
-                          background:
-                            page === p
-                              ? "var(--psp-gold)"
-                              : "transparent",
-                          color: page === p ? "var(--psp-navy)" : "#ccc",
-                          fontWeight: page === p ? 600 : 500,
-                        }}
-                      >
-                        {p}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <aside className="grid gap-6">
-          {/* Top Schools Widget */}
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-            <h3
-              className="text-lg mb-4 pb-2 border-b border-gray-700 uppercase"
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            background:
+              "radial-gradient(circle at 30% 40%, #f0a500 0%, transparent 60%), radial-gradient(circle at 80% 60%, #3b82f6 0%, transparent 50%)",
+          }}
+          aria-hidden="true"
+        />
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <Breadcrumb items={[{ label: "Awards & Honors" }]} />
+          <div className="mt-4 text-center">
+            <h1
+              className="text-5xl sm:text-6xl font-black mb-3"
               style={{
-                fontFamily: "var(--font-bebas)",
-                color: "var(--psp-gold)",
+                fontFamily: "'Bebas Neue', sans-serif",
+                color: "#f0a500",
+                letterSpacing: "0.04em",
               }}
             >
-              TOP SCHOOLS
-            </h3>
-            <div className="grid gap-3">
-              {topSchools.slice(0, 10).map((school, idx) => (
-                <Link
-                  key={school.id}
-                  href={`/${selectedSport}/schools/${school.slug}`}
-                  className="flex justify-between items-center py-2 text-gray-300 transition-colors duration-200"
+              AWARDS &amp; HONORS
+            </h1>
+            <p
+              className="text-lg sm:text-xl max-w-2xl mx-auto"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                color: "rgba(255,255,255,0.8)",
+              }}
+            >
+              The definitive archive of Philadelphia high school sports excellence
+            </p>
+          </div>
+
+          {/* Hero Stats Strip */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mt-8">
+            {[
+              {
+                value: summary.total.toLocaleString(),
+                label: "Individual Awards",
+                color: "#f0a500",
+              },
+              {
+                value: champSummary.total.toLocaleString(),
+                label: "Championships",
+                color: "#3b82f6",
+              },
+              {
+                value: proCount.toLocaleString(),
+                label: "Pro Athletes",
+                color: "#10b981",
+              },
+              {
+                value: `${yearsOfHistory}+`,
+                label: "Years of History",
+                color: "#a855f7",
+              },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="text-center p-3 rounded-lg"
+                style={{ background: "rgba(255,255,255,0.05)" }}
+              >
+                <div
+                  className="text-2xl sm:text-3xl font-bold"
+                  style={{ color: stat.color }}
+                >
+                  {stat.value}
+                </div>
+                <div
+                  className="text-xs mt-1"
                   style={{
-                    borderBottom: idx < 9 ? "1px solid #222" : "none",
+                    fontFamily: "'DM Sans', sans-serif",
+                    color: "rgba(255,255,255,0.6)",
                   }}
                 >
-                  <span className="font-medium">{school.name}</span>
-                  <span
-                    className="px-2 py-1 rounded text-xs font-semibold"
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      {/* Sport Cards Grid */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h2
+          className="text-2xl sm:text-3xl mb-6"
+          style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            color: "#f0a500",
+            letterSpacing: "0.04em",
+          }}
+        >
+          EXPLORE BY SPORT
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {sportCards.map((sport) => (
+            <Link
+              key={sport.id}
+              href={`/${sport.id}/awards`}
+              className="group relative overflow-hidden rounded-lg border-2 transition-all duration-300 hover:shadow-lg hover:shadow-black/30"
+              style={{
+                borderColor: sport.color,
+                backgroundColor: "#0a1628",
+              }}
+            >
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                style={{ backgroundColor: sport.color }}
+                aria-hidden="true"
+              />
+              <div className="relative p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-3xl">{sport.emoji}</span>
+                  <h3
+                    className="text-xl font-black group-hover:translate-x-1 transition-transform duration-300"
                     style={{
-                      background: "rgba(240, 165, 0, 0.2)",
-                      color: "var(--psp-gold)",
+                      fontFamily: "'Bebas Neue', sans-serif",
+                      color: sport.color,
+                      letterSpacing: "0.04em",
                     }}
                   >
-                    {school.count}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Award Stats Widget */}
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-            <h3
-              className="text-lg mb-4 pb-2 border-b border-gray-700 uppercase"
-              style={{
-                fontFamily: "var(--font-bebas)",
-                color: "var(--psp-gold)",
-              }}
-            >
-              AWARD TYPES
-            </h3>
-            <div className="grid gap-2 text-sm">
-              {Object.entries(summary.byType)
-                .sort(([, a], [, b]) => (b as number) - (a as number))
-                .slice(0, 8)
-                .map(([type, count]) => (
-                  <div
-                    key={type}
-                    className="flex justify-between text-gray-500 capitalize"
-                  >
-                    <span>
-                      {type.replace(/-/g, " ")}
+                    {sport.name}
+                  </h3>
+                </div>
+                <div className="flex gap-4 text-sm">
+                  <div>
+                    <span
+                      className="font-bold text-lg"
+                      style={{ color: "#f0a500" }}
+                    >
+                      {sport.awardCount.toLocaleString()}
                     </span>
-                    <span className="font-semibold" style={{ color: "var(--psp-gold)" }}>
-                      {count}
+                    <span
+                      className="ml-1"
+                      style={{ color: "rgba(255,255,255,0.6)" }}
+                    >
+                      awards
                     </span>
                   </div>
-                ))}
-            </div>
+                  {sport.champCount > 0 && (
+                    <div>
+                      <span
+                        className="font-bold text-lg"
+                        style={{ color: "#3b82f6" }}
+                      >
+                        {sport.champCount}
+                      </span>
+                      <span
+                        className="ml-1"
+                        style={{ color: "rgba(255,255,255,0.6)" }}
+                      >
+                        titles
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div
+                  className="mt-3 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider group-hover:translate-x-1 transition-transform duration-300"
+                  style={{ color: "#3b82f6" }}
+                >
+                  View All Awards →
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Main Content: Tabs + Sidebar */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+          {/* Tabbed Content */}
+          <div>
+            <AwardsHubClient
+              recentAwards={recentAwards}
+              recentChamps={recentChamps}
+              dynastyLeaders={dynastyLeaders}
+              topSchools={topSchools}
+            />
           </div>
-        </aside>
-      </div>
+
+          {/* Sidebar */}
+          <aside className="grid gap-6 content-start">
+            {/* Dynasty Tracker */}
+            {dynastyLeaders.length > 0 && (
+              <div
+                className="rounded-lg overflow-hidden border"
+                style={{
+                  backgroundColor: "rgba(10,22,40,0.8)",
+                  borderColor: "rgba(240,165,0,0.3)",
+                }}
+              >
+                <div
+                  className="px-4 py-3 border-b"
+                  style={{
+                    background: "linear-gradient(135deg, #0a1628, #1a2a42)",
+                    borderColor: "#f0a500",
+                  }}
+                >
+                  <h3
+                    className="text-lg uppercase"
+                    style={{
+                      fontFamily: "'Bebas Neue', sans-serif",
+                      color: "#f0a500",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    👑 Dynasty Tracker
+                  </h3>
+                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                    Most championships all-time
+                  </p>
+                </div>
+                <div className="p-4 space-y-2">
+                  {dynastyLeaders.slice(0, 10).map((school, idx) => (
+                    <Link
+                      key={school.id}
+                      href={`/football/schools/${school.slug}`}
+                      className="flex items-center gap-3 py-2 transition-colors duration-200 hover:bg-white/5 rounded px-2 -mx-2"
+                    >
+                      <span
+                        className="w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold"
+                        style={{
+                          background:
+                            idx < 3
+                              ? "linear-gradient(135deg, #f0a500, #d4940a)"
+                              : "rgba(255,255,255,0.1)",
+                          color: idx < 3 ? "#0a1628" : "#f0a500",
+                        }}
+                      >
+                        {idx + 1}
+                      </span>
+                      <span
+                        className="flex-1 text-sm font-medium"
+                        style={{ color: "rgba(255,255,255,0.9)" }}
+                      >
+                        {school.name}
+                      </span>
+                      <span
+                        className="text-sm font-bold"
+                        style={{ color: "#f0a500" }}
+                      >
+                        {school.count}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Quick Links */}
+            <div
+              className="rounded-lg overflow-hidden border"
+              style={{
+                backgroundColor: "rgba(10,22,40,0.8)",
+                borderColor: "rgba(59,130,246,0.3)",
+              }}
+            >
+              <div
+                className="px-4 py-3 border-b"
+                style={{
+                  background: "linear-gradient(135deg, #0a1628, #1a2a42)",
+                  borderColor: "#3b82f6",
+                }}
+              >
+                <h3
+                  className="text-lg uppercase"
+                  style={{
+                    fontFamily: "'Bebas Neue', sans-serif",
+                    color: "#3b82f6",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  Quick Links
+                </h3>
+              </div>
+              <div className="p-4 space-y-2">
+                {[
+                  { href: "/football/all-city", label: "Football All-City Archive", emoji: "🏈" },
+                  { href: "/football/championships", label: "Football Championships", emoji: "🏆" },
+                  { href: "/basketball/championships", label: "Basketball Championships", emoji: "🏀" },
+                  { href: "/baseball/awards", label: "Baseball Awards", emoji: "⚾" },
+                  { href: "/potw", label: "Player of the Week", emoji: "⭐" },
+                  { href: "/compare", label: "Compare Players", emoji: "📊" },
+                ].map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="flex items-center gap-3 py-2 px-2 -mx-2 rounded transition-colors duration-200 hover:bg-white/5 text-sm"
+                    style={{ color: "rgba(255,255,255,0.8)" }}
+                  >
+                    <span>{link.emoji}</span>
+                    <span>{link.label}</span>
+                    <span className="ml-auto" style={{ color: "#3b82f6" }}>
+                      →
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Most Honored Schools */}
+            {topSchools.length > 0 && (
+              <div
+                className="rounded-lg overflow-hidden border"
+                style={{
+                  backgroundColor: "rgba(10,22,40,0.8)",
+                  borderColor: "rgba(240,165,0,0.3)",
+                }}
+              >
+                <div
+                  className="px-4 py-3 border-b"
+                  style={{
+                    background: "linear-gradient(135deg, #0a1628, #1a2a42)",
+                    borderColor: "#f0a500",
+                  }}
+                >
+                  <h3
+                    className="text-lg uppercase"
+                    style={{
+                      fontFamily: "'Bebas Neue', sans-serif",
+                      color: "#f0a500",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    ⭐ Most Honored Schools
+                  </h3>
+                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                    By individual award count
+                  </p>
+                </div>
+                <div className="p-4 space-y-2">
+                  {topSchools.slice(0, 10).map((school, idx) => (
+                    <div
+                      key={school.id}
+                      className="flex items-center gap-3 py-1 text-sm"
+                    >
+                      <span
+                        className="font-bold w-5 text-right"
+                        style={{
+                          color: idx < 3 ? "#f0a500" : "rgba(255,255,255,0.4)",
+                        }}
+                      >
+                        {idx + 1}.
+                      </span>
+                      <span
+                        className="flex-1"
+                        style={{ color: "rgba(255,255,255,0.85)" }}
+                      >
+                        {school.name}
+                      </span>
+                      <span
+                        className="font-semibold"
+                        style={{ color: "#f0a500" }}
+                      >
+                        {school.count.toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Promo */}
+            <PSPPromo size="sidebar" />
+          </aside>
+        </div>
+      </section>
     </main>
   );
 }
