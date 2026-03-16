@@ -243,8 +243,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       .limit(30),
     supabase
       .from("schools")
-      .select("id, name, slug, leagues!inner(name)")
-      .in("leagues.name", CORE_LEAGUES)
+      .select("id, name, slug")
+      .in("league_id", [1, 2, 3])
       .is("deleted_at", null)
       .order("name")
       .limit(200),
@@ -263,7 +263,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   let allScores: ScoreGame[] = [];
   let totalCount = 0;
   try {
-    // Resolve season/school filters first (in parallel if both present)
+    // Resolve season/school filters first
     let seasonId: number | null = null;
     let schoolId: number | null = null;
 
@@ -284,15 +284,12 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       schoolId = data?.id ?? null;
     }
 
-    // Build simpler query — fetch school name/slug via FK but NOT league_id
+    // Step 1: Fetch game IDs and scores only (no FK joins — fast)
     let query = supabase
       .from("games")
       .select(
-        `id, sport_id, game_date, home_score, away_score, home_school_id, away_school_id,
-         home_school:schools!games_home_school_id_fkey(name, slug),
-         away_school:schools!games_away_school_id_fkey(name, slug),
-         seasons(label)`,
-        { count: "exact" }
+        "id, sport_id, game_date, home_score, away_score, home_school_id, away_school_id, season_id",
+        useRoundView ? undefined : { count: "exact" }
       )
       .not("home_score", "is", null)
       .not("away_score", "is", null)
@@ -323,28 +320,35 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     const { data, count } = await query;
     const rawGames = (data as unknown as any[]) ?? [];
 
-    // For round view, batch-fetch league_ids for all unique school IDs
-    let leagueMap = new Map<number, number | null>();
-    if (useRoundView && rawGames.length > 0) {
+    // Step 2: Batch-fetch school info (name, slug, league_id) for all unique school IDs
+    const schoolMap = new Map<number, { name: string; slug: string; league_id: number | null }>();
+    if (rawGames.length > 0) {
       const schoolIds = new Set<number>();
       for (const g of rawGames) {
         if (g.home_school_id) schoolIds.add(g.home_school_id);
         if (g.away_school_id) schoolIds.add(g.away_school_id);
       }
-      const { data: schoolLeagues } = await supabase
+      const { data: schoolData } = await supabase
         .from("schools")
-        .select("id, league_id")
+        .select("id, name, slug, league_id")
         .in("id", Array.from(schoolIds));
-      for (const s of schoolLeagues ?? []) {
-        leagueMap.set(s.id, s.league_id);
+      for (const s of schoolData ?? []) {
+        schoolMap.set(s.id, { name: s.name, slug: s.slug, league_id: s.league_id });
       }
     }
 
-    allScores = rawGames.map((g) => ({
-      ...g,
-      home_league_id: leagueMap.get(g.home_school_id) ?? null,
-      away_league_id: leagueMap.get(g.away_school_id) ?? null,
-    }));
+    allScores = rawGames.map((g) => {
+      const home = schoolMap.get(g.home_school_id);
+      const away = schoolMap.get(g.away_school_id);
+      return {
+        ...g,
+        home_school: home ? { name: home.name, slug: home.slug } : null,
+        away_school: away ? { name: away.name, slug: away.slug } : null,
+        seasons: null, // not needed — we already know the season from filters
+        home_league_id: home?.league_id ?? null,
+        away_league_id: away?.league_id ?? null,
+      };
+    });
     totalCount = count ?? allScores.length;
   } catch {
     // fail gracefully
