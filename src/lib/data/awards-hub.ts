@@ -374,7 +374,7 @@ export const getRecentChampionships = cache(async (limit = 50) => {
             .from("championships")
             .select(`
               id, sport_id, level, championship_type, result, score, venue, notes,
-              schools(id, name, slug),
+              schools!championships_school_id_fkey(id, name, slug),
               seasons(year_start, year_end, label)
             `)
             .order("season_id", { ascending: false })
@@ -403,7 +403,7 @@ export const getDynastyTracker = cache(async (limit = 20) => {
           const supabase = await createClient();
           const { data, error } = await supabase
             .from("championships")
-            .select("id, schools(id, name, slug)")
+            .select("id, schools!championships_school_id_fkey(id, name, slug)")
             .limit(5000);
 
           if (error) console.error("[getDynastyTracker] error:", error);

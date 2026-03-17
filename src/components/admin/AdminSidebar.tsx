@@ -6,22 +6,35 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: "📊" },
-  { href: "/admin/articles", label: "Articles", icon: "📰" },
-  { href: "/admin/pulse", label: "The Pulse", icon: "📅" },
-  { href: "/admin/potw", label: "Player of Week", icon: "⭐" },
-  { href: "/admin/import", label: "Import", icon: "📥" },
-  { href: "/admin/data", label: "Data Browser", icon: "🔍" },
-  { href: "/admin/comments", label: "Comments", icon: "💬" },
-  { href: "/admin/corrections", label: "Corrections", icon: "✏️" },
-  { href: "/admin/conflicts", label: "Conflicts", icon: "⚠️" },
-  { href: "/admin/analytics", label: "Analytics", icon: "📈" },
-  { href: "/admin/sync", label: "Sync", icon: "🔄" },
-  { href: "/admin/audit", label: "Audit Log", icon: "📋" },
-  { href: "/admin/claims", label: "Player Claims", icon: "✅" },
-  { href: "/admin/coaching", label: "Coaching Staff", icon: "👔" },
-  { href: "/admin/highlights", label: "Highlights", icon: "🎥" },
-  { href: "/admin/pickem", label: "Pick'em Manager", icon: "🎯" },
+  { section: "Core", items: [
+    { href: "/admin", label: "Dashboard", icon: "📊" },
+  ]},
+  { section: "Content", items: [
+    { href: "/admin/articles", label: "Articles", icon: "📰" },
+    { href: "/admin/pulse", label: "The Pulse", icon: "📅" },
+    { href: "/admin/potw", label: "Player of Week", icon: "⭐" },
+    { href: "/admin/coaching", label: "Coaching Staff", icon: "👔" },
+    { href: "/admin/highlights", label: "Highlights", icon: "🎥" },
+  ]},
+  { section: "Data & Tools", items: [
+    { href: "/admin/import", label: "Import", icon: "📥" },
+    { href: "/admin/data", label: "Data Browser", icon: "🔍" },
+    { href: "/admin/comments", label: "Comments", icon: "💬" },
+    { href: "/admin/corrections", label: "Corrections", icon: "✏️" },
+    { href: "/admin/conflicts", label: "Conflicts", icon: "⚠️" },
+    { href: "/admin/sync", label: "Sync", icon: "🔄" },
+    { href: "/admin/audit", label: "Audit Log", icon: "📋" },
+  ]},
+  { section: "Community", items: [
+    { href: "/admin/claims", label: "Player Claims", icon: "✅" },
+    { href: "/admin/pickem", label: "Pick'em Manager", icon: "🎯" },
+  ]},
+  { section: "Business", items: [
+    { href: "/admin/school-admins", label: "School Admins", icon: "🏫" },
+    { href: "/admin/widgets", label: "Widgets", icon: "📦" },
+    { href: "/admin/sponsors", label: "Sponsors", icon: "💼" },
+    { href: "/admin/awards-ceremony", label: "Annual Awards", icon: "🏆" },
+  ]},
 ];
 
 export default function AdminSidebar({ userEmail }: { userEmail: string }) {
@@ -52,29 +65,36 @@ export default function AdminSidebar({ userEmail }: { userEmail: string }) {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1">
-          {navItems.map((item) => {
-            const isActive =
-              item.href === "/admin"
-                ? pathname === "/admin"
-                : pathname.startsWith(item.href);
+        <nav className="p-4 space-y-6">
+          {navItems.map((section: any) => (
+            <div key={section.section} className="space-y-1">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 px-4 py-2">
+                {section.section}
+              </h3>
+              {section.items.map((item: any) => {
+                const isActive =
+                  item.href === "/admin"
+                    ? pathname === "/admin"
+                    : pathname.startsWith(item.href);
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? "text-white"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
-                style={isActive ? { background: "var(--psp-navy-mid)", color: "var(--psp-gold)" } : {}}
-              >
-                <span className="text-lg">{item.icon}</span>
-                {item.label}
-              </Link>
-            );
-          })}
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? "text-white"
+                        : "text-gray-400 hover:text-white hover:bg-white/5"
+                    }`}
+                    style={isActive ? { background: "var(--psp-navy-mid)", color: "var(--psp-gold)" } : {}}
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
       </div>
 

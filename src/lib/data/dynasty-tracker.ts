@@ -55,8 +55,9 @@ export const getDynastyTrackerData = cache(
               .from("championships")
               .select(
                 `id, school_id, season_id, level,
-                 schools!championships_school_id_fkey(id, name, slug, school_colors),
-                 seasons(year_start, year_end, label)`
+                 schools!championships_school_id_fkey(id, name, slug),
+                 seasons(year_start, year_end, label)`,
+                { count: "estimated" }
               )
               .eq("sport_id", sportSlug)
               .limit(5000);
@@ -99,7 +100,7 @@ export const getDynastyTrackerData = cache(
                   school_name: school.name,
                   school_slug: school.slug,
                   championship_count: 0,
-                  colors: school.school_colors || {},
+                  colors: {},
                 };
                 decadeMap[decadeKey].schools.push(schoolEntry);
               }
@@ -144,8 +145,9 @@ export const getDynastyLeaders = cache(
               .from("championships")
               .select(
                 `id, school_id, level,
-                 schools!championships_school_id_fkey(id, name, slug, school_colors),
-                 seasons(year_start, year_end, label)`
+                 schools!championships_school_id_fkey(id, name, slug),
+                 seasons(year_start, year_end, label)`,
+                { count: "estimated" }
               )
               .eq("sport_id", sportSlug)
               .limit(5000);
@@ -172,7 +174,7 @@ export const getDynastyLeaders = cache(
                   total_championships: 0,
                   championships_by_level: {},
                   latest_championship_year: 0,
-                  colors: school.school_colors || {},
+                  colors: {},
                 };
               }
 

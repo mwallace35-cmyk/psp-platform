@@ -400,3 +400,94 @@ export {
   type PickemPick,
   type PickemLeaderboardEntry,
 } from "./pickem";
+
+// School Admin Portal functions
+export {
+  getSchoolAdminAccess,
+  isSchoolAdmin,
+  getSchoolAnalytics,
+  requestSchoolAccess,
+  getPendingAccessRequests,
+  respondToAccessRequest,
+  type SchoolAdminAccess,
+  type SchoolAnalytics,
+  type AccessRequest,
+} from "./school-admin";
+
+// Widget system functions
+export {
+  getWidgetConfig,
+  getWidgetsBySchool,
+  getAllWidgets,
+  createWidget,
+  updateWidget,
+  deleteWidget,
+  incrementWidgetViews,
+  getWidgetData,
+  type WidgetConfig,
+  type WidgetData,
+} from "./widgets";
+
+// Sponsor management functions
+export {
+  getActiveSponsor,
+  getAllSponsors,
+  getSponsorById,
+  getSponsorPlacements,
+  getSponsorStats,
+  createSponsor,
+  updateSponsor,
+  createPlacement,
+  updatePlacement,
+  recordImpression,
+  recordClick,
+  type Sponsor,
+  type SponsorPlacement,
+  type SponsorStats,
+} from "./sponsors";
+
+// Annual Awards functions
+export {
+  getActiveAwards,
+  getAwardById,
+  getAwardResults,
+  getPastWinners,
+  createAnnualAward,
+  updateAnnualAward,
+  castAwardVote,
+  hasUserVoted,
+  getAwardVoteCounts,
+  type AnnualAward,
+  type AnnualAwardNominee,
+  type AwardResult,
+} from "./annual-awards";
+
+// Live scores functions
+export {
+  getLiveScores,
+  getGameLiveScore,
+  getRecentFinalScores,
+  getTodaysGames,
+  getGameDaySchedule,
+  type LiveScore,
+  type GameDaySchedule,
+} from "./live-scores";
+
+// Power index functions
+export {
+  getPowerIndexRankings,
+  getSchoolPowerIndex,
+  getPowerIndexHistory,
+  getTopMovers,
+  type PowerIndexEntry,
+  type PowerIndexWithHistory,
+} from "./power-index";
+
+// Stat milestones functions
+export {
+  getUpcomingMilestones,
+  getRecentMilestones,
+  getPlayerMilestones,
+  getMilestoneAlerts,
+  type StatMilestone,
+} from "./milestones";
