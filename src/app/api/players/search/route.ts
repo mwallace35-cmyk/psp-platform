@@ -29,16 +29,29 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Use direct Supabase client — the @/lib/data/common createClient() is
+    // designed for ISR/static Server Components and hangs in API route context.
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
+    // The players table has NO 'sport' column.
+    // Sport membership is determined by rows in football_player_seasons /
+    // basketball_player_seasons. Use PostgREST !inner to INNER JOIN and
+    // filter players to only those present in the target sport's season table.
+    const seasonTable =
+      sport === 'football'
+        ? 'football_player_seasons'
+        : 'basketball_player_seasons';
+
     const { data: players, error: pErr } = await supabase
       .from('players')
-      .select('id, name, slug, sport, position, grad_year, primary_school_id')
-      .eq('sport', sport)
+      .select(
+        `id, name, slug, graduation_year, positions, primary_school_id, ${seasonTable}!inner(player_id)`
+      )
       .ilike('name', `%${q.trim()}%`)
+      .is('deleted_at', null)
       .limit(10);
 
     if (pErr) throw pErr;
@@ -49,7 +62,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const schoolIds = [...new Set(players.map((p: any) => p.primary_school_id).filter(Boolean))];
+    // Step 2: Fetch school names for matched players
+    const schoolIds = [
+      ...new Set(players.map((p: any) => p.primary_school_id).filter(Boolean)),
+    ];
     const schoolMap: Record<string, { name: string; slug: string }> = {};
 
     if (schoolIds.length > 0) {
@@ -67,16 +83,22 @@ export async function GET(request: NextRequest) {
       id: player.id,
       name: player.name,
       slug: player.slug,
-      sport: player.sport,
-      position: player.position,
-      grad_year: player.grad_year,
+      sport,
+      // positions is TEXT[] — take first entry for display
+      position: Array.isArray(player.positions)
+        ? player.positions[0]
+        : player.positions ?? undefined,
+      // DB column is graduation_year; SearchResult field is grad_year
+      grad_year: player.graduation_year ?? undefined,
       school_name: schoolMap[player.primary_school_id]?.name ?? 'Unknown School',
       school_slug: schoolMap[player.primary_school_id]?.slug ?? '',
     }));
 
     return NextResponse.json(results, {
       status: 200,
-      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      },
     });
   } catch (err: any) {
     console.error('PLAYERS_SEARCH error:', err);
