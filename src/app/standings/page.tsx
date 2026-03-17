@@ -7,7 +7,229 @@ import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 
 export const metadata: Metadata = {
-        title: 'Standings | Philadelphia High School Sports',
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
+
+export const metadata: Metadata = {
+          title: 'Standings | Philadelphia High School Sports',
+          description: 'Current season standings for Philadelphia high school sports.',
+};
+
+export const revalidate = 3600;
+
+const SPORT_NAMES: Record<number, string> = {
+          1: 'Football',
+          2: 'Basketball',
+          3: 'Baseball',
+          4: 'Soccer',
+          5: 'Lacrosse',
+          6: 'Track & Field',
+          7: 'Wrestling',
+};
+
+async function getStandings() {
+          const supabase = createClient(
+                      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+                    );
+          const { data: latestSeason } = await supabase
+                      .from('seasons')
+                      .select('id, year')
+                      .order('year', { ascending: false })
+                      .limit(1)
+                      .single();
+          if (!latestSeason) return null;
+          const { data: records } = await supabase
+                      .from('team_seasons')
+                      .select('school_id, sport_id, wins, losses, ties, win_pct, league_wins, league_losses, schools(name, slug)')
+                      .eq('season_id', latestSeason.id)
+                      .order('win_pct', { ascending: false });
+          return { season: latestSeason, records: records ?? [] };
+}
+
+export default async function StandingsPage() {
+          const data = await getStandings();
+          if (!data || data.records.length === 0) {
+                      return (
+                                    <main style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto' }}>
+                                                    <h1 style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.5rem', color: 'var(--psp-navy)' }}>
+                                                                      Standings
+                                                    </h1>h1>
+                                                    <p style={{ color: 'var(--psp-muted)' }}>Standings will be available once the season begins.</p>p>
+                                    </main>main>
+                                  );
+          }
+          const bySport: Record<number, typeof diamtpao.rrte ctoyrpdes >{  =M e{t}a;d
+          a t af o}r  f(rcoomn s'tn erx to'f; 
+diamtpao.rrte cLoirndks )f r{o
+m   ' n eixft /(l!ibnykS'p;o
+ritm[pro.rstp o{r tc_rieda]t)e CblyiSepnotr t}[ rf.rsopmo r't@_siudp]a b=a s[e]/;s
+        u p a b absyeS-pjosr't;[
+        r
+.esxppoorrtt_ icdo]n.sptu smhe(tra)d;a
+t a :} 
+M e traedtautran  =( 
+        { 
+                     t<imtalien:  s'tSytlaen=d{i{n gpsa d|d iPnhgi:l a'd2erlepmh'i,a  mHaixgWhi dStchh:o o'l9 0S0ppoxr't,s 'm,a
+                             r g idne:s c'r0i patuitoon':  }'}C>u
+        r r e n t   s<eha1s osnt ysltea=n{d{i nfgosn tfFoarm iPlhyi:l a'dvealrp(h-i-af ohnitg-hb esbcahso)o'l,  sfpoonrttSsi.z'e,:
+                                           }';2
+        .
+        5erxepmo'r,t  ccoolnosrt:  r'evvaarl(i-d-aptsep -=n a3v6y0)0';,
+         
+        mcaorngsitn BSoPtOtRoTm_:N A'M0E.S2:5 rReemc'o r}d}<>n
+        u m b e r ,   s tSrtianngd>i n=g s{
+                
+                     1 :   '<F/oho1t>b
+        a l l ' , 
+          < p2 :s t'yBlaes=k{e{t bcaolllo'r,:
+          ' v3a:r ('-B-apssepb-amlult'e,d
+        ) ' ,4 :m a'rSgoicncBeort't,o
+        m :  5':2 r'eLma'c r}o}s>s{ed'a,t
+        a . s6e:a s'oTnr.ayceka r&}  FSieealsdo'n,<
+        / p >7
+        :   ' W r e s{tOlbijnegc't,.
+        e}n;t
+        r
+        iaessy(nbcy Sfpuonrctt)i.omna pg(e(t[SstpaonrdtiIndgSst(r),  {t
+                e a mcso]n)s t= >s u{p
+                        a b a s e   =   ccroenastte CslpioernttI(d
+          =   N upmrboecre(sssp.oerntvI.dNSEtXrT)_;P
+        U B L I C _ S U PrAeBtAuSrEn_ U(R
+        L ! , 
+                 p r o<cseescst.ieonnv .kNeEyX=T{_sPpUoBrLtIICd_}S UsPtAyBlAeS=E{_{A NmOaNr_gKiEnYB!o
+        t t o)m;:
+          ' 2c.o5nrsetm '{  }d}a>t
+        a :   l a t e s t S e a s<ohn2  }s t=y laew=a{i{t  fsounptaFbaamsiel
+        y :   ' v.afrr(o-m-(f'osneta-sboenbsa's))
+        ' ,   f o.nsteSliezcet:( ''i1d.,5 ryeema'r,' )c
+        o l o r :. o'rvdaerr((-'-ypesapr-'n,a v{y )a's,c ebnodridnegr:B oftatlosme:  }')2
+        p x   s o.lliidm ivta(r1()-
+        - p s p -.gsoilndg)l'e,( )p;a
+        d d iinfg B(o!tltaotme:s t'S0e.a5sroenm)' ,r emtaurrgni nnBuoltlt;o
+        m :  c'o1nrsetm '{  }d}a>t
+        a :   r e c o r d s   }   =  {aSwPaOiRtT _sNuApMaEbSa[ssep
+        o r t I d.]f}r
+        o m ( ' t e a m _ s e a s<o/nhs2'>)
+        
+                 . s e l e c t (<'tsacbhloeo ls_tiydl,e =s{p{o rwti_ditdh,:  w'i1n0s0,% 'l,o sbsoersd,e rtCioelsl,a pwsien:_ p'ccto,l llaepasgeu'e,_ wfionnst,S ilzeea:g u'e0_.l9orsesme's ,} }s>c
+        h o o l s ( n a m e ,   s l u<gt)h'e)a
+        d > 
+            . e q ( ' s e a s o n _ i d '<,t rl astteyslteS=e{a{s obna.cikdg)r
+            o u n d :. o'rvdaerr((-'-wpisnp_-pncatv'y,) '{,  acsocleonrd:i n'g#:f fffa'l s}e} >}
+            ) ; 
+                 r e t u r n   {   s e a s o<nt:h  lsattyelset=S{e{a stoenx,t Arleicgonr:d s':l erfetc'o,r dpsa d?d?i n[g]:  }';0
+            .}5
+            r
+            eemx p0o.r7t5 rdeemf'a u}l}t> Sacshyonocl <f/utnhc>t
+            i o n   S t a n d i n g s P a g e ( )< t{h
+                                                       s tcyolnes=t{ {d aptaad d=i nagw:a i't0 .g5erteSmt a0n.d7i5nrgesm(') ;}
+                    } > Wi<f/ t(h!>d
+            a t a   | |   d a t a . r e c o r d s<.tlhe nsgttyhl e==={={  0p)a d{d
+                    i n g :  r'e0t.u5rrne m( 
+            0 . 7 5 r e m<'m a}i}n> Ls<t/ytlhe>=
+                                 { {   p a d d i n g :   ' 2 r e m ' ,< tmha xsWtiydlteh=:{ {' 9p0a0dpdxi'n,g :m a'r0g.i5nr:e m' 00 .a7u5troe'm '} }}>}
+            > W i n % < / t h<>h
+            1   s t y l e = { {   f o n t F a m i<ltyh:  s'tvyalre(=-{-{f opnatd-dbienbga:s )''0,. 5froenmt S0i.z7e5:r e'm2'. 5}r}e>mL'e,a gcuoel oWr<:/ t'hv>a
+            r ( - - p s p - n a v y ) '   } } > 
+            < t h   s t y l e = {S{t apnaddidnignsg
+                    :   ' 0 . 5 r e m< /0h.17>5
+                    r e m '   } } > L<epa gsutey lLe<=/{t{h >c
+                            o l o r :   ' v a r ( - - p s p -<m/uttre>d
+                    ) '   } } > S t a n d i n g s< /wtihlela db>e
+                      a v a i l a b l e   o n c e< ttbhoed ys>e
+                      a s o n   b e g i n s . < / p > 
+                              { t e a m s .<m/ampa(i(nt>e
+                      a m ,   i)); 
+                      = >  }{
+                              
+                                  c o n s t   b y S p o r t :   R eccoonrsdt< nsucmhboeorl,  =t ytpeeaomf. sdcahtoao.lrse caosr d{s >n a=m e{:} ;s
+                      t r ifnogr;  (scloungs:t  srt roifn gd a}t a|. rneuclolr;d
+                      s )   { 
+                                       i f   ( ! b y S p orrett[urr.ns p(o
+                      r t _ i d ] )   b y S p o r t [ r . s p o<rttr_ ikde]y =={ t[e]a;m
+                      . s c h oboylS_piodr}t [srt.yslpeo=r{t{_ ibda]c.kpgursohu(nrd):; 
+                      i   %} 
+                      2   =r=e=t u0r n?  ('
+                      # f f f '< m:a i'nv asrt(y-l-ep=s{p{- cpaarddd-ibngg):'  '}2}r>e
+                      m ' ,   m a x W i d t h :   ' 9 0 0 p x ' ,  <mtadr gsitny:l e'=0{ {a uptaod'd i}n}g>:
+                        ' 0 . 5 r e<mh 10 .s7t5yrleem='{ {} }f>o
+                      n t F a m i l y :   ' v a r ( - - f o n t - b e b{assc)h'o,o lf o?n t(S
+                      i z e :   ' 2 . 5 r e m ' ,   c o l o r :   ' v a r (<-L-ipnskp -hnraevfy=){'',/ smcahrogoilnsB/o't t+o ms:c h'o0o.l2.5srleumg'}  }s}t>y
+                      l e = { {   c o lSotra:n d'ivnagrs(
+                      - - p s p - n<a/vhy1)>'
+                      ,   f o n t W<epi gshtty:l e6=0{0{  }c}o>l
+                      o r :   ' v a r ( - - p s p - m u t e d ) ' ,   m a r g i{nsBcohtotoolm.:n a'm2er}e
+                      m '   } } > { d a t a . s e a s o n . y e a r }   S e<a/sLoinn<k/>p
+                      > 
+                              { O b j e c t . e n t r i e s ( b)y S:p o<rstp)a.nm>aUpn(k(n[oswpno<r/tsIpdaSnt>r},
+                        t e a m s ] )   = >   { 
+                                                 c<o/ntsdt> 
+                                s p o r t I d   =   N u m b e r ( s p o r t I<dtSdt rs)t;y
+                      l e = { {   t e xrteAtluirgnn :( 
+                      ' c e n t e r ' ,   p<asdedcitnigo:n  'k0e.y5=r{esmp o0r.t7I5dr}e ms't y}l}e>={{t{e amma.rwgiinnsB o?t?t o0m}:< /'t2d.>5
+                      r e m '   } } > 
+                                               < h<2t ds tsytlyel=e{={{ {f otnetxFtaAmliilgyn::  ''vcaern(t-e-rf'o,n tp-abdedbiansg):' ,' 0f.o5nrteSmi z0e.:7 5'r1e.m5'r e}m}'>,{ tceoalmo.rl:o s'sveasr (?-?- p0s}p<-/ntadv>y
+                                               ) ' ,   b o r d e r B o t t o m :   ' 2 p x  <stodl isdt yvlaer=({-{- ptsepx-tgAollidg)n':,  'pcaedndtienrg'B,o tptaodmd:i n'g0:. 5'r0e.m5'r,e mm a0r.g7i5nrBeomt't o}m}:> 
+                                               ' 1 r e m '   } } > 
+                                                       {{tSePaOmR.Tw_iNnA_MpEcSt[ s!p=o rntuIldl] }?
+                                                 S t r i n g ( M a t h .<r/ohu2n>d
+                                               ( t e a m . w i n _ p c t< t*a b1l0e0 )s)t y+l e'=%{'{  :w i'd-t-h':} 
+                                               ' 1 0 0 % ' ,   b o r d e r C o l l a p s e :< /'tcdo>l
+                                               l a p s e ' ,   f o n t S i z e :   ' 0 . 9 r<etmd'  s}t}y>l
+                                               e = { {   t e x t A l i g n :< t'hceeandt>e
+                                               r ' ,   p a d d i n g :   ' 0 . 5<rterm  s0t.y7l5er=e{m{'  b}a}c>k{gtreoaumn.dl:e a'gvuaer_(w-i-npss p?-?n a0v}y<)/'t,d >c
+                                               o l o r :   ' # f f f '   } } > 
+                                                           < t d   s t y l e = { {  <ttehx tsAtlyilgen=:{ {' cteenxtteArl'i,g np:a d'dlienfgt:' ,' 0p.a5drdeimn g0:. 7'50r.e5mr'e m} }0>.{7t5eraemm.'l e}a}g>uSec_hlooosls<e/st h?>?
+                                                 0 } < / t d > 
+                                                                     < t h   s t y l e = {<{/ tpra>d
+                                                                             d i n g :   ' 0 . 5 r e m   0 . 7 5 r)e;m
+                                                                     '   } } > W < / t h > 
+                                                                             } ) } 
+                                                                                         < t h   s<t/ytlbeo=d{y{> 
+                                                                     p a d d i n g :   ' 0 . 5<r/etma b0l.e7>5
+                                                                     r e m '   } } > L < /<t/hs>e
+                                                                     c t i o n > 
+                                                                                      ) ; 
+                                                                       < t h   s t}y)l}e
+                                                                     = { {   p<a/dmdaiinng>:
+                  ' 0).;5
+                                                                     r}em 0.75rem' }}>Win%</>th>
+                                                                                       <th style={{ padding: '0.5rem 0.75rem' }}>League W</th>th>
+                                                                                       <th style={{ padding: '0.5rem 0.75rem' }}>League L</th>th>
+                                                                     </>tr>
+                                                                     </>thead>
+                                                                                   <tbody>
+                                                                                           {teams.map((team, i) => {
+                                  const school = team.schools as { name: string; slug: string } | null;
+                                  return (
+                                                              <tr key={team.school_id} style={{ background: i % 2 === 0 ? '#fff' : 'var(--psp-card-bg)' }}>
+                                                                                    <td style={{ padding: '0.5rem 0.75rem' }}>
+                                                                                            {school ? (
+                                                                                                <Link href={'/schools/' + school.slug} style={{ color: 'var(--psp-navy)', fontWeight: 600 }}>
+                                                                                                        {school.name}
+                                                                                                        </Link>Link>
+                                                                                              ) : <span>Unknown</span>span>}
+                                                                                            </td>td>
+                                                                                    <td style={{ textAlign: 'center', padding: '0.5rem 0.75rem' }}>{team.wins ?? 0}</td>td>
+                                                                                    <td style={{ textAlign: 'center', padding: '0.5rem 0.75rem' }}>{team.losses ?? 0}</td>td>
+                                                                                    <td style={{ textAlign: 'center', padding: '0.5rem 0.75rem' }}>
+                                                                                            {team.win_pct != null ? String(Math.round(team.win_pct * 100)) + '%' : '--'}
+                                                                                            </td>td>
+                                                                                    <td style={{ textAlign: 'center', padding: '0.5rem 0.75rem' }}>{team.league_wins ?? 0}</td>td>
+                                                                                    <td style={{ textAlign: 'center', padding: '0.5rem 0.75rem' }}>{team.league_losses ?? 0}</td>td>
+                                                              </tr>tr>
+                                                            );
+        })}
+                                                                                   </tbody>tbody>
+                                                                     </t>table>
+                                                 </>section>
+                                                       );
+                                                       })}
+                                               </>main>
+                                                 );
+                                                       }</></>title: 'Standings | Philadelphia High School Sports',
         description: 'Current season standings for Philadelphia high school sports.',
 };
 
