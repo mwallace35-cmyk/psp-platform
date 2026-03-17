@@ -90,7 +90,7 @@ export default function MobileBottomNav() {
           className={`${styles.mobileNavItem} ${styles.mobileNavMenu}`}
           title="Menu"
           aria-haspopup="dialog"
-          aria-expanded=={isMenuOpen}
+        aria-expanded={isMenuOpen}
         >
           <span className={styles.mobileNavIcon}>â°</span>
           <span className={styles.mobileNavLabel}>Menu</span>
