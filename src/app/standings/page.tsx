@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 
 export const revalidate = 3600;
 
-import type { Metadata } from 'next';
+mport type { Metadata } from 'next';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 
