@@ -25,3 +25,5 @@ export { default as MethodologyNote } from "./MethodologyNote";
 export { default as ShareStatButton } from "./ShareStatButton";
 export { default as TrendChart } from "./TrendChart";
 export { default as ShareableStatCard } from "./ShareableStatCard";
+export { default as SocialProfileBar } from "./SocialProfileBar";
+export { default as ClaimProfileButton } from "./ClaimProfileButton";

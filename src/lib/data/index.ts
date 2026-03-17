@@ -362,3 +362,41 @@ export {
   type SocialPost,
   type SocialHandle,
 } from "./social";
+
+// Coaching staff functions
+export {
+  getCoachingStaff,
+  getCoachingStaffBySchool,
+  getCurrentHeadCoach,
+  getCoachingHistory,
+  type CoachingStaffMember,
+} from "./coaching";
+
+// Player claims functions
+export {
+  getPlayerClaims,
+  getPendingClaims,
+  getClaimById,
+  type PlayerClaim,
+} from "./claims";
+
+// Player highlights functions
+export {
+  getPlayerHighlights,
+  getFeaturedHighlight,
+  getGameHighlights,
+  type PlayerHighlight,
+} from "./highlights";
+
+// Pick'em (pick-the-game) functions
+export {
+  getCurrentPickemWeek,
+  getPickemGames,
+  getUserPicks,
+  getPickemLeaderboard,
+  getPickemHistory,
+  type PickemWeek,
+  type PickemGame,
+  type PickemPick,
+  type PickemLeaderboardEntry,
+} from "./pickem";

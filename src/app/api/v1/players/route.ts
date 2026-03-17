@@ -24,6 +24,7 @@ import { createClient } from "@/lib/supabase/server";
 import { sanitizePostgREST } from "@/lib/data/common";
 import { captureError } from "@/lib/error-tracking";
 import { VALID_SPORTS } from "@/lib/sports";
+import { withOptionalApiAuth, type ApiKeyInfo } from "@/lib/api-auth";
 
 interface PlayerResponse {
   id: number;
@@ -56,7 +57,10 @@ interface ApiResponse<T> {
   };
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<PlayerResponse[]>>> {
+async function getPlayersHandler(
+  request: NextRequest,
+  apiKey: ApiKeyInfo | null
+): Promise<NextResponse<ApiResponse<PlayerResponse[]>>> {
   const requestId = request.headers.get("x-request-id") || crypto.randomUUID();
 
   try {
@@ -222,3 +226,5 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     return response;
   }
 }
+
+export const GET = withOptionalApiAuth(getPlayersHandler);

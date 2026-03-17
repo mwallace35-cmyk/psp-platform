@@ -110,6 +110,12 @@ export const players = pgTable("players", {
   proTeam: varchar("pro_team", { length: 150 }),
   proDraftInfo: varchar("pro_draft_info", { length: 200 }),
   isMultiSport: boolean("is_multi_sport").default(false),
+  twitterHandle: varchar("twitter_handle", { length: 100 }),
+  instagramHandle: varchar("instagram_handle", { length: 100 }),
+  hudlProfileUrl: varchar("hudl_profile_url", { length: 500 }),
+  isVerified: boolean("is_verified").default(false),
+  contactEmail: varchar("contact_email", { length: 200 }),
+  recruitingStatus: varchar("recruiting_status", { length: 30 }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -683,3 +689,211 @@ export const precomputedCache = pgTable("precomputed_cache", {
   expiresAt: timestamp("expires_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+// ============================================================================
+// PLAYER CLAIMS & VERIFICATION
+// ============================================================================
+
+export const playerClaims = pgTable("player_claims", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").notNull().references(() => players.id),
+  userId: text("user_id").notNull(), // Supabase auth.users.id
+  claimEmail: varchar("claim_email", { length: 200 }).notNull(),
+  status: varchar("status", { length: 20 }).default("pending"), // pending, approved, rejected
+  verificationToken: varchar("verification_token", { length: 100 }),
+  verifiedAt: timestamp("verified_at", { withTimezone: true }),
+  reviewedBy: text("reviewed_by"),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  playerIdx: index("idx_player_claims_player").on(table.playerId),
+  statusIdx: index("idx_player_claims_status").on(table.status),
+}));
+
+// ============================================================================
+// COACHING STAFF
+// ============================================================================
+
+export const coachingStaffMembers = pgTable("coaching_staff_members", {
+  id: serial("id").primaryKey(),
+  schoolId: integer("school_id").notNull().references(() => schools.id),
+  sportId: varchar("sport_id", { length: 30 }).notNull().references(() => sports.id),
+  name: varchar("name", { length: 150 }).notNull(),
+  role: varchar("role", { length: 100 }).notNull(), // Head Coach, Assistant Coach, etc.
+  photoUrl: varchar("photo_url", { length: 500 }),
+  bio: text("bio"),
+  email: varchar("email", { length: 200 }),
+  phone: varchar("phone", { length: 20 }),
+  linkedinUrl: varchar("linkedin_url", { length: 500 }),
+  twitterHandle: varchar("twitter_handle", { length: 100 }),
+  yearsAtSchool: integer("years_at_school"),
+  status: varchar("status", { length: 20 }).default("active"), // active, inactive, retired
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  schoolIdx: index("idx_coaching_staff_school").on(table.schoolId),
+  sportIdx: index("idx_coaching_staff_sport").on(table.sportId),
+}));
+
+// ============================================================================
+// PLAYER HIGHLIGHTS
+// ============================================================================
+
+export const playerHighlights = pgTable("player_highlights", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").notNull().references(() => players.id),
+  sportId: varchar("sport_id", { length: 30 }).notNull().references(() => sports.id),
+  title: varchar("title", { length: 300 }).notNull(),
+  description: text("description"),
+  videoUrl: varchar("video_url", { length: 500 }).notNull(),
+  thumbnailUrl: varchar("thumbnail_url", { length: 500 }),
+  duration: integer("duration"), // seconds
+  source: varchar("source", { length: 100 }), // hudl, hudl-legacy, user-upload, youtube
+  season: varchar("season", { length: 20 }),
+  featured: boolean("featured").default(false),
+  uploadedBy: text("uploaded_by"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  playerIdx: index("idx_highlights_player").on(table.playerId),
+  featuredIdx: index("idx_highlights_featured").on(table.featured),
+}));
+
+// ============================================================================
+// RECRUITING UPDATES
+// ============================================================================
+
+export const recruitingUpdates = pgTable("recruiting_updates", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").notNull().references(() => players.id),
+  sportId: varchar("sport_id", { length: 30 }).notNull().references(() => sports.id),
+  updateType: varchar("update_type", { length: 50 }).notNull(), // offer, commitment, signing, decommitment, visit
+  schoolName: varchar("school_name", { length: 200 }),
+  sourceUrl: varchar("source_url", { length: 500 }),
+  notes: text("notes"),
+  status: varchar("status", { length: 20 }).default("active"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  playerIdx: index("idx_recruiting_updates_player").on(table.playerId),
+}));
+
+// ============================================================================
+// PICK'EM SYSTEM
+// ============================================================================
+
+export const pickerWeeks = pgTable("pickem_weeks", {
+  id: serial("id").primaryKey(),
+  season: integer("season").notNull(),
+  weekNumber: integer("week_number").notNull(),
+  weekLabel: varchar("week_label", { length: 100 }).notNull(),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date").notNull(),
+  status: varchar("status", { length: 20 }).default("open"), // open, locked, closed
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  uniqueWeek: unique().on(table.season, table.weekNumber),
+}));
+
+export const pickerGames = pgTable("pickem_games", {
+  id: serial("id").primaryKey(),
+  weekId: integer("week_id").notNull().references(() => pickerWeeks.id),
+  sportId: varchar("sport_id", { length: 30 }).notNull().references(() => sports.id),
+  homeSchoolId: integer("home_school_id").references(() => schools.id),
+  awaySchoolId: integer("away_school_id").references(() => schools.id),
+  gameDate: date("game_date").notNull(),
+  homeScore: integer("home_score"),
+  awayScore: integer("away_score"),
+  winnerId: integer("winner_id").references(() => schools.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  weekIdx: index("idx_pickem_games_week").on(table.weekId),
+}));
+
+export const pickerPicks = pgTable("pickem_picks", {
+  id: serial("id").primaryKey(),
+  weekId: integer("week_id").notNull().references(() => pickerWeeks.id),
+  gameId: integer("game_id").notNull().references(() => pickerGames.id),
+  userId: text("user_id").notNull(), // Supabase auth.users.id
+  pickSchoolId: integer("pick_school_id").notNull().references(() => schools.id),
+  confidence: integer("confidence"), // 1-10
+  result: varchar("result", { length: 20 }), // correct, incorrect, pending
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  userIdx: index("idx_pickem_picks_user").on(table.userId),
+  weekIdx: index("idx_pickem_picks_week").on(table.weekId),
+  gameIdx: index("idx_pickem_picks_game").on(table.gameId),
+  uniqueUserGamePick: unique().on(table.userId, table.gameId),
+}));
+
+export const pickerLeaderboard = pgTable("pickem_leaderboard", {
+  id: serial("id").primaryKey(),
+  season: integer("season").notNull(),
+  userId: text("user_id").notNull(),
+  displayName: varchar("display_name", { length: 150 }),
+  totalCorrect: integer("total_correct").default(0),
+  totalPicks: integer("total_picks").default(0),
+  winPct: numeric("win_pct", { precision: 5, scale: 3 }),
+  rank: integer("rank"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  seasonIdx: index("idx_leaderboard_season").on(table.season),
+  uniqueUserSeason: unique().on(table.userId, table.season),
+}));
+
+// ============================================================================
+// PHOTOS
+// ============================================================================
+
+export const photos = pgTable("photos", {
+  id: serial("id").primaryKey(),
+  entityType: varchar("entity_type", { length: 30 }).notNull(), // player, school, coach, event
+  entityId: integer("entity_id").notNull(),
+  photoUrl: varchar("photo_url", { length: 500 }).notNull(),
+  caption: text("caption"),
+  creditName: varchar("credit_name", { length: 150 }),
+  creditUrl: varchar("credit_url", { length: 500 }),
+  season: varchar("season", { length: 20 }),
+  featured: boolean("featured").default(false),
+  uploadedBy: text("uploaded_by"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  entityIdx: index("idx_photos_entity").on(table.entityType, table.entityId),
+}));
+
+// ============================================================================
+// API KEYS & USAGE
+// ============================================================================
+
+export const apiKeys = pgTable("api_keys", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(), // Supabase auth.users.id
+  keyHash: varchar("key_hash", { length: 100 }).notNull(),
+  name: varchar("name", { length: 200 }).notNull(),
+  isActive: boolean("is_active").default(true),
+  rateLimit: integer("rate_limit").default(1000), // requests per day
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+}, (table) => ({
+  userIdx: index("idx_api_keys_user").on(table.userId),
+}));
+
+export const apiUsageLog = pgTable("api_usage_log", {
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  apiKeyId: integer("api_key_id").notNull().references(() => apiKeys.id),
+  endpoint: varchar("endpoint", { length: 300 }).notNull(),
+  method: varchar("method", { length: 10 }).notNull(),
+  statusCode: integer("status_code"),
+  responseTimeMs: integer("response_time_ms"),
+  userAgent: varchar("user_agent", { length: 300 }),
+  ipAddress: varchar("ip_address", { length: 50 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  apiKeyIdx: index("idx_api_usage_key").on(table.apiKeyId),
+  dateIdx: index("idx_api_usage_date").on(table.createdAt),
+}));

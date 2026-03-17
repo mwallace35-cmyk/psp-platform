@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
-import { Breadcrumb } from "@/components/ui";
+import { Breadcrumb, SocialProfileBar, ClaimProfileButton } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
@@ -13,6 +13,7 @@ import { buildOgImageUrl } from "@/lib/og-utils";
 import GameLogAccordion from "@/components/game-log/GameLogAccordion";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
+import PlayerHighlightsSection from "@/components/highlights/PlayerHighlightsSection";
 import type { MergedGameEntry, SeasonAward } from "@/components/game-log/GameLogAccordion";
 import type { Metadata } from "next";
 
@@ -124,14 +125,29 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     .filter((id): id is number => id != null);
 
   // Parallelize remaining fetches
-  const [awards, gameLog, teamGames, crossSportPlayers] = await Promise.all([
+  const [awards, gameLog, teamGames, crossSportPlayers, recruitingProfile] = await Promise.all([
     getPlayerAwards(player.id),
     (sport === "football" || sport === "basketball") ? getPlayerGameLog(player.id) : Promise.resolve([]),
     (sport === "football" || sport === "basketball") && player.primary_school_id && seasonIds.length > 0
       ? getPlayerTeamGames(player.primary_school_id, sport, seasonIds)
       : Promise.resolve([]),
     player.primary_school_id ? getCrossSportPlayers(player.name, player.primary_school_id) : Promise.resolve([]),
-  ]) as [Award[], PlayerGameLog[], TeamGame[], any[]];
+    // Fetch recruiting profile for social links
+    (async () => {
+      try {
+        const { createClient } = await import("@/lib/supabase/server");
+        const supabase = await createClient();
+        const { data } = await supabase
+          .from("recruiting_profiles")
+          .select("*")
+          .eq("player_id", player.id)
+          .maybeSingle();
+        return data;
+      } catch {
+        return null;
+      }
+    })(),
+  ]) as [Award[], PlayerGameLog[], TeamGame[], any[], any];
 
   // Football career totals
   const footballTotals = sport === "football" && stats.length > 0 ? (() => {
@@ -325,6 +341,21 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   <span>⚖️</span>
                   Compare
                 </Link>
+              </div>
+
+              {/* Social Profile Bar */}
+              <div className="mt-6">
+                <SocialProfileBar
+                  hudlUrl={player.hudl_profile_url || recruitingProfile?.url_hudl}
+                  on3Url={recruitingProfile?.url_on3}
+                  two47Url={recruitingProfile?.url_247}
+                  rivalsUrl={recruitingProfile?.url_rivals}
+                  twitterHandle={player.twitter_handle || recruitingProfile?.social_twitter}
+                  instagramHandle={player.instagram_handle || recruitingProfile?.social_instagram}
+                  maxPrepsUrl={recruitingProfile?.url_maxpreps}
+                  highlightsUrl={recruitingProfile?.highlights_url}
+                  isVerified={player.is_verified}
+                />
               </div>
             </div>
           </div>
@@ -636,6 +667,13 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               </div>
             )}
 
+            {/* Player Highlights Section */}
+            <PlayerHighlightsSection
+              playerId={player.id}
+              playerName={player.name}
+              hudlProfileUrl={player.hudl_profile_url}
+            />
+
             {/* Game Log Accordion — collapsible seasons with award badges */}
             {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
               <GameLogAccordion
@@ -942,6 +980,15 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
           </div>
         </div>
+      </div>
+
+      {/* Claim Profile Button */}
+      <div className="max-w-7xl mx-auto px-4 py-4">
+        <ClaimProfileButton
+          playerId={player.id}
+          playerName={player.name}
+          schoolName={player.schools?.name || "Unknown School"}
+        />
       </div>
 
       {/* Correction Form */}

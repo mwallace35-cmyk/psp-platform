@@ -43,8 +43,18 @@ const PULSE_ITEMS = [
 const MORE_ITEMS = [
   { href: "/coaches", label: "Coaches" },
   { href: "/compare", label: "Compare Players" },
+  { href: "/compare/schools", label: "Compare Schools" },
+  { href: "/pipeline", label: "College Pipeline" },
   { href: "/glossary", label: "Glossary" },
   { href: "/challenge", label: "Stats Challenge" },
+  { href: "/pickem", label: "Pick'em" },
+  { href: "/next-level", label: "Where Are They Now" },
+];
+
+const RECRUITING_ITEMS = [
+  { href: "/recruiting/portal", label: "Recruiter Portal" },
+  { href: "/recruiting/rankings", label: "Rankings" },
+  { href: "/recruiting/commits", label: "Commits" },
 ];
 
 const ACCOUNT_ITEMS = [

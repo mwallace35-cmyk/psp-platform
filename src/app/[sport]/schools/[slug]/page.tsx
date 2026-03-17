@@ -519,6 +519,9 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                 <Link href={`/next-level?school=${slug}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
                   🎓 Alumni Tracker
                 </Link>
+                <Link href={`/${sport}/schools/${slug}/staff/`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
+                  👔 Coaching Staff
+                </Link>
               </div>
             </div>
 

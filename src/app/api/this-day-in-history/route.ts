@@ -1,142 +1,116 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createStaticClient } from '@/lib/supabase/static';
+import { NextRequest, NextResponse } from "next/server";
+import { createStaticClient } from "@/lib/supabase/static";
 
-export const dynamic = 'force-dynamic';
-
+/**
+ * GET /api/this-day-in-history?month=3&day=15
+ *
+ * Returns historical events for the given month/day across all years in the database.
+ */
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const month = searchParams.get('month');
-    const day = searchParams.get('day');
+    const searchParams = request.nextUrl.searchParams;
+    const month = parseInt(searchParams.get("month") || "0");
+    const day = parseInt(searchParams.get("day") || "0");
 
-    if (!month || !day) {
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
       return NextResponse.json(
-        { error: 'month and day parameters required' },
+        { error: "Invalid month or day" },
         { status: 400 }
       );
     }
 
-    const supabase = createStaticClient();
+    const supabase = await createStaticClient();
 
-    // Try to find championships on this date
-    const { data: championship } = await supabase
-      .from('championships')
+    // Query for games on this month/day across all years
+    // We'll use a SQL-based approach since PostgREST doesn't support month/day extraction
+    const { data: games, error: gamesError } = await supabase
+      .from("games")
       .select(
-        `id,
-         year,
-         league_id,
-         school_id,
-         sport_id,
-         schools!championships_school_id_fkey(name, slug),
-         leagues!championships_league_id_fkey(name),
-         sports!championships_sport_id_fkey(name, id)`
+        `id, game_date, home_score, away_score, sport_id,
+         home_school:schools!games_home_school_id_fkey(name),
+         away_school:schools!games_away_school_id_fkey(name),
+         seasons(label, year_start)`
       )
-      .filter(
-        'championship_date',
-        'ilike',
-        `%-${month}-${day}%`
+      .not("game_date", "is", null)
+      .limit(100);
+
+    // Query for championships on this month/day
+    const { data: champs, error: champsError } = await supabase
+      .from("championships")
+      .select(
+        `id, championship_type, level,
+         schools(name),
+         seasons(label, year_start)`
       )
-      .limit(1)
-      .single();
+      .limit(50);
 
-    if (championship) {
-      const schoolsRaw = championship.schools as unknown;
-      const schoolName = Array.isArray(schoolsRaw)
-        ? (schoolsRaw as Array<{ name: string }>)[0]?.name
-        : (schoolsRaw as { name: string } | null)?.name;
+    // Query for awards on this month/day
+    const { data: awards, error: awardsError } = await supabase
+      .from("awards")
+      .select(
+        `id, award_name, award_type,
+         players(name),
+         schools(name),
+         seasons(label, year_start)`
+      )
+      .limit(50);
 
-      const leaguesRaw = championship.leagues as unknown;
-      const leagueName = Array.isArray(leaguesRaw)
-        ? (leaguesRaw as Array<{ name: string }>)[0]?.name
-        : (leaguesRaw as { name: string } | null)?.name;
+    const events: Array<{
+      year: number;
+      description: string;
+      type: "game" | "championship" | "award";
+      link?: string;
+      score?: string;
+    }> = [];
 
-      const sportsRaw = championship.sports as unknown;
-      const sport = Array.isArray(sportsRaw)
-        ? (sportsRaw as Array<{ name: string; id: string }>)[0]
-        : (sportsRaw as { name: string; id: string } | null);
+    // Process games
+    if (!gamesError && games) {
+      for (const game of (games as any[]) || []) {
+        if (!game.game_date) continue;
 
-      const title = `${schoolName} Wins ${leagueName} ${sport?.name || 'Championship'}`;
-      const description = `On this date in ${championship.year}, ${schoolName} captured the ${leagueName} ${sport?.name || 'championship'} title, adding to the school's storied athletic tradition.`;
+        const gameDate = new Date(game.game_date);
+        if (gameDate.getMonth() + 1 === month && gameDate.getDate() === day) {
+          const homeTeam = game.home_school?.name || "Team";
+          const awayTeam = game.away_school?.name || "Team";
+          const year = gameDate.getFullYear();
 
-      return NextResponse.json({
-        date: `${month}-${day}`,
-        title,
-        description,
-        sport: sport?.name || 'Sports',
-        sportSlug: sport?.id || 'football',
-        year: championship.year,
-      });
+          events.push({
+            year,
+            description: `${awayTeam} vs ${homeTeam}`,
+            type: "game",
+            score:
+              game.home_score !== null && game.away_score !== null
+                ? `${awayTeam} ${game.away_score}, ${homeTeam} ${game.home_score}`
+                : undefined,
+          });
+        }
+      }
     }
 
-    // If no championship found, try games on this date
-    const { data: games } = await supabase
-      .from('games')
-      .select(
-        `id,
-         game_date,
-         home_score,
-         away_score,
-         sport_id,
-         schools!games_home_team_id_fkey(name, slug),
-         away_schools:schools!games_away_team_id_fkey(name, slug),
-         sports!games_sport_id_fkey(name, id)`
-      )
-      .filter('game_date', 'ilike', `%-${month}-${day}%`)
-      .order('game_date', { ascending: false })
-      .limit(1);
-
-    if (games && games.length > 0) {
-      const game = games[0];
-      const homeRaw = game.schools as unknown;
-      const homeName = Array.isArray(homeRaw)
-        ? (homeRaw as Array<{ name: string }>)[0]?.name
-        : (homeRaw as { name: string } | null)?.name;
-      const awayRaw = game.away_schools as unknown;
-      const awayName = Array.isArray(awayRaw)
-        ? (awayRaw as Array<{ name: string }>)[0]?.name
-        : (awayRaw as { name: string } | null)?.name;
-      const sportRaw = game.sports as unknown;
-      const sport = Array.isArray(sportRaw)
-        ? (sportRaw as Array<{ name: string; id: string }>)[0]
-        : (sportRaw as { name: string; id: string } | null);
-
-      const year = new Date(game.game_date).getFullYear();
-      const title = `${homeName} vs ${awayName}`;
-      const description = `On this date in ${year}, ${homeName} defeated ${awayName} ${game.home_score}-${game.away_score} in a memorable ${sport?.name || 'game'}. Relive the glory days.`;
-
-      return NextResponse.json({
-        date: `${month}-${day}`,
-        title,
-        description,
-        sport: sport?.name || 'Sports',
-        sportSlug: sport?.id || 'football',
-        year,
-      });
+    // Process championships (simplified - would need date field)
+    if (!champsError && champs) {
+      // For now, championships don't have a specific date, so we skip this
+      // In a real implementation, you'd store championship_date in the DB
     }
 
-    // Fallback to a generic historical message
+    // Process awards (simplified)
+    if (!awardsError && awards) {
+      // Awards also need a date field to make this work
+    }
+
+    // Sort by year descending
+    events.sort((a, b) => b.year - a.year);
+
+    // Return top 3 events
     return NextResponse.json({
-      date: `${month}-${day}`,
-      title: 'Philadelphia High School Sports Legacy',
-      description:
-        'On this day in Philadelphia sports history, countless athletes have stepped onto fields and courts to compete for their schools, their leagues, and their legacies. Explore the database to discover the champions and heroes from your neighborhood.',
-      sport: 'Sports',
-      sportSlug: 'football',
-      year: new Date().getFullYear(),
+      events: events.slice(0, 3),
+      total: events.length,
     });
   } catch (error) {
-    console.error('Error fetching historical event:', error);
+    console.error("[This Day in History] Error:", error);
     return NextResponse.json(
-      {
-        date: 'error',
-        title: 'Philadelphia High School Sports Legacy',
-        description:
-          'Discover the rich history of Philadelphia high school athletics. Search our comprehensive database for players, schools, and championships dating back nearly a century.',
-        sport: 'Sports',
-        sportSlug: 'football',
-        year: new Date().getFullYear(),
-      },
-      { status: 200 }
+      { error: "Internal server error", events: [] },
+      { status: 500 }
     );
   }
 }

@@ -77,6 +77,10 @@ export interface Player {
   height?: string;
   is_multi_sport?: boolean;
   pro_draft_info?: string;
+  hudl_profile_url?: string;
+  twitter_handle?: string;
+  instagram_handle?: string;
+  is_verified?: boolean;
   schools?: { name: string; slug: string } | null;
 }
 

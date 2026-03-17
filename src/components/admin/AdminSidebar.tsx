@@ -18,6 +18,10 @@ const navItems = [
   { href: "/admin/analytics", label: "Analytics", icon: "📈" },
   { href: "/admin/sync", label: "Sync", icon: "🔄" },
   { href: "/admin/audit", label: "Audit Log", icon: "📋" },
+  { href: "/admin/claims", label: "Player Claims", icon: "✅" },
+  { href: "/admin/coaching", label: "Coaching Staff", icon: "👔" },
+  { href: "/admin/highlights", label: "Highlights", icon: "🎥" },
+  { href: "/admin/pickem", label: "Pick'em Manager", icon: "🎯" },
 ];
 
 export default function AdminSidebar({ userEmail }: { userEmail: string }) {

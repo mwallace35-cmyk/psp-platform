@@ -1,0 +1,185 @@
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import {
+  getCollegePipeline,
+  getPipelineSummary,
+  getTopPipelineSchools,
+} from "@/lib/data/pipeline";
+import { SkeletonCard } from "@/components/ui/Skeleton";
+import StatBlock from "@/components/ui/StatBlock";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "College Pipeline — PhillySportsPack",
+  description:
+    "Where Philly's high school athletes play in college. Interactive map and database of college placements.",
+  alternates: {
+    canonical: "https://phillysportspack.com/pipeline",
+  },
+};
+
+async function PipelineContent() {
+  const [collegePipeline, summary, topSchools] = await Promise.all([
+    getCollegePipeline(),
+    getPipelineSummary(),
+    getTopPipelineSchools(10),
+  ]);
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      {/* Hero Section */}
+      <div className="mb-12">
+        <h1
+          className="text-5xl font-bold mb-2"
+          style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}
+        >
+          College Pipeline
+        </h1>
+        <p className="text-xl text-gray-600 mb-8">
+          Where Philly's best athletes play next — An interactive look at our college placements.
+        </p>
+
+        {/* Stats Strip */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          <StatBlock
+            value={summary.totalTracked}
+            label="Total Tracked"
+            icon="📊"
+          />
+          <StatBlock
+            value={summary.collegeCount}
+            label="Colleges"
+            icon="🎓"
+          />
+          <StatBlock
+            value={summary.proAthletes}
+            label="Pro Athletes"
+            icon="🏆"
+          />
+          <StatBlock
+            value={summary.collegeAthletes}
+            label="College Athletes"
+            icon="⭐"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
+        <div className="lg:col-span-2">
+          {/* Colleges Section */}
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2
+              className="text-2xl font-bold mb-6"
+              style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}
+            >
+              Colleges ({collegePipeline.length})
+            </h2>
+
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {collegePipeline.slice(0, 20).map((college, idx) => (
+                <div
+                  key={college.id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                >
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900">{college.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {Object.entries(college.sports)
+                        .map(([sport, count]) => `${count} ${sport}`)
+                        .join(", ")}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p
+                      className="text-xl font-bold"
+                      style={{ color: "var(--psp-gold)" }}
+                    >
+                      {college.count}
+                    </p>
+                    <p className="text-xs text-gray-500">athletes</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {collegePipeline.length > 20 && (
+              <p className="text-sm text-gray-500 mt-4 text-center">
+                ... and {collegePipeline.length - 20} more colleges
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Top Pipeline Schools */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3
+              className="text-lg font-bold mb-4"
+              style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}
+            >
+              Top College Producers
+            </h3>
+            <div className="space-y-3">
+              {topSchools.map((school, idx) => (
+                <Link key={school.id} href={`/football/schools/${school.slug}`}>
+                  <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 transition cursor-pointer">
+                    <div>
+                      <p className="font-semibold text-gray-900">{school.name}</p>
+                      <p className="text-xs text-gray-500">
+                        {school.city}, {school.state}
+                      </p>
+                    </div>
+                    <p
+                      className="font-bold"
+                      style={{ color: "var(--psp-gold)" }}
+                    >
+                      {school.count}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* About Section */}
+          <div className="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-500">
+            <h3
+              className="font-bold mb-2"
+              style={{ color: "var(--psp-navy)" }}
+            >
+              About This Data
+            </h3>
+            <p className="text-sm text-gray-700">
+              This pipeline tracks Philly-area high school athletes who have
+              committed to or are currently attending colleges nationwide.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function CollegePipelinePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <SkeletonCard showImage={false} showTitle={true} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+            <div className="lg:col-span-2">
+              <SkeletonCard showImage={false} />
+            </div>
+            <div>
+              <SkeletonCard showImage={false} />
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <PipelineContent />
+    </Suspense>
+  );
+}

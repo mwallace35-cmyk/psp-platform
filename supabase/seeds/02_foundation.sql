@@ -1,180 +1,176 @@
--- ========================================
--- PSP Consolidated Seed: Foundation Data
--- Generated: 2026-03-08
--- ========================================
+INSERT INTO regions (id, name, state, metro_area, created_at, updated_at, slug) VALUES
+('1','Philadelphia','PA','Greater Philadelphia','2026-03-08T23:59:52.718177+00:00','2026-03-08T23:59:52.718177+00:00','1'),
+('philadelphia','Philadelphia','PA','Greater Philadelphia','2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00','philadelphia')
+ON CONFLICT (id) DO NOTHING;
 
--- Regions
-INSERT INTO regions (id, name, state, metro_area, created_at, updated_at) VALUES ('1', 'Philadelphia', 'PA', 'Greater Philadelphia', now(), now()) ON CONFLICT (id) DO NOTHING;
+INSERT INTO sports (id, name, emoji, sort_order, stat_schema, is_major, created_at, slug) VALUES
+('baseball','Baseball','⚾',3,NULL,TRUE,'2026-03-03T21:39:02.968618+00:00','baseball'),
+('basketball','Basketball','🏀',2,NULL,TRUE,'2026-03-03T21:39:02.968618+00:00','basketball'),
+('cross-country','Cross Country',NULL,0,NULL,FALSE,'2026-03-03T21:44:29.151589+00:00','cross-country'),
+('football','Football','🏈',1,NULL,TRUE,'2026-03-03T21:39:02.968618+00:00','football'),
+('lacrosse','Lacrosse','🥍',6,NULL,FALSE,'2026-03-03T21:39:02.968618+00:00','lacrosse'),
+('soccer','Soccer','⚽',5,NULL,FALSE,'2026-03-03T21:39:02.968618+00:00','soccer'),
+('track-field','Track & Field',NULL,0,NULL,FALSE,'2026-03-03T21:44:29.129281+00:00','track-field'),
+('wrestling','Wrestling','🤼',7,NULL,FALSE,'2026-03-03T21:39:02.968618+00:00','wrestling')
+ON CONFLICT (id) DO NOTHING;
 
--- Sports
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('baseball', 'Baseball', '⚾', 3, true, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('basketball', 'Basketball', '🏀', 2, true, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('cross-country', 'Cross Country', NULL, 0, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('flag-football', 'Flag Football', '🏳️', 8, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('football', 'Football', '🏈', 1, true, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('girls-basketball', 'Girls Basketball', '🏀', 9, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('golf', 'Golf', NULL, 0, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('lacrosse', 'Lacrosse', '🥍', 6, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('soccer', 'Soccer', '⚽', 5, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('softball', 'Softball', NULL, 0, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('track', 'Track & Field', '🏃', 4, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('track-field', 'Track Field', NULL, 0, false, now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO sports (id, name, emoji, sort_order, is_major, created_at) VALUES ('wrestling', 'Wrestling', '🤼', 7, false, now()) ON CONFLICT (id) DO NOTHING;
+INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES
+(1,'catholic-league','Philadelphia Catholic League','PCL','philadelphia','high_school',1920,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(2,'public-league','Philadelphia Public League','PL','philadelphia','high_school',1913,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(3,'inter-ac','Inter-Academic League','IA','philadelphia','high_school',1887,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(4,'sol-conference','Suburban One League','SOL','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(5,'bicentennial','Bicentennial Athletic League','BAL','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(6,'del-val','Del Val League','DVL','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(7,'independent','Independent','IND','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(8,'piaa-1a','PIAA District 12 Class 1A','1A','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(9,'piaa-2a','PIAA District 12 Class 2A','2A','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(10,'piaa-3a','PIAA District 12 Class 3A','3A','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(11,'piaa-4a','PIAA District 12 Class 4A','4A','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(12,'piaa-5a','PIAA District 12 Class 5A','5A','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00'),
+(13,'piaa-6a','PIAA District 12 Class 6A','6A','philadelphia','high_school',NULL,'2026-03-03T21:39:02.968618+00:00','2026-03-03T21:39:02.968618+00:00')
+ON CONFLICT (id) DO NOTHING;
 
--- Leagues
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (1, 'catholic-league', 'Philadelphia Catholic League', 'PCL', 'philadelphia', 'high_school', 1920, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (2, 'public-league', 'Philadelphia Public League', 'PL', 'philadelphia', 'high_school', 1913, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (3, 'inter-ac', 'Inter-Academic League', 'IA', 'philadelphia', 'high_school', 1887, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (4, 'sol-conference', 'Suburban One League', 'SOL', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (5, 'bicentennial', 'Bicentennial Athletic League', 'BAL', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (6, 'del-val', 'Del Val League', 'DVL', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (7, 'independent', 'Independent', 'IND', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (8, 'piaa-1a', 'PIAA District 12 Class 1A', '1A', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (9, 'piaa-2a', 'PIAA District 12 Class 2A', '2A', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (10, 'piaa-3a', 'PIAA District 12 Class 3A', '3A', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (11, 'piaa-4a', 'PIAA District 12 Class 4A', '4A', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (12, 'piaa-5a', 'PIAA District 12 Class 5A', '5A', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
-INSERT INTO leagues (id, slug, name, short_name, region_id, level, founded_year, created_at, updated_at) VALUES (13, 'piaa-6a', 'PIAA District 12 Class 6A', '6A', 'philadelphia', 'high_school', NULL, now(), now()) ON CONFLICT (id) DO NOTHING;
+INSERT INTO seasons (id, year_start, year_end, label) VALUES
+(1,1950,1951,'1950-51'),
+(2,1951,1952,'1951-52'),
+(3,1952,1953,'1952-53'),
+(4,1953,1954,'1953-54'),
+(5,1954,1955,'1954-55'),
+(6,1955,1956,'1955-56'),
+(7,1956,1957,'1956-57'),
+(8,1957,1958,'1957-58'),
+(9,1958,1959,'1958-59'),
+(10,1959,1960,'1959-60'),
+(11,1960,1961,'1960-61'),
+(12,1961,1962,'1961-62'),
+(13,1962,1963,'1962-63'),
+(14,1963,1964,'1963-64'),
+(15,1964,1965,'1964-65'),
+(16,1965,1966,'1965-66'),
+(17,1966,1967,'1966-67'),
+(18,1967,1968,'1967-68'),
+(19,1968,1969,'1968-69'),
+(20,1969,1970,'1969-70'),
+(21,1970,1971,'1970-71'),
+(22,1971,1972,'1971-72'),
+(23,1972,1973,'1972-73'),
+(24,1973,1974,'1973-74'),
+(25,1974,1975,'1974-75'),
+(26,1975,1976,'1975-76'),
+(27,1976,1977,'1976-77'),
+(28,1977,1978,'1977-78'),
+(29,1978,1979,'1978-79'),
+(30,1979,1980,'1979-80'),
+(31,1980,1981,'1980-81'),
+(32,1981,1982,'1981-82'),
+(33,1982,1983,'1982-83'),
+(34,1983,1984,'1983-84'),
+(35,1984,1985,'1984-85'),
+(36,1985,1986,'1985-86'),
+(37,1986,1987,'1986-87'),
+(38,1987,1988,'1987-88'),
+(39,1988,1989,'1988-89'),
+(40,1989,1990,'1989-90'),
+(41,1990,1991,'1990-91'),
+(42,1991,1992,'1991-92'),
+(43,1992,1993,'1992-93'),
+(44,1993,1994,'1993-94'),
+(45,1994,1995,'1994-95'),
+(46,1995,1996,'1995-96'),
+(47,1996,1997,'1996-97'),
+(48,1997,1998,'1997-98'),
+(49,1998,1999,'1998-99'),
+(50,1999,2000,'1999-00'),
+(51,2000,2001,'2000-01'),
+(52,2001,2002,'2001-02'),
+(53,2002,2003,'2002-03'),
+(54,2003,2004,'2003-04'),
+(55,2004,2005,'2004-05'),
+(56,2005,2006,'2005-06'),
+(57,2006,2007,'2006-07'),
+(58,2007,2008,'2007-08'),
+(59,2008,2009,'2008-09'),
+(60,2009,2010,'2009-10'),
+(61,2010,2011,'2010-11'),
+(62,2011,2012,'2011-12'),
+(63,2012,2013,'2012-13'),
+(64,2013,2014,'2013-14'),
+(65,2014,2015,'2014-15'),
+(66,2015,2016,'2015-16'),
+(67,2016,2017,'2016-17'),
+(68,2017,2018,'2017-18'),
+(69,2018,2019,'2018-19'),
+(70,2019,2020,'2019-20'),
+(71,2020,2021,'2020-21'),
+(72,2021,2022,'2021-22'),
+(73,2022,2023,'2022-23'),
+(74,2023,2024,'2023-24'),
+(75,2024,2025,'2024-25'),
+(76,2025,2026,'2025-26'),
+(145,2026,2027,'2026-27'),
+(250,1937,1938,'1937-38'),
+(251,1938,1939,'1938-39'),
+(252,1939,1940,'1939-40'),
+(253,1940,1941,'1940-41'),
+(254,1941,1942,'1941-42'),
+(255,1942,1943,'1942-43'),
+(256,1943,1944,'1943-44'),
+(257,1944,1945,'1944-45'),
+(258,1945,1946,'1945-46'),
+(259,1946,1947,'1946-47'),
+(260,1947,1948,'1947-48'),
+(261,1948,1949,'1948-49'),
+(262,1949,1950,'1949-50'),
+(264,0,0,'Career'),
+(265,1887,1888,'1887-88'),
+(266,1888,1889,'1888-89'),
+(267,1889,1890,'1889-90'),
+(268,1890,1891,'1890-91'),
+(269,1891,1892,'1891-92'),
+(270,1892,1893,'1892-93'),
+(271,1893,1894,'1893-94'),
+(272,1894,1895,'1894-95'),
+(273,1895,1896,'1895-96'),
+(274,1896,1897,'1896-97'),
+(275,1897,1898,'1897-98'),
+(276,1898,1899,'1898-99'),
+(277,1899,1900,'1899-00'),
+(278,1900,1901,'1900-01'),
+(279,1901,1902,'1901-02'),
+(280,1902,1903,'1902-03'),
+(281,1903,1904,'1903-04'),
+(282,1904,1905,'1904-05'),
+(283,1905,1906,'1905-06'),
+(284,1906,1907,'1906-07'),
+(285,1907,1908,'1907-08'),
+(286,1908,1909,'1908-09'),
+(287,1909,1910,'1909-10'),
+(288,1910,1911,'1910-11'),
+(289,1911,1912,'1911-12'),
+(290,1912,1913,'1912-13'),
+(291,1913,1914,'1913-14'),
+(292,1914,1915,'1914-15'),
+(293,1915,1916,'1915-16'),
+(294,1916,1917,'1916-17'),
+(295,1917,1918,'1917-18'),
+(296,1918,1919,'1918-19'),
+(297,1919,1920,'1919-20'),
+(298,1920,1921,'1920-21'),
+(299,1921,1922,'1921-22'),
+(300,1922,1923,'1922-23'),
+(301,1923,1924,'1923-24'),
+(302,1924,1925,'1924-25'),
+(303,1925,1926,'1925-26'),
+(304,1926,1927,'1926-27'),
+(305,1927,1928,'1927-28'),
+(306,1928,1929,'1928-29'),
+(307,1929,1930,'1929-30'),
+(308,1930,1931,'1930-31'),
+(309,1931,1932,'1931-32'),
+(310,1932,1933,'1932-33'),
+(311,1933,1934,'1933-34'),
+(312,1934,1935,'1934-35'),
+(313,1935,1936,'1935-36'),
+(314,1936,1937,'1936-37')
+ON CONFLICT (id) DO NOTHING;
 
--- Seasons
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (1, 1950, 1951, '1950-51') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (2, 1951, 1952, '1951-52') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (3, 1952, 1953, '1952-53') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (4, 1953, 1954, '1953-54') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (5, 1954, 1955, '1954-55') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (6, 1955, 1956, '1955-56') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (7, 1956, 1957, '1956-57') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (8, 1957, 1958, '1957-58') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (9, 1958, 1959, '1958-59') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (10, 1959, 1960, '1959-60') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (11, 1960, 1961, '1960-61') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (12, 1961, 1962, '1961-62') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (13, 1962, 1963, '1962-63') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (14, 1963, 1964, '1963-64') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (15, 1964, 1965, '1964-65') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (16, 1965, 1966, '1965-66') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (17, 1966, 1967, '1966-67') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (18, 1967, 1968, '1967-68') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (19, 1968, 1969, '1968-69') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (20, 1969, 1970, '1969-70') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (21, 1970, 1971, '1970-71') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (22, 1971, 1972, '1971-72') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (23, 1972, 1973, '1972-73') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (24, 1973, 1974, '1973-74') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (25, 1974, 1975, '1974-75') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (26, 1975, 1976, '1975-76') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (27, 1976, 1977, '1976-77') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (28, 1977, 1978, '1977-78') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (29, 1978, 1979, '1978-79') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (30, 1979, 1980, '1979-80') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (31, 1980, 1981, '1980-81') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (32, 1981, 1982, '1981-82') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (33, 1982, 1983, '1982-83') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (34, 1983, 1984, '1983-84') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (35, 1984, 1985, '1984-85') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (36, 1985, 1986, '1985-86') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (37, 1986, 1987, '1986-87') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (38, 1987, 1988, '1987-88') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (39, 1988, 1989, '1988-89') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (40, 1989, 1990, '1989-90') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (41, 1990, 1991, '1990-91') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (42, 1991, 1992, '1991-92') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (43, 1992, 1993, '1992-93') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (44, 1993, 1994, '1993-94') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (45, 1994, 1995, '1994-95') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (46, 1995, 1996, '1995-96') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (47, 1996, 1997, '1996-97') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (48, 1997, 1998, '1997-98') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (49, 1998, 1999, '1998-99') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (50, 1999, 2000, '1999-00') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (51, 2000, 2001, '2000-01') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (52, 2001, 2002, '2001-02') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (53, 2002, 2003, '2002-03') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (54, 2003, 2004, '2003-04') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (55, 2004, 2005, '2004-05') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (56, 2005, 2006, '2005-06') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (57, 2006, 2007, '2006-07') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (58, 2007, 2008, '2007-08') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (59, 2008, 2009, '2008-09') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (60, 2009, 2010, '2009-10') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (61, 2010, 2011, '2010-11') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (62, 2011, 2012, '2011-12') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (63, 2012, 2013, '2012-13') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (64, 2013, 2014, '2013-14') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (65, 2014, 2015, '2014-15') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (66, 2015, 2016, '2015-16') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (67, 2016, 2017, '2016-17') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (68, 2017, 2018, '2017-18') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (69, 2018, 2019, '2018-19') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (70, 2019, 2020, '2019-20') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (71, 2020, 2021, '2020-21') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (72, 2021, 2022, '2021-22') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (73, 2022, 2023, '2022-23') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (74, 2023, 2024, '2023-24') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (75, 2024, 2025, '2024-25') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (76, 2025, 2026, '2025-26') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (145, 2026, 2027, '2026-27') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (250, 1937, 1938, '1937-38') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (251, 1938, 1939, '1938-39') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (252, 1939, 1940, '1939-40') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (253, 1940, 1941, '1940-41') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (254, 1941, 1942, '1941-42') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (255, 1942, 1943, '1942-43') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (256, 1943, 1944, '1943-44') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (257, 1944, 1945, '1944-45') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (258, 1945, 1946, '1945-46') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (259, 1946, 1947, '1946-47') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (260, 1947, 1948, '1947-48') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (261, 1948, 1949, '1948-49') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (262, 1949, 1950, '1949-50') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (264, 0, 0, 'Career') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (265, 1887, 1888, '1887-88') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (266, 1888, 1889, '1888-89') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (267, 1889, 1890, '1889-90') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (268, 1890, 1891, '1890-91') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (269, 1891, 1892, '1891-92') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (270, 1892, 1893, '1892-93') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (271, 1893, 1894, '1893-94') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (272, 1894, 1895, '1894-95') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (273, 1895, 1896, '1895-96') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (274, 1896, 1897, '1896-97') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (275, 1897, 1898, '1897-98') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (276, 1898, 1899, '1898-99') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (277, 1899, 1900, '1899-00') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (278, 1900, 1901, '1900-01') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (279, 1901, 1902, '1901-02') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (280, 1902, 1903, '1902-03') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (281, 1903, 1904, '1903-04') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (282, 1904, 1905, '1904-05') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (283, 1905, 1906, '1905-06') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (284, 1906, 1907, '1906-07') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (285, 1907, 1908, '1907-08') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (286, 1908, 1909, '1908-09') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (287, 1909, 1910, '1909-10') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (288, 1910, 1911, '1910-11') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (289, 1911, 1912, '1911-12') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (290, 1912, 1913, '1912-13') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (291, 1913, 1914, '1913-14') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (292, 1914, 1915, '1914-15') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (293, 1915, 1916, '1915-16') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (294, 1916, 1917, '1916-17') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (295, 1917, 1918, '1917-18') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (296, 1918, 1919, '1918-19') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (297, 1919, 1920, '1919-20') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (298, 1920, 1921, '1920-21') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (299, 1921, 1922, '1921-22') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (300, 1922, 1923, '1922-23') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (301, 1923, 1924, '1923-24') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (302, 1924, 1925, '1924-25') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (303, 1925, 1926, '1925-26') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (304, 1926, 1927, '1926-27') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (305, 1927, 1928, '1927-28') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (306, 1928, 1929, '1928-29') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (307, 1929, 1930, '1929-30') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (308, 1930, 1931, '1930-31') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (309, 1931, 1932, '1931-32') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (310, 1932, 1933, '1932-33') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (311, 1933, 1934, '1933-34') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (312, 1934, 1935, '1934-35') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (313, 1935, 1936, '1935-36') ON CONFLICT (id) DO NOTHING;
-INSERT INTO seasons (id, year_start, year_end, label) VALUES (314, 1936, 1937, '1936-37') ON CONFLICT (id) DO NOTHING;

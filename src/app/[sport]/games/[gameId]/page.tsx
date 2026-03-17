@@ -10,6 +10,7 @@ import {
   type TeamSeasonStats,
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
+import GameFilmSection from "@/components/highlights/GameFilmSection";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: hourly (games get new box scores frequently)
@@ -700,6 +701,9 @@ export default async function GameDetailPage({
           )}
         </div>
       )}
+
+      {/* Game Film Section */}
+      <GameFilmSection gameId={gameId} sportSlug={sport} />
     </main>
   );
 }
