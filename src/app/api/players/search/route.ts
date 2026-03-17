@@ -1,55 +1,73 @@
 import { createClient, withErrorHandling, withRetry } from '@/lib/data/common';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  const q = request.nextUrl.searchParams.get('q');
-  const sport = request.nextUrl.searchParams.get('sport');
+interface SearchResult {
+  id: string;
+  name: string;
+  slug: string;
+  school_name: string;
+  school_slug: string;
+  sport: string;
+  position?: string;
+  grad_year?: number;
+}
 
-  if (!q || q.trim().length < 2) {
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const q = searchParams.get('q');
+  const sport = searchParams.get('sport');
+
+  if (!q || q.trim().length === 0) {
     return NextResponse.json([], { status: 200 });
   }
 
-  return withErrorHandling(
-    async () =>
-      withRetry(
+  if (!sport || !['football', 'basketball'].includes(sport)) {
+    return NextResponse.json(
+      { error: 'Invalid sport parameter. Use football or basketball.' },
+      { status: 400 }
+    );
+  }
+
+  const results = await withErrorHandling(
+    async () => {
+      return withRetry(
         async () => {
           const supabase = await createClient();
-
-          let query = supabase
+          const { data, error } = await supabase
             .from('players')
-            .select('id, name, slug, sport, grad_year, schools:schools!players_primary_school_id_fkey(name, slug)')
+            .select(
+              `id, name, slug, sport, position, grad_year,
+               schools:schools!players_primary_school_id_fkey(name, slug)`
+            )
+            .eq('sport', sport)
             .ilike('name', `%${q.trim()}%`)
             .limit(10);
 
-          if (sport && ['football', 'basketball', 'baseball', 'soccer', 'lacrosse', 'wrestling', 'track'].includes(sport)) {
-            query = query.eq('sport', sport);
-          }
+          if (error) throw error;
 
-          const { data, error } = await query;
-
-          if (error) {
-            return NextResponse.json({ error: 'Search failed' }, { status: 500 });
-          }
-
-          const results = (data ?? []).map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            slug: p.slug,
-            sport: p.sport,
-            grad_year: p.grad_year,
-            school_name: p.schools?.name ?? 'Unknown School',
-            school_slug: p.schools?.slug ?? '',
-          }));
-
-          return NextResponse.json(results, {
-            status: 200,
-            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
-          });
+          return (data ?? []).map((player: any) => ({
+            id: player.id,
+            name: player.name,
+            slug: player.slug,
+            sport: player.sport,
+            position: player.position,
+            grad_year: player.grad_year,
+            school_name: player.schools?.name ?? 'Unknown School',
+            school_slug: player.schools?.slug ?? '',
+          })) as SearchResult[];
         },
-        { maxRetries: 2, baseDelay: 300 }
-      ),
-    NextResponse.json([], { status: 200 }),
-    'API_PLAYERS_SEARCH',
-    { q, sport }
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [] as SearchResult[],
+    'PLAYERS_SEARCH',
+    {}
   );
+
+  return NextResponse.json(results, {
+    status: 200,
+    headers: {
+      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+    },
+  });
 }
