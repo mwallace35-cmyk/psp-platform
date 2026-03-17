@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: {
     default: "PhillySportsPack.com | Philadelphia High School Sports Database",
-    template: "%s | PhillySportsPack.com"
+    template: "%s | PhillySportsPack.com",
   },
   description:
     "Complete Philadelphia high school sports database covering football, basketball, baseball, soccer, lacrosse, track & field, wrestling. Stats, records, championships, and player profiles across 400+ schools and 10,000+ athletes.",
@@ -45,13 +45,28 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "PhillySportsPack.com",
     title: "PhillySportsPack.com | Philadelphia High School Sports Database",
-    description: "Complete Philadelphia high school sports database covering football, basketball, baseball, soccer, lacrosse, track & field, wrestling.",
+    description:
+      "Complete Philadelphia high school sports database covering football, basketball, baseball, soccer, lacrosse, track & field, wrestling.",
     locale: "en_US",
+    url: "https://phillysportspack.com",
+    // â FIX: explicit OG image so shared links render a card, not a blank preview
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "PhillySportsPack.com â Philadelphia High School Sports Database",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PhillySportsPack.com",
-    description: "Complete Philadelphia high school sports database.",
+    site: "@PhillySportsPack",
+    title: "PhillySportsPack.com | Philadelphia High School Sports",
+    description:
+      "Complete Philadelphia high school sports database â stats, records, championships, and player profiles.",
+    // â FIX: explicit Twitter image
+    images: ["/opengraph-image"],
   },
   alternates: {
     canonical: "https://phillysportspack.com",
@@ -75,23 +90,28 @@ export default async function RootLayout({
         {/* Feed autodiscovery */}
         <link rel="alternate" type="application/rss+xml" title="PhillySportsPack RSS" href="/feed" />
         <link rel="alternate" type="application/atom+xml" title="PhillySportsPack Atom" href="/rss" />
+
         {/* Preconnect to Google Fonts for faster font loading */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
         {/* DNS prefetch for Google Analytics and Google Tag Manager */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+
         <Script
           nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: `
-              (function(){try{var t=localStorage.getItem('psp-theme');if(t){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}})()
-            `,
+function(){try{var t=localStorage.getItem('psp-theme');if(t){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}})()
+`,
           }}
         />
+
         {/* Organization and Website JSON-LD */}
         <OrganizationJsonLd />
         <WebSiteJsonLd />
+
         {/* Google Analytics */}
         {gaId && (
           <>
@@ -106,11 +126,11 @@ export default async function RootLayout({
               strategy="afterInteractive"
               dangerouslySetInnerHTML={{
                 __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${gaId}');
-                `,
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaId}');
+`,
               }}
             />
           </>
