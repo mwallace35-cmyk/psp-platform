@@ -7,7 +7,7 @@ interface SearchResult {
   slug: string;
   school_name: string;
   school_slug: string;
-  sport: string;
+  sport: string | null;
   position?: string;
   grad_year?: number;
 }
@@ -34,19 +34,28 @@ export async function GET(request: NextRequest) {
         async () => {
           const supabase = await createClient();
 
-          // Query players with name search — no FK join to avoid ambiguity issues
           const { data: players, error: pErr } = await supabase
             .from('players')
-            .select('id, name, slug, sport, position, grad_year, primary_school_id')
-            .eq('sport', sport)
+            .select('id, name, slug, position, grad_year, primary_school_id')
             .ilike('name', `%${q.trim()}%`)
-            .limit(10);
+            .limit(20);
 
           if (pErr) throw pErr;
           if (!players || players.length === 0) return [] as SearchResult[];
 
-          // Fetch school names for matched players
-          const schoolIds = [...new Set(players.map((p: any) => p.primary_school_id).filter(Boolean))];
+          const playerIds = players.map((p: any) => p.id);
+          const { data: seasons } = await supabase
+            .from('player_seasons')
+            .select('player_id, sport')
+            .in('player_id', playerIds)
+            .eq('sport', sport);
+
+          const validPlayerIds = new Set((seasons ?? []).map((s: any) => s.player_id));
+          const filteredPlayers = players.filter((p: any) => validPlayerIds.has(p.id));
+
+          if (filteredPlayers.length === 0) return [] as SearchResult[];
+
+          const schoolIds = [...new Set(filteredPlayers.map((p: any) => p.primary_school_id).filter(Boolean))];
           let schoolMap: Record<string, { name: string; slug: string }> = {};
 
           if (schoolIds.length > 0) {
@@ -54,17 +63,16 @@ export async function GET(request: NextRequest) {
               .from('schools')
               .select('id, name, slug')
               .in('id', schoolIds);
-
             for (const s of schools ?? []) {
               schoolMap[s.id] = { name: s.name, slug: s.slug };
             }
           }
 
-          return players.map((player: any) => ({
+          return filteredPlayers.slice(0, 10).map((player: any) => ({
             id: player.id,
             name: player.name,
             slug: player.slug,
-            sport: player.sport,
+            sport: sport,
             position: player.position,
             grad_year: player.grad_year,
             school_name: schoolMap[player.primary_school_id]?.name ?? 'Unknown School',
