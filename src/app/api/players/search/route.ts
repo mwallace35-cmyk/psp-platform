@@ -33,27 +33,42 @@ export async function GET(request: NextRequest) {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data, error } = await supabase
+
+          // Query players with name search — no FK join to avoid ambiguity issues
+          const { data: players, error: pErr } = await supabase
             .from('players')
-            .select(
-              `id, name, slug, sport, position, grad_year,
-               schools:schools!players_primary_school_id_fkey(name, slug)`
-            )
+            .select('id, name, slug, sport, position, grad_year, primary_school_id')
             .eq('sport', sport)
             .ilike('name', `%${q.trim()}%`)
             .limit(10);
 
-          if (error) throw error;
+          if (pErr) throw pErr;
+          if (!players || players.length === 0) return [] as SearchResult[];
 
-          return (data ?? []).map((player: any) => ({
+          // Fetch school names for matched players
+          const schoolIds = [...new Set(players.map((p: any) => p.primary_school_id).filter(Boolean))];
+          let schoolMap: Record<string, { name: string; slug: string }> = {};
+
+          if (schoolIds.length > 0) {
+            const { data: schools } = await supabase
+              .from('schools')
+              .select('id, name, slug')
+              .in('id', schoolIds);
+
+            for (const s of schools ?? []) {
+              schoolMap[s.id] = { name: s.name, slug: s.slug };
+            }
+          }
+
+          return players.map((player: any) => ({
             id: player.id,
             name: player.name,
             slug: player.slug,
             sport: player.sport,
             position: player.position,
             grad_year: player.grad_year,
-            school_name: player.schools?.name ?? 'Unknown School',
-            school_slug: player.schools?.slug ?? '',
+            school_name: schoolMap[player.primary_school_id]?.name ?? 'Unknown School',
+            school_slug: schoolMap[player.primary_school_id]?.slug ?? '',
           })) as SearchResult[];
         },
         { maxRetries: 2, baseDelay: 500 }
