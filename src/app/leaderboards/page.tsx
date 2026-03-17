@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'Leaderboards | PhillySportsPack.com',
     description:
       'Top statistical leaders across all Philadelphia high school sports.',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+    images: [{ url: '/opengraph-image',width: 1200, height: 630 }],
   },
 };
 
@@ -116,15 +116,8 @@ export default function LeaderboardsPage() {
                 background: 'var(--psp-surface)',
                 transition: 'transform 0.15s ease, box-shadow 0.15s ease',
               }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
-                (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
-              }}
-            >
+            className="hover:shadow-lg hover:-translate-y-0.5"
+                          >
               {/* Colour bar */}
               <div style={{ height: '4px', background: sport.color }} />
 
