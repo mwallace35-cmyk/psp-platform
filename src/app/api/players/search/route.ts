@@ -49,8 +49,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const schoolIds = [...new Set(players.map((p) => p.primary_school_id).filter(Boolean))];
-    let schoolMap = {};
+    const schoolIds = [...new Set(players.map((p: any) => p.primary_school_id).filter(Boolean))];
+    const schoolMap: Record<string, { name: string; slug: string }> = {};
 
     if (schoolIds.length > 0) {
       const { data: schools } = await supabase
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const results = players.map((player) => ({
+    const results: SearchResult[] = players.map((player: any) => ({
       id: player.id,
       name: player.name,
       slug: player.slug,
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error('PLAYERS_SEARCH error:', err);
     return NextResponse.json(
       { error: 'Search failed', detail: String(err?.message ?? err) },
