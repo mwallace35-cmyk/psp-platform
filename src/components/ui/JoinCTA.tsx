@@ -41,7 +41,7 @@ export default function JoinCTA({ action, context, compact = false }: JoinCTAPro
         Join Free
       </Link>
       <p className="mt-3 text-xs text-slate-400">
-        Free forever · No credit card required
+        Free forever � No credit card required
       </p>
     </div>
   );
