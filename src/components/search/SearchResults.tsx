@@ -114,7 +114,7 @@ export default function SearchResults({
                 onClick={(e) => onRemoveRecent(e, item.href)}
                 className="text-[var(--psp-gray-300)] hover:text-[var(--psp-gray-500)] flex-shrink-0"
               >
-                ×
+                �
               </button>
             </button>
           ))}
