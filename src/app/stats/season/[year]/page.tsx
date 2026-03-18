@@ -15,7 +15,7 @@ interface LeaderRow { slug: string; name: string; school: string; value: number;
 
 async function getSeasonLeaders(year: string) {
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
-  const { data: season } = await supabase.from('seasons').select('id, year').eq('year', parseInt(year)).single();
+  const { data: season } = await supabase.from('seasons').select('id, year_start').eq('year_start', parseInt(year)).single();
   if (!season) return null;
 
   type PlayerJoin = { slug: string; name: string; schools: { name: string } | Array<{ name: string }> | null };
@@ -87,8 +87,8 @@ async function getSeasonLeaders(year: string) {
 async function getAvailableYears(): Promise<number[]> {
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
-    const { data } = await supabase.from('seasons').select('year').order('year', { ascending: false }).limit(20);
-    return (data ?? []).map(s => s.year as number);
+    const { data } = await supabase.from('seasons').select('year_start').order('year_start', { ascending: false }).limit(20);
+    return (data ?? []).map(s => s.year_start as number);
   } catch { return []; }
 }
 
