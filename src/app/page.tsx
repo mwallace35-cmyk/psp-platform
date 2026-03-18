@@ -293,7 +293,7 @@ export default async function HomePage() {
       name: person.person_name,
       team: person.current_org,
       school: schoolName || "Unknown",
-      emoji: "â­",
+      emoji: "⭐",
     };
   });
 
