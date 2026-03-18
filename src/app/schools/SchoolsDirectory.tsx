@@ -509,7 +509,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
           {filtered.length} {filtered.length === 1 ? 'school' : 'schools'}
           {selectedLeagueKey && ` in ${MAIN_LEAGUES.find(l => l.key === selectedLeagueKey)?.name}`}
           {selectedLetter && ` starting with ${selectedLetter}`}
-          {sortMode !== 'alpha' && ` · sorted by ${SORT_OPTIONS.find(o => o.value === sortMode)?.label}`}
+          {sortMode !== 'alpha' && ` � sorted by ${SORT_OPTIONS.find(o => o.value === sortMode)?.label}`}
         </span>
         {(selectedLeagueKey || searchTerm || selectedLetter) && (
           <button
