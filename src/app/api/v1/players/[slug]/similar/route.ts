@@ -10,9 +10,9 @@ export const revalidate = 3600;
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { slug } = params;
+  const { slug } = await params;
   const sport = request.nextUrl.searchParams.get('sport') ?? null;
 
   // Step 1: Look up player by slug
