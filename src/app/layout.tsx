@@ -7,6 +7,8 @@ import { WebVitalsReporter } from "@/app/web-vitals-reporter";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/nav/MobileBottomNav";
+import ScoreTicker from "@/components/home/ScoreTicker";
+import PushNotificationBanner from "@/components/ui/PushNotificationBanner";
 import "./globals.css";
 import "./type-scale.css";
 
@@ -49,13 +51,13 @@ export const metadata: Metadata = {
       "Complete Philadelphia high school sports database covering football, basketball, baseball, soccer, lacrosse, track & field, wrestling.",
     locale: "en_US",
     url: "https://phillysportspack.com",
-    // â FIX: explicit OG image so shared links render a card, not a blank preview
+    // Ã¢ÂÂ FIX: explicit OG image so shared links render a card, not a blank preview
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "PhillySportsPack.com â Philadelphia High School Sports Database",
+        alt: "PhillySportsPack.com Ã¢ÂÂ Philadelphia High School Sports Database",
       },
     ],
   },
@@ -64,8 +66,8 @@ export const metadata: Metadata = {
     site: "@PhillySportsPack",
     title: "PhillySportsPack.com | Philadelphia High School Sports",
     description:
-      "Complete Philadelphia high school sports database â stats, records, championships, and player profiles.",
-    // â FIX: explicit Twitter image
+      "Complete Philadelphia high school sports database Ã¢ÂÂ stats, records, championships, and player profiles.",
+    // Ã¢ÂÂ FIX: explicit Twitter image
     images: ["/opengraph-image"],
   },
   alternates: {
@@ -146,12 +148,14 @@ gtag('config', '${gaId}');
         <WebVitalsReporter />
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <Header />
+          <ScoreTicker />
           <main id="main-content" style={{ flex: 1, paddingBottom: "80px" }} className="md:pb-0">
             {children}
           </main>
           <Footer />
         </div>
         <MobileBottomNav />
+        <PushNotificationBanner />
       </body>
     </html>
   );
