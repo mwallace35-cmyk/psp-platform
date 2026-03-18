@@ -53,8 +53,6 @@ const MORE_ITEMS = [
 
 const RECRUITING_ITEMS = [
   { href: "/recruiting/portal", label: "Recruiter Portal" },
-  { href: "/recruiting/rankings", label: "Rankings" },
-  { href: "/recruiting/commits", label: "Commits" },
 ];
 
 const ACCOUNT_ITEMS = [
@@ -282,7 +280,7 @@ export default function Header() {
                 <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "4px 0" }} />
                 {ALL_SPORTS.slice(0, 3).map((item) => (
                   <Link key={`${item.href}/awards`} href={`${item.href}/awards`} role="menuitem" style={{ fontSize: "0.85em", opacity: 0.85 }}>
-                    🏆 {item.label} Awards
+                    ð {item.label} Awards
                   </Link>
                 ))}
               </div>
@@ -458,7 +456,7 @@ export default function Header() {
             {/* Quick Links Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
               <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Quick Links</div>
-              <Link href="/awards" onClick={handleMobileToggle}>🏆 Awards &amp; Honors</Link>
+              <Link href="/awards" onClick={handleMobileToggle}>ð Awards &amp; Honors</Link>
               <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
               <Link href="/scores" onClick={handleMobileToggle}>Scores</Link>
               <Link href="/articles" onClick={handleMobileToggle}>News</Link>
