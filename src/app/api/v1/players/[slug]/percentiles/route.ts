@@ -31,7 +31,7 @@ export async function GET(_req: Request, { params }: RouteParams) {
   }
 
   // Step 2: fetch football and basketball seasons separately by player_id
-  const [{ data: fbSeasons }, { data: bkSeasons }] = await Promise.all([
+  const [{ data: fbSeasons, error: fbErr }, { data: bkSeasons, error: bkErr }] = await Promise.all([
     supabase
       .from('football_player_seasons')
       .select('rush_yards, rush_tds, pass_yards, pass_tds, rec_yards, rec_tds')
@@ -134,5 +134,5 @@ export async function GET(_req: Request, { params }: RouteParams) {
     });
   }
 
-  return NextResponse.json({ sport: 'none', percentiles: {}, totalPlayers: 0 });
+  return NextResponse.json({ sport: 'none', percentiles: {}, totalPlayers: 0, _debug: { playerId: player.id, playerSlug: player.slug, fbErr: fbErr?.message, bkErr: bkErr?.message, fbCount: fb.length, bkCount: bk.length } });
 }
