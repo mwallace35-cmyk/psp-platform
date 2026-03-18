@@ -201,8 +201,8 @@ function ChampionshipsTab({ champs }: { champs: ChampionshipHubRecord[] }) {
                   {champ.championship_type && (
                     <span className="capitalize">{champ.championship_type.replace(/-/g, " ")}</span>
                   )}
-                  {champ.level && <span> · {champ.level}</span>}
-                  {champ.score && <span> · {champ.score}</span>}
+                  {champ.level && <span> � {champ.level}</span>}
+                  {champ.score && <span> � {champ.score}</span>}
                 </div>
               </div>
               {/* Year */}
