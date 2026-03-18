@@ -282,7 +282,7 @@ export default function ScoresFilters({
                   marginLeft: "2px",
                 }}
               >
-                ×
+                �
               </button>
             </span>
           )}
@@ -314,7 +314,7 @@ export default function ScoresFilters({
                   marginLeft: "2px",
                 }}
               >
-                ×
+                �
               </button>
             </span>
           )}
