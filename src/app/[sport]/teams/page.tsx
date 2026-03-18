@@ -120,8 +120,8 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
               </h1>
               <p className="text-sm text-gray-400 mt-1">
                 {sortedLeagues.reduce((sum, [, t]) => sum + t.length, 0)} teams across {sortedLeagues.length} leagues
-                {closedTeams.length > 0 && ` · ${closedTeams.length} closed programs`}
-                {discontinuedSchools.length > 0 && ` · ${discontinuedSchools.length} discontinued`}
+                {closedTeams.length > 0 && ` � ${closedTeams.length} closed programs`}
+                {discontinuedSchools.length > 0 && ` � ${discontinuedSchools.length} discontinued`}
               </p>
             </div>
           </div>
