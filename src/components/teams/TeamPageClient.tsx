@@ -512,7 +512,7 @@ export default function TeamPageClient({
                     }}>
                       <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>Alumni {i + 1}</div>
                       <div style={{ fontSize: 11, color: "var(--g400)", marginTop: 2 }}>
-                        {alum.destination_school || "TBA"} · {alum.destination_level || "TBA"}
+                        {alum.destination_school || "TBA"} � {alum.destination_level || "TBA"}
                       </div>
                       <div style={{ fontSize: 10, color: "var(--psp-gold)", fontWeight: 600, marginTop: 4 }}>
                         Class of {alum.graduation_year || "TBA"}
