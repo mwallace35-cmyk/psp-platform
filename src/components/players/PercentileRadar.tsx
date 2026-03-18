@@ -92,6 +92,24 @@ export const PercentileRadar = ({ slug, sport }: PercentileRadarProps) => {
     );
   }
 
+  // Ensure data.percentiles exists and is not empty
+  const percentileEntries = data?.percentiles ? Object.entries(data.percentiles) : [];
+
+  if (percentileEntries.length === 0) {
+    return (
+      <div
+        style={{
+          padding: '16px',
+          color: '#666',
+          fontSize: '14px',
+          textAlign: 'center',
+        }}
+      >
+        No percentile data available
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: '20px', fontFamily: 'DM Sans, sans-serif' }}>
       <div
@@ -102,16 +120,19 @@ export const PercentileRadar = ({ slug, sport }: PercentileRadarProps) => {
           fontWeight: '500',
         }}
       >
-        vs. {data.totalPlayers} players
+        vs. {data?.totalPlayers ?? 0} players
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {Object.entries(data.percentiles).map(([key, percentile]) => {
+        {percentileEntries.map(([key, percentile]) => {
           const labelText = key
             .replace(/([A-Z])/g, ' $1')
             .replace(/_/g, ' ')
             .replace(/^./, (str) => str.toUpperCase())
             .trim();
+
+          // Ensure percentile is a valid number
+          const validPercentile = typeof percentile === 'number' && !isNaN(percentile) ? Math.max(0, Math.min(100, percentile)) : 0;
 
           return (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -123,7 +144,7 @@ export const PercentileRadar = ({ slug, sport }: PercentileRadarProps) => {
                   color: navy,
                 }}
               >
-                {labelText}
+                {labelText || 'Unknown'}
               </div>
 
               <div
@@ -139,7 +160,7 @@ export const PercentileRadar = ({ slug, sport }: PercentileRadarProps) => {
                 <div
                   style={{
                     height: '100%',
-                    width: `${percentile}%`,
+                    width: `${validPercentile}%`,
                     backgroundColor: barColor,
                     transition: 'width 0.6s ease-out',
                     display: 'flex',
@@ -148,7 +169,7 @@ export const PercentileRadar = ({ slug, sport }: PercentileRadarProps) => {
                     paddingRight: '8px',
                   }}
                 >
-                  {percentile > 10 && (
+                  {validPercentile > 10 && (
                     <span
                       style={{
                         color: '#fff',
@@ -156,7 +177,7 @@ export const PercentileRadar = ({ slug, sport }: PercentileRadarProps) => {
                         fontWeight: '600',
                       }}
                     >
-                      {percentile}
+                      {validPercentile}
                     </span>
                   )}
                 </div>
@@ -171,7 +192,7 @@ export const PercentileRadar = ({ slug, sport }: PercentileRadarProps) => {
                   color: navy,
                 }}
               >
-                {percentile}
+                {validPercentile}
               </div>
             </div>
           );
