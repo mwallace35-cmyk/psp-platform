@@ -222,7 +222,7 @@ export default function PhillyEverywhereSection({ sport, alumni }: PhillyEverywh
                   </div>
                   {player.position && (
                     <div style={{ fontSize: 11, color: "var(--g400)" }}>
-                      {player.position}{player.classYear ? ` · ${player.classYear}` : ""}
+                      {player.position}{player.classYear ? ` � ${player.classYear}` : ""}
                     </div>
                   )}
                 </div>
