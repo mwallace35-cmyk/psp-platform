@@ -40,7 +40,6 @@ async function getPlayer(slug: string): Promise<PlayerRow | null> {
     .from('players')
     .select(`id, slug, name, graduation_year, positions, schools!primary_school_id(name, slug), football_player_seasons(rush_yards, rush_carries, rush_tds, pass_yards, pass_tds, pass_ints, rec_yards, rec_catches, rec_tds), basketball_player_seasons(points, ppg, rebounds, rpg, assists, apg, games_played), next_level_tracking(current_level, current_org, pro_team, college)`)
     .eq('slug', slug)
-    .is('deleted_at', null)
     .single();
   return data as PlayerRow | null;
 }
