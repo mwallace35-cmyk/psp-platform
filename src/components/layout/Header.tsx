@@ -48,7 +48,6 @@ const MORE_ITEMS = [
   { href: "/glossary", label: "Glossary" },
   { href: "/challenge", label: "Stats Challenge" },
   { href: "/pickem", label: "Pick'em" },
-  { href: "/next-level", label: "Where Are They Now" },
 ];
 
 const RECRUITING_ITEMS = [
@@ -59,8 +58,7 @@ const ACCOUNT_ITEMS = [
   { href: "/signup", label: "Sign Up" },
   { href: "/login", label: "Log In" },
   { href: "/profile", label: "My Profile" },
-  { href: "/profile/schools", label: "My Schools" },
-  { href: "/profile/settings", label: "Settings" },
+  { href: "/my-schools", label: "My Schools" },
 ];
 
 export default function Header() {
@@ -280,7 +278,7 @@ export default function Header() {
                 <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "4px 0" }} />
                 {ALL_SPORTS.slice(0, 3).map((item) => (
                   <Link key={`${item.href}/awards`} href={`${item.href}/awards`} role="menuitem" style={{ fontSize: "0.85em", opacity: 0.85 }}>
-                    🏆 {item.label} Awards
+                    ð {item.label} Awards
                   </Link>
                 ))}
               </div>
@@ -456,7 +454,7 @@ export default function Header() {
             {/* Quick Links Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
               <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Quick Links</div>
-              <Link href="/awards" onClick={handleMobileToggle}>🏆 Awards &amp; Honors</Link>
+              <Link href="/awards" onClick={handleMobileToggle}>ð Awards &amp; Honors</Link>
               <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
               <Link href="/scores" onClick={handleMobileToggle}>Scores</Link>
               <Link href="/articles" onClick={handleMobileToggle}>News</Link>
