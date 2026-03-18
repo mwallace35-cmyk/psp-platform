@@ -393,7 +393,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
             Scores
           </h1>
           <p style={{ fontSize: "1rem", color: "#ccc", marginBottom: "1.5rem" }}>
-            {totalCount} game{totalCount !== 1 ? "s" : ""} · Organized by{" "}
+            {totalCount} game{totalCount !== 1 ? "s" : ""} � Organized by{" "}
             {selectedSport === "football" ? "week" : "month"}
           </p>
 
