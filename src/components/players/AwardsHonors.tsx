@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 
 interface Award {
   id: number;
@@ -22,7 +22,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchAwards = async () => {
@@ -216,7 +216,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
                       fontFamily: 'DM Sans, sans-serif',
                     }}
                   >
-                    <span style={{ fontSize: '20px' }}>🏆</span>
+                    <span style={{ fontSize: '20px' }}>ð</span>
                     <div style={{ flex: 1 }}>
                       <p
                         style={{
