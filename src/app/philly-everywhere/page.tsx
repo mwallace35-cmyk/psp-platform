@@ -136,15 +136,15 @@ export default async function PhillyEverywherePage() {
             <div className="w-body">
               <div style={{ padding: "8px 0", borderBottom: "1px solid var(--g100)" }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "var(--psp-navy)" }}>Marcus Johnson — 3 TDs</div>
-                <div style={{ fontSize: 10, color: "var(--g400)" }}>Malvern Prep vs Episcopal · Yesterday</div>
+                <div style={{ fontSize: 10, color: "var(--g400)" }}>Malvern Prep vs Episcopal � Yesterday</div>
               </div>
               <div style={{ padding: "8px 0", borderBottom: "1px solid var(--g100)" }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "var(--psp-navy)" }}>Jamal Harris — 22 pts, 8 ast</div>
-                <div style={{ fontSize: 10, color: "var(--g400)" }}>Temple vs Villanova · 2 days ago</div>
+                <div style={{ fontSize: 10, color: "var(--g400)" }}>Temple vs Villanova � 2 days ago</div>
               </div>
               <div style={{ padding: "8px 0" }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "var(--psp-navy)" }}>Carlos Rivera — 3-for-4, 2 RBI</div>
-                <div style={{ fontSize: 10, color: "var(--g400)" }}>La Salle vs Malvern Prep · 3 days ago</div>
+                <div style={{ fontSize: 10, color: "var(--g400)" }}>La Salle vs Malvern Prep � 3 days ago</div>
               </div>
             </div>
           </div>
