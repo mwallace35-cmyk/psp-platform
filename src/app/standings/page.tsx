@@ -48,7 +48,7 @@ export default async function StandingsPage() {
           Standings
         </h1>
         <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>\u{1F3C6}</div>
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>{"\u{1F3C6}"}</div>
           <p style={{ color: "var(--psp-muted)", fontSize: "1.1rem", marginBottom: "0.5rem" }}>Standings will be available once the season begins.</p>
           <p style={{ color: "var(--psp-muted)", fontSize: "0.85rem" }}>Check back when games are underway for live W-L records and conference standings.</p>
         </div>
