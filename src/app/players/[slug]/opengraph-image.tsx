@@ -77,11 +77,11 @@ export default async function Image({ params }: PageProps) {
     if (totalRush >= totalPass && totalRush > 0) {
       statLabel = 'Career Rush Yards';
       statValue = totalRush.toLocaleString();
-      if (totalRushTd > 0) statLabel += ` · ${totalRushTd} TDs`;
+      if (totalRushTd > 0) statLabel += ` � ${totalRushTd} TDs`;
     } else if (totalPass > 0) {
       statLabel = 'Career Pass Yards';
       statValue = totalPass.toLocaleString();
-      if (totalPassTd > 0) statLabel += ` · ${totalPassTd} TDs`;
+      if (totalPassTd > 0) statLabel += ` � ${totalPassTd} TDs`;
     }
   } else if (hasBk) {
     sport = 'Basketball';
@@ -114,7 +114,7 @@ export default async function Image({ params }: PageProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
           <div style={{ background: accentColor, color: '#1a2744', fontSize: 20, fontWeight: 800, padding: '6px 18px', borderRadius: 4, letterSpacing: 2, textTransform: 'uppercase' as const }}>{sport}</div>
           <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: 22 }}>{schoolName}</span>
-          {positions ? <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 20 }}>· {positions}</span> : null}
+          {positions ? <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 20 }}>� {positions}</span> : null}
         </div>
         <div style={{ fontSize: 86, fontWeight: 900, color: '#ffffff', lineHeight: 0.95, letterSpacing: -3, marginBottom: 20, maxWidth: 900 }}>{player.name}</div>
         {classYear ? <div style={{ fontSize: 28, color: 'rgba(255,255,255,0.5)', marginBottom: 32 }}>{classYear}</div> : <div style={{ marginBottom: 32 }} />}
