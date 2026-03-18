@@ -13,6 +13,7 @@ import PhillyEverywhere from "@/components/home/PhillyEverywhere";
 import RecentScores from "@/components/home/RecentScores";
 import LatestArticles from "@/components/home/LatestArticles";
 import NewsletterCTA from "@/components/home/NewsletterCTA";
+import TrendingPlayersWidget from "@/components/home/TrendingPlayersWidget";
 import SponsorSlot from "@/components/ads/SponsorSlot";
 
 // ============ DATA FETCHING FUNCTIONS ============
@@ -292,7 +293,7 @@ export default async function HomePage() {
       name: person.person_name,
       team: person.current_org,
       school: schoolName || "Unknown",
-      emoji: "⭐",
+      emoji: "â­",
     };
   });
 
@@ -374,7 +375,11 @@ export default async function HomePage() {
           <SectionDivider />
           <SportNavigationGrid sports={sports} />
 
-          {/* SECTION 4: POTW Spotlight */}
+          {/* SECTION 4: Trending Players */}
+          <SectionDivider />
+          <TrendingPlayersWidget />
+
+          {/* SECTION 5: POTW Spotlight */}
           <SectionDivider />
           <PotwSpotlight nominees={displayPotw} />
 
