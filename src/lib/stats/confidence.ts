@@ -249,23 +249,23 @@ export function getConfidenceInterval(
   if (gamesPlayed < 5) {
     // Extremely uncertain
     confidence = 0.50;
-    marginOfError = Math.abs(statValue * 0.5); // ±50% error margin
+    marginOfError = Math.abs(statValue * 0.5); // �50% error margin
   } else if (gamesPlayed < 10) {
     // Low confidence
     confidence = 0.68;
-    marginOfError = Math.abs(statValue * 0.35); // ±35% error margin
+    marginOfError = Math.abs(statValue * 0.35); // �35% error margin
   } else if (gamesPlayed < 15) {
     // Medium confidence
     confidence = 0.80;
-    marginOfError = Math.abs(statValue * 0.25); // ±25% error margin
+    marginOfError = Math.abs(statValue * 0.25); // �25% error margin
   } else if (gamesPlayed < 20) {
     // High confidence
     confidence = 0.90;
-    marginOfError = Math.abs(statValue * 0.15); // ±15% error margin
+    marginOfError = Math.abs(statValue * 0.15); // �15% error margin
   } else {
     // Very high confidence
     confidence = 0.95;
-    marginOfError = Math.abs(statValue * 0.10); // ±10% error margin
+    marginOfError = Math.abs(statValue * 0.10); // �10% error margin
   }
 
   // For high-variance stats, increase margin of error
