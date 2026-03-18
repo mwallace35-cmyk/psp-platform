@@ -173,7 +173,7 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Coming-soon gate â redirect public visitors, allow IP-allowlisted & cookie-bypassed users
+  // Coming-soon gate — redirect public visitors, allow IP-allowlisted & cookie-bypassed users
   const isPassthrough = PASSTHROUGH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   if (!isPassthrough) {
     // Check IP allowlist (Vercel sets x-forwarded-for)
@@ -194,7 +194,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Public API rate limiting â apply BEFORE admin auth check
+  // Public API rate limiting — apply BEFORE admin auth check
   // These limits are per IP + endpoint, sliding window
   if (pathname.startsWith("/api/v1/")) {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
