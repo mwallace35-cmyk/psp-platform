@@ -14,6 +14,7 @@ function percentile(value: number, allValues: number[]): number {
 
 export async function GET(_req: Request, { params }: RouteParams) {
   const { slug } = await params;
+  const requestedSport = new URL(_req.url).searchParams.get('sport');
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -48,7 +49,7 @@ export async function GET(_req: Request, { params }: RouteParams) {
   const fb = (fbSeasons as FbRow[] | null) ?? [];
   const bk = (bkSeasons as BkRow[] | null) ?? [];
 
-  if (fb.length > 0) {
+  if (requestedSport !== 'basketball' && fb.length > 0) {
     const { data: allFb } = await supabase
       .from('football_player_seasons')
       .select('player_id, rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td')
