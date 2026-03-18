@@ -20,7 +20,7 @@ export async function TrendingPlayersWidget({
   let statLabel = '';
   try {
     if (sport === 'football') {
-      players = (await getFootballLeaders('rushing', limit)) as PlayerData[];
+      players = (await getFootballLeaders('rush_yards', limit)) as PlayerData[];
       statLabel = 'Rush Yds';
     } else {
       players = (await getBasketballLeaders('ppg', limit)) as PlayerData[];
