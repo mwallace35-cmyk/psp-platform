@@ -20,7 +20,7 @@ function AnimatedCounter({
   label: string;
   suffix?: string;
 }) {
-  // â FIX: initialise with `value` so SSR / first paint shows real numbers.
+  // ✅ FIX: initialise with `value` so SSR / first paint shows real numbers.
   // The animation still runs on the client after mount.
   const [displayValue, setDisplayValue] = useState(value);
   const [hasMounted, setHasMounted] = useState(false);
@@ -97,7 +97,7 @@ export default function HeroSectionNew({ stats }: HeroSectionProps) {
           </Link>
         </div>
 
-        {/* Animated Stats â real values on first paint, animate after hydration */}
+        {/* Animated Stats — real values on first paint, animate after hydration */}
         <div className={styles.heroStats}>
           <AnimatedCounter value={stats.players}       label="Players" />
           <AnimatedCounter value={stats.schools}       label="Schools" />
