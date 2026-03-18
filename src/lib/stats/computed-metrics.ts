@@ -84,7 +84,7 @@ export function calculateYardsPerAttempt(
 
 /**
  * Calculates NCAA Passer Efficiency Rating
- * Formula: (8.4 × yards + 330 × TD + 100 × completions - 200 × INT) / attempts
+ * Formula: (8.4 � yards + 330 � TD + 100 � completions - 200 � INT) / attempts
  *
  * This metric was pioneered by Dave Ominski and is standard in college football.
  * A rating of 150+ is elite, 140-150 is excellent, 120-140 is very good.
@@ -179,7 +179,7 @@ export function calculateTDToTurnoverRatio(
 
 /**
  * Calculates completion percentage
- * Formula: (completions / attempts) × 100
+ * Formula: (completions / attempts) � 100
  *
  * @param completions Pass completions
  * @param attempts Pass attempts
@@ -203,7 +203,7 @@ export function calculateCompletionPercentage(
 
 /**
  * Calculates TD percentage (for any position with TDs and carrying attempts)
- * Formula: (touchdowns / touches) × 100
+ * Formula: (touchdowns / touches) � 100
  *
  * @param touchdowns Touchdowns scored
  * @param touches Number of touches (carries, receptions, etc.)
