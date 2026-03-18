@@ -574,7 +574,7 @@ const ClaimProfileButton: React.FC<ClaimProfileButtonProps> = ({
                   onClick={() => setIsOpen(false)}
                   className="text-2xl hover:opacity-70 transition-opacity"
                 >
-                  ×
+                  �
                 </button>
               </div>
 
