@@ -123,7 +123,7 @@ function calculateFootballSeasonStats(seasonGames: MergedGameEntry[]) {
   if (points > 0) stats.push(`${points} pts`);
 
   if (stats.length === 0) return 'No individual stats';
-  return stats.join(' · ');
+  return stats.join(' � ');
 }
 
 // Calculate season stat totals (basketball)
@@ -141,7 +141,7 @@ function calculateBasketballSeasonStats(seasonGames: MergedGameEntry[]) {
   if (boxScoreCount === 0) return 'No individual stats';
 
   const ppg = (totalPoints / boxScoreCount).toFixed(1);
-  return `${totalPoints} pts · ${ppg} ppg`;
+  return `${totalPoints} pts � ${ppg} ppg`;
 }
 
 export default function GameLogAccordion({
