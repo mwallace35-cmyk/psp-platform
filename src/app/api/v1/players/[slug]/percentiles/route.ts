@@ -23,7 +23,6 @@ export async function GET(_req: Request, { params }: RouteParams) {
     .from('players')
     .select('id, slug, football_player_seasons(rush_yards, rush_tds, pass_yards, pass_tds, rec_yards, rec_tds), basketball_player_seasons(points, ppg, rebounds, rpg, assists, apg, games_played)')
     .eq('slug', slug)
-    .is('deleted_at', null)
     .single();
 
   if (!player) return NextResponse.json({ error: 'Player not found' }, { status: 404 });
