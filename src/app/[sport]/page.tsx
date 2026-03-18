@@ -6,6 +6,7 @@ import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher"
 import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScoresStrip";
 import QuickNavigation from "@/components/sport-layouts/QuickNavigation";
 import PlayoffPreview from "@/components/sport-layouts/PlayoffPreview";
+import DesignBibleSections from "@/components/sport-layouts/DesignBibleSections";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
@@ -267,6 +268,9 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
           </div>
         </div>
       </div>
+
+      {/* Design Bible Sections: Top Performers, Recent Scores, Power Rankings */}
+            <DesignBibleSections sport={sport} />
 
       {/* Editorial Intro */}
       <div style={{
