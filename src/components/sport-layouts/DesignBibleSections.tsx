@@ -40,6 +40,7 @@ export default function DesignBibleSections({ sport }: Props) {
         const { data: gData } = await (supabase as any).from('games')
           .select('home_score, away_score, game_date, home_school_id, away_school_id')
           .not('home_score', 'is', null)
+          .gt('home_score', 0)
           .not('home_school_id', 'is', null)
           .order('game_date', { ascending: false })
           .limit(5);
@@ -59,11 +60,11 @@ export default function DesignBibleSections({ sport }: Props) {
 
         // Power rankings
         const { data: prData } = await supabase.from('power_rankings')
-          .select('school_name, rank')
-          .eq('sport', sport)
-          .order('rank', { ascending: true })
+          .select('rank_position, sport_id, school_id, schools!inner(name)')
+          .eq('sport_id', sport)
+          .order('rank_position', { ascending: true })
           .limit(5);
-        if (prData) setRankings(prData.map((r: any) => ({ school: r.school_name, rank: r.rank })));
+        if (prData) setRankings(prData.map((r: any) => ({ school: (Array.isArray(r.schools) ? r.schools[0] : r.schools)?.name ?? 'Unknown', rank: r.rank_position })));
       } catch (e) { console.error('DesignBibleSections error:', e); }
       setLoading(false);
     }
