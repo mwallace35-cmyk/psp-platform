@@ -42,8 +42,9 @@ export default function StatsPage() {
         ))}
       </div>
       <h2 style={{ fontFamily: "var(--font-bebas)", fontSize: "1.5rem", color: "var(--psp-navy)", marginBottom: "1rem" }}>
-        By Sport
+        Browse by Sport
       </h2>
+      <p style={{ color: "var(--text-secondary)", marginBottom: "1rem", marginTop: "-0.5rem" }}>View leaderboards and stat leaders for each sport</p>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
         {SPORTS.map((s) => (
           <Link key={s.href} href={s.href} style={{ display: "inline-flex", alignItems: "center", background: "var(--psp-navy)", color: "#fff", padding: "0.5rem 1rem", borderRadius: "20px", textDecoration: "none", fontSize: "0.9rem" }}>
