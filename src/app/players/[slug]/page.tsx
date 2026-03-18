@@ -217,7 +217,7 @@ export default async function PlayerPage({ params }: PageProps) {
               {footballSeasons.map((s: any) => (
                 <div key={s.season_id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: '#fff', borderRadius: '6px', fontSize: '0.85rem' }}>
                   <span style={{ fontWeight: 600, color: navy }}>{(s.seasons as any)?.year ?? s.season_id}</span>
-                  <span style={{ color: muted }}>{[s.rush_yards ? `${s.rush_yards} rush` : '', s.pass_yards ? `${s.pass_yards} pass` : '', s.rec_yards ? `${s.rec_yards} rec` : ''].filter(Boolean).join(' · ') || '—'}</span>
+                  <span style={{ color: muted }}>{[s.rush_yards ? `${s.rush_yards} rush` : '', s.pass_yards ? `${s.pass_yards} pass` : '', s.rec_yards ? `${s.rec_yards} rec` : ''].filter(Boolean).join(' � ') || '—'}</span>
                 </div>
               ))}
             </div>
@@ -237,7 +237,7 @@ export default async function PlayerPage({ params }: PageProps) {
               {basketballSeasons.map((s: any) => (
                 <div key={s.season_id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: '#fff', borderRadius: '6px', fontSize: '0.85rem' }}>
                   <span style={{ fontWeight: 600, color: navy }}>{(s.seasons as any)?.year ?? s.season_id}</span>
-                  <span style={{ color: muted }}>{[s.ppg ? `${s.ppg} PPG` : '', ].filter(Boolean).join(' · ') || '—'}</span>
+                  <span style={{ color: muted }}>{[s.ppg ? `${s.ppg} PPG` : '', ].filter(Boolean).join(' � ') || '—'}</span>
                 </div>
               ))}
             </div>
