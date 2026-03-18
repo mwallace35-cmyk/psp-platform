@@ -172,7 +172,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
                         {school.name}
                       </div>
                       <div style={{ fontSize: 11, color: "var(--g400)" }}>
-                        {school.city || "Philadelphia"}{school.mascot ? ` · ${school.mascot}` : ""}
+                        {school.city || "Philadelphia"}{school.mascot ? ` � ${school.mascot}` : ""}
                       </div>
                     </div>
                   </Link>
