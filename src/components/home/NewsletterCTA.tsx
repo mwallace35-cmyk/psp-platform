@@ -132,7 +132,7 @@ export default function NewsletterCTA() {
                 <span className="text-xs bg-gold text-navy px-2 py-1 rounded font-bold">BEST VALUE</span>
               </div>
               <p className="text-white/80 font-semibold mb-3">
-                $5/month · Cancel anytime
+                $5/month � Cancel anytime
               </p>
               <ul className="space-y-2 text-white/80 text-sm">
                 {TIERS[1].features.map((feature, idx) => (
