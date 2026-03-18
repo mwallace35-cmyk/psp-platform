@@ -296,7 +296,7 @@ function HandlesTab({
               <div style={{ fontSize: 11, color: 'var(--psp-blue)' }}>
                 @{h.handle}
                 {h.school_name && (
-                  <span style={{ color: 'var(--g400)' }}> · {h.school_name}</span>
+                  <span style={{ color: 'var(--g400)' }}> � {h.school_name}</span>
                 )}
               </div>
               {h.last_fetched_at && (
@@ -552,7 +552,7 @@ function PostsTab({
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>
                 {post.player_name || post.source_handle || 'Tweet'}
                 {post.school_name && (
-                  <span style={{ color: 'var(--g400)', fontWeight: 400 }}> · {post.school_name}</span>
+                  <span style={{ color: 'var(--g400)', fontWeight: 400 }}> � {post.school_name}</span>
                 )}
               </div>
               <div style={{ fontSize: 11, color: 'var(--psp-blue)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
