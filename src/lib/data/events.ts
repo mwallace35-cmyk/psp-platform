@@ -84,7 +84,7 @@ export async function searchAll(query: string, page = 1, pageSize = 30) {
               entity_type: "player",
               entity_id: p.id,
               display_name: p.name,
-              context: [school?.name, p.college, p.pro_team].filter(Boolean).join(" · "),
+              context: [school?.name, p.college, p.pro_team].filter(Boolean).join(" � "),
               url_path: `/football/players/${p.slug}`,
             });
           }
