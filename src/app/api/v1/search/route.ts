@@ -158,7 +158,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
             id: player.id,
             name: player.name,
             slug: player.slug,
-            context: school?.name ? `${school.name} · Player` : "Player",
+            context: school?.name ? `${school.name} � Player` : "Player",
             school: school
               ? {
                   name: school.name,
@@ -194,7 +194,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
             id: coach.id,
             name: coach.name,
             slug: coach.slug,
-            context: school?.name ? `${school.name} · Coach` : "Coach",
+            context: school?.name ? `${school.name} � Coach` : "Coach",
             sport: coach.sport_id,
             school: school
               ? {
