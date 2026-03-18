@@ -50,13 +50,17 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
     fetchAwards();
   }, [playerId, supabase]);
 
-  const awardsByYear = awards.reduce((acc, award) => {
-    if (!acc[award.year]) {
-      acc[award.year] = [];
-    }
-    acc[award.year].push(award);
-    return acc;
-  }, {} as Record<number, Award[]>);
+  // Safe grouping with null check
+  const awardsByYear = (awards ?? []).reduce(
+    (acc, award) => {
+      if (!acc[award.year]) {
+        acc[award.year] = [];
+      }
+      acc[award.year].push(award);
+      return acc;
+    },
+    {} as Record<number, Award[]>
+  );
 
   const sortedYears = Object.keys(awardsByYear)
     .map(Number)
@@ -69,6 +73,9 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
     cardBg: '#f8fafc',
     border: '#e2e8f0',
   };
+
+  // Trophy emoji escaped as Unicode for RSC hydration safety
+  const trophyEmoji = "\u{1F3C6}";
 
   if (loading) {
     return (
@@ -113,8 +120,12 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
         </div>
         <style>{`
           @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% {
+              opacity: 1;
+            }
+            50% {
+              opacity: 0.5;
+            }
           }
         `}</style>
       </section>
@@ -169,8 +180,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
       >
         Awards & Honors
       </h2>
-
-      {awards.length === 0 ? (
+      {!awards || awards.length === 0 ? (
         <p
           style={{
             color: '#6b7280',
@@ -202,7 +212,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
                   gap: '8px',
                 }}
               >
-                {awardsByYear[year].map((award) => (
+                {(awardsByYear[year] ?? []).map((award) => (
                   <div
                     key={award.id}
                     style={{
@@ -216,7 +226,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
                       fontFamily: 'DM Sans, sans-serif',
                     }}
                   >
-                    <span style={{ fontSize: '20px' }}>ð</span>
+                    <span style={{ fontSize: '20px' }}>{trophyEmoji}</span>
                     <div style={{ flex: 1 }}>
                       <p
                         style={{
