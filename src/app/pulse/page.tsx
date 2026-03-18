@@ -705,7 +705,7 @@ export default async function PulsePage() {
                   </div>
                   <p className="text-xs text-gray-400 mt-3 text-center">
                     {activePoll.total_votes.toLocaleString()} votes
-                    {activePoll.ends_at && ` · Ends ${new Date(activePoll.ends_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
+                    {activePoll.ends_at && ` � Ends ${new Date(activePoll.ends_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
                   </p>
                 </div>
               </div>
