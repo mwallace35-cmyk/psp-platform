@@ -82,7 +82,7 @@ export default async function StandingsPage() {
               </thead>
               <tbody>
                 {teams.map((team, i) => {
-                  const school = team.schools as { name: string; slug: string } | null;
+                  const school = (team.schools as Array<{ name: string; slug: string }>)[0] ?? null;
                   return (
                     <tr key={team.school_id} style={{ background: i % 2 === 0 ? '#fff' : 'var(--psp-card-bg)' }}>
                       <td style={{ padding: '0.5rem 0.75rem' }}>
