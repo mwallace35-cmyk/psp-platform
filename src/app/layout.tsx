@@ -51,13 +51,13 @@ export const metadata: Metadata = {
       "Complete Philadelphia high school sports database covering football, basketball, baseball, soccer, lacrosse, track & field, wrestling.",
     locale: "en_US",
     url: "https://phillysportspack.com",
-    // Ã¢ÂÂ FIX: explicit OG image so shared links render a card, not a blank preview
+    // ✅ FIX: explicit OG image so shared links render a card, not a blank preview
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "PhillySportsPack.com Ã¢ÂÂ Philadelphia High School Sports Database",
+        alt: "PhillySportsPack.com — Philadelphia High School Sports Database",
       },
     ],
   },
@@ -66,8 +66,8 @@ export const metadata: Metadata = {
     site: "@PhillySportsPack",
     title: "PhillySportsPack.com | Philadelphia High School Sports",
     description:
-      "Complete Philadelphia high school sports database Ã¢ÂÂ stats, records, championships, and player profiles.",
-    // Ã¢ÂÂ FIX: explicit Twitter image
+      "Complete Philadelphia high school sports database — stats, records, championships, and player profiles.",
+    // ✅ FIX: explicit Twitter image
     images: ["/opengraph-image"],
   },
   alternates: {
