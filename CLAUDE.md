@@ -7,7 +7,7 @@ Mike Wallace (mwallace35@gmail.com). Solo developer building phillysportspack.co
 | Name | What | Status |
 |------|------|--------|
 | **PSP** | phillysportspack.com — Philly HS sports database | Active |
-| **War Room** | 5-phase platform redesign roadmap | In progress — Phase 5 |
+| **War Room** | 5-phase platform redesign roadmap | ✅ ALL PHASES COMPLETE |
 
 → Full details: memory/projects/psp-platform.md
 
@@ -19,7 +19,7 @@ Mike Wallace (mwallace35@gmail.com). Solo developer building phillysportspack.co
 | Phase 2 | Content Engine | ✅ COMPLETE |
 | Phase 3 | Homepage Redesign | ✅ COMPLETE |
 | Phase 4 | Data Innovation | ✅ COMPLETE |
-| Phase 5 | Community & Growth | Pending |
+| Phase 5 | Community & Growth | ✅ COMPLETE |
 
 ## Phase 2 Progress
 | Feature | Status |
@@ -55,6 +55,17 @@ Mike Wallace (mwallace35@gmail.com). Solo developer building phillysportspack.co
 
 **Phase 4 COMPLETE ✅ — compare tool, percentiles API, season leaders all shipped and building green**
 
+## Phase 5 Progress
+| Feature | Status |
+|---------|--------|
+| /coaches/claim page + API | ✅ Done (commits 0c8f5fdb + dce9d6ad) |
+| /recruit page + API | ✅ Done (commits fa721f31 + 33c2a851) |
+| PlayerReactions component + /api/v1/players/[slug]/reactions | ✅ Done (commits d94e8938 + b9f0df6d) |
+| /schools/[slug]/leaderboard (all-time leaders) | ✅ Done (commit 94833cf0) |
+| PlayerReactions + CompareButton wired into player profiles | ✅ Done (commit 31935e64) |
+
+**Phase 5 COMPLETE ✅ — all 5 community features shipped and building green**
+
 ## Build History (Key)
 | Commit | Status | Notes |
 |--------|--------|-------|
@@ -70,6 +81,14 @@ Mike Wallace (mwallace35@gmail.com). Solo developer building phillysportspack.co
 | b10c4103 | ✅ READY | Phase 4: /api/v1/players/[slug]/percentiles (career vs all players) |
 | d1dfa8fc | ✅ READY | Phase 4: CompareButton client component (modal search + navigate) |
 | 673c269e | ✅ READY | Phase 4: /stats/season/[year] leaders page (fixed dynamic column TS error) |
+| 0c8f5fdb | ✅ READY | Phase 5: /coaches/claim page (form → Supabase coach_claims table) |
+| dce9d6ad | ✅ READY | Phase 5: /api/coaches/claim route |
+| fa721f31 | ✅ READY | Phase 5: /recruit page (player recruiting interest signup) |
+| 33c2a851 | ✅ READY | Phase 5: /api/recruit route |
+| d94e8938 | ✅ READY | Phase 5: PlayerReactions component (🔥⭐💪🏆, localStorage + API) |
+| b9f0df6d | ✅ READY | Phase 5: /api/v1/players/[slug]/reactions (GET counts, POST increment) |
+| 94833cf0 | ✅ READY | Phase 5: /schools/[slug]/leaderboard (all-time football + basketball leaders) |
+| 31935e64 | ✅ READY | Phase 5: player profile wired with PlayerReactions + CompareButton |
 
 ## Known TS Pattern — Supabase Joins (CRITICAL)
 When using `.select('table(col1, col2)')` the result type varies by join direction:
@@ -120,6 +139,9 @@ NEVER: `supabase.from('table').select(\`${dynamicCol}, ...\`)` without `as any` 
 | team_seasons | school_id, season_id, sport_id, wins, losses, ties, win_pct, league_wins, league_losses |
 | game_player_stats | 78,171 records — individual game stats |
 | article_mentions | 23,805 records — links articles to players/schools |
+| coach_claims | coach_name, email, phone, school_name, sport, player_list, status, submitted_at |
+| recruiting_interest | first_name, last_name, email, graduation_year, sport, positions, gpa, target_level, highlight_url |
+| player_reactions | player_slug, reaction (fire/star/beast/champ), count, updated_at |
 
 → Full schema: memory/projects/psp-platform.md
 
@@ -137,6 +159,7 @@ NEVER: `supabase.from('table').select(\`${dynamicCol}, ...\`)` without `as any` 
 | VM disk full (ENOSPC) | Write to /mnt/outputs only |
 | GitHub web editor corrupts files | ✅ USE GITHUB API via Chrome javascript_tool fetch() — 100% reliable |
 | Vercel log tools timeout at 60s | Use Chrome to browse Vercel dashboard directly |
+| Supabase tables for Phase 5 | coach_claims, recruiting_interest, player_reactions may need to be created via Supabase dashboard |
 
 ## Preferences
 - Push directly to main branch (no PRs)
