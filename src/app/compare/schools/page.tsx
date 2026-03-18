@@ -149,7 +149,7 @@ function SchoolCompareContent() {
                     onClick={() => removeSchool(slug)}
                     className="font-bold cursor-pointer hover:text-blue-600"
                   >
-                    ×
+                    �
                   </button>
                 </div>
               );
