@@ -29,7 +29,7 @@ async function getSeasonLeaders(year: string) {
     { key: 'rushers',   col: 'rush_yards', title: 'Rush Yards' },
     { key: 'passers',   col: 'pass_yards', title: 'Pass Yards' },
     { key: 'receivers', col: 'rec_yards',  title: 'Rec Yards'  },
-    { key: 'fbTDs',     col: 'rush_tds',   title: 'Rush TDs'   },
+    { key: 'fbTDs',     col: 'rush_td',   title: 'Rush TDs'   },
   ];
   const bkCols = [
     { key: 'scorers',    col: 'points',   title: 'Points'   },
