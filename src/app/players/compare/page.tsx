@@ -17,8 +17,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   };
 }
 
-interface FbSeason { rush_yards: number; rush_carries: number; rush_tds: number; pass_yards: number; pass_tds: number; pass_ints: number; rec_yards: number; rec_catches: number; rec_tds: number; }
-interface BkSeason { points: number; ppg: number; rebounds: number; rpg: number; assists: number; apg: number; games_played: number; }
+interface FbSeason { rush_yards: number; rush_td: number; pass_yards: number; pass_td: number; rec_yards: number; rec_td: number; }
+interface BkSeason { points: number; ppg: number; rebounds: number; assists: number; games_played: number; }
 interface SchoolRef { name: string; slug: string; }
 
 interface PlayerRow {
@@ -47,11 +47,11 @@ async function getPlayer(slug: string): Promise<PlayerRow | null> {
   const [{ data: fbSeasons }, { data: bkSeasons }, { data: nextLevel }] = await Promise.all([
     supabase
       .from('football_player_seasons')
-      .select('rush_yards, rush_carries, rush_tds, pass_yards, pass_tds, pass_ints, rec_yards, rec_catches, rec_tds')
+      .select('rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td')
       .eq('player_id', player.id),
     supabase
       .from('basketball_player_seasons')
-      .select('points, ppg, rebounds, rpg, assists, apg, games_played')
+      .select('points, ppg, rebounds, assists, games_played')
       .eq('player_id', player.id),
     supabase
       .from('next_level_tracking')
@@ -70,15 +70,12 @@ function fbCareer(p: PlayerRow) {
   const seasons = (p.football_player_seasons as unknown as FbSeason[]) ?? [];
   return seasons.reduce((a, s) => ({
     rushYards: a.rushYards + (s.rush_yards ?? 0),
-    rushCarries: a.rushCarries + (s.rush_carries ?? 0),
-    rushTDs: a.rushTDs + (s.rush_tds ?? 0),
+    rushTDs: a.rushTDs + (s.rush_td ?? 0),
     passYards: a.passYards + (s.pass_yards ?? 0),
-    passTDs: a.passTDs + (s.pass_tds ?? 0),
-    passInts: a.passInts + (s.pass_ints ?? 0),
+    passTDs: a.passTDs + (s.pass_td ?? 0),
     recYards: a.recYards + (s.rec_yards ?? 0),
-    recCatches: a.recCatches + (s.rec_catches ?? 0),
-    recTDs: a.recTDs + (s.rec_tds ?? 0),
-  }), { rushYards:0, rushCarries:0, rushTDs:0, passYards:0, passTDs:0, passInts:0, recYards:0, recCatches:0, recTDs:0 });
+    recTDs: a.recTDs + (s.rec_td ?? 0),
+  }), { rushYards:0, rushTDs:0, passYards:0, passTDs:0, recYards:0, recTDs:0 });
 }
 
 function bkCareer(p: PlayerRow) {
@@ -90,9 +87,7 @@ function bkCareer(p: PlayerRow) {
     games: a.games + (s.games_played ?? 0),
   }), { points:0, rebounds:0, assists:0, games:0 });
   const bestPpg = seasons.length ? Math.max(...seasons.map(s => s.ppg ?? 0)) : 0;
-  const bestRpg = seasons.length ? Math.max(...seasons.map(s => s.rpg ?? 0)) : 0;
-  const bestApg = seasons.length ? Math.max(...seasons.map(s => s.apg ?? 0)) : 0;
-  return { ...totals, bestPpg, bestRpg, bestApg };
+  return { ...totals, bestPpg };
 }
 
 function sport(p: PlayerRow): 'football' | 'basketball' | 'none' {
@@ -182,13 +177,10 @@ export default async function ComparePage({ searchParams }: PageProps) {
     statRows = [
       { label:'Rush Yards', a:fa.rushYards, b:fb.rushYards },
       { label:'Rush TDs', a:fa.rushTDs, b:fb.rushTDs },
-      { label:'Rush Carries', a:fa.rushCarries, b:fb.rushCarries },
-      { label:'Pass Yards', a:fa.passYards, b:fb.passYards },
+          { label:'Pass Yards', a:fa.passYards, b:fb.passYards },
       { label:'Pass TDs', a:fa.passTDs, b:fb.passTDs },
-      { label:'Interceptions', a:fa.passInts, b:fb.passInts, higherWins:false },
-      { label:'Rec Yards', a:fa.recYards, b:fb.recYards },
-      { label:'Receptions', a:fa.recCatches, b:fb.recCatches },
-      { label:'Rec TDs', a:fa.recTDs, b:fb.recTDs },
+          { label:'Rec Yards', a:fa.recYards, b:fb.recYards },
+          { label:'Rec TDs', a:fa.recTDs, b:fb.recTDs },
     ];
   } else if (sportA === 'basketball' && sportB === 'basketball') {
     const ba = bkCareer(playerA); const bb = bkCareer(playerB);
@@ -196,10 +188,8 @@ export default async function ComparePage({ searchParams }: PageProps) {
       { label:'Career Points', a:ba.points, b:bb.points },
       { label:'Best PPG', a:ba.bestPpg, b:bb.bestPpg },
       { label:'Career Rebounds', a:ba.rebounds, b:bb.rebounds },
-      { label:'Best RPG', a:ba.bestRpg, b:bb.bestRpg },
-      { label:'Career Assists', a:ba.assists, b:bb.assists },
-      { label:'Best APG', a:ba.bestApg, b:bb.bestApg },
-      { label:'Games Played', a:ba.games, b:bb.games },
+          { label:'Career Assists', a:ba.assists, b:bb.assists },
+          { label:'Games Played', a:ba.games, b:bb.games },
     ];
   }
 
