@@ -13,7 +13,7 @@ const PLACEMENT_STYLES = {
   sidebar: {
     container: 'w-full rounded-lg p-6 text-center border-2 border-gold/30',
     minHeight: 'min-h-[280px]',
-    dimensions: '300×250',
+    dimensions: '300�250',
   },
   banner: {
     container: 'w-full rounded-lg p-4 text-center border-2 border-gold/30',
@@ -67,13 +67,13 @@ export default function SponsorSlot({ placement, sportId }: SponsorSlotProps) {
         {placement === 'sidebar' && (
           <>
             <p className="mb-2">Support Philly sports journalism</p>
-            <p className="text-white/50">300×250</p>
+            <p className="text-white/50">300�250</p>
           </>
         )}
         {placement === 'banner' && (
           <>
             <p className="mb-1">Reach 1000+ daily visitors</p>
-            <p className="text-white/50 text-xs">728×90 (or responsive)</p>
+            <p className="text-white/50 text-xs">728�90 (or responsive)</p>
           </>
         )}
         {placement === 'inline' && (
