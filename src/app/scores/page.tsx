@@ -111,11 +111,11 @@ function groupIntoRounds(
       let label: string;
       if (isPlayoff) {
         playoffRoundNum++;
-        if (playoffRoundNum === 1) label = "Playoffs — Round 1";
-        else if (playoffRoundNum === 2) label = "Playoffs — Quarterfinals";
-        else if (playoffRoundNum === 3) label = "Playoffs — Semifinals";
-        else if (playoffRoundNum === 4) label = "Playoffs — Championship";
-        else label = `Playoffs — Round ${playoffRoundNum}`;
+        if (playoffRoundNum === 1) label = "Playoffs â Round 1";
+        else if (playoffRoundNum === 2) label = "Playoffs â Quarterfinals";
+        else if (playoffRoundNum === 3) label = "Playoffs â Semifinals";
+        else if (playoffRoundNum === 4) label = "Playoffs â Championship";
+        else label = `Playoffs â Round ${playoffRoundNum}`;
       } else {
         regularWeekNum++;
         label = `Week ${regularWeekNum}`;
@@ -152,7 +152,7 @@ function formatDateRange(start: Date, end: Date): string {
   if (start.getTime() === end.getTime()) {
     return start.toLocaleDateString("en-US", { ...opts, weekday: "short" });
   }
-  return `${start.toLocaleDateString("en-US", opts)} – ${end.toLocaleDateString("en-US", opts)}`;
+  return `${start.toLocaleDateString("en-US", opts)} â ${end.toLocaleDateString("en-US", opts)}`;
 }
 
 function formatDate(dateStr: string): string {
@@ -166,9 +166,9 @@ function formatDate(dateStr: string): string {
 
 /**
  * Classify a game into a league bucket based on participating teams.
- * - Both teams same league → that league
- * - One team in a core league, other not → core league team's league
- * - Cross-league → "crossover"
+ * - Both teams same league â that league
+ * - One team in a core league, other not â core league team's league
+ * - Cross-league â "crossover"
  */
 function classifyGameLeague(game: ScoreGame): number | "crossover" | "other" {
   const home = game.home_league_id;
@@ -284,7 +284,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       schoolId = data?.id ?? null;
     }
 
-    // Step 1: Fetch game IDs and scores only (no FK joins — fast)
+    // Step 1: Fetch game IDs and scores only (no FK joins â fast)
     let query = supabase
       .from("games")
       .select(
@@ -294,6 +294,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       .not("home_score", "is", null)
       .not("away_score", "is", null)
       .not("game_date", "is", null)
+      .not("home_school_id", "is", null)
+      .not("away_school_id", "is", null)
       .order("game_date", { ascending: false });
 
     if (!useRoundView) {
@@ -344,7 +346,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
         ...g,
         home_school: home ? { name: home.name, slug: home.slug } : null,
         away_school: away ? { name: away.name, slug: away.slug } : null,
-        seasons: null, // not needed — we already know the season from filters
+        seasons: null, // not needed â we already know the season from filters
         home_league_id: home?.league_id ?? null,
         away_league_id: away?.league_id ?? null,
       };
@@ -391,7 +393,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
             Scores
           </h1>
           <p style={{ fontSize: "1rem", color: "#ccc", marginBottom: "1.5rem" }}>
-            {totalCount} game{totalCount !== 1 ? "s" : ""} · Organized by{" "}
+            {totalCount} game{totalCount !== 1 ? "s" : ""} Â· Organized by{" "}
             {selectedSport === "football" ? "week" : "month"}
           </p>
 
@@ -422,7 +424,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
                 href="/scores"
                 style={{ color: "var(--psp-gold)", textDecoration: "none", fontWeight: 600 }}
               >
-                Clear all filters →
+                Clear all filters â
               </Link>
             </div>
           ) : (
@@ -506,7 +508,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
                 fontSize: "0.9rem",
               }}
             >
-              View Upcoming Schedule →
+              View Upcoming Schedule â
             </Link>
           </div>
         </div>
@@ -584,7 +586,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
               ? "No games found"
               : totalCount <= PAGE_SIZE
               ? `${totalCount} game${totalCount !== 1 ? "s" : ""} found`
-              : `Showing ${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, totalCount)} of ${totalCount} games`}
+              : `Showing ${(currentPage - 1) * PAGE_SIZE + 1}â${Math.min(currentPage * PAGE_SIZE, totalCount)} of ${totalCount} games`}
           </p>
           <Link
             href="/scores/schedule"
@@ -595,7 +597,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
               fontSize: "0.85rem",
             }}
           >
-            Upcoming Schedule →
+            Upcoming Schedule â
           </Link>
         </div>
 
@@ -612,7 +614,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
                 fontWeight: 600,
               }}
             >
-              Clear all filters →
+              Clear all filters â
             </Link>
           </div>
         ) : (
@@ -691,7 +693,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
                       borderRadius: "6px",
                     }}
                   >
-                    ← Previous
+                    â Previous
                   </Link>
                 )}
                 <span style={{ color: "#999", fontSize: "0.85rem" }}>
@@ -710,7 +712,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
                       borderRadius: "6px",
                     }}
                   >
-                    Next →
+                    Next â
                   </Link>
                 )}
               </div>
@@ -826,7 +828,7 @@ function GameCard({
           <span style={{ color: awayWin ? "var(--psp-gold)" : "#999" }}>
             {game.away_score ?? "-"}
           </span>
-          <span style={{ color: "#555", fontSize: "0.85rem" }}>–</span>
+          <span style={{ color: "#555", fontSize: "0.85rem" }}>â</span>
           <span style={{ color: homeWin ? "var(--psp-gold)" : "#999" }}>
             {game.home_score ?? "-"}
           </span>
