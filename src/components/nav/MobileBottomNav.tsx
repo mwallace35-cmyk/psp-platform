@@ -6,13 +6,13 @@ import { usePathname } from 'next/navigation';
 import styles from '@/app/homepage.module.css';
 
 const SPORTS = [
-  { label: 'Football',     slug: 'football',    emoji: 'ð' },
-  { label: 'Basketball',   slug: 'basketball',  emoji: 'ð' },
-  { label: 'Baseball',     slug: 'baseball',    emoji: 'â¾' },
-  { label: 'Soccer',       slug: 'soccer',      emoji: 'â½' },
-  { label: 'Lacrosse',     slug: 'lacrosse',    emoji: 'ð¥' },
-  { label: 'Track & Field',slug: 'track-field', emoji: 'ð' },
-  { label: 'Wrestling',    slug: 'wrestling',   emoji: 'ð¤¼' },
+  { label: 'Football',     slug: 'football',    emoji: '\u00C3\u00B0\u00C2\u009F\u00C2\u008F\u00C2\u0088' },
+  { label: 'Basketball',   slug: 'basketball',  emoji: '\u00C3\u00B0\u00C2\u009F\u00C2\u008F\u00C2\u0080' },
+  { label: 'Baseball',     slug: 'baseball',    emoji: '\u00C3\u00A2\u00C2\u009A\u00C2\u00BE' },
+  { label: 'Soccer',       slug: 'soccer',      emoji: '\u00C3\u00A2\u00C2\u009A\u00C2\u00BD' },
+  { label: 'Lacrosse',     slug: 'lacrosse',    emoji: '\u00C3\u00B0\u00C2\u009F\u00C2\u00A5\u00C2\u008D' },
+  { label: 'Track & Field',slug: 'track-field', emoji: '\u00C3\u00B0\u00C2\u009F\u00C2\u008F\u00C2\u0083' },
+  { label: 'Wrestling',    slug: 'wrestling',   emoji: '\u00C3\u00B0\u00C2\u009F\u00C2\u00A4\u00C2\u00BC' },
 ];
 
 export default function MobileBottomNav() {
@@ -48,11 +48,11 @@ export default function MobileBottomNav() {
           className={`${styles.mobileNavItem} ${pathname === '/' ? styles.mobileNavItemActive : ''}`}
           title="Home"
         >
-          <span className={styles.mobileNavIcon}>ð </span>
+          <span className={styles.mobileNavIcon}>{'\u00C3\u00B0\u00C2\u009F\u00C2\u008F\u00C2\u00A0'}</span>
           <span className={styles.mobileNavLabel}>Home</span>
         </Link>
 
-        {/* Sports â opens sport picker sheet instead of /football */}
+        {/* Sports \u00C3\u00A2\u00C2\u0080\u00C2\u0094 opens sport picker sheet instead of /football */}
         <button
           onClick={() => { setIsSportPickerOpen(true); setIsMenuOpen(false); }}
           className={`${styles.mobileNavItem} ${isSportActive ? styles.mobileNavItemActive : ''}`}
@@ -60,7 +60,7 @@ export default function MobileBottomNav() {
           aria-haspopup="dialog"
           aria-expanded={isSportPickerOpen}
         >
-          <span className={styles.mobileNavIcon}>ð</span>
+          <span className={styles.mobileNavIcon}>{'\u00C3\u00B0\u00C2\u009F\u00C2\u008F\u00C2\u0086'}</span>
           <span className={styles.mobileNavLabel}>Sports</span>
         </button>
 
@@ -70,7 +70,7 @@ export default function MobileBottomNav() {
           className={`${styles.mobileNavItem} ${isActive('/community') ? styles.mobileNavItemActive : ''}`}
           title="Community"
         >
-          <span className={styles.mobileNavIcon}>ð¥</span>
+          <span className={styles.mobileNavIcon}>{'\u00C3\u00B0\u00C2\u009F\u00C2\u0091\u00C2\u00A5'}</span>
           <span className={styles.mobileNavLabel}>Community</span>
         </Link>
 
@@ -80,7 +80,7 @@ export default function MobileBottomNav() {
           className={`${styles.mobileNavItem} ${isActive('/my-schools') ? styles.mobileNavItemActive : ''}`}
           title="My Schools"
         >
-          <span className={styles.mobileNavIcon}>â</span>
+          <span className={styles.mobileNavIcon}>{'\u00C3\u00A2\u00C2\u0098\u00C2\u0085'}</span>
           <span className={styles.mobileNavLabel}>My Schools</span>
         </Link>
 
@@ -92,7 +92,7 @@ export default function MobileBottomNav() {
           aria-haspopup="dialog"
         aria-expanded={isMenuOpen}
         >
-          <span className={styles.mobileNavIcon}>â°</span>
+          <span className={styles.mobileNavIcon}>{'\u00C3\u00A2\u00C2\u0098\u00C2\u00B0'}</span>
           <span className={styles.mobileNavLabel}>Menu</span>
         </button>
       </nav>
@@ -115,7 +115,7 @@ export default function MobileBottomNav() {
               onClick={() => setIsSportPickerOpen(false)}
               aria-label="Close sport picker"
             >
-              â
+              \u00C3\u00A2\u00C2\u009C\u00C2\u0095
             </button>
             <h2 className={styles.mobileMenuTitle}>Choose a Sport</h2>
             <nav className={styles.mobileMenuNav} aria-label="Sports navigation">
@@ -153,27 +153,27 @@ export default function MobileBottomNav() {
               onClick={() => setIsMenuOpen(false)}
               aria-label="Close menu"
             >
-               â
+               \u00C3\u00A2\u00C2\u009C\u00C2\u0095
             </button>
             <h2 className={styles.mobileMenuTitle}>Menu</h2>
             <nav className={styles.mobileMenuNav}>
               <Link href="/" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
-                <span>ð </span><span>Home</span>
+                <span>{'\u00C3\u00B0\u00C2\u009F\u00C2\u008F\u00C2\u00A0'}</span><span>Home</span>
               </Link>
               <Link href="/schools" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
-                <span>ð«</span><span>Schools</span>
+                <span>{'\u00C3\u00B0\u00C2\u009F\u00C2\u008F\u00C2\u00AB'}</span><span>Schools</span>
               </Link>
               <Link href="/scores" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
-                <span>ð</span><span>Scores</span>
+                <span>{'\u00C3\u00B0\u00C2\u009F\u00C2\u008E\u00C2\u008A'}</span><span>Scores</span>
               </Link>
               <Link href="/leaderboards" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
-                <span>ð</span><span>Leaderboards</span>
+                <span>{'\u00C3\u00B0\u00C2\u009F\u00C2\u008F\u00C2\u0085'}</span><span>Leaderboards</span>
               </Link>
               <Link href="/pulse" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
-                <span>â¡</span><span>The Pulse</span>
+                <span>{'\u00C3\u00A2\u00C2\u009A\u00C2\u00A1'}</span><span>The Pulse</span>
               </Link>
               <Link href="/search" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
-                <span>ð</span><span>Search</span>
+                <span>{'\u00C3\u00B0\u00C2\u009F\u00C2\u0094\u00C2\u008D'}</span><span>Search</span>
               </Link>
             </nav>
           </div>
