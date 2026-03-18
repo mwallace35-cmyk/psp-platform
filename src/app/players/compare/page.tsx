@@ -36,12 +36,34 @@ async function getPlayer(slug: string): Promise<PlayerRow | null> {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-  const { data } = await supabase
+  // Step 1: get player and school — schools!primary_school_id uses explicit FK hint, safe
+  const { data: player } = await supabase
     .from('players')
-    .select(`id, slug, name, graduation_year, positions, schools!primary_school_id(name, slug), football_player_seasons(rush_yards, rush_carries, rush_tds, pass_yards, pass_tds, pass_ints, rec_yards, rec_catches, rec_tds), basketball_player_seasons(points, ppg, rebounds, rpg, assists, apg, games_played), next_level_tracking(current_level, current_org, pro_team, college)`)
+    .select('id, slug, name, graduation_year, positions, schools!primary_school_id(name, slug)')
     .eq('slug', slug)
     .single();
-  return data as PlayerRow | null;
+  if (!player) return null;
+  // Step 2: fetch season/tracking data separately to avoid PostgREST FK ambiguity
+  const [{ data: fbSeasons }, { data: bkSeasons }, { data: nextLevel }] = await Promise.all([
+    supabase
+      .from('football_player_seasons')
+      .select('rush_yards, rush_carries, rush_tds, pass_yards, pass_tds, pass_ints, rec_yards, rec_catches, rec_tds')
+      .eq('player_id', player.id),
+    supabase
+      .from('basketball_player_seasons')
+      .select('points, ppg, rebounds, rpg, assists, apg, games_played')
+      .eq('player_id', player.id),
+    supabase
+      .from('next_level_tracking')
+      .select('current_level, current_org, pro_team, college')
+      .eq('player_id', player.id),
+  ]);
+  return {
+    ...player,
+    football_player_seasons: fbSeasons ?? [],
+    basketball_player_seasons: bkSeasons ?? [],
+    next_level_tracking: nextLevel ?? [],
+  } as PlayerRow;
 }
 
 function fbCareer(p: PlayerRow) {
