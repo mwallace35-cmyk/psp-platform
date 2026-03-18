@@ -106,7 +106,7 @@ export default function SimilarPlayers({ slug, sport }: SimilarPlayersProps) {
     fetchSimilarPlayers();
   }, [slug, sport]);
 
-  const similarPlayers = data?.similar?.slice(0, 5) || [];
+  const similarPlayers = data?.similar?.slice(0, 5) ?? [];
   const hasPlayers = similarPlayers.length > 0;
 
   return (
@@ -185,7 +185,7 @@ export default function SimilarPlayers({ slug, sport }: SimilarPlayersProps) {
                     fontFamily: 'DM Sans, sans-serif',
                   }}
                 >
-                  {player.name}
+                  {player.name ?? 'Unknown'}
                 </a>
               </Link>
 
@@ -200,9 +200,9 @@ export default function SimilarPlayers({ slug, sport }: SimilarPlayersProps) {
                 }}
               >
                 <div>
-                  <span style={{ color: DESIGN_TOKENS.textMuted }}>School:</span> {player.school_name}
+                  <span style={{ color: DESIGN_TOKENS.textMuted }}>School:</span> {player.school_name ?? 'N/A'}
                 </div>
-                {player.positions.length > 0 && (
+                {player.positions?.length > 0 && (
                   <div>
                     <span style={{ color: DESIGN_TOKENS.textMuted }}>Position:</span> {player.positions.join(', ')}
                   </div>
@@ -220,7 +220,7 @@ export default function SimilarPlayers({ slug, sport }: SimilarPlayersProps) {
                 }}
               >
                 <div>
-                  <span style={{ color: DESIGN_TOKENS.textMuted }}>Stat:</span> {player.primary_stat_value}
+                  <span style={{ color: DESIGN_TOKENS.textMuted }}>Stat:</span> {player.primary_stat_value ?? 0}
                 </div>
               </div>
 
@@ -236,7 +236,7 @@ export default function SimilarPlayers({ slug, sport }: SimilarPlayersProps) {
                   }}
                 >
                   <span>Similarity</span>
-                  <span>{Math.round(player.similarity_score)}%</span>
+                  <span>{Math.round(player.similarity_score ?? 0)}%</span>
                 </div>
                 <div
                   style={{
@@ -250,7 +250,7 @@ export default function SimilarPlayers({ slug, sport }: SimilarPlayersProps) {
                   <div
                     style={{
                       height: '100%',
-                      width: `${player.similarity_score}%`,
+                      width: `${player.similarity_score ?? 0}%`,
                       backgroundColor: DESIGN_TOKENS.gold,
                       transition: 'width 0.3s ease',
                     }}
