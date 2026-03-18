@@ -10,7 +10,6 @@ const SECTIONS = [
   { href: "/leaderboards", label: "Leaderboards", desc: "Top performers across all sports" },
   { href: "/leaderboards/trending", label: "Trending Players", desc: "Players gaining the most attention" },
   { href: "/standings", label: "Standings", desc: "Current season W-L records" },
-  { href: "/football/efficiency", label: "Football Efficiency", desc: "YPC, completion %, TD:INT ratio" },
   { href: "/history", label: "PSP History", desc: "This week in Philadelphia sports history" },
   { href: "/schools", label: "Schools", desc: "Browse all 400+ Philadelphia schools" },
 ];
