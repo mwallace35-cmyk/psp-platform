@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import PlayerReactions from '@/components/players/PlayerReactions';
 import CompareButton from '@/components/players/CompareButton';
-import PercentileRadar from '@/components/players/PercentileRadar';
+import { PercentileRadar } from '@/components/players/PercentileRadar';
 import SimilarPlayers from '@/components/players/SimilarPlayers';
 import AwardsHonors from '@/components/players/AwardsHonors';
 
@@ -73,10 +73,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { player, school } = data;
   return {
     title: `${player.name} | ${school?.name ?? 'PhillySportsPack'}`,
-    description: `${player.name} â ${school?.name ?? 'Philadelphia'} athlete profile. Stats, career history, and highlights. Class of ${player.graduation_year ?? 'N/A'}.`,
+    description: `${player.name} Ã¢ÂÂ ${school?.name ?? 'Philadelphia'} athlete profile. Stats, career history, and highlights. Class of ${player.graduation_year ?? 'N/A'}.`,
     openGraph: {
       title: `${player.name} | PhillySportsPack`,
-      description: `${player.name} â ${school?.name ?? 'Philadelphia'}, Class of ${player.graduation_year ?? 'N/A'}`,
+      description: `${player.name} Ã¢ÂÂ ${school?.name ?? 'Philadelphia'}, Class of ${player.graduation_year ?? 'N/A'}`,
       images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
     },
   };
@@ -201,7 +201,7 @@ export default async function PlayerPage({ params }: PageProps) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
         {footballSeasons.length > 0 && (
           <div style={{ background: card, borderRadius: '12px', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
-            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>ð FOOTBALL CAREER</h2>
+            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>Ã°ÂÂÂ FOOTBALL CAREER</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem', marginBottom: '1.25rem' }}>
               {(fbTotals.rush_yards ?? 0) > 0 && statBox(fbTotals.rush_yards, 'Rush Yds')}
               {(fbTotals.rush_td ?? 0) > 0 && statBox(fbTotals.rush_td, 'Rush TDs')}
@@ -215,7 +215,7 @@ export default async function PlayerPage({ params }: PageProps) {
               {footballSeasons.map((s: any) => (
                 <div key={s.season_id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: '#fff', borderRadius: '6px', fontSize: '0.85rem' }}>
                   <span style={{ fontWeight: 600, color: navy }}>{(s.seasons as any)?.year ?? s.season_id}</span>
-                  <span style={{ color: muted }}>{[s.rush_yards ? `${s.rush_yards} rush` : '', s.pass_yards ? `${s.pass_yards} pass` : '', s.rec_yards ? `${s.rec_yards} rec` : ''].filter(Boolean).join(' Â· ') || 'â'}</span>
+                  <span style={{ color: muted }}>{[s.rush_yards ? `${s.rush_yards} rush` : '', s.pass_yards ? `${s.pass_yards} pass` : '', s.rec_yards ? `${s.rec_yards} rec` : ''].filter(Boolean).join(' ÃÂ· ') || 'Ã¢ÂÂ'}</span>
                 </div>
               ))}
             </div>
@@ -224,7 +224,7 @@ export default async function PlayerPage({ params }: PageProps) {
 
         {basketballSeasons.length > 0 && (
           <div style={{ background: card, borderRadius: '12px', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
-            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>ð BASKETBALL CAREER</h2>
+            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>Ã°ÂÂÂ BASKETBALL CAREER</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem', marginBottom: '1.25rem' }}>
               {(bkTotals.points ?? 0) > 0 && statBox(bkTotals.points, 'Points')}
               {(bkTotals.rebounds ?? 0) > 0 && statBox(bkTotals.rebounds, 'Rebounds')}
@@ -235,7 +235,7 @@ export default async function PlayerPage({ params }: PageProps) {
               {basketballSeasons.map((s: any) => (
                 <div key={s.season_id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: '#fff', borderRadius: '6px', fontSize: '0.85rem' }}>
                   <span style={{ fontWeight: 600, color: navy }}>{(s.seasons as any)?.year ?? s.season_id}</span>
-                  <span style={{ color: muted }}>{[s.ppg ? `${s.ppg} PPG` : '', ].filter(Boolean).join(' Â· ') || 'â'}</span>
+                  <span style={{ color: muted }}>{[s.ppg ? `${s.ppg} PPG` : '', ].filter(Boolean).join(' ÃÂ· ') || 'Ã¢ÂÂ'}</span>
                 </div>
               ))}
             </div>
@@ -244,11 +244,11 @@ export default async function PlayerPage({ params }: PageProps) {
 
         {proTracking && (
           <div style={{ background: card, borderRadius: '12px', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
-            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>â­ CAREER TRAJECTORY</h2>
+            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>Ã¢Â­Â CAREER TRAJECTORY</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {proTracking.college && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem', background: '#fff', borderRadius: '8px' }}>
-                  <span style={{ fontSize: '1.4rem' }}>ð</span>
+                  <span style={{ fontSize: '1.4rem' }}>Ã°ÂÂÂ</span>
                   <div>
                     <div style={{ fontSize: '0.65rem', color: muted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>College</div>
                     <div style={{ fontWeight: 700, color: navy }}>{proTracking.college}</div>
@@ -258,7 +258,7 @@ export default async function PlayerPage({ params }: PageProps) {
               )}
               {proTracking.pro_team && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem', background: '#fff', borderRadius: '8px' }}>
-                  <span style={{ fontSize: '1.4rem' }}>ð</span>
+                  <span style={{ fontSize: '1.4rem' }}>Ã°ÂÂÂ</span>
                   <div>
                     <div style={{ fontSize: '0.65rem', color: muted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{proTracking.pro_league ?? 'Pro'}</div>
                     <div style={{ fontWeight: 700, color: navy }}>{proTracking.pro_team}</div>
@@ -272,7 +272,7 @@ export default async function PlayerPage({ params }: PageProps) {
 
         {articles.length > 0 && (
           <div style={{ background: card, borderRadius: '12px', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
-            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>ð° IN THE NEWS</h2>
+            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>Ã°ÂÂÂ° IN THE NEWS</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
               {articles.map((article: any) => (
                 <Link key={article.id} href={`/news/${article.slug}`} style={{ display: 'block', padding: '0.75rem', background: '#fff', borderRadius: '8px', textDecoration: 'none', border: '1px solid #e5e7eb' }}>
@@ -303,7 +303,7 @@ export default async function PlayerPage({ params }: PageProps) {
       {/* Awards & Honors */}
       <AwardsHonors playerId={player.id} />
 
-            â All {school.name} Athletes
+            Ã¢ÂÂ All {school.name} Athletes
           </Link>
         </div>
       )}
