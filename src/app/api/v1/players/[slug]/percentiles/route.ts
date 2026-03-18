@@ -31,19 +31,19 @@ export async function GET(_req: Request, { params }: RouteParams) {
   }
 
   // Step 2: fetch football and basketball seasons separately by player_id
-  const [{ data: fbSeasons, error: fbErr }, { data: bkSeasons, error: bkErr }] = await Promise.all([
+  const [{ data: fbSeasons }, { data: bkSeasons }] = await Promise.all([
     supabase
       .from('football_player_seasons')
-      .select('rush_yards, rush_tds, pass_yards, pass_tds, rec_yards, rec_tds')
+      .select('rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td')
       .eq('player_id', player.id),
     supabase
       .from('basketball_player_seasons')
-      .select('points, ppg, rebounds, rpg, assists, apg, games_played')
+      .select('points, ppg, rebounds, assists, games_played')
       .eq('player_id', player.id),
   ]);
 
-  type FbRow = { rush_yards: number; rush_tds: number; pass_yards: number; pass_tds: number; rec_yards: number; rec_tds: number };
-  type BkRow = { points: number; ppg: number; rebounds: number; rpg: number; assists: number; apg: number; games_played: number };
+  type FbRow = { rush_yards: number; rush_td: number; pass_yards: number; pass_td: number; rec_yards: number; rec_td: number };
+  type BkRow = { points: number; ppg: number; rebounds: number; assists: number; games_played: number };
 
   const fb = (fbSeasons as FbRow[] | null) ?? [];
   const bk = (bkSeasons as BkRow[] | null) ?? [];
@@ -51,43 +51,43 @@ export async function GET(_req: Request, { params }: RouteParams) {
   if (fb.length > 0) {
     const { data: allFb } = await supabase
       .from('football_player_seasons')
-      .select('player_id, rush_yards, rush_tds, pass_yards, pass_tds, rec_yards, rec_tds')
+      .select('player_id, rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td')
       .gt('rush_yards', 0);
 
     if (!allFb) return NextResponse.json({ error: 'Could not load data' }, { status: 500 });
 
-    type FbTotal = { rush_yards: number; rush_tds: number; pass_yards: number; pass_tds: number; rec_yards: number; rec_tds: number };
+    type FbTotal = { rush_yards: number; rush_td: number; pass_yards: number; pass_td: number; rec_yards: number; rec_td: number };
     const totals: Record<string, FbTotal> = {};
     for (const row of allFb) {
       const pid = String(row.player_id);
-      if (!totals[pid]) totals[pid] = { rush_yards: 0, rush_tds: 0, pass_yards: 0, pass_tds: 0, rec_yards: 0, rec_tds: 0 };
+      if (!totals[pid]) totals[pid] = { rush_yards: 0, rush_td: 0, pass_yards: 0, pass_td: 0, rec_yards: 0, rec_td: 0 };
       totals[pid].rush_yards += row.rush_yards ?? 0;
-      totals[pid].rush_tds += row.rush_tds ?? 0;
+      totals[pid].rush_td += row.rush_td ?? 0;
       totals[pid].pass_yards += row.pass_yards ?? 0;
-      totals[pid].pass_tds += row.pass_tds ?? 0;
+      totals[pid].pass_td += row.pass_td ?? 0;
       totals[pid].rec_yards += row.rec_yards ?? 0;
-      totals[pid].rec_tds += row.rec_tds ?? 0;
+      totals[pid].rec_td += row.rec_td ?? 0;
     }
     const allPlayers = Object.values(totals);
     const myTotal = fb.reduce((a, s) => ({
       rush_yards: a.rush_yards + (s.rush_yards ?? 0),
-      rush_tds: a.rush_tds + (s.rush_tds ?? 0),
+      rush_td: a.rush_td + (s.rush_td ?? 0),
       pass_yards: a.pass_yards + (s.pass_yards ?? 0),
-      pass_tds: a.pass_tds + (s.pass_tds ?? 0),
+      pass_td: a.pass_td + (s.pass_td ?? 0),
       rec_yards: a.rec_yards + (s.rec_yards ?? 0),
-      rec_tds: a.rec_tds + (s.rec_tds ?? 0),
-    }), { rush_yards: 0, rush_tds: 0, pass_yards: 0, pass_tds: 0, rec_yards: 0, rec_tds: 0 });
+      rec_td: a.rec_td + (s.rec_td ?? 0),
+    }), { rush_yards: 0, rush_td: 0, pass_yards: 0, pass_td: 0, rec_yards: 0, rec_td: 0 });
 
     return NextResponse.json({
       sport: 'football',
       totalPlayers: allPlayers.length,
       percentiles: {
         rushYards: percentile(myTotal.rush_yards, allPlayers.map(p => p.rush_yards)),
-        rushTDs: percentile(myTotal.rush_tds, allPlayers.map(p => p.rush_tds)),
+        rushTDs: percentile(myTotal.rush_td, allPlayers.map(p => p.rush_td)),
         passYards: percentile(myTotal.pass_yards, allPlayers.map(p => p.pass_yards)),
-        passTDs: percentile(myTotal.pass_tds, allPlayers.map(p => p.pass_tds)),
+        passTDs: percentile(myTotal.pass_td, allPlayers.map(p => p.pass_td)),
         recYards: percentile(myTotal.rec_yards, allPlayers.map(p => p.rec_yards)),
-        recTDs: percentile(myTotal.rec_tds, allPlayers.map(p => p.rec_tds)),
+        recTDs: percentile(myTotal.rec_td, allPlayers.map(p => p.rec_td)),
       },
       careerTotals: myTotal,
     });
@@ -96,7 +96,7 @@ export async function GET(_req: Request, { params }: RouteParams) {
   if (bk.length > 0) {
     const { data: allBk } = await supabase
       .from('basketball_player_seasons')
-      .select('player_id, points, ppg, rebounds, rpg, assists, apg, games_played')
+      .select('player_id, points, ppg, rebounds, assists, games_played')
       .gt('points', 0);
 
     if (!allBk) return NextResponse.json({ error: 'Could not load data' }, { status: 500 });
@@ -134,5 +134,5 @@ export async function GET(_req: Request, { params }: RouteParams) {
     });
   }
 
-  return NextResponse.json({ sport: 'none', percentiles: {}, totalPlayers: 0, _debug: { playerId: player.id, playerSlug: player.slug, fbErr: fbErr?.message, bkErr: bkErr?.message, fbCount: fb.length, bkCount: bk.length } });
+  return NextResponse.json({ sport: 'none', percentiles: {}, totalPlayers: 0 });
 }
