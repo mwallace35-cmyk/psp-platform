@@ -36,12 +36,12 @@ async function getPlayerData(slug: string) {
     supabase.from('schools').select('id, name, slug').eq('id', player.primary_school_id).single(),
     supabase
       .from('football_player_seasons')
-      .select('player_id, season_id, rush_carries, rush_yards, rush_tds, pass_completions, pass_attempts, pass_yards, pass_tds, interceptions, rec_catches, rec_yards, rec_tds, seasons(year)')
+      .select('player_id, season_id, rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td, seasons(year_start, label)')
       .eq('player_id', player.id)
       .order('season_id', { ascending: false }),
     supabase
       .from('basketball_player_seasons')
-      .select('player_id, season_id, points, ppg, rebounds, rpg, assists, apg, games_played, seasons(year)')
+      .select('player_id, season_id, points, ppg, rebounds, assists, games_played, seasons(year_start, label)')
       .eq('player_id', player.id)
       .order('season_id', { ascending: false }),
     supabase.from('next_level_tracking').select('*').eq('player_id', player.id).maybeSingle(),
@@ -98,11 +98,11 @@ export default async function PlayerPage({ params }: PageProps) {
   const fbTotals = footballSeasons.reduce(
     (acc: any, s: any) => ({
       rush_yards: (acc.rush_yards ?? 0) + (s.rush_yards ?? 0),
-      rush_tds: (acc.rush_tds ?? 0) + (s.rush_tds ?? 0),
+      rush_td: (acc.rush_td ?? 0) + (s.rush_td ?? 0),
       pass_yards: (acc.pass_yards ?? 0) + (s.pass_yards ?? 0),
-      pass_tds: (acc.pass_tds ?? 0) + (s.pass_tds ?? 0),
+      pass_td: (acc.pass_td ?? 0) + (s.pass_td ?? 0),
       rec_yards: (acc.rec_yards ?? 0) + (s.rec_yards ?? 0),
-      rec_tds: (acc.rec_tds ?? 0) + (s.rec_tds ?? 0),
+      rec_td: (acc.rec_td ?? 0) + (s.rec_td ?? 0),
     }),
     {}
   );
@@ -201,11 +201,11 @@ export default async function PlayerPage({ params }: PageProps) {
             <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>ð FOOTBALL CAREER</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem', marginBottom: '1.25rem' }}>
               {(fbTotals.rush_yards ?? 0) > 0 && statBox(fbTotals.rush_yards, 'Rush Yds')}
-              {(fbTotals.rush_tds ?? 0) > 0 && statBox(fbTotals.rush_tds, 'Rush TDs')}
+              {(fbTotals.rush_td ?? 0) > 0 && statBox(fbTotals.rush_td, 'Rush TDs')}
               {(fbTotals.pass_yards ?? 0) > 0 && statBox(fbTotals.pass_yards, 'Pass Yds')}
-              {(fbTotals.pass_tds ?? 0) > 0 && statBox(fbTotals.pass_tds, 'Pass TDs')}
+              {(fbTotals.pass_td ?? 0) > 0 && statBox(fbTotals.pass_td, 'Pass TDs')}
               {(fbTotals.rec_yards ?? 0) > 0 && statBox(fbTotals.rec_yards, 'Rec Yds')}
-              {(fbTotals.rec_tds ?? 0) > 0 && statBox(fbTotals.rec_tds, 'Rec TDs')}
+              {(fbTotals.rec_td ?? 0) > 0 && statBox(fbTotals.rec_td, 'Rec TDs')}
             </div>
             <h3 style={{ fontSize: '0.75rem', fontWeight: 700, color: muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.625rem' }}>By Season</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
@@ -232,7 +232,7 @@ export default async function PlayerPage({ params }: PageProps) {
               {basketballSeasons.map((s: any) => (
                 <div key={s.season_id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: '#fff', borderRadius: '6px', fontSize: '0.85rem' }}>
                   <span style={{ fontWeight: 600, color: navy }}>{(s.seasons as any)?.year ?? s.season_id}</span>
-                  <span style={{ color: muted }}>{[s.ppg ? `${s.ppg} PPG` : '', s.rpg ? `${s.rpg} RPG` : '', s.apg ? `${s.apg} APG` : ''].filter(Boolean).join(' Â· ') || 'â'}</span>
+                  <span style={{ color: muted }}>{[s.ppg ? `${s.ppg} PPG` : '', ].filter(Boolean).join(' Â· ') || 'â'}</span>
                 </div>
               ))}
             </div>
