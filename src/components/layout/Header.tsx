@@ -275,19 +275,9 @@ export default function Header() {
                     {item.label}
                   </Link>
                 ))}
-                <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "4px 0" }} />
-                {ALL_SPORTS.slice(0, 3).map((item) => (
-                  <Link key={`${item.href}/awards`} href={`${item.href}/awards`} role="menuitem" style={{ fontSize: "0.85em", opacity: 0.85 }}>
-                    🏆 {item.label} Awards
-                  </Link>
-                ))}
+                {/* Awards links removed — accessible via sport hub tabs */}
               </div>
             </div>
-
-            {/* Awards Link */}
-            <Link href="/awards" className={`nav-link ${isActive("/awards") ? "active" : ""}`} aria-current={isActive("/awards") ? "page" : undefined}>
-              Awards
-            </Link>
 
             {/* Schools Link */}
             <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`} aria-current={isActive("/schools") ? "page" : undefined}>

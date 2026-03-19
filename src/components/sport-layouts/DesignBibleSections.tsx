@@ -36,21 +36,33 @@ export default function DesignBibleSections({ sport }: Props) {
         const [rush, pass, rec] = await Promise.all(statQueries);
         setLeaders({ rush, pass, rec });
 
-        // Recent scores
+        // Recent scores — filter by sport, show only completed games with different teams
         const { data: gData } = await (supabase as any).from('games')
-          .select('home_score, away_score, game_date, home_school_id, away_school_id')
+          .select('home_score, away_score, game_date, home_school_id, away_school_id, sport_id')
+          .eq('sport_id', sport)
           .not('home_score', 'is', null)
           .gt('home_score', 0)
           .not('home_school_id', 'is', null)
+          .not('away_school_id', 'is', null)
           .order('game_date', { ascending: false })
-          .limit(5);
+          .limit(10);
         if (gData) {
           const schoolIds = new Set<number>();
           gData.forEach((g: any) => { schoolIds.add(g.home_school_id); schoolIds.add(g.away_school_id); });
           const { data: schools } = await supabase.from('school_names').select('id, name').in('id', Array.from(schoolIds));
           const sm = new Map<number, string>();
           (schools ?? []).forEach((s: any) => sm.set(s.id, s.name));
-          setGames(gData.map((g: any) => ({
+          // Show variety — limit any single school to max 2 appearances, but allow rematches
+          const schoolCount = new Map<number, number>();
+          const diverseGames = gData.filter((g: any) => {
+            const homeCount = schoolCount.get(g.home_school_id) ?? 0;
+            const awayCount = schoolCount.get(g.away_school_id) ?? 0;
+            if (homeCount >= 2 && awayCount >= 2) return false;
+            schoolCount.set(g.home_school_id, homeCount + 1);
+            schoolCount.set(g.away_school_id, awayCount + 1);
+            return true;
+          }).slice(0, 5);
+          setGames(diverseGames.map((g: any) => ({
             home: sm.get(g.home_school_id) ?? 'TBD',
             away: sm.get(g.away_school_id) ?? 'TBD',
             homeScore: g.home_score, awayScore: g.away_score,

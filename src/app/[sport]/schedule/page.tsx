@@ -142,7 +142,7 @@ export default async function SchedulePage({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
+      <div className="bg-[#0a1628] py-10 px-4">
         <div className="max-w-6xl mx-auto">
           <nav className="text-xs text-gray-400 mb-3">
             <a href="/" className="hover:text-gold transition">

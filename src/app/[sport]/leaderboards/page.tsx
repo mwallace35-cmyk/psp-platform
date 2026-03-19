@@ -84,7 +84,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
         {/* Hero */}
         <div
           style={{
-            background: "linear-gradient(135deg, var(--psp-navy) 0%, #0f2040 100%)",
+            background: "var(--psp-navy)",
             borderRadius: 12,
             padding: "32px 24px",
             marginBottom: 32,

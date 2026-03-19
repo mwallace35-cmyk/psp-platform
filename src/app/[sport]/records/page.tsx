@@ -92,7 +92,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
         { name: meta.name, url: `https://phillysportspack.com/${sport}` },
         { name: "Records", url: `https://phillysportspack.com/${sport}/records` },
       ]} />
-      <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, ${meta.color}33 100%)` }}>
+      <section className="py-10" style={{ background: 'var(--psp-navy)' }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{ label: meta.name, href: `/${sport}` }, { label: "Records" }]} />
           <h1 className="text-4xl md:text-5xl text-white mb-2 font-bebas">

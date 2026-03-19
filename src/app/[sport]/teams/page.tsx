@@ -96,7 +96,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
       {/* Header */}
       <section
         className="py-12 md:py-16"
-        style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 60%, ${meta.color}22 100%)` }}
+        style={{ background: "var(--psp-navy)" }}
       >
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[

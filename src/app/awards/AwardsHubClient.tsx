@@ -197,20 +197,21 @@ function ChampionshipsTab({ champs }: { champs: ChampionshipHubRecord[] }) {
                     {sportMeta?.name || champ.sport_id}
                   </span>
                 </div>
-                <div className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
+                <div className="text-xs mt-1 flex items-center gap-1 flex-wrap" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  {champ.level && <span className="capitalize">{champ.level}</span>}
+                  {champ.level && champ.championship_type && <span>{" \u00B7 "}</span>}
                   {champ.championship_type && (
                     <span className="capitalize">{champ.championship_type.replace(/-/g, " ")}</span>
                   )}
-                  {champ.level && <span> � {champ.level}</span>}
-                  {champ.score && <span> � {champ.score}</span>}
+                  {champ.score && <span>{" \u00B7 "}{champ.score}</span>}
                 </div>
               </div>
-              {/* Year */}
+              {/* Season label */}
               <div
                 className="text-sm font-bold shrink-0"
                 style={{ color: "rgba(255,255,255,0.6)" }}
               >
-                {champ.seasons?.year_start || "—"}
+                {champ.seasons?.label || champ.seasons?.year_start || "\u2014"}
               </div>
             </div>
           );
@@ -396,16 +397,23 @@ function AwardRow({
         </div>
       </div>
 
-      {/* Award badge */}
-      <span
-        className="text-xs px-2 py-1 rounded capitalize shrink-0 hidden sm:inline-block"
-        style={{
-          background: "rgba(240,165,0,0.12)",
-          color: "rgba(240,165,0,0.9)",
-        }}
-      >
-        {awardLabel}
-      </span>
+      {/* Award badge + year */}
+      <div className="flex items-center gap-2 shrink-0">
+        <span
+          className="text-xs px-2 py-1 rounded capitalize hidden sm:inline-block"
+          style={{
+            background: "rgba(240,165,0,0.12)",
+            color: "rgba(240,165,0,0.9)",
+          }}
+        >
+          {awardLabel}
+        </span>
+        {year && (
+          <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.5)" }}>
+            {year}
+          </span>
+        )}
+      </div>
 
       {/* Year */}
       <span

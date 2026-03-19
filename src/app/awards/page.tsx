@@ -116,53 +116,7 @@ export default async function AwardsHubPage() {
             </p>
           </div>
 
-          {/* Hero Stats Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mt-8">
-            {[
-              {
-                value: summary.total.toLocaleString(),
-                label: "Individual Awards",
-                color: "#f0a500",
-              },
-              {
-                value: champSummary.total.toLocaleString(),
-                label: "Championships",
-                color: "#3b82f6",
-              },
-              {
-                value: proCount.toLocaleString(),
-                label: "Pro Athletes",
-                color: "#10b981",
-              },
-              {
-                value: `${yearsOfHistory}+`,
-                label: "Years of History",
-                color: "#a855f7",
-              },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="text-center p-3 rounded-lg"
-                style={{ background: "rgba(255,255,255,0.05)" }}
-              >
-                <div
-                  className="text-2xl sm:text-3xl font-bold"
-                  style={{ color: stat.color }}
-                >
-                  {stat.value}
-                </div>
-                <div
-                  className="text-xs mt-1"
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    color: "rgba(255,255,255,0.6)",
-                  }}
-                >
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Stats removed per design spec — data appears in context below */}
         </div>
       </header>
 

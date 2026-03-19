@@ -37,7 +37,8 @@ export default function PlayerCompare() {
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&type=player`);
       const data = await res.json();
-      setResults(data.results?.filter((r: SearchResult) => r.entity_type === "player") ?? []);
+      const results = data.data?.results ?? data.results ?? [];
+      setResults(results.filter((r: SearchResult) => r.entity_type === "player"));
     } catch {
       setResults([]);
     }
@@ -51,7 +52,8 @@ export default function PlayerCompare() {
     setLoading(true);
     try {
       const res = await fetch(`/api/player/${id}`);
-      const data = await res.json();
+      const raw = await res.json();
+      const data = raw.data ?? raw;
       setPlayer(data);
       setSearch(data.player?.name || "");
     } catch {
@@ -72,7 +74,8 @@ export default function PlayerCompare() {
 
     try {
       const res = await fetch(`/api/player/${result.entity_id}`);
-      const data = await res.json();
+      const raw = await res.json();
+      const data = raw.data ?? raw;
       setPlayer(data);
     } catch {
       setPlayer(null);

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PSP Layout Spec — Page-by-Page Redesign</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans',sans-serif;background:#fff;color:#1a1a1a;line-height:1.6}
+  @media print{.pb{page-break-before:always}}
+  .cover{background:linear-gradient(135deg,#0a1628,#1a2d4a);color:#fff;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 40px}
+  .cover h1{font-family:'Bebas Neue',sans-serif;font-size:56px;color:#f0a500;letter-spacing:3px}
+  .cover h2{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f5c542;margin-top:8px}
+  .cover p{color:#94a3b8;margin-top:20px;max-width:600px;font-size:15px}
+  .s{max-width:900px;margin:0 auto;padding:50px 40px}
+  h2.t{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#0a1628;border-bottom:3px solid #f0a500;padding-bottom:8px;margin-bottom:20px}
+  h3{font-size:18px;font-weight:700;margin:16px 0 8px}
+  p{font-size:14px;margin-bottom:10px}
+  .note{background:#fef3c7;border-left:3px solid #f0a500;padding:10px 14px;border-radius:4px;font-size:13px;margin:12px 0}
+  .w{background:#f8fafc;border:2px solid #cbd5e1;border-radius:8px;padding:16px;font-family:'Courier New',monospace;font-size:11px;line-height:1.4;white-space:pre;overflow-x:auto;color:#475569;margin:12px 0}
+  .hl{color:#f0a500;font-weight:700}
+  .lb{color:#0a1628;font-weight:700}
+  .pill-demo{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .pill{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600}
+  .pill.active{background:#16a34a;color:#fff}
+  .pill.inactive{background:transparent;border:2px solid #16a34a;color:#16a34a}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+  th{background:#0a1628;color:#f0a500;padding:8px 12px;text-align:left;font-size:11px;text-transform:uppercase}
+  td{padding:6px 12px;border-bottom:1px solid #e2e8f0}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>PSP LAYOUT SPEC</h1>
+  <h2>Page-by-Page Redesign Guide</h2>
+  <p>Tab-style navigation pills replace scattered stat counters. Aesthetically pleasing layouts that flow. Every page mapped to the war room report.</p>
+  <p style="color:#64748b;margin-top:30px;font-size:12px">March 18, 2026</p>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Design Direction</h2>
+  <div class="note">Mike: "I don't love the numbers that show players, schools, and titles all over the place. I would like to utilize that style for tabs maybe."</div>
+  <p><strong>BEFORE:</strong> Big stat counter pills in hero: "36,218 players / 2,942 schools / 446 titles"</p>
+  <p><strong>AFTER:</strong> That pill style becomes interactive TAB NAVIGATION. Numbers move into context or disappear.</p>
+  <h3>Tab Pills Pattern</h3>
+  <div class="pill-demo">
+    <span class="pill active">Overview</span>
+    <span class="pill inactive">Teams</span>
+    <span class="pill inactive">Leaderboards</span>
+    <span class="pill inactive">Records</span>
+    <span class="pill inactive">Championships</span>
+    <span class="pill inactive">Awards</span>
+  </div>
+  <p>Active: filled with sport color, white text. Inactive: outlined. Same pattern on every page.</p>
+
+  <h3>Flow Principles</h3>
+  <table>
+    <tr><th>Principle</th><th>How</th></tr>
+    <tr><td>No orphaned numbers</td><td>Stats appear IN context (tables, cards) not as hero decorations</td></tr>
+    <tr><td>2-column layout</td><td>Main content (65%) + sidebar (35%) on desktop. Single on mobile.</td></tr>
+    <tr><td>Card-based sections</td><td>Every block is a card with border, radius, consistent padding</td></tr>
+    <tr><td>Sport color threading</td><td>Active tabs, accent borders, hovers all use the sport accent color</td></tr>
+  </table>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Sport Hub (/football, /basketball, etc.)</h2>
+  <div class="w"><span class="lb">HERO</span> (compact — icon + sport name + accent gradient, NO stat counters)
+<span class="lb">TAB PILLS</span>: [<span class="hl">Overview</span>] [Teams] [Leaderboards] [Records] [Championships] [Awards]
+
+<span class="lb">MAIN (65%)</span>                          | <span class="lb">SIDEBAR (35%)</span>
+                                       |
+<span class="hl">TOP PERFORMERS</span>                        | <span class="hl">POWER RANKINGS</span>
+Rush: Curtis Brinkley (2,813)          | 1. Imhotep Charter
+Pass: Semaj Beals (4,135)              | 2. St. Joe's Prep
+Rec: Rayshawn Scott (1,399)            | 3. Archbishop Wood
+                                       |
+<span class="hl">RECENT SCORES</span>                         | <span class="hl">QUICK LINKS</span>
+Archbishop Wood 28 — La Salle 14       | Leaderboards
+Imhotep 35 — Prep Charter 7            | Records
+West Catholic 21 — Roman 17            | Compare Players
+Neumann-Goretti 55 — Crestwood 24      | Rivalries
+                                       |
+<span class="hl">FEATURED CONTENT</span>                      |
+[Latest article card]                   |
+
+<span class="lb">GAME OF THE WEEK TICKER</span> (full-width)</div>
+  <div class="note"><strong>Removed:</strong> "36,218 players / 2,942 schools / 446 titles" pills. Color gradient. Navigation card grid. Emoji sub-nav.<br><strong>Added:</strong> Field/court texture bg (dark overlay). Tab pills. 2-column layout. Sidebar with rankings + tools.</div>
+
+  <h3>Hero Background — Field/Court Textures</h3>
+  <p>Each sport gets a unique surface texture with 80-85% navy overlay. NO color gradients. Just enough texture to feel the sport's playing surface.</p>
+  <table>
+    <tr><th>Sport</th><th>Texture</th></tr>
+    <tr><td>Football</td><td>Green turf / grass fibers</td></tr>
+    <tr><td>Basketball</td><td>Hardwood court grain</td></tr>
+    <tr><td>Baseball</td><td>Red clay / dirt infield</td></tr>
+    <tr><td>Track</td><td>Rubber track surface with lane lines</td></tr>
+    <tr><td>Lacrosse</td><td>Turf field (shared with football)</td></tr>
+    <tr><td>Wrestling</td><td>Mat texture / rubber surface</td></tr>
+    <tr><td>Soccer</td><td>Grass pitch / natural turf</td></tr>
+  </table>
+  <p>CSS: <code>background: linear-gradient(rgba(10,22,40,0.85), rgba(10,22,40,0.9)), url(/textures/sport.jpg) center/cover</code></p>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Player Pages</h2>
+  <h3>/players — Browser</h3>
+  <div class="w"><span class="hl">PLAYER DIRECTORY</span>
+[Search: "Find a player..."]
+Tab pills: [<span class="hl">All</span>] [Football] [Basketball] [Baseball]
+Filters: [Position] [Class Year] [School] [Region]
+Grid of PlayerCards — 4 columns desktop, 2 mobile</div>
+
+  <h3>/players/[slug] — Profile (already built, no changes)</h3>
+  <p>Hero, Compare/Share, Reactions, Stats, PercentileRadar, SimilarPlayers, AwardsHonors.</p>
+
+  <h3>/compare — Head-to-Head (no changes needed)</h3>
+  <p>Two search boxes, VS layout. Clean as-is.</p>
+</div>
+
+<div class="s pb">
+  <h2 class="t">School Pages</h2>
+  <h3>/schools — Browser</h3>
+  <div class="w"><span class="hl">SCHOOLS</span>
+[Search: "Find a school..."]
+Tab pills: [<span class="hl">All</span>] [Catholic League] [Public League] [Suburban] [Inter-Ac]
+Grid of SchoolCards — title count on each card, not in hero</div>
+
+  <h3>/schools/[slug] — Profile</h3>
+  <div class="w">[Logo] <span class="hl">WEST CATHOLIC</span> — Philadelphia — Catholic League
+Tab pills: [<span class="hl">Overview</span>] [Players] [Leaderboard] [Coaches] [Championships]
+Main (65%): program overview      | Sidebar (35%): championships, links</div>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Stats &amp; Leaderboards</h2>
+  <h3>/leaderboards — Hub</h3>
+  <div class="w"><span class="hl">LEADERBOARDS</span>
+Tab pills: [<span class="hl">All</span>] [Football] [Basketball] [Baseball] [Track]
+2-column grid of sport leader cards with top-3 per category</div>
+
+  <h3>/stats/season/[year]</h3>
+  <div class="w"><span class="hl">2024 SEASON LEADERS</span>
+Tab pills: [<span class="hl">2024</span>] [2023] [2022] [2021] [2020] — year selector as pills
+Football Leaders: 4-column grid (Rush/Pass/Rec/TDs)
+Basketball Leaders: 4-column grid (Pts/PPG/Reb/Ast)</div>
+  <div class="note">Year selector becomes tab pills instead of a plain text row.</div>
+
+  <h3>/football/records</h3>
+  <div class="w"><span class="hl">FOOTBALL RECORDS</span>
+Tab pills: [<span class="hl">Rushing</span>] [Passing] [Receiving] [Scoring] [Defense]
+ERA filter: [All Time dropdown]
+Records table for selected category</div>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Community</h2>
+  <h3>/pulse — Hub</h3>
+  <div class="w"><span class="hl">THE PULSE</span>
+Tab pills: [<span class="hl">Hub</span>] [Recruiting] [Our Guys] [Rankings] [Forum]
+Main (65%): articles, hot takes    | Sidebar (35%): daily poll, trending</div>
+
+  <h3>/challenge</h3>
+  <div class="w"><span class="hl">WHO HAD THE BETTER SEASON?</span>
+[Player A Card]     VS     [Player B Card]
+[VOTE A]                   [VOTE B]
+Streak counter below</div>
+
+  <h3>/pickem, /potw</h3>
+  <p>Hero heading, content cards, leaderboard sidebar. No stat pills.</p>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Pipeline &amp; Recruiting</h2>
+  <h3>/pipeline</h3>
+  <div class="w"><span class="hl">COLLEGE PIPELINE</span>
+Tab pills: [<span class="hl">All Levels</span>] [D1] [D2] [D3] [NAIA] [Pro]
+Main (65%): college list + table   | Sidebar (35%): top producers</div>
+  <div class="note">Remove "2,116 Total Tracked / 1,680 Colleges / 436 Pro" stat counters from hero.</div>
+
+  <h3>/recruiting/portal</h3>
+  <p>Already clean — sport dropdown, position pills, filter fields. No changes.</p>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Content &amp; Utility</h2>
+  <h3>/articles</h3>
+  <div class="w"><span class="hl">NEWS</span>
+Tab pills: [<span class="hl">All</span>] [Football] [Basketball] [Baseball] ...
+Featured hero card + 3-column article grid</div>
+
+  <h3>/awards</h3>
+  <div class="w"><span class="hl">AWARDS &amp; HONORS</span>
+Tab pills: [<span class="hl">All</span>] [Football] [Basketball] [Baseball] [Track]
+Award cards by year — NO "16,012 / 1,000" stat counter grid</div>
+  <div class="note">Remove the stat counter grid (16,012 Individual Awards / 1,000 Championships / etc.).</div>
+
+  <h3>/scores, /coaches, /glossary, /about, /support, /data-sources</h3>
+  <p>These already use clean layouts. Sport filter on /scores becomes tab pills. Utility pages need no changes.</p>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Navigation Architecture</h2>
+  <h3>Desktop Header</h3>
+  <div class="w">PHILLYSPORTSPACK  [Sports v] [Awards] [Schools] [Scores] [News] [The Pulse v] [More v]  [Search] [Account]</div>
+
+  <h3>Sports Mega Menu</h3>
+  <div class="w">Football | Basketball | Baseball | Track | Lacrosse | Wrestling | Soccer
+(each links to /[sport] hub — sub-pages via tab pills on the hub)</div>
+
+  <h3>More Menu</h3>
+  <div class="w">Compare Players | Compare Schools | Pipeline | Coaches | Challenge | Pick'em | POTW | Glossary</div>
+
+  <h3>Mobile Bottom Nav</h3>
+  <div class="w">HOME | SPORTS | COMMUNITY | MY SCHOOLS | MENU</div>
+</div>
+
+<div class="s pb">
+  <h2 class="t">Implementation Priority</h2>
+  <table>
+    <tr><th>#</th><th>Task</th><th>Files</th></tr>
+    <tr><td>1</td><td>Remove stat counter pills from sport hub hero</td><td>[sport]/page.tsx, ContextAwareHero.tsx</td></tr>
+    <tr><td>2</td><td>Convert sub-nav to tab pill style (no emojis)</td><td>Sport sub-nav component</td></tr>
+    <tr><td>3</td><td>Fix recent scores query (already done locally)</td><td>DesignBibleSections.tsx</td></tr>
+    <tr><td>4</td><td>Remove stat counters from /awards hero</td><td>AwardsHubClient.tsx</td></tr>
+    <tr><td>5</td><td>Remove stat counters from /pipeline hero</td><td>pipeline/page.tsx</td></tr>
+    <tr><td>6</td><td>Convert year selector to tab pills</td><td>stats/season/[year]/page.tsx</td></tr>
+    <tr><td>7</td><td>Apply 2-column layout to sport hubs</td><td>SportLayout components</td></tr>
+  </table>
+  <div class="note"><strong>Rule:</strong> All work done LOCAL at ~/Desktop/psp-platform. Test at localhost:3000. Push when ready.</div>
+</div>
+
+<div class="s" style="text-align:center;padding:40px">
+  <p style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#f0a500">READY FOR REVIEW</p>
+  <p style="color:#94a3b8">Approve layouts before implementation begins.</p>
+</div>
+</body>
+</html>

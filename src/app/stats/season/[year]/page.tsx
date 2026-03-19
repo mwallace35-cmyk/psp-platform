@@ -143,7 +143,7 @@ export default async function SeasonLeadersPage({ params }: PageProps) {
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' as const }}>
           {years.slice(0, 8).map(y => (
             <Link key={y} href={`/stats/season/${y}`}
-              style={{ padding: '0.35rem 0.7rem', borderRadius: 6, fontWeight: 700, fontSize: '0.82rem', textDecoration: 'none', background: String(y) === year ? navy : '#f3f4f6', color: String(y) === year ? '#fff' : '#374151' }}>
+              style={{ padding: '0.35rem 0.85rem', borderRadius: 9999, fontWeight: 600, fontSize: '0.82rem', textDecoration: 'none', background: String(y) === year ? navy : 'transparent', color: String(y) === year ? '#fff' : '#475569', border: String(y) === year ? 'none' : '1.5px solid #e2e8f0', transition: 'all 0.15s' }}>
               {y}
             </Link>
           ))}

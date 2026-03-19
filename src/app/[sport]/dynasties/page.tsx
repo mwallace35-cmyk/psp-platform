@@ -72,7 +72,7 @@ export default async function DynastiesPage({
       <section
         className="py-10"
         style={{
-          background: `linear-gradient(135deg, var(--psp-navy) 0%, ${meta.color}33 100%)`,
+          background: "var(--psp-navy)",
         }}
       >
         <div className="max-w-7xl mx-auto px-4">

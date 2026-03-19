@@ -1,168 +1,122 @@
 # Memory — PSP Platform
 
 ## Me
-Mike Wallace (mwallace35@gmail.com). Solo developer building phillysportspack.com — the definitive Philadelphia high school sports database. 400+ schools, 10,000+ athletes, 7 sports.
+Mike Wallace (mwallace35@gmail.com). Solo developer building phillysportspack.com — the definitive Philadelphia high school sports database. 55,232 players, 738 schools, 7 sports, 25+ years of history.
 
 ## Projects
 | Name | What | Status |
 |------|------|--------|
 | **PSP** | phillysportspack.com — Philly HS sports database | Active |
-| **War Room** | 5-phase platform redesign roadmap | ✅ ALL PHASES COMPLETE |
+| **Design Bible** | Page-by-page spec for entire platform (35+ pages) | ✅ COMPLETE |
 
-→ Full details: memory/projects/psp-platform.md
-
-## War Room Phases
+## Design Bible Implementation
 | Phase | Name | Status |
 |-------|------|--------|
-| Phase 0 | Emergency Fixes | ✅ COMPLETE |
-| Phase 1 | Foundation | ✅ COMPLETE |
-| Phase 2 | Content Engine | ✅ COMPLETE |
-| Phase 3 | Homepage Redesign | ✅ COMPLETE |
-| Phase 4 | Data Innovation | ✅ COMPLETE |
-| Phase 5 | Community & Growth | ✅ COMPLETE |
+| P0 | Player Profile + Leaderboards + Trending | ✅ COMPLETE (14/16 components) |
+| P1 | Sport Hubs, Season Stats, Compare, Records | ✅ COMPLETE |
+| P2 | Pulse/Forum, Challenge, Pick'em, POTW | ✅ COMPLETE |
+| P3 | Pipeline, Next Level, Recruiter Portal | ✅ COMPLETE |
+| P4 | Articles, Coaches, Auth, Utility | ✅ COMPLETE |
 
-## Phase 2 Progress
-| Feature | Status |
-|---------|--------|
-| TrendingPlayersWidget | ✅ Done (commit f158890b — created in Phase 3) |
-| /leaderboards/trending | ✅ Done (commit 14205ed) |
-| /football/efficiency stats | ✅ Done (commit c66626f) |
-| /history (This Week in PSP History) | ✅ Done (commit ab07b59) |
-| /api/players/search | ✅ Done (commit de62c57) |
-| Player Share Card generator | ✅ Done (commits 7d4e313c + 7c1afca6) |
-| Live score ticker | ✅ Done (commit 7009a864) |
-| Auto-generated game recaps | ✅ Done (commit 5236366e) |
-| Push notification system | ✅ Done (commit c9f752ae) |
-
-**Phase 2 COMPLETE ✅ — all 9 features shipped and building green**
-
-## Phase 3 Progress
-| Feature | Status |
-|---------|--------|
-| ScoreTicker wired into root layout | ✅ Done (commit db95245d) |
-| PushNotificationBanner wired into root layout | ✅ Done (commit db95245d) |
-| TrendingPlayersWidget added to homepage feed | ✅ Done (commits 456c975b + f158890b) |
-
-**Phase 3 COMPLETE ✅ — all Phase 2 components wired into homepage/layout**
-
-## Phase 4 Progress
-| Feature | Status |
-|---------|--------|
-| /players/compare page | ✅ Done (commit 371572bf) |
-| /api/v1/players/[slug]/percentiles API | ✅ Done (commit b10c4103) |
-| CompareButton component | ✅ Done (commit d1dfa8fc) |
-| /stats/season/[year] leaders page | ✅ Done (commit 673c269e) |
-
-**Phase 4 COMPLETE ✅ — compare tool, percentiles API, season leaders all shipped and building green**
-
-## Phase 5 Progress
-| Feature | Status |
-|---------|--------|
-| /coaches/claim page + API | ✅ Done (commits 0c8f5fdb + dce9d6ad) |
-| /recruit page + API | ✅ Done (commits fa721f31 + 33c2a851) |
-| PlayerReactions component + /api/v1/players/[slug]/reactions | ✅ Done (commits d94e8938 + b9f0df6d) |
-| /schools/[slug]/leaderboard (all-time leaders) | ✅ Done (commit 94833cf0) |
-| PlayerReactions + CompareButton wired into player profiles | ✅ Done (commit 31935e64) |
-
-**Phase 5 COMPLETE ✅ — all 5 community features shipped and building green**
-
-## Build History (Key)
-| Commit | Status | Notes |
-|--------|--------|-------|
-| ff793943 | ✅ READY | Fixed standings TS type cast — Supabase join returns array |
-| 7d4e313c | ✅ READY | Player OG image (opengraph-image.tsx) |
-| 7c1afca6 | ✅ READY | SharePlayerButton component |
-| 7009a864 | ✅ READY | ScoreTicker — live polling, scroll animation |
-| 5236366e | ✅ READY | GameRecapCard — AI recap trigger + display |
-| c9f752ae | ✅ READY | PushNotificationBanner — browser Notification API |
-| db95245d | ✅ READY | Phase 3: ScoreTicker + PushNotificationBanner in root layout |
-| f158890b | ✅ READY | Phase 3: TrendingPlayersWidget component + homepage wired |
-| 371572bf | ✅ READY | Phase 4: /players/compare page (server component, side-by-side stats) |
-| b10c4103 | ✅ READY | Phase 4: /api/v1/players/[slug]/percentiles (career vs all players) |
-| d1dfa8fc | ✅ READY | Phase 4: CompareButton client component (modal search + navigate) |
-| 673c269e | ✅ READY | Phase 4: /stats/season/[year] leaders page (fixed dynamic column TS error) |
-| 0c8f5fdb | ✅ READY | Phase 5: /coaches/claim page (form → Supabase coach_claims table) |
-| dce9d6ad | ✅ READY | Phase 5: /api/coaches/claim route |
-| fa721f31 | ✅ READY | Phase 5: /recruit page (player recruiting interest signup) |
-| 33c2a851 | ✅ READY | Phase 5: /api/recruit route |
-| d94e8938 | ✅ READY | Phase 5: PlayerReactions component (🔥⭐💪🏆, localStorage + API) |
-| b9f0df6d | ✅ READY | Phase 5: /api/v1/players/[slug]/reactions (GET counts, POST increment) |
-| 94833cf0 | ✅ READY | Phase 5: /schools/[slug]/leaderboard (all-time football + basketball leaders) |
-| 31935e64 | ✅ READY | Phase 5: player profile wired with PlayerReactions + CompareButton |
-
-## Known TS Pattern — Supabase Joins (CRITICAL)
-When using `.select('table(col1, col2)')` the result type varies by join direction:
-- Many-to-one (player→school): runtime is single object, TS types as array
-- One-to-many (player→seasons): runtime is array, TS types as array
-SAFE pattern for ANY direction: `Array.isArray(raw) ? raw[0] : raw` or `(raw as unknown as Array<T>)[0] ?? null`
-NEVER: `field as { col1: string } | null` (TS error)
-
-## Known TS Pattern — Dynamic Supabase Columns (CRITICAL)
-When using template literals in `.select()` like `\`${col}, players!inner(...)\``, Supabase's TypeScript parser produces a `ParserError` type because it can't infer from runtime strings.
-SAFE pattern: Cast client to `any` before `.from()`:
-```ts
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const db = supabase as any;
-const { data } = await db.from('table').select(`${col}, ...`);
-type Row = { players: PlayerJoin | null } & Record<string, number>;
-const rows = (data ?? []) as Row[];
-```
-NEVER: `supabase.from('table').select(\`${dynamicCol}, ...\`)` without `as any` (ParserError on row.players)
+## Local Dev Environment
+| Item | Detail |
+|------|--------|
+| Repo location | ~/Desktop/psp-platform |
+| Dev server | npm run dev → http://localhost:3000 |
+| Env file | .env.local (Supabase URL + anon key + preview key) |
+| Deploy | git push origin main → Vercel auto-deploys |
+| **RULE** | ALL work done LOCAL first, then push. No more GitHub API edits. |
 
 ## Tech Stack
 | Item | Detail |
 |------|--------|
-| Framework | Next.js 15 App Router |
-| Database | Supabase (PostgreSQL via PostgREST) |
-| Hosting | Vercel |
+| Framework | Next.js 16 App Router (RSC streaming, Turbopack) |
+| Database | Supabase PostgreSQL 17.6 (project: uxshabfmgjsykurzvkcr) |
+| Hosting | Vercel (auto-deploy ~90s on push to main) |
 | Repo | github.com/mwallace35-cmyk/psp-platform |
-| Vercel Project | philly-sports-pack |
-| Vercel Project ID | prj_bnuSRj7prv5IqcgGeZJY42epYncb |
-| Vercel Team ID | team_tuDn5WZnv2QKpIJEODJH0pQC |
+| Production | philly-sports-pack.vercel.app + www.phillysportspack.com |
+| DB Tables | 88 total |
 
 ## CSS Design Tokens
-| Token | Value |
-|-------|-------|
-| --psp-navy | #1a2744 |
-| --psp-gold | #c8a84b |
-| --psp-muted | #6b7280 |
-| --psp-card-bg | #f8f9fc |
-| --font-bebas | "Bebas Neue", sans-serif |
+| Token | Value | Usage |
+|-------|-------|-------|
+| --psp-navy | #0a1628 | Primary bg, header, dark sections |
+| --psp-navy-mid | #0f2040 | Card bg on dark |
+| --psp-gold | #f0a500 | Primary accent, CTA |
+| --psp-gold-light | #f5c542 | Hover state |
+| --psp-blue | #3b82f6 | Links, basketball accent |
+| --fb (football) | #16a34a | Sport accent |
+| --bb (baseball) | #ea580c | Sport accent |
+| --track | #7c3aed | Sport accent |
+| --lac (lacrosse) | #0891b2 | Sport accent |
+| --wrest | #ca8a04 | Sport accent |
+| --soccer | #059669 | Sport accent |
+| Heading font | Bebas Neue | Display, h1, h2 |
+| Body font | DM Sans | Body, UI, tables |
+
+## Design Decisions (Q&A with Mike)
+| # | Decision |
+|---|----------|
+| 1 | Basketball stays blue (#3b82f6), links differentiate with underlines |
+| 2 | Ad-supported, free for all — no paywalls |
+| 3 | Player photos planned but not yet — fallback: initials on sport-colored circle |
+| 4 | Live scores not a priority right now |
+| 5 | Hybrid moderation: auto-flag + manual review |
+| 6 | Minor sports (track, lac, wrest, soccer) = thinner data, simplified templates |
+| 7 | Daily Challenge = Football + Basketball |
+| 8 | Responsive web only, no native app |
+| 9 | Sport hub heroes: field/court TEXTURE backgrounds (turf, hardwood, clay, etc.) with 80% navy overlay. NO color gradients. |
+| 10 | Stat counter pills (36,218 players etc.) REMOVED from heroes. That pill style becomes tab navigation instead. |
 
 ## Key DB Tables
 | Table | Key Columns |
 |-------|-------------|
-| players | id, slug, name, first_name, last_name, primary_school_id, graduation_year, positions TEXT[] |
-| football_player_seasons | player_id, season_id, rush_yards, rush_tds, pass_yards, pass_tds, rec_yards, rec_tds |
-| basketball_player_seasons | player_id, season_id, points, ppg, rebounds, rpg, assists, apg, games_played |
-| next_level_tracking | player_id, current_level, current_org, pro_team, pro_league, draft_info, college |
-| team_seasons | school_id, season_id, sport_id, wins, losses, ties, win_pct, league_wins, league_losses |
-| game_player_stats | 78,171 records — individual game stats |
-| article_mentions | 23,805 records — links articles to players/schools |
-| coach_claims | coach_name, email, phone, school_name, sport, player_list, status, submitted_at |
-| recruiting_interest | first_name, last_name, email, graduation_year, sport, positions, gpa, target_level, highlight_url |
-| player_reactions | player_slug, reaction (fire/star/beast/champ), count, updated_at |
+| players | id, slug, name, graduation_year, positions[], primary_school_id |
+| football_player_seasons | player_id, season_id, rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td |
+| basketball_player_seasons | player_id, season_id, points, ppg, rebounds, assists, games_played |
+| schools | id, slug, name, city, region_id (RLS: deleted_at IS NULL hides soft-deleted) |
+| school_names | VIEW — bypasses RLS, shows all schools including deleted (for scores) |
+| games | home_school_id, away_school_id, home_score, away_score, game_date |
+| awards | player_id, award_name, year (16,012 rows) |
+| power_rankings | sport_id, school_id, rank_position, record_display, week_label |
+| player_reactions | player_id, reaction (fire/star/beast/champ) |
+| next_level_tracking | player_id, current_level, current_org (2,224 rows, 436 pro) |
+| search_index | 56,383 entries |
 
-→ Full schema: memory/projects/psp-platform.md
+## Components Built This Session
+| Component | File | Status |
+|-----------|------|--------|
+| PercentileRadar | src/components/players/PercentileRadar.tsx | ✅ LIVE |
+| SimilarPlayers | src/components/players/SimilarPlayers.tsx | ✅ LIVE |
+| AwardsHonors | src/components/players/AwardsHonors.tsx | ✅ LIVE |
+| DesignBibleSections | src/components/sport-layouts/DesignBibleSections.tsx | ✅ LIVE |
+| Avatar initials | Inline in player page | ✅ LIVE |
+| Position tag | Inline in player page | ✅ LIVE |
+| SharePlayerButton | Already existed, wired into profile | ✅ LIVE |
 
-## GitHub API
-| Item | Value |
-|------|-------|
-| Token | stored in session memory (not committed to repo) |
-| Usage | Bearer token — use Chrome javascript_tool fetch() to call api.github.com |
-| Update file | PUT https://api.github.com/repos/mwallace35-cmyk/psp-platform/contents/{path} |
+## CRITICAL: Double-Encoding Issue
+The codebase had a sitewide UTF-8 double-encoding problem. Emojis and special characters stored as C3/C2 byte pairs cause React RSC hydration crashes (`SyntaxError: Failed to execute 'appendChild'`).
+**Fixed in 30+ files this session.** If editing files via GitHub API, ALWAYS run the fixDoubleEncoding function afterward. Working locally avoids this entirely — that's why we switched to local dev.
 
-## Known Environment Issues
-| Issue | Workaround |
-|-------|-----------|
-| Bash non-functional in VM | Use Agent subprocesses + Chrome tools |
-| VM disk full (ENOSPC) | Write to /mnt/outputs only |
-| GitHub web editor corrupts files | ✅ USE GITHUB API via Chrome javascript_tool fetch() — 100% reliable |
-| Vercel log tools timeout at 60s | Use Chrome to browse Vercel dashboard directly |
-| Supabase tables for Phase 5 | coach_claims, recruiting_interest, player_reactions may need to be created via Supabase dashboard |
+## Known TS Patterns
+- Supabase joins: `Array.isArray(raw) ? raw[0] : raw` for many-to-one
+- Dynamic columns: Cast `supabase as any` before `.from()` for template literals
+- RLS bypass: Use `school_names` view instead of `schools` table for historical game displays
+
+## FAIL Items Backlog (Needs Real Users)
+| Item | Table | Status |
+|------|-------|--------|
+| User profiles | user_profiles | 0 — fills from signups |
+| Coming soon signups | coming_soon_signups | 0 — fills from traffic |
+| Pick'em picks | pickem_picks | 0 — needs user auth FK |
+| Forum likes | forum_likes | 0 — needs user auth FK |
+
+## Route Health: 54/54 PASS
+All routes verified returning 200 on March 18, 2026.
 
 ## Preferences
+- **ALL work done LOCAL, push when ready** — no more GitHub API file edits
 - Push directly to main branch (no PRs)
 - ISR revalidation: 3600 (1hr) for all pages
-- Direct Supabase client in API routes (not shared createClient which can hang)
-- Sport filtering: always use !inner join on season tables, never a sport column
+- Direct Supabase client in API routes
+- Sport filtering: use !inner join on season tables

@@ -73,20 +73,18 @@ export async function getSchoolComparisonData(
               proAthletes,
               collegeAthletes,
               awards,
-              rosters,
+              currentPlayers,
             ] = await Promise.all([
-              // Team seasons (for all-time record)
+              // Team seasons (for all-time record) — no deleted_at column on this table
               supabase
                 .from("team_seasons")
                 .select("wins, losses, ties")
-                .eq("school_id", schoolId)
-                .is("deleted_at", null),
-              // Championships
+                .eq("school_id", schoolId),
+              // Championships — no deleted_at column on this table
               supabase
                 .from("championships")
                 .select("level, sport_id")
-                .eq("school_id", schoolId)
-                .is("deleted_at", null),
+                .eq("school_id", schoolId),
               // Pro athletes
               supabase
                 .from("next_level_tracking")
@@ -105,11 +103,12 @@ export async function getSchoolComparisonData(
                 .select("id", { count: "exact", head: true })
                 .eq("school_id", schoolId)
                 .like("award_name", "%All-City%"),
-              // Rosters for current season
+              // Current players (count from players table)
               supabase
-                .from("rosters")
+                .from("players")
                 .select("id", { count: "exact", head: true })
-                .eq("school_id", schoolId),
+                .eq("primary_school_id", schoolId)
+                .is("deleted_at", null),
             ]);
 
             // Calculate all-time record
@@ -158,7 +157,7 @@ export async function getSchoolComparisonData(
               college_placements: collegeAthletes.count ?? 0,
               all_city_selections: awards.count ?? 0,
               league_titles: 0, // TODO: Calculate from championships table
-              current_roster_size: rosters.count ?? 0,
+              current_roster_size: currentPlayers.count ?? 0,
               top_players: (topPlayers ?? []).map((p: any) => ({
                 id: p.id,
                 name: p.name,

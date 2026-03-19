@@ -125,7 +125,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
       ]} />
 
       {/* Hero */}
-      <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, ${meta.color}33 100%)` }}>
+      <section className="py-10" style={{ background: "var(--psp-navy)" }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{ label: meta.name, href: `/${sport}` }, { label: "Championships" }]} />
           <h1 className="text-4xl md:text-5xl text-white mb-3" style={{ fontFamily: "Bebas Neue, sans-serif" }}>

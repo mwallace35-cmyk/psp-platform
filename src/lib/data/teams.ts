@@ -109,11 +109,11 @@ export const getRecordsBySport = cache(
             const supabase = await createClient();
             const { data } = await supabase
               .from("records")
-              .select("id, sport_id, category, record_number, player_id, school_id, season_id, scope, notes, players(name, slug), schools(name, slug), seasons(label)")
+              .select("id, sport_id, category, subcategory, record_value, record_number, holder_name, holder_school, year_set, description, player_id, school_id, season_id, scope, verified, players(name, slug), schools(name, slug), seasons(label)")
               .eq("sport_id", sportId)
               .order("category")
               .order("record_number", { ascending: false })
-              .limit(200);
+              .limit(600);
             return data ?? [];
           },
           { maxRetries: 2, baseDelay: 500 }

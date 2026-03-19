@@ -293,7 +293,7 @@ export default function RecordsView({
         padding: "64px 24px",
         borderRadius: 12,
         border: "2px solid rgba(240, 165, 0, 0.2)",
-        background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)",
+        background: "#0a1628",
       }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>🏆</div>
         <h3 style={{

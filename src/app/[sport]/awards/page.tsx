@@ -6,6 +6,8 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { SPORT_META, getAwardsPageData } from "@/lib/data";
 import AwardsArchive from "./AwardsArchive";
+import AwardTierRoster from "@/components/awards/AwardTierRoster";
+import { buildAwardTiers } from "@/lib/awards/categorize";
 import type { Metadata } from "next";
 
 export const revalidate = 86400; // 24 hours
@@ -43,65 +45,24 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
   const data = await getAwardsPageData(sport);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a1628] to-[#0f2040]">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-[#0a1628] to-[#0f2040] border-b-4 border-[#f0a500]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-white">
+      {/* Header — matches standard sport sub-page layout */}
+      <section className="py-10" style={{ background: 'var(--psp-navy)' }}>
+        <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb
             items={[
               { label: meta.name, href: `/${sport}` },
               { label: "Awards & Honors" },
             ]}
           />
-          <div className="mt-4 flex items-start gap-4">
-            <div className="flex-1">
-              <h1 className="text-4xl sm:text-5xl font-bebas text-white mb-2">
-                Awards & Honors
-              </h1>
-              <p className="text-gray-300 text-lg">
-                Complete archive of Philadelphia {meta.name.toLowerCase()} awards and honors
-              </p>
-            </div>
-            <div className="text-[#f0a500] text-3xl mt-2">
-              {meta.emoji}
-            </div>
-          </div>
+          <h1 className="text-4xl md:text-5xl text-white mb-2 font-bebas mt-4">
+            {meta.emoji} {meta.name} Awards & Honors
+          </h1>
+          <p className="text-gray-300">
+            Complete archive of Philadelphia {meta.name.toLowerCase()} awards and honors
+          </p>
         </div>
-      </header>
-
-      {/* Stats Strip */}
-      <div className="bg-[#0f2040] border-b border-gray-700 sticky top-0 z-40">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-[#f0a500] text-2xl font-bold">
-                {data.totalCount.toLocaleString()}
-              </div>
-              <div className="text-gray-400 text-sm">Total Awards</div>
-            </div>
-            <div className="text-center">
-              <div className="text-blue-400 text-2xl font-bold">
-                {data.tabs.length}
-              </div>
-              <div className="text-gray-400 text-sm">Award Categories</div>
-            </div>
-            <div className="text-center">
-              <div className="text-green-400 text-2xl font-bold">
-                {data.schoolsRepresented}
-              </div>
-              <div className="text-gray-400 text-sm">Schools Represented</div>
-            </div>
-            <div className="text-center">
-              <div className="text-purple-400 text-2xl font-bold">
-                {data.yearsSpanned.min > 0
-                  ? `${data.yearsSpanned.min}–${data.yearsSpanned.max}`
-                  : "—"}
-              </div>
-              <div className="text-gray-400 text-sm">Timeline</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </section>
 
       {/* Sport-Specific Featured Section */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-2">
@@ -109,7 +70,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {/* All Awards Hub link */}
           <Link
             href="/awards"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
             style={{
               border: "1px solid rgba(59,130,246,0.3)",
               background: "rgba(59,130,246,0.08)",
@@ -121,7 +82,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {/* Championships link */}
           <Link
             href={`/${sport}/championships`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
             style={{
               border: "1px solid rgba(240,165,0,0.3)",
               background: "rgba(240,165,0,0.08)",
@@ -135,7 +96,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             <>
               <Link
                 href="/football/all-city"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
                 style={{
                   border: "1px solid rgba(16,163,97,0.3)",
                   background: "rgba(16,163,97,0.08)",
@@ -146,7 +107,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
               </Link>
               <Link
                 href="/football/city-all-star-game"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
                 style={{
                   border: "1px solid rgba(168,85,247,0.3)",
                   background: "rgba(168,85,247,0.08)",
@@ -160,7 +121,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {sport === "basketball" && (
             <Link
               href="/basketball/leaderboards/scoring"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
               style={{
                 border: "1px solid rgba(234,88,12,0.3)",
                 background: "rgba(234,88,12,0.08)",
@@ -173,7 +134,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {sport === "baseball" && (
             <Link
               href="/pros"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
               style={{
                 border: "1px solid rgba(220,38,38,0.3)",
                 background: "rgba(220,38,38,0.08)",
@@ -191,20 +152,44 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-3">
-            {data.tabs.length === 0 ? (
-              <div className="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
-                <p className="text-gray-300 text-lg">
-                  No award data available for {meta.name.toLowerCase()} yet.
-                </p>
-                <p className="text-gray-500 text-sm mt-2">
-                  Check back soon or explore{" "}
-                  <Link href="/awards" className="text-blue-400 hover:underline">
-                    awards across all sports
-                  </Link>.
-                </p>
-              </div>
-            ) : (
-              <AwardsArchive tabs={data.tabs} sport={sport} />
+            {/* Pro Bowl-style tier roster for football and basketball */}
+            {(sport === "football" || sport === "basketball") && data.tabs.length > 0 && (() => {
+              const allAwards = data.tabs.flatMap(tab => tab.awards.map(a => ({
+                award_name: a.award_name ?? a.award_type ?? null,
+                player_name: a.displayName ?? a.players?.name ?? (a as any).player_name ?? null,
+                player_slug: a.players?.slug ?? null,
+                school_name: a.school?.name ?? a.players?.schools?.name ?? null,
+                school_slug: a.school?.slug ?? a.players?.schools?.slug ?? null,
+                position: a.position ?? null,
+                year: (a as any).year ?? ((a.seasons as any)?.year_start) ?? null,
+              })));
+              const tiers = buildAwardTiers(allAwards, sport);
+              // Extract available years for the filter
+              const yearSet = new Set<number>();
+              allAwards.forEach(a => { if (a.year) yearSet.add(a.year); });
+              const availableYears = Array.from(yearSet).sort((a, b) => b - a);
+              return tiers.length > 0 ? (
+                <AwardTierRoster tiers={tiers} sport={sport} availableYears={availableYears} />
+              ) : null;
+            })()}
+
+            {/* Standard archive shown only for non-football/basketball sports */}
+            {sport !== "football" && sport !== "basketball" && (
+              data.tabs.length === 0 ? (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+                  <p className="text-gray-600 text-lg">
+                    No award data available for {meta.name.toLowerCase()} yet.
+                  </p>
+                  <p className="text-gray-400 text-sm mt-2">
+                    Check back soon or explore{" "}
+                    <Link href="/awards" className="text-blue-400 hover:underline">
+                      awards across all sports
+                    </Link>.
+                  </p>
+                </div>
+              ) : (
+                <AwardsArchive tabs={data.tabs} sport={sport} />
+              )
             )}
           </div>
 

@@ -146,7 +146,7 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
     <>
       <BreadcrumbJsonLd items={jsonLdItems} />
 
-      <div className="min-h-screen bg-gradient-to-b from-[var(--psp-navy)] to-[var(--psp-navy-mid)]">
+      <div className="min-h-screen bg-[#0a1628]">
         {/* Hero Section */}
         <div className="border-b-4 border-[var(--psp-gold)] px-4 py-12 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />

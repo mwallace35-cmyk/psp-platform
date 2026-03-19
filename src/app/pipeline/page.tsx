@@ -39,29 +39,7 @@ async function PipelineContent() {
           Where Philly's best athletes play next — An interactive look at our college placements.
         </p>
 
-        {/* Stats Strip */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <StatBlock
-            value={summary.totalTracked}
-            label="Total Tracked"
-            icon="📊"
-          />
-          <StatBlock
-            value={summary.collegeCount}
-            label="Colleges"
-            icon="🎓"
-          />
-          <StatBlock
-            value={summary.proAthletes}
-            label="Pro Athletes"
-            icon="🏆"
-          />
-          <StatBlock
-            value={summary.collegeAthletes}
-            label="College Athletes"
-            icon="⭐"
-          />
-        </div>
+        {/* Stats removed per design spec — data appears in context below */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

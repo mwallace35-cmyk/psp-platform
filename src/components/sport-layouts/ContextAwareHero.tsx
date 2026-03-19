@@ -83,7 +83,7 @@ const ContextAwareHero: React.FC<ContextAwareHeroProps> = ({
           style={{
             height: '320px',
             borderRadius: '6px',
-            background: `linear-gradient(135deg, #1A2744 0%, ${sportColor}33 100%)`,
+            background: `linear-gradient(rgba(10,22,40,0.88), rgba(10,22,40,0.92))`,
             padding: '32px',
             display: 'flex',
             flexDirection: 'column',
@@ -146,7 +146,7 @@ const ContextAwareHero: React.FC<ContextAwareHeroProps> = ({
     // Off-Season Mode with Featured Article
     const backgroundImage = featuredArticle.featured_image_url
       ? `linear-gradient(135deg, rgba(26, 39, 68, 0.85) 0%, rgba(26, 39, 68, 0.85) 100%), url('${featuredArticle.featured_image_url}')`
-      : `linear-gradient(135deg, #1A2744 0%, ${sportColor}33 100%)`;
+      : `linear-gradient(rgba(10,22,40,0.88), rgba(10,22,40,0.92))`;
 
     return (
       <div
@@ -208,7 +208,7 @@ const ContextAwareHero: React.FC<ContextAwareHeroProps> = ({
       style={{
         height: '320px',
         borderRadius: '6px',
-        background: `linear-gradient(135deg, #1A2744 0%, ${sportColor}33 100%)`,
+        background: `linear-gradient(rgba(10,22,40,0.88), rgba(10,22,40,0.92))`,
         padding: '32px',
         display: 'flex',
         flexDirection: 'column',
@@ -236,24 +236,7 @@ const ContextAwareHero: React.FC<ContextAwareHeroProps> = ({
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '24px', fontSize: '14px' }}>
-        {playerCount !== undefined && (
-          <div>
-            <div style={{ fontWeight: 'bold', fontSize: '20px', color: sportColor }}>
-              {playerCount.toLocaleString()}
-            </div>
-            <div style={{ opacity: 0.8 }}>Players</div>
-          </div>
-        )}
-        {schoolCount !== undefined && (
-          <div>
-            <div style={{ fontWeight: 'bold', fontSize: '20px', color: sportColor }}>
-              {schoolCount.toLocaleString()}
-            </div>
-            <div style={{ opacity: 0.8 }}>Schools</div>
-          </div>
-        )}
-      </div>
+      {/* Stats removed — data appears in context below */}
 
       <div style={{ fontSize: '12px', opacity: 0.7 }}>
         {sport} • Philadelphia

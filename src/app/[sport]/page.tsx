@@ -252,19 +252,17 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       {/* Breadcrumb */}
       <Breadcrumb items={[{label: meta.name}]} />
 
-      {/* Sport Hero with Gradient */}
-      <div className={`bg-gradient-to-r ${sportGradient} text-white py-12 px-4`}>
+      {/* Sport Hero — Texture Background */}
+      <div className="text-white py-12 px-4" style={{
+        background: `linear-gradient(rgba(10,22,40,0.88), rgba(10,22,40,0.92)), url(/textures/${sport === 'track-field' ? 'track' : sport}.jpg) center/cover no-repeat`,
+        backgroundColor: '#0a1628',
+      }}>
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4">
             <span style={{ fontSize: 48 }} aria-hidden="true">{meta.emoji}</span>
             <h1 className="text-4xl md:text-5xl font-black" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
               {meta.name}
             </h1>
-          </div>
-          <div className="flex flex-wrap gap-4 text-sm md:text-base">
-            <div className="bg-white/20 px-4 py-2 rounded-full"><strong>{overview.players.toLocaleString()}</strong> players</div>
-            <div className="bg-white/20 px-4 py-2 rounded-full"><strong>{overview.schools.toLocaleString()}</strong> schools</div>
-            <div className="bg-white/20 px-4 py-2 rounded-full"><strong>{overview.championships.toLocaleString()}</strong> titles</div>
           </div>
         </div>
       </div>

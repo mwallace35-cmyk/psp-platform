@@ -238,40 +238,9 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
           }}>
             School Directory
           </h1>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', margin: '0 0 24px', maxWidth: 600 }}>
-            Explore every Philadelphia-area high school — championships, player stats, win records, and pro alumni spanning {aggregateStats.yearsOfData}+ years.
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', margin: 0, maxWidth: 600 }}>
+            Browse every high school program across Philadelphia and the surrounding area. Search by name, filter by league, or explore the alphabet.
           </p>
-
-          {/* Stats strip */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-            gap: 16,
-            maxWidth: 800,
-          }}>
-            {[
-              { label: 'Schools', value: aggregateStats.totalSchools, icon: '🏫' },
-              { label: 'Players', value: aggregateStats.totalPlayers, icon: '👤' },
-              { label: 'Championships', value: aggregateStats.totalChampionships, icon: '🏆' },
-              { label: 'Pro Athletes', value: aggregateStats.totalPros, icon: '⭐' },
-              { label: 'Games', value: aggregateStats.totalGames, icon: '📊' },
-            ].map(stat => (
-              <div key={stat.label} style={{
-                background: 'rgba(255,255,255,0.08)',
-                borderRadius: 10,
-                padding: '12px 14px',
-                backdropFilter: 'blur(4px)',
-                borderLeft: '3px solid var(--psp-gold)',
-              }}>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
-                  {stat.icon} {stat.label}
-                </div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--psp-gold)', fontFamily: "'Bebas Neue', sans-serif" }}>
-                  {stat.value.toLocaleString()}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
