@@ -72,7 +72,7 @@ export const getChampionshipsBySport = cache(
             const { data, error } = await supabase
               .from("championships")
               .select(
-                `id, sport_id, school_id, opponent_id, season_id, level, league_id, score, notes,
+                `id, sport_id, school_id, opponent_id, season_id, level, league_id, score, notes, championship_type,
                  schools!championships_school_id_fkey(name, slug), seasons(year_start, year_end, label), leagues(name),
                  opponent:schools!championships_opponent_id_fkey(name)`
               )

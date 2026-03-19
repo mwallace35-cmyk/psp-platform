@@ -104,11 +104,16 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
 
   // Sort years descending; within each year sort by level priority (state > city > league)
   const sortedYears = Object.values(bySeason).sort((a, b) => b.yearStart - a.yearStart);
+  const classOrder = ['6A', '5A', '4A', '3A', '2A', '1A', 'AAAA', 'AAA', 'AA', 'A'];
   for (const year of sortedYears) {
     year.champs.sort((a, b) => {
-      const aOrder = getLevelConfig(a.level || "").order;
-      const bOrder = getLevelConfig(b.level || "").order;
-      return aOrder - bOrder;
+      const aLevelOrder = getLevelConfig(a.level || "").order;
+      const bLevelOrder = getLevelConfig(b.level || "").order;
+      if (aLevelOrder !== bLevelOrder) return aLevelOrder - bLevelOrder;
+      // Within same level, sort by classification (6A first)
+      const aClass = classOrder.indexOf(a.championship_type || "");
+      const bClass = classOrder.indexOf(b.championship_type || "");
+      return (aClass === -1 ? 99 : aClass) - (bClass === -1 ? 99 : bClass);
     });
   }
 
@@ -212,7 +217,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                         }}>
                         {/* Main row */}
                         <div className="flex items-center gap-3">
-                          {/* Level badge */}
+                          {/* Level badge + classification */}
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-bold flex-shrink-0 whitespace-nowrap"
                             style={{
                               background: getLevelConfig(c.level || "").bg,
@@ -221,6 +226,9 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                               justifyContent: "center",
                             }}>
                             {getLevelConfig(c.level || "").label}
+                            {c.championship_type && (
+                              <span style={{ opacity: 0.85, marginLeft: "2px" }}>{c.championship_type}</span>
+                            )}
                           </span>
 
                           {/* Champion */}
