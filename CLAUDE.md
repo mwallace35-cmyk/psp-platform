@@ -114,6 +114,31 @@ The codebase had a sitewide UTF-8 double-encoding problem. Emojis and special ch
 ## Route Health: 54/54 PASS
 All routes verified returning 200 on March 18, 2026.
 
+## Data Scraped This Session
+| Source | Records | Status |
+|--------|---------|--------|
+| All-Catholic MVPs + COTY (PDFs, 2021-2025) | 17 | ✅ Inserted to DB |
+| All-Public 2024-25 (PPL website, 68 schools) | 1,154 | SQL file: seed_2025_all_public.sql |
+| All-Public 2023-24 (PPL website, 72 schools) | 1,069 | SQL file: seed_2024_all_public.sql |
+| All-Public 2022-23 (PPL website, 68 schools) | 868 | SQL file: seed_2023_all_public.sql |
+| Public League school logos | 28 | ✅ Inserted to DB |
+| 9 articles (3 FB, 3 BK, 3 BB) | 9 | ✅ Inserted to DB |
+
+## Code Changes This Session (Local + Pushed)
+- Tab pill navigation (SportNav.tsx) — no emojis, rounded pills
+- Gradient removal from sport hub hero + 12 sub-pages
+- Stat counter pills removed from sport hubs, awards, pipeline, schools
+- Schools directory text rewritten, stat boxes removed
+- Awards Pro Bowl-style tier roster (AwardTierRoster.tsx + categorize.ts)
+- MVP + Coach of the Year dedicated tabs
+- Year filter dropdown (defaults to most recent year)
+- Records query fix (missing columns + limit 600)
+- Compare tools fixed (player search API wrapper + school compare deleted_at)
+- DesignBibleSections scores fix (sport filter + diversity cap)
+- Awards page white bg matching other sub-pages
+- Award links removed from sports dropdown
+- 3 award links removed from sports dropdown menu
+
 ## Preferences
 - **ALL work done LOCAL, push when ready** — no more GitHub API file edits
 - Push directly to main branch (no PRs)
