@@ -33,7 +33,7 @@ const ALL_SPORTS = [
 
 const PULSE_ITEMS = [
   { href: "/pulse", label: "The Pulse Hub" },
-  { href: "/pulse/recruiting", label: "Recruiting" },
+  { href: "/recruiting", label: "Recruiting Central" },
   { href: "/pulse/our-guys", label: "Our Guys" },
   { href: "/pulse/rankings", label: "Power Rankings" },
   { href: "/pulse/forum", label: "Forum" },
@@ -44,6 +44,7 @@ const MORE_ITEMS = [
   { href: "/coaches", label: "Coaches" },
   { href: "/compare", label: "Compare Players" },
   { href: "/compare/schools", label: "Compare Schools" },
+  { href: "/recruiting", label: "Recruiting Central" },
   { href: "/pipeline", label: "College Pipeline" },
   { href: "/glossary", label: "Glossary" },
   { href: "/challenge", label: "Stats Challenge" },
@@ -51,6 +52,7 @@ const MORE_ITEMS = [
 ];
 
 const RECRUITING_ITEMS = [
+  { href: "/recruiting", label: "Recruiting Central" },
   { href: "/recruiting/portal", label: "Recruiter Portal" },
 ];
 

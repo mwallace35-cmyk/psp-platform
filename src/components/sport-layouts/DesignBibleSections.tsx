@@ -41,11 +41,13 @@ export default function DesignBibleSections({ sport }: Props) {
           .select('home_score, away_score, game_date, home_school_id, away_school_id, sport_id')
           .eq('sport_id', sport)
           .not('home_score', 'is', null)
+          .not('away_score', 'is', null)
           .gt('home_score', 0)
           .not('home_school_id', 'is', null)
           .not('away_school_id', 'is', null)
+          .not('game_date', 'is', null)
           .order('game_date', { ascending: false })
-          .limit(10);
+          .limit(20);
         if (gData) {
           const schoolIds = new Set<number>();
           gData.forEach((g: any) => { schoolIds.add(g.home_school_id); schoolIds.add(g.away_school_id); });
