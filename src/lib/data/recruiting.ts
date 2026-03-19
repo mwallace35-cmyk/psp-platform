@@ -199,7 +199,8 @@ export async function getRecruitingBoard(classYear?: number, sportId?: string) {
         });
       });
     },
-    []
+    [],
+    "RECRUITING_BOARD_ERROR"
   );
 }
 
@@ -217,7 +218,8 @@ export async function getRecruitingClassYears() {
       const years = [...new Set((data ?? []).map((d: any) => d.class_year))];
       return years;
     },
-    []
+    [],
+    "RECRUITING_CLASS_YEARS_ERROR"
   );
 }
 
@@ -234,7 +236,8 @@ export async function getCollegeOptions(): Promise<CollegeOption[]> {
         .order("name");
       return (data ?? []) as CollegeOption[];
     },
-    []
+    [],
+    "COLLEGE_OPTIONS_ERROR"
   );
 }
 
@@ -260,6 +263,7 @@ export async function getRecruitingSummary() {
 
       return { total, committed, fiveStars, fourStars, totalOffers: offerCount ?? 0 };
     },
-    { total: 0, committed: 0, fiveStars: 0, fourStars: 0, totalOffers: 0 }
+    { total: 0, committed: 0, fiveStars: 0, fourStars: 0, totalOffers: 0 },
+    "RECRUITING_SUMMARY_ERROR"
   );
 }
