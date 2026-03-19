@@ -1,8 +1,5 @@
 "use client";
 
-import StarRating from "./StarRating";
-import ExternalLinks from "./ExternalLinks";
-
 interface Recruit {
   id: number;
   player_name?: string;
@@ -30,162 +27,74 @@ interface Recruit {
   highlights_url?: string;
 }
 
-interface RecruitingBoardProps {
+interface Props {
   recruits: Recruit[];
   sportColor?: string;
 }
 
-const STATUS_STYLES: Record<string, { bg: string; color: string; label: string }> = {
-  unsigned: { bg: "var(--g100)", color: "var(--g500)", label: "Unsigned" },
-  committed: { bg: "#16a34a", color: "#fff", label: "Committed" },
-  signed: { bg: "#f0a500", color: "#0a1628", label: "Signed" },
-  enrolled: { bg: "#3b82f6", color: "#fff", label: "Enrolled" },
-  decommitted: { bg: "#dc2626", color: "#fff", label: "Decommitted" },
-};
-
-export default function RecruitingBoard({ recruits, sportColor = "#f0a500" }: RecruitingBoardProps) {
-  if (recruits.length === 0) {
+export default function RecruitingBoard({ recruits, sportColor = "#f0a500" }: Props) {
+  if (!recruits || recruits.length === 0) {
     return (
-      <div style={{
-        padding: 40,
-        textAlign: "center",
-        color: "var(--g400)",
-        background: "var(--card)",
-        borderRadius: 8,
-        border: "1px solid var(--g100)",
-      }}>
-        <div style={{ fontSize: 32, marginBottom: 8 }}>📋</div>
-        <div style={{ fontSize: 14, fontWeight: 600 }}>No recruits found</div>
-        <div style={{ fontSize: 12, marginTop: 4 }}>
-          Recruiting profiles will appear here once added by admins.
-        </div>
+      <div style={{ padding: "2rem", textAlign: "center", color: "#94a3b8" }}>
+        No recruits to display
       </div>
     );
   }
 
   return (
-    <>
-      {/* Desktop table */}
-      <div className="hide-mobile" style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-          <thead>
-            <tr style={{ borderBottom: `2px solid ${sportColor}` }}>
-              <th style={thStyle}>#</th>
-              <th style={thStyle}>Name</th>
-              <th style={thStyle}>School</th>
-              <th style={thStyle}>Pos</th>
-              <th style={thStyle}>Stars</th>
-              <th style={thStyle}>Status</th>
-              <th style={thStyle}>Committed To</th>
-              <th style={thStyle}>Links</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recruits.map((r, i) => {
-              const status = STATUS_STYLES[r.status || "unsigned"] || STATUS_STYLES.unsigned;
-              return (
-                <tr key={r.id} style={{ borderBottom: "1px solid var(--g100)" }}>
-                  <td style={{ ...tdStyle, fontWeight: 700, color: i < 3 ? sportColor : "var(--g400)" }}>
-                    {i + 1}
-                  </td>
-                  <td style={tdStyle}>
-                    <strong>{r.player_name || "Unknown"}</strong>
-                    {r.height && r.weight && (
-                      <div style={{ fontSize: 10, color: "var(--g400)" }}>{r.height} / {r.weight} lbs</div>
-                    )}
-                  </td>
-                  <td style={tdStyle}>{r.school_name || "—"}</td>
-                  <td style={tdStyle}>{r.position || "—"}</td>
-                  <td style={tdStyle}>
-                    {r.star_rating ? <StarRating rating={r.star_rating} size={12} /> : "—"}
-                  </td>
-                  <td style={tdStyle}>
-                    <span style={{
-                      fontSize: 10, fontWeight: 700, textTransform: "uppercase",
-                      padding: "2px 6px", borderRadius: 3,
-                      background: status.bg, color: status.color,
-                    }}>
-                      {status.label}
-                    </span>
-                  </td>
-                  <td style={tdStyle}>
-                    {r.committed_school ? (
-                      <span style={{ fontWeight: 600, color: "#16a34a" }}>{r.committed_school}</span>
-                    ) : "—"}
-                  </td>
-                  <td style={tdStyle}>
-                    <ExternalLinks
-                      url_247={r.url_247}
-                      url_rivals={r.url_rivals}
-                      url_on3={r.url_on3}
-                      url_maxpreps={r.url_maxpreps}
-                      url_hudl={r.url_hudl}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Mobile card layout */}
-      <div className="show-mobile" style={{ display: "none" }}>
-        {recruits.map((r, i) => {
-          const status = STATUS_STYLES[r.status || "unsigned"] || STATUS_STYLES.unsigned;
-          return (
-            <div key={r.id} style={{
-              background: "var(--card)",
-              border: "1px solid var(--g100)",
-              borderRadius: 8,
-              padding: 14,
-              marginBottom: 10,
-              borderLeft: i < 3 ? `3px solid ${sportColor}` : undefined,
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
-                <div>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: i < 3 ? sportColor : "var(--g400)", marginRight: 6 }}>#{i + 1}</span>
-                  <strong style={{ fontSize: 13 }}>{r.player_name || "Unknown"}</strong>
-                </div>
-                <span style={{
-                  fontSize: 9, fontWeight: 700, textTransform: "uppercase",
-                  padding: "2px 6px", borderRadius: 3,
-                  background: status.bg, color: status.color,
-                }}>
-                  {status.label}
+    <div className="space-y-3">
+      {recruits.map((r, idx) => (
+        <div
+          key={r.id}
+          className="flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition"
+        >
+          <div
+            className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+            style={{ backgroundColor: "#0a1628", color: sportColor }}
+          >
+            {idx + 1}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-gray-900">
+                {r.player_name ?? "Unknown"}
+              </span>
+              {r.star_rating && (
+                <span className="text-sm" style={{ color: sportColor }}>
+                  {"★".repeat(r.star_rating)}
+                  {"☆".repeat(5 - r.star_rating)}
                 </span>
-              </div>
-              <div style={{ fontSize: 11, color: "var(--g500)", lineHeight: 1.6 }}>
-                {r.school_name && <div>🏫 {r.school_name}</div>}
-                {r.position && <div>📍 {r.position}{r.height ? ` • ${r.height}` : ""}{r.weight ? ` / ${r.weight} lbs` : ""}</div>}
-                {r.star_rating && <div style={{ marginTop: 4 }}><StarRating rating={r.star_rating} size={12} /></div>}
-                {r.committed_school && (
-                  <div style={{ color: "#16a34a", fontWeight: 600, marginTop: 4 }}>→ {r.committed_school}</div>
-                )}
-              </div>
-              <div style={{ marginTop: 8 }}>
-                <ExternalLinks
-                  url_247={r.url_247}
-                  url_rivals={r.url_rivals}
-                  url_on3={r.url_on3}
-                  url_maxpreps={r.url_maxpreps}
-                  url_hudl={r.url_hudl}
-                />
-              </div>
+              )}
+              {r.status && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 uppercase">
+                  {r.status}
+                </span>
+              )}
             </div>
-          );
-        })}
-      </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .hide-mobile { display: none !important; }
-          .show-mobile { display: block !important; }
-        }
-      `}</style>
-    </>
+            <div className="text-sm text-gray-500 flex items-center gap-2 mt-0.5">
+              {r.position && <span className="font-medium">{r.position}</span>}
+              {r.school_name && <span>{r.school_name}</span>}
+              <span>Class of {r.class_year}</span>
+              {r.committed_school && (
+                <span className="text-green-600 font-medium">
+                  → {r.committed_school}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-1.5">
+            {r.url_247 && (
+              <a href={r.url_247} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 bg-blue-50 text-blue-700 rounded font-semibold">247</a>
+            )}
+            {r.url_rivals && (
+              <a href={r.url_rivals} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 bg-red-50 text-red-700 rounded font-semibold">RIV</a>
+            )}
+            {r.url_on3 && (
+              <a href={r.url_on3} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 bg-green-50 text-green-700 rounded font-semibold">On3</a>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
-
-const thStyle: React.CSSProperties = { textAlign: "left", padding: "8px 10px", fontSize: 10, fontWeight: 700, color: "var(--g400)", textTransform: "uppercase" };
-const tdStyle: React.CSSProperties = { padding: "8px 10px", verticalAlign: "middle" };
