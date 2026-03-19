@@ -99,10 +99,10 @@ export async function getRecruitingBoard(classYear?: number, sportId?: string) {
           .select(`
             id, recruiting_profile_id, college_id, status,
             offer_date, visit_date, commitment_date, scholarship_type,
-            colleges!inner(name, division, conference)
+            colleges(name, division, conference)
           `)
           .in("recruiting_profile_id", profileIds)
-          .order("offer_date", { ascending: false });
+          .order("created_at", { ascending: false });
 
         // Fetch latest ratings per service
         const { data: ratings } = await (supabase as any)
