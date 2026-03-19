@@ -17,7 +17,7 @@ interface RawAward {
 }
 
 interface CategorizedAward {
-  tier: 'league' | 'city' | 'state' | 'other';
+  tier: 'league' | 'city' | 'state' | 'mvp' | 'coty' | 'other';
   selector: string; // "Daily News", "Coaches", "Bulletin", etc.
   level: string; // "All-Public", "All-Catholic", "All-City", etc.
   team: string | null; // "First Team", "Second Team", etc.
