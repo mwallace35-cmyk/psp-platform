@@ -203,7 +203,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
                   marginBottom: '12px',
                 }}
               >
-                {/^\d{4}$/.test(year) ? `${String(Number(year) - 1).slice(-2)}-${String(year).slice(-2)}` : year}
+                {/^\d{4}$/.test(String(year)) ? `${String(Number(year) - 1).slice(-2)}-${String(year).slice(-2)}` : year}
               </h3>
               <div
                 style={{

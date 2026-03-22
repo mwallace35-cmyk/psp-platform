@@ -19,10 +19,10 @@ export default async function OurGuysPage() {
   const [alumniRes, countsRes] = await Promise.all([
     supabase
       .from('next_level_tracking')
-      .select('id, person_name, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, college, draft_info, schools:high_school_id(name, slug)')
+      .select('id, person_name, player_id, slug, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, college, draft_info, schools:high_school_id(name, slug)')
       .order('featured', { ascending: false })
       .order('person_name')
-      .limit(2000),
+      .limit(2500),
     Promise.all([
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }),
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'pro').eq('status', 'active'),
@@ -54,27 +54,10 @@ export default async function OurGuysPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
+      <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">Our Guys</h1>
-          <p className="text-gray-300 text-lg">Philly HS alumni making it at the next level</p>
-
-          <div className="flex flex-wrap gap-4 mt-6">
-            {[
-              { label: 'Total Tracked', count: counts.total, color: 'text-white' },
-              { label: 'Active Pros', count: counts.activePro, color: 'text-green-400' },
-              { label: 'Former Pros', count: counts.formerPro, color: 'text-gray-300' },
-              { label: 'College', count: counts.college, color: 'text-gold' },
-              { label: 'NFL', count: counts.nfl, color: 'text-green-400' },
-              { label: 'NBA', count: counts.nba, color: 'text-orange-400' },
-              { label: 'MLB', count: counts.mlb, color: 'text-blue-400' },
-            ].map(s => (
-              <div key={s.label} className="text-center">
-                <p className={`text-2xl font-bold ${s.color}`}>{s.count}</p>
-                <p className="text-xs text-gray-400 uppercase tracking-wider">{s.label}</p>
-              </div>
-            ))}
-          </div>
+          <h1 className="text-4xl md:text-5xl font-bebas text-white mb-1">Our Guys</h1>
+          <p className="text-gray-400">Philly HS alumni making it at the next level</p>
         </div>
       </div>
 
