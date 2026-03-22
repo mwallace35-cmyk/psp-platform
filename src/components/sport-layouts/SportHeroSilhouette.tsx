@@ -278,13 +278,13 @@ const GOLD = "#f0a500";
 export default function SportHeroSilhouette({ sport }: SportHeroSilhouetteProps) {
   const sportColor = SPORT_COLORS[sport] || "#3b82f6";
 
-  const courtBgs: Record<string, JSX.Element> = {
+  const courtBgs: Record<string, React.ReactNode> = {
     basketball: <BasketballCourtBg />,
     football: <FootballFieldBg />,
     baseball: <BaseballDiamondBg />,
   };
 
-  const players: Record<string, JSX.Element> = {
+  const players: Record<string, React.ReactNode> = {
     basketball: <BasketballPlayer />,
     football: <FootballPlayer />,
     baseball: <BaseballPlayer />,
