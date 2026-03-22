@@ -13,19 +13,61 @@ interface AwardPlayer {
   graduation_year?: number | null;
 }
 
-const OFFENSE_POSITIONS = new Set(['QB', 'RB', 'WR', 'TE', 'OL', 'C', 'G', 'T', 'E/OB', 'WR/TE', 'K', 'PK', 'K-P', 'P', 'Rec.', 'B', 'E']);
-const DEFENSE_POSITIONS = new Set(['DB', 'DL', 'LB', 'ILB', 'IL']);
+const OFFENSE_POSITIONS = new Set(['QB', 'RB', 'WR', 'TE', 'OL', 'C', 'G', 'T', 'E/OB', 'WR/TE', 'K', 'PK', 'K-P', 'P', 'Rec.', 'Rec', 'B', 'E', 'HB', 'FB', 'KR', 'L']);
+const DEFENSE_POSITIONS = new Set(['DB', 'DL', 'LB', 'ILB', 'IL', 'DE', 'DT', 'S', 'CB', 'FS', 'SS']);
 const SPECIAL_POSITIONS = new Set(['Multi-Purpose', 'UTL', 'MP', 'MVP', 'Coach']);
+
+// Map generic/old-school positions to modern equivalents per side
+const OFFENSE_LABELS: Record<string, string> = {
+  'B': 'RB', 'L': 'OL', 'E': 'WR', 'T': 'OT', 'G': 'OG', 'C': 'C',
+  'E/OB': 'WR', 'WR/TE': 'WR/TE', 'Rec.': 'WR', 'Rec': 'WR',
+  'HB': 'RB', 'FB': 'FB', 'KR': 'KR',
+};
+const DEFENSE_LABELS: Record<string, string> = {
+  'B': 'DB', 'L': 'DL', 'E': 'DE', 'T': 'DT', 'IL': 'ILB',
+  'L-DL': 'DL',
+};
 
 function getSide(pos?: string): 'offense' | 'defense' | 'special' {
   if (!pos) return 'special';
+  // Handle dual positions like "RB-DB", "RB-LB", "L-DL"
+  if (pos.includes('-')) {
+    const parts = pos.split('-');
+    const hasOff = parts.some(p => OFFENSE_POSITIONS.has(p));
+    const hasDef = parts.some(p => DEFENSE_POSITIONS.has(p));
+    if (hasOff && !hasDef) return 'offense';
+    if (hasDef && !hasOff) return 'defense';
+    // Dual: default to offense (player will appear in offense section)
+    if (hasOff && hasDef) return 'offense';
+  }
   if (OFFENSE_POSITIONS.has(pos)) return 'offense';
   if (DEFENSE_POSITIONS.has(pos)) return 'defense';
   if (SPECIAL_POSITIONS.has(pos)) return 'special';
-  // Fallback: check first letters
   if (pos.startsWith('O') || pos.startsWith('Q') || pos.startsWith('W') || pos.startsWith('R') || pos.startsWith('T')) return 'offense';
   if (pos.startsWith('D') || pos.startsWith('L')) return 'defense';
   return 'special';
+}
+
+/** Get the display position for a given side */
+function getPositionForSide(pos: string | undefined, side: 'offense' | 'defense' | 'special'): string {
+  if (!pos) return '';
+  // Handle dual positions like "RB-DB" — pick the right side
+  if (pos.includes('-')) {
+    const parts = pos.split('-');
+    if (side === 'offense') {
+      const offPart = parts.find(p => OFFENSE_POSITIONS.has(p));
+      if (offPart) return OFFENSE_LABELS[offPart] || offPart;
+    }
+    if (side === 'defense') {
+      const defPart = parts.find(p => DEFENSE_POSITIONS.has(p));
+      if (defPart) return DEFENSE_LABELS[defPart] || defPart;
+    }
+    return parts[0]; // fallback to first part
+  }
+  // Map generic positions to side-specific labels
+  if (side === 'offense' && OFFENSE_LABELS[pos]) return OFFENSE_LABELS[pos];
+  if (side === 'defense' && DEFENSE_LABELS[pos]) return DEFENSE_LABELS[pos];
+  return pos;
 }
 
 interface AwardTeam {
@@ -264,17 +306,21 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                   }
                   if (groups.length === 0) groups.push({ label: '', players: sortedPlayers });
 
-                  return groups.map((group) => (
+                  return groups.map((group) => {
+                    const side = group.label === 'OFFENSE' ? 'offense' as const : group.label === 'DEFENSE' ? 'defense' as const : 'special' as const;
+                    return (
                     <div key={group.label}>
                       {group.label && (
                         <div style={{ padding: '6px 16px', background: 'rgba(240,165,0,0.08)', fontSize: 11, fontWeight: 700, color: '#f0a500', letterSpacing: 2, fontFamily: "'Bebas Neue', sans-serif" }}>
                           {group.label}
                         </div>
                       )}
-                      {group.players.map((player, pIdx) => (
+                      {group.players.map((player, pIdx) => {
+                        const displayPos = getPositionForSide(player.position, side);
+                        return (
                         <div key={`${player.player_name}-${pIdx}`} style={{
                           display: 'grid',
-                          gridTemplateColumns: '42px 1fr 160px auto 50px',
+                          gridTemplateColumns: '50px 1fr 160px auto 50px',
                           alignItems: 'center',
                           padding: '10px 16px',
                           borderBottom: pIdx < group.players.length - 1 ? '1px solid rgba(240,165,0,0.06)' : 'none',
@@ -283,13 +329,13 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                           {/* Position badge */}
                           <span style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            minWidth: 36, height: 28, borderRadius: 6,
-                            background: player.position ? badgeColor : 'rgba(255,255,255,0.1)',
+                            minWidth: 40, height: 28, borderRadius: 6,
+                            background: displayPos ? badgeColor : 'rgba(255,255,255,0.1)',
                             fontSize: 10, fontWeight: 700, color: '#fff',
                             fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase',
                             padding: '0 6px',
                           }}>
-                            {player.position || (pIdx + 1)}
+                            {displayPos || (pIdx + 1)}
                           </span>
 
                           {/* Player name */}
@@ -319,9 +365,11 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                             {player.year ? `${String(player.year - 1).slice(-2)}-${String(player.year).slice(-2)}` : ''}
                           </span>
                         </div>
-                      ))}
+                      );
+                      })}
                     </div>
-                  ));
+                    );
+                  });
                 })()}
               </div>
             ))}
