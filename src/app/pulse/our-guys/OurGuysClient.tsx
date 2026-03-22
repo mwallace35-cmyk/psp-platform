@@ -56,6 +56,113 @@ const SPORT_EMOJIS: Record<string, string> = {
   wrestling: '🤼',
 };
 
+const SPORT_LABELS: Record<string, string> = {
+  football: 'Football',
+  basketball: 'Basketball',
+  baseball: 'Baseball',
+  soccer: 'Soccer',
+  lacrosse: 'Lacrosse',
+  'track-field': 'Track & Field',
+  wrestling: 'Wrestling',
+  other: 'Other',
+};
+
+const SPORT_COLORS: Record<string, string> = {
+  football: '#16a34a',
+  basketball: '#3b82f6',
+  baseball: '#ea580c',
+  soccer: '#059669',
+  lacrosse: '#0891b2',
+  'track-field': '#7c3aed',
+  wrestling: '#ca8a04',
+  other: '#6b7280',
+};
+
+const SPORT_ORDER = ['football', 'basketball', 'baseball', 'soccer', 'lacrosse', 'track-field', 'wrestling', 'other'];
+
+function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
+  const league = a.pro_league ? LEAGUE_BADGES[a.pro_league] : null;
+  const sportEmoji = SPORT_EMOJIS[a.sport_id || ''] || '';
+  const isInactive = a.status !== 'active';
+  const sportColor = SPORT_COLORS[a.sport_id || 'other'] || '#6b7280';
+
+  if (activeTab === 'active-pros' || activeTab === 'former-pros') {
+    const isFormer = activeTab === 'former-pros';
+    return (
+      <div
+        className={`bg-white rounded-lg border p-4 hover:shadow-md transition ${isFormer ? 'opacity-80 hover:border-gray-400' : 'hover:border-gold'}`}
+        style={{ borderLeft: `3px solid ${isInactive && !isFormer ? '#d1d5db' : sportColor}`, borderColor: undefined }}
+      >
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <h3 className={`font-bold text-lg ${isFormer ? 'text-gray-700' : 'text-navy'}`}>{a.person_name}</h3>
+            {isInactive && !isFormer && (
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-500">
+                {a.status === 'retired' ? 'Retired' : 'Inactive'}
+              </span>
+            )}
+          </div>
+          {league && (
+            <span className={`px-2 py-0.5 rounded text-xs font-bold text-white ${league.bg} ${isFormer ? 'opacity-70' : ''}`}>
+              {league.icon} {a.pro_league}
+            </span>
+          )}
+        </div>
+        {a.current_org && <p className={`text-sm font-medium ${isFormer ? 'text-gray-600' : 'text-gray-700'}`}>{a.current_org}</p>}
+        {a.current_role && <p className="text-sm text-gray-500">{a.current_role}</p>}
+        {a.schools && (
+          <Link href={`/schools/${a.schools.slug}`} className="text-xs text-blue-600 hover:text-blue-800 mt-2 inline-block">
+            {a.schools.name}
+          </Link>
+        )}
+        {a.bio_note && <p className={`text-xs mt-2 line-clamp-2 ${isFormer ? 'text-gray-400' : 'text-gray-500'}`}>{a.bio_note}</p>}
+        {!isFormer && (a.social_twitter || a.social_instagram) && (
+          <div className="flex gap-3 mt-3">
+            {a.social_twitter && (
+              <a href={`https://twitter.com/${a.social_twitter}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:text-blue-700">
+                @{a.social_twitter}
+              </a>
+            )}
+            {a.social_instagram && (
+              <a href={`https://instagram.com/${a.social_instagram}`} target="_blank" rel="noopener noreferrer" className="text-xs text-pink-500 hover:text-pink-700">
+                IG: {a.social_instagram}
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (activeTab === 'college') {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-400 transition" style={{ borderLeft: `3px solid ${sportColor}` }}>
+        <p className="font-bold text-navy">{sportEmoji} {a.person_name}</p>
+        {(a.current_org || a.college) && <p className="text-sm text-gray-700 font-medium">{a.current_org || a.college}</p>}
+        {a.current_role && <p className="text-xs text-gray-500">{a.current_role}</p>}
+        {a.schools && (
+          <Link href={`/schools/${a.schools.slug}`} className="text-xs text-gray-400 mt-1 inline-block hover:text-blue-600">
+            {a.schools.name}
+          </Link>
+        )}
+        {a.bio_note && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{a.bio_note}</p>}
+      </div>
+    );
+  }
+
+  // Coaching
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-green-400 transition" style={{ borderLeft: '3px solid #16a34a' }}>
+      <p className="font-bold text-navy">{a.person_name}</p>
+      {a.current_org && <p className="text-sm text-gray-700">{a.current_org}</p>}
+      {a.current_role && <p className="text-xs text-gray-500">{a.current_role}</p>}
+      {a.schools && (
+        <p className="text-xs text-gray-400 mt-1">HS: {a.schools.name}</p>
+      )}
+    </div>
+  );
+}
+
 export default function OurGuysClient({ alumni, counts }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('active-pros');
   const [sportFilter, setSportFilter] = useState('all');
@@ -80,6 +187,29 @@ export default function OurGuysClient({ alumni, counts }: Props) {
       return matchesSport && matchesSearch;
     });
   }, [currentList, sportFilter, searchTerm]);
+
+  // Group by sport (when "All Sports" is selected)
+  const groupedBySport = useMemo(() => {
+    const groups: Record<string, AlumniRecord[]> = {};
+    filtered.forEach(a => {
+      const sport = a.sport_id || 'other';
+      if (!groups[sport]) groups[sport] = [];
+      groups[sport].push(a);
+    });
+    // Sort within each group: active first, then alphabetical
+    Object.values(groups).forEach(group => {
+      group.sort((a, b) => {
+        if (a.status === 'active' && b.status !== 'active') return -1;
+        if (a.status !== 'active' && b.status === 'active') return 1;
+        return a.person_name.localeCompare(b.person_name);
+      });
+    });
+    return SPORT_ORDER
+      .filter(s => groups[s]?.length > 0)
+      .map(s => ({ sport: s, athletes: groups[s] }));
+  }, [filtered]);
+
+  const showGrouped = sportFilter === 'all' && groupedBySport.length > 1;
 
   // Top schools for sidebar
   const schoolCounts: Record<string, { count: number; slug: string }> = {};
@@ -186,98 +316,32 @@ export default function OurGuysClient({ alumni, counts }: Props) {
               <p className="text-gray-600 font-medium">No athletes found</p>
               <p className="text-gray-400 text-sm mt-1">Try adjusting your filters or search</p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filtered.map(a => {
-                const league = a.pro_league ? LEAGUE_BADGES[a.pro_league] : null;
-                const sportEmoji = SPORT_EMOJIS[a.sport_id || ''] || '';
-
-                if (activeTab === 'active-pros') {
-                  return (
-                    <div key={a.id} className="bg-white rounded-lg border border-gray-200 p-5 hover:border-gold hover:shadow-md transition">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-bold text-navy text-lg">{a.person_name}</h3>
-                        {league && (
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold text-white ${league.bg}`}>
-                            {league.icon} {a.pro_league}
-                          </span>
-                        )}
-                      </div>
-                      {a.current_org && <p className="text-sm text-gray-700 font-medium">{a.current_org}</p>}
-                      {a.current_role && <p className="text-sm text-gray-500">{a.current_role}</p>}
-                      {a.schools && (
-                        <Link href={`/schools/${a.schools.slug}`} className="text-xs text-blue-600 hover:text-blue-800 mt-2 inline-block">
-                          {a.schools.name}
-                        </Link>
-                      )}
-                      {a.bio_note && <p className="text-xs text-gray-500 mt-2 line-clamp-2">{a.bio_note}</p>}
-                      <div className="flex gap-3 mt-3">
-                        {a.social_twitter && (
-                          <a href={`https://twitter.com/${a.social_twitter}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:text-blue-700">
-                            @{a.social_twitter}
-                          </a>
-                        )}
-                        {a.social_instagram && (
-                          <a href={`https://instagram.com/${a.social_instagram}`} target="_blank" rel="noopener noreferrer" className="text-xs text-pink-500 hover:text-pink-700">
-                            IG: {a.social_instagram}
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  );
-                }
-
-                if (activeTab === 'former-pros') {
-                  return (
-                    <div key={a.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:border-gray-400 transition opacity-90">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-bold text-gray-700">{a.person_name}</h3>
-                        {league && (
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold text-white ${league.bg} opacity-70`}>
-                            {league.icon} {a.pro_league}
-                          </span>
-                        )}
-                      </div>
-                      {a.current_org && <p className="text-sm text-gray-600">{a.current_org}</p>}
-                      {a.current_role && <p className="text-sm text-gray-500">{a.current_role}</p>}
-                      {a.schools && (
-                        <Link href={`/schools/${a.schools.slug}`} className="text-xs text-blue-600 hover:text-blue-800 mt-2 inline-block">
-                          {a.schools.name}
-                        </Link>
-                      )}
-                      {a.bio_note && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{a.bio_note}</p>}
-                    </div>
-                  );
-                }
-
-                if (activeTab === 'college') {
-                  return (
-                    <div key={a.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-400 transition">
-                      <p className="font-bold text-navy">{sportEmoji} {a.person_name}</p>
-                      {(a.current_org || a.college) && <p className="text-sm text-gray-700 font-medium">{a.current_org || a.college}</p>}
-                      {a.current_role && <p className="text-xs text-gray-500">{a.current_role}</p>}
-                      {a.schools && (
-                        <Link href={`/schools/${a.schools.slug}`} className="text-xs text-gray-400 mt-1 inline-block hover:text-blue-600">
-                          {a.schools.name}
-                        </Link>
-                      )}
-                      {a.bio_note && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{a.bio_note}</p>}
-                    </div>
-                  );
-                }
-
-                // Coaching
-                return (
-                  <div key={a.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:border-green-400 transition">
-                    <p className="font-bold text-navy">{a.person_name}</p>
-                    {a.current_org && <p className="text-sm text-gray-700">{a.current_org}</p>}
-                    {a.current_role && <p className="text-xs text-gray-500">{a.current_role}</p>}
-                    {a.schools && (
-                      <p className="text-xs text-gray-400 mt-1">HS: {a.schools.name}</p>
-                    )}
+          ) : showGrouped ? (
+            /* Grouped by Sport view */
+            <div className="space-y-8">
+              {groupedBySport.map(({ sport, athletes }) => (
+                <div key={sport}>
+                  {/* Sport Section Header */}
+                  <div className="flex items-center gap-3 mb-4 pb-2 border-b-2" style={{ borderColor: SPORT_COLORS[sport] || '#6b7280' }}>
+                    <span className="text-2xl">{SPORT_EMOJIS[sport] || ''}</span>
+                    <h2 className="text-xl font-black tracking-wide" style={{ fontFamily: "'Bebas Neue', sans-serif", color: SPORT_COLORS[sport] }}>
+                      {SPORT_LABELS[sport] || sport}
+                    </h2>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: SPORT_COLORS[sport] }}>
+                      {athletes.length}
+                    </span>
                   </div>
-                );
-              })}
+                  {/* Cards for this sport */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {athletes.map(a => <AthleteCard key={a.id} a={a} activeTab={activeTab} />)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* Flat grid (single sport selected) */
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {filtered.map(a => <AthleteCard key={a.id} a={a} activeTab={activeTab} />)}
             </div>
           )}
         </div>
