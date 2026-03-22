@@ -14,6 +14,7 @@ interface RawAward {
   school_slug?: string | null;
   position?: string | null;
   year?: number | null;
+  graduation_year?: number | null;
 }
 
 interface CategorizedAward {
@@ -27,6 +28,7 @@ interface CategorizedAward {
   school_slug?: string;
   position?: string;
   year?: number;
+  graduation_year?: number;
 }
 
 export function categorizeFootballAward(award: RawAward): CategorizedAward | null {
@@ -44,6 +46,7 @@ export function categorizeFootballAward(award: RawAward): CategorizedAward | nul
     school_slug: award.school_slug || undefined,
     position: award.position || undefined,
     year: award.year || undefined,
+    graduation_year: award.graduation_year || undefined,
   };
 
   // Extract team designation
@@ -136,6 +139,7 @@ export function categorizeBasketballAward(award: RawAward): CategorizedAward | n
     school_slug: award.school_slug || undefined,
     position: award.position || undefined,
     year: award.year || undefined,
+    graduation_year: award.graduation_year || undefined,
   };
 
   // Extract team designation
@@ -225,6 +229,7 @@ export function buildAwardTiers(awards: RawAward[], sport?: string) {
             school_slug: p.school_slug,
             position: p.position,
             year: p.year,
+            graduation_year: p.graduation_year,
           })),
         };
       }),

@@ -74,7 +74,7 @@ async function fetchAllCityAwardsJson(sport: string) {
          player_name,
          school_id,
          year,
-         players(id, name, slug),
+         players(id, name, slug, graduation_year),
          schools(id, name, slug)`,
         { count: "exact" }
       )
@@ -102,6 +102,7 @@ async function fetchAllCityAwardsJson(sport: string) {
       direct_player_name: row.player_name || null,
       player_name: row.players?.name || null,
       player_slug: row.players?.slug || null,
+      graduation_year: row.players?.graduation_year || null,
       school_id: row.schools?.id || null,
       school_name: row.schools?.name || null,
       school_slug: row.schools?.slug || null,
@@ -409,11 +410,12 @@ export interface AwardsPageData {
 }
 
 /**
- * Compute season label from year: e.g. 2024 → "2024-25"
+ * Compute season label from year: e.g. 2025 → "24-25" (school year format)
+ * The year in the DB is the spring/end year, so 2025 means the 2024-25 season.
  */
 function yearToSeasonLabel(year: number): string {
-  const nextYear = year + 1;
-  return `${year}-${String(nextYear).slice(-2)}`;
+  const startYear = year - 1;
+  return `${String(startYear).slice(-2)}-${String(year).slice(-2)}`;
 }
 
 /**
@@ -441,7 +443,7 @@ async function fetchAllAwardsForSport(sport: string) {
          player_name,
          school_id,
          year,
-         players(id, name, slug),
+         players(id, name, slug, graduation_year),
          schools(id, name, slug)`,
         { count: "exact" }
       )
@@ -469,6 +471,7 @@ async function fetchAllAwardsForSport(sport: string) {
       direct_player_name: row.player_name || null,
       player_name: row.players?.name || null,
       player_slug: row.players?.slug || null,
+      graduation_year: row.players?.graduation_year || null,
       school_id: row.schools?.id || null,
       school_name: row.schools?.name || null,
       school_slug: row.schools?.slug || null,
