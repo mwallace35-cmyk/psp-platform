@@ -89,6 +89,8 @@ const PASSTHROUGH_PREFIXES = [
   "/robots",
   "/sitemap",
   "/manifest",
+  "/banners",
+  "/textures",
   "/scores",
   "/pulse",
   "/pipeline",
@@ -150,6 +152,11 @@ function constantTimeCompare(a: string, b: string): boolean {
 
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+
+  // Skip middleware entirely for static assets and public directory files
+  if (/\.(png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|css|js|map)$/i.test(pathname) || pathname.startsWith('/banners') || pathname.startsWith('/textures')) {
+    return NextResponse.next();
+  }
 
   // Generate or retrieve request correlation ID
   const requestId = request.headers.get("x-request-id") || generateRequestId();
@@ -338,6 +345,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next/static|_next/image|favicon.ico|banners|textures|.*\\.png$|.*\\.jpg$|.*\\.svg$|.*\\.ico$|.*\\.webp$).*)",
   ],
 };

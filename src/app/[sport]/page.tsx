@@ -7,6 +7,7 @@ import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScor
 import QuickNavigation from "@/components/sport-layouts/QuickNavigation";
 import PlayoffPreview from "@/components/sport-layouts/PlayoffPreview";
 import DesignBibleSections from "@/components/sport-layouts/DesignBibleSections";
+import SportHeroSilhouette from "@/components/sport-layouts/SportHeroSilhouette";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
@@ -252,12 +253,13 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       {/* Breadcrumb */}
       <Breadcrumb items={[{label: meta.name}]} />
 
-      {/* Sport Hero — Texture Background */}
-      <div className="text-white py-12 px-4" style={{
-        background: `linear-gradient(rgba(10,22,40,0.88), rgba(10,22,40,0.92)), url(/textures/${sport === 'track-field' ? 'track' : sport}.jpg) center/cover no-repeat`,
+      {/* Sport Hero — AI-Generated Banner */}
+      <div className="text-white px-4 relative overflow-hidden flex items-center" style={{
+        background: `linear-gradient(to right, rgba(10,22,40,0.55), rgba(10,22,40,0.15)), url(/images/banners/${sport === 'track-field' ? 'track' : sport}.png) center/cover no-repeat`,
         backgroundColor: '#0a1628',
+        height: '140px',
       }}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="flex items-center gap-4">
             <span style={{ fontSize: 48 }} aria-hidden="true">{meta.emoji}</span>
             <h1 className="text-4xl md:text-5xl font-black" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
