@@ -7,7 +7,7 @@ import {
 } from '@/lib/data/common';
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 interface EffRow {
   players?: { name?: string | null; slug?: string | null; schools?: { name?: string | null; slug?: string | null } | null } | null;
   rush_yards?: number | null;

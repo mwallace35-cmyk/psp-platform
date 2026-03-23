@@ -5,7 +5,7 @@ import SchoolsDirectory from './SchoolsDirectory';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'School Directory — PhillySportsPack',
   description: 'Browse all Philadelphia-area high schools. Filter by league, search by name, and explore championship histories across Catholic League, Public League, Inter-Ac, and more.',

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 interface PageProps { params: Promise<{ year: string }> }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

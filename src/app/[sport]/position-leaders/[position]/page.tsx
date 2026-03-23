@@ -14,24 +14,24 @@ import PositionLeadersView from "./PositionLeadersView";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string; position: string };
 
-export function generateStaticParams() {
-  const params: PageParams[] = [];
-
-  const football = getPositionsForSport("football");
-  for (const pos of football) {
-    params.push({ sport: "football", position: pos });
-  }
-
-  const basketball = getPositionsForSport("basketball");
-  for (const pos of basketball) {
-    params.push({ sport: "basketball", position: pos });
-  }
-
-  return params;
-}
+// export function generateStaticParams() {
+//   const params: PageParams[] = [];
+// 
+//   const football = getPositionsForSport("football");
+//   for (const pos of football) {
+//     params.push({ sport: "football", position: pos });
+//   }
+// 
+//   const basketball = getPositionsForSport("basketball");
+//   for (const pos of basketball) {
+//     params.push({ sport: "basketball", position: pos });
+//   }
+// 
+//   return params;
+// }
 
 export async function generateMetadata({
   params,

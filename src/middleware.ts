@@ -180,26 +180,9 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Coming-soon gate — redirect public visitors, allow IP-allowlisted & cookie-bypassed users
-  const isPassthrough = PASSTHROUGH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-  if (!isPassthrough) {
-    // Check IP allowlist (Vercel sets x-forwarded-for)
-    const forwarded = request.headers.get("x-forwarded-for") || "";
-    const clientIp = forwarded.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "";
-    const ipAllowed = ALLOWED_IPS.length > 0 && ALLOWED_IPS.includes(clientIp);
-
-    // Check preview cookie (set via ?preview=<key>)
-    const hasBypassCookie = request.cookies.get(BYPASS_COOKIE)?.value === "1";
-
-    if (!ipAllowed && !hasBypassCookie) {
-      const comingSoonUrl = request.nextUrl.clone();
-      comingSoonUrl.pathname = "/coming-soon";
-      comingSoonUrl.search = "";
-      const response = NextResponse.redirect(comingSoonUrl);
-      response.headers.set("x-request-id", requestId);
-      return response;
-    }
-  }
+  // Coming-soon gate DISABLED — site is now public (March 2026)
+  // All visitors can access all routes. Preview cookie and IP allowlist
+  // kept for potential future use but no longer gate access.
 
   // Public API rate limiting — apply BEFORE admin auth check
   // These limits are per IP + endpoint, sliding window

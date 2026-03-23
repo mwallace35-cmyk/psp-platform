@@ -7,7 +7,7 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import AllStarArchive from "./AllStarArchive";
 
 export const revalidate = 86400; // 24 hours - static historical data
-
+export const dynamic = "force-dynamic";
 interface GameData {
   year: number;
   score: string;

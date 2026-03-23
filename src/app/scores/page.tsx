@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 1800; // 30 minutes
-
+export const dynamic = "force-dynamic";
 interface ScoresPageProps {
   searchParams: Promise<{ sport?: string; season?: string; school?: string; page?: string }>;
 }

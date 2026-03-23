@@ -17,7 +17,7 @@ export const alt = "PhillySportsPack.com - Sport Hub";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const revalidate = 3600; // 1 hour (sports data changes frequently)
-
+export const dynamic = "force-dynamic";
 const SPORT_CONFIG: Record<
   string,
   {

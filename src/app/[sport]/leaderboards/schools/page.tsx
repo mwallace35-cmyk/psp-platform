@@ -17,7 +17,7 @@ import type { Metadata } from "next";
 import type React from "react";
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 const TABS = [

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getFootballLeaders, getBasketballLeaders } from '@/lib/data';
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Leaderboards | Philadelphia High School Sports Stats',
   description:

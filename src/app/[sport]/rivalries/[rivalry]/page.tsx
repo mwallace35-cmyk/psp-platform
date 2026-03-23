@@ -15,7 +15,7 @@ import PSPPromo from '@/components/ads/PSPPromo';
 import type { Metadata } from 'next';
 
 export const revalidate = 86400; // ISR: daily
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string; rivalry: string };
 
 export async function generateMetadata({
@@ -39,32 +39,7 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams() {
-  const params: Array<{ sport: string; rivalry: string }> = [];
-
-  const sports = ['football', 'basketball', 'baseball', 'soccer', 'lacrosse'];
-
-  for (const sport of sports) {
-    try {
-      const rivalries = await getTopRivalries(sport, 20);
-      for (const r of rivalries) {
-        const slug1 = r.school1.slug;
-        const slug2 = r.school2.slug;
-        if (slug1 && slug2) {
-          params.push({
-            sport,
-            rivalry: `${slug1}-vs-${slug2}`,
-          });
-        }
-      }
-    } catch {
-      // Skip if getTopRivalries fails
-    }
-  }
-
-  return params;
-}
-
+// Dynamic — too many slug combos to pre-render
 function formatDate(dateStr: string | null | undefined): string {
   if (!dateStr) return 'Date TBD';
   try {

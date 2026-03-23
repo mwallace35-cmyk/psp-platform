@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
@@ -18,20 +18,20 @@ import type { MergedGameEntry, SeasonAward } from "@/components/game-log/GameLog
 import type { Metadata } from "next";
 
 // Dynamic imports for heavy client components (below fold)
-const CorrectionForm = dynamic(() => import("@/components/corrections/CorrectionForm"), {
+const CorrectionForm = nextDynamic(() => import("@/components/corrections/CorrectionForm"), {
   loading: () => <div className="text-center py-4 text-gray-500 text-sm">Loading form...</div>,
 });
 
-const ClientCareerTrajectory = dynamic(() => import("@/components/viz/ClientCareerTrajectory"), {
+const ClientCareerTrajectory = nextDynamic(() => import("@/components/viz/ClientCareerTrajectory"), {
   loading: () => <div className="w-full bg-white rounded-lg border border-gray-200 p-4 h-[300px] animate-pulse" />,
 });
 
-const SimilarPlayers = dynamic(() => import("@/components/player/SimilarPlayers"), {
+const SimilarPlayers = nextDynamic(() => import("@/components/player/SimilarPlayers"), {
   loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" />,
 });
 
 export const revalidate = 86400; // ISR: daily
-export const dynamicParams = true; // Allow ISR for slugs not in generateStaticParams
+export const dynamic = "force-dynamic";export const dynamicParams = true; // Allow ISR for slugs not in generateStaticParams
 
 type PageParams = { sport: string; slug: string };
 
@@ -40,23 +40,7 @@ type PageParams = { sport: string; slug: string };
  * All other players are generated on first request via ISR.
  * With 52,000+ players, generating all at build time is impractical.
  */
-export async function generateStaticParams() {
-  return [
-    // Football notable players
-    { sport: "football", slug: "curtis-brinkley-2004" },
-    { sport: "football", slug: "kyle-mccord" },
-    { sport: "football", slug: "marvin-harrison-sr" },
-    { sport: "football", slug: "abdul-carter-2882" },
-
-    // Basketball notable players
-    { sport: "basketball", slug: "reggie-jackson" },
-    { sport: "basketball", slug: "alvin-williams" },
-
-    // Baseball notable players
-    { sport: "baseball", slug: "al-brancato-7065" },
-  ];
-}
-
+// Dynamic — too many slug combos to pre-render
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport, slug } = await params;
   const validSport = await validateSportParamForMetadata({ sport });

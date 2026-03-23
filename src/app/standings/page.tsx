@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 const SPORT_NAMES: Record<number, string> = {
   1: 'Football',
   2: 'Basketball',

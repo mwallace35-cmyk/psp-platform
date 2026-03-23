@@ -5,7 +5,7 @@ import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 
 export const revalidate = 300; // ISR: 5 minutes
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Pick'em | PhillySportsPack.com",
   description: "Play pick'em predictions on Philadelphia high school sports games. Pick winners and compete with other fans.",

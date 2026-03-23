@@ -39,7 +39,7 @@ import { captureError } from "@/lib/error-tracking";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: hourly (for preview pages that may have upcoming seasons)
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string; slug: string; season: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {

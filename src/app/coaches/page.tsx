@@ -6,7 +6,7 @@ import CoachesDirectory from "@/components/coaches/CoachesDirectory";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Coaches Directory — PhillySportsPack",
   description:

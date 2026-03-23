@@ -6,7 +6,7 @@ import { SPORT_META } from '@/lib/sports';
 import PulseNav from '@/components/pulse/PulseNav';
 
 export const revalidate = 60;
-
+export const dynamic = "force-dynamic";
 interface ForumPostRow {
   id: string;
   author_name: string;

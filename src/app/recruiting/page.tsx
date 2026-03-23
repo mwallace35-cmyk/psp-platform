@@ -10,7 +10,7 @@ import { SkeletonCard } from "@/components/ui/Skeleton";
 import Link from "next/link";
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Recruiting Central - PhillySportsPack",
   description:

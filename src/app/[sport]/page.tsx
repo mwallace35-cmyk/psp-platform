@@ -14,7 +14,7 @@ import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 interface SportOverview {
@@ -100,17 +100,17 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
-export async function generateStaticParams() {
-  return [
-    { sport: "football" },
-    { sport: "basketball" },
-    { sport: "baseball" },
-    { sport: "track-field" },
-    { sport: "lacrosse" },
-    { sport: "wrestling" },
-    { sport: "soccer" },
-  ];
-}
+// export async function generateStaticParams() {
+//   return [
+//     { sport: "football" },
+//     { sport: "basketball" },
+//     { sport: "baseball" },
+//     { sport: "track-field" },
+//     { sport: "lacrosse" },
+//     { sport: "wrestling" },
+//     { sport: "soccer" },
+//   ];
+// }
 
 export default async function SportHubPage({ params }: { params: Promise<PageParams> }) {
   const sport = await validateSportParam(params);

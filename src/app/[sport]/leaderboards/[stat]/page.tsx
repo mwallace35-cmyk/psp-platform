@@ -19,18 +19,18 @@ import MethodologyNote from "@/components/ui/MethodologyNote";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string; stat: string };
 
-export function generateStaticParams() {
-  const params: { sport: string; stat: string }[] = [];
-  for (const [sport, stats] of Object.entries(SPORT_STAT_MAP)) {
-    for (const s of stats) {
-      params.push({ sport, stat: s.key });
-    }
-  }
-  return params;
-}
+// export function generateStaticParams() {
+//   const params: { sport: string; stat: string }[] = [];
+//   for (const [sport, stats] of Object.entries(SPORT_STAT_MAP)) {
+//     for (const s of stats) {
+//       params.push({ sport, stat: s.key });
+//     }
+//   }
+//   return params;
+// }
 
 export async function generateMetadata({ params, searchParams }: { params: Promise<PageParams>; searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {
   const { stat } = await params;

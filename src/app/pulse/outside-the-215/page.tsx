@@ -6,7 +6,7 @@ import PSPPromo from '@/components/ads/PSPPromo';
 import PulseNav from '@/components/pulse/PulseNav';
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Outside the 215 — The Pulse | PhillySportsPack.com',
   description: 'Track player transfers in and out of Philadelphia high school sports programs.',

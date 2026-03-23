@@ -5,7 +5,7 @@ import StreakCounter from '@/components/challenge/StreakCounter';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 
 export const revalidate = 86400; // 24 hours
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Daily Challenge — Who Had the Better Season? | PhillySportsPack',
   description: 'Test your knowledge with our daily player stats challenge. Compare two Philly athletes and guess who had the better season.',

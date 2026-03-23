@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs';
 export const revalidate = 0; // always fresh for counts
-
+export const dynamic = "force-dynamic";
 const VALID = ['fire', 'star', 'beast', 'champ'];
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {

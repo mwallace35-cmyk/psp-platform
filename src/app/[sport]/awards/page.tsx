@@ -11,7 +11,7 @@ import { buildAwardTiers } from "@/lib/awards/categorize";
 import type { Metadata } from "next";
 
 export const revalidate = 86400; // 24 hours
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
@@ -27,17 +27,17 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
-export function generateStaticParams() {
-  return [
-    { sport: "football" },
-    { sport: "basketball" },
-    { sport: "baseball" },
-    { sport: "track-field" },
-    { sport: "lacrosse" },
-    { sport: "wrestling" },
-    { sport: "soccer" },
-  ];
-}
+// export function generateStaticParams() {
+//   return [
+//     { sport: "football" },
+//     { sport: "basketball" },
+//     { sport: "baseball" },
+//     { sport: "track-field" },
+//     { sport: "lacrosse" },
+//     { sport: "wrestling" },
+//     { sport: "soccer" },
+//   ];
+// }
 
 export default async function AwardsPage({ params }: { params: Promise<PageParams> }) {
   const sport = await validateSportParam(params);

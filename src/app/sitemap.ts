@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import type { MetadataRoute } from "next";
 import { createStaticClient } from "@/lib/supabase/static";
 import { VALID_SPORTS } from "@/lib/data";

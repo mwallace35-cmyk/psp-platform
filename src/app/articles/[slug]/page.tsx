@@ -13,7 +13,7 @@ import ShareButtons from '@/components/social/ShareButtons';
 import JoinCTA from '@/components/ui/JoinCTA';
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 interface PageProps {
   params: Promise<{
     slug: string;

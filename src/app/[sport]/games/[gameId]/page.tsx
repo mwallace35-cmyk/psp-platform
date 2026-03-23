@@ -14,7 +14,7 @@ import GameFilmSection from "@/components/highlights/GameFilmSection";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: hourly (games get new box scores frequently)
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string; gameId: string };
 
 export async function generateMetadata({

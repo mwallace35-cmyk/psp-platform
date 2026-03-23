@@ -10,20 +10,20 @@ import DynastyTimeline from "./DynastyTimeline";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
-export function generateStaticParams() {
-  return [
-    { sport: "football" },
-    { sport: "basketball" },
-    { sport: "baseball" },
-    { sport: "track-field" },
-    { sport: "lacrosse" },
-    { sport: "wrestling" },
-    { sport: "soccer" },
-  ];
-}
+// export function generateStaticParams() {
+//   return [
+//     { sport: "football" },
+//     { sport: "basketball" },
+//     { sport: "baseball" },
+//     { sport: "track-field" },
+//     { sport: "lacrosse" },
+//     { sport: "wrestling" },
+//     { sport: "soccer" },
+//   ];
+// }
 
 export async function generateMetadata({
   params,

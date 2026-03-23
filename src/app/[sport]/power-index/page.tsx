@@ -8,7 +8,7 @@ import SportIcon from "@/components/ui/SportIcon";
 import { getPowerIndexRankings, getTopMovers, PowerIndexEntry } from "@/lib/data/power-index";
 
 export const revalidate = 3600; // 1 hour
-
+export const dynamic = "force-dynamic";
 interface PageProps {
   params: Promise<{ sport: string }>;
 }
@@ -35,24 +35,24 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams() {
-  const supabase = createStaticClient();
-  const { data: seasons } = await supabase
-    .from("seasons")
-    .select("label")
-    .order("year_start", { ascending: false })
-    .limit(1);
-
-  return [
-    { sport: "football" },
-    { sport: "basketball" },
-    { sport: "baseball" },
-    { sport: "track-field" },
-    { sport: "lacrosse" },
-    { sport: "wrestling" },
-    { sport: "soccer" },
-  ];
-}
+// export async function generateStaticParams() {
+//   const supabase = createStaticClient();
+//   const { data: seasons } = await supabase
+//     .from("seasons")
+//     .select("label")
+//     .order("year_start", { ascending: false })
+//     .limit(1);
+// 
+//   return [
+//     { sport: "football" },
+//     { sport: "basketball" },
+//     { sport: "baseball" },
+//     { sport: "track-field" },
+//     { sport: "lacrosse" },
+//     { sport: "wrestling" },
+//     { sport: "soccer" },
+//   ];
+// }
 
 export default async function PowerIndexPage({ params }: PageProps) {
   const { sport } = await params;

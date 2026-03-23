@@ -9,20 +9,20 @@ import RecordsView from "./RecordsView";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
-export function generateStaticParams() {
-  return [
-    { sport: "football" },
-    { sport: "basketball" },
-    { sport: "baseball" },
-    { sport: "track-field" },
-    { sport: "lacrosse" },
-    { sport: "wrestling" },
-    { sport: "soccer" },
-  ];
-}
+// export function generateStaticParams() {
+//   return [
+//     { sport: "football" },
+//     { sport: "basketball" },
+//     { sport: "baseball" },
+//     { sport: "track-field" },
+//     { sport: "lacrosse" },
+//     { sport: "wrestling" },
+//     { sport: "soccer" },
+//   ];
+// }
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const sport = await validateSportParamForMetadata(params);

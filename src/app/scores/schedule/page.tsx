@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 1800; // 30 minutes
-
+export const dynamic = "force-dynamic";
 interface SchedulePageProps {
   searchParams: Promise<{ sport?: string }>;
 }

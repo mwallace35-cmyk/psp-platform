@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 300; // Revalidate every 5 minutes for voting
-
+export const dynamic = "force-dynamic";
 export default async function PotwPage() {
   const supabase = createStaticClient();
 

@@ -10,7 +10,7 @@ import SimilarPlayers from '@/components/players/SimilarPlayers';
 import AwardsHonors from '@/components/players/AwardsHonors';
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

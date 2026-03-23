@@ -31,6 +31,7 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600; // 1 hour
+export const dynamic = 'force-dynamic';
 
 export default async function AwardsHubPage() {
   // Fetch all data in parallel

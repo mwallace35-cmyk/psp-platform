@@ -10,7 +10,7 @@ import {
 import TeamPageClient from "@/components/teams/TeamPageClient";
 
 export const revalidate = 3600; // ISR: revalidate every hour
-
+export const dynamic = "force-dynamic";
 type PageProps = {
   params: Promise<{ sport: string; slug: string }>;
 };

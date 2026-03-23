@@ -1,0 +1,98 @@
+{
+  "2024_25": {
+    "season_id": 75,
+    "grad_year": 2025,
+    "pdfs": {
+      "AC": "/documents/2025/3/10/PCL_Team_Stats_2024_25_Carroll.pdf",
+      "AR": "/documents/2025/2/26/PCL_Team_Stats_2024_25_Ryan.pdf",
+      "AW": "/documents/2025/2/26/PCL_Team_Stats_2024_25_Wood.pdf",
+      "BP": "/documents/2025/3/17/PCL_Team_Stats_2024_25_BP.pdf",
+      "CE": "/documents/2025/2/26/PCL_Team_Stats_2024_25_Con_Egan.pdf",
+      "CO": "/documents/2025/2/26/PCL_Team_Stats_2024_25_O_Hara.pdf",
+      "DP": "/documents/2025/3/28/PCL_Team_Stats_2024_25_Devon.pdf",
+      "FJ": "/documents/2025/4/1/PCL_Team_Stats_2024_25_Judge.pdf",
+      "LC": "/documents/2025/3/11/PCL_Team_Stats_2024_25_LC_U.pdf",
+      "LS": "/documents/2025/2/26/PCL_Team_Stats_2024_25_LaSalle.pdf",
+      "NG": "/documents/2025/3/31/PCL_Team_Stats_2024_25_NG_U.pdf",
+      "RC": "/documents/2025/4/1/PCL_Team_Stats_2024_25_Roman.pdf",
+      "SJP": "/documents/2025/3/7/PCL_Team_Stats_2024_25_SJPrep.pdf",
+      "WC": "/documents/2025/4/1/PCL_Team_Stats_2024_25_West.pdf"
+    }
+  },
+  "2023_24": {
+    "season_id": 74,
+    "grad_year": 2024,
+    "pdfs": {
+      "AC": "/documents/2024/3/25/PCL_Team_Stats_2023_24_Carroll.pdf",
+      "AR": "/documents/2024/3/5/PCL_Team_Stats_2023_24_Ryan.pdf",
+      "AW": "/documents/2024/3/22/PCL_Team_Stats_2023_24_Wood.pdf",
+      "CO": "/documents/2024/2/28/PCL_Team_Stats_2023_24_O_Hara.pdf",
+      "FJ": "/documents/2024/2/28/PCL_Team_Stats_2023_24_Judge.pdf",
+      "LS": "/documents/2024/2/28/PCL_Team_Stats_2023_24_LaSalle.pdf",
+      "NG": "/documents/2024/3/19/PCL_Team_Stats_2023_24_Neum_Gor.pdf",
+      "RC": "/documents/2024/3/19/PCL_Team_Stats_2023_24_Roman.pdf",
+      "SJP": "/documents/2024/2/28/PCL_Team_Stats_2023_24_SJPrep.pdf",
+      "WC": "/documents/2024/3/16/PCL_Team_Stats_2023_24_West.pdf"
+    }
+  },
+  "2022_23": {
+    "season_id": 73,
+    "grad_year": 2023,
+    "pdfs": {
+      "AC": "/documents/2023/3/1/PCL_Team_Stats_2022_23_Carroll.pdf",
+      "AR": "/documents/2023/3/27/PCL_Team_Stats_2022_23_Ryan.pdf",
+      "AW": "/documents/2023/3/23/PCL_Team_Stats_2022_23_Wood.pdf",
+      "BP": "/documents/2023/3/7/PCL_Team_Stats_2022_23_Bonner_Pren.pdf",
+      "CE": "/documents/2023/3/15/PCL_Team_Stats_2022_23_Con_Egan.pdf",
+      "CO": "/documents/2023/3/20/PCL_Team_Stats_2022_23_O_Hara.pdf",
+      "FJ": "/documents/2023/2/25/PCL_Team_Stats_2022_23_Judge.pdf",
+      "LC": "/documents/2023/2/22/PCL_Team_Stats_2022_23_Lansdale.pdf",
+      "LS": "/documents/2023/2/22/PCL_Team_Stats_2022_23_LaSalle.pdf",
+      "NG": "/documents/2023/3/27/PCL_Team_Stats_2022_23_Neum_Gor_1_.pdf",
+      "RC": "/documents/2023/3/27/PCL_Team_Stats_2022_23_Roman_2_1_.pdf",
+      "SJP": "/documents/2023/3/3/PCL_Team_Stats_2022_23_SJPrep.pdf",
+      "WC": "/documents/2023/3/27/PCL_Team_Stats_2022_23_West.pdf"
+    }
+  },
+  "2021_22": {
+    "season_id": 72,
+    "grad_year": 2022,
+    "pdfs": {
+      "AC": "/documents/2022/3/22/PCL_Team_Stats_2021_22_Carroll.pdf",
+      "AR": "/documents/2022/3/18/PCL_Team_Stats_2021_22_Ryan.pdf",
+      "AW": "/documents/2022/3/28/PCL_Team_Stats_2021_22_Wood.pdf",
+      "BP": "/documents/2022/3/9/PCL_Team_Stats_2021_22_Bonner_Pren.pdf",
+      "CE": "/documents/2022/2/20/PCL_Team_Stats_2021_22_Con_Egan.pdf",
+      "CO": "/documents/2022/3/23/PCL_Team_Stats_2021_22_O_Hara.pdf",
+      "DP": "/documents/2022/3/28/PCL_Team_Stats_2021_22_Devon.pdf",
+      "FJ": "/documents/2022/2/20/PCL_Team_Stats_2021_22_Judge.pdf",
+      "LC": "/documents/2022/2/20/PCL_Team_Stats_2021_22_Lansdale.pdf",
+      "LS": "/documents/2022/2/20/PCL_Team_Stats_2021_22_LaSalle.pdf",
+      "NG": "/documents/2022/3/26/PCL_Team_Stats_2021_22_Neum_Gor.pdf",
+      "RC": "/documents/2022/3/28/PCL_Team_Stats_2021_22_Roman.pdf",
+      "SJP": "/documents/2022/2/19/PCL_Team_Stats_2021_22_SJPrep.pdf",
+      "WC": "/documents/2022/3/18/PCL_Team_Stats_2021_22_West.pdf"
+    }
+  },
+  "2020_21": {
+    "season_id": 71,
+    "grad_year": 2021,
+    "pdfs": {
+      "AC": "/documents/2021/3/22/PCL_Team_Stats_2021_Carroll.pdf",
+      "AR": "/documents/2021/3/29/PCL_Team_Stats_2021_Ryan.pdf",
+      "AW": "/documents/2021/3/29/PCL_Team_Stats_2021_Wood.pdf",
+      "BP": "/documents/2021/3/29/PCL_Team_Stats_2021_Bonn_Pren_.pdf",
+      "CE": "/documents/2021/3/14/PCL_Team_Stats_2021_Con_Egan.pdf",
+      "CO": "/documents/2021/3/29/PCL_Team_Stats_2021_OHara.pdf",
+      "DP": "/documents/2021/3/15/PCL_Team_Stats_2021_Devon.pdf",
+      "FJ": "/documents/2021/3/16/PCL_Team_Stats_2021_Judge.pdf",
+      "LC": "/documents/2021/3/17/PCL_Team_Stats_2021_Lansdale.pdf",
+      "LS": "/documents/2021/3/15/PCL_Team_Stats_2021_LaSalle.pdf",
+      "MD": "/documents/2021/3/15/PCL_Team_Stats_2021_McDevitt.pdf",
+      "NG": "/documents/2021/3/16/PCL_Team_Stats_2021_Neum_Gor_.pdf",
+      "RC": "/documents/2021/3/16/PCL_Team_Stats_2021_Roman.pdf",
+      "SJP": "/documents/2021/3/17/PCL_Team_Stats_2021_SJP.pdf",
+      "WC": "/documents/2021/3/29/PCL_Team_Stats_2021_West.pdf"
+    }
+  }
+}

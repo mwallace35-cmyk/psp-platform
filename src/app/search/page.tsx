@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600; // ISR: revalidate every hour
-
+export const dynamic = "force-dynamic";
 type GroupedResults = Partial<Record<SearchResult['entity_type'] | 'other', SearchResult[]>>;
 
 export default async function SearchPage({

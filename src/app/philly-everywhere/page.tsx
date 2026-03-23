@@ -7,7 +7,7 @@ import { getTrackedAlumni, getAlumniCounts } from "@/lib/data";
 import { captureError } from "@/lib/error-tracking";
 
 export const revalidate = 3600;
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Philly Everywhere — PhillySportsPack",
   description: "Track Philadelphia athletes wherever they play — prep schools, colleges, and the pros. Follow every Philly kid making waves beyond city limits.",

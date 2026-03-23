@@ -1,0 +1,540 @@
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name)=LOWER('Joe Halferty') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name) LIKE 'j%halferty' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Joe Halferty','joe-halferty-2022-ls',2882,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,2882,10,9,0.9,3,4,75.0,2,2,100.0,1,1,100.0,0,6,6,0.6,5,0.5,1,0,9,'21','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name)=LOWER('James Bartchak') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name) LIKE 'j%bartchak' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'James Bartchak','james-bartchak-2022-ls',2882,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,2882,12,7,0.6,3,7,42.9,1,3,33.3,0,0,NULL,0,3,3,0.3,2,0.2,3,0,7,'12','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name)=LOWER('Anthony Rivers') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name) LIKE 'a%rivers' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Anthony Rivers','anthony-rivers-2022-ls',2882,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,2882,3,2,0.7,1,1,100.0,0,0,NULL,0,0,NULL,1,3,4,1.3,0,0.0,1,1,2,'24','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name)=LOWER('Will Ryan') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name) LIKE 'w%ryan' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Will Ryan','will-ryan-2022-ls',2882,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,2882,1,0,0.0,0,1,0.0,0,1,0.0,0,0,NULL,0,0,0,0.0,0,0.0,0,0,0,'14','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name)=LOWER('Donald Adams') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=2882 AND LOWER(name) LIKE 'd%adams' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Donald Adams','donald-adams-2022-ls',2882,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,2882,1,0,0.0,0,0,NULL,0,0,NULL,0,0,NULL,0,0,0,0.0,0,0.0,0,0,0,'22','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Robert Wright') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'r%wright' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Robert Wright','robert-wright-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,27,520,19.3,191,394,48.5,57,131,43.5,81,127,63.8,37,102,139,5.1,116,4.3,38,1,519,'2','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Sultan Adewale') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 's%adewale' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Sultan Adewale','sultan-adewale-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,27,313,11.6,123,212,58.0,6,21,28.6,61,91,67.0,102,100,202,7.5,14,0.5,19,58,308,'11','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Masud Stewart') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'm%stewart' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Masud Stewart','masud-stewart-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,26,296,11.4,108,251,43.0,45,128,35.2,35,49,71.4,14,54,68,2.6,57,2.2,31,7,296,'4','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Khaafiq Myers') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'k%myers' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Khaafiq Myers','khaafiq-myers-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,23,227,9.9,81,200,40.5,27,87,31.0,38,76,50.0,24,85,109,4.7,98,4.3,62,4,223,'0','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Aamir Hurst') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'a%hurst' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Aamir Hurst','aamir-hurst-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,24,201,8.4,70,148,47.3,30,72,41.7,31,51,60.8,15,40,55,2.3,64,2.7,48,19,201,'3','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Bruce Smith') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'b%smith' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Bruce Smith','bruce-smith-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,27,130,4.8,46,120,38.3,20,68,29.4,18,37,48.6,14,45,59,2.2,27,1.0,26,5,130,'22','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Amir Williams') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'a%williams' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Amir Williams','amir-williams-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,26,74,2.8,28,75,37.3,13,53,24.5,5,10,50.0,22,43,65,2.5,24,0.9,28,22,74,'12','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Luke Bevilacqua') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'l%bevilacqua' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Luke Bevilacqua','luke-bevilacqua-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,21,49,2.3,19,37,51.4,1,2,50.0,10,17,58.8,23,25,48,2.3,3,0.1,3,9,49,'23','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Shawn Battle') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 's%battle' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Shawn Battle','shawn-battle-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,24,34,1.4,12,31,38.7,3,5,60.0,7,20,35.0,6,44,50,2.1,46,1.9,18,0,34,'5','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Tymir Smalls') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 't%smalls' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Tymir Smalls','tymir-smalls-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,11,4,0.4,2,6,33.3,0,2,0.0,0,0,NULL,1,3,4,0.4,5,0.5,3,0,4,'15','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Matt Guokas') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'm%guokas' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Matt Guokas','matt-guokas-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,9,0,0.0,0,2,0.0,0,2,0.0,0,0,NULL,1,0,1,0.1,0,0.0,0,0,0,'10','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Kai Jones') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'k%jones' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Kai Jones','kai-jones-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,8,3,0.4,1,4,25.0,1,3,33.3,0,0,NULL,2,3,5,0.6,0,0.0,1,2,3,'24','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Ronald Johnson') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'r%johnson' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Ronald Johnson','ronald-johnson-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,8,7,0.9,3,5,60.0,1,2,50.0,0,1,0.0,0,4,4,0.5,2,0.3,2,0,7,'32','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name)=LOWER('Nasir Feggans') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=198 AND LOWER(name) LIKE 'n%feggans' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Nasir Feggans','nasir-feggans-2022-ng',198,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,198,1,6,6.0,2,2,100.0,1,1,100.0,1,1,100.0,0,0,0,0.0,0,0.0,0,0,6,'35','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Daniel Skillings') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 'd%skillings' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Daniel Skillings','daniel-skillings-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,28,537,19.2,226,411,55.0,36,104,34.6,49,79,62.0,83,145,228,8.1,65,2.3,41,32,537,'0','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Khalil Farmer') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 'k%farmer' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Khalil Farmer','khalil-farmer-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,28,444,15.9,148,347,42.7,50,116,43.1,98,127,77.2,44,129,173,6.2,76,2.7,31,21,444,'3','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Xzayvier Brown') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 'x%brown' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Xzayvier Brown','xzayvier-brown-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,25,351,14.0,128,236,54.2,15,48,31.2,80,95,84.2,15,103,118,4.7,156,6.2,72,11,351,'1','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Toby Ojukwu') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 't%ojukwu' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Toby Ojukwu','toby-ojukwu-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,27,229,8.5,73,162,45.1,16,41,39.0,67,95,70.5,25,66,91,3.4,87,3.2,53,4,229,'11','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Quadir Brown') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 'q%brown' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Quadir Brown','quadir-brown-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,27,126,4.7,54,95,56.8,8,23,34.8,10,16,62.5,14,32,46,1.7,42,1.6,25,26,126,'4','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Shareef Jackson') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 's%jackson' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Shareef Jackson','shareef-jackson-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,28,129,4.6,53,97,54.6,0,2,0.0,23,51,45.1,48,112,160,5.7,45,1.6,16,42,129,'44','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Will Felder') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 'w%felder' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Will Felder','will-felder-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,14,22,1.6,10,24,41.7,0,1,0.0,2,3,66.7,8,13,21,1.5,6,0.4,7,0,22,'12','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Ryan Smith') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 'r%smith' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Ryan Smith','ryan-smith-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,12,8,0.7,3,4,75.0,0,0,NULL,2,2,100.0,2,4,6,0.5,1,0.1,0,0,8,'22','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Sebastian Ash') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 's%ash' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Sebastian Ash','sebastian-ash-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,5,3,0.6,1,3,33.3,1,1,100.0,0,0,NULL,0,4,4,0.8,0,0.0,0,1,3,'14','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Jack Flannery') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 'j%flannery' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Jack Flannery','jack-flannery-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,5,7,1.4,3,9,33.3,1,5,20.0,0,1,0.0,0,1,1,0.2,1,0.2,2,0,7,'15','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();
+
+WITH pid AS (
+  SELECT COALESCE(
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name)=LOWER('Jayden Rounbehler') LIMIT 1),
+    (SELECT id FROM players WHERE primary_school_id=127 AND LOWER(name) LIKE 'j%rounbehler' LIMIT 1)
+  ) as id
+), new_player AS (
+  INSERT INTO players (name,slug,primary_school_id,graduation_year,region_id,created_at)
+  SELECT 'Jayden Rounbehler','jayden-rounbehler-2022-rc',127,2022,'philly',NOW()
+  WHERE (SELECT id FROM pid) IS NULL
+  RETURNING id
+), final_pid AS (
+  SELECT COALESCE((SELECT id FROM pid),(SELECT id FROM new_player)) as id
+)
+INSERT INTO basketball_player_seasons (player_id,season_id,school_id,games_played,points,ppg,fgm,fga,fg_pct,three_pm,three_pa,three_pct,ftm,fta,ft_pct,off_rebounds,def_rebounds,rebounds,rpg,assists,apg,steals,blocks,turnovers,jersey_number,source_file,created_at)
+SELECT id,72,127,7,0,0.0,0,2,0.0,0,2,0.0,0,0,NULL,0,1,1,0.1,0,0.0,2,0,0,'24','pcl_team_stats_2021_22',NOW()
+FROM final_pid
+ON CONFLICT (player_id,season_id,school_id) DO UPDATE SET games_played=EXCLUDED.games_played,points=EXCLUDED.points,ppg=EXCLUDED.ppg,fgm=EXCLUDED.fgm,fga=EXCLUDED.fga,fg_pct=EXCLUDED.fg_pct,three_pm=EXCLUDED.three_pm,three_pa=EXCLUDED.three_pa,three_pct=EXCLUDED.three_pct,ftm=EXCLUDED.ftm,fta=EXCLUDED.fta,ft_pct=EXCLUDED.ft_pct,off_rebounds=EXCLUDED.off_rebounds,def_rebounds=EXCLUDED.def_rebounds,rebounds=EXCLUDED.rebounds,rpg=EXCLUDED.rpg,assists=EXCLUDED.assists,apg=EXCLUDED.apg,steals=EXCLUDED.steals,blocks=EXCLUDED.blocks,turnovers=EXCLUDED.turnovers,jersey_number=EXCLUDED.jersey_number,source_file=EXCLUDED.source_file,updated_at=NOW();

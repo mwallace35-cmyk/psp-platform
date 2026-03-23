@@ -1,415 +1,261 @@
-export const revalidate = 3600;
+import { createStaticClient } from '@/lib/supabase/static';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { OrganizationJsonLd } from '@/components/seo/JsonLd';
+import SportNavigationGrid from '@/components/home/SportNavigationGrid';
 
-import { createStaticClient } from "@/lib/supabase/static";
-import { captureError } from "@/lib/error-tracking";
-import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { OrganizationJsonLd } from "@/components/seo/JsonLd";
-import HeroSectionNew from "@/components/home/HeroSectionNew";
-import LiveStatsStrip from "@/components/home/LiveStatsStrip";
-import SportNavigationGrid from "@/components/home/SportNavigationGrid";
-import SectionDivider from "@/components/home/SectionDivider";
-import PotwSpotlight from "@/components/home/PotwSpotlight";
-import PhillyEverywhere from "@/components/home/PhillyEverywhere";
-import RecentScores from "@/components/home/RecentScores";
-import LatestArticles from "@/components/home/LatestArticles";
-import NewsletterCTA from "@/components/home/NewsletterCTA";
-import TrendingPlayersWidget from "@/components/home/TrendingPlayersWidget";
-import SponsorSlot from "@/components/ads/SponsorSlot";
+export const revalidate = 300; // 5 min ISR — live content
+export const dynamic = 'force-dynamic';
 
-// ============ DATA FETCHING FUNCTIONS ============
-
-async function getOverviewStats() {
-  try {
-    const supabase = createStaticClient();
-    const [schools, players, championships] = await Promise.all([
-      supabase.from("schools").select("id", { count: "exact", head: true }),
-      supabase.from("players").select("id", { count: "exact", head: true }),
-      supabase.from("championships").select("id", { count: "exact", head: true }),
-    ]);
-    return {
-      schools: schools.count ?? 0,
-      players: players.count ?? 0,
-      championships: championships.count ?? 0,
-      years: 25,
-    };
-  } catch (error) {
-    captureError(error, { function: "getOverviewStats", context: "data_fetching" });
-    return { schools: 1237, players: 21502, championships: 1665, years: 25 };
-  }
-}
-
-async function getSportsWithCounts() {
-  try {
-    const supabase = createStaticClient();
-    const sports = [
-      { id: 'fb', name: 'Football', slug: 'football' },
-      { id: 'bb', name: 'Basketball', slug: 'basketball' },
-      { id: 'base', name: 'Baseball', slug: 'baseball' },
-      { id: 'soccer', name: 'Soccer', slug: 'soccer' },
-      { id: 'lac', name: 'Lacrosse', slug: 'lacrosse' },
-      { id: 'track', name: 'Track & Field', slug: 'track-field' },
-      { id: 'wrest', name: 'Wrestling', slug: 'wrestling' },
-    ];
-
-    const sportCounts: Record<string, number> = {};
-
-    for (const sport of sports) {
-      try {
-        const { count } = await supabase
-          .from('players')
-          .select('id', { count: 'exact', head: true })
-          .ilike('sports', `%${sport.id}%`);
-        sportCounts[sport.slug] = count ?? 3000;
-      } catch {
-        sportCounts[sport.slug] = 3000;
-      }
-    }
-
-    return sports.map(s => ({
-      ...s,
-      playerCount: sportCounts[s.slug]
-    }));
-  } catch (error) {
-    captureError(error, { function: "getSportsWithCounts", context: "data_fetching" });
-    return [
-      { id: 'fb', name: 'Football', slug: 'football', playerCount: 3000 },
-      { id: 'bb', name: 'Basketball', slug: 'basketball', playerCount: 2500 },
-      { id: 'base', name: 'Baseball', slug: 'baseball', playerCount: 1500 },
-      { id: 'soccer', name: 'Soccer', slug: 'soccer', playerCount: 800 },
-      { id: 'lac', name: 'Lacrosse', slug: 'lacrosse', playerCount: 600 },
-      { id: 'track', name: 'Track & Field', slug: 'track-field', playerCount: 1200 },
-      { id: 'wrest', name: 'Wrestling', slug: 'wrestling', playerCount: 900 },
-    ];
-  }
-}
-
-async function getRecentArticles(limit: number = 3) {
-  try {
-    const supabase = createStaticClient();
-    const { data } = await supabase
-      .from("articles")
-      .select("slug, title, excerpt, sport_id, featured_image_url, published_at")
-      .eq("status", "published")
-      .order("published_at", { ascending: false })
-      .limit(limit);
-    return data || [];
-  } catch (error) {
-    captureError(error, { function: "getRecentArticles", context: "data_fetching" });
-    return [];
-  }
-}
-
-async function getFeaturedAlumni() {
-  try {
-    const supabase = createStaticClient();
-    const { data } = await supabase
-      .from("next_level_tracking")
-      .select(
-        `person_name,
-         current_org,
-         current_role,
-         sport_id,
-         high_school_id,
-         schools!next_level_tracking_high_school_id_fkey(name)`
-      )
-      .eq("featured", true)
-      .eq("status", "active")
-      .limit(12);
-    return data || [];
-  } catch (error) {
-    captureError(error, { function: "getFeaturedAlumni", context: "data_fetching" });
-    return [];
-  }
-}
-
-async function getRecentScores() {
-  try {
-    const supabase = createStaticClient();
-    const { data } = await supabase
-      .from("games")
-      .select(
-        `id,
-         home_score,
-         away_score,
-         game_date,
-         status,
-         sport_id,
-         schools!games_home_team_id_fkey(name),
-         away_schools:schools!games_away_team_id_fkey(name)`
-      )
-      .not("home_score", "is", null)
-      .order("game_date", { ascending: false })
-      .limit(10);
-    return data || [];
-  } catch (error) {
-    captureError(error, { function: "getRecentScores", context: "data_fetching" });
-    return [];
-  }
-}
-
-async function getPotwNominees() {
-  try {
-    const supabase = createStaticClient();
-    const { data } = await supabase
-      .from("potw_nominees")
-      .select("id, player_name, school_name, sport_id, stat_line, votes")
-      .eq("is_winner", false)
-      .order("votes", { ascending: false })
-      .limit(5);
-    return data || [];
-  } catch (error) {
-    captureError(error, { function: "getPotwNominees", context: "data_fetching" });
-    return [];
-  }
-}
-
-async function getHotTakes() {
-  try {
-    const supabase = createStaticClient();
-    const { data } = await supabase
-      .from("hot_takes")
-      .select("id, user_handle, content, type, upvotes, downvotes, created_at")
-      .order("created_at", { ascending: false })
-      .limit(3);
-    return data || [];
-  } catch (error) {
-    captureError(error, { function: "getHotTakes", context: "data_fetching" });
-    return [];
-  }
-}
-
-// ============ INTERFACES ============
-
-interface Article {
-  slug: string;
-  title: string;
-  excerpt: string | null;
-  sport_id: string;
-  featured_image_url: string | null;
-  published_at: string;
-}
-
-interface FeaturedAlumni {
-  person_name: string;
-  current_org: string;
-  current_role: string | null;
-  sport_id: string;
-  high_school_id: number;
-  schools: { name: string }[] | { name: string } | null;
-}
-
-interface GameScore {
-  id: string;
-  home_score: number;
-  away_score: number;
-  game_date: string;
-  status: string;
-  sport_id: string;
-  schools: { name: string }[] | { name: string } | null;
-  away_schools: { name: string }[] | { name: string } | null;
-}
-
-interface PotwNominee {
-  id: string;
-  player_name: string;
-  school_name: string;
-  sport_id: string;
-  stat_line: string;
-  votes: number;
-}
-
-interface HotTake {
-  id: string;
-  user_handle: string;
-  content: string;
-  type: string;
-  upvotes: number;
-  downvotes: number;
-  created_at: string;
-}
-
-// ============ MAIN PAGE COMPONENT ============
+export const metadata: Metadata = {
+  title: 'PhillySportsPack.com — Philadelphia High School Sports Database',
+  description: 'The definitive source for Philadelphia high school sports. Scores, stats, rankings, player profiles, and recruiting across football, basketball, baseball, and more.',
+  metadataBase: new URL('https://phillysportspack.com'),
+  alternates: { canonical: 'https://phillysportspack.com' },
+  openGraph: {
+    title: 'PhillySportsPack.com — Philadelphia High School Sports',
+    description: 'Scores, stats, rankings, and player profiles for 7 sports across 1,300+ schools.',
+    url: 'https://phillysportspack.com',
+    siteName: 'PhillySportsPack.com',
+    images: [{ url: 'https://phillysportspack.com/og-default.png', width: 1200, height: 630, alt: 'PhillySportsPack.com' }],
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image', title: 'PhillySportsPack.com', description: 'The definitive source for Philadelphia high school sports.', images: ['https://phillysportspack.com/og-default.png'] },
+  robots: { index: true, follow: true },
+};
 
 export default async function HomePage() {
-  let stats = { schools: 1237, players: 21502, championships: 1665, years: 25 };
-  let sports: Array<{ id: string; name: string; slug: string; playerCount: number }> = [];
-  let articles: Article[] = [];
-  let featuredAlumni: FeaturedAlumni[] = [];
-  let recentScores: GameScore[] = [];
-  let potwNominees: PotwNominee[] = [];
-  let hotTakes: HotTake[] = [];
+  const supabase = createStaticClient();
 
-  try {
-    const results = await Promise.allSettled([
-      getOverviewStats(),
-      getSportsWithCounts(),
-      getRecentArticles(3),
-      getFeaturedAlumni(),
-      getRecentScores(),
-      getPotwNominees(),
-      getHotTakes(),
-    ]);
+  // Parallel data fetching — lightweight queries only
+  const [articlesRes, recentGamesRes, alumniRes] = await Promise.all([
+    supabase
+      .from('articles')
+      .select('id, slug, title, excerpt, author_name, sport_id, published_at, content_type')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(6),
 
-    const [statsResult, sportsResult, articlesResult, alumniResult, scoresResult, potwResult, hotTakesResult] = results;
+    // Recent completed games (last 7 days)
+    supabase
+      .from('games')
+      .select('id, game_date, sport_id, home_score, away_score, home_school:home_school_id(name, slug), away_school:away_school_id(name, slug)')
+      .not('home_score', 'is', null)
+      .gte('game_date', new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10))
+      .order('game_date', { ascending: false })
+      .limit(8),
 
-    if (statsResult.status === "fulfilled") stats = statsResult.value;
-    if (sportsResult.status === "fulfilled") sports = sportsResult.value;
-    if (articlesResult.status === "fulfilled") articles = articlesResult.value;
-    if (alumniResult.status === "fulfilled") featuredAlumni = alumniResult.value;
-    if (scoresResult.status === "fulfilled") recentScores = scoresResult.value;
-    if (potwResult.status === "fulfilled") potwNominees = potwResult.value;
-    if (hotTakesResult.status === "fulfilled") hotTakes = hotTakesResult.value;
+    // Featured active alumni
+    supabase
+      .from('next_level_tracking')
+      .select('id, person_name, current_org, pro_league, sport_id, status, schools:high_school_id(name, slug)')
+      .eq('featured', true)
+      .eq('status', 'active')
+      .limit(6),
+  ]);
 
-    // Error logging for failed fetches
-    [statsResult, sportsResult, articlesResult, alumniResult, scoresResult, potwResult, hotTakesResult].forEach(
-      (result, idx) => {
-        if (result.status === "rejected") {
-          const names = ["getOverviewStats", "getSportsWithCounts", "getRecentArticles", "getFeaturedAlumni", "getRecentScores", "getPotwNominees", "getHotTakes"];
-          captureError(result.reason, { function: "HomePage", fetch: names[idx] });
-        }
-      }
-    );
-  } catch (error) {
-    captureError(error, { function: "HomePage", context: "data_fetching" });
-  }
-
-  // Transform data for components
-  const displayArticles = articles.map((a) => ({
-    slug: a.slug,
-    title: a.title,
-    excerpt: a.excerpt || "",
-    sport_id: a.sport_id || "News",
-    featured_image_url: a.featured_image_url || "/sports/football.svg",
-    published_at: a.published_at,
+  const articles = articlesRes.data ?? [];
+  const recentGames = (recentGamesRes.data ?? []).map((g: Record<string, unknown>) => ({
+    ...g,
+    home_school: Array.isArray(g.home_school) ? g.home_school[0] : g.home_school,
+    away_school: Array.isArray(g.away_school) ? g.away_school[0] : g.away_school,
+  }));
+  const featuredAlumni = (alumniRes.data ?? []).map((a: Record<string, unknown>) => ({
+    ...a,
+    schools: Array.isArray(a.schools) ? a.schools[0] : a.schools,
   }));
 
-  const displayAlumni = featuredAlumni.map((person) => {
-    const schoolName = person.schools
-      ? Array.isArray(person.schools)
-        ? person.schools[0]?.name
-        : person.schools.name
-      : undefined;
-    return {
-      name: person.person_name,
-      team: person.current_org,
-      school: schoolName || "Unknown",
-      emoji: "⭐",
-    };
-  });
-
-  const displayScores = recentScores.map((game) => {
-    const homeName = game.schools
-      ? Array.isArray(game.schools) ? game.schools[0]?.name : game.schools.name
-      : "Unknown";
-    const awayName = game.away_schools
-      ? Array.isArray(game.away_schools) ? game.away_schools[0]?.name : game.away_schools.name
-      : "Unknown";
-    return {
-      id: game.id,
-      homeTeam: homeName || "Unknown",
-      awayTeam: awayName || "Unknown",
-      homeScore: game.home_score,
-      awayScore: game.away_score,
-      gameDate: game.game_date,
-      status: game.status,
-      sportId: game.sport_id,
-    };
-  });
-
-  const displayPotw = potwNominees.map((nominee) => ({
-    id: nominee.id,
-    playerName: nominee.player_name,
-    schoolName: nominee.school_name,
-    sportId: nominee.sport_id,
-    statLine: nominee.stat_line,
-    votes: nominee.votes,
-  }));
-
-  const displayHotTakes = hotTakes.length > 0 ? hotTakes.map((take) => ({
-    id: take.id,
-    userHandle: take.user_handle,
-    content: take.content,
-    type: take.type,
-    upvotes: take.upvotes,
-    downvotes: take.downvotes,
-  })) : [];
-
-  // JSON-LD Schema
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "PhillySportsPack",
-    url: "https://phillysportspack.com",
-    description: "Comprehensive database of Philadelphia high school sports statistics, players, coaches, and records across football, basketball, baseball, and more.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: "https://phillysportspack.com/search?q={search_term_string}",
-      },
-      "query-input": "required name=search_term_string",
-    },
+  const SPORT_EMOJI: Record<string, string> = {
+    football: '🏈', basketball: '🏀', baseball: '⚾', soccer: '⚽',
+    lacrosse: '🥍', 'track-field': '🏃', wrestling: '🤼',
   };
 
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+    <div className="min-h-screen bg-[var(--psp-navy)]">
+      <OrganizationJsonLd />
 
-      <ErrorBoundary>
-        <div style={{ width: "100%" }}>
-          <div id="content-updates" aria-live="polite" aria-atomic="true" className="sr-only"></div>
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-[var(--psp-navy)] to-[var(--psp-navy-mid)] pt-8 pb-6 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bebas text-white tracking-wide">
+            PHILLY<span className="text-[var(--psp-gold)]">SPORTS</span>PACK
+          </h1>
+          <p className="text-gray-400 text-sm mt-1">Philadelphia High School Sports — Scores, Stats, Rankings</p>
+        </div>
+      </div>
 
-          {/* SECTION 1: Hero Section */}
-          <HeroSectionNew stats={stats} />
+      {/* Sport Navigation */}
+      <div className="max-w-7xl mx-auto px-4 -mt-2 mb-6">
+        <SportNavigationGrid sports={[
+          { id: 'football', name: 'Football', slug: 'football', playerCount: 0 },
+          { id: 'basketball', name: 'Basketball', slug: 'basketball', playerCount: 0 },
+          { id: 'baseball', name: 'Baseball', slug: 'baseball', playerCount: 0 },
+          { id: 'soccer', name: 'Soccer', slug: 'soccer', playerCount: 0 },
+          { id: 'lacrosse', name: 'Lacrosse', slug: 'lacrosse', playerCount: 0 },
+          { id: 'track-field', name: 'Track & Field', slug: 'track-field', playerCount: 0 },
+          { id: 'wrestling', name: 'Wrestling', slug: 'wrestling', playerCount: 0 },
+        ]} />
+      </div>
 
-          {/* SECTION 2: Live Scores (unified scores) */}
-          {displayScores.length > 0 && (
-            <>
-              <SectionDivider />
-              <LiveStatsStrip />
-              <RecentScores scores={displayScores} />
-            </>
-          )}
+      <div className="max-w-7xl mx-auto px-4 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Column */}
+          <div className="lg:col-span-2 space-y-6">
 
-          {/* SECTION 3: Sport Navigation Cards */}
-          <SectionDivider />
-          <SportNavigationGrid sports={sports} />
+            {/* Recent Scores */}
+            {recentGames.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-bebas text-white tracking-wider">Recent Scores</h2>
+                  <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)]">
+                    All Scores →
+                  </Link>
+                </div>
+                <div className="space-y-2">
+                  {recentGames.map((game: Record<string, unknown>) => {
+                    const home = game.home_school as Record<string, unknown> | null;
+                    const away = game.away_school as Record<string, unknown> | null;
+                    return (
+                      <Link
+                        key={game.id as string}
+                        href={`/${game.sport_id}/games/${game.id}`}
+                        className="flex items-center justify-between bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-3 hover:border-[var(--psp-gold)]/30 transition"
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          <span className="text-lg">{SPORT_EMOJI[(game.sport_id as string) || '']}</span>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-white font-medium">{(away?.name as string) || 'TBD'}</span>
+                              <span className="text-sm font-bold text-white">{game.away_score as number}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-white font-medium">{(home?.name as string) || 'TBD'}</span>
+                              <span className="text-sm font-bold text-white">{game.home_score as number}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <span className="text-[10px] text-gray-500 ml-3">
+                          {new Date(game.game_date as string).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
-          {/* SECTION 4: Trending Players */}
-          <SectionDivider />
-          <TrendingPlayersWidget />
+            {/* Latest Articles */}
+            {articles.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-bebas text-white tracking-wider">Latest Stories</h2>
+                  <Link href="/articles" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)]">
+                    All Stories →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {articles.slice(0, 4).map((article: Record<string, unknown>) => (
+                    <Link
+                      key={article.id as number}
+                      href={`/articles/${article.slug}`}
+                      className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/30 transition group"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm">{SPORT_EMOJI[(article.sport_id as string) || ''] || '📰'}</span>
+                        <span className="text-[10px] text-gray-500 uppercase tracking-wider">
+                          {(article.content_type as string) || 'article'}
+                        </span>
+                      </div>
+                      <h3 className="text-sm font-bold text-white group-hover:text-[var(--psp-gold)] transition line-clamp-2">
+                        {article.title as string}
+                      </h3>
+                      {(article.excerpt as string) ? (
+                        <p className="text-xs text-gray-400 mt-1 line-clamp-2">{article.excerpt as string}</p>
+                      ) : null}
+                      <p className="text-[10px] text-gray-600 mt-2">
+                        {article.author_name as string} · {new Date(article.published_at as string).toLocaleDateString()}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
 
-          {/* SECTION 5: POTW Spotlight */}
-          <SectionDivider />
-          <PotwSpotlight nominees={displayPotw} />
-
-          {/* SECTION 5: Philly Everywhere / Alumni */}
-          {displayAlumni.length > 0 && (
-            <>
-              <SectionDivider />
-              <PhillyEverywhere alumni={displayAlumni} totalCount={stats.players} />
-            </>
-          )}
-
-          {/* SECTION 6: Latest Articles */}
-          {displayArticles.length > 0 && (
-            <>
-              <SectionDivider />
-              <LatestArticles articles={displayArticles} />
-            </>
-          )}
-
-          {/* Inline Sponsor Slot */}
-          <SectionDivider />
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1rem' }}>
-            <SponsorSlot placement="inline" />
+            {/* POTW + Rankings links */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Link href="/potw" className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/30 transition text-center">
+                <span className="text-3xl mb-2 block">🏆</span>
+                <h3 className="text-sm font-bold text-white">Player of the Week</h3>
+                <p className="text-[10px] text-gray-400 mt-1">Vote for this week&apos;s top performer</p>
+              </Link>
+              <Link href="/pulse/rankings" className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/30 transition text-center">
+                <span className="text-3xl mb-2 block">📊</span>
+                <h3 className="text-sm font-bold text-white">Power Rankings</h3>
+                <p className="text-[10px] text-gray-400 mt-1">See who&apos;s on top this week</p>
+              </Link>
+            </section>
           </div>
 
-          {/* SECTION 7: Community + Newsletter (merged) */}
-          <SectionDivider />
-          <NewsletterCTA />
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Featured Alumni */}
+            {featuredAlumni.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-bebas text-white tracking-wider">Our Guys</h2>
+                  <Link href="/pulse/our-guys" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)]">
+                    View All →
+                  </Link>
+                </div>
+                <div className="space-y-2">
+                  {featuredAlumni.slice(0, 5).map((a: Record<string, unknown>) => {
+                    const school = a.schools as Record<string, unknown> | null;
+                    return (
+                      <div key={a.id as string} className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-3 py-2.5">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-white font-medium">{a.person_name as string}</p>
+                            <p className="text-[10px] text-gray-400">
+                              {a.current_org as string} · {school?.name as string}
+                            </p>
+                          </div>
+                          {(a.pro_league as string) ? (
+                            <span className="text-[10px] font-bold text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 px-2 py-0.5 rounded">
+                              {a.pro_league as string}
+                            </span>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* Quick Links */}
+            <section className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Quick Links</h3>
+              <div className="space-y-2">
+                <Link href="/pulse/rankings" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">Power Rankings</Link>
+                <Link href="/pulse/our-guys" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">Our Guys — Next Level</Link>
+                <Link href="/compare" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">Compare Players</Link>
+                <Link href="/search" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">Player Search</Link>
+                <Link href="/about" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">About PSP</Link>
+              </div>
+            </section>
+
+            {/* Leaderboard links */}
+            <section className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Leaderboards</h3>
+              <div className="space-y-2">
+                <Link href="/football/leaderboards" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">🏈 Football Leaders</Link>
+                <Link href="/basketball/leaderboards" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">🏀 Basketball Leaders</Link>
+                <Link href="/baseball/leaderboards" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">⚾ Baseball Leaders</Link>
+              </div>
+            </section>
+          </div>
         </div>
-      </ErrorBoundary>
-    </>
+      </div>
+    </div>
   );
 }

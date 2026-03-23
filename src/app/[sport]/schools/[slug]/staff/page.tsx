@@ -11,7 +11,7 @@ import { createStaticClient } from "@/lib/supabase/static";
 import type { Metadata } from "next";
 
 export const revalidate = 86400; // ISR: daily
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string; slug: string };
 
 interface Coach {
@@ -39,15 +39,7 @@ interface CoachingStaff {
   former_player_id?: number;
 }
 
-export async function generateStaticParams() {
-  return [
-    { sport: "football", slug: "la-salle" },
-    { sport: "football", slug: "st-josephs-prep" },
-    { sport: "basketball", slug: "la-salle" },
-    { sport: "basketball", slug: "roman-catholic" },
-  ];
-}
-
+// Dynamic — too many slug combos to pre-render
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport, slug } = await params;
   const sportValidated = await validateSportParamForMetadata({ sport });

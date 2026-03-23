@@ -16,7 +16,7 @@ import type { Metadata } from "next";
 import EraChart from "./EraChart";
 
 export const revalidate = 86400; // 1 day
-
+export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
@@ -31,13 +31,13 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
-export function generateStaticParams() {
-  return [
-    { sport: "football" },
-    { sport: "basketball" },
-    { sport: "baseball" },
-  ];
-}
+// export function generateStaticParams() {
+//   return [
+//     { sport: "football" },
+//     { sport: "basketball" },
+//     { sport: "baseball" },
+//   ];
+// }
 
 /**
  * Format trend arrow and percentage

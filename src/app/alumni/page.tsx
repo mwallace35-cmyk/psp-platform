@@ -6,7 +6,7 @@ import PSPPromo from "@/components/ads/PSPPromo";
 import { SPORT_META } from "@/lib/data";
 
 export const revalidate = 3600; // ISR: hourly
-
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Alumni Tracker | PhillySportsPack.com",
   description: "Track Philadelphia high school sports alumni playing college and professional sports. See where your favorite players ended up.",
