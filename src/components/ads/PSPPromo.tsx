@@ -32,9 +32,9 @@ const PROMOS = [
     href: '/archive',
   },
   {
-    text: '8 Hall of Famers. One city.',
+    text: 'Explore 55,000+ Philly HS athletes',
     cta: '→',
-    href: '/search',
+    href: '/players',
   },
 ];
 

@@ -305,18 +305,6 @@ export default async function HomePage() {
               </section>
             )}
 
-            {/* Quick Links */}
-            <section className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Quick Links</h3>
-              <div className="space-y-2">
-                <Link href="/pulse/rankings" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">Power Rankings</Link>
-                <Link href="/pulse/our-guys" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">Our Guys — Next Level</Link>
-                <Link href="/compare" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">Compare Players</Link>
-                <Link href="/search" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">Player Search</Link>
-                <Link href="/about" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">About PSP</Link>
-              </div>
-            </section>
-
             {/* Leaderboard links */}
             <section className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Leaderboards</h3>

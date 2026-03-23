@@ -1,0 +1,335 @@
+{
+  "brackets": [
+    {
+      "name": "2025 PIAA Football Championship (6A)",
+      "type": "piaa_6a",
+      "sport": "football",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Parkland", "team1_score": 17, "team2": "Easton Area", "team2_score": 42, "winner": "Easton Area", "date": "2025-11-14" },
+            { "team1": "Imhotep Charter", "team1_score": 16, "team2": "La Salle College", "team2_score": 31, "winner": "La Salle College", "date": "2025-11-15" },
+            { "team1": "Coatesville", "team1_score": 14, "team2": "Pennridge", "team2_score": 17, "winner": "Pennridge", "date": "2025-11-14" },
+            { "team1": "Neshaminy", "team1_score": 7, "team2": "North Penn", "team2_score": 35, "winner": "North Penn", "date": "2025-11-14" },
+            { "team1": "Wilson", "team1_score": 7, "team2": "Central York", "team2_score": 42, "winner": "Central York", "date": "2025-11-14" },
+            { "team1": "Manheim Township", "team1_score": 7, "team2": "Harrisburg", "team2_score": 34, "winner": "Harrisburg", "date": "2025-11-15" },
+            { "team1": "Wilkes-Barre", "team1_score": 0, "team2": "State College", "team2_score": 52, "winner": "State College", "date": "2025-11-15" },
+            { "team1": "North Allegheny", "team1_score": 7, "team2": "Central Catholic", "team2_score": 42, "winner": "Central Catholic", "date": "2025-11-15" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Easton Area", "team1_score": 7, "team2": "La Salle College", "team2_score": 49, "winner": "La Salle College", "date": "2025-11-21" },
+            { "team1": "Pennridge", "team1_score": 14, "team2": "North Penn", "team2_score": 21, "winner": "North Penn", "date": "2025-11-21" },
+            { "team1": "Central York", "team1_score": 10, "team2": "Harrisburg", "team2_score": 34, "winner": "Harrisburg", "date": "2025-11-21" },
+            { "team1": "State College", "team1_score": 21, "team2": "Central Catholic", "team2_score": 42, "winner": "Central Catholic", "date": "2025-11-22" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "La Salle College", "team1_score": 49, "team2": "North Penn", "team2_score": 14, "winner": "La Salle College", "date": "2025-11-29" },
+            { "team1": "Harrisburg", "team1_score": 14, "team2": "Central Catholic", "team2_score": 32, "winner": "Central Catholic", "date": "2025-11-29" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "La Salle College", "team1_score": 34, "team2": "Central Catholic", "team2_score": 20, "winner": "La Salle College", "date": "2025-12-06" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PIAA Football Championship (5A)",
+      "type": "piaa_5a",
+      "sport": "football",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Delaware Valley", "team1_score": 42, "team2": "Hollidaysburg", "team2_score": 56, "winner": "Hollidaysburg", "date": "2025-11-14" },
+            { "team1": "Whitehall", "team1_score": 7, "team2": "Roman Catholic", "team2_score": 49, "winner": "Roman Catholic", "date": "2025-11-14" },
+            { "team1": "Strath Haven", "team1_score": 10, "team2": "Springfield", "team2_score": 26, "winner": "Springfield", "date": "2025-11-14" },
+            { "team1": "Bayard Rustin", "team1_score": 13, "team2": "Chester", "team2_score": 27, "winner": "Chester", "date": "2025-11-15" },
+            { "team1": "Moon Area", "team1_score": 24, "team2": "Pine-Richland", "team2_score": 34, "winner": "Pine-Richland", "date": "2025-11-14" },
+            { "team1": "Upper St. Clair", "team1_score": 6, "team2": "Peters Township", "team2_score": 31, "winner": "Peters Township", "date": "2025-11-14" },
+            { "team1": "Solanco", "team1_score": 43, "team2": "New Oxford", "team2_score": 12, "winner": "Solanco", "date": "2025-11-14" },
+            { "team1": "Exeter Township", "team1_score": 0, "team2": "Bishop McDevitt", "team2_score": 42, "winner": "Bishop McDevitt", "date": "2025-11-14" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Hollidaysburg", "team1_score": 20, "team2": "Roman Catholic", "team2_score": 55, "winner": "Roman Catholic", "date": "2025-11-21" },
+            { "team1": "Chester", "team1_score": 12, "team2": "Springfield", "team2_score": 34, "winner": "Springfield", "date": "2025-11-22" },
+            { "team1": "Pine-Richland", "team1_score": 19, "team2": "Peters Township", "team2_score": 20, "winner": "Peters Township", "date": "2025-11-22" },
+            { "team1": "Solanco", "team1_score": 20, "team2": "Bishop McDevitt", "team2_score": 38, "winner": "Bishop McDevitt", "date": "2025-11-21" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Roman Catholic", "team1_score": 48, "team2": "Springfield", "team2_score": 20, "winner": "Roman Catholic", "date": "2025-11-28" },
+            { "team1": "Peters Township", "team1_score": 28, "team2": "Bishop McDevitt", "team2_score": 31, "winner": "Bishop McDevitt", "date": "2025-11-29" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Roman Catholic", "team1_score": 28, "team2": "Bishop McDevitt", "team2_score": 6, "winner": "Roman Catholic", "date": "2025-12-05" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PIAA Football Championship (4A)",
+      "type": "piaa_4a",
+      "sport": "football",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Bethlehem Catholic", "team1_score": 28, "team2": "Southern Lehigh", "team2_score": 49, "winner": "Southern Lehigh", "date": "2025-11-14" },
+            { "team1": "Bellefonte", "team1_score": 13, "team2": "Shamokin Area", "team2_score": 42, "winner": "Shamokin Area", "date": "2025-11-14" },
+            { "team1": "Bishop Shanahan", "team1_score": 36, "team2": "North Pocono", "team2_score": 40, "winner": "North Pocono", "date": "2025-11-14" },
+            { "team1": "West Philadelphia", "team1_score": 6, "team2": "Cardinal O'Hara", "team2_score": 34, "winner": "Cardinal O'Hara", "date": "2025-11-15" },
+            { "team1": "Wyomissing", "team1_score": 35, "team2": "Susquehanna Township", "team2_score": 37, "winner": "Susquehanna Township", "date": "2025-11-14" },
+            { "team1": "West York Area", "team1_score": 14, "team2": "Twin Valley", "team2_score": 45, "winner": "Twin Valley", "date": "2025-11-14" },
+            { "team1": "Punxsutawney", "team1_score": 14, "team2": "Oil City", "team2_score": 47, "winner": "Oil City", "date": "2025-11-14" },
+            { "team1": "McKeesport", "team1_score": 12, "team2": "Aliquippa", "team2_score": 21, "winner": "Aliquippa", "date": "2025-11-14" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Shamokin Area", "team1_score": 27, "team2": "Southern Lehigh", "team2_score": 30, "winner": "Southern Lehigh", "date": "2025-11-21" },
+            { "team1": "North Pocono", "team1_score": 6, "team2": "Cardinal O'Hara", "team2_score": 28, "winner": "Cardinal O'Hara", "date": "2025-11-21" },
+            { "team1": "Susquehanna Township", "team1_score": 21, "team2": "Twin Valley", "team2_score": 41, "winner": "Twin Valley", "date": "2025-11-21" },
+            { "team1": "Oil City", "team1_score": 6, "team2": "Aliquippa", "team2_score": 28, "winner": "Aliquippa", "date": "2025-11-22" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Southern Lehigh", "team1_score": 28, "team2": "Cardinal O'Hara", "team2_score": 24, "winner": "Southern Lehigh", "date": "2025-11-28" },
+            { "team1": "Twin Valley", "team1_score": 28, "team2": "Aliquippa", "team2_score": 24, "winner": "Twin Valley", "date": "2025-11-29" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Southern Lehigh", "team1_score": 43, "team2": "Twin Valley", "team2_score": 21, "winner": "Southern Lehigh", "date": "2025-12-04" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PIAA Football Championship (3A)",
+      "type": "piaa_3a",
+      "sport": "football",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Berks Catholic", "team1_score": 0, "team2": "Trinity", "team2_score": 17, "winner": "Trinity", "date": "2025-11-14" },
+            { "team1": "Mifflinburg", "team1_score": 21, "team2": "Scranton Prep", "team2_score": 28, "winner": "Scranton Prep", "date": "2025-11-14" },
+            { "team1": "Notre Dame-Green Pond", "team1_score": 14, "team2": "Northwestern Lehigh", "team2_score": 35, "winner": "Northwestern Lehigh", "date": "2025-11-14" },
+            { "team1": "North Catholic", "team1_score": 24, "team2": "Avonworth", "team2_score": 44, "winner": "Avonworth", "date": "2025-11-14" },
+            { "team1": "Central Valley", "team1_score": 0, "team2": "Imani Christian Academy", "team2_score": 48, "winner": "Imani Christian Academy", "date": "2025-11-14" },
+            { "team1": "Brockway", "team1_score": 0, "team2": "Penn Cambria", "team2_score": 27, "winner": "Penn Cambria", "date": "2025-11-14" },
+            { "team1": "Hickory", "team1_score": 17, "team2": "Sharon", "team2_score": 20, "winner": "Sharon", "date": "2025-11-14" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Neumann-Goretti", "team1_score": 22, "team2": "Trinity", "team2_score": 26, "winner": "Trinity", "date": "2025-11-21" },
+            { "team1": "Scranton Prep", "team1_score": 14, "team2": "Northwestern Lehigh", "team2_score": 42, "winner": "Northwestern Lehigh", "date": "2025-11-21" },
+            { "team1": "Imani Christian Academy", "team1_score": 6, "team2": "Avonworth", "team2_score": 30, "winner": "Avonworth", "date": "2025-11-22" },
+            { "team1": "Sharon", "team1_score": 7, "team2": "Penn Cambria", "team2_score": 12, "winner": "Penn Cambria", "date": "2025-11-21" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Trinity", "team1_score": 13, "team2": "Northwestern Lehigh", "team2_score": 48, "winner": "Northwestern Lehigh", "date": "2025-11-28" },
+            { "team1": "Penn Cambria", "team1_score": 15, "team2": "Avonworth", "team2_score": 31, "winner": "Avonworth", "date": "2025-11-28" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Northwestern Lehigh", "team1_score": 7, "team2": "Avonworth", "team2_score": 31, "winner": "Avonworth", "date": "2025-12-06" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PIAA Football Championship (2A)",
+      "type": "piaa_2a",
+      "sport": "football",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Chestnut Ridge", "team1_score": 22, "team2": "Steelton-Highspire", "team2_score": 50, "winner": "Steelton-Highspire", "date": "2025-11-14" },
+            { "team1": "Troy", "team1_score": 0, "team2": "Southern Columbia Area", "team2_score": 42, "winner": "Southern Columbia Area", "date": "2025-11-14" },
+            { "team1": "Schuylkill Haven", "team1_score": 31, "team2": "Williams Valley", "team2_score": 34, "winner": "Williams Valley", "date": "2025-11-14" },
+            { "team1": "Lakeland", "team1_score": 7, "team2": "Lansdale Catholic", "team2_score": 43, "winner": "Lansdale Catholic", "date": "2025-11-15" },
+            { "team1": "Karns City", "team1_score": 20, "team2": "Farrell", "team2_score": 48, "winner": "Farrell", "date": "2025-11-14" },
+            { "team1": "Bishop McCort", "team1_score": 7, "team2": "Richland", "team2_score": 14, "winner": "Richland", "date": "2025-11-15" },
+            { "team1": "Washington", "team1_score": 19, "team2": "Seton LaSalle", "team2_score": 27, "winner": "Seton LaSalle", "date": "2025-11-14" },
+            { "team1": "Western Beaver", "team1_score": 7, "team2": "Steel Valley", "team2_score": 34, "winner": "Steel Valley", "date": "2025-11-14" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Steelton-Highspire", "team1_score": 26, "team2": "Southern Columbia Area", "team2_score": 55, "winner": "Southern Columbia Area", "date": "2025-11-21" },
+            { "team1": "Williams Valley", "team1_score": 7, "team2": "Lansdale Catholic", "team2_score": 33, "winner": "Lansdale Catholic", "date": "2025-11-21" },
+            { "team1": "Richland", "team1_score": 14, "team2": "Farrell", "team2_score": 32, "winner": "Farrell", "date": "2025-11-21" },
+            { "team1": "Steel Valley", "team1_score": 14, "team2": "Seton LaSalle", "team2_score": 21, "winner": "Seton LaSalle", "date": "2025-11-22" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Lansdale Catholic", "team1_score": 7, "team2": "Southern Columbia Area", "team2_score": 24, "winner": "Southern Columbia Area", "date": "2025-11-28" },
+            { "team1": "Seton LaSalle", "team1_score": 19, "team2": "Farrell", "team2_score": 40, "winner": "Farrell", "date": "2025-11-29" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Southern Columbia Area", "team1_score": 43, "team2": "Farrell", "team2_score": 22, "winner": "Southern Columbia Area", "date": "2025-12-05" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PIAA Football Championship (1A)",
+      "type": "piaa_1a",
+      "sport": "football",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Juniata Valley", "team1_score": 0, "team2": "Bishop Guilfoyle", "team2_score": 62, "winner": "Bishop Guilfoyle", "date": "2025-11-14" },
+            { "team1": "Meyersdale", "team1_score": 0, "team2": "Westinghouse", "team2_score": 44, "winner": "Westinghouse", "date": "2025-11-14" },
+            { "team1": "York Catholic", "team1_score": 20, "team2": "Belmont Charter", "team2_score": 36, "winner": "Belmont Charter", "date": "2025-11-15" },
+            { "team1": "Line Mountain", "team1_score": 20, "team2": "Lackawanna Trail", "team2_score": 31, "winner": "Lackawanna Trail", "date": "2025-11-15" },
+            { "team1": "Fort Cherry", "team1_score": 14, "team2": "Laurel", "team2_score": 24, "winner": "Laurel", "date": "2025-11-14" },
+            { "team1": "Bishop Canevin", "team1_score": 22, "team2": "Clairton", "team2_score": 42, "winner": "Clairton", "date": "2025-11-14" },
+            { "team1": "Wilmington", "team1_score": 22, "team2": "Greenville", "team2_score": 25, "winner": "Greenville", "date": "2025-11-15" },
+            { "team1": "Redbank Valley", "team1_score": 19, "team2": "Port Allegany", "team2_score": 41, "winner": "Port Allegany", "date": "2025-11-14" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Westinghouse", "team1_score": 6, "team2": "Bishop Guilfoyle", "team2_score": 7, "winner": "Bishop Guilfoyle", "date": "2025-11-21" },
+            { "team1": "Lackawanna Trail", "team1_score": 40, "team2": "Belmont Charter", "team2_score": 52, "winner": "Belmont Charter", "date": "2025-11-21" },
+            { "team1": "Laurel", "team1_score": 6, "team2": "Clairton", "team2_score": 8, "winner": "Clairton", "date": "2025-11-22" },
+            { "team1": "Port Allegany", "team1_score": 28, "team2": "Greenville", "team2_score": 36, "winner": "Greenville", "date": "2025-11-21" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Belmont Charter", "team1_score": 0, "team2": "Bishop Guilfoyle", "team2_score": 35, "winner": "Bishop Guilfoyle", "date": "2025-11-29" },
+            { "team1": "Greenville", "team1_score": 0, "team2": "Clairton", "team2_score": 57, "winner": "Clairton", "date": "2025-11-28" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Bishop Guilfoyle", "team1_score": 3, "team2": "Clairton", "team2_score": 35, "winner": "Clairton", "date": "2025-12-04" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PCL Football Playoffs",
+      "type": "pcl",
+      "sport": "football",
+      "rounds": [
+        {
+          "name": "6A Semifinals",
+          "round_number": 1,
+          "games": [
+            { "team1": "La Salle College", "team1_score": null, "team2": "St. Joseph's Prep", "team2_score": null, "winner": "La Salle College", "date": "2025-10-25" },
+            { "team1": "St. Joseph's Prep", "team1_score": null, "team2": "La Salle College", "team2_score": null, "winner": "St. Joseph's Prep", "date": "2025-10-25" }
+          ]
+        },
+        {
+          "name": "6A Championship",
+          "round_number": 2,
+          "games": [
+            { "team1": "La Salle College", "team1_score": 24, "team2": "St. Joseph's Prep", "team2_score": 14, "winner": "La Salle College", "date": "2025-11-01" }
+          ]
+        },
+        {
+          "name": "5A Semifinals",
+          "round_number": 1,
+          "games": []
+        },
+        {
+          "name": "5A Championship",
+          "round_number": 2,
+          "games": [
+            { "team1": "Roman Catholic", "team1_score": 63, "team2": "Father Judge", "team2_score": 21, "winner": "Roman Catholic", "date": "2025-11-01" }
+          ]
+        },
+        {
+          "name": "4A Semifinals",
+          "round_number": 1,
+          "games": [
+            { "team1": "Cardinal O'Hara", "team1_score": 44, "team2": "Archbishop Ryan", "team2_score": 21, "winner": "Cardinal O'Hara", "date": "2025-11-01" },
+            { "team1": "Bonner & Prendie", "team1_score": 35, "team2": "Archbishop Wood", "team2_score": 7, "winner": "Bonner & Prendie", "date": "2025-11-01" }
+          ]
+        },
+        {
+          "name": "4A Championship",
+          "round_number": 2,
+          "games": [
+            { "team1": "Cardinal O'Hara", "team1_score": 24, "team2": "Bonner & Prendie", "team2_score": 3, "winner": "Cardinal O'Hara", "date": "2025-11-08" }
+          ]
+        },
+        {
+          "name": "3A Championship",
+          "round_number": 2,
+          "games": [
+            { "team1": "Neumann-Goretti", "team1_score": 20, "team2": "Conwell-Egan", "team2_score": 7, "winner": "Neumann-Goretti", "date": "2025-11-01" }
+          ]
+        }
+      ]
+    }
+  ]
+}

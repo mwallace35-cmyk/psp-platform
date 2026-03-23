@@ -5,7 +5,6 @@ import LayoutToggle from "./LayoutToggle";
 import type { LayoutType } from "./LayoutToggle";
 import SportLayoutA from "./SportLayoutA";
 import SportLayoutB from "./SportLayoutB";
-import SportLayoutC from "./SportLayoutC";
 import type { Championship, School } from "@/lib/data/types";
 import type { HubGame } from "./HubScoresStrip";
 
@@ -65,9 +64,9 @@ const DEFAULT_LAYOUTS: Record<string, LayoutType> = {
   basketball: "editorial",
   baseball: "dashboard",
   "track-field": "dashboard",
-  lacrosse: "league",
+  lacrosse: "dashboard",
   wrestling: "dashboard",
-  soccer: "league",
+  soccer: "dashboard",
 };
 
 export default function SportLayoutSwitcher(props: SportLayoutSwitcherProps) {
@@ -83,7 +82,6 @@ export default function SportLayoutSwitcher(props: SportLayoutSwitcherProps) {
       />
       {layout === "editorial" && <SportLayoutA {...props} />}
       {layout === "dashboard" && <SportLayoutB {...props} />}
-      {layout === "league" && <SportLayoutC {...props} />}
     </>
   );
 }

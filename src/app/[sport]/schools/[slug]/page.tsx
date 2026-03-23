@@ -513,12 +513,15 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                         {player.name}
                       </Link>
                       <div className="text-xs" style={{ color: "var(--psp-gray-500)" }}>
-                        {player.positions && (
+                        {(player.positions || player.graduation_year) && (
                           <span>
-                            {Array.isArray(player.positions)
-                              ? player.positions.join(", ")
-                              : player.positions}{" "}
-                            {player.graduation_year && `• Class of ${player.graduation_year}`}
+                            {player.positions && (
+                              Array.isArray(player.positions)
+                                ? player.positions.join(", ")
+                                : player.positions
+                            )}
+                            {player.positions && player.graduation_year && " "}
+                            {player.graduation_year && `${player.positions ? "• " : ""}Class of ${player.graduation_year}`}
                           </span>
                         )}
                       </div>

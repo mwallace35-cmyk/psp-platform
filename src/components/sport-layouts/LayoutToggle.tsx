@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from "react";
 
-type LayoutType = "editorial" | "dashboard" | "league";
+type LayoutType = "editorial" | "dashboard";
 
 const LAYOUT_LABELS: Record<LayoutType, { label: string; icon: string }> = {
   editorial: { label: "Editorial", icon: "📰" },
   dashboard: { label: "Dashboard", icon: "📊" },
-  league: { label: "By League", icon: "🏟️" },
 };
 
 interface LayoutToggleProps {
@@ -24,7 +23,7 @@ export default function LayoutToggle({ sport, sportColor, onLayoutChange, defaul
     // Restore from localStorage
     try {
       const saved = localStorage.getItem(`psp-layout-${sport}`);
-      if (saved && (saved === "editorial" || saved === "dashboard" || saved === "league")) {
+      if (saved && (saved === "editorial" || saved === "dashboard")) {
         setActive(saved);
         onLayoutChange(saved);
       }

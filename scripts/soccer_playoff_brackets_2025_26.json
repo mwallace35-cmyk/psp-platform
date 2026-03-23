@@ -1,0 +1,258 @@
+{
+  "brackets": [
+    {
+      "name": "2025 PIAA Boys Soccer Championships - 1A",
+      "type": "piaa_1a",
+      "sport": "soccer",
+      "classification": "1A",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Camp Hill", "team1_score": 2, "team2": "Millville", "team2_score": 1, "winner": "Camp Hill", "date": "2025-11-04" },
+            { "team1": "Masterman", "team1_score": 0, "team2": "Delaware County Christian", "team2_score": 4, "winner": "Delaware County Christian", "date": "2025-11-04" },
+            { "team1": "Southern Columbia Area", "team1_score": 4, "team2": "York Catholic", "team2_score": 0, "winner": "Southern Columbia Area", "date": "2025-11-04" },
+            { "team1": "Wyoming Seminary College Prep", "team1_score": 6, "team2": "Minersville", "team2_score": 0, "winner": "Wyoming Seminary College Prep", "date": "2025-11-04" },
+            { "team1": "McConnellsburg", "team1_score": 1, "team2": "Lancaster Mennonite", "team2_score": 3, "winner": "Lancaster Mennonite", "date": "2025-11-04" },
+            { "team1": "Bishop Carroll", "team1_score": 0, "team2": "OLSH", "team2_score": 8, "winner": "OLSH", "date": "2025-11-04" },
+            { "team1": "Bentworth", "team1_score": 3, "team2": "Mercyhurst Prep", "team2_score": 1, "winner": "Bentworth", "date": "2025-11-04" },
+            { "team1": "Brockway", "team1_score": 0, "team2": "Winchester Thurston", "team2_score": 6, "winner": "Winchester Thurston", "date": "2025-11-04" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Camp Hill", "team1_score": 0, "team2": "Delaware County Christian", "team2_score": 2, "winner": "Delaware County Christian", "date": "2025-11-08" },
+            { "team1": "Southern Columbia Area", "team1_score": 1, "team2": "Wyoming Seminary College Prep", "team2_score": 3, "winner": "Wyoming Seminary College Prep", "date": "2025-11-08" },
+            { "team1": "Lancaster Mennonite", "team1_score": 1, "team2": "OLSH", "team2_score": 2, "winner": "OLSH", "date": "2025-11-08" },
+            { "team1": "Bentworth", "team1_score": 5, "team2": "Winchester Thurston", "team2_score": 0, "winner": "Bentworth", "date": "2025-11-08" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Delaware County Christian", "team1_score": 1, "team2": "Wyoming Seminary College Prep", "team2_score": 0, "winner": "Delaware County Christian", "date": "2025-11-11" },
+            { "team1": "OLSH", "team1_score": 1, "team2": "Bentworth", "team2_score": 2, "winner": "Bentworth", "date": "2025-11-11" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Delaware County Christian", "team1_score": 0, "team2": "Bentworth", "team2_score": 1, "winner": "Bentworth", "date": "2025-11-15", "notes": "OT" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PIAA Boys Soccer Championships - 2A",
+      "type": "piaa_2a",
+      "sport": "soccer",
+      "classification": "2A",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Northwestern Lehigh", "team1_score": 10, "team2": "Midd-West", "team2_score": 3, "winner": "Northwestern Lehigh", "date": "2025-11-04" },
+            { "team1": "Lancaster Catholic", "team1_score": 0, "team2": "Faith Christian Academy", "team2_score": 1, "winner": "Faith Christian Academy", "date": "2025-11-04" },
+            { "team1": "Devon Prep", "team1_score": 5, "team2": "Palisades", "team2_score": 1, "winner": "Devon Prep", "date": "2025-11-04" },
+            { "team1": "Lake-Lehman", "team1_score": 2, "team2": "Lewisburg", "team2_score": 3, "winner": "Lewisburg", "date": "2025-11-04" },
+            { "team1": "Juniata", "team1_score": 0, "team2": "Tulpehocken", "team2_score": 4, "winner": "Tulpehocken", "date": "2025-11-04" },
+            { "team1": "Deer Lakes", "team1_score": 1, "team2": "Harbor Creek", "team2_score": 0, "winner": "Deer Lakes", "date": "2025-11-04" },
+            { "team1": "Somerset", "team1_score": 1, "team2": "Beaver", "team2_score": 9, "winner": "Beaver", "date": "2025-11-04" },
+            { "team1": "Fairview", "team1_score": 7, "team2": "Quaker Valley", "team2_score": 0, "winner": "Fairview", "date": "2025-11-04" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Northwestern Lehigh", "team1_score": 1, "team2": "Faith Christian Academy", "team2_score": 2, "winner": "Faith Christian Academy", "date": "2025-11-08" },
+            { "team1": "Devon Prep", "team1_score": 0, "team2": "Lewisburg", "team2_score": 2, "winner": "Lewisburg", "date": "2025-11-08" },
+            { "team1": "Tulpehocken", "team1_score": 1, "team2": "Deer Lakes", "team2_score": 2, "winner": "Deer Lakes", "date": "2025-11-08" },
+            { "team1": "Beaver", "team1_score": 0, "team2": "Fairview", "team2_score": 4, "winner": "Fairview", "date": "2025-11-08" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Faith Christian Academy", "team1_score": 0, "team2": "Lewisburg", "team2_score": 1, "winner": "Lewisburg", "date": "2025-11-11", "notes": "OT" },
+            { "team1": "Deer Lakes", "team1_score": 1, "team2": "Fairview", "team2_score": 3, "winner": "Fairview", "date": "2025-11-11" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Lewisburg", "team1_score": 1, "team2": "Fairview", "team2_score": 0, "winner": "Lewisburg", "date": "2025-11-14" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PIAA Boys Soccer Championships - 3A",
+      "type": "piaa_3a",
+      "sport": "soccer",
+      "classification": "3A",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Archbishop Ryan", "team1_score": 3, "team2": "Northern York", "team2_score": 2, "winner": "Archbishop Ryan", "date": "2025-11-04" },
+            { "team1": "Harriton", "team1_score": 1, "team2": "Susquehannock", "team2_score": 0, "winner": "Harriton", "date": "2025-11-04" },
+            { "team1": "Abington Heights", "team1_score": 5, "team2": "Selinsgrove", "team2_score": 0, "winner": "Abington Heights", "date": "2025-11-04" },
+            { "team1": "Blue Mountain", "team1_score": 2, "team2": "Franklin Towne", "team2_score": 1, "winner": "Blue Mountain", "date": "2025-11-04" },
+            { "team1": "Conrad Weiser", "team1_score": 4, "team2": "Thomas Jefferson", "team2_score": 1, "winner": "Conrad Weiser", "date": "2025-11-04" },
+            { "team1": "Franklin Regional", "team1_score": 3, "team2": "Hollidaysburg", "team2_score": 0, "winner": "Franklin Regional", "date": "2025-11-04" },
+            { "team1": "General McLane", "team1_score": 0, "team2": "Taylor Allderdice", "team2_score": 1, "winner": "Taylor Allderdice", "date": "2025-11-04" },
+            { "team1": "West Allegheny", "team1_score": 2, "team2": "York Suburban", "team2_score": 1, "winner": "West Allegheny", "date": "2025-11-04" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Harriton", "team1_score": 1, "team2": "Archbishop Ryan", "team2_score": 0, "winner": "Harriton", "date": "2025-11-08" },
+            { "team1": "Abington Heights", "team1_score": 1, "team2": "Blue Mountain", "team2_score": 0, "winner": "Abington Heights", "date": "2025-11-08" },
+            { "team1": "Conrad Weiser", "team1_score": 2, "team2": "Franklin Regional", "team2_score": 0, "winner": "Conrad Weiser", "date": "2025-11-08" },
+            { "team1": "Taylor Allderdice", "team1_score": 3, "team2": "West Allegheny", "team2_score": 3, "winner": "Taylor Allderdice", "date": "2025-11-08", "notes": "PKs or ET" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Abington Heights", "team1_score": 2, "team2": "Harriton", "team2_score": 0, "winner": "Abington Heights", "date": "2025-11-11" },
+            { "team1": "Conrad Weiser", "team1_score": 3, "team2": "Taylor Allderdice", "team2_score": 1, "winner": "Conrad Weiser", "date": "2025-11-11" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Abington Heights", "team1_score": 2, "team2": "Conrad Weiser", "team2_score": 0, "winner": "Abington Heights", "date": "2025-11-15" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PIAA Boys Soccer Championships - 4A",
+      "type": "piaa_4a",
+      "sport": "soccer",
+      "classification": "4A",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Haverford", "team1_score": 3, "team2": "Manheim Township", "team2_score": 1, "winner": "Haverford", "date": "2025-11-04" },
+            { "team1": "Parkland", "team1_score": 3, "team2": "Springfield Township", "team2_score": 2, "winner": "Parkland", "date": "2025-11-04" },
+            { "team1": "La Salle College", "team1_score": 0, "team2": "Emmaus", "team2_score": 1, "winner": "Emmaus", "date": "2025-11-04" },
+            { "team1": "Henderson", "team1_score": 2, "team2": "Wyoming Valley West", "team2_score": 1, "winner": "Henderson", "date": "2025-11-04" },
+            { "team1": "Warwick", "team1_score": 1, "team2": "Great Valley", "team2_score": 0, "winner": "Warwick", "date": "2025-11-04" },
+            { "team1": "Seneca Valley", "team1_score": 2, "team2": "McDowell", "team2_score": 1, "winner": "Seneca Valley", "date": "2025-11-04" },
+            { "team1": "Abington", "team1_score": 3, "team2": "Chambersburg", "team2_score": 1, "winner": "Abington", "date": "2025-11-04" },
+            { "team1": "Fox Chapel", "team1_score": 2, "team2": "Central York", "team2_score": 1, "winner": "Fox Chapel", "date": "2025-11-04" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Parkland", "team1_score": 4, "team2": "Haverford", "team2_score": 3, "winner": "Parkland", "date": "2025-11-08" },
+            { "team1": "Henderson", "team1_score": 0, "team2": "Emmaus", "team2_score": 0, "winner": "Henderson", "date": "2025-11-08", "notes": "PKs or ET" },
+            { "team1": "Seneca Valley", "team1_score": 1, "team2": "Warwick", "team2_score": 0, "winner": "Seneca Valley", "date": "2025-11-08" },
+            { "team1": "Abington", "team1_score": 2, "team2": "Fox Chapel", "team2_score": 0, "winner": "Abington", "date": "2025-11-08" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "Henderson", "team1_score": 3, "team2": "Parkland", "team2_score": 1, "winner": "Henderson", "date": "2025-11-11" },
+            { "team1": "Abington", "team1_score": 4, "team2": "Seneca Valley", "team2_score": 1, "winner": "Abington", "date": "2025-11-11" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Henderson", "team1_score": 1, "team2": "Abington", "team2_score": 3, "winner": "Abington", "date": "2025-11-14" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PPL Boys Soccer Invitational (PIT Bracket)",
+      "type": "ppl_invitational",
+      "sport": "soccer",
+      "classification": "PPL",
+      "rounds": [
+        {
+          "name": "Semifinals",
+          "round_number": 1,
+          "games": [
+            { "team1": "Prep Charter", "team1_score": 0, "team2": "MAST Charter II", "team2_score": null, "winner": "MAST Charter II", "date": "2025-10-20" },
+            { "team1": "Olney", "team1_score": 0, "team2": "Mastery Charter South", "team2_score": 2, "winner": "Mastery Charter South", "date": "2025-10-21" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 2,
+          "games": [
+            { "team1": "MAST Charter II", "team1_score": 2, "team2": "Mastery Charter South", "team2_score": 0, "winner": "MAST Charter II", "date": "2025-10-23" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 PPL Boys Varsity Soccer Playoffs",
+      "type": "ppl_varsity",
+      "sport": "soccer",
+      "classification": "PPL",
+      "rounds": [
+        {
+          "name": "First Round",
+          "round_number": 1,
+          "games": [
+            { "team1": "Academy at Palumbo", "team1_score": 1, "team2": "Central", "team2_score": 2, "winner": "Central", "date": "2025-10-14" },
+            { "team1": "Franklin Learning Center", "team1_score": 2, "team2": "Samuel Fels", "team2_score": 1, "winner": "Franklin Learning Center", "date": "2025-10-14" },
+            { "team1": "South Philadelphia", "team1_score": 0, "team2": "Masterman", "team2_score": 1, "winner": "Masterman", "date": "2025-10-14" },
+            { "team1": "Frankford", "team1_score": 1, "team2": "John Bartram", "team2_score": 7, "winner": "John Bartram", "date": "2025-10-14" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "round_number": 2,
+          "games": [
+            { "team1": "Franklin Learning Center", "team1_score": 0, "team2": "Northeast", "team2_score": 8, "winner": "Northeast", "date": "2025-10-16" },
+            { "team1": "Central", "team1_score": 2, "team2": "Franklin Towne", "team2_score": 6, "winner": "Franklin Towne", "date": "2025-10-16" },
+            { "team1": "Masterman", "team1_score": 1, "team2": "George Washington", "team2_score": 2, "winner": "George Washington", "date": "2025-10-16" },
+            { "team1": "Science Leadership Academy", "team1_score": 2, "team2": "John Bartram", "team2_score": 3, "winner": "John Bartram", "date": "2025-10-16" }
+          ]
+        },
+        {
+          "name": "Semifinals",
+          "round_number": 3,
+          "games": [
+            { "team1": "John Bartram", "team1_score": 1, "team2": "Northeast", "team2_score": 2, "winner": "Northeast", "date": "2025-10-21" },
+            { "team1": "George Washington", "team1_score": 1, "team2": "Franklin Towne", "team2_score": 2, "winner": "Franklin Towne", "date": "2025-10-21" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "round_number": 4,
+          "games": [
+            { "team1": "Franklin Towne", "team1_score": 0, "team2": "Northeast", "team2_score": 2, "winner": "Northeast", "date": "2025-10-24" }
+          ]
+        }
+      ]
+    }
+  ]
+}

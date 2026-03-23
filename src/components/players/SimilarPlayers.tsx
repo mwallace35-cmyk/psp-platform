@@ -199,9 +199,11 @@ export default function SimilarPlayers({ slug, sport }: SimilarPlayersProps) {
                   fontFamily: 'DM Sans, sans-serif',
                 }}
               >
-                <div>
-                  <span style={{ color: DESIGN_TOKENS.textMuted }}>School:</span> {player.school_name ?? 'N/A'}
-                </div>
+                {player.school_name && (
+                  <div>
+                    <span style={{ color: DESIGN_TOKENS.textMuted }}>School:</span> {player.school_name}
+                  </div>
+                )}
                 {player.positions?.length > 0 && (
                   <div>
                     <span style={{ color: DESIGN_TOKENS.textMuted }}>Position:</span> {player.positions.join(', ')}

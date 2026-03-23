@@ -64,14 +64,14 @@ export default function MobileBottomNav() {
           <span className={styles.mobileNavLabel}>Sports</span>
         </button>
 
-        {/* Community */}
+        {/* Vote (POTW) */}
         <Link
-          href="/pulse/forum"
-          className={`${styles.mobileNavItem} ${isActive('/pulse/forum') ? styles.mobileNavItemActive : ''}`}
-          title="Community"
+          href="/potw"
+          className={`${styles.mobileNavItem} ${isActive('/potw') ? styles.mobileNavItemActive : ''}`}
+          title="Vote"
         >
-          <span className={styles.mobileNavIcon}>{'\u{1F465}'}</span>
-          <span className={styles.mobileNavLabel}>Community</span>
+          <span className={styles.mobileNavIcon}>{'\u{1F3C6}'}</span>
+          <span className={styles.mobileNavLabel}>Vote</span>
         </Link>
 
         {/* My Schools */}

@@ -27,7 +27,7 @@ export default function Footer() {
         <nav style={{ flex: "1 1 140px" }} aria-label="The Pulse navigation">
           <h5>The Pulse</h5>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            <li><Link href="/pulse">The Pulse Hub</Link></li>
+            <li><Link href="/">Home</Link></li>
             <li><Link href="/potw">Player of the Week</Link></li>
             <li><Link href="/pulse/forum">Forum</Link></li>
             <li><Link href="/pulse/rankings">Power Rankings</Link></li>
@@ -46,7 +46,7 @@ export default function Footer() {
         <nav style={{ flex: "1 1 140px" }} aria-label="Support navigation">
           <h5>Support</h5>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            <li><Link href="/support">Donate</Link></li>
+            <li><Link href="/support">Support</Link></li>
             <li><Link href="/advertise">Advertise</Link></li>
             <li><Link href="/about">Our Story</Link></li>
             <li><Link href="/feed">RSS Feed</Link></li>

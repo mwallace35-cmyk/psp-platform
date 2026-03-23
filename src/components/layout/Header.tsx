@@ -53,6 +53,7 @@ const MORE_SPORTS = [
 
 // Desktop: "More" dropdown (Pulse + More combined)
 const MORE_ITEMS = [
+  { href: "/pulse/rankings", label: "Rankings" },
   { href: "/pulse/our-guys", label: "Our Guys" },
   { href: "/recruiting", label: "Recruiting" },
   { href: "/recruit-finder", label: "Recruit Finder" },
@@ -356,11 +357,6 @@ export default function Header() {
                 ))}
               </div>
             </div>
-
-            {/* Rankings — direct link */}
-            <Link href="/pulse/rankings" className={`nav-link ${isActive("/pulse/rankings") ? "active" : ""}`} aria-current={isActive("/pulse/rankings") ? "page" : undefined}>
-              Rankings
-            </Link>
 
             {/* More Dropdown */}
             <div className="nav-dd">

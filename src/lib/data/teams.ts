@@ -39,14 +39,41 @@ export const getRecentChampions = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
+            const currentYear = new Date().getFullYear();
+            const cutoffYear = currentYear - 3;
             const { data } = await supabase
               .from("championships")
-              .select("id, sport_id, school_id, opponent_id, season_id, level, league_id, score, notes, schools!championships_school_id_fkey(name, slug), seasons(year_start, year_end, label), leagues(name)")
+              .select("id, sport_id, school_id, opponent_id, season_id, level, league_id, score, notes, schools!championships_school_id_fkey(name, slug), seasons!inner(year_start, year_end, label), leagues(name)")
               .eq("sport_id", sportId)
               .not("season_id", "is", null)
-              .order("created_at", { ascending: false })
-              .limit(Math.min(limit, 200));
-            return data ?? [];
+              .gte("seasons.year_start", cutoffYear)
+              .limit(Math.min(limit * 10, 200));
+
+            if (!data || data.length === 0) return [];
+
+            // Level priority: state > city/district > league
+            const levelPriority: Record<string, number> = {
+              state: 1,
+              "6A": 2, "5A": 2, "4A": 2, "3A": 2,
+              AAAA: 2, AAA: 3, AA: 4,
+              city: 5, "City Title": 5,
+              "public-league": 6, "catholic-league": 6, "inter-ac": 6,
+              league: 7,
+            };
+
+            // Sort by year DESC, then by level priority
+            const sorted = [...data].sort((a: any, b: any) => {
+              const aSeason = Array.isArray(a.seasons) ? a.seasons[0] : a.seasons;
+              const bSeason = Array.isArray(b.seasons) ? b.seasons[0] : b.seasons;
+              const aYear = aSeason?.year_start ?? 0;
+              const bYear = bSeason?.year_start ?? 0;
+              if (bYear !== aYear) return bYear - aYear;
+              const aPri = levelPriority[a.level ?? ""] ?? 99;
+              const bPri = levelPriority[b.level ?? ""] ?? 99;
+              return aPri - bPri;
+            });
+
+            return sorted.slice(0, limit);
           },
           { maxRetries: 2, baseDelay: 500 }
         );

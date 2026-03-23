@@ -21,7 +21,6 @@ const ENTITY_TYPES = [
   { id: "player", name: "Players", icon: "👤" },
   { id: "school", name: "Schools", icon: "🏫" },
   { id: "coach", name: "Coaches", icon: "🧑‍🏫" },
-  { id: "season", name: "Seasons", icon: "📅" },
 ];
 
 const LEAGUES = [

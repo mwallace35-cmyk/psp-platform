@@ -1089,12 +1089,12 @@ export async function getCompoundLeaders(
             return rows
               .filter(
                 (r: any) =>
-                  (r.tackles || 0) > 0 || (r.sacks || 0) > 0 || (r.interceptions || 0) > 0
+                  Number(r.tackles || 0) > 0 || Number(r.sacks || 0) > 0 || Number(r.interceptions || 0) > 0
               )
               .map((r: any) => {
-                const tackles = r.tackles || 0;
-                const sacks = r.sacks || 0;
-                const ints = r.interceptions || 0;
+                const tackles = Number(r.tackles) || 0;
+                const sacks = Number(r.sacks) || 0;
+                const ints = Number(r.interceptions) || 0;
                 return {
                   player_name: r.players?.name || "Unknown",
                   player_slug: r.players?.slug || "",

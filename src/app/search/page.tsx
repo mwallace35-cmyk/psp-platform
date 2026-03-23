@@ -85,7 +85,6 @@ export default async function SearchPage({
     school: { label: "Schools", icon: "🏫" },
     player: { label: "Players", icon: "👤" },
     coach: { label: "Coaches", icon: "🧑‍🏫" },
-    season: { label: "Seasons", icon: "📅" },
     other: { label: "Other", icon: "📋" },
   };
 
