@@ -203,7 +203,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <h2 style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ color: sportColor }}>●</span> The Pulse
           </h2>
-          <Link href="/pulse/forum" className="more" aria-label="Join the community conversation">Join the Conversation →</Link>
+          <Link href="/potw" className="more" aria-label="Vote for Player of the Week">Player of the Week →</Link>
         </div>
         <PulseHotTakes sport={sport} />
 

@@ -296,7 +296,7 @@ export default async function HomePage() {
             <PotwHomepageWidget nominees={potwNominees} />
 
             {/* Rankings link */}
-            <Link href="/pulse/rankings" className="group flex items-center gap-4 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all">
+            <Link href="/rankings" className="group flex items-center gap-4 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all">
               <div className="text-3xl group-hover:scale-110 transition-transform">📊</div>
               <div>
                 <h3 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h3>
@@ -315,7 +315,7 @@ export default async function HomePage() {
               <section>
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-bebas text-gray-100 tracking-wider">Our Guys</h2>
-                  <Link href="/pulse/our-guys" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
+                  <Link href="/our-guys" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
                     View All →
                   </Link>
                 </div>

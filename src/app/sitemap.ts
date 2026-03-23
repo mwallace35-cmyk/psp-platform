@@ -343,7 +343,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/pulse/our-guys`,
+      url: `${baseUrl}/our-guys`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.6,
@@ -357,11 +357,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/pulse/forum`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
+      changeFrequency: "monthly",
+      priority: 0.3,
     },
     {
-      url: `${baseUrl}/pulse/rankings`,
+      url: `${baseUrl}/rankings`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.5,
@@ -400,12 +400,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     // Community & engagement
-    {
-      url: `${baseUrl}/community`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.6,
-    },
+    // /community redirects to / — no separate sitemap entry needed
     {
       url: `${baseUrl}/our-guys`,
       lastModified: new Date(),

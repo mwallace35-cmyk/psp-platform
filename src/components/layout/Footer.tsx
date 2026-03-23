@@ -29,9 +29,8 @@ export default function Footer() {
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li><Link href="/">Home</Link></li>
             <li><Link href="/potw">Player of the Week</Link></li>
-            <li><Link href="/pulse/forum">Forum</Link></li>
-            <li><Link href="/pulse/rankings">Power Rankings</Link></li>
-            <li><Link href="/pulse/our-guys">Our Guys</Link></li>
+            <li><Link href="/rankings">Power Rankings</Link></li>
+            <li><Link href="/our-guys">Our Guys</Link></li>
           </ul>
         </nav>
         <nav style={{ flex: "1 1 140px" }} aria-label="Tools navigation">

@@ -111,6 +111,20 @@ export default async function ForumPage({
 
       <PulseNav />
 
+      {/* Community redirect banner */}
+      <div className="max-w-6xl mx-auto px-4 pt-6">
+        <div className="bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/30 rounded-lg p-4 flex items-center gap-3">
+          <span className="text-2xl">🏆</span>
+          <div className="flex-1">
+            <p className="text-navy font-bold text-sm">Looking for community? Vote for Player of the Week!</p>
+            <p className="text-gray-500 text-xs mt-0.5">Cast your vote and rep your school every week.</p>
+          </div>
+          <Link href="/potw" className="px-4 py-2 bg-gold text-navy font-bold text-sm rounded-md hover:bg-gold/90 transition whitespace-nowrap">
+            Vote Now
+          </Link>
+        </div>
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 

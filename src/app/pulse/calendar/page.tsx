@@ -37,7 +37,7 @@ const GAME_TYPE_LABELS: Record<string, { label: string; color: string }> = {
 
 const SUB_NAV = [
   { label: 'Hub', href: '/pulse' },
-  { label: 'Our Guys', href: '/pulse/our-guys' },
+  { label: 'Our Guys', href: '/our-guys' },
   { label: 'Outside the 215', href: '/pulse/outside-the-215' },
   { label: 'Calendar', href: '/pulse/calendar' },
 ];

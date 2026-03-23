@@ -6,10 +6,9 @@ import { usePathname } from 'next/navigation';
 const PULSE_TABS = [
   { href: '/pulse', label: 'Hub', icon: '🔥' },
   { href: '/pulse/recruiting', label: 'Recruiting', icon: '🎯' },
-  { href: '/pulse/our-guys', label: 'Our Guys', icon: '🌟' },
-  { href: '/pulse/rankings', label: 'Rankings', icon: '📊' },
+  { href: '/our-guys', label: 'Our Guys', icon: '🌟' },
+  { href: '/rankings', label: 'Rankings', icon: '📊' },
   { href: '/pulse/outside-the-215', label: 'Outside the 215', icon: '🔄' },
-  { href: '/pulse/forum', label: 'Forum', icon: '💬' },
 ];
 
 export default function PulseNav() {

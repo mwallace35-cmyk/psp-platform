@@ -53,8 +53,8 @@ const MORE_SPORTS = [
 
 // Desktop: "More" dropdown (Pulse + More combined)
 const MORE_ITEMS = [
-  { href: "/pulse/rankings", label: "Rankings" },
-  { href: "/pulse/our-guys", label: "Our Guys" },
+  { href: "/rankings", label: "Rankings" },
+  { href: "/our-guys", label: "Our Guys" },
   { href: "/recruiting", label: "Recruiting" },
   { href: "/recruit-finder", label: "Recruit Finder" },
   { href: "/compare", label: "Compare" },
@@ -67,9 +67,8 @@ const MORE_ITEMS = [
 const PULSE_ITEMS = [
   { href: "/", label: "The Pulse Hub" },
   { href: "/recruiting", label: "Recruiting Central" },
-  { href: "/pulse/our-guys", label: "Our Guys" },
-  { href: "/pulse/rankings", label: "Power Rankings" },
-  { href: "/pulse/forum", label: "Forum" },
+  { href: "/our-guys", label: "Our Guys" },
+  { href: "/rankings", label: "Power Rankings" },
   { href: "/potw", label: "Player of the Week" },
 ];
 
