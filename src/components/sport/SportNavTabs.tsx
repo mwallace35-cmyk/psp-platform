@@ -10,34 +10,34 @@ interface SportNavProps {
 interface Tab {
   href: string;
   label: string;
-  icon: string;
-  matchPrefix?: string; // If set, tab is active when pathname starts with this prefix
-  condition?: boolean; // Optional condition to show/hide tab
+  matchPrefix?: string;
 }
 
-// Helper to build standard tabs for a sport
-function buildTabs(sport: string, icon: string, defaultLeaderboardStat: string, extras?: Tab[]): Tab[] {
-  return [
-    { href: `/${sport}`, label: 'Overview', icon },
-    { href: `/${sport}/teams`, label: 'Teams', icon: '🏟️' },
-    { href: `/${sport}/leaderboards`, label: 'Leaderboards', icon: '📊', matchPrefix: `/${sport}/leaderboards` },
-    { href: `/${sport}/records`, label: 'Records', icon: '🏆' },
-    { href: `/${sport}/championships`, label: 'Championships', icon: '👑' },
-    ...(extras || []),
-    { href: `/${sport}/schedule`, label: 'Schedule', icon: '📅' },
+// Standard tabs every sport gets, plus optional extras
+function buildTabs(sport: string, extras?: Tab[]): Tab[] {
+  const base: Tab[] = [
+    { href: `/${sport}`, label: 'Overview' },
+    { href: `/${sport}/teams`, label: 'Teams' },
+    { href: `/${sport}/leaderboards`, label: 'Leaderboards', matchPrefix: `/${sport}/leaderboards` },
+    { href: `/${sport}/records`, label: 'Records' },
+    { href: `/${sport}/championships`, label: 'Championships' },
+    { href: `/${sport}/playoffs`, label: 'Playoffs' },
   ];
+  if (extras) base.push(...extras);
+  base.push({ href: `/${sport}/schedule`, label: 'Schedule' });
+  return base;
 }
 
 const SPORT_TAB_CONFIG: Record<string, Tab[]> = {
-  football: buildTabs('football', '🏈', 'rushing', [
-    { href: '/football/awards', label: 'Awards', icon: '⭐' },
+  football: buildTabs('football', [
+    { href: '/football/awards', label: 'Awards' },
   ]),
-  basketball: buildTabs('basketball', '🏀', 'scoring'),
-  baseball: buildTabs('baseball', '⚾', 'batting'),
-  soccer: buildTabs('soccer', '⚽', 'goals'),
-  lacrosse: buildTabs('lacrosse', '🥍', 'goals'),
-  'track-field': buildTabs('track-field', '🏃', 'sprints'),
-  wrestling: buildTabs('wrestling', '🤼', 'wins'),
+  basketball: buildTabs('basketball'),
+  baseball: buildTabs('baseball'),
+  soccer: buildTabs('soccer'),
+  lacrosse: buildTabs('lacrosse'),
+  'track-field': buildTabs('track-field'),
+  wrestling: buildTabs('wrestling'),
 };
 
 const SPORT_DISPLAY_NAMES: Record<string, string> = {
@@ -50,7 +50,7 @@ const SPORT_DISPLAY_NAMES: Record<string, string> = {
   wrestling: 'Wrestling',
 };
 
-export default function SportNav({ sport }: SportNavProps) {
+export default function SportNavTabs({ sport }: SportNavProps) {
   const pathname = usePathname();
   const tabs = SPORT_TAB_CONFIG[sport] || [];
   const sportName = SPORT_DISPLAY_NAMES[sport] || sport;
@@ -63,6 +63,7 @@ export default function SportNav({ sport }: SportNavProps) {
     <nav
       className="bg-white border-b border-gray-200"
       aria-label={`${sportName} section navigation`}
+
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3">

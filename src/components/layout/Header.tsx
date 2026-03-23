@@ -38,6 +38,7 @@ const SPORT_SUB_ITEMS = [
   { suffix: "/leaderboards", label: "Leaderboards" },
   { suffix: "/schools", label: "Schools" },
   { suffix: "/championships", label: "Championships" },
+  { suffix: "/playoffs", label: "Playoffs" },
   { suffix: "/records", label: "Records" },
 ];
 

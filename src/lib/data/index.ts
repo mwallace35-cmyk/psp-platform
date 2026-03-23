@@ -497,3 +497,13 @@ export {
   getMilestoneAlerts,
   type StatMilestone,
 } from "./milestones";
+
+// Playoff bracket functions
+export {
+  getPlayoffBrackets,
+  getPlayoffBracketById,
+  getPlayoffBracketTypes,
+  type PlayoffBracket,
+  type PlayoffBracketGame,
+  type PlayoffBracketWithGames,
+} from "./playoffs";

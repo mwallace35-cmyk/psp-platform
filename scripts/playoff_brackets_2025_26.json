@@ -1,0 +1,337 @@
+{
+  "scraped_at": "2026-03-23T19:00:00.000Z",
+  "season": "2025-26",
+  "brackets": [
+    {
+      "name": "2026 Philadelphia Public League Boys Basketball Playoffs",
+      "source_url": "https://www.maxpreps.com/tournament/pEhwC5VwIUWgxX-uYC7drg/C_TGl3AtZUWQcmrfx8cNfw/basketball-25-26/2026-philadelphia-public-league-boys-basketball-play-offs-playoff-bracket.htm",
+      "type": "public_league",
+      "classification": null,
+      "rounds": [
+        {
+          "name": "Play-In",
+          "games": [
+            { "team1": "George Washington", "team1_score": 62, "team2": "Overbrook", "team2_score": 79, "winner": "Overbrook", "date": "2026-02-05" },
+            { "team1": "Belmont Charter", "team1_score": 48, "team2": "Sayre", "team2_score": 52, "winner": "Sayre", "date": "2026-02-05" },
+            { "team1": "TECH Freire Charter", "team1_score": 57, "team2": "Science Leadership Academy", "team2_score": 31, "winner": "TECH Freire Charter", "date": "2026-02-05" },
+            { "team1": "Parkway Northwest", "team1_score": 35, "team2": "Hill Freedman World Academy", "team2_score": 42, "winner": "Hill Freedman World Academy", "date": "2026-02-05" },
+            { "team1": "Benjamin Franklin", "team1_score": 64, "team2": "Jules E. Mastbaum Vo-Tech", "team2_score": 43, "winner": "Benjamin Franklin", "date": "2026-02-05" },
+            { "team1": "MAST Charter II", "team1_score": 69, "team2": "Tacony Academy Charter", "team2_score": 64, "winner": "MAST Charter II", "date": "2026-02-05" }
+          ]
+        },
+        {
+          "name": "Round 1",
+          "games": [
+            { "team1": "Samuel Fels", "team1_score": 91, "team2": "Overbrook", "team2_score": 50, "winner": "Samuel Fels", "date": "2026-02-06" },
+            { "team1": "Mastery Charter North - Pickett", "team1_score": 31, "team2": "Martin Luther King", "team2_score": 33, "winner": "Martin Luther King", "date": "2026-02-06" },
+            { "team1": "High School of the Future", "team1_score": 68, "team2": "MaST Community Charter School III", "team2_score": 59, "winner": "High School of the Future", "date": "2026-02-06" },
+            { "team1": "Murrell Dobbins Vo-Tech", "team1_score": 81, "team2": "Vaux Big Picture", "team2_score": 48, "winner": "Murrell Dobbins Vo-Tech", "date": "2026-02-06" },
+            { "team1": "Sankofa Freedom Academy", "team1_score": 57, "team2": "Sayre", "team2_score": 31, "winner": "Sankofa Freedom Academy", "date": "2026-02-06" },
+            { "team1": "Abraham Lincoln", "team1_score": 62, "team2": "Thomas A. Edison", "team2_score": 58, "winner": "Abraham Lincoln", "date": "2026-02-06" },
+            { "team1": "Franklin Towne", "team1_score": 58, "team2": "Frankford", "team2_score": 59, "winner": "Frankford", "date": "2026-02-06" },
+            { "team1": "West Philadelphia", "team1_score": 76, "team2": "TECH Freire Charter", "team2_score": 44, "winner": "West Philadelphia", "date": "2026-02-06" },
+            { "team1": "Imhotep Charter", "team1_score": 68, "team2": "Hill Freedman World Academy", "team2_score": 14, "winner": "Imhotep Charter", "date": "2026-02-06" },
+            { "team1": "Kensington", "team1_score": 48, "team2": "Simon Gratz", "team2_score": 51, "winner": "Simon Gratz", "date": "2026-02-06" },
+            { "team1": "Audenried", "team1_score": 71, "team2": "Freire Charter", "team2_score": 44, "winner": "Audenried", "date": "2026-02-06" },
+            { "team1": "Paul Robeson", "team1_score": 78, "team2": "Mastery Charter South co-op", "team2_score": 43, "winner": "Paul Robeson", "date": "2026-02-06" },
+            { "team1": "Carver High School of Engineering & Science", "team1_score": 72, "team2": "Benjamin Franklin", "team2_score": 31, "winner": "Carver High School of Engineering & Science", "date": "2026-02-06" },
+            { "team1": "Roxborough", "team1_score": 46, "team2": "Science Leadership Academy at Beeber", "team2_score": 44, "winner": "Roxborough", "date": "2026-02-06" },
+            { "team1": "Olney", "team1_score": 56, "team2": "Northeast", "team2_score": 42, "winner": "Olney", "date": "2026-02-06" },
+            { "team1": "Constitution", "team1_score": 80, "team2": "MAST Charter II", "team2_score": 40, "winner": "Constitution", "date": "2026-02-06" }
+          ]
+        },
+        {
+          "name": "Round 2",
+          "games": [
+            { "team1": "Samuel Fels", "team1_score": 71, "team2": "Martin Luther King", "team2_score": 47, "winner": "Samuel Fels", "date": "2026-02-10" },
+            { "team1": "High School of the Future", "team1_score": 49, "team2": "Murrell Dobbins Vo-Tech", "team2_score": 62, "winner": "Murrell Dobbins Vo-Tech", "date": "2026-02-10" },
+            { "team1": "Sankofa Freedom Academy", "team1_score": 57, "team2": "Abraham Lincoln", "team2_score": 42, "winner": "Sankofa Freedom Academy", "date": "2026-02-10" },
+            { "team1": "Frankford", "team1_score": 55, "team2": "West Philadelphia", "team2_score": 88, "winner": "West Philadelphia", "date": "2026-02-10" },
+            { "team1": "Imhotep Charter", "team1_score": 71, "team2": "Simon Gratz", "team2_score": 35, "winner": "Imhotep Charter", "date": "2026-02-10" },
+            { "team1": "Audenried", "team1_score": 51, "team2": "Paul Robeson", "team2_score": 59, "winner": "Paul Robeson", "date": "2026-02-10" },
+            { "team1": "Carver High School of Engineering & Science", "team1_score": 79, "team2": "Roxborough", "team2_score": 50, "winner": "Carver High School of Engineering & Science", "date": "2026-02-10" },
+            { "team1": "Olney", "team1_score": 67, "team2": "Constitution", "team2_score": 86, "winner": "Constitution", "date": "2026-02-10" }
+          ]
+        },
+        {
+          "name": "Quarter-Finals",
+          "games": [
+            { "team1": "Samuel Fels", "team1_score": 57, "team2": "Murrell Dobbins Vo-Tech", "team2_score": 61, "winner": "Murrell Dobbins Vo-Tech", "date": "2026-02-12" },
+            { "team1": "Sankofa Freedom Academy", "team1_score": 42, "team2": "West Philadelphia", "team2_score": 48, "winner": "West Philadelphia", "date": "2026-02-12" },
+            { "team1": "Imhotep Charter", "team1_score": 71, "team2": "Paul Robeson", "team2_score": 46, "winner": "Imhotep Charter", "date": "2026-02-12" },
+            { "team1": "Carver High School of Engineering & Science", "team1_score": 0, "team2": "Constitution", "team2_score": 2, "winner": "Constitution", "date": "2026-02-12" }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "games": [
+            { "team1": "Murrell Dobbins Vo-Tech", "team1_score": 47, "team2": "West Philadelphia", "team2_score": 68, "winner": "West Philadelphia", "date": "2026-02-17" },
+            { "team1": "Imhotep Charter", "team1_score": 73, "team2": "Constitution", "team2_score": 41, "winner": "Imhotep Charter", "date": "2026-02-17" }
+          ]
+        },
+        {
+          "name": "Championship",
+          "games": [
+            { "team1": "West Philadelphia", "team1_score": 35, "team2": "Imhotep Charter", "team2_score": 39, "winner": "Imhotep Charter", "date": "2026-02-22" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2026 PIAA Boys Basketball Championships - 6A",
+      "source_url": "https://www.maxpreps.com/tournament/EVPJj-fgGU-FlElJtT0g_A/_RRmIlkAZEyEb0Df7JLVdA/basketball-25-26/2026-piaa-boys-basketball-championships-6a-boys-championship.htm",
+      "type": "piaa",
+      "classification": "6A",
+      "rounds": [
+        {
+          "name": "First Round",
+          "games": [
+            { "team1": "Plymouth Whitemarsh", "team1_score": 75, "team2": "Cedar Cliff", "team2_score": 45, "winner": "Plymouth Whitemarsh", "date": "2026-03-07" },
+            { "team1": "Liberty", "team1_score": 61, "team2": "Wilkes-Barre", "team2_score": 52, "winner": "Liberty", "date": "2026-03-07" },
+            { "team1": "Central York", "team1_score": 59, "team2": "Cheltenham", "team2_score": 54, "winner": "Central York", "date": "2026-03-07" },
+            { "team1": "Father Judge", "team1_score": 61, "team2": "Spring-Ford", "team2_score": 45, "winner": "Father Judge", "date": "2026-03-07" },
+            { "team1": "Imhotep Charter", "team1_score": 70, "team2": "Garnet Valley", "team2_score": 40, "winner": "Imhotep Charter", "date": "2026-03-07" },
+            { "team1": "William Penn", "team1_score": 80, "team2": "Pocono Mountain East", "team2_score": 69, "winner": "William Penn", "date": "2026-03-07" },
+            { "team1": "Delaware Valley", "team1_score": 56, "team2": "Abington", "team2_score": 54, "winner": "Delaware Valley", "date": "2026-03-07" },
+            { "team1": "Parkland", "team1_score": 61, "team2": "Conestoga", "team2_score": 47, "winner": "Parkland", "date": "2026-03-07" },
+            { "team1": "Central Dauphin", "team1_score": 64, "team2": "Pennsbury", "team2_score": 45, "winner": "Central Dauphin", "date": "2026-03-07" },
+            { "team1": "Souderton", "team1_score": 68, "team2": "Archbishop Wood", "team2_score": 66, "winner": "Souderton", "date": "2026-03-07" },
+            { "team1": "Methacton", "team1_score": 49, "team2": "Whitehall", "team2_score": 46, "winner": "Methacton", "date": "2026-03-07" },
+            { "team1": "New Castle", "team1_score": 68, "team2": "Wilson", "team2_score": 38, "winner": "New Castle", "date": "2026-03-07" },
+            { "team1": "Coatesville", "team1_score": 49, "team2": "Chambersburg", "team2_score": 57, "winner": "Chambersburg", "date": "2026-03-07" },
+            { "team1": "Taylor Allderdice", "team1_score": 34, "team2": "Central Catholic", "team2_score": 48, "winner": "Central Catholic", "date": "2026-03-07" },
+            { "team1": "Upper St. Clair", "team1_score": 66, "team2": "Cedar Crest", "team2_score": 52, "winner": "Upper St. Clair", "date": "2026-03-07" },
+            { "team1": "Red Lion", "team1_score": 69, "team2": "Seneca Valley", "team2_score": 62, "winner": "Red Lion", "date": "2026-03-07" }
+          ]
+        },
+        {
+          "name": "Second Round",
+          "games": [
+            { "team1": "Plymouth Whitemarsh", "team1_score": 59, "team2": "Liberty", "team2_score": 46, "winner": "Plymouth Whitemarsh", "date": "2026-03-11" },
+            { "team1": "Central York", "team1_score": 68, "team2": "Father Judge", "team2_score": 82, "winner": "Father Judge", "date": "2026-03-11" },
+            { "team1": "Imhotep Charter", "team1_score": 68, "team2": "William Penn", "team2_score": 45, "winner": "Imhotep Charter", "date": "2026-03-11" },
+            { "team1": "Delaware Valley", "team1_score": 33, "team2": "Parkland", "team2_score": 62, "winner": "Parkland", "date": "2026-03-11" },
+            { "team1": "Central Dauphin", "team1_score": 68, "team2": "Souderton", "team2_score": 55, "winner": "Central Dauphin", "date": "2026-03-11" },
+            { "team1": "Methacton", "team1_score": 61, "team2": "New Castle", "team2_score": 65, "winner": "New Castle", "date": "2026-03-11" },
+            { "team1": "Chambersburg", "team1_score": 38, "team2": "Central Catholic", "team2_score": 48, "winner": "Central Catholic", "date": "2026-03-11" },
+            { "team1": "Upper St. Clair", "team1_score": 66, "team2": "Red Lion", "team2_score": 69, "winner": "Red Lion", "date": "2026-03-11" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "games": [
+            { "team1": "Plymouth Whitemarsh", "team1_score": 54, "team2": "Father Judge", "team2_score": 58, "winner": "Father Judge", "date": "2026-03-14" },
+            { "team1": "Imhotep Charter", "team1_score": 70, "team2": "Parkland", "team2_score": 39, "winner": "Imhotep Charter", "date": "2026-03-14" },
+            { "team1": "Central Dauphin", "team1_score": 54, "team2": "New Castle", "team2_score": 43, "winner": "Central Dauphin", "date": "2026-03-14" },
+            { "team1": "Central Catholic", "team1_score": 46, "team2": "Upper St. Clair", "team2_score": 52, "winner": "Upper St. Clair", "date": "2026-03-14" }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "games": [
+            { "team1": "Father Judge", "team1_score": 48, "team2": "Imhotep Charter", "team2_score": 51, "winner": "Imhotep Charter", "date": "2026-03-17" },
+            { "team1": "Central Dauphin", "team1_score": 55, "team2": "Upper St. Clair", "team2_score": 52, "winner": "Central Dauphin", "date": "2026-03-17" }
+          ]
+        },
+        {
+          "name": "Finals",
+          "games": [
+            { "team1": "Imhotep Charter", "team1_score": 49, "team2": "Central Dauphin", "team2_score": 52, "winner": "Central Dauphin", "date": "2026-03-21" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2026 PIAA Boys Basketball Championships - 5A",
+      "source_url": "https://www.maxpreps.com/tournament/EVPJj-fgGU-FlElJtT0g_A/IocnEhxt0kKx4wdXEM1NCw/basketball-25-26/2026-piaa-boys-basketball-championships-5a-boys-championship.htm",
+      "type": "piaa",
+      "classification": "5A",
+      "rounds": [
+        {
+          "name": "First Round",
+          "games": [
+            { "team1": "Upper Dublin", "team1_score": 57, "team2": "Spring Grove", "team2_score": 43, "winner": "Upper Dublin", "date": "2026-03-06" },
+            { "team1": "Selinsgrove", "team1_score": 35, "team2": "Monsignor Bonner/Archbishop Prendergast Catholic", "team2_score": 68, "winner": "Monsignor Bonner/Archbishop Prendergast Catholic", "date": "2026-03-06" },
+            { "team1": "Abington Heights", "team1_score": 47, "team2": "Springfield", "team2_score": 49, "winner": "Springfield", "date": "2026-03-06" },
+            { "team1": "Frankford", "team1_score": 55, "team2": "Octorara Area", "team2_score": 69, "winner": "Octorara Area", "date": "2026-03-06" },
+            { "team1": "Southern Lehigh", "team1_score": 40, "team2": "Upper Moreland", "team2_score": 61, "winner": "Upper Moreland", "date": "2026-03-06" },
+            { "team1": "Penncrest", "team1_score": 36, "team2": "York Suburban", "team2_score": 29, "winner": "Penncrest", "date": "2026-03-06" },
+            { "team1": "Neumann-Goretti", "team1_score": 95, "team2": "Pottstown", "team2_score": 60, "winner": "Neumann-Goretti", "date": "2026-03-06" },
+            { "team1": "Holy Ghost Prep", "team1_score": 58, "team2": "Crestwood", "team2_score": 60, "winner": "Crestwood", "date": "2026-03-06" },
+            { "team1": "West York Area", "team1_score": 64, "team2": "Ringgold", "team2_score": 57, "winner": "West York Area", "date": "2026-03-06" },
+            { "team1": "Meadville", "team1_score": 45, "team2": "Penn Hills", "team2_score": 58, "winner": "Penn Hills", "date": "2026-03-06" },
+            { "team1": "Hershey", "team1_score": 49, "team2": "Moon Area", "team2_score": 55, "winner": "Moon Area", "date": "2026-03-06" },
+            { "team1": "Thomas Jefferson", "team1_score": 66, "team2": "New Oxford", "team2_score": 61, "winner": "Thomas Jefferson", "date": "2026-03-06" },
+            { "team1": "Chartiers Valley", "team1_score": 66, "team2": "Exeter Township", "team2_score": 42, "winner": "Chartiers Valley", "date": "2026-03-06" },
+            { "team1": "Hampton", "team1_score": 58, "team2": "Cocalico", "team2_score": 61, "winner": "Cocalico", "date": "2026-03-06" },
+            { "team1": "Milton Hershey", "team1_score": 39, "team2": "Gateway", "team2_score": 49, "winner": "Gateway", "date": "2026-03-06" },
+            { "team1": "Greater Johnstown", "team1_score": 68, "team2": "Shaler Area", "team2_score": 56, "winner": "Greater Johnstown", "date": "2026-03-06" }
+          ]
+        },
+        {
+          "name": "Second Round",
+          "games": [
+            { "team1": "Upper Dublin", "team1_score": 58, "team2": "Monsignor Bonner/Archbishop Prendergast Catholic", "team2_score": 67, "winner": "Monsignor Bonner/Archbishop Prendergast Catholic", "date": "2026-03-10" },
+            { "team1": "Springfield", "team1_score": 54, "team2": "Octorara Area", "team2_score": 28, "winner": "Springfield", "date": "2026-03-10" },
+            { "team1": "Upper Moreland", "team1_score": 58, "team2": "Penncrest", "team2_score": 53, "winner": "Upper Moreland", "date": "2026-03-10" },
+            { "team1": "Neumann-Goretti", "team1_score": 55, "team2": "Crestwood", "team2_score": 24, "winner": "Neumann-Goretti", "date": "2026-03-10" },
+            { "team1": "West York Area", "team1_score": 56, "team2": "Penn Hills", "team2_score": 42, "winner": "West York Area", "date": "2026-03-10" },
+            { "team1": "Moon Area", "team1_score": 87, "team2": "Thomas Jefferson", "team2_score": 77, "winner": "Moon Area", "date": "2026-03-10" },
+            { "team1": "Chartiers Valley", "team1_score": 64, "team2": "Cocalico", "team2_score": 61, "winner": "Chartiers Valley", "date": "2026-03-10" },
+            { "team1": "Gateway", "team1_score": 49, "team2": "Greater Johnstown", "team2_score": 68, "winner": "Greater Johnstown", "date": "2026-03-10" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "games": [
+            { "team1": "Monsignor Bonner/Archbishop Prendergast Catholic", "team1_score": 61, "team2": "Springfield", "team2_score": 52, "winner": "Monsignor Bonner/Archbishop Prendergast Catholic", "date": "2026-03-13" },
+            { "team1": "Upper Moreland", "team1_score": 62, "team2": "Neumann-Goretti", "team2_score": 52, "winner": "Upper Moreland", "date": "2026-03-13" },
+            { "team1": "West York Area", "team1_score": 59, "team2": "Moon Area", "team2_score": 53, "winner": "West York Area", "date": "2026-03-13" },
+            { "team1": "Chartiers Valley", "team1_score": 42, "team2": "Greater Johnstown", "team2_score": 36, "winner": "Chartiers Valley", "date": "2026-03-13" }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "games": [
+            { "team1": "Monsignor Bonner/Archbishop Prendergast Catholic", "team1_score": 54, "team2": "Upper Moreland", "team2_score": 28, "winner": "Monsignor Bonner/Archbishop Prendergast Catholic", "date": "2026-03-16" },
+            { "team1": "West York Area", "team1_score": 45, "team2": "Chartiers Valley", "team2_score": 44, "winner": "West York Area", "date": "2026-03-16" }
+          ]
+        },
+        {
+          "name": "Finals",
+          "games": [
+            { "team1": "Monsignor Bonner/Archbishop Prendergast Catholic", "team1_score": 62, "team2": "West York Area", "team2_score": 35, "winner": "Monsignor Bonner/Archbishop Prendergast Catholic", "date": "2026-03-20" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2026 PIAA Boys Basketball Championships - 4A",
+      "source_url": "https://www.maxpreps.com/tournament/EVPJj-fgGU-FlElJtT0g_A/fa7J-tkH8kiiEUjJPkK-4w/basketball-25-26/2026-piaa-boys-basketball-championships-4a-boys-championship.htm",
+      "type": "piaa",
+      "classification": "4A",
+      "rounds": [
+        {
+          "name": "First Round",
+          "games": [
+            { "team1": "Archbishop Carroll", "team1_score": 77, "team2": "Wyomissing", "team2_score": 52, "winner": "Archbishop Carroll", "date": "2026-03-06" },
+            { "team1": "Bishop McDevitt", "team1_score": 78, "team2": "Mount Carmel", "team2_score": 34, "winner": "Bishop McDevitt", "date": "2026-03-06" },
+            { "team1": "Pope John Paul II", "team1_score": 59, "team2": "Murrell Dobbins Vo-Tech", "team2_score": 28, "winner": "Pope John Paul II", "date": "2026-03-06" },
+            { "team1": "Lewisburg", "team1_score": 70, "team2": "Big Spring", "team2_score": 54, "winner": "Lewisburg", "date": "2026-03-06" },
+            { "team1": "Allentown Central Catholic", "team1_score": 47, "team2": "Devon Prep", "team2_score": 68, "winner": "Devon Prep", "date": "2026-03-06" },
+            { "team1": "Montoursville", "team1_score": 44, "team2": "Valley View", "team2_score": 58, "winner": "Valley View", "date": "2026-03-06" },
+            { "team1": "West Philadelphia", "team1_score": 45, "team2": "Salisbury Township", "team2_score": 54, "winner": "Salisbury Township", "date": "2026-03-06" },
+            { "team1": "Scranton Prep", "team1_score": 65, "team2": "Schuylkill Valley", "team2_score": 48, "winner": "Scranton Prep", "date": "2026-03-06" },
+            { "team1": "Berks Catholic", "team1_score": 35, "team2": "Carver High School of Engineering & Science", "team2_score": 40, "winner": "Carver High School of Engineering & Science", "date": "2026-03-06" },
+            { "team1": "Northwestern Lehigh", "team1_score": 48, "team2": "Dallas", "team2_score": 57, "winner": "Dallas", "date": "2026-03-06" },
+            { "team1": "Knoch", "team1_score": 46, "team2": "Girard", "team2_score": 30, "winner": "Knoch", "date": "2026-03-06" },
+            { "team1": "Sharon", "team1_score": 52, "team2": "North Catholic", "team2_score": 64, "winner": "North Catholic", "date": "2026-03-06" },
+            { "team1": "Quaker Valley", "team1_score": 43, "team2": "Hickory", "team2_score": 47, "winner": "Hickory", "date": "2026-03-06" },
+            { "team1": "Huntingdon", "team1_score": 47, "team2": "Deer Lakes", "team2_score": 64, "winner": "Deer Lakes", "date": "2026-03-06" },
+            { "team1": "Obama Academy of International Studies", "team1_score": 55, "team2": "Warren", "team2_score": 50, "winner": "Obama Academy of International Studies", "date": "2026-03-06" },
+            { "team1": "Cathedral Prep", "team1_score": 79, "team2": "Central Valley", "team2_score": 49, "winner": "Cathedral Prep", "date": "2026-03-06" }
+          ]
+        },
+        {
+          "name": "Second Round",
+          "games": [
+            { "team1": "Archbishop Carroll", "team1_score": 36, "team2": "Bishop McDevitt", "team2_score": 41, "winner": "Bishop McDevitt", "date": "2026-03-10" },
+            { "team1": "Pope John Paul II", "team1_score": 59, "team2": "Lewisburg", "team2_score": 64, "winner": "Lewisburg", "date": "2026-03-10" },
+            { "team1": "Devon Prep", "team1_score": 61, "team2": "Valley View", "team2_score": 42, "winner": "Devon Prep", "date": "2026-03-10" },
+            { "team1": "Salisbury Township", "team1_score": 57, "team2": "Scranton Prep", "team2_score": 42, "winner": "Salisbury Township", "date": "2026-03-10" },
+            { "team1": "Carver High School of Engineering & Science", "team1_score": 69, "team2": "Dallas", "team2_score": 53, "winner": "Carver High School of Engineering & Science", "date": "2026-03-10" },
+            { "team1": "Knoch", "team1_score": 69, "team2": "North Catholic", "team2_score": 77, "winner": "North Catholic", "date": "2026-03-10" },
+            { "team1": "Hickory", "team1_score": 37, "team2": "Deer Lakes", "team2_score": 46, "winner": "Deer Lakes", "date": "2026-03-10" },
+            { "team1": "Obama Academy of International Studies", "team1_score": 70, "team2": "Cathedral Prep", "team2_score": 69, "winner": "Obama Academy of International Studies", "date": "2026-03-10" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "games": [
+            { "team1": "Bishop McDevitt", "team1_score": 58, "team2": "Lewisburg", "team2_score": 60, "winner": "Lewisburg", "date": "2026-03-13" },
+            { "team1": "Devon Prep", "team1_score": 62, "team2": "Salisbury Township", "team2_score": 55, "winner": "Devon Prep", "date": "2026-03-13" },
+            { "team1": "Carver High School of Engineering & Science", "team1_score": 68, "team2": "North Catholic", "team2_score": 61, "winner": "Carver High School of Engineering & Science", "date": "2026-03-13" },
+            { "team1": "Deer Lakes", "team1_score": 41, "team2": "Obama Academy of International Studies", "team2_score": 53, "winner": "Obama Academy of International Studies", "date": "2026-03-13" }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "games": [
+            { "team1": "Lewisburg", "team1_score": 49, "team2": "Devon Prep", "team2_score": 73, "winner": "Devon Prep", "date": "2026-03-16" },
+            { "team1": "Carver High School of Engineering & Science", "team1_score": 51, "team2": "Obama Academy of International Studies", "team2_score": 52, "winner": "Obama Academy of International Studies", "date": "2026-03-16" }
+          ]
+        },
+        {
+          "name": "Finals",
+          "games": [
+            { "team1": "Devon Prep", "team1_score": 58, "team2": "Obama Academy of International Studies", "team2_score": 41, "winner": "Devon Prep", "date": "2026-03-19" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2026 PIAA Boys Basketball Championships - 3A",
+      "source_url": "https://www.maxpreps.com/tournament/EVPJj-fgGU-FlElJtT0g_A/FS9h7C_9tkWNO04_LJxFmg/basketball-25-26/2026-piaa-boys-basketball-championships-3a-boys-championship.htm",
+      "type": "piaa",
+      "classification": "3A",
+      "rounds": [
+        {
+          "name": "First Round",
+          "games": [
+            { "team1": "West Catholic", "team1_score": 72, "team2": "Lancaster Catholic", "team2_score": 47, "winner": "West Catholic", "date": "2026-03-07" },
+            { "team1": "Southern Columbia Area", "team1_score": 56, "team2": "Executive Education Academy Charter School", "team2_score": 61, "winner": "Executive Education Academy Charter School", "date": "2026-03-07" },
+            { "team1": "MAST Community Charter", "team1_score": 53, "team2": "High School of the Future", "team2_score": 59, "winner": "High School of the Future", "date": "2026-03-07" },
+            { "team1": "Riverside", "team1_score": 74, "team2": "Mifflinburg", "team2_score": 50, "winner": "Riverside", "date": "2026-03-07" },
+            { "team1": "Notre Dame-Green Pond", "team1_score": 59, "team2": "TECH Freire Charter", "team2_score": 20, "winner": "Notre Dame-Green Pond", "date": "2026-03-07" },
+            { "team1": "Lancaster Mennonite", "team1_score": 34, "team2": "Lansdale Catholic", "team2_score": 30, "winner": "Lancaster Mennonite", "date": "2026-03-07" },
+            { "team1": "Audenried", "team1_score": 68, "team2": "Catasauqua", "team2_score": 62, "winner": "Audenried", "date": "2026-03-07" },
+            { "team1": "Warrior Run", "team1_score": 72, "team2": "Dunmore", "team2_score": 54, "winner": "Warrior Run", "date": "2026-03-07" },
+            { "team1": "Trinity", "team1_score": 78, "team2": "River Valley", "team2_score": 42, "winner": "Trinity", "date": "2026-03-07" },
+            { "team1": "Everett", "team1_score": 38, "team2": "Mohawk Area", "team2_score": 57, "winner": "Mohawk Area", "date": "2026-03-07" },
+            { "team1": "Forest Hills", "team1_score": 58, "team2": "Shady Side Academy", "team2_score": 39, "winner": "Forest Hills", "date": "2026-03-07" },
+            { "team1": "Aliquippa", "team1_score": 87, "team2": "Cranberry Area", "team2_score": 52, "winner": "Aliquippa", "date": "2026-03-07" },
+            { "team1": "Bishop Guilfoyle", "team1_score": 62, "team2": "Ligonier Valley", "team2_score": 43, "winner": "Bishop Guilfoyle", "date": "2026-03-07" },
+            { "team1": "South Park", "team1_score": 90, "team2": "Perry Traditional Academy", "team2_score": 61, "winner": "South Park", "date": "2026-03-07" },
+            { "team1": "South Allegheny", "team1_score": 51, "team2": "Westmont Hilltop", "team2_score": 58, "winner": "Westmont Hilltop", "date": "2026-03-07" },
+            { "team1": "Eisenhower", "team1_score": 65, "team2": "Seton LaSalle", "team2_score": 67, "winner": "Seton LaSalle", "date": "2026-03-07" }
+          ]
+        },
+        {
+          "name": "Second Round",
+          "games": [
+            { "team1": "West Catholic", "team1_score": 52, "team2": "Executive Education Academy Charter School", "team2_score": 49, "winner": "West Catholic", "date": "2026-03-11" },
+            { "team1": "High School of the Future", "team1_score": 51, "team2": "Riverside", "team2_score": 58, "winner": "Riverside", "date": "2026-03-11" },
+            { "team1": "Notre Dame-Green Pond", "team1_score": 66, "team2": "Lancaster Mennonite", "team2_score": 61, "winner": "Notre Dame-Green Pond", "date": "2026-03-11" },
+            { "team1": "Audenried", "team1_score": 59, "team2": "Warrior Run", "team2_score": 64, "winner": "Warrior Run", "date": "2026-03-11" },
+            { "team1": "Trinity", "team1_score": 69, "team2": "Mohawk Area", "team2_score": 50, "winner": "Trinity", "date": "2026-03-11" },
+            { "team1": "Forest Hills", "team1_score": 63, "team2": "Aliquippa", "team2_score": 55, "winner": "Forest Hills", "date": "2026-03-11" },
+            { "team1": "Bishop Guilfoyle", "team1_score": 65, "team2": "South Park", "team2_score": 32, "winner": "Bishop Guilfoyle", "date": "2026-03-11" },
+            { "team1": "Westmont Hilltop", "team1_score": 46, "team2": "Seton LaSalle", "team2_score": 35, "winner": "Westmont Hilltop", "date": "2026-03-11" }
+          ]
+        },
+        {
+          "name": "Quarterfinals",
+          "games": [
+            { "team1": "West Catholic", "team1_score": 58, "team2": "Riverside", "team2_score": 50, "winner": "West Catholic", "date": "2026-03-14" },
+            { "team1": "Notre Dame-Green Pond", "team1_score": 63, "team2": "Warrior Run", "team2_score": 60, "winner": "Notre Dame-Green Pond", "date": "2026-03-14" },
+            { "team1": "Trinity", "team1_score": 75, "team2": "Forest Hills", "team2_score": 53, "winner": "Trinity", "date": "2026-03-14" },
+            { "team1": "Bishop Guilfoyle", "team1_score": 50, "team2": "Westmont Hilltop", "team2_score": 46, "winner": "Bishop Guilfoyle", "date": "2026-03-14" }
+          ]
+        },
+        {
+          "name": "Semi-Finals",
+          "games": [
+            { "team1": "West Catholic", "team1_score": 76, "team2": "Notre Dame-Green Pond", "team2_score": 52, "winner": "West Catholic", "date": "2026-03-17" },
+            { "team1": "Trinity", "team1_score": 50, "team2": "Bishop Guilfoyle", "team2_score": 37, "winner": "Trinity", "date": "2026-03-17" }
+          ]
+        },
+        {
+          "name": "Finals",
+          "games": [
+            { "team1": "West Catholic", "team1_score": 49, "team2": "Trinity", "team2_score": 52, "winner": "Trinity", "date": "2026-03-21" }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { isValidSport } from "@/lib/data";
-import SportNav from "@/components/sport/SportNav";
+import SportNavTabs from "@/components/sport/SportNavTabs";
 
 export default async function SportLayout({
   children,
@@ -16,7 +16,7 @@ export default async function SportLayout({
 
   return (
     <>
-      <SportNav sport={sport} />
+      <SportNavTabs sport={sport} />
       {children}
     </>
   );
