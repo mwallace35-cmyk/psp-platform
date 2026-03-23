@@ -839,11 +839,24 @@ export const getFootballLeaders = cache(async (stat: string, limit = 50) => {
           else if (stat === "receiving") orderCol = "rec_yards";
           else if (stat === "scoring" || stat === "touchdowns") orderCol = "total_td";
 
-          const { data } = await supabase
+          // Get current season to filter leaders to this year only
+          const { data: currentSeason } = await supabase
+            .from("seasons")
+            .select("id")
+            .eq("is_current", true)
+            .single();
+
+          let query = supabase
             .from("football_player_seasons")
             .select("*, players(name, slug, pro_team, graduation_year, positions, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
-            .gt(orderCol, 0)
+            .gt(orderCol, 0);
+
+          if (currentSeason?.id) {
+            query = query.eq("season_id", currentSeason.id);
+          }
+
+          const { data } = await query
             .order(orderCol, { ascending: false, nullsFirst: false })
             .limit(cappedLimit);
 
@@ -904,13 +917,26 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
           else if (stat === "rebounds") orderCol = "rebounds";
           else if (stat === "assists") orderCol = "assists";
 
-          const { data } = await supabase
+          // Get current season to filter leaders to this year only
+          const { data: currentSeason } = await supabase
+            .from("seasons")
+            .select("id")
+            .eq("is_current", true)
+            .single();
+
+          let bbQuery = supabase
             .from("basketball_player_seasons")
             .select("*, players(name, slug, pro_team, graduation_year, positions, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
-            .not("games_played", "is", null) // Exclude incomplete/aggregate records with no games data
-            .neq("season_id", 264) // Exclude "Career" aggregate season
+            .not("games_played", "is", null)
+            .neq("season_id", 264);
+
+          if (currentSeason?.id) {
+            bbQuery = bbQuery.eq("season_id", currentSeason.id);
+          }
+
+          const { data } = await bbQuery
             .order(orderCol, { ascending: false, nullsFirst: false })
             .limit(cappedLimit);
 

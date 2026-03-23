@@ -106,8 +106,8 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
             </h1>
           </div>
           <p style={{ color: "#94a3b8", fontSize: "1rem", margin: 0 }}>
-            Season and career statistical leaders for Philadelphia high school {meta.name.toLowerCase()}.
-            Choose a category below.
+            Current season statistical leaders for Philadelphia high school {meta.name.toLowerCase()}.
+            Choose a category below. Toggle to career mode for all-time records.
           </p>
         </div>
 
