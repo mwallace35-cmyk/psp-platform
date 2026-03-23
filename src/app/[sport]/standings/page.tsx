@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
+import SeasonSelector from "./SeasonSelector";
 import {
   SPORT_META,
   getLeagueStandings,
@@ -82,38 +83,9 @@ async function StandingsLoader({ sport, season }: { sport: string; season?: stri
 
   return (
     <>
-      {/* Season Selector — dropdown for many seasons */}
+      {/* Season Selector */}
       {availableSeasons.length > 1 && (
-        <div className="mb-6 rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-4">
-          <label className="block text-sm font-semibold text-gray-300 mb-2">Select Season</label>
-          <div className="flex items-center gap-3">
-            <select
-              defaultValue={defaultSeason}
-              onChange={(e) => { if (typeof window !== 'undefined') window.location.href = `/${sport}/standings?season=${e.target.value}`; }}
-              className="rounded bg-gray-900 border border-gray-600 px-4 py-2 text-white text-sm focus:border-[var(--psp-gold)] focus:outline-none"
-            >
-              {availableSeasons.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-            {/* Quick links for recent seasons */}
-            <div className="hidden sm:flex gap-1.5">
-              {availableSeasons.slice(0, 5).map((s) => (
-                <a
-                  key={s}
-                  href={`/${sport}/standings?season=${s}`}
-                  className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
-                    s === defaultSeason
-                      ? 'bg-[var(--psp-gold)] text-[var(--psp-navy)]'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  {s}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
+        <SeasonSelector sport={sport} currentSeason={defaultSeason} availableSeasons={availableSeasons} />
       )}
 
       {/* Standings Table */}
