@@ -496,13 +496,16 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                           {schoolScore !== null && opponentScore !== null ? `${schoolScore}-${opponentScore}` : "—"}
                         </td>
                         <td className="py-3 px-4 text-center">
-                          {gamesWithBoxScores.has(game.id) ? (
+                          {(schoolScore !== null && opponentScore !== null) ? (
                             <Link
                               href={`/${sport}/games/${game.id}`}
                               className="text-xs font-medium px-2 py-1 rounded"
-                              style={{ background: "var(--psp-blue, #3b82f6)", color: "white" }}
+                              style={{
+                                background: gamesWithBoxScores.has(game.id) ? "var(--psp-blue, #3b82f6)" : "rgba(59,130,246,0.3)",
+                                color: "white"
+                              }}
                             >
-                              Box Score
+                              {gamesWithBoxScores.has(game.id) ? "Box Score" : "Game"}
                             </Link>
                           ) : null}
                         </td>

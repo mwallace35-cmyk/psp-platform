@@ -550,9 +550,12 @@ export default async function GameDetailPage({
       {/* Box Score */}
       {boxScore.length > 0 ? (
         <section>
-          <h2 className="text-2xl font-bold text-white mb-4 font-heading uppercase">
-            Box Score
+          <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">
+            {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average') ? 'Player Stats' : 'Box Score'}
           </h2>
+          {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average') && (
+            <p className="text-xs text-gray-500 mb-4">Per-game averages based on season totals</p>
+          )}
           <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-6">
             {sport === "football" ? (
               <FootballBoxScore
@@ -577,7 +580,10 @@ export default async function GameDetailPage({
             )}
 
             <p className="text-xs text-gray-600 mt-4 border-t border-gray-700 pt-3">
-              Source: Ted Silary Archive &middot; PhillySportsPack.com
+              {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average')
+                ? <>Season averages shown &middot; Per-game stats not available &middot; PhillySportsPack.com</>
+                : <>Source: Ted Silary Archive &middot; PhillySportsPack.com</>
+              }
             </p>
           </div>
         </section>
