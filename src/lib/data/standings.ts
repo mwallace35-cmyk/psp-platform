@@ -219,27 +219,29 @@ export const getAvailableStandingsSeasons = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
-            // Query distinct season_ids from team_seasons, then get labels
-            const { data, error } = await supabase
+            // Use RPC or direct SQL via a simple approach:
+            // Get all seasons, then filter to those that have team_seasons for this sport
+            const { data: allSeasons } = await supabase
               .from("seasons")
-              .select("label, year_start")
-              .in("id",
-                // Subquery: get all season_ids that have team_seasons for this sport
-                (await supabase
-                  .from("team_seasons")
-                  .select("season_id")
-                  .eq("sport_id", sportSlug)
-                  .limit(5000)
-                ).data?.map((ts: { season_id: number }) => ts.season_id) ?? []
-              )
+              .select("id, label, year_start")
               .order("year_start", { ascending: false });
 
-            if (error) {
-              console.error("Available seasons query error:", error);
-              return [];
-            }
+            if (!allSeasons || allSeasons.length === 0) return [];
 
-            return (data ?? []).map((s: { label: string }) => s.label);
+            // Get distinct season_ids that have standings for this sport
+            const { data: tsData } = await supabase
+              .from("team_seasons")
+              .select("season_id")
+              .eq("sport_id", sportSlug);
+
+            const seasonIdsWithData = new Set(
+              (tsData ?? []).map((ts: { season_id: number }) => ts.season_id)
+            );
+
+            // Filter and return labels in year_start DESC order
+            return allSeasons
+              .filter((s: { id: number }) => seasonIdsWithData.has(s.id))
+              .map((s: { label: string }) => s.label);
           },
           { maxRetries: 2, baseDelay: 500 }
         );
