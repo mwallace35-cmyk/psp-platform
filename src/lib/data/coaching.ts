@@ -31,7 +31,7 @@ export const getCoachingStaff = cache(
           async () => {
             const supabase = await createClient();
             const { data } = await supabase
-              .from('coaching_staff')
+              .from('coaching_stints')
               .select(
                 'id, school_id, sport_id, coach_name, role, start_year, end_year, bio, photo_url, twitter_handle, instagram_handle, email, former_player_id'
               )
@@ -62,7 +62,7 @@ export const getCoachingStaffBySchool = cache(
           async () => {
             const supabase = await createClient();
             const { data } = await supabase
-              .from('coaching_staff')
+              .from('coaching_stints')
               .select(
                 'id, school_id, sport_id, coach_name, role, start_year, end_year, bio, photo_url, twitter_handle, instagram_handle, email, former_player_id'
               )
@@ -93,7 +93,7 @@ export const getCurrentHeadCoach = cache(
           async () => {
             const supabase = await createClient();
             const { data } = await supabase
-              .from('coaching_staff')
+              .from('coaching_stints')
               .select(
                 'id, school_id, sport_id, coach_name, role, start_year, end_year, bio, photo_url, twitter_handle, instagram_handle, email, former_player_id'
               )
@@ -128,7 +128,7 @@ export const getCoachingHistory = cache(
           async () => {
             const supabase = await createClient();
             const { data } = await supabase
-              .from('coaching_staff')
+              .from('coaching_stints')
               .select(
                 'id, school_id, sport_id, coach_name, role, start_year, end_year, bio, photo_url, twitter_handle, instagram_handle, email, former_player_id'
               )

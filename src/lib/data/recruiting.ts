@@ -104,12 +104,14 @@ export async function getRecruitingBoard(classYear?: number, sportId?: string) {
           .in("recruiting_profile_id", profileIds)
           .order("created_at", { ascending: false });
 
-        // Fetch latest ratings per service
-        const { data: ratings } = await (supabase as any)
-          .from("recruiting_ratings")
-          .select("*")
-          .in("recruiting_profile_id", profileIds)
-          .order("recorded_date", { ascending: false });
+        // Fetch ratings from profiles JSONB column
+        const ratings: any[] = [];
+        (data ?? []).forEach((p: any) => {
+          const profileRatings = p.ratings || [];
+          profileRatings.forEach((r: any) => {
+            ratings.push({ ...r, recruiting_profile_id: p.id });
+          });
+        });
 
         // Group offers and ratings by profile
         const offersMap = new Map<number, OfferRecord[]>();

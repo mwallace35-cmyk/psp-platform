@@ -34,7 +34,7 @@ export async function getPowerIndexRankings(sportId: string, seasonId?: number) 
   const supabase = await createClient();
 
   let query = supabase
-    .from("power_index")
+    .from("power_rankings")
     .select(
       `
       id,
@@ -85,7 +85,7 @@ export async function getSchoolPowerIndex(
   const supabase = await createClient();
 
   let query = supabase
-    .from("power_index")
+    .from("power_rankings")
     .select(
       `
       id,
@@ -134,7 +134,7 @@ export async function getPowerIndexHistory(
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("power_index")
+    .from("power_rankings")
     .select(
       `
       id,
@@ -174,7 +174,7 @@ export async function getTopMovers(sportId: string, limit: number = 10) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("power_index")
+    .from("power_rankings")
     .select(
       `
       id,
