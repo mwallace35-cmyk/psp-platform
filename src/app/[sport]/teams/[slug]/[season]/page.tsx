@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import SortablePreviewRoster from "@/components/team/SortablePreviewRoster";
 import {
   SPORT_META,
   getSchoolBySlug,
@@ -438,17 +439,27 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                       // Filter out games with no opponent
                       const isHome = g.home_school_id === school.id;
                       const opp = isHome ? g.away_school : g.home_school;
-                      return opp != null;
+                      if (opp == null) return false;
+                      // Filter out past games with no scores (TBD placeholders)
+                      const hasScores = g.home_score != null && g.away_score != null;
+                      if (!hasScores && g.game_date && new Date(g.game_date) < new Date()) return false;
+                      return true;
                     })
                     .filter((g: any, i: number, arr: any[]) => {
-                      // Deduplicate: keep first occurrence of each opponent+date combo
+                      // Deduplicate: for same opponent+date, prefer the game with scores
                       const isHome = g.home_school_id === school.id;
                       const oppId = isHome ? g.away_school_id : g.home_school_id;
-                      return arr.findIndex((g2: any) => {
+                      const hasScores = g.home_score != null && g.away_score != null;
+                      const dupIdx = arr.findIndex((g2: any) => {
                         const isHome2 = g2.home_school_id === school.id;
                         const oppId2 = isHome2 ? g2.away_school_id : g2.home_school_id;
                         return oppId === oppId2 && g.game_date === g2.game_date;
-                      }) === i;
+                      });
+                      if (dupIdx === i) return true;
+                      // If this isn't the first occurrence, keep it only if it has scores and the first one doesn't
+                      const firstDup = arr[dupIdx];
+                      const firstHasScores = firstDup.home_score != null && firstDup.away_score != null;
+                      return hasScores && !firstHasScores;
                     })
                     .map((gameRaw: any, idx: number) => {
                     const game = gameRaw as Game & Record<string, any>;
@@ -533,14 +544,14 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 <Link key={player.player_id} href={`/${sport}/players/${player.player_slug}`}>
                   <div
                     className="rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
-                    style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }}
+                    style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)" }}
                   >
                     <div className="font-bold text-white mb-1">{player.player_name}</div>
-                    <div className="text-xs text-gray-400 mb-3">
+                    <div className="text-xs text-gray-300 mb-3">
                       {player.positions && player.positions.length > 0 ? player.positions.join(", ") : "Position TBD"}
                     </div>
                     {sport === "football" && (
-                      <div className="text-sm space-y-1 text-gray-300">
+                      <div className="text-sm space-y-1 text-gray-100">
                         {player.rush_yards ? <div>📊 {player.rush_yards} rush yds</div> : null}
                         {player.rec_yards ? <div>📊 {player.rec_yards} rec yds</div> : null}
                         {player.pass_yards ? <div>📊 {player.pass_yards} pass yds</div> : null}
@@ -548,7 +559,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                       </div>
                     )}
                     {sport === "basketball" && (
-                      <div className="text-sm space-y-1 text-gray-300">
+                      <div className="text-sm space-y-1 text-gray-100">
                         {player.ppg ? <div>🏀 {player.ppg.toFixed(1)} PPG</div> : null}
                         {player.total_points ? <div>📊 {player.total_points} total pts</div> : null}
                       </div>
@@ -585,75 +596,16 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           </details>
         )}
 
-        {/* Projected Returning Roster (Preview Mode) */}
+        {/* Returning Roster (Preview Mode) */}
         {isPreview && rosterReturning.length > 0 && (
           <section className="mb-12">
             <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
-              Projected {season} Roster
+              {season} Roster {isPreviewSeason(season) ? "(Projected)" : ""}
             </h2>
             <p className="text-sm text-gray-400 mb-6">
-              Based on {prevSeason} roster — seniors graduated
+              {isPreviewSeason(season) ? `Based on ${prevSeason} roster — seniors graduated` : `${rosterReturning.length} players`}
             </p>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-gray-200">
-                <thead>
-                  <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">#</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Name</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Position</th>
-                    <th className="text-center py-3 px-4 text-gray-400 font-semibold">Class</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rosterReturning.map((player: RosterReturningPlayer) => (
-                    <tr
-                      key={player.player_id}
-                      style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-                    >
-                      <td className="py-3 px-4 text-gray-400 font-mono">
-                        {player.jersey_number || "—"}
-                      </td>
-                      <td className="py-3 px-4">
-                        <Link
-                          href={`/${sport}/players/${player.player_slug}`}
-                          className="text-blue-400 hover:underline"
-                        >
-                          {player.player_name}
-                        </Link>
-                      </td>
-                      <td className="py-3 px-4 text-gray-300">
-                        {player.positions || "—"}
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        {player.projected_class ? (
-                          <span
-                            className="inline-block px-2 py-0.5 text-xs font-medium rounded"
-                            style={{
-                              background:
-                                player.projected_class === "Senior"
-                                  ? "rgba(240, 165, 0, 0.2)"
-                                  : player.projected_class === "Junior"
-                                  ? "rgba(59, 130, 246, 0.2)"
-                                  : "rgba(16, 185, 129, 0.2)",
-                              color:
-                                player.projected_class === "Senior"
-                                  ? "#f0a500"
-                                  : player.projected_class === "Junior"
-                                  ? "#3b82f6"
-                                  : "#10b981",
-                            }}
-                          >
-                            {player.projected_class}
-                          </span>
-                        ) : (
-                          <span className="text-gray-500">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <SortablePreviewRoster players={rosterReturning as any} sport={sport} />
             <div className="mt-4 text-xs text-gray-500">
               {rosterReturning.length} returning players
             </div>
