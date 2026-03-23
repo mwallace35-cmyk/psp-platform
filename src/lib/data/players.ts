@@ -148,7 +148,7 @@ export async function getPlayerAwards(playerId: number) {
         .from("awards")
         .select("*, seasons(year_start, year_end, label)")
         .eq("player_id", playerId)
-        .order("created_at", { ascending: false })
+        .order("year", { ascending: false })
         .limit(50);
       return data ?? [];
     },

@@ -158,6 +158,10 @@ export interface Award {
   award_name?: string;
   award_type?: string;
   category?: string;
+  position?: string;
+  award_tier?: string;
+  year?: number;
+  sport_id?: string;
   seasons?: Season;
 }
 

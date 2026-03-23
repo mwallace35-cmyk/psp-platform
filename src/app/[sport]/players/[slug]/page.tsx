@@ -692,68 +692,105 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             )}
 
             {/* Awards */}
-            {(awards as Award[]).length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                    Honors & Awards
-                  </h2>
-                  <Link
-                    href={`/${sport}/awards`}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
-                    style={{
-                      background: "rgba(59,130,246,0.1)",
-                      color: "var(--psp-blue, #3b82f6)",
-                      border: "1px solid rgba(59,130,246,0.2)",
-                    }}
-                  >
-                    All {meta.name} Awards →
-                  </Link>
-                </div>
-                <div className="space-y-2">
-                  {(awards as Award[]).map((a) => {
-                    // Determine badge color by award type
-                    const awardType = (a.award_type || "").toLowerCase();
-                    const isAllCity = awardType.includes("all-city") || awardType.includes("all-scholastic");
-                    const isAllState = awardType.includes("all-state");
-                    const isPOTY = awardType.includes("player-of-year");
-                    const isAllDecade = awardType.includes("all-decade") || awardType.includes("all-era");
-                    const badgeEmoji = isPOTY ? "⭐" : isAllState ? "🏆" : isAllDecade ? "👑" : isAllCity ? "🏅" : "🎖️";
+            {(awards as Award[]).length > 0 && (() => {
+              const TIER_COLORS: Record<string, { bg: string; border: string; text: string; badge: string }> = {
+                "First Team": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e", badge: "#f59e0b" },
+                "Second Team": { bg: "#e0e7ff", border: "#6366f1", text: "#3730a3", badge: "#6366f1" },
+                "Third Team": { bg: "#ecfdf5", border: "#10b981", text: "#065f46", badge: "#10b981" },
+                "Honorable Mention": { bg: "#f3f4f6", border: "#9ca3af", text: "#374151", badge: "#9ca3af" },
+                "MVP": { bg: "#fef3c7", border: "#d97706", text: "#92400e", badge: "#d97706" },
+              };
+              const CAT_ICONS: Record<string, string> = { offense: "\u26A1", defense: "\uD83D\uDEE1\uFE0F", specialist: "\uD83C\uDFAF" };
+              const DEFAULT_STYLE = { bg: "#f3f4f6", border: "#d1d5db", text: "#374151", badge: "#6b7280" };
 
-                    // Build display label: prefer award_name, clean up redundant info
-                    let displayLabel = a.award_name || a.award_type || "Award";
-                    // Strip sport prefix from award_type fallback
-                    displayLabel = displayLabel.replace(/^(football|basketball|baseball|soccer|lacrosse|wrestling|track-field)-/, "");
-                    // Strip year+tier suffix from baseball-style names (e.g. "Daily News All-City Baseball Third Team 2018")
-                    displayLabel = displayLabel.replace(/\s+(First|Second|Third)\s+Team\s+\d{4}$/i, "");
-                    // Strip trailing tier info (e.g. "Coaches All-Public First Team")
-                    displayLabel = displayLabel.replace(/\s+(First|Second|Third)\s+Team$/i, "");
-                    // Convert remaining hyphens to spaces for award_type fallbacks
-                    if (!a.award_name) displayLabel = displayLabel.replace(/-/g, " ");
+              // Group by year
+              const byYear: Record<number, Award[]> = {};
+              (awards as Award[]).forEach(a => {
+                const y = a.year || (a.seasons?.label ? parseInt(a.seasons.label.split("-")[0]) + 1 : 0);
+                if (!byYear[y]) byYear[y] = [];
+                byYear[y].push(a);
+              });
+              const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
 
-                    // Build tier + category info
-                    const tierLabel = a.category;
-
-                    return (
-                      <div key={a.id} className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3">
-                        <span className="text-xl" aria-hidden="true">{badgeEmoji}</span>
-                        <div className="flex-1 min-w-0">
-                          <span className="font-medium text-sm capitalize" style={{ color: "var(--psp-navy)" }}>
-                            {displayLabel}
+              return (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl font-bold" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                      Honors & Awards
+                    </h2>
+                    <Link
+                      href={`/${sport}/awards`}
+                      className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
+                      style={{ background: "rgba(59,130,246,0.1)", color: "var(--psp-blue, #3b82f6)", border: "1px solid rgba(59,130,246,0.2)" }}
+                    >
+                      All {meta.name} Awards
+                    </Link>
+                  </div>
+                  <div className="space-y-6">
+                    {years.map(year => (
+                      <div key={year}>
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-base font-bold" style={{ color: "var(--psp-gold, #f0a500)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.05em" }}>
+                            {year > 1900 ? `${String(year - 1).slice(-2)}-${String(year).slice(-2)}` : year}
                           </span>
-                          {tierLabel && (
-                            <span className="text-xs ml-2 capitalize" style={{ color: "var(--psp-gray-400)" }}>{tierLabel}</span>
-                          )}
-                          {a.seasons?.label && (
-                            <span className="text-xs ml-2" style={{ color: "var(--psp-gray-500)" }}>{a.seasons.label}</span>
-                          )}
+                          <div className="flex-1 h-px" style={{ background: "var(--psp-gray-200, #e2e8f0)" }} />
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                          {byYear[year].map(a => {
+                            const tier = a.award_tier || "";
+                            const colors = TIER_COLORS[tier] || DEFAULT_STYLE;
+                            const catIcon = CAT_ICONS[a.category || ""] || "\uD83C\uDFC6";
+                            let label = a.award_name || a.award_type || "Award";
+                            label = label.replace(/^(football|basketball|baseball|soccer|lacrosse|wrestling|track-field)-/, "").replace(/-/g, " ");
+                            if (tier) {
+                              label = label.replace(/First Team/i, "").replace(/Second Team/i, "").replace(/Third Team/i, "").replace(/Honorable Mention/i, "").replace(/Red Division/i, "").trim().replace(/[-\s]+$/, "") || label;
+                            }
+
+                            return (
+                              <div
+                                key={a.id}
+                                className="rounded-xl px-4 py-3 transition-transform hover:-translate-y-0.5"
+                                style={{
+                                  background: colors.bg,
+                                  border: `2px solid ${colors.border}`,
+                                  minWidth: "180px",
+                                  maxWidth: "300px",
+                                  boxShadow: `0 2px 8px ${colors.border}20`,
+                                }}
+                              >
+                                <div className="flex items-start gap-2">
+                                  <span className="text-lg shrink-0">{catIcon}</span>
+                                  <div className="min-w-0">
+                                    <p className="font-semibold text-sm leading-tight capitalize" style={{ color: colors.text }}>
+                                      {label}
+                                    </p>
+                                    {a.position && (
+                                      <p className="text-xs mt-0.5" style={{ color: colors.text, opacity: 0.7 }}>{a.position}</p>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2 mt-2">
+                                  {tier && (
+                                    <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: colors.badge }}>
+                                      {tier}
+                                    </span>
+                                  )}
+                                  {a.category && (
+                                    <span className="text-[10px] uppercase tracking-wider font-medium capitalize" style={{ color: colors.text, opacity: 0.6 }}>
+                                      {a.category}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Related: More from this school */}
             {player.schools && (
