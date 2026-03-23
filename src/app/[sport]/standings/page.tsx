@@ -47,47 +47,71 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
  * Async data loader component
  */
 async function StandingsLoader({ sport, season }: { sport: string; season?: string }) {
-  const availableSeasons = await getAvailableStandingsSeasons(sport);
+  const allSeasons = await getAvailableStandingsSeasons(sport);
 
-  // Default to most recent season with data (not future seasons)
+  // Filter out future seasons that have no meaningful data
   const currentYear = new Date().getFullYear();
-  const defaultSeason = season || availableSeasons.find(s => {
+  const availableSeasons = allSeasons.filter(s => {
     const yearStart = parseInt(s.split('-')[0]);
-    // For football (fall sport): current school year is yearStart = currentYear - 1 if we're before August
-    // For spring sports: current school year is yearStart = currentYear - 1
     return yearStart <= currentYear;
-  }) || availableSeasons[0];
+  });
 
-  const standings = await getLeagueStandings(sport, defaultSeason);
+  // Default to most recent completed season
+  const defaultSeason = season || availableSeasons[0];
+
+  if (!defaultSeason) {
+    return (
+      <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-400">
+        No standings data available yet.
+      </div>
+    );
+  }
+
+  let standings = await getLeagueStandings(sport, defaultSeason);
+
+  // Filter out "Other" league (schools with no league_id — non-league opponents)
+  standings = standings.filter(lg => lg.league_name !== 'Other' && lg.league_id !== 0);
 
   if (!standings || standings.length === 0) {
     return (
       <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-400">
-        No standings data available for {defaultSeason || 'this season'}.
+        No standings data available for {defaultSeason}.
       </div>
     );
   }
 
   return (
     <>
-      {/* Season Selector */}
+      {/* Season Selector — dropdown for many seasons */}
       {availableSeasons.length > 1 && (
         <div className="mb-6 rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-4">
           <label className="block text-sm font-semibold text-gray-300 mb-2">Select Season</label>
-          <div className="flex flex-wrap gap-2">
-            {availableSeasons.slice(0, 10).map((s) => (
-              <a
-                key={s}
-                href={`/${sport}/standings?season=${s}`}
-                className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
-                  s === defaultSeason
-                    ? 'bg-[var(--psp-gold)] text-[var(--psp-navy)]'
-                    : 'bg-gray-700 text-white hover:bg-gray-600'
-                }`}
-              >
-                {s}
-              </a>
-            ))}
+          <div className="flex items-center gap-3">
+            <select
+              defaultValue={defaultSeason}
+              onChange={(e) => { if (typeof window !== 'undefined') window.location.href = `/${sport}/standings?season=${e.target.value}`; }}
+              className="rounded bg-gray-900 border border-gray-600 px-4 py-2 text-white text-sm focus:border-[var(--psp-gold)] focus:outline-none"
+            >
+              {availableSeasons.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+            {/* Quick links for recent seasons */}
+            <div className="hidden sm:flex gap-1.5">
+              {availableSeasons.slice(0, 5).map((s) => (
+                <a
+                  key={s}
+                  href={`/${sport}/standings?season=${s}`}
+                  className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+                    s === defaultSeason
+                      ? 'bg-[var(--psp-gold)] text-[var(--psp-navy)]'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  {s}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       )}

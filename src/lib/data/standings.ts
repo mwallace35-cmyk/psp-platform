@@ -17,6 +17,9 @@ export interface Standing {
   losses: number;
   ties: number;
   win_pct: number;
+  league_wins?: number;
+  league_losses?: number;
+  league_finish?: string;
   points_for?: number;
   points_against?: number;
   league_name?: string;
@@ -50,7 +53,7 @@ export const getLeagueStandings = cache(
 
             // Build query
             let query = supabase.from("team_seasons").select(
-              `id, school_id, wins, losses, ties, points_for, points_against,
+              `id, school_id, wins, losses, ties, league_wins, league_losses, league_finish, points_for, points_against,
                schools(id, name, slug, short_name, city, state, league_id, leagues(id, name)),
                seasons(label, year_start, year_end)`
             );
@@ -170,6 +173,9 @@ export const getLeagueStandings = cache(
                       losses,
                       ties,
                       win_pct: winPct,
+                      league_wins: (ts as any).league_wins ?? undefined,
+                      league_losses: (ts as any).league_losses ?? undefined,
+                      league_finish: (ts as any).league_finish ?? undefined,
                       points_for: ts.points_for ?? undefined,
                       points_against: ts.points_against ?? undefined,
                       league_name,

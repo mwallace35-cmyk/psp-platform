@@ -17,7 +17,8 @@ export default function StandingsTable({ standings, sport }: { standings: League
   }
 
   const data = currentLeague.standings;
-  const hasPointsData = data.some((s) => s.points_for !== undefined);
+  const hasPointsData = data.some((s) => s.points_for !== undefined && s.points_for > 0);
+  const hasLeagueRecord = data.some((s) => s.league_wins !== undefined && s.league_wins !== null);
 
   return (
     <div>
@@ -45,16 +46,19 @@ export default function StandingsTable({ standings, sport }: { standings: League
         <table className="w-full text-sm text-gray-200">
           <thead>
             <tr className="border-b border-gray-700 bg-gray-900">
-              <th className="px-4 py-3 text-left font-semibold text-gray-300 w-12">#</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-300 flex-1">School</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-300 w-12">W</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-300 w-12">L</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-300 w-12">T</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-300 w-20">Win %</th>
+              <th className="px-3 py-3 text-left font-semibold text-gray-300 w-10">#</th>
+              <th className="px-3 py-3 text-left font-semibold text-gray-300">School</th>
+              {hasLeagueRecord && (
+                <th className="px-3 py-3 text-center font-semibold text-gray-300 w-20">
+                  <span className="text-[var(--psp-gold)]">League</span>
+                </th>
+              )}
+              <th className="px-3 py-3 text-center font-semibold text-gray-300 w-20">Overall</th>
+              <th className="px-3 py-3 text-center font-semibold text-gray-300 w-16">Win %</th>
               {hasPointsData && (
                 <>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-300 w-16">PF</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-300 w-16">PA</th>
+                  <th className="px-3 py-3 text-center font-semibold text-gray-300 w-14">PF</th>
+                  <th className="px-3 py-3 text-center font-semibold text-gray-300 w-14">PA</th>
                 </>
               )}
             </tr>
@@ -62,46 +66,55 @@ export default function StandingsTable({ standings, sport }: { standings: League
           <tbody>
             {data.map((row: Standing, idx: number) => {
               const winPct = ((row.win_pct * 100).toFixed(1)) + "%";
+              const leagueRecord = (row.league_wins !== undefined && row.league_wins !== null)
+                ? `${row.league_wins}-${row.league_losses ?? 0}`
+                : null;
+              const overallRecord = `${row.wins}-${row.losses}${row.ties > 0 ? `-${row.ties}` : ''}`;
+
               return (
                 <tr
                   key={`${row.school.slug}-${idx}`}
                   className={`border-b border-gray-800 transition-colors hover:bg-gray-800 ${
-                    row.is_champion ? "bg-yellow-950 bg-opacity-20" : idx % 2 === 0 ? "bg-gray-900" : ""
+                    row.is_champion ? "bg-yellow-950/20" : idx % 2 === 0 ? "bg-gray-900/50" : ""
                   }`}
                 >
-                  {/* Rank */}
-                  <td className="px-4 py-3 font-bold text-[var(--psp-gold)] w-12">
+                  <td className="px-3 py-3 font-bold text-[var(--psp-gold)] w-10">
                     {row.is_champion ? "🏆" : row.rank}
                   </td>
 
-                  {/* School */}
-                  <td className="px-4 py-3 flex-1">
+                  <td className="px-3 py-3">
                     <Link
                       href={`/${sport}/schools/${row.school.slug}`}
-                      className="font-semibold text-white hover:text-[var(--psp-gold)]"
+                      className="font-semibold text-white hover:text-[var(--psp-gold)] transition-colors"
                     >
                       {row.school.name}
                     </Link>
                     {row.is_champion && (
-                      <span className="ml-2 inline-block rounded bg-[var(--psp-gold)] px-2 py-0.5 text-xs font-bold text-[var(--psp-navy)]">
-                        Champion
+                      <span className="ml-2 inline-block rounded bg-[var(--psp-gold)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--psp-navy)]">
+                        CHAMP
                       </span>
+                    )}
+                    {row.league_finish && (
+                      <span className="ml-1 text-[10px] text-gray-500">{row.league_finish}</span>
                     )}
                   </td>
 
-                  {/* W-L-T */}
-                  <td className="px-4 py-3 text-white w-12">{row.wins}</td>
-                  <td className="px-4 py-3 text-white w-12">{row.losses}</td>
-                  <td className="px-4 py-3 text-white w-12">{row.ties}</td>
+                  {hasLeagueRecord && (
+                    <td className="px-3 py-3 text-center font-semibold text-[var(--psp-gold)]">
+                      {leagueRecord || '-'}
+                    </td>
+                  )}
 
-                  {/* Win % */}
-                  <td className="px-4 py-3 font-semibold text-white w-20">{winPct}</td>
+                  <td className="px-3 py-3 text-center text-white font-medium">
+                    {overallRecord}
+                  </td>
 
-                  {/* PF/PA if available */}
+                  <td className="px-3 py-3 text-center text-gray-300">{winPct}</td>
+
                   {hasPointsData && (
                     <>
-                      <td className="px-4 py-3 text-gray-300 w-16">{row.points_for ?? "-"}</td>
-                      <td className="px-4 py-3 text-gray-300 w-16">{row.points_against ?? "-"}</td>
+                      <td className="px-3 py-3 text-center text-gray-400">{row.points_for ?? "-"}</td>
+                      <td className="px-3 py-3 text-center text-gray-400">{row.points_against ?? "-"}</td>
                     </>
                   )}
                 </tr>
@@ -111,8 +124,8 @@ export default function StandingsTable({ standings, sport }: { standings: League
         </table>
       </div>
 
-      <div className="mt-4 text-sm text-gray-400">
-        <p>Showing standings for {currentLeague.season_label}</p>
+      <div className="mt-4 text-sm text-gray-500">
+        Showing standings for {currentLeague.season_label} · {data.length} teams
       </div>
     </div>
   );
