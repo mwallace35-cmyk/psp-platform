@@ -57,7 +57,14 @@ export function categorizeFootballAward(award: RawAward): CategorizedAward | nul
   // TIER 1: League Awards
   if (name.includes('All-Catholic') || name.includes('Catholic League')) {
     result.tier = 'league';
-    result.level = 'All-Catholic';
+    // Preserve Red/Blue division distinction
+    if (name.includes('Red Division')) {
+      result.level = 'All-Catholic Red Division';
+    } else if (name.includes('Blue Division')) {
+      result.level = 'All-Catholic Blue Division';
+    } else {
+      result.level = 'All-Catholic';
+    }
     result.selector = name.includes('Coaches') ? 'Coaches' : name.includes('Daily News') ? 'Daily News' : 'Coaches';
   } else if (name.includes('All-Public') || name.includes('Public League')) {
     result.tier = 'league';
