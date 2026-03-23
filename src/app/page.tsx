@@ -70,17 +70,52 @@ export default async function HomePage() {
     lacrosse: '🥍', 'track-field': '🏃', wrestling: '🤼',
   };
 
+  const SPORT_COLOR: Record<string, string> = {
+    football: '#16a34a', basketball: '#3b82f6', baseball: '#ea580c',
+    soccer: '#059669', lacrosse: '#0891b2', 'track-field': '#7c3aed', wrestling: '#ca8a04',
+  };
+
+  const LEAGUE_BADGES: Record<string, { icon: string; bg: string }> = {
+    NFL: { icon: '🏈', bg: 'bg-green-700' },
+    NBA: { icon: '🏀', bg: 'bg-orange-600' },
+    MLB: { icon: '⚾', bg: 'bg-blue-700' },
+    MLS: { icon: '⚽', bg: 'bg-emerald-600' },
+    NHL: { icon: '🏒', bg: 'bg-slate-600' },
+  };
+
+  // Compute the "This Week" date range label
+  const now = new Date();
+  const weekAgo = new Date(Date.now() - 7 * 86400000);
+  const weekRangeLabel = `${weekAgo.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
   return (
     <div className="min-h-screen bg-[var(--psp-navy)]">
       <OrganizationJsonLd />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-[var(--psp-navy)] to-[var(--psp-navy-mid)] pt-8 pb-6 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bebas text-white tracking-wide">
+      <div className="bg-gradient-to-b from-[var(--psp-navy)] to-[var(--psp-navy-mid)] pt-10 pb-8 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-bebas text-white tracking-wide">
             PHILLY<span className="text-[var(--psp-gold)]">SPORTS</span>PACK
           </h1>
-          <p className="text-gray-400 text-sm mt-1">Philadelphia High School Sports — Scores, Stats, Rankings</p>
+          <p className="text-gray-300 text-sm md:text-base mt-2 font-medium tracking-wide">
+            Scores &bull; Stats &bull; Rankings &bull; 7 Sports &bull; 1,300+ Schools
+          </p>
+
+          {/* Search Bar */}
+          <form action="/search" className="mt-5 max-w-xl mx-auto">
+            <div className="relative">
+              <input
+                type="text"
+                name="q"
+                placeholder="Search players, schools, teams..."
+                className="w-full bg-[var(--psp-navy-mid)] border border-gray-600 rounded-full px-5 py-3 pl-12 text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:border-[var(--psp-gold)] focus:ring-1 focus:ring-[var(--psp-gold)] transition"
+              />
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -105,38 +140,42 @@ export default async function HomePage() {
             {/* Recent Scores */}
             {recentGames.length > 0 && (
               <section>
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-bebas text-white tracking-wider">Recent Scores</h2>
-                  <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)]">
+                <div className="flex items-center justify-between mb-1">
+                  <h2 className="text-lg font-bebas text-gray-100 tracking-wider">This Week</h2>
+                  <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
                     All Scores →
                   </Link>
                 </div>
+                <p className="text-[11px] text-gray-400 mb-3">{weekRangeLabel}</p>
                 <div className="space-y-2">
                   {recentGames.map((game: Record<string, unknown>) => {
                     const home = game.home_school as Record<string, unknown> | null;
                     const away = game.away_school as Record<string, unknown> | null;
+                    const homeWon = (game.home_score as number) > (game.away_score as number);
+                    const awayWon = (game.away_score as number) > (game.home_score as number);
                     return (
                       <Link
                         key={game.id as string}
                         href={`/${game.sport_id}/games/${game.id}`}
-                        className="flex items-center justify-between bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-3 hover:border-[var(--psp-gold)]/30 transition"
+                        className="flex items-center bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-3 hover:border-[var(--psp-gold)]/30 hover:bg-[var(--psp-navy-mid)]/80 transition group"
                       >
-                        <div className="flex items-center gap-3 flex-1">
-                          <span className="text-lg">{SPORT_EMOJI[(game.sport_id as string) || '']}</span>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm text-white font-medium">{(away?.name as string) || 'TBD'}</span>
-                              <span className="text-sm font-bold text-white">{game.away_score as number}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm text-white font-medium">{(home?.name as string) || 'TBD'}</span>
-                              <span className="text-sm font-bold text-white">{game.home_score as number}</span>
-                            </div>
+                        <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">{SPORT_EMOJI[(game.sport_id as string) || '']}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className={`text-sm font-medium ${awayWon ? 'text-gray-100' : 'text-gray-400'}`}>{(away?.name as string) || 'TBD'}</span>
+                            <span className={`text-sm font-bold tabular-nums ${awayWon ? 'text-gray-100' : 'text-gray-400'}`}>{game.away_score as number}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className={`text-sm font-medium ${homeWon ? 'text-gray-100' : 'text-gray-400'}`}>{(home?.name as string) || 'TBD'}</span>
+                            <span className={`text-sm font-bold tabular-nums ${homeWon ? 'text-gray-100' : 'text-gray-400'}`}>{game.home_score as number}</span>
                           </div>
                         </div>
-                        <span className="text-[10px] text-gray-500 ml-3">
-                          {new Date(game.game_date as string).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </span>
+                        <div className="flex flex-col items-end ml-3 shrink-0">
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded">Final</span>
+                          <span className="text-[10px] text-gray-500 mt-1">
+                            {new Date(game.game_date as string).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </span>
+                        </div>
                       </Link>
                     );
                   })}
@@ -148,50 +187,66 @@ export default async function HomePage() {
             {articles.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-bebas text-white tracking-wider">Latest Stories</h2>
-                  <Link href="/articles" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)]">
+                  <h2 className="text-lg font-bebas text-gray-100 tracking-wider">Latest Stories</h2>
+                  <Link href="/articles" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
                     All Stories →
                   </Link>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {articles.slice(0, 4).map((article: Record<string, unknown>) => (
-                    <Link
-                      key={article.id as number}
-                      href={`/articles/${article.slug}`}
-                      className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/30 transition group"
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm">{SPORT_EMOJI[(article.sport_id as string) || ''] || '📰'}</span>
-                        <span className="text-[10px] text-gray-500 uppercase tracking-wider">
-                          {(article.content_type as string) || 'article'}
-                        </span>
-                      </div>
-                      <h3 className="text-sm font-bold text-white group-hover:text-[var(--psp-gold)] transition line-clamp-2">
-                        {article.title as string}
-                      </h3>
-                      {(article.excerpt as string) ? (
-                        <p className="text-xs text-gray-400 mt-1 line-clamp-2">{article.excerpt as string}</p>
-                      ) : null}
-                      <p className="text-[10px] text-gray-600 mt-2">
-                        {article.author_name as string} · {new Date(article.published_at as string).toLocaleDateString()}
-                      </p>
-                    </Link>
-                  ))}
+                  {articles.slice(0, 4).map((article: Record<string, unknown>) => {
+                    const sportId = (article.sport_id as string) || '';
+                    const dotColor = SPORT_COLOR[sportId] || '#6b7280';
+                    const excerptText = (article.excerpt as string)
+                      ? (article.excerpt as string)
+                      : (article.title as string).length > 100
+                        ? (article.title as string).slice(0, 100) + '...'
+                        : null;
+                    return (
+                      <Link
+                        key={article.id as number}
+                        href={`/articles/${article.slug}`}
+                        className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/30 hover:bg-[var(--psp-navy-mid)]/80 transition group"
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
+                          <span className="text-sm">{SPORT_EMOJI[sportId] || '📰'}</span>
+                          <span className="text-[10px] text-gray-400 uppercase tracking-wider">
+                            {(article.content_type as string) || 'article'}
+                          </span>
+                        </div>
+                        <h3 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition line-clamp-2">
+                          {article.title as string}
+                        </h3>
+                        {excerptText && (
+                          <p className="text-xs text-gray-400 mt-1 line-clamp-2">{excerptText}</p>
+                        )}
+                        <p className="text-[10px] text-gray-500 mt-2">
+                          {article.author_name as string} · {new Date(article.published_at as string).toLocaleDateString()}
+                        </p>
+                      </Link>
+                    );
+                  })}
                 </div>
               </section>
             )}
 
             {/* POTW + Rankings links */}
             <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Link href="/potw" className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/30 transition text-center">
-                <span className="text-3xl mb-2 block">🏆</span>
-                <h3 className="text-sm font-bold text-white">Player of the Week</h3>
-                <p className="text-[10px] text-gray-400 mt-1">Vote for this week&apos;s top performer</p>
+              <Link href="/potw" className="group relative overflow-hidden bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all text-center">
+                <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">🏆</div>
+                <h3 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Player of the Week</h3>
+                <p className="text-[11px] text-gray-400 mt-1">Vote for this week&apos;s top performer</p>
+                <div className="flex justify-center gap-1 mt-2">
+                  <span className="text-xs">🏈</span><span className="text-xs">🏀</span><span className="text-xs">⚾</span><span className="text-xs">⚽</span>
+                </div>
               </Link>
-              <Link href="/pulse/rankings" className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/30 transition text-center">
-                <span className="text-3xl mb-2 block">📊</span>
-                <h3 className="text-sm font-bold text-white">Power Rankings</h3>
-                <p className="text-[10px] text-gray-400 mt-1">See who&apos;s on top this week</p>
+              <Link href="/pulse/rankings" className="group relative overflow-hidden bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all text-center">
+                <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">📊</div>
+                <h3 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h3>
+                <p className="text-[11px] text-gray-400 mt-1">See who&apos;s on top this week</p>
+                <div className="flex justify-center gap-1 mt-2">
+                  <span className="text-xs">🥍</span><span className="text-xs">🏃</span><span className="text-xs">🤼</span><span className="text-xs">🏈</span>
+                </div>
               </Link>
             </section>
           </div>

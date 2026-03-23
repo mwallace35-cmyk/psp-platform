@@ -21,6 +21,7 @@ const SearchTypeahead = dynamic(() => import("../search/SearchTypeahead"), {
   ssr: false,
 });
 
+// Mobile menu still uses ALL_SPORTS for the full sport listing
 const ALL_SPORTS = [
   { href: "/football", label: "Football", color: "var(--fb)" },
   { href: "/basketball", label: "Basketball", color: "var(--bb)" },
@@ -31,8 +32,37 @@ const ALL_SPORTS = [
   { href: "/soccer", label: "Soccer", color: "var(--soccer)" },
 ];
 
+// Desktop: per-sport dropdown sub-items
+const SPORT_SUB_ITEMS = [
+  { suffix: "/standings", label: "Standings" },
+  { suffix: "/leaderboards", label: "Leaderboards" },
+  { suffix: "/schools", label: "Schools" },
+  { suffix: "/championships", label: "Championships" },
+  { suffix: "/records", label: "Records" },
+];
+
+// Desktop: "More Sports" dropdown — everything except Football & Basketball
+const MORE_SPORTS = [
+  { href: "/soccer", label: "Soccer", color: "var(--soccer)" },
+  { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)" },
+  { href: "/track-field", label: "Track & Field", color: "var(--track)" },
+  { href: "/wrestling", label: "Wrestling", color: "var(--wrest)" },
+  { href: "/baseball", label: "Baseball", color: "var(--base)" },
+];
+
+// Desktop: "More" dropdown (formerly Pulse + More combined)
+const MORE_ITEMS = [
+  { href: "/pulse/our-guys", label: "Our Guys" },
+  { href: "/recruiting", label: "Recruiting" },
+  { href: "/compare", label: "Compare" },
+  { href: "/pipeline", label: "Pipeline" },
+  { href: "/coaches", label: "Coaches" },
+  { href: "/pickem", label: "Pick'em" },
+];
+
+// Mobile menu still uses PULSE_ITEMS
 const PULSE_ITEMS = [
-  { href: "/pulse", label: "The Pulse Hub" },
+  { href: "/", label: "The Pulse Hub" },
   { href: "/recruiting", label: "Recruiting Central" },
   { href: "/pulse/our-guys", label: "Our Guys" },
   { href: "/pulse/rankings", label: "Power Rankings" },
@@ -40,27 +70,9 @@ const PULSE_ITEMS = [
   { href: "/potw", label: "Player of the Week" },
 ];
 
-const MORE_ITEMS = [
-  { href: "/coaches", label: "Coaches" },
-  { href: "/compare", label: "Compare Players" },
-  { href: "/compare/schools", label: "Compare Schools" },
-  { href: "/recruiting", label: "Recruiting Central" },
-  { href: "/pipeline", label: "College Pipeline" },
-  { href: "/glossary", label: "Glossary" },
-  { href: "/challenge", label: "Stats Challenge" },
-  { href: "/pickem", label: "Pick'em" },
-];
-
-const RECRUITING_ITEMS = [
-  { href: "/recruiting", label: "Recruiting Central" },
-  { href: "/recruiting/portal", label: "Recruiter Portal" },
-];
-
 const ACCOUNT_ITEMS = [
-  { href: "/signup", label: "Sign Up" },
-  { href: "/login", label: "Log In" },
-  { href: "/profile", label: "My Profile" },
   { href: "/my-schools", label: "My Schools" },
+  { href: "/signup", label: "Sign Up / Log In" },
 ];
 
 export default function Header() {
@@ -250,80 +262,103 @@ export default function Header() {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-2">
-            {/* Sports Dropdown */}
+            {/* Scores — direct link */}
+            <Link href="/scores" className={`nav-link ${isActive("/scores") ? "active" : ""}`} aria-current={isActive("/scores") ? "page" : undefined}>
+              Scores
+            </Link>
+
+            {/* Football Dropdown */}
             <div className="nav-dd">
               <button
                 className="nav-link"
                 style={{ background: "none", border: "none", cursor: "pointer" }}
                 aria-haspopup="menu"
-                aria-expanded={openDropdown === "sports"}
-                aria-label="Sports menu"
-                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "sports")}
-                onClick={() => handleDropdownToggle("sports")}
+                aria-expanded={openDropdown === "football"}
+                aria-label="Football menu"
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "football")}
+                onClick={() => handleDropdownToggle("football")}
                 onBlur={handleDropdownClose}
               >
-                Sports &#9662;
+                Football &#9662;
               </button>
               <div
                 className="dd-menu"
                 role="menu"
-                aria-label="Sports menu"
-                style={{ display: openDropdown === "sports" ? "block" : undefined }}
+                aria-label="Football menu"
+                style={{ display: openDropdown === "football" ? "block" : undefined }}
                 onKeyDown={handleMenuKeyDown}
               >
-                {ALL_SPORTS.map((item) => (
+                {SPORT_SUB_ITEMS.map((item) => (
+                  <Link key={item.suffix} href={`/football${item.suffix}`} role="menuitem" aria-current={isActive(`/football${item.suffix}`) ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Basketball Dropdown */}
+            <div className="nav-dd">
+              <button
+                className="nav-link"
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "basketball"}
+                aria-label="Basketball menu"
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "basketball")}
+                onClick={() => handleDropdownToggle("basketball")}
+                onBlur={handleDropdownClose}
+              >
+                Basketball &#9662;
+              </button>
+              <div
+                className="dd-menu"
+                role="menu"
+                aria-label="Basketball menu"
+                style={{ display: openDropdown === "basketball" ? "block" : undefined }}
+                onKeyDown={handleMenuKeyDown}
+              >
+                {SPORT_SUB_ITEMS.map((item) => (
+                  <Link key={item.suffix} href={`/basketball${item.suffix}`} role="menuitem" aria-current={isActive(`/basketball${item.suffix}`) ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* More Sports Dropdown */}
+            <div className="nav-dd">
+              <button
+                className="nav-link"
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "moreSports"}
+                aria-label="More Sports menu"
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "moreSports")}
+                onClick={() => handleDropdownToggle("moreSports")}
+                onBlur={handleDropdownClose}
+              >
+                More Sports &#9662;
+              </button>
+              <div
+                className="dd-menu"
+                role="menu"
+                aria-label="More Sports menu"
+                style={{ display: openDropdown === "moreSports" ? "block" : undefined }}
+                onKeyDown={handleMenuKeyDown}
+              >
+                {MORE_SPORTS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
                     <span className="nav-dot" style={{ background: item.color }} />
                     {item.label}
                   </Link>
                 ))}
-                {/* Awards links removed — accessible via sport hub tabs */}
               </div>
             </div>
 
-            {/* Schools Link */}
-            <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`} aria-current={isActive("/schools") ? "page" : undefined}>
-              Schools
+            {/* Rankings — direct link */}
+            <Link href="/pulse/rankings" className={`nav-link ${isActive("/pulse/rankings") ? "active" : ""}`} aria-current={isActive("/pulse/rankings") ? "page" : undefined}>
+              Rankings
             </Link>
-
-            {/* Scores Link */}
-            <Link href="/scores" className={`nav-link ${isActive("/scores") ? "active" : ""}`} aria-current={isActive("/scores") ? "page" : undefined}>
-              Scores
-            </Link>
-
-            {/* News Link */}
-            <Link href="/articles" className={`nav-link ${isActive("/articles") ? "active" : ""}`} aria-current={isActive("/articles") ? "page" : undefined}>
-              News
-            </Link>
-
-            {/* The Pulse Dropdown */}
-            <div className="nav-dd">
-              <button
-                className="nav-link"
-                style={{ background: "none", border: "none", cursor: "pointer" }}
-                aria-haspopup="menu"
-                aria-expanded={openDropdown === "pulse"}
-                aria-label="The Pulse menu"
-                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "pulse")}
-                onClick={() => handleDropdownToggle("pulse")}
-                onBlur={handleDropdownClose}
-              >
-                The Pulse &#9662;
-              </button>
-              <div
-                className="dd-menu"
-                role="menu"
-                aria-label="The Pulse menu"
-                style={{ display: openDropdown === "pulse" ? "block" : undefined }}
-                onKeyDown={handleMenuKeyDown}
-              >
-                {PULSE_ITEMS.map((item) => (
-                  <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
 
             {/* More Dropdown */}
             <div className="nav-dd">
