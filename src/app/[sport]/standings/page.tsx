@@ -46,12 +46,26 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 /**
  * Async data loader component
  */
-async function StandingsLoader({ sport }: { sport: string }) {
-  const standings = await getLeagueStandings(sport);
+async function StandingsLoader({ sport, season }: { sport: string; season?: string }) {
   const availableSeasons = await getAvailableStandingsSeasons(sport);
 
+  // Default to most recent season with data (not future seasons)
+  const currentYear = new Date().getFullYear();
+  const defaultSeason = season || availableSeasons.find(s => {
+    const yearStart = parseInt(s.split('-')[0]);
+    // For football (fall sport): current school year is yearStart = currentYear - 1 if we're before August
+    // For spring sports: current school year is yearStart = currentYear - 1
+    return yearStart <= currentYear;
+  }) || availableSeasons[0];
+
+  const standings = await getLeagueStandings(sport, defaultSeason);
+
   if (!standings || standings.length === 0) {
-    notFound();
+    return (
+      <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-400">
+        No standings data available for {defaultSeason || 'this season'}.
+      </div>
+    );
   }
 
   return (
@@ -60,20 +74,21 @@ async function StandingsLoader({ sport }: { sport: string }) {
       {availableSeasons.length > 1 && (
         <div className="mb-6 rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-4">
           <label className="block text-sm font-semibold text-gray-300 mb-2">Select Season</label>
-          <select
-            disabled
-            value={availableSeasons[0]}
-            className="w-full rounded bg-gray-900 px-4 py-2 text-white disabled:opacity-50"
-          >
-            {availableSeasons.map((season) => (
-              <option key={season} value={season}>
-                {season}
-              </option>
+          <div className="flex flex-wrap gap-2">
+            {availableSeasons.slice(0, 10).map((s) => (
+              <a
+                key={s}
+                href={`/${sport}/standings?season=${s}`}
+                className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                  s === defaultSeason
+                    ? 'bg-[var(--psp-gold)] text-[var(--psp-navy)]'
+                    : 'bg-gray-700 text-white hover:bg-gray-600'
+                }`}
+              >
+                {s}
+              </a>
             ))}
-          </select>
-          <p className="mt-2 text-xs text-gray-500">
-            To view different seasons, refresh the page or check back soon.
-          </p>
+          </div>
         </div>
       )}
 
@@ -83,8 +98,9 @@ async function StandingsLoader({ sport }: { sport: string }) {
   );
 }
 
-export default async function StandingsPage({ params }: { params: Promise<PageParams> }) {
+export default async function StandingsPage({ params, searchParams }: { params: Promise<PageParams>; searchParams: Promise<{ season?: string }> }) {
   const sport = await validateSportParam(params);
+  const { season } = await searchParams;
   const meta = SPORT_META[sport];
 
   const jsonLdItems = [
@@ -128,7 +144,7 @@ export default async function StandingsPage({ params }: { params: Promise<PagePa
                 </div>
               }
             >
-              <StandingsLoader sport={sport} />
+              <StandingsLoader sport={sport} season={season} />
             </Suspense>
           </div>
 
