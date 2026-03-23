@@ -8,6 +8,7 @@ import {
   getBasketballLeaders,
   getFootballCareerLeaders,
   getBasketballCareerLeaders,
+  getStatTotalCount,
 } from "@/lib/data";
 import type { CareerLeaderRow } from "@/lib/data/events";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -292,6 +293,9 @@ export default async function LeaderboardPage({
     }));
   }
 
+  // Fetch total count of players with this stat > 0 for percentile context
+  const statTotalCount = await getStatTotalCount(sport, stat);
+
   const tableData = isCareer ? careerTableData : seasonTableData;
   const activeCols = isCareer ? (statConfig.careerCols || []) : statConfig.cols;
 
@@ -455,7 +459,8 @@ export default async function LeaderboardPage({
               schools={uniqueSchools}
               positions={[]}
               leagues={["Catholic League", "Public League", "Inter-Ac"]}
-              totalPlayers={tableData.length}
+              totalPlayers={statTotalCount > 0 ? statTotalCount : tableData.length}
+              percentileLabel={`Philly ${statConfig.label}`}
             />
           </div>
         ) : (filterClass || filterPosition) ? (

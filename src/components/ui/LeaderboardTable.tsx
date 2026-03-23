@@ -45,6 +45,8 @@ interface LeaderboardTableProps {
   positions?: string[];
   leagues?: string[];
   totalPlayers?: number;
+  /** Descriptive label for percentile badge, e.g. "Philly QBs" */
+  percentileLabel?: string;
 }
 
 export default function LeaderboardTable({
@@ -62,6 +64,7 @@ export default function LeaderboardTable({
   positions = [],
   leagues = [],
   totalPlayers,
+  percentileLabel,
 }: LeaderboardTableProps) {
   const [filters, setFilters] = useState<FilterState>({
     positions: [],
@@ -134,7 +137,7 @@ export default function LeaderboardTable({
       sortable: false,
       render: (value: unknown, row: Record<string, any>) =>
         totalPlayers ? (
-          <PercentileBadge rank={row.rank} totalPlayers={totalPlayers} />
+          <PercentileBadge rank={row.rank} totalPlayers={totalPlayers} statLabel={percentileLabel} />
         ) : (
           <span>#{row.rank}</span>
         ),

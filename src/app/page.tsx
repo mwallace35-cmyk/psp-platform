@@ -33,7 +33,7 @@ export default async function HomePage() {
   const currentSeasonId = await getCurrentSeasonId();
 
   // Parallel data fetching — lightweight queries only
-  const [articlesRes, recentGamesRes, alumniRes, potwRes] = await Promise.all([
+  const [articlesRes, recentGamesRes, alumniRes, potwRes, pickemCountRes] = await Promise.all([
     supabase
       .from('articles')
       .select('id, slug, title, excerpt, author_name, sport_id, published_at, content_type')
@@ -65,6 +65,12 @@ export default async function HomePage() {
       .eq('is_winner', false)
       .order('votes', { ascending: false })
       .limit(6),
+
+    // Active Pick'em games (game_date >= today)
+    supabase
+      .from('pickem_games')
+      .select('id, games!inner(game_date)', { count: 'exact', head: true })
+      .gte('games.game_date', new Date().toISOString().slice(0, 10)),
   ]);
 
   // Season-aware scores fallback: if no games in last 7 days,
@@ -106,6 +112,7 @@ export default async function HomePage() {
     votes: (n.votes as number) || 0,
     is_winner: (n.is_winner as boolean) || false,
   }));
+  const activePickemCount = pickemCountRes.count ?? 0;
 
   const SPORT_EMOJI: Record<string, string> = {
     football: '🏈', basketball: '🏀', baseball: '⚾', soccer: '⚽',
@@ -340,6 +347,23 @@ export default async function HomePage() {
                   })}
                 </div>
               </section>
+            )}
+
+            {/* Pick'em Promo — only if active games exist */}
+            {activePickemCount > 0 && (
+              <Link
+                href="/pickem"
+                className="group flex items-center gap-4 bg-gradient-to-br from-[var(--psp-navy-mid)] to-[#0d1a30] rounded-lg border border-[var(--psp-gold)]/30 p-4 hover:border-[var(--psp-gold)]/60 hover:shadow-lg hover:shadow-[var(--psp-gold)]/10 transition-all"
+              >
+                <div className="text-3xl group-hover:scale-110 transition-transform shrink-0">🏈</div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-bold text-[var(--psp-gold)] group-hover:text-[var(--psp-gold-light)] transition">Pick&apos;em</h3>
+                  <p className="text-[11px] text-gray-400 mt-0.5">Make your picks for this week&apos;s games</p>
+                </div>
+                <svg className="w-4 h-4 text-[var(--psp-gold)]/50 group-hover:text-[var(--psp-gold)] transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
             )}
 
             {/* Leaderboard links */}

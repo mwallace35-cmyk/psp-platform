@@ -1,6 +1,7 @@
 import { createStaticClient } from "@/lib/supabase/static";
 import { withErrorHandling } from "@/lib/errors";
 import { withRetry } from "@/lib/retry";
+import { cache } from "react";
 import type { Player, School } from "@/lib/data/common";
 
 // ============================================================================
@@ -1325,3 +1326,77 @@ export async function getRecordWatchData(
     { sport }
   );
 }
+
+// ============================================================================
+// STAT TOTAL COUNT (for percentile context on leaderboards)
+// ============================================================================
+
+/**
+ * Stat column mapping: given a sport and stat key, returns the
+ * table name and the primary column to check for > 0.
+ */
+const STAT_TABLE_MAP: Record<string, { table: string; columns: Record<string, string> }> = {
+  football: {
+    table: "football_player_seasons",
+    columns: {
+      rushing: "rush_yards",
+      passing: "pass_yards",
+      receiving: "rec_yards",
+      scoring: "total_td",
+    },
+  },
+  basketball: {
+    table: "basketball_player_seasons",
+    columns: {
+      scoring: "points",
+      ppg: "ppg",
+      rebounds: "rebounds",
+      assists: "assists",
+    },
+  },
+};
+
+/**
+ * Get the total count of player-seasons with a given stat > 0.
+ * Used to calculate percentile context on leaderboards.
+ * e.g., getStatTotalCount("football", "rushing") returns how many
+ * football_player_seasons rows have rush_yards > 0.
+ */
+export const getStatTotalCount = cache(async (
+  sport: string,
+  stat: string,
+  seasonId?: string,
+): Promise<number> => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const mapping = STAT_TABLE_MAP[sport];
+          if (!mapping) return 0;
+
+          const column = mapping.columns[stat];
+          if (!column) return 0;
+
+          const supabase = createStaticClient();
+
+          let query = (supabase as any)
+            .from(mapping.table)
+            .select("id", { count: "exact", head: true })
+            .not(column, "is", null)
+            .gt(column, 0);
+
+          if (seasonId) {
+            query = query.eq("season_id", seasonId);
+          }
+
+          const { count } = await query;
+          return count || 0;
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    0,
+    "STAT_TOTAL_COUNT",
+    { sport, stat }
+  );
+});

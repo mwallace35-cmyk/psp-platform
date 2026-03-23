@@ -4,6 +4,7 @@ import { SPORT_META } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
 import PotwVoteButton from '@/components/potw/PotwVoteButton';
 import JoinCTA from '@/components/ui/JoinCTA';
+import PotwSchoolStandings from '@/components/pulse/PotwSchoolStandings';
 
 export const metadata: Metadata = {
   title: 'Player of the Week | PhillySportsPack.com',
@@ -183,6 +184,17 @@ export default async function PotwPage() {
                   );
                 })}
               </div>
+            )}
+
+            {/* School Fan Loyalty */}
+            {hasNominees && (
+              <PotwSchoolStandings
+                nominees={nominees.map(n => ({
+                  school_name: n.school_name || '',
+                  vote_count: n.vote_count || 0,
+                  sport_id: n.sport_id || '',
+                }))}
+              />
             )}
 
             <PSPPromo size="sidebar" variant={2} />
