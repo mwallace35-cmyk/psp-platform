@@ -413,19 +413,36 @@ export async function getTeamsWithRecords(sportId: string, page = 1, pageSize = 
           const supabase = await createClient();
           const offset = (page - 1) * pageSize;
 
+          // Get current season to filter standings
+          const { data: currentSeason } = await supabase
+            .from("seasons")
+            .select("id")
+            .eq("is_current", true)
+            .single();
+          const seasonFilter = currentSeason?.id;
+
+          let dataQuery = supabase
+            .from("team_seasons")
+            .select("*, schools(name, slug), seasons(label)")
+            .eq("sport_id", sportId);
+
+          let countQuery = supabase
+            .from("team_seasons")
+            .select("id", { count: "exact", head: true })
+            .eq("sport_id", sportId);
+
+          if (seasonFilter) {
+            dataQuery = dataQuery.eq("season_id", seasonFilter);
+            countQuery = countQuery.eq("season_id", seasonFilter);
+          }
+
           const [dataRes, countRes] = await Promise.all([
-            supabase
-              .from("team_seasons")
-              .select("*, schools(name, slug), seasons(label)")
-              .eq("sport_id", sportId)
+            dataQuery
               .order("wins", { ascending: false })
               .order("losses")
               .order("ties")
               .range(offset, offset + pageSize - 1),
-            supabase
-              .from("team_seasons")
-              .select("id", { count: "exact", head: true })
-              .eq("sport_id", sportId),
+            countQuery,
           ]);
 
           return {
