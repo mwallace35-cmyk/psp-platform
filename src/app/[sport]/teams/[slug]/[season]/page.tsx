@@ -420,7 +420,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           </h2>
           {games.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm text-gray-200">
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
                     <th className="text-left py-3 px-4 text-gray-400 font-semibold">Date</th>
@@ -575,7 +575,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               Based on {prevSeason} roster — seniors removed
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm text-gray-200">
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
                     <th className="text-left py-3 px-4 text-gray-400 font-semibold">#</th>
@@ -710,7 +710,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               Head-to-Head History
             </h2>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm text-gray-200">
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
                     <th className="text-left py-3 px-4 text-gray-400 font-semibold">Opponent</th>
@@ -774,7 +774,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           {roster.length > 0 ? (
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm text-gray-200">
                   {sport === "football" && (
                     <>
                       <thead>

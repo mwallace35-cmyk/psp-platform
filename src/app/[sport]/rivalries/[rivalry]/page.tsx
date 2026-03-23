@@ -264,7 +264,7 @@ export default async function RivalryDetailPage({
             <section>
               <h2 className="text-2xl font-bold text-white mb-4 font-heading">Game History</h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm text-gray-200">
                   <thead>
                     <tr className="border-b border-gray-700">
                       <th className="text-left py-2 px-3 text-gray-400">Date</th>

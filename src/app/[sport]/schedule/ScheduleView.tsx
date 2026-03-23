@@ -447,7 +447,7 @@ export default function ScheduleView({
 
                   {/* Team schedule table */}
                   <div className="border-t border-gray-100">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm text-gray-200">
                       <thead>
                         <tr className="text-xs text-gray-500 uppercase bg-gray-50">
                           <th className="px-4 py-2 text-left w-8">#</th>

@@ -42,7 +42,7 @@ export default function StandingsTable({ standings, sport }: { standings: League
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] shadow-lg">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm text-gray-200">
           <thead>
             <tr className="border-b border-gray-700 bg-gray-900">
               <th className="px-4 py-3 text-left font-semibold text-gray-300 w-12">#</th>

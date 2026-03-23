@@ -231,7 +231,7 @@ function SortableTable({
         {sortAnnouncement}
       </div>
       <div className="overflow-x-auto border border-gray-200 rounded-lg">
-        <table className="w-full text-sm" aria-label={ariaLabel}>
+        <table className="w-full text-sm text-gray-200" aria-label={ariaLabel}>
         <thead className="sticky top-0 z-10 bg-navy text-white">
           <tr>
             {visibleColumns
