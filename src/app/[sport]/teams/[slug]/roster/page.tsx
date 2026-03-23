@@ -1,11 +1,12 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { getSchoolBySlug } from "@/lib/data/schools";
 import { getTeamRoster, getRosterSeasons, groupRosterByPosition } from "@/lib/data/rosters";
 import { SPORT_META } from "@/lib/data";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import RosterSeasonSelector from "./RosterSeasonSelector";
 
 type PageParams = { sport: string; slug: string };
 
@@ -37,17 +38,8 @@ export async function generateMetadata({
 
 export const revalidate = 3600; // 1 hour
 
-export function generateStaticParams() {
-  return [
-    { sport: "football" },
-    { sport: "basketball" },
-    { sport: "baseball" },
-    { sport: "track-field" },
-    { sport: "lacrosse" },
-    { sport: "wrestling" },
-    { sport: "soccer" },
-  ];
-}
+// Fully dynamic — too many sport+slug combos to pre-render
+export const dynamic = "force-dynamic";
 
 export default async function RosterPage({
   params,
@@ -190,42 +182,11 @@ export default async function RosterPage({
 
         {/* Season Selector */}
         {seasons.filter((s) => s.hasRoster).length > 1 && (
-          <div>
-            <label
-              style={{
-                color: "#999",
-                fontSize: "0.9rem",
-                marginRight: "1rem",
-                fontWeight: 600,
-              }}
-            >
-              Season:
-            </label>
-            <select
-              defaultValue={selectedSeason.label}
-              onChange={(e) => {
-                window.location.href = `/${sport}/teams/${school.slug}/roster?season=${e.target.value}`;
-              }}
-              style={{
-                padding: "0.5rem 1rem",
-                borderRadius: "6px",
-                border: "1px solid #333",
-                background: "#0a1628",
-                color: "#ccc",
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "0.95rem",
-                cursor: "pointer",
-              }}
-            >
-              {seasons
-                .filter((s) => s.hasRoster)
-                .map((s) => (
-                  <option key={s.label} value={s.label}>
-                    {s.label}
-                  </option>
-                ))}
-            </select>
-          </div>
+          <RosterSeasonSelector
+            seasons={seasons.filter((s) => s.hasRoster).map((s) => s.label)}
+            currentSeason={selectedSeason.label}
+            baseUrl={`/${sport}/teams/${school.slug}/roster`}
+          />
         )}
       </div>
 
@@ -363,19 +324,7 @@ export default async function RosterPage({
                           {player.players ? (
                             <Link
                               href={`/${sport}/players/${player.players.slug}`}
-                              style={{
-                                color: "#ccc",
-                                textDecoration: "none",
-                                fontWeight: 500,
-                              }}
-                              onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.color =
-                                  "var(--psp-gold)";
-                              }}
-                              onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLElement).style.color =
-                                  "#ccc";
-                              }}
+                              className="text-gray-300 hover:text-gold no-underline font-medium transition-colors"
                             >
                               {player.players.name}
                             </Link>
