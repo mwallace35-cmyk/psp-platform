@@ -20,6 +20,7 @@ export interface AlumniRecord {
   draft_info?: string | null;
   player_id?: number | null;
   slug?: string | null;
+  bio_url?: string | null;
   schools?: { name: string; slug: string } | null;
 }
 
@@ -186,8 +187,118 @@ function AlphabetBar({ letters, activeLetter, onSelect }: { letters: Set<string>
   );
 }
 
+/* ─── Twitter Embed ─── */
+function TwitterEmbed({ handle }: { handle: string }) {
+  const [expanded, setExpanded] = useState(false);
+  if (!handle) return null;
+  return (
+    <div className="mt-3">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="text-xs text-blue-500 hover:text-blue-700 flex items-center gap-1"
+      >
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        {expanded ? 'Hide' : 'View'} @{handle}
+      </button>
+      {expanded && (
+        <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 max-h-[400px] overflow-y-auto">
+          <iframe
+            src={`https://syndication.twitter.com/srv/timeline-profile/screen-name/${handle}?dnt=true&embedId=twitter-widget-0&frame=false&hideBorder=true&hideFooter=true&hideHeader=true&hideScrollBar=false&lang=en&maxHeight=400px&showReplies=false&transparent=true&theme=light`}
+            className="w-full border-0"
+            style={{ height: '380px' }}
+            title={`@${handle} tweets`}
+            sandbox="allow-scripts allow-same-origin allow-popups"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Coaching Card ─── */
+function CoachingCard({ a }: { a: AlumniRecord }) {
+  const hasPlayerProfile = !!a.player_id && !!a.slug;
+  const initials = a.person_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-lg hover:border-green-400 transition group">
+      {/* Header with avatar */}
+      <div className="flex items-start gap-4">
+        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center text-white font-bold text-lg shrink-0">
+          {initials}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-lg text-navy">{a.person_name}</h3>
+          {a.current_role && a.current_role !== 'postgres' && (
+            <p className="text-sm font-medium text-gray-700">{a.current_role}</p>
+          )}
+          {a.current_org && (
+            <p className="text-sm text-green-700 font-semibold">{a.current_org}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Bio note */}
+      {a.bio_note && <p className="text-xs text-gray-500 mt-3 leading-relaxed">{a.bio_note}</p>}
+
+      {/* HS link */}
+      {a.schools && (
+        <div className="mt-2">
+          <Link href={`/schools/${a.schools.slug}`} className="text-xs text-blue-600 hover:text-blue-800">
+            🏫 {a.schools.name}
+          </Link>
+        </div>
+      )}
+
+      {/* College */}
+      {a.college && (
+        <p className="text-xs text-gray-400 mt-1">🎓 {a.college}</p>
+      )}
+
+      {/* Action buttons */}
+      <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-gray-100">
+        {a.bio_url && (
+          <a
+            href={a.bio_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-50 text-green-700 hover:bg-green-100 transition"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+            Staff Bio
+          </a>
+        )}
+        {a.social_twitter && (
+          <a
+            href={`https://twitter.com/${a.social_twitter}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            @{a.social_twitter}
+          </a>
+        )}
+        {hasPlayerProfile && (
+          <Link
+            href={`/players/${a.slug}`}
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-navy hover:bg-gold transition"
+          >
+            📊 HS Stats
+          </Link>
+        )}
+      </div>
+
+      {/* Twitter embed */}
+      {a.social_twitter && <TwitterEmbed handle={a.social_twitter} />}
+    </div>
+  );
+}
+
 /* ─── Athlete Card ─── */
 function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
+  if (activeTab === 'coaching') return <CoachingCard a={a} />;
+
   const league = a.pro_league ? LEAGUE_BADGES[a.pro_league] : null;
   const sportEmoji = SPORT_EMOJIS[a.sport_id || ''] || '';
   const isInactive = a.status !== 'active';
@@ -198,7 +309,6 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
     <div
       className={`bg-white rounded-lg border p-4 hover:shadow-md transition group ${
         activeTab === 'former-pros' ? 'opacity-80 hover:border-gray-400' :
-        activeTab === 'coaching' ? 'hover:border-green-400' :
         activeTab === 'college' ? 'hover:border-blue-400' :
         'hover:border-gold'
       }`}
