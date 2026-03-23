@@ -544,14 +544,14 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 <Link key={player.player_id} href={`/${sport}/players/${player.player_slug}`}>
                   <div
                     className="rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
-                    style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)" }}
+                    style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}
                   >
-                    <div className="font-bold text-white mb-1">{player.player_name}</div>
-                    <div className="text-xs text-gray-300 mb-3">
+                    <div className="font-bold mb-1" style={{ color: "#fff", fontSize: "1.05rem" }}>{player.player_name}</div>
+                    <div className="text-xs mb-3" style={{ color: "var(--psp-gold)" }}>
                       {player.positions && player.positions.length > 0 ? player.positions.join(", ") : "Position TBD"}
                     </div>
                     {sport === "football" && (
-                      <div className="text-sm space-y-1 text-gray-100">
+                      <div className="text-sm space-y-1" style={{ color: "#e5e7eb" }}>
                         {player.rush_yards ? <div>📊 {player.rush_yards} rush yds</div> : null}
                         {player.rec_yards ? <div>📊 {player.rec_yards} rec yds</div> : null}
                         {player.pass_yards ? <div>📊 {player.pass_yards} pass yds</div> : null}
@@ -559,7 +559,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                       </div>
                     )}
                     {sport === "basketball" && (
-                      <div className="text-sm space-y-1 text-gray-100">
+                      <div className="text-sm space-y-1" style={{ color: "#e5e7eb" }}>
                         {player.ppg ? <div>🏀 {player.ppg.toFixed(1)} PPG</div> : null}
                         {player.total_points ? <div>📊 {player.total_points} total pts</div> : null}
                       </div>
