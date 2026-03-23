@@ -58,7 +58,16 @@ export const getLeagueStandings = cache(
             query = query.eq("sport_id", sportSlug);
 
             if (seasonLabel) {
-              query = query.filter("seasons.label", "eq", seasonLabel);
+              // Get the season ID for this label to filter directly on the FK
+              const seasonClient = await createClient();
+              const { data: seasonData } = await seasonClient
+                .from("seasons")
+                .select("id")
+                .eq("label", seasonLabel)
+                .single();
+              if (seasonData?.id) {
+                query = query.eq("season_id", seasonData.id);
+              }
             }
 
             if (leagueId) {
