@@ -71,8 +71,20 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
   // Get team season data
   const teamSeasonData = await getTeamSeason(school.id, sport, season);
 
-  // Determine if this is a preview season (before Sept of start year) or if we only have schedule data
-  const isPreview = isPreviewSeason(season) || !teamSeasonData;
+  // Determine if this is a preview season
+  // A season is NOT a preview if we have team season data (wins/losses) or game results with scores
+  const hasGameResults = await (async () => {
+    const { data } = await (await import("@/lib/supabase/static")).createStaticClient()
+      .from("games")
+      .select("id")
+      .eq("sport_id", sport)
+      .eq("season_id", teamSeasonData?.season_id ?? 0)
+      .or(`home_school_id.eq.${school.id},away_school_id.eq.${school.id}`)
+      .not("home_score", "is", null)
+      .limit(1);
+    return (data?.length ?? 0) > 0;
+  })();
+  const isPreview = !teamSeasonData && !hasGameResults && isPreviewSeason(season);
 
   // Get basic data that works for both regular and preview modes
   let games: Game[] = [];
@@ -600,10 +612,10 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         {isPreview && rosterReturning.length > 0 && (
           <section className="mb-12">
             <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
-              {season} Roster {isPreviewSeason(season) ? "(Projected)" : ""}
+              {season} Roster {isPreview && roster.length === 0 ? "(Projected)" : ""}
             </h2>
             <p className="text-sm text-gray-400 mb-6">
-              {isPreviewSeason(season) ? `Based on ${prevSeason} roster — seniors graduated` : `${rosterReturning.length} players`}
+              {isPreview && roster.length === 0 ? `Based on ${prevSeason} roster — seniors graduated` : `${rosterReturning.length} players`}
             </p>
             <SortablePreviewRoster players={rosterReturning as any} sport={sport} />
             <div className="mt-4 text-xs text-gray-500">
