@@ -330,10 +330,9 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
         if (g.home_school_id) schoolIds.add(g.home_school_id);
         if (g.away_school_id) schoolIds.add(g.away_school_id);
       }
+      // Use RPC function to bypass RLS and include soft-deleted schools
       const { data: schoolData } = await supabase
-        .from("school_names")
-        .select("id, name, slug, league_id")
-        .in("id", Array.from(schoolIds));
+        .rpc("get_school_names", { school_ids: Array.from(schoolIds) });
       for (const s of schoolData ?? []) {
         schoolMap.set(s.id, { name: s.name, slug: s.slug, league_id: s.league_id });
       }
