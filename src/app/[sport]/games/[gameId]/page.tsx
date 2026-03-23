@@ -101,7 +101,32 @@ function FootballBoxScore({
   const homeStats = stats.filter((s) => s.school_id === homeSchoolId);
   const awayStats = stats.filter((s) => s.school_id === awaySchoolId);
 
+  // Helper to get TD values from stats_json or native columns
+  function getTD(s: GamePlayerStat, type: 'rush' | 'pass' | 'rec'): number | null {
+    const json = s.stats_json as Record<string, unknown> | null;
+    if (type === 'rush') {
+      const seasonTd = json?.season_rush_td as number | null;
+      const gp = json?.games_played as number | null;
+      if (seasonTd != null && gp && gp > 0) return Math.round(seasonTd / gp * 10) / 10;
+      return null;
+    }
+    if (type === 'pass') {
+      const seasonTd = json?.season_pass_td as number | null;
+      const gp = json?.games_played as number | null;
+      if (seasonTd != null && gp && gp > 0) return Math.round(seasonTd / gp * 10) / 10;
+      return null;
+    }
+    if (type === 'rec') {
+      const seasonTd = json?.season_rec_td as number | null;
+      const gp = json?.games_played as number | null;
+      if (seasonTd != null && gp && gp > 0) return Math.round(seasonTd / gp * 10) / 10;
+      return null;
+    }
+    return null;
+  }
+
   function TeamStats({ teamStats, label }: { teamStats: GamePlayerStat[]; label: string }) {
+    const isSeasonAvg = teamStats.some(s => s.source_type === 'season_average');
     const rushers = teamStats.filter(
       (s) => s.rush_carries != null && (s.rush_carries > 0 || s.rush_yards !== 0)
     );
@@ -129,13 +154,16 @@ function FootballBoxScore({
                   <th className="text-left py-1 pr-2">Player</th>
                   <th className="text-center py-1 px-2">#</th>
                   <th className="text-right py-1 px-2">Car</th>
-                  <th className="text-right py-1 pl-2">Yds</th>
+                  <th className="text-right py-1 px-2">Yds</th>
+                  <th className="text-right py-1 pl-2">TD</th>
                 </tr>
               </thead>
               <tbody>
                 {rushers
                   .sort((a, b) => (b.rush_yards ?? 0) - (a.rush_yards ?? 0))
-                  .map((s) => (
+                  .map((s) => {
+                    const rushTd = getTD(s, 'rush');
+                    return (
                     <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
@@ -153,11 +181,15 @@ function FootballBoxScore({
                         {s.jersey_number ?? ""}
                       </td>
                       <td className="text-right py-1.5 px-2">{s.rush_carries ?? 0}</td>
-                      <td className="text-right py-1.5 pl-2 font-semibold">
+                      <td className="text-right py-1.5 px-2 font-semibold">
                         {s.rush_yards ?? 0}
                       </td>
+                      <td className="text-right py-1.5 pl-2" style={{ color: (rushTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                        {rushTd != null ? (isSeasonAvg ? rushTd.toFixed(1) : rushTd) : '—'}
+                      </td>
                     </tr>
-                  ))}
+                  );
+                  })}
               </tbody>
             </table>
           </div>
@@ -174,13 +206,16 @@ function FootballBoxScore({
                   <th className="text-left py-1 pr-2">Player</th>
                   <th className="text-center py-1 px-2">#</th>
                   <th className="text-right py-1 px-2">Comp</th>
-                  <th className="text-right py-1 pl-2">Yds</th>
+                  <th className="text-right py-1 px-2">Yds</th>
+                  <th className="text-right py-1 pl-2">TD</th>
                 </tr>
               </thead>
               <tbody>
                 {passers
                   .sort((a, b) => (b.pass_yards ?? 0) - (a.pass_yards ?? 0))
-                  .map((s) => (
+                  .map((s) => {
+                    const passTd = getTD(s, 'pass');
+                    return (
                     <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
@@ -198,11 +233,14 @@ function FootballBoxScore({
                         {s.jersey_number ?? ""}
                       </td>
                       <td className="text-right py-1.5 px-2">{s.pass_completions ?? 0}</td>
-                      <td className="text-right py-1.5 pl-2 font-semibold">
+                      <td className="text-right py-1.5 px-2 font-semibold">
                         {s.pass_yards ?? 0}
                       </td>
+                      <td className="text-right py-1.5 pl-2" style={{ color: (passTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                        {passTd != null ? (isSeasonAvg ? passTd.toFixed(1) : passTd) : '—'}
+                      </td>
                     </tr>
-                  ))}
+                  );})}
               </tbody>
             </table>
           </div>
@@ -219,13 +257,16 @@ function FootballBoxScore({
                   <th className="text-left py-1 pr-2">Player</th>
                   <th className="text-center py-1 px-2">#</th>
                   <th className="text-right py-1 px-2">Rec</th>
-                  <th className="text-right py-1 pl-2">Yds</th>
+                  <th className="text-right py-1 px-2">Yds</th>
+                  <th className="text-right py-1 pl-2">TD</th>
                 </tr>
               </thead>
               <tbody>
                 {receivers
                   .sort((a, b) => (b.rec_yards ?? 0) - (a.rec_yards ?? 0))
-                  .map((s) => (
+                  .map((s) => {
+                    const recTd = getTD(s, 'rec');
+                    return (
                     <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
@@ -243,11 +284,14 @@ function FootballBoxScore({
                         {s.jersey_number ?? ""}
                       </td>
                       <td className="text-right py-1.5 px-2">{s.rec_catches ?? 0}</td>
-                      <td className="text-right py-1.5 pl-2 font-semibold">
+                      <td className="text-right py-1.5 px-2 font-semibold">
                         {s.rec_yards ?? 0}
                       </td>
+                      <td className="text-right py-1.5 pl-2" style={{ color: (recTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                        {recTd != null ? (isSeasonAvg ? recTd.toFixed(1) : recTd) : '—'}
+                      </td>
                     </tr>
-                  ))}
+                  );})}
               </tbody>
             </table>
           </div>
