@@ -156,7 +156,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
           <h2 style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ color: sportColor }}>●</span> The Pulse
           </h2>
-          <Link href="/community" className="more">Join the Conversation →</Link>
+          <Link href="/pulse/forum" className="more">Join the Conversation →</Link>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
           {[

@@ -66,8 +66,8 @@ export default function MobileBottomNav() {
 
         {/* Community */}
         <Link
-          href="/community"
-          className={`${styles.mobileNavItem} ${isActive('/community') ? styles.mobileNavItemActive : ''}`}
+          href="/pulse/forum"
+          className={`${styles.mobileNavItem} ${isActive('/pulse/forum') ? styles.mobileNavItemActive : ''}`}
           title="Community"
         >
           <span className={styles.mobileNavIcon}>{'\u{1F465}'}</span>

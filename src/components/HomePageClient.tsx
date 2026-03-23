@@ -395,7 +395,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
             </div>
             <div className="text-center">
               <Link
-                href="/community"
+                href="/pulse/forum"
                 className="px-7 py-3 bg-[var(--psp-navy)] text-white rounded-lg font-semibold inline-block transition-all duration-300 hover:bg-[#1a4d8f] hover:-translate-y-1"
               >
                 Join The Pulse

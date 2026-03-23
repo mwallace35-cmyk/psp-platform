@@ -154,7 +154,7 @@ export default async function PhillyEverywherePage() {
             <div className="w-body">
               <Link href="/our-guys" className="w-link">→ Our Guys</Link>
               <Link href="/recruiting" className="w-link">→ Recruiting Board</Link>
-              <Link href="/next-level" className="w-link">→ Next Level Tracker</Link>
+              <Link href="/alumni" className="w-link">→ Next Level Tracker</Link>
               <Link href="/coaches" className="w-link">→ Coaches Directory</Link>
             </div>
           </div>

@@ -20,7 +20,7 @@ const SPORTS = [
   { href: "/baseball/leaderboards", label: "Baseball" },
   { href: "/soccer/leaderboards", label: "Soccer" },
   { href: "/lacrosse/leaderboards", label: "Lacrosse" },
-  { href: "/track/leaderboards", label: "Track and Field" },
+  { href: "/track-field/leaderboards", label: "Track and Field" },
   { href: "/wrestling/leaderboards", label: "Wrestling" },
 ];
 
