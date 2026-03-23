@@ -219,33 +219,27 @@ export const getAvailableStandingsSeasons = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
+            // Query distinct season_ids from team_seasons, then get labels
             const { data, error } = await supabase
-              .from("team_seasons")
-              .select("seasons(label, year_start)")
-              .eq("sport_id", sportSlug)
-              .order("created_at", { ascending: false })
-              .limit(500);
+              .from("seasons")
+              .select("label, year_start")
+              .in("id",
+                // Subquery: get all season_ids that have team_seasons for this sport
+                (await supabase
+                  .from("team_seasons")
+                  .select("season_id")
+                  .eq("sport_id", sportSlug)
+                  .limit(5000)
+                ).data?.map((ts: { season_id: number }) => ts.season_id) ?? []
+              )
+              .order("year_start", { ascending: false });
 
             if (error) {
               console.error("Available seasons query error:", error);
               return [];
             }
 
-            // Extract unique season labels
-            const seasonSet = new Set<string>();
-            for (const ts of data ?? []) {
-              const season = (ts.seasons as any);
-              if (season?.label) {
-                seasonSet.add(season.label);
-              }
-            }
-
-            // Sort by year descending
-            return Array.from(seasonSet).sort((a, b) => {
-              const aYear = parseInt(a.split("-")[0]);
-              const bYear = parseInt(b.split("-")[0]);
-              return bYear - aYear;
-            });
+            return (data ?? []).map((s: { label: string }) => s.label);
           },
           { maxRetries: 2, baseDelay: 500 }
         );
