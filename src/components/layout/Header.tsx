@@ -53,6 +53,7 @@ const MORE_SPORTS = [
 
 // Desktop: "More" dropdown (Pulse + More combined)
 const MORE_ITEMS = [
+  { href: "/schools", label: "Schools" },
   { href: "/rankings", label: "Rankings" },
   { href: "/our-guys", label: "Our Guys" },
   { href: "/recruiting", label: "Recruiting" },
