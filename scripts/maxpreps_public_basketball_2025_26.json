@@ -1,0 +1,196 @@
+{
+  "season": "2025-26",
+  "source": "MaxPreps",
+  "scrape_date": "2026-03-23",
+  "note": "Updated stats for Public League & Charter playoff teams (3+ playoff games). Team leader data only - MaxPreps does not have full stat tables for these schools.",
+  "schools_scraped": 10,
+  "schools": [
+    {
+      "school_name": "Imhotep Charter",
+      "school_id": 209,
+      "maxpreps_slug": "imhotep-charter-panthers",
+      "record": "26-6",
+      "playoff_games": 5,
+      "stats_available": false,
+      "note": "No player stats on MaxPreps - only roster"
+    },
+    {
+      "school_name": "West Philadelphia",
+      "school_id": 151,
+      "maxpreps_slug": "west-philadelphia-speedboys",
+      "record": "21-8",
+      "playoff_games": 5,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Khabir Washington", "position": "PG", "class": "Sr", "ppg": 14.8, "points": 415, "steals": 16},
+        {"player_name": "Isaiah Smith", "position": "F", "class": "Jr", "ppg": 13.4, "points": 375, "rpg": 3.4, "rebounds": 96, "blocks": 14},
+        {"player_name": "Xavier Howard", "position": "SG/PG", "class": "Sr", "ppg": 8.2, "points": 205},
+        {"player_name": "Tamir Lett", "position": "PF", "class": "Sr", "rpg": 1.0},
+        {"player_name": "Jayden Mckie", "position": "PG", "class": "Sr", "apg": 0.7, "assists": 19},
+        {"player_name": "Mohhamed Boubacar", "position": "C", "class": "Jr", "rpg": 0.9}
+      ]
+    },
+    {
+      "school_name": "Constitution",
+      "school_id": 220,
+      "maxpreps_slug": "constitution-generals",
+      "record": "26-4",
+      "playoff_games": 4,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Nick Young", "position": "G", "class": "Sr", "ppg": 16.3, "points": 423},
+        {"player_name": "Jacob Mitchell", "position": "G", "class": "Sr", "ppg": 15.0, "points": 389},
+        {"player_name": "Dahkenah Wilkins", "position": "G", "class": "Sr", "ppg": 8.0, "points": 209},
+        {"player_name": "Rahleem Brown", "position": null, "class": null, "apg": 3.3, "assists": 86},
+        {"player_name": "Ibrahim Mahmoud", "position": null, "class": null},
+        {"player_name": "Chaz Hannah", "position": null, "class": null}
+      ]
+    },
+    {
+      "school_name": "Freire Charter",
+      "school_id": 1878,
+      "maxpreps_slug": "freire-charter-dragons",
+      "record": "3-1",
+      "playoff_games": 4,
+      "stats_available": true,
+      "note": "Very limited games reported on MaxPreps (3-4 games only)",
+      "players": [
+        {"player_name": "Jabriel White", "position": null, "class": "Jr", "ppg": 14.7, "points": 44},
+        {"player_name": "Haleem Jones", "position": null, "class": "Jr", "ppg": 8.0, "points": 24, "apg": 1.0, "assists": 3},
+        {"player_name": "Jaden Mitchell", "position": null, "class": "Fr", "ppg": 4.0, "points": 16, "rpg": 0.3, "rebounds": 1},
+        {"player_name": "Keith Dupree", "position": null, "class": "Sr", "rpg": 1.0, "rebounds": 3, "blocks": 2}
+      ]
+    },
+    {
+      "school_name": "Murrell Dobbins",
+      "school_id": 2936,
+      "maxpreps_slug": "murrell-dobbins-vo-tech",
+      "record": "13-15",
+      "playoff_games": 4,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Haneef Davis", "position": "SG/PG", "class": "Sr", "ppg": 18.1, "points": 470, "fg_pct": 44, "ft_pct": 81, "three_pct": 32, "rpg": 4.7, "rebounds": 121, "apg": 2.7, "assists": 71, "steals": 69},
+        {"player_name": "Hasan Laws", "position": "SF", "class": "Sr", "ppg": 13.5, "points": 364, "fg_pct": 54, "ft_pct": 71, "rpg": 9.3, "rebounds": 252, "steals": 42, "blocks": 22},
+        {"player_name": "Kyyir Roberts-Moore", "position": "PG/SG", "class": "So", "ppg": 13.6, "points": 354, "fg_pct": 44, "ft_pct": 78, "three_pct": 45, "apg": 3.0, "assists": 77},
+        {"player_name": "Khaleef Agbemehia", "position": "PF/SF", "class": "Sr", "rpg": 8.2, "rebounds": 205, "blocks": 28},
+        {"player_name": "Zahmir Green", "position": "SG/PG", "class": "So", "three_pct": 39, "apg": 1.8, "assists": 49, "steals": 47, "blocks": 2}
+      ]
+    },
+    {
+      "school_name": "Paul Robeson",
+      "school_id": 2979,
+      "maxpreps_slug": "paul-robeson-huskies",
+      "record": "25-3",
+      "playoff_games": 4,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Jasir Tyler", "position": "PG", "class": "Sr", "ppg": 14.5, "points": 363, "fg_pct": 49, "three_pct": 32, "apg": 6.4, "assists": 159, "steals": 118},
+        {"player_name": "Mekhi Anderson", "position": "F", "class": "Sr", "ppg": 11.6, "points": 220, "ft_pct": 72, "rpg": 7.4, "rebounds": 141, "steals": 45, "blocks": 39},
+        {"player_name": "Eden McFadden", "position": "SF", "class": "Sr", "ppg": 8.7, "points": 191, "rpg": 5.0, "rebounds": 109, "steals": 46},
+        {"player_name": "Hanai Williamson", "position": "F", "class": "Jr", "fg_pct": 49, "three_pct": 31, "rebounds": 98},
+        {"player_name": "Jordan Belo", "position": "PF", "class": "Jr", "fg_pct": 48},
+        {"player_name": "Jahmier Smith", "position": "PG/SG", "class": "Sr", "apg": 1.7, "ft_pct": 67},
+        {"player_name": "Jeremiah DeShazo", "position": "G", "class": "Jr", "assists": 32, "apg": 1.5},
+        {"player_name": "Samir Toori", "position": "G", "class": "Jr", "three_pct": 32, "ft_pct": 65}
+      ]
+    },
+    {
+      "school_name": "Frankford",
+      "school_id": 180,
+      "maxpreps_slug": "frankford-pioneers",
+      "record": "19-10",
+      "playoff_games": 3,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Doron Ross", "position": "G", "class": "Sr", "ppg": 22.9, "points": 617, "fg_pct": 38, "rpg": 3.8, "rebounds": 102, "apg": 1.1, "assists": 31, "steals": 43},
+        {"player_name": "Jaden Natal-Diaz", "position": "G", "class": "So", "ppg": 8.8, "points": 229},
+        {"player_name": "Joshua Johnson", "position": "G", "class": "Jr", "ppg": 7.2, "fg_pct": 32, "apg": 2.5, "assists": 54},
+        {"player_name": "Khamari Champ", "position": "G", "class": "Jr", "fg_pct": 39, "rpg": 5.5, "rebounds": 148, "apg": 1.2, "assists": 32, "blocks": 25},
+        {"player_name": "Jasir Jeffcoat", "position": "F", "class": "So", "rpg": 5.3, "rebounds": 111}
+      ]
+    },
+    {
+      "school_name": "Carver Engineering",
+      "school_id": 2755,
+      "maxpreps_slug": "carver-high-school-of-engineering-and-science",
+      "record": "23-6",
+      "playoff_games": 3,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Fareed Brown", "position": "PG/SG", "class": "Sr", "ppg": 14.0, "points": 379, "fg_pct": 48, "ft_pct": 77, "apg": 4.1, "assists": 110, "steals": 40, "blocks": 12},
+        {"player_name": "Matthew McField", "position": "PG", "class": "Sr", "ppg": 13.4, "points": 336, "fg_pct": 51, "three_pct": 38, "apg": 2.4, "assists": 60, "steals": 49},
+        {"player_name": "Billy Henighan", "position": "SG", "class": "Jr", "ppg": 11.0, "points": 308, "ft_pct": 75, "three_pct": 43, "rpg": 5.2, "rebounds": 145},
+        {"player_name": "Sahin Rodriguez", "position": "G/SG", "class": "Sr", "fg_pct": 46, "ft_pct": 71, "rpg": 5.9, "rebounds": 153, "apg": 3.0, "assists": 79, "steals": 40, "blocks": 9},
+        {"player_name": "Malcolm Musgrove Jr.", "position": "F", "class": "Jr", "rpg": 3.8, "rebounds": 105, "blocks": 20},
+        {"player_name": "Samir Roberts-Mouzon", "position": "PG", "class": "Sr", "three_pct": 35}
+      ]
+    },
+    {
+      "school_name": "MAST Charter II",
+      "school_id": 5539,
+      "maxpreps_slug": "mast-charter-ii-voyagers",
+      "record": "17-10",
+      "playoff_games": 3,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Shane Twyman", "position": null, "class": "Sr", "ppg": 13.4, "points": 336, "rpg": 10.0, "rebounds": 251, "steals": 43, "blocks": 28},
+        {"player_name": "Andrew Lopez", "position": null, "class": "Sr", "ppg": 10.7, "points": 236, "steals": 74},
+        {"player_name": "Jadan Thomas", "position": null, "class": "Sr", "ppg": 9.6, "points": 231, "rpg": 9.5, "rebounds": 228, "blocks": 31},
+        {"player_name": "Chase Bratton", "position": null, "class": "Sr", "rpg": 7.0, "rebounds": 133, "blocks": 18},
+        {"player_name": "Jordan Brooks", "position": null, "class": "So", "steals": 40}
+      ]
+    },
+    {
+      "school_name": "Sankofa Freedom Academy",
+      "school_id": 237,
+      "maxpreps_slug": "sankofa-freedom-academy-warriors",
+      "record": "25-7",
+      "playoff_games": 3,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Nafis Dubose", "position": null, "class": "Sr", "ppg": 16.5, "points": 511, "fg_pct": 45, "ft_pct": 65, "three_pct": 18, "rpg": 4.8, "rebounds": 148, "apg": 1.5, "assists": 48, "steals": 50},
+        {"player_name": "Sammad West", "position": null, "class": "Jr", "ppg": 10.7, "points": 332, "fg_pct": 62, "ft_pct": 57, "rpg": 8.2, "rebounds": 253, "blocks": 4},
+        {"player_name": "Nasir Brown", "position": null, "class": "Sr", "ppg": 10.0, "points": 309, "fg_pct": null, "ft_pct": 65, "three_pct": 32, "apg": 2.9, "assists": 91, "steals": 51},
+        {"player_name": "Terrence Fortson", "position": null, "class": "Jr", "fg_pct": 54, "rpg": 4.0, "rebounds": 115, "blocks": 6},
+        {"player_name": "Jameel Brown", "position": null, "class": "Sr", "apg": 1.0, "assists": 31, "steals": 36},
+        {"player_name": "Demoree Brotus", "position": null, "class": "Jr", "three_pct": 34},
+        {"player_name": "Rahmir Alexander", "position": null, "class": "So", "blocks": 4}
+      ]
+    },
+    {
+      "school_name": "Samuel Fels",
+      "school_id": 162,
+      "maxpreps_slug": "samuel-fels",
+      "record": "17-9",
+      "playoff_games": 3,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Izaaz Kornegay", "position": "W/G", "class": "Sr", "ppg": 20.9, "points": 481, "fg_pct": 64, "rpg": 6.7, "rebounds": 154, "blocks": 25},
+        {"player_name": "Jaasin Sabb", "position": "G", "class": "Sr", "ppg": 11.8, "points": 141, "three_pct": 30},
+        {"player_name": "Ayden McDowell", "position": "PG/SG", "class": "Fr", "ppg": 8.2, "three_pct": 37, "steals": 27},
+        {"player_name": "Isael A Moronta-Mendez", "position": "PG", "class": "Sr", "fg_pct": 39, "apg": 3.5, "assists": 56, "steals": 27},
+        {"player_name": "Kieran Favors", "position": "W/SG", "class": "Jr", "fg_pct": 39, "rpg": 4.8, "rebounds": 82},
+        {"player_name": "Khalil Hudgins", "position": "G", "class": "Sr", "apg": 1.4},
+        {"player_name": "Ramone Williams", "position": "G/SG", "class": "Sr", "apg": 1.3},
+        {"player_name": "Elian Pavon", "position": "W/G", "class": "So", "blocks": 25}
+      ]
+    },
+    {
+      "school_name": "Olney",
+      "school_id": 163,
+      "maxpreps_slug": "olney-trojans",
+      "record": "15-9",
+      "playoff_games": 3,
+      "stats_available": true,
+      "players": [
+        {"player_name": "Maurice Burgess", "position": "F", "class": "Sr", "ppg": 12.8, "points": 243, "rpg": 6.7, "rebounds": 128},
+        {"player_name": "Ni'eem Gregory", "position": "SF", "class": "Jr", "ppg": 7.8, "rpg": 7.9, "rebounds": 87},
+        {"player_name": "Zaire Parker-Barnes", "position": "SG/SF", "class": "Jr", "ppg": 7.6, "points": 144},
+        {"player_name": "Amaree Frazier", "position": "PG/SG", "class": "Jr", "apg": 1.3, "assists": 24},
+        {"player_name": "Ashayn Smith", "position": "PG", "class": "Sr", "apg": 1.3, "assists": 24},
+        {"player_name": "Christopher Northern", "position": "SG/PG", "class": "Sr", "apg": 0.8, "assists": 15},
+        {"player_name": "Ryheem Wilson", "position": "F", "class": "Jr", "rpg": 2.1, "rebounds": 40}
+      ]
+    }
+  ]
+}

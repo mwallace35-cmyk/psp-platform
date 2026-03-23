@@ -131,15 +131,25 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
   };
 
   if (currentRankings.length === 0 && weeks.length === 0) {
+    const comingSoonMessages: Record<string, { title: string; subtitle: string }> = {
+      football: {
+        title: 'Way Too Early Preseason Rankings Coming Soon',
+        subtitle: 'Our football rankings will drop this summer as we preview the 2026 season. Who\'s the team to beat?',
+      },
+      baseball: {
+        title: 'Preseason Rankings Coming Soon',
+        subtitle: 'Baseball season is around the corner. Check back for our preseason power rankings as teams gear up for 2026.',
+      },
+    };
+    const msg = comingSoonMessages[activeSport] || {
+      title: `${sportMeta?.name} Rankings Coming Soon`,
+      subtitle: `Power rankings will be published during the season. Check back when ${sportMeta?.name?.toLowerCase()} season kicks off!`,
+    };
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-        <p className="text-4xl mb-3">📊</p>
-        <p className="text-gray-700 text-xl font-medium mb-2">
-          {sportMeta?.name} Rankings Coming Soon
-        </p>
-        <p className="text-gray-500">
-          Power rankings will be published weekly during the season. Check back when {sportMeta?.name?.toLowerCase()} season kicks off!
-        </p>
+        <p className="text-4xl mb-3">{sportMeta?.emoji || '📊'}</p>
+        <p className="text-gray-700 text-xl font-medium mb-2">{msg.title}</p>
+        <p className="text-gray-500">{msg.subtitle}</p>
       </div>
     );
   }
