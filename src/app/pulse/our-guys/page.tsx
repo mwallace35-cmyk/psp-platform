@@ -19,7 +19,7 @@ export default async function OurGuysPage() {
   const [alumniRes, countsRes] = await Promise.all([
     supabase
       .from('next_level_tracking')
-      .select('id, person_name, player_id, slug, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, college, draft_info, schools:high_school_id(name, slug)')
+      .select('id, person_name, player_id, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, college, draft_info, schools:high_school_id(name, slug), players:player_id(slug)')
       .order('featured', { ascending: false })
       .order('person_name')
       .limit(2500),
@@ -34,10 +34,14 @@ export default async function OurGuysPage() {
     ]),
   ]);
 
-  const alumni = (alumniRes.data ?? []).map((a: Record<string, unknown>) => ({
-    ...a,
-    schools: Array.isArray(a.schools) ? a.schools[0] : a.schools,
-  })) as AlumniRecord[];
+  const alumni = (alumniRes.data ?? []).map((a: Record<string, unknown>) => {
+    const playerJoin = Array.isArray(a.players) ? a.players[0] : a.players;
+    return {
+      ...a,
+      schools: Array.isArray(a.schools) ? a.schools[0] : a.schools,
+      slug: (playerJoin as Record<string, unknown> | null)?.slug as string | null ?? null,
+    };
+  }) as AlumniRecord[];
 
   const [total, activePro, formerPro, college, nfl, nba, mlb] = countsRes;
 
