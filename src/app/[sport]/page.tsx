@@ -1,6 +1,7 @@
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, getTeamsWithRecords, getTrackedAlumni, type Championship } from "@/lib/data";
+import { SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, getTeamsWithRecords, getTrackedAlumni, type Championship, getCompoundLeaders, getCompoundCategoriesForSport, COMPOUND_CATEGORIES, getRecordWatchData } from "@/lib/data";
+import type { CompoundCategory } from "@/lib/data/computed-records";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher";
 import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScoresStrip";
@@ -8,6 +9,8 @@ import QuickNavigation from "@/components/sport-layouts/QuickNavigation";
 import PlayoffPreview from "@/components/sport-layouts/PlayoffPreview";
 import DesignBibleSections from "@/components/sport-layouts/DesignBibleSections";
 import SportHeroSilhouette from "@/components/sport-layouts/SportHeroSilhouette";
+import CompoundLeaderboards from "@/components/leaderboards/CompoundLeaderboards";
+import RecordWatch from "@/components/widgets/RecordWatch";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
@@ -133,8 +136,21 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
   let recentGames: HubGame[] = [];
   let standings: TeamWithRecords[] = [];
   let trackedAlumni: TrackedAlumni[] = [];
+  let compoundCategories: { key: string; label: string; description: string; data: any[] }[] = [];
+  let recordWatchData: Awaited<ReturnType<typeof getRecordWatchData>> = [];
 
   try {
+    // Build compound leaderboard fetch promises
+    const compoundKeys = getCompoundCategoriesForSport(sport);
+    const compoundPromises = compoundKeys.map((key) =>
+      getCompoundLeaders(sport, key, 10).then((data) => ({
+        key,
+        label: COMPOUND_CATEGORIES[key].label,
+        description: COMPOUND_CATEGORIES[key].description,
+        data,
+      }))
+    );
+
     // Use Promise.allSettled to prevent one failure from crashing the page
     const results = await Promise.allSettled([
       getSportOverview(sport),
@@ -145,10 +161,12 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       getRecentGamesBySport(sport, 20),
       getTeamsWithRecords(sport, 1, 10),
       getTrackedAlumni({ sport }, 8),
+      Promise.allSettled(compoundPromises),
+      getRecordWatchData(sport, sport === "basketball" ? 25 : 11),
     ]);
 
     // Process results safely
-    const [overviewResult, championsResult, schoolsResult, featuredResult, freshnessResult, gamesResult, standingsResult, alumniResult] = results;
+    const [overviewResult, championsResult, schoolsResult, featuredResult, freshnessResult, gamesResult, standingsResult, alumniResult, compoundResult, recordWatchResult] = results;
 
     if (overviewResult.status === "fulfilled") overview = overviewResult.value as unknown as SportOverview;
     if (championsResult.status === "fulfilled") champions = championsResult.value as unknown as Championship[];
@@ -157,6 +175,19 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     if (freshnessResult.status === "fulfilled") freshness = freshnessResult.value as unknown as DataFreshness | null;
     if (gamesResult.status === "fulfilled") recentGames = gamesResult.value as unknown as HubGame[];
     if (standingsResult.status === "fulfilled") standings = (standingsResult.value as unknown as Awaited<ReturnType<typeof getTeamsWithRecords>>).data || [];
+
+    // Process compound leaderboard results
+    if (compoundResult.status === "fulfilled") {
+      const settled = compoundResult.value as PromiseSettledResult<{ key: string; label: string; description: string; data: any[] }>[];
+      compoundCategories = settled
+        .filter((r): r is PromiseFulfilledResult<{ key: string; label: string; description: string; data: any[] }> => r.status === "fulfilled")
+        .map((r) => r.value);
+    }
+
+    // Process record watch results
+    if (recordWatchResult.status === "fulfilled") {
+      recordWatchData = recordWatchResult.value as Awaited<ReturnType<typeof getRecordWatchData>>;
+    }
     if (alumniResult.status === "fulfilled") trackedAlumni = alumniResult.value as unknown as TrackedAlumni[];
 
     // Log any failures with structured error context (development logging)
@@ -308,6 +339,27 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         standings={standings}
         trackedAlumni={trackedAlumni}
       />
+
+      {/* Compound Leaderboards + Record Watch */}
+      {(compoundCategories.length > 0 || recordWatchData.length > 0) && (
+        <div className="bg-[var(--psp-navy)]">
+          {/* Compound Leaderboards */}
+          {compoundCategories.length > 0 && (
+            <CompoundLeaderboards sport={sport} categories={compoundCategories} />
+          )}
+
+          {/* Record Watch Widget */}
+          {recordWatchData.length > 0 && (
+            <section className="py-6 px-4">
+              <div className="max-w-7xl mx-auto">
+                <div className="max-w-lg">
+                  <RecordWatch sport={sport} data={recordWatchData} />
+                </div>
+              </div>
+            </section>
+          )}
+        </div>
+      )}
 
       {/* JSON-LD */}
       <script

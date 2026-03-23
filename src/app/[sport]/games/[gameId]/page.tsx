@@ -11,6 +11,7 @@ import {
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import GameFilmSection from "@/components/highlights/GameFilmSection";
+import HeadToHeadBadge from "@/components/game/HeadToHeadBadge";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: hourly (games get new box scores frequently)
@@ -564,6 +565,17 @@ export default async function GameDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Head-to-Head Badge */}
+      {game.home_school_id && game.away_school_id && (
+        <div className="mb-6">
+          <HeadToHeadBadge
+            homeSchoolId={game.home_school_id}
+            awaySchoolId={game.away_school_id}
+            sportId={sport}
+          />
+        </div>
+      )}
 
       {/* Period Scores (if available) */}
       {game.period_scores && typeof game.period_scores === "object" && Object.keys(game.period_scores).length > 0 && (

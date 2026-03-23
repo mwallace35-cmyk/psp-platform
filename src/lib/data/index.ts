@@ -132,12 +132,14 @@ export {
   getGamesWithBoxScores,
   getPlayerGameLog,
   getPlayerTeamGames,
+  getHeadToHead,
   type GamePlayerStat,
   type GameDetail,
   type TeamSeasonStats,
   type TeamSeasonPlayer,
   type PlayerGameLog,
   type TeamGame,
+  type HeadToHeadResult,
 } from "./games";
 
 // Pulse / community hub functions
@@ -369,7 +371,11 @@ export {
   getCoachingStaffBySchool,
   getCurrentHeadCoach,
   getCoachingHistory,
+  getCoachingRecord,
+  getCoachRecord,
   type CoachingStaffMember,
+  type CoachingRecordStint,
+  type CoachingRecordResult,
 } from "./coaching";
 
 // Player claims functions

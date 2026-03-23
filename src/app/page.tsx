@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { OrganizationJsonLd } from '@/components/seo/JsonLd';
 import SportNavigationGrid from '@/components/home/SportNavigationGrid';
+import PotwHomepageWidget from '@/components/pulse/PotwHomepageWidget';
 
 export const revalidate = 300; // 5 min ISR — live content
 export const dynamic = 'force-dynamic';
@@ -28,7 +29,7 @@ export default async function HomePage() {
   const supabase = createStaticClient();
 
   // Parallel data fetching — lightweight queries only
-  const [articlesRes, recentGamesRes, alumniRes] = await Promise.all([
+  const [articlesRes, recentGamesRes, alumniRes, potwRes] = await Promise.all([
     supabase
       .from('articles')
       .select('id, slug, title, excerpt, author_name, sport_id, published_at, content_type')
@@ -52,6 +53,14 @@ export default async function HomePage() {
       .eq('featured', true)
       .eq('status', 'active')
       .limit(6),
+
+    // POTW nominees — current week
+    supabase
+      .from('potw_nominees')
+      .select('id, player_name, school_name, sport_id, stat_line, votes, is_winner')
+      .eq('is_winner', false)
+      .order('votes', { ascending: false })
+      .limit(6),
   ]);
 
   const articles = articlesRes.data ?? [];
@@ -63,6 +72,15 @@ export default async function HomePage() {
   const featuredAlumni = (alumniRes.data ?? []).map((a: Record<string, unknown>) => ({
     ...a,
     schools: Array.isArray(a.schools) ? a.schools[0] : a.schools,
+  }));
+  const potwNominees = (potwRes.data ?? []).map((n: Record<string, unknown>) => ({
+    id: String(n.id),
+    player_name: (n.player_name as string) || '',
+    school_name: (n.school_name as string) || '',
+    sport_id: (n.sport_id as string) || '',
+    stat_line: (n.stat_line as string) || null,
+    votes: (n.votes as number) || 0,
+    is_winner: (n.is_winner as boolean) || false,
   }));
 
   const SPORT_EMOJI: Record<string, string> = {
@@ -230,25 +248,20 @@ export default async function HomePage() {
               </section>
             )}
 
-            {/* POTW + Rankings links */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Link href="/potw" className="group relative overflow-hidden bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all text-center">
-                <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">🏆</div>
-                <h3 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Player of the Week</h3>
-                <p className="text-[11px] text-gray-400 mt-1">Vote for this week&apos;s top performer</p>
-                <div className="flex justify-center gap-1 mt-2">
-                  <span className="text-xs">🏈</span><span className="text-xs">🏀</span><span className="text-xs">⚾</span><span className="text-xs">⚽</span>
-                </div>
-              </Link>
-              <Link href="/pulse/rankings" className="group relative overflow-hidden bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all text-center">
-                <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">📊</div>
+            {/* POTW Voting Widget */}
+            <PotwHomepageWidget nominees={potwNominees} />
+
+            {/* Rankings link */}
+            <Link href="/pulse/rankings" className="group flex items-center gap-4 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all">
+              <div className="text-3xl group-hover:scale-110 transition-transform">📊</div>
+              <div>
                 <h3 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h3>
-                <p className="text-[11px] text-gray-400 mt-1">See who&apos;s on top this week</p>
-                <div className="flex justify-center gap-1 mt-2">
-                  <span className="text-xs">🥍</span><span className="text-xs">🏃</span><span className="text-xs">🤼</span><span className="text-xs">🏈</span>
-                </div>
-              </Link>
-            </section>
+                <p className="text-[11px] text-gray-400 mt-0.5">See who&apos;s on top this week</p>
+              </div>
+              <svg className="w-4 h-4 text-gray-500 ml-auto group-hover:text-[var(--psp-gold)] transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
 
           {/* Sidebar */}

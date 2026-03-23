@@ -954,3 +954,374 @@ export async function getSchoolRecordBook(
     { sportSlug, schoolId }
   );
 }
+
+// ============================================================================
+// COMPOUND LEADERBOARDS
+// ============================================================================
+
+export interface CompoundLeaderEntry {
+  player_name: string;
+  player_slug: string;
+  school_name: string;
+  school_slug: string;
+  value: number;
+  components: Record<string, number>;
+}
+
+export type CompoundCategory =
+  | "dual-threat-qb"
+  | "complete-back"
+  | "defensive-impact"
+  | "all-around-guard"
+  | "double-double-machine";
+
+interface CompoundCategoryDef {
+  label: string;
+  sport: string;
+  description: string;
+}
+
+export const COMPOUND_CATEGORIES: Record<CompoundCategory, CompoundCategoryDef> = {
+  "dual-threat-qb": {
+    label: "Dual Threat QBs",
+    sport: "football",
+    description: "Pass yards + rush yards combined (min 5 games)",
+  },
+  "complete-back": {
+    label: "Complete Backs",
+    sport: "football",
+    description: "Rush yards + rec yards + (rush TDs + rec TDs) x 50 (min 5 games)",
+  },
+  "defensive-impact": {
+    label: "Defensive Impact",
+    sport: "football",
+    description: "Tackles + sacks x 2 + interceptions x 3",
+  },
+  "all-around-guard": {
+    label: "All-Around Guards",
+    sport: "basketball",
+    description: "Points + assists x 2 + steals x 3",
+  },
+  "double-double-machine": {
+    label: "Double-Double Machines",
+    sport: "basketball",
+    description: "PPG x RPG score (min 10 PPG and 8 RPG)",
+  },
+};
+
+export function getCompoundCategoriesForSport(sport: string): CompoundCategory[] {
+  return (Object.entries(COMPOUND_CATEGORIES) as [CompoundCategory, CompoundCategoryDef][])
+    .filter(([, def]) => def.sport === sport)
+    .map(([key]) => key);
+}
+
+/**
+ * Get compound leaderboard data for a specific category.
+ * Fetches current season stats and computes multi-column formulas client-side.
+ */
+export async function getCompoundLeaders(
+  sport: string,
+  category: CompoundCategory,
+  limit: number = 10
+): Promise<CompoundLeaderEntry[]> {
+  return withErrorHandling(
+    async () => {
+      return withRetry(async () => {
+        const client = createStaticClient();
+
+        if (sport === "football") {
+          const { data: rows, error } = await client
+            .from("football_player_seasons")
+            .select(
+              "player_id, games_played, rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td, tackles, sacks, interceptions, receptions, players(name, slug), schools(name, slug), season_id, seasons!inner(id, is_current)"
+            )
+            .eq("seasons.is_current", true)
+            .limit(1000) as { data: any[] | null; error: any };
+
+          if (error || !rows) return [];
+
+          if (category === "dual-threat-qb") {
+            return rows
+              .filter((r: any) => (r.games_played || 0) >= 5 && ((r.pass_yards || 0) > 0))
+              .map((r: any) => {
+                const passYds = r.pass_yards || 0;
+                const rushYds = r.rush_yards || 0;
+                return {
+                  player_name: r.players?.name || "Unknown",
+                  player_slug: r.players?.slug || "",
+                  school_name: r.schools?.name || "Unknown",
+                  school_slug: r.schools?.slug || "",
+                  value: passYds + rushYds,
+                  components: { "Pass Yds": passYds, "Rush Yds": rushYds },
+                };
+              })
+              .sort((a: CompoundLeaderEntry, b: CompoundLeaderEntry) => b.value - a.value)
+              .slice(0, limit);
+          }
+
+          if (category === "complete-back") {
+            return rows
+              .filter((r: any) => (r.games_played || 0) >= 5 && ((r.rush_yards || 0) > 0))
+              .map((r: any) => {
+                const rushYds = r.rush_yards || 0;
+                const recYds = r.rec_yards || 0;
+                const rushTd = r.rush_td || 0;
+                const recTd = r.rec_td || 0;
+                return {
+                  player_name: r.players?.name || "Unknown",
+                  player_slug: r.players?.slug || "",
+                  school_name: r.schools?.name || "Unknown",
+                  school_slug: r.schools?.slug || "",
+                  value: rushYds + recYds + (rushTd + recTd) * 50,
+                  components: {
+                    "Rush Yds": rushYds,
+                    "Rec Yds": recYds,
+                    "Rush TDs": rushTd,
+                    "Rec TDs": recTd,
+                  },
+                };
+              })
+              .sort((a: CompoundLeaderEntry, b: CompoundLeaderEntry) => b.value - a.value)
+              .slice(0, limit);
+          }
+
+          if (category === "defensive-impact") {
+            return rows
+              .filter(
+                (r: any) =>
+                  (r.tackles || 0) > 0 || (r.sacks || 0) > 0 || (r.interceptions || 0) > 0
+              )
+              .map((r: any) => {
+                const tackles = r.tackles || 0;
+                const sacks = r.sacks || 0;
+                const ints = r.interceptions || 0;
+                return {
+                  player_name: r.players?.name || "Unknown",
+                  player_slug: r.players?.slug || "",
+                  school_name: r.schools?.name || "Unknown",
+                  school_slug: r.schools?.slug || "",
+                  value: tackles + sacks * 2 + ints * 3,
+                  components: { Tackles: tackles, Sacks: sacks, INTs: ints },
+                };
+              })
+              .sort((a: CompoundLeaderEntry, b: CompoundLeaderEntry) => b.value - a.value)
+              .slice(0, limit);
+          }
+        }
+
+        if (sport === "basketball") {
+          const { data: rows, error } = await client
+            .from("basketball_player_seasons")
+            .select(
+              "player_id, games_played, points, ppg, rebounds, rpg, assists, steals, players(name, slug), schools(name, slug), season_id, seasons!inner(id, is_current)"
+            )
+            .eq("seasons.is_current", true)
+            .limit(1000) as { data: any[] | null; error: any };
+
+          if (error || !rows) return [];
+
+          if (category === "all-around-guard") {
+            return rows
+              .filter((r: any) => (r.points || 0) > 0 && (r.assists || 0) > 0)
+              .map((r: any) => {
+                const pts = r.points || 0;
+                const ast = r.assists || 0;
+                const stl = r.steals || 0;
+                return {
+                  player_name: r.players?.name || "Unknown",
+                  player_slug: r.players?.slug || "",
+                  school_name: r.schools?.name || "Unknown",
+                  school_slug: r.schools?.slug || "",
+                  value: pts + ast * 2 + stl * 3,
+                  components: { Points: pts, Assists: ast, Steals: stl },
+                };
+              })
+              .sort((a: CompoundLeaderEntry, b: CompoundLeaderEntry) => b.value - a.value)
+              .slice(0, limit);
+          }
+
+          if (category === "double-double-machine") {
+            return rows
+              .filter((r: any) => (r.ppg || 0) >= 10 && (r.rpg || 0) >= 8)
+              .map((r: any) => {
+                const ppg = r.ppg || 0;
+                const rpg = r.rpg || 0;
+                return {
+                  player_name: r.players?.name || "Unknown",
+                  player_slug: r.players?.slug || "",
+                  school_name: r.schools?.name || "Unknown",
+                  school_slug: r.schools?.slug || "",
+                  value: Math.round(ppg * rpg * 10) / 10,
+                  components: { PPG: ppg, RPG: rpg },
+                };
+              })
+              .sort((a: CompoundLeaderEntry, b: CompoundLeaderEntry) => b.value - a.value)
+              .slice(0, limit);
+          }
+        }
+
+        return [];
+      }, { maxRetries: 2, baseDelay: 500 });
+    },
+    [],
+    "COMPOUND_LEADERS",
+    { sport, category }
+  );
+}
+
+// ============================================================================
+// RECORD WATCH
+// ============================================================================
+
+export interface RecordWatchEntry {
+  player_name: string;
+  player_slug: string;
+  school_name: string;
+  school_slug: string;
+  stat_name: string;
+  current_value: number;
+  record_value: number;
+  record_holder: string;
+  record_year: number | null;
+  games_played: number;
+  estimated_games_remaining: number;
+  pace_projection: number;
+  on_pace: boolean;
+  needs_per_game: number | null;
+}
+
+/**
+ * Get Record Watch data: current season leaders vs all-time records.
+ * Compares current season pace against season records.
+ */
+export async function getRecordWatchData(
+  sport: string,
+  seasonLength: number = 11
+): Promise<RecordWatchEntry[]> {
+  return withErrorHandling(
+    async () => {
+      return withRetry(async () => {
+        const client = createStaticClient();
+
+        // Fetch season-scope records for this sport
+        const { data: records, error: recErr } = await client
+          .from("records")
+          .select("id, category, subcategory, scope, record_value, record_number, holder_name, year_set, sport_id")
+          .eq("scope", "season")
+          .limit(200);
+
+        if (recErr || !records || records.length === 0) return [];
+
+        // Filter records that have numeric values
+        const numericRecords = records.filter(
+          (r: any) => r.record_number != null && r.record_number > 0
+        );
+
+        if (numericRecords.length === 0) return [];
+
+        // Map stat columns to labels for matching
+        const statMappings: Record<string, { column: string; label: string }[]> = {
+          football: [
+            { column: "rush_yards", label: "Rush Yards" },
+            { column: "rush_td", label: "Rush TDs" },
+            { column: "pass_yards", label: "Pass Yards" },
+            { column: "pass_td", label: "Pass TDs" },
+            { column: "rec_yards", label: "Rec Yards" },
+            { column: "tackles", label: "Tackles" },
+            { column: "sacks", label: "Sacks" },
+            { column: "interceptions", label: "INTs" },
+          ],
+          basketball: [
+            { column: "points", label: "Points" },
+            { column: "rebounds", label: "Rebounds" },
+            { column: "assists", label: "Assists" },
+            { column: "steals", label: "Steals" },
+            { column: "blocks", label: "Blocks" },
+            { column: "three_pm", label: "3-Pointers" },
+          ],
+        };
+
+        const mappings = statMappings[sport];
+        if (!mappings) return [];
+
+        const tableName = sport === "football" ? "football_player_seasons" : "basketball_player_seasons";
+
+        // Fetch current season leaders
+        const { data: currentLeaders, error: leadErr } = await client
+          .from(tableName)
+          .select(
+            "*, players(name, slug), schools(name, slug), seasons!inner(id, is_current)"
+          )
+          .eq("seasons.is_current", true)
+          .limit(500) as { data: any[] | null; error: any };
+
+        if (leadErr || !currentLeaders) return [];
+
+        const results: RecordWatchEntry[] = [];
+
+        for (const mapping of mappings) {
+          // Find the matching record (fuzzy match on category/subcategory)
+          const matchingRecord = numericRecords.find((r: any) => {
+            const cat = (r.category || "").toLowerCase();
+            const sub = (r.subcategory || "").toLowerCase();
+            const label = mapping.label.toLowerCase();
+            return cat.includes(label) || sub.includes(label) || label.includes(cat);
+          });
+
+          if (!matchingRecord) continue;
+
+          const recordNum = Number(matchingRecord.record_number);
+          if (!recordNum || recordNum <= 0) continue;
+
+          // Find current season leader for this stat
+          const sorted = currentLeaders
+            .filter((r: any) => (r[mapping.column] || 0) > 0)
+            .sort((a: any, b: any) => (b[mapping.column] || 0) - (a[mapping.column] || 0));
+
+          const leader = sorted[0];
+          if (!leader) continue;
+
+          const currentVal = leader[mapping.column] || 0;
+          const gamesPlayed = leader.games_played || 1;
+          const gamesRemaining = Math.max(0, seasonLength - gamesPlayed);
+          const perGame = currentVal / gamesPlayed;
+          const paceProjection = Math.round(perGame * seasonLength);
+          const onPace = paceProjection >= recordNum;
+          const deficit = recordNum - currentVal;
+          const needsPerGame =
+            gamesRemaining > 0 ? Math.round((deficit / gamesRemaining) * 10) / 10 : null;
+
+          // Only show if player is within 70% of record pace or ahead
+          if (paceProjection < recordNum * 0.7) continue;
+
+          results.push({
+            player_name: leader.players?.name || "Unknown",
+            player_slug: leader.players?.slug || "",
+            school_name: leader.schools?.name || "Unknown",
+            school_slug: leader.schools?.slug || "",
+            stat_name: mapping.label,
+            current_value: currentVal,
+            record_value: recordNum,
+            record_holder: matchingRecord.holder_name || "Unknown",
+            record_year: matchingRecord.year_set || null,
+            games_played: gamesPlayed,
+            estimated_games_remaining: gamesRemaining,
+            pace_projection: paceProjection,
+            on_pace: onPace,
+            needs_per_game: needsPerGame,
+          });
+        }
+
+        // Sort by closest to record (highest ratio)
+        results.sort(
+          (a, b) => b.pace_projection / b.record_value - a.pace_projection / a.record_value
+        );
+
+        return results.slice(0, 8);
+      }, { maxRetries: 2, baseDelay: 500 });
+    },
+    [],
+    "RECORD_WATCH",
+    { sport }
+  );
+}

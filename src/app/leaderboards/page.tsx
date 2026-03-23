@@ -238,7 +238,37 @@ export default async function LeaderboardsPage() {
         ))}
       </div>
 
-      <div style={{ marginTop: '3rem', padding: '1.5rem', background: 'var(--psp-navy)', borderRadius: '12px', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* By Class Year */}
+      <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: 'var(--psp-surface)', borderRadius: '12px', border: '1px solid var(--psp-border)' }}>
+        <p style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.25rem', letterSpacing: '0.05em', color: 'var(--psp-navy)', margin: '0 0 0.75rem' }}>
+          BROWSE BY CLASS YEAR
+        </p>
+        <p style={{ color: 'var(--psp-muted)', fontSize: '0.85rem', margin: '0 0 1rem' }}>
+          See top performers from each graduating class across all sports.
+        </p>
+        <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+          {[2025, 2026, 2027, 2028].map((yr) => (
+            <Link
+              key={yr}
+              href={`/class/${yr}`}
+              style={{
+                padding: '0.45rem 1.25rem',
+                borderRadius: '8px',
+                background: 'var(--psp-navy)',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: '0.875rem',
+                textDecoration: 'none',
+                transition: 'opacity 0.15s',
+              }}
+            >
+              Class of {yr}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: 'var(--psp-navy)', borderRadius: '12px', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <p style={{ color: 'var(--psp-gold-text, #FFC107)', fontFamily: 'var(--font-bebas)', fontSize: '1.25rem', margin: 0 }}>
             LOOKING FOR ALL-TIME RECORDS?

@@ -50,10 +50,11 @@ const MORE_SPORTS = [
   { href: "/baseball", label: "Baseball", color: "var(--base)" },
 ];
 
-// Desktop: "More" dropdown (formerly Pulse + More combined)
+// Desktop: "More" dropdown (Pulse + More combined)
 const MORE_ITEMS = [
   { href: "/pulse/our-guys", label: "Our Guys" },
   { href: "/recruiting", label: "Recruiting" },
+  { href: "/recruit-finder", label: "Recruit Finder" },
   { href: "/compare", label: "Compare" },
   { href: "/pipeline", label: "Pipeline" },
   { href: "/coaches", label: "Coaches" },

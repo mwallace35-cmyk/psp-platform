@@ -830,3 +830,182 @@ export const getSchoolRivalries = cache(
     );
   }
 );
+
+// ============================================================================
+// HEAD-TO-HEAD HISTORY BETWEEN TWO SCHOOLS
+// ============================================================================
+
+export interface HeadToHeadResult {
+  totalGames: number;
+  schoolAWins: number;
+  schoolBWins: number;
+  ties: number;
+  schoolAName: string;
+  schoolBName: string;
+  schoolASlug: string;
+  schoolBSlug: string;
+  lastGame: {
+    date: string | null;
+    homeSchoolId: number | null;
+    awaySchoolId: number | null;
+    homeScore: number | null;
+    awayScore: number | null;
+  } | null;
+  streak: {
+    team: string;
+    teamId: number;
+    count: number;
+  } | null;
+}
+
+/**
+ * Get head-to-head history between two schools in a specific sport.
+ * Returns overall record, last game, and current streak.
+ */
+export const getHeadToHead = cache(
+  async (
+    schoolA: number,
+    schoolB: number,
+    sportId: string
+  ): Promise<HeadToHeadResult | null> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // Get school names
+            const { data: schools } = await supabase
+              .from("schools")
+              .select("id, name, slug")
+              .in("id", [schoolA, schoolB]);
+
+            if (!schools || schools.length < 2) return null;
+
+            const schoolAData = schools.find((s: any) => s.id === schoolA);
+            const schoolBData = schools.find((s: any) => s.id === schoolB);
+            if (!schoolAData || !schoolBData) return null;
+
+            // Get all games between the two schools in this sport
+            // schoolA could be home or away
+            const { data: gamesAHome } = await supabase
+              .from("games")
+              .select("id, game_date, home_school_id, away_school_id, home_score, away_score")
+              .eq("sport_id", sportId)
+              .eq("home_school_id", schoolA)
+              .eq("away_school_id", schoolB)
+              .not("home_score", "is", null)
+              .not("away_score", "is", null)
+              .order("game_date", { ascending: false });
+
+            const { data: gamesBHome } = await supabase
+              .from("games")
+              .select("id, game_date, home_school_id, away_school_id, home_score, away_score")
+              .eq("sport_id", sportId)
+              .eq("home_school_id", schoolB)
+              .eq("away_school_id", schoolA)
+              .not("home_score", "is", null)
+              .not("away_score", "is", null)
+              .order("game_date", { ascending: false });
+
+            const allGames = [
+              ...((gamesAHome as any[]) ?? []),
+              ...((gamesBHome as any[]) ?? []),
+            ].sort((a, b) => (b.game_date || "").localeCompare(a.game_date || ""));
+
+            if (allGames.length === 0) {
+              return {
+                totalGames: 0,
+                schoolAWins: 0,
+                schoolBWins: 0,
+                ties: 0,
+                schoolAName: schoolAData.name,
+                schoolBName: schoolBData.name,
+                schoolASlug: schoolAData.slug,
+                schoolBSlug: schoolBData.slug,
+                lastGame: null,
+                streak: null,
+              };
+            }
+
+            let schoolAWins = 0;
+            let schoolBWins = 0;
+            let ties = 0;
+
+            // Track streak (games are sorted most recent first)
+            let streakTeamId: number | null = null;
+            let streakCount = 0;
+            let streakBroken = false;
+
+            for (const game of allGames) {
+              const isAHome = game.home_school_id === schoolA;
+              const aScore = isAHome ? game.home_score : game.away_score;
+              const bScore = isAHome ? game.away_score : game.home_score;
+
+              let winnerId: number | null = null;
+              if (aScore > bScore) {
+                schoolAWins++;
+                winnerId = schoolA;
+              } else if (bScore > aScore) {
+                schoolBWins++;
+                winnerId = schoolB;
+              } else {
+                ties++;
+                winnerId = null;
+              }
+
+              // Build streak from most recent games
+              if (!streakBroken) {
+                if (winnerId === null) {
+                  // Tie breaks streak
+                  if (streakCount === 0) continue;
+                  streakBroken = true;
+                } else if (streakTeamId === null) {
+                  streakTeamId = winnerId;
+                  streakCount = 1;
+                } else if (winnerId === streakTeamId) {
+                  streakCount++;
+                } else {
+                  streakBroken = true;
+                }
+              }
+            }
+
+            const lastGame = allGames[0];
+            const streakTeamName = streakTeamId === schoolA
+              ? schoolAData.name
+              : streakTeamId === schoolB
+                ? schoolBData.name
+                : null;
+
+            return {
+              totalGames: allGames.length,
+              schoolAWins,
+              schoolBWins,
+              ties,
+              schoolAName: schoolAData.name,
+              schoolBName: schoolBData.name,
+              schoolASlug: schoolAData.slug,
+              schoolBSlug: schoolBData.slug,
+              lastGame: {
+                date: lastGame.game_date,
+                homeSchoolId: lastGame.home_school_id,
+                awaySchoolId: lastGame.away_school_id,
+                homeScore: lastGame.home_score,
+                awayScore: lastGame.away_score,
+              },
+              streak:
+                streakTeamId && streakCount > 1
+                  ? { team: streakTeamName!, teamId: streakTeamId, count: streakCount }
+                  : null,
+            };
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      null,
+      "DATA_HEAD_TO_HEAD",
+      { schoolA, schoolB, sportId }
+    );
+  }
+);
