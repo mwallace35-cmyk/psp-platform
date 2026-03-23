@@ -60,8 +60,8 @@ export const getLeagueStandings = cache(
 
             query = query.eq("sport_id", sportSlug);
 
+            // Always filter by season — never return all seasons
             if (seasonLabel) {
-              // Get the season ID for this label to filter directly on the FK
               const seasonClient = await createClient();
               const { data: seasonData } = await seasonClient
                 .from("seasons")
@@ -70,6 +70,27 @@ export const getLeagueStandings = cache(
                 .single();
               if (seasonData?.id) {
                 query = query.eq("season_id", seasonData.id);
+              } else {
+                // Fallback: use current season
+                const { data: currentSeason } = await seasonClient
+                  .from("seasons")
+                  .select("id")
+                  .eq("is_current", true)
+                  .single();
+                if (currentSeason?.id) {
+                  query = query.eq("season_id", currentSeason.id);
+                }
+              }
+            } else {
+              // No season specified — use current season
+              const seasonClient = await createClient();
+              const { data: currentSeason } = await seasonClient
+                .from("seasons")
+                .select("id")
+                .eq("is_current", true)
+                .single();
+              if (currentSeason?.id) {
+                query = query.eq("season_id", currentSeason.id);
               }
             }
 
