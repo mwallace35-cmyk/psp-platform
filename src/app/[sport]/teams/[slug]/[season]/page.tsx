@@ -433,7 +433,24 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                   </tr>
                 </thead>
                 <tbody>
-                  {games.map((gameRaw: any, idx: number) => {
+                  {games
+                    .filter((g: any) => {
+                      // Filter out games with no opponent
+                      const isHome = g.home_school_id === school.id;
+                      const opp = isHome ? g.away_school : g.home_school;
+                      return opp != null;
+                    })
+                    .filter((g: any, i: number, arr: any[]) => {
+                      // Deduplicate: keep first occurrence of each opponent+date combo
+                      const isHome = g.home_school_id === school.id;
+                      const oppId = isHome ? g.away_school_id : g.home_school_id;
+                      return arr.findIndex((g2: any) => {
+                        const isHome2 = g2.home_school_id === school.id;
+                        const oppId2 = isHome2 ? g2.away_school_id : g2.home_school_id;
+                        return oppId === oppId2 && g.game_date === g2.game_date;
+                      }) === i;
+                    })
+                    .map((gameRaw: any, idx: number) => {
                     const game = gameRaw as Game & Record<string, any>;
                     const isHome = game.home_school_id === school.id;
                     const opponent = isHome ? game.away_school : game.home_school;
@@ -572,7 +589,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               Projected {season} Roster
             </h2>
             <p className="text-sm text-gray-400 mb-6">
-              Based on {prevSeason} roster — seniors removed
+              Based on {prevSeason} roster — seniors graduated
             </p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-gray-200">
@@ -774,7 +791,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           {roster.length > 0 ? (
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-gray-200">
+                <table className="w-full text-sm text-gray-700">
                   {sport === "football" && (
                     <>
                       <thead>
@@ -802,7 +819,11 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         </tr>
                       </thead>
                       <tbody>
-                        {roster.map((player: unknown, idx: number) => {
+                        {[...roster].sort((a: unknown, b: unknown) => {
+                          const aNum = parseInt(String((a as Record<string, unknown>).jersey_number || '999'), 10);
+                          const bNum = parseInt(String((b as Record<string, unknown>).jersey_number || '999'), 10);
+                          return aNum - bNum;
+                        }).map((player: unknown, idx: number) => {
                           // Roster API returns enriched data with stats beyond RosterPlayer type
                           const p = player as RosterPlayer & Record<string, unknown>;
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -812,7 +833,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                           const hasRec = (stats.rec_yards as number | null) !== null && (stats.rec_yards as number) !== 0;
                           return (
                             <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
-                              <td className="py-3 px-4 text-xs text-gray-400 sticky left-0 bg-white">{idx + 1}</td>
+                              <td className="py-3 px-4 text-xs font-bold text-gray-500 sticky left-0 bg-white">{p.jersey_number ?? '—'}</td>
                               <td className="py-3 px-4 font-medium sticky left-8 bg-white" style={{ color: "var(--psp-navy)" }}>
                                 {p.players ? (
                                   <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
@@ -876,13 +897,17 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         </tr>
                       </thead>
                       <tbody>
-                        {roster.map((player: unknown, idx: number) => {
+                        {[...roster].sort((a: unknown, b: unknown) => {
+                          const aNum = parseInt(String((a as Record<string, unknown>).jersey_number || '999'), 10);
+                          const bNum = parseInt(String((b as Record<string, unknown>).jersey_number || '999'), 10);
+                          return aNum - bNum;
+                        }).map((player: unknown, idx: number) => {
                           const p = player as RosterPlayer & Record<string, unknown>;
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           const stats = p as any;
                           return (
                             <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
-                              <td className="py-3 px-4 text-xs text-gray-400">{idx + 1}</td>
+                              <td className="py-3 px-4 text-xs font-bold text-gray-500">{p.jersey_number ?? '—'}</td>
                               <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
                                 {p.players ? (
                                   <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
@@ -943,9 +968,13 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         </tr>
                       </thead>
                       <tbody>
-                        {roster.map((p: RosterPlayer, idx: number) => (
+                        {[...roster].sort((a: RosterPlayer, b: RosterPlayer) => {
+                          const aNum = parseInt(String(a.jersey_number || '999'), 10);
+                          const bNum = parseInt(String(b.jersey_number || '999'), 10);
+                          return aNum - bNum;
+                        }).map((p: RosterPlayer, idx: number) => (
                           <tr key={p.id || idx} className="hover:bg-gray-50" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
-                            <td className="py-3 px-4 text-xs text-gray-400">{idx + 1}</td>
+                            <td className="py-3 px-4 text-xs font-bold text-gray-500">{p.jersey_number ?? '—'}</td>
                             <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
                               {p.players ? (
                                 <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
