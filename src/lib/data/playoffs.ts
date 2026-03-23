@@ -54,22 +54,48 @@ export const getPlayoffBrackets = cache(
       async () => {
         const supabase = await createClient();
 
-        // First get the most recent season for this sport
-        const { data: seasonData } = await supabase
+        // Get current season (or most recent with bracket data for this sport)
+        let seasonId: number | null = null;
+
+        // Try current season first
+        const { data: currentSeason } = await supabase
           .from("seasons")
           .select("id")
-          .order("year_start", { ascending: false })
-          .limit(1)
+          .eq("is_current", true)
           .single();
 
-        if (!seasonData) return [];
+        if (currentSeason?.id) {
+          // Check if this season has brackets for this sport
+          const { count } = await supabase
+            .from("playoff_brackets")
+            .select("id", { count: "exact", head: true })
+            .eq("sport_id", sportId)
+            .eq("season_id", currentSeason.id);
+          if (count && count > 0) {
+            seasonId = currentSeason.id;
+          }
+        }
+
+        // If no brackets in current season, find the most recent season that has them
+        if (!seasonId) {
+          const { data: recentBracket } = await supabase
+            .from("playoff_brackets")
+            .select("season_id")
+            .eq("sport_id", sportId)
+            .order("season_id", { ascending: false })
+            .limit(1)
+            .single();
+          seasonId = recentBracket?.season_id ?? null;
+        }
+
+        if (!seasonId) return [];
 
         // Get brackets for this sport + season
         const { data: brackets, error: bracketsError } = await supabase
           .from("playoff_brackets")
           .select("*")
           .eq("sport_id", sportId)
-          .eq("season_id", seasonData.id)
+          .eq("season_id", seasonId)
           .order("name");
 
         if (bracketsError || !brackets || brackets.length === 0) return [];
@@ -143,20 +169,31 @@ export const getPlayoffBracketTypes = cache(
       async () => {
         const supabase = await createClient();
 
-        const { data: seasonData } = await supabase
+        // Use current season, fallback to most recent with brackets
+        const { data: currentSeason } = await supabase
           .from("seasons")
           .select("id")
-          .order("year_start", { ascending: false })
-          .limit(1)
+          .eq("is_current", true)
           .single();
 
-        if (!seasonData) return [];
+        let typeSeasonId = currentSeason?.id;
+        if (!typeSeasonId) {
+          const { data: recent } = await supabase
+            .from("playoff_brackets")
+            .select("season_id")
+            .eq("sport_id", sportId)
+            .order("season_id", { ascending: false })
+            .limit(1)
+            .single();
+          typeSeasonId = recent?.season_id;
+        }
+        if (!typeSeasonId) return [];
 
         const { data, error } = await supabase
           .from("playoff_brackets")
           .select("bracket_type, name")
           .eq("sport_id", sportId)
-          .eq("season_id", seasonData.id)
+          .eq("season_id", typeSeasonId)
           .order("name");
 
         if (error || !data) return [];
