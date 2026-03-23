@@ -123,7 +123,7 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Rushing
             </h4>
-            <table className="w-full text-sm">
+            <table className="w-full text-sm text-gray-200">
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
                   <th className="text-left py-1 pr-2">Player</th>
@@ -168,7 +168,7 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Passing
             </h4>
-            <table className="w-full text-sm">
+            <table className="w-full text-sm text-gray-200">
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
                   <th className="text-left py-1 pr-2">Player</th>
@@ -213,7 +213,7 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Receiving
             </h4>
-            <table className="w-full text-sm">
+            <table className="w-full text-sm text-gray-200">
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
                   <th className="text-left py-1 pr-2">Player</th>
@@ -315,7 +315,7 @@ function BasketballBoxScore({
         <h3 className="text-lg font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase">
           {label} {displayPts > 0 && <span className="text-white">({displayPts} pts)</span>}
         </h3>
-        <table className="w-full text-sm">
+        <table className="w-full text-sm text-gray-200">
           <thead>
             <tr className="text-gray-400 border-b border-gray-700">
               <th className="text-left py-1 pr-2">Player</th>
@@ -600,7 +600,7 @@ export default async function GameDetailPage({
                     </Link>
                   </h3>
                   {t.players.length > 0 ? (
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm text-gray-200">
                       <thead>
                         <tr className="text-gray-400 border-b border-gray-700">
                           <th className="text-left py-1 pr-2">Player</th>
