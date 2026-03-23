@@ -37,6 +37,7 @@ interface ScoreGame {
   seasons: { label: string } | null;
   home_league_id: number | null;
   away_league_id: number | null;
+  game_type: string | null;
 }
 
 const CORE_LEAGUES = [
@@ -288,7 +289,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     let query = supabase
       .from("games")
       .select(
-        "id, sport_id, game_date, home_score, away_score, home_school_id, away_school_id, season_id",
+        "id, sport_id, game_date, home_score, away_score, home_school_id, away_school_id, season_id, game_type",
         useRoundView ? undefined : { count: "exact" }
       )
       .not("home_score", "is", null)
@@ -844,6 +845,44 @@ function GameCard({
           {game.home_school?.name || "TBD"}
         </span>
       </div>
+
+      {/* Right: game type badge */}
+      {game.game_type && game.game_type !== 'regular' && (
+        <span
+          style={{
+            fontSize: "0.6rem",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+            padding: "0.15rem 0.4rem",
+            borderRadius: "3px",
+            whiteSpace: "nowrap",
+            ...(game.game_type === 'playoff' || game.game_type?.includes('playoff') ? {
+              background: "rgba(234, 88, 12, 0.15)",
+              color: "#f97316",
+              border: "1px solid rgba(234, 88, 12, 0.3)",
+            } : game.game_type?.includes('championship') || game.game_type?.includes('final') ? {
+              background: "rgba(240, 165, 0, 0.15)",
+              color: "#f0a500",
+              border: "1px solid rgba(240, 165, 0, 0.3)",
+            } : game.game_type?.includes('district') ? {
+              background: "rgba(59, 130, 246, 0.15)",
+              color: "#60a5fa",
+              border: "1px solid rgba(59, 130, 246, 0.3)",
+            } : {
+              background: "rgba(107, 114, 128, 0.15)",
+              color: "#9ca3af",
+              border: "1px solid rgba(107, 114, 128, 0.3)",
+            }),
+          }}
+        >
+          {game.game_type === 'playoff' ? '🏆 Playoff' :
+           game.game_type?.includes('championship') ? '🥇 Championship' :
+           game.game_type?.includes('final') ? '🥇 Final' :
+           game.game_type?.includes('district') ? '📍 District' :
+           game.game_type}
+        </span>
+      )}
     </Link>
   );
 }
