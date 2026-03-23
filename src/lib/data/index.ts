@@ -52,7 +52,9 @@ export {
   getSchoolTeamSeasons,
   getSchoolChampionships,
   getSchoolNotablePlayers,
+  getCurrentSeasonData,
   type NotablePlayer,
+  type CurrentSeasonData,
 } from "./schools";
 
 // School hub functions
@@ -141,6 +143,15 @@ export {
   type TeamGame,
   type HeadToHeadResult,
 } from "./games";
+
+// Season awareness helpers
+export {
+  getCurrentSeasonId,
+  getCurrentSeason,
+  getSeasonPhaseForSport,
+  type SeasonPhase,
+  type SportSeasonInfo,
+} from "./seasons";
 
 // Pulse / community hub functions
 export {

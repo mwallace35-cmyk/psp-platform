@@ -1,7 +1,8 @@
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, getTeamsWithRecords, getTrackedAlumni, type Championship, getCompoundLeaders, getCompoundCategoriesForSport, COMPOUND_CATEGORIES, getRecordWatchData } from "@/lib/data";
+import { SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, getTeamsWithRecords, getTrackedAlumni, type Championship, getCompoundLeaders, getCompoundCategoriesForSport, COMPOUND_CATEGORIES, getRecordWatchData, getSeasonPhaseForSport } from "@/lib/data";
 import type { CompoundCategory } from "@/lib/data/computed-records";
+import type { SeasonPhase, SportSeasonInfo } from "@/lib/data/seasons";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import SportLayoutSwitcher from "@/components/sport-layouts/SportLayoutSwitcher";
 import HubScoresStrip, { type HubGame } from "@/components/sport-layouts/HubScoresStrip";
@@ -138,6 +139,13 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
   let trackedAlumni: TrackedAlumni[] = [];
   let compoundCategories: { key: string; label: string; description: string; data: any[] }[] = [];
   let recordWatchData: Awaited<ReturnType<typeof getRecordWatchData>> = [];
+  let seasonInfo: SportSeasonInfo = {
+    phase: "offseason" as SeasonPhase,
+    lastGameDate: null,
+    scoredGames: 0,
+    scheduledGames: 0,
+    typicalStartMonth: null,
+  };
 
   try {
     // Build compound leaderboard fetch promises
@@ -163,10 +171,11 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       getTrackedAlumni({ sport }, 8),
       Promise.allSettled(compoundPromises),
       getRecordWatchData(sport, sport === "basketball" ? 25 : 11),
+      getSeasonPhaseForSport(sport),
     ]);
 
     // Process results safely
-    const [overviewResult, championsResult, schoolsResult, featuredResult, freshnessResult, gamesResult, standingsResult, alumniResult, compoundResult, recordWatchResult] = results;
+    const [overviewResult, championsResult, schoolsResult, featuredResult, freshnessResult, gamesResult, standingsResult, alumniResult, compoundResult, recordWatchResult, seasonInfoResult] = results;
 
     if (overviewResult.status === "fulfilled") overview = overviewResult.value as unknown as SportOverview;
     if (championsResult.status === "fulfilled") champions = championsResult.value as unknown as Championship[];
@@ -189,6 +198,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       recordWatchData = recordWatchResult.value as Awaited<ReturnType<typeof getRecordWatchData>>;
     }
     if (alumniResult.status === "fulfilled") trackedAlumni = alumniResult.value as unknown as TrackedAlumni[];
+    if (seasonInfoResult.status === "fulfilled") seasonInfo = seasonInfoResult.value as SportSeasonInfo;
 
     // Log any failures with structured error context (development logging)
     if (process.env.NODE_ENV === 'development') {
@@ -260,18 +270,38 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     // Page will degrade gracefully with fallback data already set above
   }
 
-  // Sport-specific editorial intros
-  const sportIntros: Record<string, string> = {
-    football: "From the Catholic League's storied rivalry games at Franklin Field to the Public League's Friday night lights, Philadelphia football has produced NFL legends and forged lifelong bonds. Explore the statistics and stories that defined generations of champions.",
-    basketball: "The Catholic League's dynasties, the Public League's talent pipeline, and the Inter-Ac's proud traditions. Philadelphia basketball has given the world Hall of Famers and inspired countless athletes. Discover the players and programs that built this legacy.",
-    baseball: "From All-City award winners to PIAA state champions, Philadelphia's baseball tradition runs deep. Explore the schools, players, and seasons that have made Philly a baseball hotbed.",
-    soccer: "Philadelphia's soccer programs have built increasingly competitive traditions across multiple leagues. Discover the schools, players, and championships shaping this growing sport.",
-    lacrosse: "Elite programs like Haverford, Conestoga, and Episcopal have put Philadelphia on the lacrosse map nationally. Explore the history, champions, and rising stars of Philly lacrosse.",
-    'track-field': "From sprinters to distance runners, from jumpers to throwers — Philadelphia's track and field athletes have set records that inspire. Discover the individual achievements and team championships.",
-    wrestling: "Malvern Prep's national ranking, PAISWT champions, and a tradition of toughness defines Philadelphia wrestling. Explore the wrestlers and programs building this legacy.",
+  // Sport-specific editorial intros — now season-phase aware
+  const sportIntrosBase: Record<string, string> = {
+    football: "From the Catholic League's storied rivalry games at Franklin Field to the Public League's Friday night lights, Philadelphia football has produced NFL legends and forged lifelong bonds.",
+    basketball: "The Catholic League's dynasties, the Public League's talent pipeline, and the Inter-Ac's proud traditions. Philadelphia basketball has given the world Hall of Famers and inspired countless athletes.",
+    baseball: "From All-City award winners to PIAA state champions, Philadelphia's baseball tradition runs deep. The schools, players, and seasons that have made Philly a baseball hotbed.",
+    soccer: "Philadelphia's soccer programs have built increasingly competitive traditions across multiple leagues. The schools, players, and championships shaping this growing sport.",
+    lacrosse: "Elite programs like Haverford, Conestoga, and Episcopal have put Philadelphia on the lacrosse map nationally. The history, champions, and rising stars of Philly lacrosse.",
+    'track-field': "From sprinters to distance runners, from jumpers to throwers — Philadelphia's track and field athletes have set records that inspire.",
+    wrestling: "Malvern Prep's national ranking, PAISWT champions, and a tradition of toughness defines Philadelphia wrestling.",
   };
 
-  const sportIntro = sportIntros[sport] || "Explore the history, statistics, and champions of Philadelphia high school sports.";
+  // Build season-phase suffix
+  let phaseIntroSuffix = " Explore the statistics and stories that defined generations of champions.";
+  if (seasonInfo.phase === "in-season") {
+    phaseIntroSuffix = ` The ${meta.name.toLowerCase()} season is underway — follow the latest scores, stats, and standings.`;
+  } else if (seasonInfo.phase === "preseason") {
+    phaseIntroSuffix = ` The ${meta.name.toLowerCase()} season is just around the corner. Check back soon for scores and stats.`;
+  } else if (seasonInfo.phase === "offseason") {
+    const returnMonth = seasonInfo.typicalStartMonth;
+    phaseIntroSuffix = returnMonth
+      ? ` ${meta.name} returns in ${returnMonth}. Until then, explore the records and stories from past seasons.`
+      : ` Explore the records and stories from past seasons.`;
+  }
+
+  const sportIntro = (sportIntrosBase[sport] || "Explore the history, statistics, and champions of Philadelphia high school sports.") + phaseIntroSuffix;
+
+  // Season phase badge config
+  const phaseBadge: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
+    "in-season": { label: "In Season", color: "text-green-300", bg: "bg-green-500/20 border-green-500/30" },
+    "preseason": { label: "Preseason", color: "text-yellow-300", bg: "bg-yellow-500/20 border-yellow-500/30" },
+    "offseason": { label: "Offseason", color: "text-gray-300", bg: "bg-gray-500/20 border-gray-500/30" },
+  };
 
   return (
     <main id="main-content">
@@ -293,9 +323,14 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="flex items-center gap-4">
             <span style={{ fontSize: 48 }} aria-hidden="true">{meta.emoji}</span>
-            <h1 className="text-4xl md:text-5xl font-black" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
-              {meta.name}
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-4xl md:text-5xl font-black" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                {meta.name}
+              </h1>
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${phaseBadge[seasonInfo.phase].color} ${phaseBadge[seasonInfo.phase].bg}`}>
+                {phaseBadge[seasonInfo.phase].label}
+              </span>
+            </div>
           </div>
         </div>
       </div>

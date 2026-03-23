@@ -367,3 +367,175 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
     { schoolId, sportId, limit }
   );
 });
+
+// ============================================================================
+// CURRENT SEASON DATA (for school page "Current Season" block)
+// ============================================================================
+
+export interface CurrentSeasonData {
+  seasonId: number;
+  seasonLabel: string;
+  teamSeason: {
+    id: number;
+    wins: number;
+    losses: number;
+    ties: number;
+    league_finish: string | null;
+    playoff_result: string | null;
+    coach: { name: string; slug: string } | null;
+  } | null;
+  nextGame: {
+    id: number;
+    game_date: string | null;
+    home_score: number | null;
+    away_score: number | null;
+    game_type: string | null;
+    isHome: boolean;
+    opponent: { name: string; slug: string };
+  } | null;
+  roster: Array<{
+    id: number;
+    jersey_number: string | null;
+    position: string | null;
+    class_year: string | null;
+    player: { id: number; name: string; slug: string };
+  }>;
+}
+
+/**
+ * Get current season data for a school: record, standing, next game, and roster preview.
+ * Returns null if no current season exists or no team_season for this school/sport.
+ */
+export const getCurrentSeasonData = cache(
+  async (schoolId: number, sportId: string): Promise<CurrentSeasonData | null> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // 1. Get current season
+            const { data: currentSeason } = await supabase
+              .from("seasons")
+              .select("id, label")
+              .eq("is_current", true)
+              .single();
+
+            if (!currentSeason) return null;
+
+            // 2. Get team_season for this school/sport/season
+            const { data: teamSeason } = await supabase
+              .from("team_seasons")
+              .select("id, wins, losses, ties, league_finish, playoff_result, coaches(name, slug)")
+              .eq("school_id", schoolId)
+              .eq("sport_id", sportId)
+              .eq("season_id", currentSeason.id)
+              .single();
+
+            if (!teamSeason) return null;
+
+            // 3. Get most recent/next game (closest to today, preferring future games)
+            const today = new Date().toISOString().split("T")[0];
+
+            // Try future game first
+            const { data: futureGame } = await supabase
+              .from("games")
+              .select(
+                `id, game_date, home_score, away_score, game_type, home_school_id, away_school_id,
+                 home_school:schools!games_home_school_id_fkey(name, slug),
+                 away_school:schools!games_away_school_id_fkey(name, slug)`
+              )
+              .eq("season_id", currentSeason.id)
+              .eq("sport_id", sportId)
+              .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+              .gte("game_date", today)
+              .order("game_date", { ascending: true })
+              .limit(1);
+
+            // If no future game, get most recent past game
+            let gameData = futureGame?.[0] || null;
+            if (!gameData) {
+              const { data: pastGame } = await supabase
+                .from("games")
+                .select(
+                  `id, game_date, home_score, away_score, game_type, home_school_id, away_school_id,
+                   home_school:schools!games_home_school_id_fkey(name, slug),
+                   away_school:schools!games_away_school_id_fkey(name, slug)`
+                )
+                .eq("season_id", currentSeason.id)
+                .eq("sport_id", sportId)
+                .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+                .order("game_date", { ascending: false })
+                .limit(1);
+              gameData = pastGame?.[0] || null;
+            }
+
+            let nextGame: CurrentSeasonData["nextGame"] = null;
+            if (gameData) {
+              const isHome = gameData.home_school_id === schoolId;
+              const opponentRaw = isHome ? gameData.away_school : gameData.home_school;
+              const opponent = Array.isArray(opponentRaw) ? opponentRaw[0] : opponentRaw;
+              nextGame = {
+                id: gameData.id,
+                game_date: gameData.game_date,
+                home_score: gameData.home_score,
+                away_score: gameData.away_score,
+                game_type: gameData.game_type,
+                isHome,
+                opponent: opponent || { name: "TBD", slug: "" },
+              };
+            }
+
+            // 4. Get roster preview (up to 8 players, prefer starters/positions)
+            const { data: rosterData } = await supabase
+              .from("rosters")
+              .select("id, jersey_number, position, class_year, players(id, name, slug)")
+              .eq("school_id", schoolId)
+              .eq("sport_id", sportId)
+              .eq("season_id", currentSeason.id)
+              .order("position")
+              .order("jersey_number")
+              .limit(8);
+
+            const roster = (rosterData || []).map((r: any) => {
+              const player = Array.isArray(r.players) ? r.players[0] : r.players;
+              return {
+                id: r.id,
+                jersey_number: r.jersey_number,
+                position: r.position,
+                class_year: r.class_year,
+                player: player || { id: 0, name: "Unknown", slug: "" },
+              };
+            });
+
+            const coach = teamSeason.coaches
+              ? Array.isArray(teamSeason.coaches)
+                ? (teamSeason.coaches as any)[0]
+                : teamSeason.coaches
+              : null;
+
+            return {
+              seasonId: currentSeason.id,
+              seasonLabel: currentSeason.label,
+              teamSeason: {
+                id: teamSeason.id,
+                wins: teamSeason.wins ?? 0,
+                losses: teamSeason.losses ?? 0,
+                ties: teamSeason.ties ?? 0,
+                league_finish: teamSeason.league_finish,
+                playoff_result: teamSeason.playoff_result,
+                coach,
+              },
+              nextGame,
+              roster,
+            };
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      null,
+      "DATA_CURRENT_SEASON",
+      { schoolId, sportId }
+    );
+  }
+);

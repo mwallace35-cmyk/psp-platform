@@ -607,10 +607,13 @@ export default async function GameDetailPage({
       {boxScore.length > 0 ? (
         <section>
           <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">
-            {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average') ? 'Player Stats' : 'Box Score'}
+            {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average') ? 'Player Stats (Season Averages)' : 'Box Score'}
           </h2>
           {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average') && (
-            <p className="text-xs text-gray-500 mb-4">Per-game averages based on season totals</p>
+            <div className="flex items-start gap-2 rounded-lg px-4 py-3 mb-4" style={{ backgroundColor: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+              <span className="text-amber-400 text-base leading-5 flex-shrink-0" aria-hidden="true">&#9432;</span>
+              <p className="text-amber-300 text-sm leading-5">Per-game averages based on season totals. Actual game stats not available.</p>
+            </div>
           )}
           <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-6">
             {sport === "football" ? (

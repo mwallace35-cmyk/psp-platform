@@ -10,6 +10,7 @@ import {
   RosterPlayer,
   TeamSeasonWithRelations,
 } from "./common";
+import { getCurrentSeasonId } from "./seasons";
 
 // Helper type for sorting season-joined data
 interface SeasonJoinedRecord {
@@ -290,20 +291,37 @@ export const getRecentGamesBySport = cache(
           async () => {
             const supabase = await createClient();
 
-            // Step 1: Find the most recent season that has completed games
-            // Exclude 0-0 placeholder games (future/unplayed games with default scores)
-            const { data: latestSeasonData } = await supabase
-              .from("games")
-              .select("season_id, seasons(id, label, year_start)")
-              .eq("sport_id", sportId)
-              .not("home_score", "is", null)
-              .not("away_score", "is", null)
-              .not("season_id", "is", null)
-              .or("home_score.gt.0,away_score.gt.0")
-              .order("game_date", { ascending: false })
-              .limit(1);
+            // Step 1: Use the current season (is_current = true)
+            // Fall back to the most recent season with scored games if current has none
+            const currentSeasonId = await getCurrentSeasonId();
 
-            const latestSeasonId = latestSeasonData?.[0]?.season_id;
+            // Check if the current season has scored games for this sport
+            const { count: currentSeasonGames } = await supabase
+              .from("games")
+              .select("id", { count: "exact", head: true })
+              .eq("sport_id", sportId)
+              .eq("season_id", currentSeasonId)
+              .not("home_score", "is", null)
+              .or("home_score.gt.0,away_score.gt.0");
+
+            let latestSeasonId = currentSeasonId;
+
+            // If no scored games in current season for this sport,
+            // find the most recent season that does have games
+            if ((currentSeasonGames ?? 0) === 0) {
+              const { data: latestSeasonData } = await supabase
+                .from("games")
+                .select("season_id")
+                .eq("sport_id", sportId)
+                .not("home_score", "is", null)
+                .not("season_id", "is", null)
+                .or("home_score.gt.0,away_score.gt.0")
+                .order("game_date", { ascending: false })
+                .limit(1);
+
+              latestSeasonId = latestSeasonData?.[0]?.season_id ?? currentSeasonId;
+            }
+
             if (!latestSeasonId) return [];
 
             // Step 2: Fetch completed games from that season only

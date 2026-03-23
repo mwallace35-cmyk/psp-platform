@@ -16,6 +16,7 @@ export interface MergedGameEntry {
   recYards: number | null;
   points: number | null;
   bbPoints: number | null;
+  sourceType: string | null;
 }
 
 // Exported utilities (also used by GameLogAccordion)

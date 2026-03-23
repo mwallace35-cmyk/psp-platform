@@ -2,7 +2,8 @@ import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
-import { SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, getSchoolNotablePlayers, type School, type TeamSeason, type Championship, type NotablePlayer } from "@/lib/data";
+import { SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, getSchoolNotablePlayers, getCurrentSeasonData, type School, type TeamSeason, type Championship, type NotablePlayer } from "@/lib/data";
+import CurrentSeasonBlock from "@/components/school/CurrentSeasonBlock";
 import { Breadcrumb, TrendChart } from "@/components/ui";
 import WinLossBar from "@/components/ui/WinLossBar";
 import BookmarkButton from "@/components/ui/BookmarkButton";
@@ -102,6 +103,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   let championships: Championship[] = [];
   let notablePlayers: NotablePlayer[] = [];
   let rivalries: any[] = [];
+  let currentSeasonData: Awaited<ReturnType<typeof getCurrentSeasonData>> = null;
 
   try {
     const results = await Promise.allSettled([
@@ -109,17 +111,20 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
       getSchoolChampionships(school.id, sport),
       getSchoolNotablePlayers(school.id, sport, 10),
       getSchoolRivalries(school.id, sport),
+      getCurrentSeasonData(school.id, sport),
     ]);
 
     if (results[0].status === "fulfilled") teamSeasons = results[0].value;
     if (results[1].status === "fulfilled") championships = results[1].value;
     if (results[2].status === "fulfilled") notablePlayers = results[2].value;
     if (results[3].status === "fulfilled") rivalries = results[3].value;
+    if (results[4].status === "fulfilled") currentSeasonData = results[4].value;
 
     if (results[0].status === "rejected") captureError(results[0].reason, { sport, slug, fetch: "getSchoolTeamSeasons" });
     if (results[1].status === "rejected") captureError(results[1].reason, { sport, slug, fetch: "getSchoolChampionships" });
     if (results[2].status === "rejected") captureError(results[2].reason, { sport, slug, fetch: "getSchoolNotablePlayers" });
     if (results[3].status === "rejected") captureError(results[3].reason, { sport, slug, fetch: "getSchoolRivalries" });
+    if (results[4].status === "rejected") captureError(results[4].reason, { sport, slug, fetch: "getCurrentSeasonData" });
   } catch (error) {
     captureError(error, { sport, slug, context: "data_fetching" });
   }
@@ -233,6 +238,18 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Current Season Block - first visible section */}
+            {currentSeasonData && (
+              <CurrentSeasonBlock
+                data={currentSeasonData}
+                schoolName={school.name}
+                schoolSlug={slug}
+                sport={sport}
+                sportColor={meta.color}
+                sportName={meta.name}
+              />
+            )}
+
             {/* Data Source Badge */}
             <div className="flex flex-wrap items-center gap-3">
               <DataSourceBadge

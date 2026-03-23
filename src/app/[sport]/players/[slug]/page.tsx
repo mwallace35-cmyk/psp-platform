@@ -180,6 +180,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       recYards: bs?.rec_yards ?? null,
       points: bs?.points ?? null,
       bbPoints: bs?.points ?? null,
+      sourceType: bs?.source_type ?? null,
     };
   });
 
@@ -203,6 +204,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         recYards: g.rec_yards,
         points: g.points,
         bbPoints: g.points,
+        sourceType: g.source_type ?? null,
       });
     }
   }
@@ -677,6 +679,10 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* Game Log Accordion — collapsible seasons with award badges */}
             {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
+              <>
+              {mergedGames.some(g => g.sourceType === 'season_average') && (
+                <p className="text-xs text-amber-400/80 italic mb-2">Some game stats are estimated from season averages</p>
+              )}
               <GameLogAccordion
                 games={mergedGames}
                 awards={(awards as Award[]).map(a => ({
@@ -690,6 +696,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 playerSchoolId={player.primary_school_id ?? null}
                 playerName={player.name}
               />
+              </>
             )}
 
             {/* Awards */}

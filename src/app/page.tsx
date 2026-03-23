@@ -1,4 +1,5 @@
 import { createStaticClient } from '@/lib/supabase/static';
+import { getCurrentSeasonId } from '@/lib/data/seasons';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { OrganizationJsonLd } from '@/components/seo/JsonLd';
@@ -27,6 +28,9 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const supabase = createStaticClient();
+
+  // Get current season for season-aware queries
+  const currentSeasonId = await getCurrentSeasonId();
 
   // Parallel data fetching — lightweight queries only
   const [articlesRes, recentGamesRes, alumniRes, potwRes] = await Promise.all([
@@ -63,8 +67,28 @@ export default async function HomePage() {
       .limit(6),
   ]);
 
+  // Season-aware scores fallback: if no games in last 7 days,
+  // show most recent completed games from the current season
+  let seasonFallbackGamesRes: typeof recentGamesRes | null = null;
+  let scoresLabel: 'this-week' | 'recent' = 'this-week';
+
+  if ((recentGamesRes.data ?? []).length === 0) {
+    seasonFallbackGamesRes = await supabase
+      .from('games')
+      .select('id, game_date, sport_id, home_score, away_score, home_school:home_school_id(name, slug), away_school:away_school_id(name, slug)')
+      .not('home_score', 'is', null)
+      .eq('season_id', currentSeasonId)
+      .or('home_score.gt.0,away_score.gt.0')
+      .order('game_date', { ascending: false })
+      .limit(8);
+    scoresLabel = 'recent';
+  }
+
   const articles = articlesRes.data ?? [];
-  const recentGames = (recentGamesRes.data ?? []).map((g: Record<string, unknown>) => ({
+  const rawGames = (recentGamesRes.data ?? []).length > 0
+    ? (recentGamesRes.data ?? [])
+    : (seasonFallbackGamesRes?.data ?? []);
+  const recentGames = rawGames.map((g: Record<string, unknown>) => ({
     ...g,
     home_school: Array.isArray(g.home_school) ? g.home_school[0] : g.home_school,
     away_school: Array.isArray(g.away_school) ? g.away_school[0] : g.away_school,
@@ -156,15 +180,21 @@ export default async function HomePage() {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Recent Scores */}
-            {recentGames.length > 0 && (
-              <section>
-                <div className="flex items-center justify-between mb-1">
-                  <h2 className="text-lg font-bebas text-gray-100 tracking-wider">This Week</h2>
-                  <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
-                    All Scores →
-                  </Link>
-                </div>
+            <section>
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="text-lg font-bebas text-gray-100 tracking-wider">
+                  {scoresLabel === 'this-week' ? 'This Week' : 'Recent Scores'}
+                </h2>
+                <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
+                  All Scores →
+                </Link>
+              </div>
+              {scoresLabel === 'this-week' ? (
                 <p className="text-[11px] text-gray-400 mb-3">{weekRangeLabel}</p>
+              ) : recentGames.length > 0 ? (
+                <p className="text-[11px] text-gray-400 mb-3">No games this week — here are the latest results</p>
+              ) : null}
+              {recentGames.length > 0 ? (
                 <div className="space-y-2">
                   {recentGames.map((game: Record<string, unknown>) => {
                     const home = game.home_school as Record<string, unknown> | null;
@@ -198,8 +228,15 @@ export default async function HomePage() {
                     );
                   })}
                 </div>
-              </section>
-            )}
+              ) : (
+                <div className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-6 text-center">
+                  <p className="text-sm text-gray-400">No recent games to show right now.</p>
+                  <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] mt-2 inline-block transition">
+                    Browse all scores →
+                  </Link>
+                </div>
+              )}
+            </section>
 
             {/* Latest Articles */}
             {articles.length > 0 && (
