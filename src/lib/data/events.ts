@@ -649,7 +649,7 @@ export async function getLeaderboard(stat: StatCategory, limit = 25): Promise<Le
  * Get football career leaders from materialized view.
  * Stat options: rushing, passing, receiving, scoring, total_yards (or raw column names)
  */
-export async function getFootballCareerLeaders(stat: string = "rushing", limit = 50): Promise<CareerLeaderRow[]> {
+export async function getFootballCareerLeaders(stat: string = "rushing", limit = 50, filters?: { graduationYear?: number }): Promise<CareerLeaderRow[]> {
   const cappedLimit = Math.min(Math.max(1, limit), 100);
   // Map friendly stat keys to column names
   const colMap: Record<string, string> = {
@@ -664,11 +664,15 @@ export async function getFootballCareerLeaders(stat: string = "rushing", limit =
   return withErrorHandling(
     async () => {
       const supabase = await createClient();
-      const { data, error } = await supabase
+      let query = supabase
         .from("football_career_leaders")
         .select("*")
         .not(orderCol, "is", null)
-        .gt(orderCol, 0)
+        .gt(orderCol, 0);
+      if (filters?.graduationYear) {
+        query = query.eq("graduation_year", filters.graduationYear);
+      }
+      const { data, error } = await query
         .order(orderCol, { ascending: false, nullsFirst: false })
         .limit(cappedLimit);
       if (error) {
@@ -679,7 +683,7 @@ export async function getFootballCareerLeaders(stat: string = "rushing", limit =
     },
     [],
     "DATA_FOOTBALL_CAREER_LEADERS",
-    { stat, limit }
+    { stat, limit, filters }
   );
 }
 
@@ -687,7 +691,7 @@ export async function getFootballCareerLeaders(stat: string = "rushing", limit =
  * Get basketball career leaders from materialized view.
  * Stat options: scoring, ppg (or raw column names)
  */
-export async function getBasketballCareerLeaders(stat: string = "scoring", limit = 50): Promise<CareerLeaderRow[]> {
+export async function getBasketballCareerLeaders(stat: string = "scoring", limit = 50, filters?: { graduationYear?: number }): Promise<CareerLeaderRow[]> {
   const cappedLimit = Math.min(Math.max(1, limit), 100);
   const colMap: Record<string, string> = {
     scoring: "career_points",
@@ -698,11 +702,15 @@ export async function getBasketballCareerLeaders(stat: string = "scoring", limit
   return withErrorHandling(
     async () => {
       const supabase = await createClient();
-      const { data, error } = await supabase
+      let query = supabase
         .from("basketball_career_leaders")
         .select("*")
         .not(orderCol, "is", null)
-        .gt(orderCol, 0)
+        .gt(orderCol, 0);
+      if (filters?.graduationYear) {
+        query = query.eq("graduation_year", filters.graduationYear);
+      }
+      const { data, error } = await query
         .order(orderCol, { ascending: false, nullsFirst: false })
         .limit(cappedLimit);
       if (error) {
@@ -713,7 +721,7 @@ export async function getBasketballCareerLeaders(stat: string = "scoring", limit
     },
     [],
     "DATA_BASKETBALL_CAREER_LEADERS",
-    { stat, limit }
+    { stat, limit, filters }
   );
 }
 
@@ -778,6 +786,8 @@ export interface FootballLeaderRowData extends Record<string, unknown> {
     name: string;
     slug: string;
     pro_team?: string | null;
+    graduation_year?: number | null;
+    positions?: string[] | null;
     schools?: { name: string; slug: string } | null;
   } | null;
   schools?: {
@@ -814,7 +824,7 @@ export const getFootballLeaders = cache(async (stat: string, limit = 50) => {
 
           const { data } = await supabase
             .from("football_player_seasons")
-            .select("*, players(name, slug, pro_team, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
+            .select("*, players(name, slug, pro_team, graduation_year, positions, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
             .order(orderCol, { ascending: false, nullsFirst: false })
@@ -841,6 +851,8 @@ export interface BasketballLeaderRowData extends Record<string, unknown> {
     name: string;
     slug: string;
     pro_team?: string | null;
+    graduation_year?: number | null;
+    positions?: string[] | null;
     schools?: { name: string; slug: string } | null;
   } | null;
   schools?: {
@@ -877,7 +889,7 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
 
           const { data } = await supabase
             .from("basketball_player_seasons")
-            .select("*, players(name, slug, pro_team, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
+            .select("*, players(name, slug, pro_team, graduation_year, positions, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
             .not("games_played", "is", null) // Exclude incomplete/aggregate records with no games data

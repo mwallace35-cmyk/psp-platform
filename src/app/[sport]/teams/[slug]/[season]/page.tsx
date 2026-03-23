@@ -36,6 +36,7 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
 import SeasonSelector from "@/components/scores/SeasonSelector";
 import { captureError } from "@/lib/error-tracking";
+import TeamSeasonTabs from "@/components/team/TeamSeasonTabs";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: hourly (for preview pages that may have upcoming seasons)
@@ -405,10 +406,26 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         </div>
       </section>
 
+      {/* Sticky Tab Navigation */}
+      <TeamSeasonTabs
+        sportColor={meta.color}
+        tabs={[
+          { id: "overview", label: "Overview" },
+          ...(!isPreview && roster.length > 0 ? [{ id: "roster", label: "Roster" }] : []),
+          ...(isPreview && rosterReturning.length > 0 ? [{ id: "roster", label: "Roster" }] : []),
+          { id: "schedule", label: "Schedule" },
+          ...(!isPreview && roster.length > 0 ? [{ id: "stats", label: "Stats" }] : []),
+          ...(availableSeasons.length > 1 ? [{ id: "history", label: "History" }] : []),
+        ]}
+      />
+
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Season Navigation Bar */}
+        {/* Overview Section */}
+        <section id="overview" className="scroll-mt-16" />
+
+        {/* Season Navigation Bar / History */}
         {availableSeasons.length > 1 && (
-          <div className="mb-8 flex overflow-x-auto gap-2 pb-4 -mx-4 px-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+          <div id="history" className="mb-8 flex overflow-x-auto gap-2 pb-4 -mx-4 px-4 scroll-mt-16" style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
             {availableSeasons.map((s: Season) => (
               <Link
                 key={s.label}
@@ -427,7 +444,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         )}
 
         {/* Games Section */}
-        <section className="mb-12">
+        <section id="schedule" className="mb-12 scroll-mt-16">
           <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
             {isPreview ? "Schedule" : "Schedule & Results"}
           </h2>
@@ -610,7 +627,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Returning Roster (Preview Mode) */}
         {isPreview && rosterReturning.length > 0 && (
-          <section className="mb-12">
+          <section id="roster" className="mb-12 scroll-mt-16">
             <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
               {season} Roster {isPreview && roster.length === 0 ? "(Projected)" : ""}
             </h2>
@@ -727,7 +744,9 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Roster & Stats Section */}
         {!isPreview && (
-          <section className="mb-12">
+          <section id="roster" className="mb-12 scroll-mt-16">
+            {/* Stats anchor */}
+            <div id="stats" className="scroll-mt-16" />
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>

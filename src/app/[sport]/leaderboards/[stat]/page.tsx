@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import {
   SPORT_META,
@@ -12,6 +13,7 @@ import type { CareerLeaderRow } from "@/lib/data/events";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import LeaderboardTable from "@/components/ui/LeaderboardTable";
+import LeaderboardFilters from "@/components/leaderboards/LeaderboardFilters";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
@@ -145,6 +147,8 @@ interface RawLeader {
     name: string;
     slug: string;
     pro_team?: string | null;
+    graduation_year?: number | null;
+    positions?: string[] | null;
     schools?: { name: string; slug: string } | null;
   } | null;
   schools?: { name: string; slug: string } | null;
@@ -201,6 +205,10 @@ export default async function LeaderboardPage({
   const sp = await searchParams;
   const isCareer = sp?.mode === "career";
 
+  // Read filter params
+  const filterClass = typeof sp?.class === "string" ? parseInt(sp.class, 10) : undefined;
+  const filterPosition = typeof sp?.position === "string" ? sp.position : undefined;
+
   const meta = SPORT_META[sport];
 
   const allStats = SPORT_STAT_MAP[sport] || [];
@@ -215,13 +223,17 @@ export default async function LeaderboardPage({
   let careerTableData: TableRow[] = [];
 
   if (isCareer && careerAvailable) {
-    // Career mode
+    // Career mode — graduation_year filter applied at DB level
     let careerLeaders: CareerLeaderRow[] = [];
+    const careerFilters = filterClass ? { graduationYear: filterClass } : undefined;
     if (sport === "football") {
-      careerLeaders = await getFootballCareerLeaders(statConfig.key, 100);
+      careerLeaders = await getFootballCareerLeaders(statConfig.key, 100, careerFilters);
     } else if (sport === "basketball") {
-      careerLeaders = await getBasketballCareerLeaders(statConfig.key, 100);
+      careerLeaders = await getBasketballCareerLeaders(statConfig.key, 100, careerFilters);
     }
+
+    // Position filter not available on career views — no positions column
+    // (position filtering only works in season mode)
 
     careerTableData = careerLeaders.map((row, idx) => ({
       id: String(row.player_id),
@@ -248,6 +260,20 @@ export default async function LeaderboardPage({
       leaders = await getFootballLeaders(statConfig.key, 100);
     } else if (sport === "basketball") {
       leaders = await getBasketballLeaders(statConfig.key, 100);
+    }
+
+    // Apply class year filter (graduation_year from players join)
+    if (filterClass) {
+      leaders = leaders.filter(r => r.players?.graduation_year === filterClass);
+    }
+
+    // Apply position filter (positions[] from players join)
+    if (filterPosition) {
+      leaders = leaders.filter(r => {
+        const pos = r.players?.positions;
+        if (!pos || !Array.isArray(pos)) return false;
+        return pos.some(p => p.toUpperCase() === filterPosition.toUpperCase());
+      });
     }
 
     seasonTableData = leaders.map((row, idx) => ({
@@ -392,32 +418,11 @@ export default async function LeaderboardPage({
           </div>
         )}
 
-        {/* Filter dropdowns (season mode only shows season filter) */}
-        <div className="flex flex-wrap gap-3 mb-6">
-          {!isCareer && uniqueSeasons.length > 0 && (
-            <select
-              className="px-3 py-2 rounded border text-sm"
-              style={{ borderColor: "var(--psp-navy)", color: "var(--psp-navy)" }}
-              defaultValue=""
-            >
-              <option value="">All Seasons</option>
-              {uniqueSeasons.map((season) => (
-                <option key={season} value={season}>{season}</option>
-              ))}
-            </select>
-          )}
-          {uniqueSchools.length > 0 && (
-            <select
-              className="px-3 py-2 rounded border text-sm"
-              style={{ borderColor: "var(--psp-navy)", color: "var(--psp-navy)" }}
-              defaultValue=""
-            >
-              <option value="">All Schools</option>
-              {uniqueSchools.map((school) => (
-                <option key={school.slug} value={school.name}>{school.name}</option>
-              ))}
-            </select>
-          )}
+        {/* Class Year + Position filter dropdowns */}
+        <div className="mb-6">
+          <Suspense fallback={null}>
+            <LeaderboardFilters sport={sport} sportColor={meta.color} />
+          </Suspense>
         </div>
 
         <PSPPromo size="banner" variant={1} />
@@ -427,7 +432,13 @@ export default async function LeaderboardPage({
           <div className="my-8">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
-                Showing top {tableData.length} {modeLabel.toLowerCase()} {statConfig.label.toLowerCase()} leaders
+                Showing {tableData.length} {modeLabel.toLowerCase()} {statConfig.label.toLowerCase()} leaders
+                {(filterClass || filterPosition) && (
+                  <span style={{ color: meta.color, fontWeight: 600 }}>
+                    {filterClass ? ` | Class of ${filterClass}` : ""}
+                    {filterPosition ? ` | ${filterPosition}` : ""}
+                  </span>
+                )}
               </p>
             </div>
             <LeaderboardTable
@@ -446,6 +457,21 @@ export default async function LeaderboardPage({
               leagues={["Catholic League", "Public League", "Inter-Ac"]}
               totalPlayers={tableData.length}
             />
+          </div>
+        ) : (filterClass || filterPosition) ? (
+          <div className="rounded-xl border p-8 my-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
+            <div className="text-center">
+              <div className="text-5xl mb-4">🔍</div>
+              <h3 className="text-2xl font-bold mb-3 text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                No Results
+              </h3>
+              <p className="text-gray-300 mb-4">
+                No {statConfig.label.toLowerCase()} leaders found
+                {filterClass ? ` in the Class of ${filterClass}` : ""}
+                {filterPosition ? ` at ${filterPosition}` : ""}.
+                Try adjusting your filters.
+              </p>
+            </div>
           </div>
         ) : (
           <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>

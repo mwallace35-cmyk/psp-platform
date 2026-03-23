@@ -257,25 +257,30 @@ export default async function HomePage() {
             {featuredAlumni.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-bebas text-white tracking-wider">Our Guys</h2>
-                  <Link href="/pulse/our-guys" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)]">
+                  <h2 className="text-lg font-bebas text-gray-100 tracking-wider">Our Guys</h2>
+                  <Link href="/pulse/our-guys" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
                     View All →
                   </Link>
                 </div>
                 <div className="space-y-2">
                   {featuredAlumni.slice(0, 5).map((a: Record<string, unknown>) => {
                     const school = a.schools as Record<string, unknown> | null;
+                    const league = (a.pro_league as string) ? LEAGUE_BADGES[a.pro_league as string] : null;
                     return (
-                      <div key={a.id as string} className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-3 py-2.5">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-white font-medium">{a.person_name as string}</p>
-                            <p className="text-[10px] text-gray-400">
+                      <div key={a.id as string} className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-3 py-2.5 hover:border-gray-600 transition">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-sm text-gray-100 font-medium">{a.person_name as string}</p>
+                            <p className="text-[10px] text-gray-400 truncate">
                               {a.current_org as string} · {school?.name as string}
                             </p>
                           </div>
-                          {(a.pro_league as string) ? (
-                            <span className="text-[10px] font-bold text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 px-2 py-0.5 rounded">
+                          {league ? (
+                            <span className={`shrink-0 text-[10px] font-bold text-white px-2 py-0.5 rounded ${league.bg}`}>
+                              {league.icon} {a.pro_league as string}
+                            </span>
+                          ) : (a.pro_league as string) ? (
+                            <span className="shrink-0 text-[10px] font-bold text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 px-2 py-0.5 rounded">
                               {a.pro_league as string}
                             </span>
                           ) : null}
@@ -289,23 +294,23 @@ export default async function HomePage() {
 
             {/* Quick Links */}
             <section className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Quick Links</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Quick Links</h3>
               <div className="space-y-2">
-                <Link href="/pulse/rankings" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">Power Rankings</Link>
-                <Link href="/pulse/our-guys" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">Our Guys — Next Level</Link>
-                <Link href="/compare" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">Compare Players</Link>
-                <Link href="/search" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">Player Search</Link>
-                <Link href="/about" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">About PSP</Link>
+                <Link href="/pulse/rankings" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">Power Rankings</Link>
+                <Link href="/pulse/our-guys" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">Our Guys — Next Level</Link>
+                <Link href="/compare" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">Compare Players</Link>
+                <Link href="/search" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">Player Search</Link>
+                <Link href="/about" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">About PSP</Link>
               </div>
             </section>
 
             {/* Leaderboard links */}
             <section className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Leaderboards</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Leaderboards</h3>
               <div className="space-y-2">
-                <Link href="/football/leaderboards" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">🏈 Football Leaders</Link>
-                <Link href="/basketball/leaderboards" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">🏀 Basketball Leaders</Link>
-                <Link href="/baseball/leaderboards" className="block text-sm text-gray-300 hover:text-[var(--psp-gold)]">⚾ Baseball Leaders</Link>
+                <Link href="/football/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">🏈 Football Leaders</Link>
+                <Link href="/basketball/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">🏀 Basketball Leaders</Link>
+                <Link href="/baseball/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">⚾ Baseball Leaders</Link>
               </div>
             </section>
           </div>

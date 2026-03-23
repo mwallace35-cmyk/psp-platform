@@ -22,8 +22,8 @@ const CorrectionForm = nextDynamic(() => import("@/components/corrections/Correc
   loading: () => <div className="text-center py-4 text-gray-500 text-sm">Loading form...</div>,
 });
 
-const ClientCareerTrajectory = nextDynamic(() => import("@/components/viz/ClientCareerTrajectory"), {
-  loading: () => <div className="w-full bg-white rounded-lg border border-gray-200 p-4 h-[300px] animate-pulse" />,
+const CareerTrajectoryChart = nextDynamic(() => import("@/components/players/CareerTrajectoryChart"), {
+  loading: () => <div className="w-full bg-white rounded-lg border border-gray-200 p-4 h-[340px] animate-pulse" />,
 });
 
 const SimilarPlayers = nextDynamic(() => import("@/components/player/SimilarPlayers"), {
@@ -421,16 +421,17 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             </div>
 
             {/* Career Trajectory Chart */}
-            {sport === "football" && stats.length > 1 && (
-              <ClientCareerTrajectory
-                seasons={(stats as FootballPlayerSeason[]).map((s) => ({
-                  year: s.seasons?.label || "Unknown",
-                  value: s.rush_yards || 0,
-                  isChampionship: false,
-                }))}
-                stat="Rushing Yards"
+            {sport === "football" && stats.length > 0 && (
+              <CareerTrajectoryChart
                 sport={sport}
-                height={300}
+                seasons={(stats as FootballPlayerSeason[]).map((s) => ({
+                  label: s.seasons?.label || "Unknown",
+                  stats: {
+                    pass_yards: s.pass_yards || 0,
+                    rush_yards: s.rush_yards || 0,
+                    rec_yards: s.rec_yards || 0,
+                  },
+                }))}
               />
             )}
 
@@ -571,16 +572,17 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             )}
 
             {/* Basketball chart */}
-            {sport === "basketball" && stats.length > 1 && (
-              <ClientCareerTrajectory
-                seasons={(stats as BasketballPlayerSeason[]).map((s) => ({
-                  year: s.seasons?.label || "Unknown",
-                  value: s.points || 0,
-                  isChampionship: false,
-                }))}
-                stat="Points"
+            {sport === "basketball" && stats.length > 0 && (
+              <CareerTrajectoryChart
                 sport={sport}
-                height={300}
+                seasons={(stats as BasketballPlayerSeason[]).map((s) => ({
+                  label: s.seasons?.label || "Unknown",
+                  stats: {
+                    points: s.points || 0,
+                    rebounds: s.rebounds || 0,
+                    assists: s.assists || 0,
+                  },
+                }))}
               />
             )}
 
@@ -649,6 +651,21 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* Baseball chart */}
+            {sport === "baseball" && stats.length > 0 && (
+              <CareerTrajectoryChart
+                sport={sport}
+                seasons={(stats as BaseballPlayerSeason[]).map((s) => ({
+                  label: s.seasons?.label || "Unknown",
+                  stats: {
+                    hits: (s as any).hits || 0,
+                    rbi: (s as any).rbi || 0,
+                    home_runs: s.home_runs || 0,
+                  },
+                }))}
+              />
             )}
 
             {/* Player Highlights Section */}

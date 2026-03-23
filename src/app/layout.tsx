@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/nav/MobileBottomNav";
 import ScoreTicker from "@/components/home/ScoreTicker";
 import PushNotificationBanner from "@/components/ui/PushNotificationBanner";
+import OnboardingWrapper from "@/components/onboarding/OnboardingWrapper";
 import "./globals.css";
 import "./type-scale.css";
 
@@ -156,6 +157,7 @@ gtag('config', '${gaId}');
         </div>
         <MobileBottomNav />
         <PushNotificationBanner />
+        <OnboardingWrapper />
       </body>
     </html>
   );
