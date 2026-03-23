@@ -240,29 +240,28 @@ export const getAvailableStandingsSeasons = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
-            // Use RPC or direct SQL via a simple approach:
-            // Get all seasons, then filter to those that have team_seasons for this sport
-            const { data: allSeasons } = await supabase
+
+            // Use seasons table with inner join to team_seasons
+            // This avoids the Supabase 1000-row default limit issue
+            const { data: seasons } = await supabase
               .from("seasons")
-              .select("id, label, year_start")
-              .order("year_start", { ascending: false });
+              .select("label, year_start, team_seasons!inner(id)")
+              .eq("team_seasons.sport_id", sportSlug)
+              .order("year_start", { ascending: false })
+              .limit(200);
 
-            if (!allSeasons || allSeasons.length === 0) return [];
+            if (!seasons || seasons.length === 0) return [];
 
-            // Get distinct season_ids that have standings for this sport
-            const { data: tsData } = await supabase
-              .from("team_seasons")
-              .select("season_id")
-              .eq("sport_id", sportSlug);
-
-            const seasonIdsWithData = new Set(
-              (tsData ?? []).map((ts: { season_id: number }) => ts.season_id)
-            );
-
-            // Filter and return labels in year_start DESC order
-            return allSeasons
-              .filter((s: { id: number }) => seasonIdsWithData.has(s.id))
-              .map((s: { label: string }) => s.label);
+            // Deduplicate (inner join may return multiple rows per season)
+            const seen = new Set<string>();
+            const result: string[] = [];
+            for (const s of seasons) {
+              if (!seen.has(s.label)) {
+                seen.add(s.label);
+                result.push(s.label);
+              }
+            }
+            return result;
           },
           { maxRetries: 2, baseDelay: 500 }
         );
