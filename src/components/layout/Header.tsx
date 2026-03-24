@@ -272,18 +272,22 @@ export default function Header() {
 
             {/* Football Dropdown */}
             <div className="nav-dd">
-              <button
-                className="nav-link"
-                style={{ background: "none", border: "none", cursor: "pointer" }}
-                aria-haspopup="menu"
-                aria-expanded={openDropdown === "football"}
-                aria-label="Football menu"
-                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "football")}
-                onClick={() => handleDropdownToggle("football")}
-                onBlur={handleDropdownClose}
-              >
-                Football &#9662;
-              </button>
+              <div className="nav-link" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                <Link href="/football" style={{ color: "inherit", textDecoration: "none" }} aria-current={isActive("/football") ? "page" : undefined}>
+                  Football
+                </Link>
+                <button
+                  style={{ background: "none", border: "none", cursor: "pointer", color: "inherit", padding: "0 2px", fontSize: "0.7em" }}
+                  aria-haspopup="menu"
+                  aria-expanded={openDropdown === "football"}
+                  aria-label="Football menu"
+                  onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "football")}
+                  onClick={() => handleDropdownToggle("football")}
+                  onBlur={handleDropdownClose}
+                >
+                  &#9662;
+                </button>
+              </div>
               <div
                 className="dd-menu"
                 role="menu"
@@ -291,6 +295,9 @@ export default function Header() {
                 style={{ display: openDropdown === "football" ? "block" : undefined }}
                 onKeyDown={handleMenuKeyDown}
               >
+                <Link href="/football" role="menuitem" aria-current={isActive("/football") ? "page" : undefined} style={{ fontWeight: 600 }}>
+                  Football Hub
+                </Link>
                 {SPORT_SUB_ITEMS.map((item) => (
                   <Link key={item.suffix} href={`/football${item.suffix}`} role="menuitem" aria-current={isActive(`/football${item.suffix}`) ? "page" : undefined}>
                     {item.label}
@@ -301,18 +308,22 @@ export default function Header() {
 
             {/* Basketball Dropdown */}
             <div className="nav-dd">
-              <button
-                className="nav-link"
-                style={{ background: "none", border: "none", cursor: "pointer" }}
-                aria-haspopup="menu"
-                aria-expanded={openDropdown === "basketball"}
-                aria-label="Basketball menu"
-                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "basketball")}
-                onClick={() => handleDropdownToggle("basketball")}
-                onBlur={handleDropdownClose}
-              >
-                Basketball &#9662;
-              </button>
+              <div className="nav-link" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                <Link href="/basketball" style={{ color: "inherit", textDecoration: "none" }} aria-current={isActive("/basketball") ? "page" : undefined}>
+                  Basketball
+                </Link>
+                <button
+                  style={{ background: "none", border: "none", cursor: "pointer", color: "inherit", padding: "0 2px", fontSize: "0.7em" }}
+                  aria-haspopup="menu"
+                  aria-expanded={openDropdown === "basketball"}
+                  aria-label="Basketball menu"
+                  onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "basketball")}
+                  onClick={() => handleDropdownToggle("basketball")}
+                  onBlur={handleDropdownClose}
+                >
+                  &#9662;
+                </button>
+              </div>
               <div
                 className="dd-menu"
                 role="menu"
@@ -320,6 +331,9 @@ export default function Header() {
                 style={{ display: openDropdown === "basketball" ? "block" : undefined }}
                 onKeyDown={handleMenuKeyDown}
               >
+                <Link href="/basketball" role="menuitem" aria-current={isActive("/basketball") ? "page" : undefined} style={{ fontWeight: 600 }}>
+                  Basketball Hub
+                </Link>
                 {SPORT_SUB_ITEMS.map((item) => (
                   <Link key={item.suffix} href={`/basketball${item.suffix}`} role="menuitem" aria-current={isActive(`/basketball${item.suffix}`) ? "page" : undefined}>
                     {item.label}
