@@ -86,6 +86,8 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
 
   for (const row of dirRes.data || []) {
     if (!sportSchoolIds.has(row.id)) continue;
+    // Only show schools that belong to a league (skip opponent stubs)
+    if (!row.league_name) continue;
     const colors = row.colors && typeof row.colors === 'object' && 'primary' in row.colors
       ? (row.colors as { primary?: string }).primary || null
       : null;
