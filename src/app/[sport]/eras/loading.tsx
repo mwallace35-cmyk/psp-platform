@@ -12,7 +12,7 @@ export default function ErasLoading() {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-3 lg:px-8">
+      <div className="grid grid-cols-1 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-3 lg:px-8">
         {/* Content Area */}
         <div className="lg:col-span-2 space-y-8">
           {/* Stat Selector */}

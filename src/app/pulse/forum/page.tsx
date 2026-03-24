@@ -126,13 +126,13 @@ export default async function ForumPage({
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
           {/* Sidebar — Categories */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden sticky top-4">
               <div className="bg-navy px-4 py-3">
-                <h3 className="text-gold font-bebas">Categories</h3>
+                <h3 className="psp-h4 text-gold">Categories</h3>
               </div>
               <div className="divide-y divide-gray-100">
                 {CATEGORIES.map(cat => (

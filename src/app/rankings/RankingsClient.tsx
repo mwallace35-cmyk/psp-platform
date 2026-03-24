@@ -258,7 +258,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
             {hasMultipleCategories && (
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xl">{category.icon}</span>
-                <h3 className="text-lg font-bebas tracking-wide text-navy">{category.label}</h3>
+                <h3 className="psp-h4 text-navy">{category.label}</h3>
                 <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: sportColor }}>
                   {catRankings.length}
                 </span>
@@ -276,7 +276,8 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
           return (
             <div
               key={r.id}
-              className={`flex items-center gap-4 px-5 py-4 ${idx > 0 ? 'border-t border-gray-100' : ''} hover:bg-gray-50 transition group`}
+              className={`flex items-center gap-4 px-5 py-4 ${idx > 0 ? 'border-t border-gray-100' : ''} hover:bg-gray-50 transition group animate-fade-in-up`}
+              style={{ animationDelay: `${idx * 30}ms` }}
             >
               {/* Rank Badge */}
               <div className={`w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold flex-shrink-0 ${

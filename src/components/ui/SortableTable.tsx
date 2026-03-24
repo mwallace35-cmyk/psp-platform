@@ -245,7 +245,7 @@ function SortableTable({
                   onKeyDown={(e) => col.sortable !== false && handleHeaderKeyDown(e, col.key)}
                   aria-sort={col.sortable !== false ? getAriaSort(col.key) : undefined}
                   aria-label={getHeaderAriaLabel(col)}
-                  className={`px-3 py-3 text-left font-semibold text-xs uppercase tracking-wider border-b border-gray-600 whitespace-nowrap transition ${
+                  className={`px-3 py-3 text-left font-bold text-xs uppercase tracking-wider border-b border-gray-600 whitespace-nowrap transition text-white ${
                     col.sortable !== false ? 'cursor-pointer hover:bg-gray-800 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400' : ''
                   }`}
                   style={{

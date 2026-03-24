@@ -316,7 +316,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
 
       {/* Sport Hero — AI-Generated Banner */}
       <div
-        className="text-white px-4 relative overflow-hidden flex items-center h-[140px] bg-[#0a1628]"
+        className="text-white py-10 px-4 relative overflow-hidden flex items-center bg-[#0a1628]"
         style={{
           background: `linear-gradient(to right, rgba(10,22,40,0.55), rgba(10,22,40,0.15)), url(/images/banners/${sport === 'track-field' ? 'track' : sport}.jpg) center/cover no-repeat`,
         }}

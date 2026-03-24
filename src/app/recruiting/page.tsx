@@ -433,7 +433,7 @@ async function RecruitingContent() {
                 return (
                   <div
                     key={school.slug || index}
-                    className="min-w-[160px] max-w-[180px] flex-shrink-0 rounded-xl overflow-hidden transition-shadow hover:shadow-lg"
+                    className="w-[170px] flex-shrink-0 rounded-xl overflow-hidden transition-shadow hover:shadow-lg"
                     style={{
                       backgroundColor: isTop ? "rgba(240,165,0,0.08)" : "rgba(255,255,255,0.03)",
                       border: isTop ? "1.5px solid #f0a500" : "1px solid rgba(255,255,255,0.08)",
@@ -514,7 +514,7 @@ async function RecruitingContent() {
               {data.topDestinations.map((dest, index) => (
                 <div
                   key={dest.college}
-                  className="min-w-[170px] max-w-[190px] flex-shrink-0 rounded-xl p-3 hover:shadow-md transition-shadow"
+                  className="w-[170px] flex-shrink-0 rounded-xl p-3 hover:shadow-md transition-shadow"
                   style={{
                     backgroundColor: "rgba(255,255,255,0.03)",
                     border: index === 0
@@ -529,7 +529,7 @@ async function RecruitingContent() {
                       #{index + 1}
                     </span>
                     <span
-                      className="psp-h3"
+                      className="font-bold text-base"
                       style={{
                         color: index === 0 ? "#f0a500" : "rgba(255,255,255,0.9)",
                       }}
@@ -586,7 +586,7 @@ async function RecruitingContent() {
                   >
                     <span className="text-sm">{emoji}</span>
                     <span
-                      className="psp-h3" style={{ color: sportHex }}
+                      className="font-bold text-sm" style={{ color: sportHex }}
                     >
                       {count.toLocaleString()}
                     </span>
@@ -696,8 +696,8 @@ function StatPill({
       }}
     >
       <span
-        className="psp-h3 leading-none"
-        style={{ color: "#f0a500" }}
+        className="font-bold text-base leading-none"
+        style={{ color: "#f0a500", fontFamily: "var(--font-bebas)" }}
       >
         {value}
       </span>

@@ -151,7 +151,7 @@ export default async function HomePage() {
             {featuredAlumni.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-bebas text-gray-100 tracking-wider">Our Guys</h2>
+                  <h2 className="psp-h4 text-gray-100">Our Guys</h2>
                   <Link href="/our-guys" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
                     View All →
                   </Link>

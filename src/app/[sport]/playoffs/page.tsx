@@ -75,7 +75,7 @@ export default async function PlayoffsPage({ params }: { params: Promise<PagePar
       />
 
       <h1
-        className="text-[32px] font-bold mt-4 mb-6 font-bebas tracking-[0.5px]"
+        className="psp-h1 mt-4 mb-6"
         style={{ color: "var(--psp-navy, #0a1628)" }}
       >
         {meta.name} Playoffs

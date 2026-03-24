@@ -119,7 +119,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
       <div className="max-w-7xl mx-auto px-4 py-8">
         {stints.length > 0 ? (
           <div>
-            <h2 className="psp-h2 mb-4">
+            <h2 className="psp-h2 text-[var(--text)] mb-4">
               Coaching Timeline
             </h2>
             <div className="space-y-4">

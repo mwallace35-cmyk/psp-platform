@@ -212,7 +212,7 @@ export default async function SchedulePage({
                 </h2>
 
                 <div style={{ display: "grid", gap: "1rem" }}>
-                  {sortedGames.map((game) => {
+                  {sortedGames.map((game, idx) => {
                     const gameDate = new Date(game.game_date || "");
                     const dayLabel = new Intl.DateTimeFormat("en-US", {
                       weekday: "short",
@@ -231,7 +231,9 @@ export default async function SchedulePage({
                     return (
                       <div
                         key={game.id}
+                        className="animate-fade-in-up"
                         style={{
+                          animationDelay: `${idx * 30}ms`,
                           background:
                             "linear-gradient(135deg, #1a1a1a 0%, #222 100%)",
                           border: "1px solid #333",

@@ -47,8 +47,8 @@ export default async function PotwPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-navy to-navy-mid py-12 px-4">
-        <div className="max-w-4xl mx-auto text-center">
+      <div className="bg-gradient-to-r from-navy to-navy-mid py-10 px-4">
+        <div className="max-w-7xl mx-auto text-center">
           <div className="text-6xl mb-4">🏆</div>
           <h1 className="psp-h1 text-white mb-4">Player of the Week</h1>
           <p className="text-gold text-lg">

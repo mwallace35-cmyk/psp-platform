@@ -6,7 +6,7 @@ export default function Loading() {
       <div className="h-4 bg-gray-200 rounded w-2/3 mb-8" />
 
       {/* Main content */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="h-96 bg-gray-200 rounded" />
         <div className="h-96 bg-gray-200 rounded" />
       </div>

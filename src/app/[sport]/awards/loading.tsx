@@ -33,7 +33,7 @@ export default function AwardsLoading() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3 space-y-4">
             {/* Tab Bar */}
             <div className="flex flex-wrap gap-1.5 mb-6">

@@ -21,7 +21,7 @@ export default function ComparePage() {
           Search for two players to compare their career statistics side-by-side.
         </p>
         <Suspense fallback={
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SkeletonCard showImage={true} showTitle={true} showDescription={true} />
             <SkeletonCard showImage={true} showTitle={true} showDescription={true} />
           </div>

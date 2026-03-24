@@ -235,7 +235,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
         >
           <ChevronLeft size={16} /> Previous
         </button>
-        <h2 className="text-2xl font-bebas text-navy">
+        <h2 className="psp-h2 text-navy">
           {sportMeta?.emoji} {selectedWeek}
         </h2>
         <button
@@ -258,7 +258,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
             {hasMultipleCategories && (
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xl">{category.icon}</span>
-                <h3 className="text-lg font-bebas tracking-wide text-navy">{category.label}</h3>
+                <h3 className="psp-h4 text-navy">{category.label}</h3>
                 <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: sportColor }}>
                   {catRankings.length}
                 </span>

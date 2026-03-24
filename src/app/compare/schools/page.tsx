@@ -90,7 +90,7 @@ function SchoolCompareContent() {
       {/* Header */}
       <div className="mb-8">
         <h1
-          className="psp-h1 mb-2"
+          className="psp-h1 text-[var(--psp-navy)] mb-2"
         >
           Compare Schools
         </h1>

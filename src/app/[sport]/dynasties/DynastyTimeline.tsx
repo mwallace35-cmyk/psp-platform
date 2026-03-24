@@ -77,7 +77,7 @@ export default function DynastyTimeline({
       <div className="space-y-8">
         {filteredData.map((decadeItem) => (
           <div key={decadeItem.decade} className="space-y-4">
-            <h2 className="text-2xl font-bebas text-gray-900">
+            <h2 className="psp-h2 text-gray-900">
               {decadeItem.decade}
             </h2>
 

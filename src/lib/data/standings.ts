@@ -246,27 +246,27 @@ export const getAvailableStandingsSeasons = cache(
           async () => {
             const supabase = await createClient();
 
-            // Use seasons table with inner join to team_seasons
-            // This avoids the Supabase 1000-row default limit issue
+            // First get distinct season_ids that have team_seasons for this sport
+            const { data: tsData } = await supabase
+              .from("team_seasons")
+              .select("season_id")
+              .eq("sport_id", sportSlug);
+
+            if (!tsData || tsData.length === 0) return [];
+
+            // Get unique season IDs
+            const seasonIds = [...new Set(tsData.map(r => r.season_id))];
+
+            // Now fetch all those seasons' labels
             const { data: seasons } = await supabase
               .from("seasons")
-              .select("label, year_start, team_seasons!inner(id)")
-              .eq("team_seasons.sport_id", sportSlug)
-              .order("year_start", { ascending: false })
-              .limit(200);
+              .select("label, year_start")
+              .in("id", seasonIds)
+              .order("year_start", { ascending: false });
 
             if (!seasons || seasons.length === 0) return [];
 
-            // Deduplicate (inner join may return multiple rows per season)
-            const seen = new Set<string>();
-            const result: string[] = [];
-            for (const s of seasons) {
-              if (!seen.has(s.label)) {
-                seen.add(s.label);
-                result.push(s.label);
-              }
-            }
-            return result;
+            return seasons.map(s => s.label);
           },
           { maxRetries: 2, baseDelay: 500 }
         );

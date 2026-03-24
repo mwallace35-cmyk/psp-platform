@@ -445,7 +445,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Games Section */}
         <section id="schedule" className="mb-8 scroll-mt-16">
-          <h2 className="psp-h2 mb-6">
+          <h2 className="psp-h2 text-white mb-6">
             {isPreview ? "Schedule" : "Schedule & Results"}
           </h2>
           {games.length > 0 ? (
@@ -565,7 +565,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         {/* Players to Watch Section (Preview Mode) */}
         {isPreview && returningPlayers.length > 0 && (
           <section className="mb-8">
-            <h2 className="psp-h2 mb-6">
+            <h2 className="psp-h2 text-white mb-6">
               Players to Watch 👀
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -627,7 +627,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         {/* Returning Roster (Preview Mode) */}
         {isPreview && rosterReturning.length > 0 && (
           <section id="roster" className="mb-8 scroll-mt-16">
-            <h2 className="psp-h2 mb-2">
+            <h2 className="psp-h2 text-white mb-2">
               {season} Roster {isPreview && roster.length === 0 ? "(Projected)" : ""}
             </h2>
             <p className="text-sm text-gray-400 mb-6">
@@ -643,7 +643,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         {/* Last Season Recap Section (Preview Mode) */}
         {isPreview && lastSeasonRecap && (
           <section className="mb-8">
-            <h2 className="psp-h2 mb-6">
+            <h2 className="psp-h2 text-white mb-6">
               {lastSeasonRecap.season_label} Recap
             </h2>
             <div className="rounded-lg p-6" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }}>
@@ -706,7 +706,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         {/* Historical Matchups Section (Preview Mode) */}
         {isPreview && matchupHistories.length > 0 && (
           <section className="mb-8">
-            <h2 className="psp-h2 mb-6">
+            <h2 className="psp-h2 text-white mb-6">
               Head-to-Head History
             </h2>
             <div className="overflow-x-auto">
@@ -748,7 +748,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <div id="stats" className="scroll-mt-16" />
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="psp-h2 mb-2">
+                <h2 className="psp-h2 text-white mb-2">
                   Roster & Stats
                 </h2>
                 <p className="text-sm text-gray-400">{roster.length} players on record</p>

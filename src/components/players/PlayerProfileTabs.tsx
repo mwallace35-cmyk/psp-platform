@@ -84,25 +84,17 @@ export default function PlayerProfileTabs({ sportColor, tabs }: PlayerProfileTab
                 if (el) tabRefs.current.set(tab.id, el);
               }}
               onClick={() => handleTabClick(tab.id)}
-              className="psp-caption relative whitespace-nowrap px-5 py-3 transition-colors flex-shrink-0"
+              className={`psp-caption whitespace-nowrap px-5 py-3 transition-colors duration-200 flex-shrink-0 cursor-pointer bg-transparent border-b-2 ${
+                isActive
+                  ? "border-[var(--psp-gold)] text-white"
+                  : "border-transparent text-gray-400 hover:text-gray-200"
+              }`}
               style={{
                 fontSize: "1rem",
                 letterSpacing: "0.08em",
-                color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
               }}
             >
               {tab.label}
-              <span
-                className="absolute bottom-0 left-2 right-2 rounded-t-sm transition-all duration-200"
-                style={{
-                  height: isActive ? "3px" : "0px",
-                  background: sportColor,
-                  opacity: isActive ? 1 : 0,
-                }}
-              />
             </button>
           );
         })}

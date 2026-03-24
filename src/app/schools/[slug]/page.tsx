@@ -460,11 +460,12 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                         </Link>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {sportChamps.map((c) => (
+                        {sportChamps.map((c, idx) => (
                           <Link
                             key={c.id}
                             href={`/${c.sport_id}/schools/${slug}`}
-                            className="inline-flex items-center gap-1.5 bg-white border border-[var(--psp-gray-200)] rounded-full px-3 py-1.5 text-sm hover:border-[var(--psp-gold)]/50 hover:shadow-sm transition"
+                            className="inline-flex items-center gap-1.5 bg-white border border-[var(--psp-gray-200)] rounded-full px-3 py-1.5 text-sm hover:border-[var(--psp-gold)]/50 hover:shadow-sm transition animate-fade-in-up"
+                            style={{ animationDelay: `${idx * 30}ms` }}
                           >
                             <span className="text-xs">🏆</span>
                             <span className="font-bold tabular-nums" style={{ color: "var(--psp-navy)" }}>
@@ -771,10 +772,11 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                         </tr>
                       </thead>
                       <tbody>
-                        {sortedNextLevel.slice(0, 15).map((athlete) => (
+                        {sortedNextLevel.slice(0, 15).map((athlete, idx) => (
                           <tr
                             key={athlete.id}
-                            className={athlete.pro_league ? "bg-amber-50" : ""}
+                            className={`${athlete.pro_league ? "bg-amber-50" : ""} animate-fade-in-up`}
+                            style={{ animationDelay: `${idx * 30}ms` }}
                           >
                             <td className="font-medium">{athlete.person_name}</td>
                             <td>

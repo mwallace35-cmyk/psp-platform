@@ -343,7 +343,7 @@ export default function ScheduleView({
             {gamesByWeek.map(({ weekLabel, weekKey, items: weekItems }) => (
               <section key={weekKey}>
                 <div className="flex items-center gap-2 mb-3 pb-1 border-b-2 border-gold/40">
-                  <h2 className="text-lg font-bebas text-navy">
+                  <h2 className="psp-h4 text-navy">
                     <span className="text-gold">Week</span> {weekLabel}
                   </h2>
                   <span className="text-xs text-gray-400 ml-auto">

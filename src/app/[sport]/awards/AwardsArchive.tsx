@@ -534,7 +534,7 @@ export default function AwardsArchive({ tabs, sport }: AwardsArchiveProps) {
             >
               <summary className="cursor-pointer px-4 py-3 flex items-center justify-between hover:bg-gray-750/50 transition-all">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <h3 className="text-white font-bebas text-xl tracking-wide">{yearData.label}</h3>
+                  <h3 className="psp-h3 text-white">{yearData.label}</h3>
                   <span className="text-gray-500 text-xs font-medium">
                     {yearData.awards.length} {yearData.awards.length === 1 ? "award" : "awards"}
                   </span>
@@ -595,7 +595,7 @@ export default function AwardsArchive({ tabs, sport }: AwardsArchiveProps) {
         <details className="group bg-gray-800/80 border border-gray-700/60 rounded-lg overflow-hidden">
           <summary className="cursor-pointer px-4 py-3 flex items-center justify-between hover:bg-gray-750/50 transition-all">
             <div className="flex items-center gap-3 flex-wrap">
-              <h3 className="text-white font-bebas text-xl tracking-wide">📜 All-Time / Multi-Era Selections</h3>
+              <h3 className="psp-h3 text-white">📜 All-Time / Multi-Era Selections</h3>
               <span className="text-gray-500 text-xs font-medium">
                 {undatedAwards.length} {undatedAwards.length === 1 ? "award" : "awards"}
               </span>

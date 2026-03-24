@@ -202,30 +202,30 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
           {/* Stat bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-2xl">
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="psp-h2 text-white">
+              <div className="text-white font-bebas text-2xl leading-none tracking-wide">
                 {allTimeRecord.w}-{allTimeRecord.l}{allTimeRecord.t > 0 ? `-${allTimeRecord.t}` : ""}
               </div>
-              <div className="text-xs text-gray-400">All-Time Record</div>
+              <div className="text-xs text-gray-400 mt-1">All-Time Record</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="psp-h2 text-white">
+              <div className="text-white font-bebas text-2xl leading-none tracking-wide">
                 {championships.length}
               </div>
-              <div className="text-xs text-gray-400">Championships</div>
+              <div className="text-xs text-gray-400 mt-1">Championships</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="psp-h2 text-white">
+              <div className="text-white font-bebas text-2xl leading-none tracking-wide">
                 {teamSeasons.length}
               </div>
-              <div className="text-xs text-gray-400">Seasons on Record</div>
+              <div className="text-xs text-gray-400 mt-1">Seasons on Record</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="psp-h2 text-white">
+              <div className="text-white font-bebas text-2xl leading-none tracking-wide">
                 {allTimeRecord.w + allTimeRecord.l + allTimeRecord.t > 0
                   ? ((allTimeRecord.w / (allTimeRecord.w + allTimeRecord.l + allTimeRecord.t)) * 100).toFixed(1) + "%"
                   : "—"}
               </div>
-              <div className="text-xs text-gray-400">Win Percentage</div>
+              <div className="text-xs text-gray-400 mt-1">Win Percentage</div>
             </div>
           </div>
         </div>
@@ -303,7 +303,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             {championships.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="psp-h2" style={{ color: "var(--psp-navy)" }}>
+                  <h2 className="psp-h2 text-[var(--psp-navy)]">
                     Championships ({championships.length})
                   </h2>
                   <Link
@@ -354,7 +354,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             {/* Rivalries */}
             {rivalries.length > 0 && (
               <div id="rivalries">
-                <h2 className="psp-h2 mb-4" style={{ color: "var(--psp-navy)" }}>
+                <h2 className="psp-h2 text-[var(--psp-navy)] mb-4">
                   ⚔️ Head-to-Head Records ({rivalries.length})
                 </h2>
                 <RivalryRecord
@@ -381,7 +381,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             {/* Season-by-season results */}
             {teamSeasons.length > 0 && (
               <div>
-                <h2 className="psp-h2 mb-4" style={{ color: "var(--psp-navy)" }}>
+                <h2 className="psp-h2 text-[var(--psp-navy)] mb-4">
                   Season-by-Season Results
                 </h2>
                 <div className="overflow-x-auto">

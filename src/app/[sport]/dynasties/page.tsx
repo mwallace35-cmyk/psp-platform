@@ -140,7 +140,7 @@ export default async function DynastiesPage({
                 </div>
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                  <h3 className="psp-h4 mb-3">About</h3>
+                  <h3 className="psp-h4 text-[var(--psp-navy)] mb-3">About</h3>
                   <p className="text-sm text-gray-600">
                     This visualization shows championship dominance organized by decade. Explore
                     how different programs have dominated across different eras of {meta.name.toLowerCase()}.

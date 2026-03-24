@@ -75,13 +75,13 @@ export default function ScoresFilters({
         <button
           onClick={() => router.push(buildUrl({ sport: "all" }))}
           style={{
-            padding: "0.5rem 1rem",
+            padding: "0.35rem 0.85rem",
             borderRadius: "20px",
             border: "1px solid var(--psp-gold)",
             background: currentSport === "all" ? "var(--psp-gold)" : "transparent",
             color: currentSport === "all" ? "var(--psp-navy)" : "var(--psp-gold)",
             fontWeight: 600,
-            fontSize: "0.9rem",
+            fontSize: "0.8rem",
             cursor: "pointer",
             transition: "all 0.2s ease",
           }}
@@ -93,13 +93,13 @@ export default function ScoresFilters({
             key={sport.id}
             onClick={() => router.push(buildUrl({ sport: sport.id }))}
             style={{
-              padding: "0.5rem 1rem",
+              padding: "0.35rem 0.85rem",
               borderRadius: "20px",
               border: `1px solid ${sport.color}`,
               background: currentSport === sport.id ? sport.color : "transparent",
               color: currentSport === sport.id ? "white" : sport.color,
               fontWeight: 600,
-              fontSize: "0.9rem",
+              fontSize: "0.8rem",
               cursor: "pointer",
               transition: "all 0.2s ease",
             }}
@@ -132,13 +132,13 @@ export default function ScoresFilters({
             value={currentSeason}
             onChange={(e) => router.push(buildUrl({ season: e.target.value }))}
             style={{
-              background: "#1a1a1a",
-              color: "white",
-              border: "1px solid #444",
+              background: "rgba(255,255,255,0.06)",
+              color: "#ccc",
+              border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: "8px",
-              padding: "0.5rem 2rem 0.5rem 0.75rem",
-              fontSize: "0.9rem",
-              fontWeight: 600,
+              padding: "0.4rem 1.8rem 0.4rem 0.65rem",
+              fontSize: "0.8rem",
+              fontWeight: 500,
               cursor: "pointer",
               appearance: "auto",
             }}
@@ -174,13 +174,13 @@ export default function ScoresFilters({
                 if (schoolSearch.length >= 2) setShowDropdown(true);
               }}
               style={{
-                background: "#1a1a1a",
-                color: "white",
-                border: "1px solid #444",
+                background: "rgba(255,255,255,0.06)",
+                color: "#ccc",
+                border: "1px solid rgba(255,255,255,0.12)",
                 borderRadius: "8px",
-                padding: "0.5rem 0.75rem",
-                fontSize: "0.9rem",
-                width: "200px",
+                padding: "0.4rem 0.65rem",
+                fontSize: "0.8rem",
+                width: "180px",
               }}
             />
             {currentSchool && (

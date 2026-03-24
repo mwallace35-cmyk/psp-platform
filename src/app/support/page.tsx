@@ -72,7 +72,7 @@ export default function SupportPage() {
             THE MISSION
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-5xl mb-4">📊</div>
               <h3 className="text-white font-bold mb-3 text-lg">Preserve Data</h3>

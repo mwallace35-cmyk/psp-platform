@@ -37,15 +37,18 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 //   ];
 // }
 
-/* Level display config */
-const LEVEL_CONFIG: Record<string, { label: string; emoji: string; bg: string; text: string; order: number }> = {
-  state: { label: "State", emoji: "🏆", bg: "var(--psp-gold)", text: "var(--psp-navy)", order: 1 },
-  city: { label: "City", emoji: "🏅", bg: "var(--psp-blue)", text: "white", order: 2 },
-  league: { label: "League", emoji: "🎖️", bg: "var(--psp-navy-mid, #0f2040)", text: "var(--psp-gray-300, #d1d5db)", order: 3 },
-};
+/* Level display config — sport-aware for league badges */
+function buildLevelConfig(sportColor?: string): Record<string, { label: string; emoji: string; bg: string; text: string; order: number }> {
+  return {
+    state: { label: "State", emoji: "🏆", bg: "var(--psp-gold)", text: "var(--psp-navy)", order: 1 },
+    city: { label: "City", emoji: "🏅", bg: "#3b82f6", text: "white", order: 2 },
+    league: { label: "League", emoji: "🎖️", bg: sportColor ?? "var(--psp-gray-600, #4b5563)", text: "white", order: 3 },
+  };
+}
 
-function getLevelConfig(level: string) {
-  return LEVEL_CONFIG[level] || { label: level, emoji: "🏆", bg: "var(--psp-gray-500)", text: "white", order: 99 };
+function getLevelConfig(level: string, sportColor?: string) {
+  const config = buildLevelConfig(sportColor);
+  return config[level] || { label: level, emoji: "🏆", bg: "var(--psp-gray-500)", text: "white", order: 99 };
 }
 
 export default async function ChampionshipsPage({ params }: { params: Promise<PageParams> }) {
@@ -140,7 +143,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             {Object.entries(levelCounts)
               .sort(([a], [b]) => (getLevelConfig(a).order) - (getLevelConfig(b).order))
               .map(([level, count]) => {
-                const cfg = getLevelConfig(level);
+                const cfg = getLevelConfig(level, meta.color);
                 return (
                   <span key={level} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
                     style={{ background: cfg.bg, color: cfg.text }}>
@@ -220,12 +223,12 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                           {/* Level badge + classification */}
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-bold flex-shrink-0 whitespace-nowrap"
                             style={{
-                              background: getLevelConfig(c.level || "").bg,
-                              color: getLevelConfig(c.level || "").text,
+                              background: getLevelConfig(c.level || "", meta.color).bg,
+                              color: getLevelConfig(c.level || "", meta.color).text,
                               minWidth: "70px",
                               justifyContent: "center",
                             }}>
-                            {getLevelConfig(c.level || "").label}
+                            {getLevelConfig(c.level || "", meta.color).label}
                             {c.championship_type && (
                               <span style={{ opacity: 0.85, marginLeft: "2px" }}>{c.championship_type}</span>
                             )}
@@ -317,8 +320,8 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                     <div key={c.id} className="flex items-center gap-3 px-5 py-3"
                       style={{ borderBottom: idx < unknownGroup.champs.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-bold flex-shrink-0 whitespace-nowrap"
-                        style={{ background: getLevelConfig(c.level || "").bg, color: getLevelConfig(c.level || "").text, minWidth: "70px", justifyContent: "center" }}>
-                        {getLevelConfig(c.level || "").label}
+                        style={{ background: getLevelConfig(c.level || "", meta.color).bg, color: getLevelConfig(c.level || "", meta.color).text, minWidth: "70px", justifyContent: "center" }}>
+                        {getLevelConfig(c.level || "", meta.color).label}
                       </span>
                       <div className="flex-1 min-w-0">
                         {c.schools?.name ? (

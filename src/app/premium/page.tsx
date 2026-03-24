@@ -100,7 +100,7 @@ export default function PremiumPage() {
             WHAT YOU GET
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
             {/* Free Column */}
             <div className="bg-navy rounded-lg p-8 border border-white/10">
               <h3 className="psp-h3 text-white mb-6">FREE</h3>

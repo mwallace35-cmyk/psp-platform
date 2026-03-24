@@ -43,7 +43,7 @@ export default function AwardsLoading() {
 
       {/* Content skeleton */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
           <div>
             <div className="flex gap-2 mb-6">
               {Array.from({ length: 4 }).map((_, i) => (

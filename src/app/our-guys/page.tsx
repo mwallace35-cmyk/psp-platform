@@ -152,7 +152,7 @@ export default async function OurGuysPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ═══ Hero ═══ */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-navy via-navy-mid to-navy py-10 md:py-14 px-4">
+      <div className="relative overflow-hidden bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
         {/* Decorative glows */}
         <div className="absolute top-0 right-0 w-72 h-72 bg-gold/10 rounded-full blur-[140px]" />
         <div className="absolute bottom-0 left-1/4 w-56 h-56 bg-blue-500/10 rounded-full blur-[120px]" />

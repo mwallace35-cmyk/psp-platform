@@ -41,7 +41,7 @@ export default function ChallengePage() {
           />
           <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="font-[var(--font-bebas)] text-4xl md:text-5xl text-white tracking-wider">
+              <h1 className="psp-h1 text-white">
                 WHO HAD THE BETTER SEASON?
               </h1>
               <p className="text-[var(--psp-gold)] text-lg mt-2">

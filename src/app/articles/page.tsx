@@ -72,8 +72,8 @@ export default async function ArticlesPage({
   return (
     <main id="main-content" className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-navy to-navy-mid py-12 px-4">
-        <div className="max-w-4xl mx-auto">
+      <div className="bg-gradient-to-r from-navy to-navy-mid py-10 px-4">
+        <div className="max-w-7xl mx-auto">
           <h1 className="psp-h1 text-white mb-4">Articles</h1>
           <p className="text-gold text-lg">
             News and stories from Philadelphia high school sports

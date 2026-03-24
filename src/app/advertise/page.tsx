@@ -272,7 +272,7 @@ export default function AdvertisePage() {
             WHY PARTNER WITH PSP
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6">
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">🎯</div>
               <h3 className="text-white font-bold mb-2 text-lg">Targeted Audience</h3>

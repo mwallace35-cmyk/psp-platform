@@ -68,7 +68,7 @@ export default function GreatestSeasonsView({
       {/* Seasons by Category */}
       {Object.entries(grouped).map(([category, categorySeasons]) => (
         <div key={category} className="space-y-4">
-          <h2 className="text-2xl font-bebas text-gray-900">{category}</h2>
+          <h2 className="psp-h2 text-gray-900">{category}</h2>
 
           <div className="overflow-x-auto rounded-lg border border-gray-200">
             <table className="w-full text-sm" aria-label="Greatest seasons">

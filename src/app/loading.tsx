@@ -56,7 +56,7 @@ export default function RootLoading() {
       <section className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 bg-white [data-theme=dark]:bg-[var(--psp-navy)]/40">
         <div className="max-w-7xl mx-auto">
           <div className="h-10 sm:h-12 bg-gray-200 [data-theme=dark]:bg-gray-700 rounded-lg animate-pulse mb-8 max-w-xs" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}

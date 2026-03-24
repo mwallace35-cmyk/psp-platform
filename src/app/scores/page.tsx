@@ -374,29 +374,31 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
         {/* Hero */}
         <div
-          className="bg-gradient-to-br from-[var(--psp-navy)] to-[#1a3a52] px-4 pt-8 pb-6 text-center"
+          className="bg-gradient-to-br from-[var(--psp-navy)] to-[#1a3a52] py-10 px-4 text-center"
         >
-          <h1
-            className="psp-h1 text-white mb-2"
-          >
-            {SPORT_META[selectedSport as keyof typeof SPORT_META]?.emoji}{" "}
-            {selectedSeason}{" "}
-            {SPORT_META[selectedSport as keyof typeof SPORT_META]?.name || selectedSport}{" "}
-            Scores
-          </h1>
-          <p className="text-base text-[#ccc] mb-6">
-            {totalCount} game{totalCount !== 1 ? "s" : ""} � Organized by{" "}
-            {selectedSport === "football" ? "week" : "month"}
-          </p>
+          <div className="max-w-7xl mx-auto">
+            <h1
+              className="psp-h1 text-white mb-2"
+            >
+              {SPORT_META[selectedSport as keyof typeof SPORT_META]?.emoji}{" "}
+              {selectedSeason}{" "}
+              {SPORT_META[selectedSport as keyof typeof SPORT_META]?.name || selectedSport}{" "}
+              Scores
+            </h1>
+            <p className="text-base text-[#ccc] mb-6">
+              {totalCount} game{totalCount !== 1 ? "s" : ""} — Organized by{" "}
+              {selectedSport === "football" ? "week" : "month"}
+            </p>
 
-          <ScoresFilters
-            seasons={seasons}
-            schools={schools}
-            sports={sportOptions}
-            currentSeason={selectedSeason}
-            currentSport={selectedSport}
-            currentSchool={selectedSchool}
-          />
+            <ScoresFilters
+              seasons={seasons}
+              schools={schools}
+              sports={sportOptions}
+              currentSeason={selectedSeason}
+              currentSport={selectedSport}
+              currentSchool={selectedSchool}
+            />
+          </div>
         </div>
 
         {/* Round-grouped scores */}
@@ -431,7 +433,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
                     style={{ borderColor: "var(--psp-gold)" }}
                   >
                     <h2
-                      className="text-[1.6rem] font-bebas m-0"
+                      className="psp-h2 m-0"
                       style={{ color: "var(--psp-gold)" }}
                     >
                       {round.label}
@@ -499,25 +501,27 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
       {/* Hero Section */}
       <div
-        className="bg-gradient-to-br from-[var(--psp-navy)] to-[#1a3a52] px-4 pt-8 pb-6 text-center"
+        className="bg-gradient-to-br from-[var(--psp-navy)] to-[#1a3a52] py-10 px-4 text-center"
       >
-        <h1
-          className="psp-h1 text-white mb-2"
-        >
-          Scores
-        </h1>
-        <p className="text-base text-[#ccc] mb-6">
-          Find games by sport, season, and team
-        </p>
+        <div className="max-w-7xl mx-auto">
+          <h1
+            className="psp-h1 text-white mb-2"
+          >
+            Scores
+          </h1>
+          <p className="text-base text-[#ccc] mb-6">
+            Find games by sport, season, and team
+          </p>
 
-        <ScoresFilters
-          seasons={seasons}
-          schools={schools}
-          sports={sportOptions}
-          currentSeason={selectedSeason}
-          currentSport={selectedSport}
-          currentSchool={selectedSchool}
-        />
+          <ScoresFilters
+            seasons={seasons}
+            schools={schools}
+            sports={sportOptions}
+            currentSeason={selectedSeason}
+            currentSport={selectedSport}
+            currentSchool={selectedSchool}
+          />
+        </div>
       </div>
 
       {/* Scores List */}
@@ -571,7 +575,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
             return (
               <div key={date} className="mb-8">
                 <h2
-                  className="text-[1.3rem] font-bebas mb-3 pb-2 border-b-2 border-[#333]"
+                  className="psp-h3 mb-3 pb-2 border-b-2 border-[#333]"
                   style={{ color: "var(--psp-gold)" }}
                 >
                   {dateLabel}
@@ -660,14 +664,14 @@ function GameCard({
     game.home_score !== null &&
     game.away_score > game.home_score;
 
-  const gameTypeBadgeClass =
-    game.game_type === 'playoff' || game.game_type?.includes('playoff')
-      ? 'bg-orange-600/15 text-orange-400 border-orange-600/30'
-      : game.game_type?.includes('championship') || game.game_type?.includes('final')
-      ? 'bg-[#f0a500]/15 text-[#f0a500] border-[#f0a500]/30'
-      : game.game_type?.includes('district')
-      ? 'bg-blue-500/15 text-blue-400 border-blue-500/30'
-      : 'bg-gray-500/15 text-gray-400 border-gray-500/30';
+  const PLAYOFF_TYPES = ['playoff', 'championship', 'semifinal', 'quarterfinal', 'final'];
+  const isPlayoffType = PLAYOFF_TYPES.some(t => game.game_type === t || game.game_type?.includes(t));
+
+  const gameTypeBadgeClass = isPlayoffType
+    ? 'bg-[#f0a500]/15 text-[#f0a500] border-[#f0a500]/30'
+    : game.game_type?.includes('district')
+    ? 'bg-blue-500/15 text-blue-400 border-blue-500/30'
+    : 'bg-gray-500/15 text-gray-400 border-gray-500/30';
 
   return (
     <Link
@@ -721,8 +725,12 @@ function GameCard({
           className={`text-[0.6rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-sm whitespace-nowrap border ${gameTypeBadgeClass}`}
         >
           {game.game_type === 'playoff' ? <><span role="img" aria-label="trophy">🏆</span> Playoff</> :
+           game.game_type === 'championship' ? <><span role="img" aria-label="medal">🥇</span> Championship</> :
+           game.game_type === 'semifinal' ? <><span role="img" aria-label="trophy">🏆</span> Semifinal</> :
+           game.game_type === 'quarterfinal' ? <><span role="img" aria-label="trophy">🏆</span> Quarterfinal</> :
+           game.game_type === 'final' || game.game_type?.includes('final') ? <><span role="img" aria-label="medal">🥇</span> Final</> :
            game.game_type?.includes('championship') ? <><span role="img" aria-label="medal">🥇</span> Championship</> :
-           game.game_type?.includes('final') ? <><span role="img" aria-label="medal">🥇</span> Final</> :
+           game.game_type?.includes('playoff') ? <><span role="img" aria-label="trophy">🏆</span> Playoff</> :
            game.game_type?.includes('district') ? <><span role="img" aria-label="location">📍</span> District</> :
            game.game_type}
         </span>

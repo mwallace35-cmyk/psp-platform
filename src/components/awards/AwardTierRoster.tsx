@@ -229,8 +229,14 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
             </div>
 
             {/* Teams within tier */}
-            {tier.teams.map((team, idx) => (
-              <div key={`${team.selector}-${team.level}-${team.team}-${idx}`} style={{
+            {tier.teams.map((team, idx) => {
+              const levelLower = team.level.toLowerCase();
+              const isFirst = levelLower.includes('first') || levelLower.includes('1st');
+              const isSecond = levelLower.includes('second') || levelLower.includes('2nd');
+              const isThird = levelLower.includes('third') || levelLower.includes('3rd');
+              const tierShadow = isFirst ? 'shadow-lg ring-1 ring-[#f0a500]/20' : isSecond ? 'shadow-md' : isThird ? 'shadow-sm' : '';
+              return (
+              <div key={`${team.selector}-${team.level}-${team.team}-${idx}`} className={tierShadow} style={{
                 background: '#0f2040',
                 borderRadius: 8,
                 marginBottom: 12,
@@ -363,7 +369,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                   });
                 })()}
               </div>
-            ))}
+            )})}
           </div>
         );
       })}

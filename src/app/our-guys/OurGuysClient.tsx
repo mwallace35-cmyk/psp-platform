@@ -121,7 +121,7 @@ function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
                 </span>
               )}
             </div>
-            <h2 className="text-3xl md:text-4xl font-bebas text-white tracking-wide">{a.person_name}</h2>
+            <h2 className="psp-h2 text-white">{a.person_name}</h2>
             <div className="flex items-center gap-3 mt-2">
               {a.current_org && <span className="text-gray-300 text-sm font-medium">{a.current_org}</span>}
               {a.current_role && a.current_role !== 'postgres' && <span className="text-gray-400 text-sm">{a.current_role}</span>}

@@ -22,7 +22,7 @@ export default function ArticleDetailSkeleton() {
       </div>
 
       {/* Article Content */}
-      <div className="max-w-4xl mx-auto px-4 py-12 grid grid-cols-3 gap-8">
+      <div className="max-w-4xl mx-auto px-4 py-12 grid grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="col-span-2">
           {/* Featured Image */}

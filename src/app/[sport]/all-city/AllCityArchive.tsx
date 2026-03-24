@@ -217,7 +217,7 @@ export default function AllCityArchive({ years, sport }: AllCityArchiveProps) {
             >
               <summary className="cursor-pointer px-4 py-3 flex items-center justify-between hover:bg-gray-750/50 transition-all">
                 <div className="flex items-center gap-3">
-                  <h3 className="text-white font-bebas text-xl tracking-wide">{yearData.label}</h3>
+                  <h3 className="psp-h3 text-white">{yearData.label}</h3>
                   <span className="text-gray-500 text-xs font-medium">
                     {yearData.awards.length} selections
                   </span>

@@ -125,7 +125,7 @@ export default async function CityAllStarGamePage() {
       <section className="border-b border-[var(--psp-gold)]/30 bg-gradient-to-b from-[var(--psp-navy-mid)] to-[var(--psp-navy)]">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl">
-            <h1 className="font-bebas-neue text-5xl md:text-6xl font-bold mb-2">
+            <h1 className="psp-h1-lg text-white mb-2">
               City All-Star Game
             </h1>
             <p className="text-[var(--psp-gold)] text-lg font-semibold mb-4">

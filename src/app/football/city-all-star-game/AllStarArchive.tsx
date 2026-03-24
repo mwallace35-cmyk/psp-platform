@@ -395,7 +395,7 @@ function RecordsSection({ records }: { records: IndividualRecords }) {
         if (!data) return null;
         return (
           <div key={section.key}>
-            <h3 className="font-bebas-neue text-2xl font-bold text-[var(--psp-gold)] mb-4 border-b border-[var(--psp-gold)]/30 pb-2">
+            <h3 className="psp-h2 text-[var(--psp-gold)] mb-4 border-b border-[var(--psp-gold)]/30 pb-2">
               {section.title}
             </h3>
             <div className="overflow-x-auto">
@@ -463,7 +463,7 @@ function TdScorersTab({ games }: { games: GameData[] }) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h3 className="font-bebas-neue text-2xl font-bold text-[var(--psp-gold)]">
+          <h3 className="psp-h2 text-[var(--psp-gold)]">
             All-Time TD Scorers
           </h3>
           <p className="text-gray-400 text-sm">{allTds.length} touchdowns across 45 games (1975–2019)</p>
@@ -504,7 +504,7 @@ function TdScorersTab({ games }: { games: GameData[] }) {
       <div className="space-y-4">
         {byYear.map(({ year, tds }) => (
           <div key={year} className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/10 p-3">
-            <h4 className="font-bebas-neue text-xl font-bold text-[var(--psp-gold)] mb-2">{year}</h4>
+            <h4 className="psp-h3 text-[var(--psp-gold)] mb-2">{year}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
               {tds.map((td, idx) => (
                 <p key={idx} className="text-sm">
@@ -545,7 +545,7 @@ function RostersTab({ games }: { games: GameData[] }) {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="font-bebas-neue text-2xl font-bold text-[var(--psp-gold)]">
+        <h3 className="psp-h2 text-[var(--psp-gold)]">
           Game Rosters
         </h3>
         <p className="text-gray-400 text-sm">
@@ -555,7 +555,7 @@ function RostersTab({ games }: { games: GameData[] }) {
 
       {rosterYears.map((game) => (
         <div key={game.year} className="space-y-4">
-          <h4 className="font-bebas-neue text-2xl font-bold border-b border-[var(--psp-gold)]/30 pb-2">
+          <h4 className="psp-h2 border-b border-[var(--psp-gold)]/30 pb-2">
             {game.year} — <span className="text-gray-400 text-lg">{game.score}</span>
           </h4>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -151,10 +151,11 @@ export default async function PickemPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {games.map((game) => (
+                    {games.map((game, idx) => (
                       <div
                         key={game.id}
-                        className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-lg transition-shadow"
+                        className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-lg transition-shadow animate-fade-in-up"
+                        style={{ animationDelay: `${idx * 30}ms` }}
                       >
                         <div className="space-y-3">
                           {/* Home Team */}

@@ -264,24 +264,35 @@ export default function Header() {
               Scores
             </Link>
 
-            {/* Football Dropdown */}
-            <div className="nav-dd">
-              <div className="nav-link" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                <Link href="/football" style={{ color: "inherit", textDecoration: "none" }} aria-current={isActive("/football") ? "page" : undefined}>
-                  Football
-                </Link>
-                <button
-                  style={{ background: "none", border: "none", cursor: "pointer", color: "inherit", padding: "0 2px", fontSize: "0.7em" }}
-                  aria-haspopup="menu"
-                  aria-expanded={openDropdown === "football"}
-                  aria-label="Football menu"
-                  onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "football")}
-                  onClick={() => handleDropdownToggle("football")}
-                  onBlur={handleDropdownClose}
-                >
-                  &#9662;
-                </button>
-              </div>
+            {/* Football Dropdown — clickable link + hover dropdown */}
+            <div
+              className="nav-dd"
+              onMouseEnter={() => setOpenDropdown("football")}
+              onMouseLeave={() => setOpenDropdown(prev => prev === "football" ? null : prev)}
+            >
+              <Link
+                href="/football"
+                className={`nav-link ${isActive("/football") ? "active" : ""}`}
+                style={{ display: "flex", alignItems: "center", gap: "4px" }}
+                aria-current={isActive("/football") ? "page" : undefined}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "football"}
+                onFocus={() => setOpenDropdown("football")}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setOpenDropdown("football");
+                    setTimeout(() => {
+                      const menu = (e.currentTarget as HTMLElement).nextElementSibling as HTMLElement | null;
+                      if (menu) menu.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+                    }, 0);
+                  } else if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+              >
+                Football <span style={{ fontSize: "0.7em" }}>&#9662;</span>
+              </Link>
               <div
                 className="dd-menu"
                 role="menu"
@@ -300,24 +311,35 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Basketball Dropdown */}
-            <div className="nav-dd">
-              <div className="nav-link" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                <Link href="/basketball" style={{ color: "inherit", textDecoration: "none" }} aria-current={isActive("/basketball") ? "page" : undefined}>
-                  Basketball
-                </Link>
-                <button
-                  style={{ background: "none", border: "none", cursor: "pointer", color: "inherit", padding: "0 2px", fontSize: "0.7em" }}
-                  aria-haspopup="menu"
-                  aria-expanded={openDropdown === "basketball"}
-                  aria-label="Basketball menu"
-                  onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "basketball")}
-                  onClick={() => handleDropdownToggle("basketball")}
-                  onBlur={handleDropdownClose}
-                >
-                  &#9662;
-                </button>
-              </div>
+            {/* Basketball Dropdown — clickable link + hover dropdown */}
+            <div
+              className="nav-dd"
+              onMouseEnter={() => setOpenDropdown("basketball")}
+              onMouseLeave={() => setOpenDropdown(prev => prev === "basketball" ? null : prev)}
+            >
+              <Link
+                href="/basketball"
+                className={`nav-link ${isActive("/basketball") ? "active" : ""}`}
+                style={{ display: "flex", alignItems: "center", gap: "4px" }}
+                aria-current={isActive("/basketball") ? "page" : undefined}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "basketball"}
+                onFocus={() => setOpenDropdown("basketball")}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setOpenDropdown("basketball");
+                    setTimeout(() => {
+                      const menu = (e.currentTarget as HTMLElement).nextElementSibling as HTMLElement | null;
+                      if (menu) menu.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+                    }, 0);
+                  } else if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+              >
+                Basketball <span style={{ fontSize: "0.7em" }}>&#9662;</span>
+              </Link>
               <div
                 className="dd-menu"
                 role="menu"
@@ -365,6 +387,11 @@ export default function Header() {
                 ))}
               </div>
             </div>
+
+            {/* Schools — direct link */}
+            <Link href="/schools" className={`nav-link ${isActive("/schools") ? "active" : ""}`} aria-current={isActive("/schools") ? "page" : undefined}>
+              Schools
+            </Link>
 
             {/* More Dropdown */}
             <div className="nav-dd">

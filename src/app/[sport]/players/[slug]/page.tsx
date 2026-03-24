@@ -759,7 +759,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
         <section id="game-log" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
           <h2
-            className="psp-h2 mb-6"
+            className="psp-h2 text-[var(--psp-navy)] mb-6"
           >
             Game Log
           </h2>

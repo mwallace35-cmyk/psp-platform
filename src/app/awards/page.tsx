@@ -197,7 +197,7 @@ export default async function AwardsHubPage() {
 
       {/* Main Content: Tabs + Sidebar */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
           {/* Tabbed Content */}
           <div>
             <AwardsHubClient

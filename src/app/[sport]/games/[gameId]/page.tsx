@@ -150,14 +150,15 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Rushing
             </h4>
+            <div className="overflow-x-auto">
             <table className="w-full text-sm text-gray-200" aria-label={`${label} rushing statistics`}>
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
-                  <th className="text-left py-1 pr-2">Player</th>
-                  <th className="text-center py-1 px-2">#</th>
-                  <th className="text-right py-1 px-2">Car</th>
-                  <th className="text-right py-1 px-2">Yds</th>
-                  <th className="text-right py-1 pl-2">TD</th>
+                  <th className="text-left px-3 py-2">Player</th>
+                  <th className="text-center px-3 py-2">#</th>
+                  <th className="text-right px-3 py-2">Car</th>
+                  <th className="text-right px-3 py-2">Yds</th>
+                  <th className="text-right px-3 py-2">TD</th>
                 </tr>
               </thead>
               <tbody>
@@ -167,7 +168,7 @@ function FootballBoxScore({
                     const rushTd = getTD(s, 'rush');
                     return (
                     <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
-                      <td className="py-1.5 pr-2">
+                      <td className="px-3 py-2">
                         {s.players?.slug ? (
                           <Link
                             href={`/${sport}/players/${s.players.slug}`}
@@ -179,14 +180,14 @@ function FootballBoxScore({
                           <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
-                      <td className="text-center py-1.5 px-2 text-gray-400">
+                      <td className="text-center px-3 py-2 text-gray-400">
                         {s.jersey_number ?? ""}
                       </td>
-                      <td className="text-right py-1.5 px-2">{s.rush_carries ?? 0}</td>
-                      <td className="text-right py-1.5 px-2 font-semibold">
+                      <td className="text-right px-3 py-2">{s.rush_carries ?? 0}</td>
+                      <td className="text-right px-3 py-2 font-semibold">
                         {s.rush_yards ?? 0}
                       </td>
-                      <td className="text-right py-1.5 pl-2" style={{ color: (rushTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                      <td className="text-right px-3 py-2" style={{ color: (rushTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
                         {rushTd != null ? (isSeasonAvg ? rushTd.toFixed(1) : rushTd) : '—'}
                       </td>
                     </tr>
@@ -194,6 +195,7 @@ function FootballBoxScore({
                   })}
               </tbody>
             </table>
+            </div>
           </div>
         )}
 
@@ -202,14 +204,15 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Passing
             </h4>
+            <div className="overflow-x-auto">
             <table className="w-full text-sm text-gray-200" aria-label={`${label} passing statistics`}>
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
-                  <th className="text-left py-1 pr-2">Player</th>
-                  <th className="text-center py-1 px-2">#</th>
-                  <th className="text-right py-1 px-2">Comp</th>
-                  <th className="text-right py-1 px-2">Yds</th>
-                  <th className="text-right py-1 pl-2">TD</th>
+                  <th className="text-left px-3 py-2">Player</th>
+                  <th className="text-center px-3 py-2">#</th>
+                  <th className="text-right px-3 py-2">Comp</th>
+                  <th className="text-right px-3 py-2">Yds</th>
+                  <th className="text-right px-3 py-2">TD</th>
                 </tr>
               </thead>
               <tbody>
@@ -219,7 +222,7 @@ function FootballBoxScore({
                     const passTd = getTD(s, 'pass');
                     return (
                     <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
-                      <td className="py-1.5 pr-2">
+                      <td className="px-3 py-2">
                         {s.players?.slug ? (
                           <Link
                             href={`/${sport}/players/${s.players.slug}`}
@@ -231,20 +234,21 @@ function FootballBoxScore({
                           <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
-                      <td className="text-center py-1.5 px-2 text-gray-400">
+                      <td className="text-center px-3 py-2 text-gray-400">
                         {s.jersey_number ?? ""}
                       </td>
-                      <td className="text-right py-1.5 px-2">{s.pass_completions ?? 0}</td>
-                      <td className="text-right py-1.5 px-2 font-semibold">
+                      <td className="text-right px-3 py-2">{s.pass_completions ?? 0}</td>
+                      <td className="text-right px-3 py-2 font-semibold">
                         {s.pass_yards ?? 0}
                       </td>
-                      <td className="text-right py-1.5 pl-2" style={{ color: (passTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                      <td className="text-right px-3 py-2" style={{ color: (passTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
                         {passTd != null ? (isSeasonAvg ? passTd.toFixed(1) : passTd) : '—'}
                       </td>
                     </tr>
                   );})}
               </tbody>
             </table>
+            </div>
           </div>
         )}
 
@@ -253,14 +257,15 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Receiving
             </h4>
+            <div className="overflow-x-auto">
             <table className="w-full text-sm text-gray-200" aria-label={`${label} receiving statistics`}>
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
-                  <th className="text-left py-1 pr-2">Player</th>
-                  <th className="text-center py-1 px-2">#</th>
-                  <th className="text-right py-1 px-2">Rec</th>
-                  <th className="text-right py-1 px-2">Yds</th>
-                  <th className="text-right py-1 pl-2">TD</th>
+                  <th className="text-left px-3 py-2">Player</th>
+                  <th className="text-center px-3 py-2">#</th>
+                  <th className="text-right px-3 py-2">Rec</th>
+                  <th className="text-right px-3 py-2">Yds</th>
+                  <th className="text-right px-3 py-2">TD</th>
                 </tr>
               </thead>
               <tbody>
@@ -270,7 +275,7 @@ function FootballBoxScore({
                     const recTd = getTD(s, 'rec');
                     return (
                     <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
-                      <td className="py-1.5 pr-2">
+                      <td className="px-3 py-2">
                         {s.players?.slug ? (
                           <Link
                             href={`/${sport}/players/${s.players.slug}`}
@@ -282,20 +287,21 @@ function FootballBoxScore({
                           <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
-                      <td className="text-center py-1.5 px-2 text-gray-400">
+                      <td className="text-center px-3 py-2 text-gray-400">
                         {s.jersey_number ?? ""}
                       </td>
-                      <td className="text-right py-1.5 px-2">{s.rec_catches ?? 0}</td>
-                      <td className="text-right py-1.5 px-2 font-semibold">
+                      <td className="text-right px-3 py-2">{s.rec_catches ?? 0}</td>
+                      <td className="text-right px-3 py-2 font-semibold">
                         {s.rec_yards ?? 0}
                       </td>
-                      <td className="text-right py-1.5 pl-2" style={{ color: (recTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                      <td className="text-right px-3 py-2" style={{ color: (recTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
                         {recTd != null ? (isSeasonAvg ? recTd.toFixed(1) : recTd) : '—'}
                       </td>
                     </tr>
                   );})}
               </tbody>
             </table>
+            </div>
           </div>
         )}
 
@@ -361,12 +367,13 @@ function BasketballBoxScore({
         <h3 className="text-lg font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase">
           {label} {displayPts > 0 && <span className="text-white">({displayPts} pts)</span>}
         </h3>
+        <div className="overflow-x-auto">
         <table className="w-full text-sm text-gray-200" aria-label={`${label} scoring statistics`}>
           <thead>
             <tr className="text-gray-400 border-b border-gray-700">
-              <th className="text-left py-1 pr-2">Player</th>
-              <th className="text-center py-1 px-2">#</th>
-              <th className="text-right py-1 pl-2">Pts</th>
+              <th className="text-left px-3 py-2">Player</th>
+              <th className="text-center px-3 py-2">#</th>
+              <th className="text-right px-3 py-2">Pts</th>
             </tr>
           </thead>
           <tbody>
@@ -374,7 +381,7 @@ function BasketballBoxScore({
               .sort((a, b) => (b.points ?? 0) - (a.points ?? 0))
               .map((s) => (
                 <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
-                  <td className="py-1.5 pr-2">
+                  <td className="px-3 py-2">
                     {s.players?.slug ? (
                       <Link
                         href={`/${sport}/players/${s.players.slug}`}
@@ -386,16 +393,17 @@ function BasketballBoxScore({
                       <span className="text-gray-200">{s.player_name}</span>
                     )}
                   </td>
-                  <td className="text-center py-1.5 px-2 text-gray-400">
+                  <td className="text-center px-3 py-2 text-gray-400">
                     {s.jersey_number ?? ""}
                   </td>
-                  <td className="text-right py-1.5 pl-2 font-semibold text-[var(--psp-gold)]">
+                  <td className="text-right px-3 py-2 font-semibold text-[var(--psp-gold)]">
                     {s.points ?? 0}
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
+        </div>
         {teamStats.length === 0 && (
           <p className="text-gray-500 text-sm italic">No individual stats available</p>
         )}

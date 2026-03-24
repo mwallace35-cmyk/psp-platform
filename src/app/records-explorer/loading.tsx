@@ -10,7 +10,7 @@ export default function RecordsExplorerSkeleton() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar - Filters */}
           <div className="lg:col-span-1">
             <div className="sticky top-4 space-y-6 bg-gray-50 border border-gray-200 rounded-lg p-6">
