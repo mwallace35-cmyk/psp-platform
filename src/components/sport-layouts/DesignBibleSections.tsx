@@ -108,8 +108,10 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
         const statQueries = config.stats.map(async ({ column, label, suffix }) => {
           const db = supabase as any;
           const { data } = await db.from(config.table)
-            .select('player_id, ' + column + ', players!inner(name, schools!inner(name))')
+            .select('player_id, ' + column + ', games_played, players!inner(name, schools!inner(name)), seasons!inner(is_current)')
+            .eq('seasons.is_current', true)
             .not(column, 'is', null)
+            .gte('games_played', 5)
             .order(column, { ascending: false })
             .limit(1);
           if (data?.[0]) {
