@@ -58,7 +58,6 @@ export default async function OurGuysPage() {
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('pro_league', 'NBA'),
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('pro_league', 'MLB'),
       supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).in('current_level', ['coaching', 'coach', 'referee']),
-      // (league breakdown now computed from alumni data)
     ]),
 
     // School pipeline: active pros grouped by school (also used for league breakdown)
