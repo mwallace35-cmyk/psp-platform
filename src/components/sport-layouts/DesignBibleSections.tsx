@@ -2,7 +2,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
-interface Props { sport: string; }
+interface Props {
+  sport: string;
+  /** When true, limits leaders to 1 per stat, rankings to top 5, scores to 4. Used in editorial hub layout. */
+  compact?: boolean;
+  /** When true, uses dark navy theme (white text, dark cards). Used in editorial hub layout. */
+  darkTheme?: boolean;
+}
 
 interface Leader { name: string; school: string; value: number; }
 interface Game {
@@ -68,7 +74,7 @@ function getPlayoffBadge(gameType: string | null, playoffRound: string | null): 
   return playoffRound;
 }
 
-export default function DesignBibleSections({ sport }: Props) {
+export default function DesignBibleSections({ sport, compact = false, darkTheme = false }: Props) {
   const [leaders, setLeaders] = useState<{ items: { label: string; suffix: string; leader: Leader | null }[] }>({ items: [] });
   const [games, setGames] = useState<Game[]>([]);
   const [rankingCategories, setRankingCategories] = useState<RankingCategory[]>([]);
@@ -196,17 +202,33 @@ export default function DesignBibleSections({ sport }: Props) {
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Loading stats...</div>;
 
-  const headingStyle: React.CSSProperties = { fontSize: '1.25rem', color: '#0a1628', letterSpacing: '1px', marginBottom: '0.75rem' };
-  const cardStyle: React.CSSProperties = { background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', marginBottom: '0.5rem' };
+  const headingStyle: React.CSSProperties = {
+    fontSize: '1.25rem',
+    color: darkTheme ? '#fff' : '#0a1628',
+    letterSpacing: '1px',
+    marginBottom: '0.75rem',
+  };
+  const cardStyle: React.CSSProperties = {
+    background: darkTheme ? 'rgba(255,255,255,0.05)' : '#f8fafc',
+    border: darkTheme ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e2e8f0',
+    borderRadius: '8px',
+    padding: '1rem',
+    marginBottom: '0.5rem',
+    color: darkTheme ? '#e2e8f0' : undefined,
+  };
+
+  // Compact mode limits
+  const maxScores = compact ? 4 : 5;
+  const maxRankings = compact ? 5 : undefined; // undefined = show all
 
   const currentCategory = rankingCategories[activeCategory] ?? null;
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', padding: '1.5rem 0', maxWidth: '960px', margin: '0 auto' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', padding: '1.5rem', maxWidth: '960px', margin: '0 auto' }}>
       <div>
         <h2 className="psp-h3" style={headingStyle}>TOP PERFORMERS</h2>
         {leaders.items.map(({ label, suffix, leader }) => leader && (
-          <div key={label} style={cardStyle}><strong style={{ color: '#f0a500' }}>{label}:</strong> {leader.name} ({leader.value.toLocaleString()} {suffix})</div>
+          <div key={label} style={cardStyle}><strong style={{ color: '#f0a500' }}>{label}:</strong> {leader.name} <span style={{ color: darkTheme ? 'rgba(255,255,255,0.5)' : '#64748b' }}>({leader.value.toLocaleString()} {suffix})</span></div>
         ))}
         {rankingCategories.length > 0 && (
           <>
@@ -225,9 +247,9 @@ export default function DesignBibleSections({ sport }: Props) {
                         fontSize: '11px',
                         fontWeight: 700,
                         borderRadius: '4px',
-                        border: isActive ? '1px solid #f0a500' : '1px solid #e2e8f0',
-                        background: isActive ? '#f0a500' : '#f8fafc',
-                        color: isActive ? '#0a1628' : '#64748b',
+                        border: isActive ? '1px solid #f0a500' : darkTheme ? '1px solid rgba(255,255,255,0.15)' : '1px solid #e2e8f0',
+                        background: isActive ? '#f0a500' : darkTheme ? 'rgba(255,255,255,0.05)' : '#f8fafc',
+                        color: isActive ? '#0a1628' : darkTheme ? 'rgba(255,255,255,0.5)' : '#64748b',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
                         textTransform: 'uppercase',
@@ -241,17 +263,17 @@ export default function DesignBibleSections({ sport }: Props) {
               </div>
             )}
             {/* Active category label */}
-            <div style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: darkTheme ? 'rgba(255,255,255,0.4)' : '#64748b', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               {currentCategory?.label}
             </div>
             {/* Rankings list */}
-            {currentCategory?.rankings.map((r) => (
-              <div key={`${currentCategory.key}-${r.rank}`} style={cardStyle}>
+            {(maxRankings ? currentCategory?.rankings.slice(0, maxRankings) : currentCategory?.rankings)?.map((r) => (
+              <div key={`${currentCategory!.key}-${r.rank}`} style={cardStyle}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <span style={{ display: 'inline-block', width: '28px', height: '28px', borderRadius: '50%', background: '#f0a500', color: '#0a1628', textAlign: 'center', lineHeight: '28px', fontWeight: 700, fontSize: '14px', marginRight: '0.5rem', flexShrink: 0 }}>{r.rank}</span>
                   <span style={{ flex: 1, fontWeight: 600 }}>{r.school}</span>
                   {r.record && (
-                    <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>{r.record}</span>
+                    <span style={{ fontSize: '12px', color: darkTheme ? 'rgba(255,255,255,0.4)' : '#64748b', fontWeight: 500 }}>{r.record}</span>
                   )}
                 </div>
               </div>
@@ -279,7 +301,7 @@ export default function DesignBibleSections({ sport }: Props) {
       <div>
         <h2 className="psp-h3" style={headingStyle}>RECENT SCORES</h2>
         {games.length === 0 && <div style={cardStyle}>No recent scores available</div>}
-        {games.map((g, i) => {
+        {games.slice(0, maxScores).map((g, i) => {
           const badge = getPlayoffBadge(g.gameType, g.playoffRound);
           return (
             <div key={i} style={cardStyle}>
@@ -301,11 +323,11 @@ export default function DesignBibleSections({ sport }: Props) {
                 </div>
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: g.homeScore > g.awayScore ? 700 : 400, color: g.homeScore > g.awayScore ? '#0a1628' : '#64748b' }}>{g.home}</span>
+                <span style={{ fontWeight: g.homeScore > g.awayScore ? 700 : 400, color: g.homeScore > g.awayScore ? (darkTheme ? '#fff' : '#0a1628') : (darkTheme ? 'rgba(255,255,255,0.4)' : '#64748b') }}>{g.home}</span>
                 <span style={{ fontWeight: 700, color: '#f0a500' }}>{g.homeScore}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: g.awayScore > g.homeScore ? 700 : 400, color: g.awayScore > g.homeScore ? '#0a1628' : '#64748b' }}>{g.away}</span>
+                <span style={{ fontWeight: g.awayScore > g.homeScore ? 700 : 400, color: g.awayScore > g.homeScore ? (darkTheme ? '#fff' : '#0a1628') : (darkTheme ? 'rgba(255,255,255,0.4)' : '#64748b') }}>{g.away}</span>
                 <span style={{ fontWeight: 700, color: '#f0a500' }}>{g.awayScore}</span>
               </div>
             </div>

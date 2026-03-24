@@ -10,6 +10,9 @@ import QuickNavigation from "@/components/sport-layouts/QuickNavigation";
 import PlayoffPreview from "@/components/sport-layouts/PlayoffPreview";
 import DesignBibleSections from "@/components/sport-layouts/DesignBibleSections";
 import SportHeroSilhouette from "@/components/sport-layouts/SportHeroSilhouette";
+import SportHubHero from "@/components/sport-layouts/SportHubHero";
+import SportHubNews from "@/components/sport-layouts/SportHubNews";
+import SportHubStandings from "@/components/sport-layouts/SportHubStandings";
 import CompoundLeaderboards from "@/components/leaderboards/CompoundLeaderboards";
 import RecordWatch from "@/components/widgets/RecordWatch";
 import { captureError } from "@/lib/error-tracking";
@@ -34,6 +37,8 @@ interface FeaturedArticle {
   title: string;
   excerpt?: string;
   featured_image_url?: string | null;
+  published_at?: string | null;
+  author_name?: string | null;
 }
 
 interface DataFreshness {
@@ -164,7 +169,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       getSportOverview(sport),
       getRecentChampions(sport, 10),
       getSchoolsBySport(sport, 30),
-      getFeaturedArticles(sport, 3),
+      getFeaturedArticles(sport, 4),
       getDataFreshness(sport),
       getRecentGamesBySport(sport, 20),
       getTeamsWithRecords(sport, 1, 10),
@@ -303,6 +308,11 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     "offseason": { label: "Offseason", color: "text-gray-300", bg: "bg-gray-500/20 border-gray-500/30" },
   };
 
+  // Split articles: first = hero, rest = news grid
+  const heroArticle = featured.length > 0 ? featured[0] : null;
+  const newsArticles = featured.length > 1 ? featured.slice(1, 4) : [];
+  const fallbackBannerSport = sport === 'track-field' ? 'track' : sport;
+
   return (
     <main id="main-content">
       {/* Breadcrumb JSON-LD */}
@@ -314,36 +324,48 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       {/* Breadcrumb */}
       <Breadcrumb items={[{label: meta.name}]} />
 
-      {/* Sport Hero — AI-Generated Banner */}
-      <div
-        className="text-white py-10 px-4 relative overflow-hidden flex items-center bg-[#0a1628]"
-        style={{
-          background: `linear-gradient(to right, rgba(10,22,40,0.55), rgba(10,22,40,0.15)), url(/images/banners/${sport === 'track-field' ? 'track' : sport}.jpg) center/cover no-repeat`,
-        }}
-        role="img"
-        aria-label={`Philadelphia high school ${meta.name.toLowerCase()} banner`}
-      >
-        <div className="max-w-7xl mx-auto relative z-10 w-full">
-          <div className="flex items-center gap-4">
-            <span className="text-4xl" aria-hidden="true">{meta.emoji}</span>
-            <div className="flex items-center gap-3">
-              <h1 className="psp-h1-lg text-white">
-                {meta.name}
-              </h1>
-              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${phaseBadge[seasonInfo.phase].color} ${phaseBadge[seasonInfo.phase].bg}`}>
-                {phaseBadge[seasonInfo.phase].label}
-              </span>
-            </div>
-          </div>
-        </div>
+      {/* 1. HERO — Featured Story (Bleacher Report style) */}
+      <SportHubHero
+        sport={sport}
+        sportName={meta.name}
+        sportEmoji={meta.emoji}
+        sportColorHex={sportColorHex}
+        article={heroArticle}
+        seasonPhaseBadge={phaseBadge[seasonInfo.phase]}
+        fallbackBannerSport={fallbackBannerSport}
+      />
+
+      {/* 2. LATEST NEWS — Horizontal card row */}
+      <div className="bg-[var(--psp-navy)]">
+        <SportHubNews
+          sport={sport}
+          sportName={meta.name}
+          sportColorHex={sportColorHex}
+          articles={newsArticles}
+        />
       </div>
 
-      {/* Design Bible Sections: Top Performers, Recent Scores, Power Rankings */}
-            <DesignBibleSections sport={sport} />
+      {/* 3-4-5. SCORES + RANKINGS + LEADERS — Compact dark theme */}
+      <div className="bg-[var(--psp-navy)]">
+        <DesignBibleSections sport={sport} compact darkTheme />
+      </div>
+
+      {/* 6. STANDINGS — Compact league standings */}
+      <div className="bg-[var(--psp-navy)]">
+        <SportHubStandings
+          standings={standings}
+          sport={sport}
+          sportName={meta.name}
+          sportColorHex={sportColorHex}
+          maxTeams={5}
+        />
+      </div>
 
       {/* Editorial Intro */}
-      <div className="max-w-[900px] mx-auto my-8 px-6 text-[1.1rem] leading-[1.7]" style={{ color: "var(--text-body)", fontFamily: "var(--font-dm-sans)" }}>
-        <p>{sportIntro}</p>
+      <div className="bg-[var(--psp-navy)]">
+        <div className="max-w-[900px] mx-auto py-8 px-6 text-[1.1rem] leading-[1.7]" style={{ color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-dm-sans)" }}>
+          <p>{sportIntro}</p>
+        </div>
       </div>
 
       {/* Playoff Preview (basketball only, March 2026) */}
@@ -355,7 +377,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       {/* Quick Navigation */}
       <QuickNavigation sport={sport} sportColor={sportColorHex} />
 
-      {/* Layout Switcher (Client Component) */}
+      {/* Layout Switcher (Client Component) — Editorial/Dashboard toggle */}
       <SportLayoutSwitcher
         sport={sport}
         sportColor={sportColorHex}

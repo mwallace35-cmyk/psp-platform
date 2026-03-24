@@ -62,11 +62,11 @@ interface SportLayoutSwitcherProps {
 const DEFAULT_LAYOUTS: Record<string, LayoutType> = {
   football: "editorial",
   basketball: "editorial",
-  baseball: "dashboard",
-  "track-field": "dashboard",
-  lacrosse: "dashboard",
-  wrestling: "dashboard",
-  soccer: "dashboard",
+  baseball: "editorial",
+  "track-field": "editorial",
+  lacrosse: "editorial",
+  wrestling: "editorial",
+  soccer: "editorial",
 };
 
 export default function SportLayoutSwitcher(props: SportLayoutSwitcherProps) {
