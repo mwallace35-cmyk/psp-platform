@@ -359,7 +359,7 @@ export default function ComingSoonPage() {
                 fontWeight: 600,
                 textTransform: "uppercase",
                 letterSpacing: "1.5px",
-                color: "rgba(255,255,255,0.4)",
+                color: "rgba(255,255,255,0.7)",
               }}
             >
               {stat.label}
@@ -405,7 +405,7 @@ export default function ComingSoonPage() {
               style={{
                 fontSize: 14,
                 lineHeight: 1.6,
-                color: "rgba(255,255,255,0.5)",
+                color: "rgba(255,255,255,0.75)",
                 margin: 0,
               }}
             >
@@ -492,7 +492,7 @@ export default function ComingSoonPage() {
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            color: "rgba(255,255,255,0.4)",
+            color: "rgba(255,255,255,0.7)",
             textDecoration: "none",
             fontSize: 13,
             fontWeight: 600,
@@ -513,7 +513,7 @@ export default function ComingSoonPage() {
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            color: "rgba(255,255,255,0.4)",
+            color: "rgba(255,255,255,0.7)",
             textDecoration: "none",
             fontSize: 13,
             fontWeight: 600,

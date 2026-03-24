@@ -154,7 +154,7 @@ export default function NewsletterCTA() {
         )}
 
         {/* Social Proof */}
-        <p className="text-center text-white/50 text-xs mt-6">
+        <p className="text-center text-white/75 text-xs mt-6">
           The official Philadelphia high school sports database — 25 years of data, 1,200+ schools, 50,000+ players
         </p>
       </div>

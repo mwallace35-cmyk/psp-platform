@@ -472,13 +472,26 @@ select {
   outline: 2px solid var(--psp-gold);
   outline-offset: 2px;
 }
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+/* Focus-visible on ALL interactive elements */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="menuitem"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
   outline: 2px solid var(--psp-gold);
   outline-offset: 2px;
   border-radius: 4px;
 }
-/* Remove default focus ring when not keyboard-navigating */
-*:focus:not(:focus-visible) { outline: none; }
+
+/* Remove default outline to avoid double rings */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}
 
 /* Fade-in-up animation for grid items */
 @keyframes fadeInUp {
@@ -758,7 +771,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   justify-content: space-between;
   gap: 10px;
   font-size: 12px;
-  color: rgba(255,255,255,.5);
+  color: rgba(255,255,255,.75);
   line-height: 1.6;
 }
 
@@ -775,7 +788,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .hsc-score {
   font-weight: 800;
   font-size: 14px;
-  color: rgba(255,255,255,.4);
+  color: rgba(255,255,255,.7);
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
@@ -2023,5 +2036,8 @@ select:focus {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .animate-pulse, .animate-fade-in-up {
+    animation: none !important;
   }
 }

@@ -232,7 +232,7 @@ export default async function AwardsHubPage() {
                   >
                     Dynasty Tracker
                   </h3>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.75)" }}>
                     Most championships all-time
                   </p>
                 </div>
@@ -340,7 +340,7 @@ export default async function AwardsHubPage() {
                   >
                     Most Honored Schools
                   </h3>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.75)" }}>
                     By individual award count
                   </p>
                 </div>
@@ -353,7 +353,7 @@ export default async function AwardsHubPage() {
                       <span
                         className="font-bold w-5 text-right"
                         style={{
-                          color: idx < 3 ? "#f0a500" : "rgba(255,255,255,0.4)",
+                          color: idx < 3 ? "#f0a500" : "rgba(255,255,255,0.7)",
                         }}
                       >
                         {idx + 1}.

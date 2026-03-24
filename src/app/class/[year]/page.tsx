@@ -242,7 +242,7 @@ export default async function ClassYearPage({
         {/* Breadcrumb */}
         <nav
           aria-label="Breadcrumb"
-          style={{ marginBottom: "1rem", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}
+          style={{ marginBottom: "1rem", fontSize: "0.85rem", color: "rgba(255,255,255,0.75)" }}
         >
           <Link href="/" style={{ color: "var(--psp-gold)", textDecoration: "none" }}>
             Home
@@ -305,7 +305,7 @@ export default async function ClassYearPage({
               border: "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "1.1rem" }}>
+            <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "1.1rem" }}>
               No current season data available for the Class of {year}.
             </p>
             <Link
@@ -345,9 +345,9 @@ export default async function ClassYearPage({
                   </h2>
                   <span
                     style={{
-                      fontSize: "0.7rem",
+                      fontSize: "0.75rem",
                       fontWeight: 700,
-                      color: "rgba(255,255,255,0.4)",
+                      color: "rgba(255,255,255,0.75)",
                       textTransform: "uppercase",
                       letterSpacing: "0.05em",
                     }}
@@ -411,7 +411,7 @@ export default async function ClassYearPage({
                               <div
                                 style={{
                                   fontSize: "0.78rem",
-                                  color: "rgba(255,255,255,0.5)",
+                                  color: "rgba(255,255,255,0.75)",
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
                                   whiteSpace: "nowrap",
@@ -427,7 +427,7 @@ export default async function ClassYearPage({
                                   borderRadius: "4px",
                                   background: `${section.color}22`,
                                   color: section.color,
-                                  fontSize: "0.72rem",
+                                  fontSize: "0.75rem",
                                   fontWeight: 700,
                                 }}
                               >
@@ -467,7 +467,7 @@ export default async function ClassYearPage({
                                   color: "var(--psp-navy)",
                                   borderRadius: "999px",
                                   padding: "0.15rem 0.55rem",
-                                  fontSize: "0.72rem",
+                                  fontSize: "0.75rem",
                                   fontWeight: 800,
                                   display: "flex",
                                   alignItems: "center",
@@ -514,7 +514,7 @@ export default async function ClassYearPage({
             >
               LOOKING FOR SPECIFIC RECRUITS?
             </p>
-            <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.875rem", margin: "0.25rem 0 0" }}>
+            <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.875rem", margin: "0.25rem 0 0" }}>
               Use the Recruit Finder to search by position, league, and minimum stat thresholds.
             </p>
           </div>
@@ -568,14 +568,14 @@ function StatChip({
         padding: "0.15rem 0.5rem",
         borderRadius: "6px",
         background: "rgba(255,255,255,0.06)",
-        fontSize: "0.72rem",
+        fontSize: "0.75rem",
         color: "rgba(255,255,255,0.8)",
         display: "flex",
         alignItems: "center",
         gap: "0.3rem",
       }}
     >
-      <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 600 }}>{label}</span>
+      <span style={{ color: "rgba(255,255,255,0.75)", fontWeight: 600 }}>{label}</span>
       <span style={{ fontWeight: 700, color, fontVariantNumeric: "tabular-nums" }}>{display}</span>
     </span>
   );

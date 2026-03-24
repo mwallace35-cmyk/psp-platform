@@ -99,7 +99,7 @@ export default function AwardsHubClient({
 function RecentAwardsTab({ awards }: { awards: AwardDetail[] }) {
   if (awards.length === 0) {
     return (
-      <div className="p-8 text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
+      <div className="p-8 text-center" style={{ color: "rgba(255,255,255,0.75)" }}>
         No recent awards data available.
       </div>
     );
@@ -141,7 +141,7 @@ function RecentAwardsTab({ awards }: { awards: AwardDetail[] }) {
 function ChampionshipsTab({ champs }: { champs: ChampionshipHubRecord[] }) {
   if (champs.length === 0) {
     return (
-      <div className="p-8 text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
+      <div className="p-8 text-center" style={{ color: "rgba(255,255,255,0.75)" }}>
         No championship data available.
       </div>
     );
@@ -195,7 +195,7 @@ function ChampionshipsTab({ champs }: { champs: ChampionshipHubRecord[] }) {
                     {sportMeta?.name || champ.sport_id}
                   </span>
                 </div>
-                <div className="text-xs mt-1 flex items-center gap-1 flex-wrap" style={{ color: "rgba(255,255,255,0.5)" }}>
+                <div className="text-xs mt-1 flex items-center gap-1 flex-wrap" style={{ color: "rgba(255,255,255,0.75)" }}>
                   {champ.level && <span className="capitalize">{champ.level}</span>}
                   {champ.level && champ.championship_type && <span>{" \u00B7 "}</span>}
                   {champ.championship_type && (
@@ -240,7 +240,7 @@ function ChampionshipsTab({ champs }: { champs: ChampionshipHubRecord[] }) {
 function POTYTab({ awards }: { awards: AwardDetail[] }) {
   if (awards.length === 0) {
     return (
-      <div className="p-8 text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
+      <div className="p-8 text-center" style={{ color: "rgba(255,255,255,0.75)" }}>
         <p>Player of the Year data is available on sport-specific pages.</p>
         <div className="mt-4 flex flex-wrap justify-center gap-3">
           {(["football", "basketball", "baseball"] as const).map((sport) => (
@@ -291,12 +291,12 @@ function AllCityTab({ awards }: { awards: AwardDetail[] }) {
         >
           All-City & All-League Selections
         </h3>
-        <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
+        <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.75)" }}>
           For the complete archive, visit each sport&apos;s awards page
         </p>
       </div>
       {awards.length === 0 ? (
-        <div className="p-8 text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
+        <div className="p-8 text-center" style={{ color: "rgba(255,255,255,0.75)" }}>
           <p>All-City team archives are available on sport-specific pages.</p>
         </div>
       ) : (
@@ -385,7 +385,7 @@ function AwardRow({
             <Link
               href={`/${award.sport_id}/schools/${schoolSlug}`}
               className="text-xs hover:underline hidden sm:inline"
-              style={{ color: "rgba(255,255,255,0.5)" }}
+              style={{ color: "rgba(255,255,255,0.75)" }}
             >
               {schoolName}
             </Link>
@@ -405,7 +405,7 @@ function AwardRow({
           {awardLabel}
         </span>
         {year && (
-          <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.5)" }}>
+          <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.75)" }}>
             {year}
           </span>
         )}
@@ -414,7 +414,7 @@ function AwardRow({
       {/* Year */}
       <span
         className="text-xs font-medium shrink-0"
-        style={{ color: "rgba(255,255,255,0.4)" }}
+        style={{ color: "rgba(255,255,255,0.7)" }}
       >
         {year || "—"}
       </span>

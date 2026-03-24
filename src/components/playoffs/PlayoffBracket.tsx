@@ -52,14 +52,24 @@ function groupByRound(games: BracketGame[]) {
 
 /** Check if a team won */
 function isWinner(game: BracketGame, teamNum: 1 | 2): boolean {
-  if (!game.winner_school_id) return false;
-  const schoolId = teamNum === 1 ? game.team1_school_id : game.team2_school_id;
-  return schoolId === game.winner_school_id;
+  // First check winner_school_id if available
+  if (game.winner_school_id) {
+    const schoolId = teamNum === 1 ? game.team1_school_id : game.team2_school_id;
+    return schoolId === game.winner_school_id;
+  }
+  // Fallback: infer winner from scores when both scores exist
+  if (game.team1_score !== null && game.team2_score !== null && game.team1_score !== game.team2_score) {
+    if (teamNum === 1) return game.team1_score > game.team2_score;
+    return game.team2_score > game.team1_score;
+  }
+  return false;
 }
 
 /** Check if game is completed */
 function isCompleted(game: BracketGame): boolean {
-  return game.winner_school_id !== null;
+  if (game.winner_school_id !== null) return true;
+  // Fallback: if both scores exist, game is completed
+  return game.team1_score !== null && game.team2_score !== null;
 }
 
 // ============================================================================
@@ -249,8 +259,11 @@ function RoundConnectors({
   const totalHeight = gamesInRound * cardHeight + (gamesInRound - 1) * gap;
 
   // Build paths: each pair of games feeds into one next-round game
+  // For non-binary brackets (e.g. play-in rounds), only draw connectors
+  // for valid pairs where both games exist
   const paths: string[] = [];
-  for (let i = 0; i < gamesInNextRound; i++) {
+  const pairsToConnect = Math.min(gamesInNextRound, Math.floor(gamesInRound / 2));
+  for (let i = 0; i < pairsToConnect; i++) {
     const topGameIdx = i * 2;
     const bottomGameIdx = i * 2 + 1;
 
@@ -301,7 +314,7 @@ export default function PlayoffBracket({ bracketName, games, sportColor }: Props
         style={{
           textAlign: "center",
           padding: "60px 20px",
-          color: "rgba(255,255,255,0.5)",
+          color: "rgba(255,255,255,0.75)",
           fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
         }}
       >
@@ -322,14 +335,24 @@ export default function PlayoffBracket({ bracketName, games, sportColor }: Props
   // Card height estimate for connector positioning
   const cardHeight = 66; // ~two rows at 32px + border
 
-  // Find champion
+  // Find champion — check winner_school_id first, then fall back to score comparison
   const championshipGame = championshipRound?.games[0];
-  const champion =
-    championshipGame && championshipGame.winner_school_id
-      ? championshipGame.team1_school_id === championshipGame.winner_school_id
+  let champion: string | null = null;
+  if (championshipGame) {
+    if (championshipGame.winner_school_id) {
+      champion = championshipGame.team1_school_id === championshipGame.winner_school_id
         ? championshipGame.team1_name
-        : championshipGame.team2_name
-      : null;
+        : championshipGame.team2_name;
+    } else if (
+      championshipGame.team1_score !== null &&
+      championshipGame.team2_score !== null &&
+      championshipGame.team1_score !== championshipGame.team2_score
+    ) {
+      champion = championshipGame.team1_score > championshipGame.team2_score
+        ? championshipGame.team1_name
+        : championshipGame.team2_name;
+    }
+  }
 
   return (
     <div
@@ -404,7 +427,8 @@ export default function PlayoffBracket({ bracketName, games, sportColor }: Props
 
           // Calculate vertical spacing to center games relative to their connections
           // Each round's games need more vertical space for earlier rounds
-          const roundGap = 16 * Math.pow(2, roundIdx);
+          // Cap at 128px to prevent enormous gaps for brackets with many rounds
+          const roundGap = Math.min(16 * Math.pow(2, roundIdx), 128);
 
           return (
             <div
@@ -425,7 +449,7 @@ export default function PlayoffBracket({ bracketName, games, sportColor }: Props
                   style={{
                     fontSize: "10px",
                     fontWeight: 600,
-                    color: "rgba(255,255,255,0.4)",
+                    color: "rgba(255,255,255,0.7)",
                     textTransform: "uppercase",
                     letterSpacing: "1px",
                     marginBottom: "8px",

@@ -81,7 +81,7 @@ export default function RecruitingSubNav() {
               onClick={() => handleClick(tab.id)}
               className="relative whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors shrink-0"
               style={{
-                color: isActive ? "#f0a500" : "rgba(255,255,255,0.5)",
+                color: isActive ? "#f0a500" : "rgba(255,255,255,0.75)",
                 fontFamily: "DM Sans, sans-serif",
               }}
             >

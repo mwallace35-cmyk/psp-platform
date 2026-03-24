@@ -114,10 +114,10 @@ export default async function Image({ params }: PageProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
           <div style={{ background: accentColor, color: '#1a2744', fontSize: 20, fontWeight: 800, padding: '6px 18px', borderRadius: 4, letterSpacing: 2, textTransform: 'uppercase' as const }}>{sport}</div>
           <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: 22 }}>{schoolName}</span>
-          {positions ? <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 20 }}>� {positions}</span> : null}
+          {positions ? <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 20 }}>� {positions}</span> : null}
         </div>
         <div style={{ fontSize: 86, fontWeight: 900, color: '#ffffff', lineHeight: 0.95, letterSpacing: -3, marginBottom: 20, maxWidth: 900 }}>{player.name}</div>
-        {classYear ? <div style={{ fontSize: 28, color: 'rgba(255,255,255,0.5)', marginBottom: 32 }}>{classYear}</div> : <div style={{ marginBottom: 32 }} />}
+        {classYear ? <div style={{ fontSize: 28, color: 'rgba(255,255,255,0.75)', marginBottom: 32 }}>{classYear}</div> : <div style={{ marginBottom: 32 }} />}
         {statValue ? (
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 'auto' }}>
             <span style={{ fontSize: 72, fontWeight: 900, color: accentColor, lineHeight: 1 }}>{statValue}</span>

@@ -57,7 +57,8 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
   const meta = SPORT_META[sport];
   const champData = await getChampionshipsBySport(sport);
   const champGamesMap = await getChampionshipGamesWithBoxScores(sport);
-  const championships = (champData ?? []) as Championship[];
+  // Filter out championship entries with no school_id (incomplete data)
+  const championships = ((champData ?? []) as Championship[]).filter(c => c.schools?.name);
 
   // Dynasty analysis — count titles per school, split by level
   const dynastyByLevel: Record<string, Record<string, { name: string; slug: string | undefined; count: number }>> = {};

@@ -31,6 +31,7 @@ export interface AwardRecord {
     name: string;
     slug: string;
     primary_school_id?: number;
+    graduation_year?: number | null;
     schools?: {
       id: number;
       name: string;
@@ -189,6 +190,7 @@ function mapAwardRow(row: any): AwardRecord {
           name: row.player_name,
           slug: row.player_slug,
           primary_school_id: row.school_id,
+          graduation_year: row.graduation_year ?? null,
           schools: row.school_id
             ? {
                 id: row.school_id,

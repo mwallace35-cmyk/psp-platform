@@ -17,6 +17,8 @@ const BRACKET_TYPE_LABELS: Record<string, string> = {
   piaa_5a: "PIAA 5A",
   piaa_4a: "PIAA 4A",
   piaa_3a: "PIAA 3A",
+  piaa_2a: "PIAA 2A",
+  piaa_1a: "PIAA 1A",
   district_12: "District 12",
 };
 

@@ -51,7 +51,7 @@ export default function ClassYearSpotlight({ players, classYears }: ClassYearSpo
               className="px-4 py-1.5 rounded-full font-semibold text-sm transition-all font-bebas tracking-wide"
               style={{
                 backgroundColor: isActive ? "#f0a500" : "rgba(255,255,255,0.06)",
-                color: isActive ? "#0a1628" : "rgba(255,255,255,0.5)",
+                color: isActive ? "#0a1628" : "rgba(255,255,255,0.75)",
                 border: isActive ? "none" : "1px solid rgba(255,255,255,0.1)",
                 fontSize: "0.95rem",
               }}

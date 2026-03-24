@@ -243,7 +243,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
           options={LEAGUES}
         />
         <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-          <label style={{ fontSize: "0.7rem", fontWeight: 700, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          <label style={{ fontSize: "0.7rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
             Min Stat
           </label>
           <input
@@ -307,7 +307,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5 + statColumns.length} style={{ textAlign: "center", padding: "2rem", color: "rgba(255,255,255,0.4)" }}>
+                <td colSpan={5 + statColumns.length} style={{ textAlign: "center", padding: "2rem", color: "rgba(255,255,255,0.7)" }}>
                   No players match your filters. Try adjusting your criteria.
                 </td>
               </tr>
@@ -377,7 +377,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
         </table>
       </div>
       {filtered.length > 200 && (
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem", marginTop: "0.75rem", textAlign: "center" }}>
+        <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8rem", marginTop: "0.75rem", textAlign: "center" }}>
           Showing top 200 of {filtered.length} results. Use filters to narrow your search.
         </p>
       )}
@@ -402,7 +402,7 @@ function FilterSelect({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-      <label style={{ fontSize: "0.7rem", fontWeight: 700, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+      <label style={{ fontSize: "0.7rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
         {label}
       </label>
       <select
@@ -451,7 +451,7 @@ function SortTh({
         ...thStyle,
         cursor: "pointer",
         userSelect: "none",
-        color: isActive ? "var(--psp-gold)" : "rgba(255,255,255,0.5)",
+        color: isActive ? "var(--psp-gold)" : "rgba(255,255,255,0.75)",
         whiteSpace: "nowrap",
       }}
     >
@@ -471,7 +471,7 @@ const thStyle: React.CSSProperties = {
   fontWeight: 700,
   textTransform: "uppercase",
   letterSpacing: "0.05em",
-  color: "rgba(255,255,255,0.5)",
+  color: "rgba(255,255,255,0.75)",
 };
 
 const tdStyle: React.CSSProperties = {

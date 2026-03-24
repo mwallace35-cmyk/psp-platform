@@ -173,7 +173,7 @@ export default function OnboardingBanner({
 
         .psp-onboarding-btn-secondary:hover {
           background: rgba(255, 255, 255, 0.1);
-          border-color: rgba(255, 255, 255, 0.4);
+          border-color: rgba(255, 255, 255, 0.7);
           color: white;
         }
 

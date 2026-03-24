@@ -180,7 +180,7 @@ export default async function RecruitFinderPage() {
         {/* Breadcrumb */}
         <nav
           aria-label="Breadcrumb"
-          className="mb-4 text-[0.85rem] text-white/50"
+          className="mb-4 text-[0.85rem] text-white/75"
         >
           <Link href="/" className="no-underline" style={{ color: "var(--psp-gold)" }}>
             Home

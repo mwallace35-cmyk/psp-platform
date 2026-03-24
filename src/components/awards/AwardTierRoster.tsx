@@ -281,7 +281,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                     {(['default', 'position', 'school'] as SortBy[]).map(s => (
                       <button key={s} onClick={() => setSortBy(s)} style={{
                         fontSize: 10, fontWeight: sortBy === s ? 700 : 400, border: 'none', background: sortBy === s ? 'rgba(240,165,0,0.2)' : 'transparent',
-                        color: sortBy === s ? '#f0a500' : 'rgba(255,255,255,0.4)', padding: '2px 8px', borderRadius: 4, cursor: 'pointer', textTransform: 'capitalize',
+                        color: sortBy === s ? '#f0a500' : 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: 4, cursor: 'pointer', textTransform: 'capitalize',
                       }}>{s}</button>
                     ))}
                   </div>
@@ -347,7 +347,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                           )}
 
                           {/* School */}
-                          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {player.school_name || ''}
                           </span>
 

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { SPORT_META, getPlayoffBrackets } from "@/lib/data";
+import { SPORT_META, getPlayoffBrackets, type PlayoffBracketWithGames } from "@/lib/data";
 import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
 import type { Metadata } from "next";
 import PlayoffsClient from "./PlayoffsClient";
@@ -24,7 +24,13 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 }
 
 async function PlayoffsLoader({ sport }: { sport: string }) {
-  const brackets = await getPlayoffBrackets(sport) ?? [];
+  let brackets: PlayoffBracketWithGames[] = [];
+  try {
+    brackets = await getPlayoffBrackets(sport) ?? [];
+  } catch (err) {
+    console.error("[PSP] Playoffs data fetch error:", err);
+    brackets = [];
+  }
   const sportColor = SPORT_COLORS_HEX[sport] || "#3b82f6";
 
   if (brackets.length === 0) {
@@ -40,7 +46,7 @@ async function PlayoffsLoader({ sport }: { sport: string }) {
           Playoff Brackets Coming Soon
         </h2>
         <p
-          className="text-sm text-white/50 m-0"
+          className="text-sm text-white/75 m-0"
           style={{ fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)" }}
         >
           Bracket data will be available once the playoff season begins.
@@ -84,7 +90,7 @@ export default async function PlayoffsPage({ params }: { params: Promise<PagePar
       <Suspense
         fallback={
           <div
-            className="rounded-xl px-5 py-[60px] text-center text-white/50 text-sm"
+            className="rounded-xl px-5 py-[60px] text-center text-white/75 text-sm"
             style={{ background: "var(--psp-navy, #0a1628)" }}
           >
             Loading playoff brackets...

@@ -102,7 +102,7 @@ export default function CompoundLeaderboards({
                                 ? "#0a1628"
                                 : isTopThree
                                 ? sportColor
-                                : "rgba(255,255,255,0.5)",
+                                : "rgba(255,255,255,0.75)",
                               border: isFirst
                                 ? "none"
                                 : isTopThree

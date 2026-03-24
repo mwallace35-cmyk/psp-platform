@@ -66,7 +66,7 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
       icon: "🏫",
       label: "Schools",
       description: "Browse all participating schools",
-      href: `/#schools-section`,
+      href: `/${sport}/schools`,
     },
     {
       icon: "🔍",

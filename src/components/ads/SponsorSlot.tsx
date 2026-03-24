@@ -67,23 +67,23 @@ export default function SponsorSlot({ placement, sportId }: SponsorSlotProps) {
         {placement === 'sidebar' && (
           <>
             <p className="mb-2">Support Philly sports journalism</p>
-            <p className="text-white/50">300�250</p>
+            <p className="text-white/75">300�250</p>
           </>
         )}
         {placement === 'banner' && (
           <>
             <p className="mb-1">Reach 1000+ daily visitors</p>
-            <p className="text-white/50 text-xs">728�90 (or responsive)</p>
+            <p className="text-white/75 text-xs">728�90 (or responsive)</p>
           </>
         )}
         {placement === 'inline' && (
           <>
             <p className="mb-2">Native ad placement</p>
-            <p className="text-white/50 text-xs">Between content sections</p>
+            <p className="text-white/75 text-xs">Between content sections</p>
           </>
         )}
         {placement === 'footer' && (
-          <p className="text-white/50 text-xs">Logo or text sponsorship</p>
+          <p className="text-white/75 text-xs">Logo or text sponsorship</p>
         )}
       </div>
 

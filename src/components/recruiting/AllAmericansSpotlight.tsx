@@ -146,7 +146,7 @@ export default function AllAmericansSpotlight({ awards }: AllAmericansSpotlightP
               className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all font-bebas tracking-wide"
               style={{
                 backgroundColor: isActive ? tab.color : "rgba(255,255,255,0.08)",
-                color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
+                color: isActive ? "#fff" : "rgba(255,255,255,0.75)",
                 fontSize: "1.05rem",
               }}
             >
@@ -217,7 +217,7 @@ export default function AllAmericansSpotlight({ awards }: AllAmericansSpotlightP
                   <span
                     className="text-sm font-bold flex-shrink-0 ml-2 font-bebas"
                     style={{
-                      color: "rgba(255,255,255,0.5)",
+                      color: "rgba(255,255,255,0.75)",
                     }}
                   >
                     {Array.from(new Set(card.awards.map((a) => a.year).filter(Boolean)))

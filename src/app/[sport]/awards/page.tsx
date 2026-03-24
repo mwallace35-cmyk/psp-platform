@@ -127,11 +127,12 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
               const allAwards = data.tabs.flatMap(tab => tab.awards.map(a => ({
                 award_name: a.award_name ?? a.award_type ?? null,
                 player_name: a.displayName ?? a.players?.name ?? (a as any).player_name ?? null,
-                player_slug: a.players?.slug ?? null,
-                school_name: a.school?.name ?? a.players?.schools?.name ?? null,
-                school_slug: a.school?.slug ?? a.players?.schools?.slug ?? null,
-                position: a.position ?? null,
-                year: (a as any).year ?? ((a.seasons as any)?.year_start) ?? null,
+                player_slug: a.players?.slug || null,
+                school_name: a.school?.name || a.players?.schools?.name || null,
+                school_slug: a.school?.slug || a.players?.schools?.slug || null,
+                position: a.position || null,
+                year: (a as any).year ?? (a.seasons?.year_start) ?? null,
+                graduation_year: (a.players as any)?.graduation_year ?? null,
               })));
               const tiers = buildAwardTiers(allAwards, sport);
               // Extract available years for the filter

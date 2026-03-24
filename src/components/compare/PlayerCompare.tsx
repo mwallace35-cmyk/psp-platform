@@ -140,16 +140,16 @@ export default function PlayerCompare() {
                       className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
                     >
                       <div className="font-medium text-sm">{r.display_name}</div>
-                      <div className="text-xs text-gray-400">{r.context}</div>
+                      <div className="text-xs text-gray-600">{r.context}</div>
                     </button>
                   ))}
                 </div>
               )}
-              {loading && <div className="mt-2 text-sm text-gray-300">Loading stats...</div>}
+              {loading && <div className="mt-2 text-sm text-gray-600">Loading stats...</div>}
               {player && !loading && (
                 <div className="mt-3 p-4 rounded-lg border border-gray-200 bg-gray-50">
                   <div className="font-bold" style={{ color: "var(--psp-navy)" }}>{player.player.name}</div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-600">
                     {player.player.schools?.name} {player.player.graduation_year ? `• Class of ${player.player.graduation_year}` : ""}
                   </div>
                 </div>
@@ -222,7 +222,7 @@ export default function PlayerCompare() {
           <h2 className="text-xl font-bold mb-2" style={{ color: "var(--psp-navy)" }}>
             Select Two Players
           </h2>
-          <p className="text-gray-400 max-w-md mx-auto">
+          <p className="text-gray-600 max-w-md mx-auto">
             Use the search boxes above to find and compare any two Philadelphia high school athletes side-by-side.
           </p>
         </div>

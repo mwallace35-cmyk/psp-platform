@@ -93,7 +93,7 @@ export default function TeamSeasonTabs({ sportColor, tabs }: TeamSeasonTabsProps
               style={{
                 fontSize: "1rem",
                 letterSpacing: "0.08em",
-                color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
+                color: isActive ? "#fff" : "rgba(255,255,255,0.75)",
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
