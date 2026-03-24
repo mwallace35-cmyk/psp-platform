@@ -19,9 +19,9 @@ export interface RankingRow {
 }
 
 const RANKING_CATEGORIES: { key: string; label: string; icon: string; limit: number }[] = [
-  { key: 'city', label: 'City Top 10', icon: '🏙️', limit: 10 },
+  { key: 'city', label: 'City Top 12', icon: '🏙️', limit: 12 },
   { key: 'public', label: 'Public League Top 10', icon: '🏫', limit: 10 },
-  { key: 'catholic', label: 'Catholic League Top 6', icon: '⛪', limit: 6 },
+  { key: 'pcl', label: 'Catholic League Top 5', icon: '⛪', limit: 5 },
 ];
 
 interface Props {
