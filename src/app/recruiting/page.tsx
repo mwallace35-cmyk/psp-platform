@@ -7,6 +7,7 @@ import ClassYearSpotlight from "@/components/recruiting/ClassYearSpotlight";
 import type { ClassYearPlayer } from "@/components/recruiting/ClassYearSpotlight";
 import AllAmericansSpotlight from "@/components/recruiting/AllAmericansSpotlight";
 import type { AllAmericanAward } from "@/components/recruiting/AllAmericansSpotlight";
+import RecruitingSubNav from "@/components/recruiting/RecruitingSubNav";
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -357,391 +358,310 @@ async function RecruitingContent() {
   const data = await getRecruitingData();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <>
       {/* ================================================================
-          HERO SECTION
+          HERO SECTION — Compact
       ================================================================ */}
       <div
-        className="rounded-2xl px-6 sm:px-10 py-10 sm:py-14 mb-10"
+        className="px-4 sm:px-6 pt-4 pb-5"
         style={{ backgroundColor: "var(--psp-navy)" }}
       >
-        {/* Breadcrumb */}
-        <nav className="text-sm mb-5">
-          <Link href="/" className="text-gray-400 hover:text-white transition-colors">
-            Home
-          </Link>
-          <span className="text-gray-600 mx-2">&rsaquo;</span>
-          <span className="text-gray-300">Recruiting Central</span>
-        </nav>
+        <div className="max-w-7xl mx-auto">
+          {/* Breadcrumb */}
+          <nav className="text-xs mb-3">
+            <Link href="/" className="text-gray-400 hover:text-white transition-colors">
+              Home
+            </Link>
+            <span className="text-gray-600 mx-1.5">&rsaquo;</span>
+            <span className="text-gray-300">Recruiting Central</span>
+          </nav>
 
-        <h1
-          className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-3"
-          style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "1px" }}
-        >
-          Philly Recruiting Central
-        </h1>
-        <p className="text-gray-400 text-base sm:text-lg max-w-2xl mb-8">
-          Tracking every Philadelphia athlete&apos;s path to the next level
-        </p>
+          <h1
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-1"
+            style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "1px" }}
+          >
+            Philly Recruiting Central
+          </h1>
+          <p className="text-gray-500 text-sm max-w-xl mb-4">
+            Tracking every Philadelphia athlete&apos;s path to the next level
+          </p>
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard value={data.collegeCount.toLocaleString()} label="College Athletes" />
-          <StatCard value={data.d1Count.toLocaleString()} label="D1 Commits" accent />
-          <StatCard value={data.proCount.toLocaleString()} label="Pro Athletes" />
+          {/* Stat Pills — inline horizontal row */}
+          <div className="flex flex-wrap gap-2">
+            <StatPill value={data.collegeCount.toLocaleString()} label="College" />
+            <StatPill value={data.d1Count.toLocaleString()} label="D1" accent />
+            <StatPill value={data.proCount.toLocaleString()} label="Pro" />
+          </div>
         </div>
       </div>
 
       {/* ================================================================
-          ALL-AMERICAN GAME SPOTLIGHT
+          STICKY SUB-NAV
       ================================================================ */}
-      {data.allAmericanAwards.length > 0 && (
-        <section className="mb-10">
-          <AllAmericansSpotlight awards={data.allAmericanAwards} />
+      <RecruitingSubNav />
+
+      {/* ================================================================
+          CONTENT
+      ================================================================ */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+
+        {/* All-Americans */}
+        {data.allAmericanAwards.length > 0 && (
+          <section id="all-americans" className="mb-8 scroll-mt-16">
+            <AllAmericansSpotlight awards={data.allAmericanAwards} />
+          </section>
+        )}
+
+        {/* Class Year Spotlight */}
+        <section id="class-spotlight" className="mb-8 scroll-mt-16">
+          <SectionHeader title="Class Year Spotlight" />
+          {data.classPlayers.length === 0 || data.classYears.length === 0 ? (
+            <EmptyState message="No class year data available yet." />
+          ) : (
+            <ClassYearSpotlight players={data.classPlayers} classYears={data.classYears} />
+          )}
         </section>
-      )}
 
-      {/* ================================================================
-          RECENT COMMITS
-      ================================================================ */}
-      <section className="mb-12">
-        <SectionHeader title="Latest Recruiting Updates" />
-        {data.recentCommits.length === 0 ? (
-          <EmptyState message="No recent commits to display." />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {data.recentCommits.map((commit: any) => {
-              const school = Array.isArray(commit.schools)
-                ? commit.schools[0]
-                : commit.schools;
-              const sportId = commit.sport_id || "football";
-              const sportColor = SPORT_COLORS_CSS[sportId] || "var(--fb)";
-              const sportHex = SPORT_COLORS_HEX[sportId] || "#16a34a";
-              const emoji = SPORT_EMOJI[sportId] || "\u{1F3C8}";
-
-              return (
-                <div
-                  key={commit.id}
-                  className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
-                  style={{ borderLeft: `4px solid ${sportHex}` }}
-                >
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-1.5">
-                      <span
-                        className="font-bold text-gray-900 text-sm"
-                        style={{ fontFamily: "DM Sans, sans-serif" }}
-                      >
-                        {commit.person_name}
-                      </span>
-                      <span className="text-base" title={SPORT_NAMES[sportId]}>
-                        {emoji}
-                      </span>
-                    </div>
-                    {school?.name && (
-                      <div className="text-xs text-gray-500 mb-2">
-                        {school.slug ? (
-                          <Link
-                            href={`/schools/${school.slug}`}
-                            className="hover:underline"
-                          >
-                            {school.name}
-                          </Link>
-                        ) : (
-                          school.name
-                        )}
-                      </div>
-                    )}
-                    {commit.college && (
-                      <div
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
-                        style={{
-                          backgroundColor: `${sportHex}15`,
-                          color: sportHex,
-                        }}
-                      >
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+        {/* Pipeline Rankings — Horizontal Scroll */}
+        <section id="pipeline" className="mb-8 scroll-mt-16">
+          <SectionHeader title="Top Recruiting Pipelines" />
+          {data.pipelineRankings.length === 0 ? (
+            <EmptyState message="No pipeline data available." />
+          ) : (
+            <div className="flex gap-3 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
+              {data.pipelineRankings.map((school, index) => {
+                const isTop = index === 0;
+                return (
+                  <div
+                    key={school.slug || index}
+                    className="min-w-[160px] max-w-[180px] flex-shrink-0 rounded-xl overflow-hidden transition-shadow hover:shadow-lg"
+                    style={{
+                      backgroundColor: isTop ? "rgba(240,165,0,0.08)" : "rgba(255,255,255,0.03)",
+                      border: isTop ? "1.5px solid #f0a500" : "1px solid rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <div className="p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span
+                          className="text-xs font-bold px-1.5 py-0.5 rounded-full"
+                          style={{
+                            backgroundColor: isTop ? "#f0a500" : "rgba(255,255,255,0.1)",
+                            color: isTop ? "#0a1628" : "rgba(255,255,255,0.7)",
+                            fontFamily: "Bebas Neue, sans-serif",
+                            fontSize: "0.8rem",
+                          }}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        {commit.college}
+                          #{index + 1}
+                        </span>
+                        <span
+                          className="text-lg font-bold"
+                          style={{
+                            color: isTop ? "#f0a500" : "rgba(255,255,255,0.9)",
+                            fontFamily: "Bebas Neue, sans-serif",
+                          }}
+                        >
+                          {school.total}
+                        </span>
                       </div>
-                    )}
-                    {commit.created_at && (
-                      <div className="text-[10px] text-gray-400 mt-2">
-                        {new Date(commit.created_at).toLocaleDateString(
-                          "en-US",
-                          { month: "short", day: "numeric", year: "numeric" }
+
+                      {school.slug ? (
+                        <Link
+                          href={`/schools/${school.slug}`}
+                          className="text-xs font-bold text-white hover:underline block mb-1.5 leading-tight"
+                          style={{ fontFamily: "DM Sans, sans-serif" }}
+                        >
+                          {school.name}
+                        </Link>
+                      ) : (
+                        <span
+                          className="text-xs font-bold text-white block mb-1.5 leading-tight"
+                          style={{ fontFamily: "DM Sans, sans-serif" }}
+                        >
+                          {school.name}
+                        </span>
+                      )}
+
+                      <div className="flex items-center gap-2 text-[10px] text-gray-400 mb-1.5">
+                        <span>{school.college} col</span>
+                        {school.pro > 0 && (
+                          <span style={{ color: "#f0a500" }}>{school.pro} pro</span>
                         )}
                       </div>
-                    )}
+
+                      <div className="flex gap-0.5 flex-wrap">
+                        {Array.from(school.sports).map((sport) => (
+                          <span
+                            key={sport}
+                            className="text-[10px]"
+                            title={SPORT_NAMES[sport] || sport}
+                          >
+                            {SPORT_EMOJI[sport] || sport}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
-      {/* ================================================================
-          CLASS YEAR SPOTLIGHT
-      ================================================================ */}
-      <section className="mb-12">
-        <SectionHeader title="Class Year Spotlight" />
-        {data.classPlayers.length === 0 || data.classYears.length === 0 ? (
-          <EmptyState message="No class year data available yet." />
-        ) : (
-          <ClassYearSpotlight players={data.classPlayers} classYears={data.classYears} />
-        )}
-      </section>
-
-      {/* ================================================================
-          SCHOOL PIPELINE RANKINGS
-      ================================================================ */}
-      <section className="mb-12">
-        <SectionHeader title="Top Recruiting Pipelines" />
-        {data.pipelineRankings.length === 0 ? (
-          <EmptyState message="No pipeline data available." />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {data.pipelineRankings.map((school, index) => {
-              const isTop = index === 0;
-              return (
+        {/* College Destinations — Horizontal Scroll Strip */}
+        <section id="destinations" className="mb-8 scroll-mt-16">
+          <SectionHeader title="Where Philly Athletes Go" />
+          {data.topDestinations.length === 0 ? (
+            <EmptyState message="No destination data available." />
+          ) : (
+            <div className="flex gap-3 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
+              {data.topDestinations.map((dest, index) => (
                 <div
-                  key={school.slug || index}
-                  className="rounded-xl overflow-hidden transition-shadow hover:shadow-lg"
+                  key={dest.college}
+                  className="min-w-[170px] max-w-[190px] flex-shrink-0 rounded-xl p-3 hover:shadow-md transition-shadow"
                   style={{
-                    backgroundColor: isTop ? "var(--psp-navy)" : "var(--psp-navy-mid, #0f2040)",
-                    border: isTop ? "2px solid #f0a500" : "1px solid rgba(255,255,255,0.08)",
+                    backgroundColor: "rgba(255,255,255,0.03)",
+                    border: index === 0
+                      ? "1.5px solid #f0a500"
+                      : "1px solid rgba(255,255,255,0.08)",
                   }}
                 >
-                  <div className="p-4">
-                    {/* Rank badge */}
-                    <div className="flex items-center justify-between mb-3">
-                      <span
-                        className="text-xs font-bold px-2 py-0.5 rounded-full"
-                        style={{
-                          backgroundColor: isTop ? "#f0a500" : "rgba(255,255,255,0.1)",
-                          color: isTop ? "#0a1628" : "rgba(255,255,255,0.7)",
-                          fontFamily: "Bebas Neue, sans-serif",
-                          fontSize: "0.85rem",
-                        }}
-                      >
-                        #{index + 1}
-                      </span>
-                      <span
-                        className="text-xl font-bold"
-                        style={{
-                          color: isTop ? "#f0a500" : "rgba(255,255,255,0.9)",
-                          fontFamily: "Bebas Neue, sans-serif",
-                        }}
-                      >
-                        {school.total}
-                      </span>
-                    </div>
-
-                    {/* School name */}
-                    {school.slug ? (
-                      <Link
-                        href={`/schools/${school.slug}`}
-                        className="text-sm font-bold text-white hover:underline block mb-2 leading-tight"
-                        style={{ fontFamily: "DM Sans, sans-serif" }}
-                      >
-                        {school.name}
-                      </Link>
-                    ) : (
-                      <span
-                        className="text-sm font-bold text-white block mb-2 leading-tight"
-                        style={{ fontFamily: "DM Sans, sans-serif" }}
-                      >
-                        {school.name}
-                      </span>
-                    )}
-
-                    {/* Stats row */}
-                    <div className="flex items-center gap-3 text-[10px] text-gray-400 mb-2">
-                      <span>{school.college} college</span>
-                      {school.pro > 0 && (
-                        <span style={{ color: "#f0a500" }}>{school.pro} pro</span>
-                      )}
-                    </div>
-
-                    {/* Sport dots */}
-                    <div className="flex gap-1 flex-wrap">
-                      {Array.from(school.sports).map((sport) => (
-                        <span
-                          key={sport}
-                          className="text-xs"
-                          title={SPORT_NAMES[sport] || sport}
-                        >
-                          {SPORT_EMOJI[sport] || sport}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* ================================================================
-          COLLEGE DESTINATION BOARD
-      ================================================================ */}
-      <section className="mb-12">
-        <SectionHeader title="Where Philly Athletes Go" />
-        {data.topDestinations.length === 0 ? (
-          <EmptyState message="No destination data available." />
-        ) : (
-          <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
-            {data.topDestinations.map((dest, index) => (
-              <div
-                key={dest.college}
-                className="min-w-[200px] max-w-[220px] flex-shrink-0 bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span
-                    className="text-xs font-bold text-gray-400"
-                    style={{ fontFamily: "Bebas Neue, sans-serif", fontSize: "0.8rem" }}
-                  >
-                    #{index + 1}
-                  </span>
-                  <span
-                    className="text-2xl font-bold"
-                    style={{
-                      color: index === 0 ? "#f0a500" : "var(--psp-navy)",
-                      fontFamily: "Bebas Neue, sans-serif",
-                    }}
-                  >
-                    {dest.count}
-                  </span>
-                </div>
-                <div
-                  className="font-bold text-gray-900 text-sm mb-2 leading-tight"
-                  style={{ fontFamily: "DM Sans, sans-serif" }}
-                >
-                  {dest.college}
-                </div>
-                <div className="flex gap-1 flex-wrap">
-                  {dest.sports.map((sport) => (
+                  <div className="flex items-center justify-between mb-1.5">
                     <span
-                      key={sport}
-                      className="text-xs px-2 py-0.5 rounded-full font-medium"
+                      className="text-[10px] font-bold text-gray-500"
+                      style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                    >
+                      #{index + 1}
+                    </span>
+                    <span
+                      className="text-lg font-bold"
                       style={{
-                        backgroundColor: `${SPORT_COLORS_HEX[sport] || "#6b7280"}15`,
-                        color: SPORT_COLORS_HEX[sport] || "#6b7280",
+                        color: index === 0 ? "#f0a500" : "rgba(255,255,255,0.9)",
+                        fontFamily: "Bebas Neue, sans-serif",
                       }}
                     >
-                      {SPORT_NAMES[sport] || sport}
+                      {dest.count}
                     </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* ================================================================
-          SPORT BREAKDOWN
-      ================================================================ */}
-      <section className="mb-12">
-        <SectionHeader title="Recruiting by Sport" />
-        {data.sportBreakdown.length === 0 ? (
-          <EmptyState message="No sport data available." />
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {data.sportBreakdown.map(({ sport, count }) => {
-              const sportHex = SPORT_COLORS_HEX[sport] || "#6b7280";
-              const emoji = SPORT_EMOJI[sport] || "";
-              const name = SPORT_NAMES[sport] || sport;
-              return (
-                <Link
-                  key={sport}
-                  href={`/sports/${sport}/pipeline`}
-                  className="group bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-all text-center"
-                  style={{ borderBottom: `3px solid ${sportHex}` }}
-                >
-                  <div className="text-3xl mb-2">{emoji}</div>
-                  <div
-                    className="text-2xl font-bold mb-1"
-                    style={{
-                      color: sportHex,
-                      fontFamily: "Bebas Neue, sans-serif",
-                    }}
-                  >
-                    {count.toLocaleString()}
                   </div>
                   <div
-                    className="text-sm font-semibold text-gray-700 group-hover:underline"
+                    className="font-bold text-white text-xs mb-1.5 leading-tight"
                     style={{ fontFamily: "DM Sans, sans-serif" }}
                   >
-                    {name}
+                    {dest.college}
                   </div>
-                  <div className="text-[10px] text-gray-400 mt-1">
-                    college + pro athletes
+                  <div className="flex gap-1 flex-wrap">
+                    {dest.sports.map((sport) => (
+                      <span
+                        key={sport}
+                        className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                        style={{
+                          backgroundColor: `${SPORT_COLORS_HEX[sport] || "#6b7280"}20`,
+                          color: SPORT_COLORS_HEX[sport] || "#6b7280",
+                        }}
+                      >
+                        {SPORT_NAMES[sport] || sport}
+                      </span>
+                    ))}
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
-      {/* ================================================================
-          RECRUIT FINDER CTA
-      ================================================================ */}
-      <section className="mb-8">
-        <div
-          className="rounded-2xl p-8 sm:p-10 text-center"
-          style={{ backgroundColor: "var(--psp-navy)" }}
-        >
-          <h2
-            className="text-3xl sm:text-4xl font-bold text-white mb-3"
-            style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.5px" }}
-          >
-            Find Any Recruit
-          </h2>
-          <p className="text-gray-400 text-sm sm:text-base mb-6 max-w-lg mx-auto">
-            Search by sport, position, class year, and stats across every
-            Philadelphia high school athlete in our database.
-          </p>
-          <Link
-            href="/recruit-finder"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-colors"
+        {/* Sport Breakdown — Compact horizontal pills */}
+        <section className="mb-8">
+          <SectionHeader title="By Sport" />
+          {data.sportBreakdown.length === 0 ? (
+            <EmptyState message="No sport data available." />
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {data.sportBreakdown.map(({ sport, count }) => {
+                const sportHex = SPORT_COLORS_HEX[sport] || "#6b7280";
+                const emoji = SPORT_EMOJI[sport] || "";
+                const name = SPORT_NAMES[sport] || sport;
+                return (
+                  <Link
+                    key={sport}
+                    href={`/sports/${sport}/pipeline`}
+                    className="group inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm transition-all hover:scale-105"
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.03)",
+                      border: `1px solid ${sportHex}40`,
+                    }}
+                  >
+                    <span className="text-sm">{emoji}</span>
+                    <span
+                      className="font-bold"
+                      style={{ color: sportHex, fontFamily: "Bebas Neue, sans-serif" }}
+                    >
+                      {count.toLocaleString()}
+                    </span>
+                    <span
+                      className="text-xs text-gray-400 group-hover:underline"
+                      style={{ fontFamily: "DM Sans, sans-serif" }}
+                    >
+                      {name}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* Recruit Finder CTA — Gold gradient, prominent */}
+        <section id="recruit-finder" className="mb-8 scroll-mt-16">
+          <div
+            className="rounded-2xl p-8 sm:p-10 text-center"
             style={{
-              backgroundColor: "#f0a500",
-              color: "#0a1628",
-              fontFamily: "DM Sans, sans-serif",
+              background: "linear-gradient(135deg, #f0a500 0%, #d4920a 100%)",
             }}
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <h2
+              className="text-3xl sm:text-4xl font-bold mb-2"
+              style={{
+                fontFamily: "Bebas Neue, sans-serif",
+                letterSpacing: "0.5px",
+                color: "#0a1628",
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            Open Recruit Finder
-          </Link>
-        </div>
-      </section>
-    </div>
+              Find Any Recruit
+            </h2>
+            <p
+              className="text-sm sm:text-base mb-5 max-w-md mx-auto"
+              style={{ color: "rgba(10,22,40,0.7)" }}
+            >
+              Search by sport, position, class year, and stats across every
+              Philadelphia high school athlete in our database.
+            </p>
+            <Link
+              href="/recruit-finder"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
+              style={{
+                backgroundColor: "#0a1628",
+                color: "#f0a500",
+                fontFamily: "DM Sans, sans-serif",
+              }}
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              Open Recruit Finder
+            </Link>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
 
@@ -752,10 +672,10 @@ async function RecruitingContent() {
 function SectionHeader({ title }: { title: string }) {
   return (
     <h2
-      className="text-2xl sm:text-3xl font-bold mb-6"
+      className="text-xl sm:text-2xl font-bold mb-4"
       style={{
         fontFamily: "Bebas Neue, sans-serif",
-        color: "var(--psp-navy)",
+        color: "rgba(255,255,255,0.9)",
         letterSpacing: "0.5px",
       }}
     >
@@ -764,7 +684,7 @@ function SectionHeader({ title }: { title: string }) {
   );
 }
 
-function StatCard({
+function StatPill({
   value,
   label,
   accent,
@@ -775,31 +695,33 @@ function StatCard({
 }) {
   return (
     <div
-      className="rounded-xl p-5 text-center"
+      className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5"
       style={{
         backgroundColor: accent
           ? "rgba(240,165,0,0.15)"
-          : "rgba(255,255,255,0.08)",
-        border: accent ? "1px solid rgba(240,165,0,0.3)" : "none",
+          : "rgba(255,255,255,0.06)",
+        border: accent
+          ? "1px solid rgba(240,165,0,0.35)"
+          : "1px solid rgba(255,255,255,0.1)",
       }}
     >
-      <div
-        className="text-3xl sm:text-4xl font-bold"
-        style={{
-          color: "#f0a500",
-          fontFamily: "Bebas Neue, sans-serif",
-        }}
+      <span
+        className="text-lg font-bold leading-none"
+        style={{ color: "#f0a500", fontFamily: "Bebas Neue, sans-serif" }}
       >
         {value}
-      </div>
-      <div className="text-gray-400 text-sm mt-1">{label}</div>
+      </span>
+      <span className="text-xs text-gray-400">{label}</span>
     </div>
   );
 }
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="text-center py-12 text-gray-400 text-sm bg-gray-50 rounded-xl">
+    <div
+      className="text-center py-8 text-gray-500 text-sm rounded-xl"
+      style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
+    >
       {message}
     </div>
   );
@@ -813,10 +735,9 @@ export default function RecruitingPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           <SkeletonCard showImage={false} showTitle={true} />
-          <div className="mt-8 space-y-4">
-            <SkeletonCard showImage={false} />
+          <div className="mt-6 space-y-4">
             <SkeletonCard showImage={false} />
             <SkeletonCard showImage={false} />
           </div>
