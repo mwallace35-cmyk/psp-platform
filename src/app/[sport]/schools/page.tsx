@@ -103,9 +103,11 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
     });
   }
 
-  const schools = Array.from(schoolMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  const allSchools = Array.from(schoolMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  const schools = allSchools.filter(s => !s.closed_year);
+  const closedSchools = allSchools.filter(s => !!s.closed_year).sort((a, b) => (b.closed_year || 0) - (a.closed_year || 0));
 
-  // Group by league
+  // Group active schools by league
   const leagueGroups = new Map<string, typeof schools>();
   for (const school of schools) {
     const league = school.league || 'Other';
@@ -141,7 +143,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
           {sportLabel} Schools
         </h1>
         <p className="text-gray-400 text-sm mb-6">
-          {schools.length} schools with {sportLabel.toLowerCase()} programs
+          {schools.length} active {sportLabel.toLowerCase()} programs{closedSchools.length > 0 ? ` + ${closedSchools.length} historical` : ''}
         </p>
 
         {sortedLeagues.map(([league, leagueSchools]) => (
@@ -192,7 +194,40 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
           </div>
         ))}
 
-        {schools.length === 0 && (
+        {/* Historical / Closed Programs */}
+        {closedSchools.length > 0 && (
+          <div className="mb-8 mt-4">
+            <h2
+              className="text-lg font-bold mb-3 pb-2 border-b border-gray-700"
+              style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#9ca3af' }}
+            >
+              Historical Programs
+              <span className="ml-2 text-xs font-normal text-gray-600">({closedSchools.length} closed)</span>
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              {closedSchools.map((school) => (
+                <Link
+                  key={school.id}
+                  href={`/${sport}/schools/${school.slug}`}
+                  className="group rounded-lg p-2 transition opacity-60 hover:opacity-90"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                    border: '1px solid rgba(255,255,255,0.05)',
+                  }}
+                >
+                  <span className="text-gray-400 text-xs font-medium truncate block group-hover:text-gray-300 transition">
+                    {school.name}
+                  </span>
+                  <span className="text-gray-600 text-[10px]">
+                    Closed {school.closed_year}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {allSchools.length === 0 && (
           <div className="text-center py-16">
             <p className="text-gray-500">No {sportLabel.toLowerCase()} programs found</p>
             <Link href="/schools" className="text-blue-400 text-sm mt-2 inline-block hover:underline">
