@@ -6,6 +6,7 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import SportIcon from "@/components/ui/SportIcon";
 import ScoresFilters from "@/components/scores/ScoresFilters";
 import { createStaticClient } from "@/lib/supabase/static";
+import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 
 export const metadata: Metadata = {
   title: "Scores | PhillySportsPack",
@@ -32,8 +33,8 @@ interface ScoreGame {
   away_score: number | null;
   home_school_id: number;
   away_school_id: number;
-  home_school: { name: string; slug: string } | null;
-  away_school: { name: string; slug: string } | null;
+  home_school: { name: string; slug: string; city?: string | null; league_id?: number | null } | null;
+  away_school: { name: string; slug: string; city?: string | null; league_id?: number | null } | null;
   seasons: { label: string } | null;
   home_league_id: number | null;
   away_league_id: number | null;
@@ -324,7 +325,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     const rawGames = (data as unknown as any[]) ?? [];
 
     // Step 2: Batch-fetch school info (name, slug, league_id) for all unique school IDs
-    const schoolMap = new Map<number, { name: string; slug: string; league_id: number | null }>();
+    const schoolMap = new Map<number, { name: string; slug: string; league_id: number | null; city?: string | null }>();
     if (rawGames.length > 0) {
       const schoolIds = new Set<number>();
       for (const g of rawGames) {
@@ -335,7 +336,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       const { data: schoolData } = await supabase
         .rpc("get_school_names", { school_ids: Array.from(schoolIds) });
       for (const s of schoolData ?? []) {
-        schoolMap.set(s.id, { name: s.name, slug: s.slug, league_id: s.league_id });
+        schoolMap.set(s.id, { name: s.name, slug: s.slug, league_id: s.league_id, city: s.city ?? null });
       }
     }
 
@@ -344,8 +345,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       const away = schoolMap.get(g.away_school_id);
       return {
         ...g,
-        home_school: home ? { name: home.name, slug: home.slug } : null,
-        away_school: away ? { name: away.name, slug: away.slug } : null,
+        home_school: home ? { name: home.name, slug: home.slug, city: home.city, league_id: home.league_id } : null,
+        away_school: away ? { name: away.name, slug: away.slug, city: away.city, league_id: away.league_id } : null,
         seasons: null, // not needed — we already know the season from filters
         home_league_id: home?.league_id ?? null,
         away_league_id: away?.league_id ?? null,
@@ -812,7 +813,7 @@ function GameCard({
             textAlign: "right",
           }}
         >
-          {game.away_school?.name || "TBD"}
+          {game.away_school ? getSchoolDisplayName(game.away_school) : "TBD"}
         </span>
 
         <div
@@ -842,7 +843,7 @@ function GameCard({
             textAlign: "left",
           }}
         >
-          {game.home_school?.name || "TBD"}
+          {game.home_school ? getSchoolDisplayName(game.home_school) : "TBD"}
         </span>
       </div>
 

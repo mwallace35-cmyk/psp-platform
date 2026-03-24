@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import PSPPromo from "@/components/ads/PSPPromo";
 import type { Championship } from "@/lib/data/types";
 import type { HubGame } from "./HubScoresStrip";
+import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 
 const PhillyEverywhereSection = dynamic(() => import("@/components/philly-everywhere/PhillyEverywhereSection"), { ssr: false });
 
@@ -133,10 +134,10 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                     transition: "box-shadow 0.2s ease",
                   }}>
                     <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)", marginBottom: 4 }}>
-                      {game.home_school?.name || "Home"}
+                      {game.home_school ? getSchoolDisplayName(game.home_school) : "Home"}
                     </div>
                     <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>
-                      vs {game.away_school?.name || "Away"}
+                      vs {game.away_school ? getSchoolDisplayName(game.away_school) : "Away"}
                     </div>
                     {game.home_score !== null && game.away_score !== null ? (
                       <div style={{ fontSize: 16, fontWeight: 800, color: sportColor }}>

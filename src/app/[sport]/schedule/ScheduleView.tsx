@@ -2,12 +2,15 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 
 interface School {
   id: number;
   name: string;
   slug: string;
   colors: Record<string, string> | null;
+  city?: string | null;
+  league_id?: number | null;
 }
 
 interface GameRow {
@@ -490,7 +493,7 @@ export default function ScheduleView({
                                     href={`/${sport}/teams/${opponent.slug}/${seasonLabel}`}
                                     className="text-navy hover:text-blue-600 transition font-medium"
                                   >
-                                    {opponent.name}
+                                    {getSchoolDisplayName(opponent)}
                                   </Link>
                                 ) : (
                                   <span className="text-gray-400">
@@ -608,7 +611,7 @@ function GameCard({
                   awayBold ? "font-bold" : "font-medium"
                 }`}
               >
-                {g.away_school.name}
+                {getSchoolDisplayName(g.away_school)}
               </Link>
             ) : (
               <span className="text-gray-400">TBD</span>
@@ -621,7 +624,7 @@ function GameCard({
                   homeBold ? "font-bold" : "font-medium"
                 }`}
               >
-                {g.home_school.name}
+                {getSchoolDisplayName(g.home_school)}
               </Link>
             ) : (
               <span className="text-gray-400">TBD</span>
@@ -724,7 +727,7 @@ function ScrimmageGroupCard({
                   href={`/${sport}/teams/${t.slug}/${seasonLabel}`}
                   className="font-medium hover:text-blue-600 transition"
                 >
-                  {t.name}
+                  {getSchoolDisplayName(t)}
                 </Link>
               </span>
             ))}

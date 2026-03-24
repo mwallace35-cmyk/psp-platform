@@ -2,10 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { getSchoolDisplayName } from '@/lib/utils/schoolDisplayName';
 
 interface School {
   name: string;
   slug?: string;
+  city?: string | null;
+  league_id?: number | null;
 }
 
 interface Game {
@@ -75,8 +78,8 @@ const WeeklyMatchups: React.FC<WeeklyMatchupsProps> = ({ games, sport, sportColo
       >
         {games.map((game, index) => {
           const leagueColor = getLeagueColor(game.league);
-          const homeTeam = game.home_school?.name || 'Home Team';
-          const awayTeam = game.away_school?.name || 'Away Team';
+          const homeTeam = game.home_school ? getSchoolDisplayName(game.home_school) : 'Home Team';
+          const awayTeam = game.away_school ? getSchoolDisplayName(game.away_school) : 'Away Team';
           const scored = hasScore(game);
 
           return (

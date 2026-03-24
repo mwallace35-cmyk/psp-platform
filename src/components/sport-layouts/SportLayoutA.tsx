@@ -15,6 +15,7 @@ import type { Championship } from "@/lib/data/types";
 import type { HubGame } from "./HubScoresStrip";
 import BilingualHeader from "@/components/ui/BilingualHeader";
 import { baseballSpanish } from "@/lib/i18n/baseball-es";
+import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 
 const PhillyEverywhereSection = dynamic(() => import("@/components/philly-everywhere/PhillyEverywhereSection"), { ssr: false });
 
@@ -154,11 +155,11 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
                       {game.game_date ? new Date(game.game_date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Date TBA"}
                     </div>
                     <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)", marginBottom: 2 }}>
-                      {game.home_school?.name || "Home"}
+                      {game.home_school ? getSchoolDisplayName(game.home_school) : "Home"}
                     </div>
                     <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>vs</div>
                     <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text)", marginBottom: 6 }}>
-                      {game.away_school?.name || "Away"}
+                      {game.away_school ? getSchoolDisplayName(game.away_school) : "Away"}
                     </div>
                     {game.home_score !== null && game.away_score !== null ? (
                       <div style={{ fontSize: 14, fontWeight: 800, color: sportColor }}>

@@ -197,7 +197,7 @@ export const getGamesByTeamSeason = cache(
             const supabase = await createClient();
             const { data } = await supabase
               .from("games")
-              .select("id, sport_id, season_id, game_date, game_time, home_school_id, away_school_id, home_score, away_score, notes, data_source, seasons(label, year_start), home_school:schools!games_home_school_id_fkey(name, slug), away_school:schools!games_away_school_id_fkey(name, slug)")
+              .select("id, sport_id, season_id, game_date, game_time, home_school_id, away_school_id, home_score, away_score, notes, data_source, seasons(label, year_start), home_school:schools!games_home_school_id_fkey(name, slug, city, league_id), away_school:schools!games_away_school_id_fkey(name, slug, city, league_id)")
               .eq("season_id", seasonId)
               .eq("sport_id", sportId)
               .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
@@ -331,8 +331,8 @@ export const getRecentGamesBySport = cache(
               .from("games")
               .select(
                 "id, home_score, away_score, game_date, game_type, playoff_round, " +
-                "home_school:schools!games_home_school_id_fkey(id, name, slug), " +
-                "away_school:schools!games_away_school_id_fkey(id, name, slug), " +
+                "home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id), " +
+                "away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id), " +
                 "seasons(label)"
               )
               .eq("sport_id", sportId)
@@ -403,8 +403,8 @@ export const getChampionshipGamesWithBoxScores = cache(
               .from("games")
               .select(
                 `id, sport_id, season_id, game_date, home_school_id, away_school_id, home_score, away_score, notes,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug),
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
                  seasons(label, year_start, year_end),
                  game_player_stats(id)`
               )

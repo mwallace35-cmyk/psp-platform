@@ -23,6 +23,7 @@ import { createClient } from '@/lib/supabase/server';
 import { withApiAuth, type ApiKeyInfo } from '@/lib/api-auth';
 import { captureError } from '@/lib/error-tracking';
 import { VALID_SPORTS } from '@/lib/sports';
+import { getSchoolShortDisplayName } from '@/lib/utils/schoolDisplayName';
 
 interface GameScore {
   id: number;
@@ -117,8 +118,8 @@ const handler = async (
         sports(slug),
         location,
         notes,
-        home_schools:schools!games_home_school_id_fkey(id, name, slug, league_id),
-        away_schools:schools!games_away_school_id_fkey(id, name, slug, league_id),
+        home_schools:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+        away_schools:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
         home_league:home_schools.leagues(name),
         away_league:away_schools.leagues(name)
       `
@@ -154,13 +155,13 @@ const handler = async (
       status: game.status || 'scheduled',
       home_team: {
         id: game.home_school_id,
-        name: game.home_schools?.name || 'Unknown',
+        name: game.home_schools ? getSchoolShortDisplayName(game.home_schools) : 'Unknown',
         slug: game.home_schools?.slug || '',
         score: game.home_score ?? 0,
       },
       away_team: {
         id: game.away_school_id,
-        name: game.away_schools?.name || 'Unknown',
+        name: game.away_schools ? getSchoolShortDisplayName(game.away_schools) : 'Unknown',
         slug: game.away_schools?.slug || '',
         score: game.away_score ?? 0,
       },

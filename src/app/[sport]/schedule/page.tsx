@@ -41,12 +41,16 @@ interface GameRow {
     name: string;
     slug: string;
     colors: Record<string, string> | null;
+    city?: string | null;
+    league_id?: number | null;
   } | null;
   away_school: {
     id: number;
     name: string;
     slug: string;
     colors: Record<string, string> | null;
+    city?: string | null;
+    league_id?: number | null;
   } | null;
 }
 
@@ -90,7 +94,7 @@ export default async function SchedulePage({
   const { data: rawGames } = await supabase
     .from("games")
     .select(
-      "id, game_date, game_time, game_type, home_score, away_score, notes, home_school:home_school_id(id, name, slug, colors), away_school:away_school_id(id, name, slug, colors)"
+      "id, game_date, game_time, game_type, home_score, away_score, notes, home_school:home_school_id(id, name, slug, colors, city, league_id), away_school:away_school_id(id, name, slug, colors, city, league_id)"
     )
     .eq("season_id", seasonData.id)
     .eq("sport_id", sportId)

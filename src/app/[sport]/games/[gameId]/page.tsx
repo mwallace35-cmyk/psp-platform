@@ -12,6 +12,7 @@ import {
 import { Breadcrumb } from "@/components/ui";
 import GameFilmSection from "@/components/highlights/GameFilmSection";
 import HeadToHeadBadge from "@/components/game/HeadToHeadBadge";
+import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: hourly (games get new box scores frequently)
@@ -28,9 +29,9 @@ export async function generateMetadata({
   const game = await getGameById(Number(gameId));
   if (!game) return { title: "Game Not Found" };
 
-  const home = game.home_school?.name ?? "Home";
-  const awayName = game.away_school?.name
-    ?? (game.notes ? game.notes.replace(/^Opponent:\s*/i, "").replace(/\s*\(.*\)\s*$/, "").trim() : null)
+  const home = game.home_school ? getSchoolDisplayName(game.home_school) : "Home";
+  const awayName = game.away_school ? getSchoolDisplayName(game.away_school)
+    : (game.notes ? game.notes.replace(/^Opponent:\s*/i, "").replace(/\s*\(.*\)\s*$/, "").trim() : null)
     ?? "Away";
   const away = awayName;
   const score =
@@ -505,7 +506,7 @@ export default async function GameDetailPage({
                   href={`/${sport}/schools/${away.slug}`}
                   className="text-lg md:text-xl font-bold text-white hover:text-[var(--psp-gold)] transition-colors font-heading"
                 >
-                  {away.name}
+                  {getSchoolDisplayName(away)}
                 </Link>
               ) : opponentFromNotes ? (
                 <span className="text-lg md:text-xl font-bold text-gray-300 font-heading">
@@ -547,7 +548,7 @@ export default async function GameDetailPage({
                   href={`/${sport}/schools/${home.slug}`}
                   className="text-lg md:text-xl font-bold text-white hover:text-[var(--psp-gold)] transition-colors font-heading"
                 >
-                  {home.name}
+                  {getSchoolDisplayName(home)}
                 </Link>
               ) : (
                 <span className="text-lg md:text-xl font-bold text-gray-400">Home</span>

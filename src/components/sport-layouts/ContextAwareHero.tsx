@@ -1,9 +1,12 @@
 'use client';
 
 import React from 'react';
+import { getSchoolDisplayName } from '@/lib/utils/schoolDisplayName';
 
 interface School {
   name: string;
+  city?: string | null;
+  league_id?: number | null;
 }
 
 interface Game {
@@ -68,8 +71,8 @@ const ContextAwareHero: React.FC<ContextAwareHeroProps> = ({
 
   if (gameToday) {
     // Game Day Mode
-    const homeTeam = gameToday.home_school?.name || 'Home Team';
-    const awayTeam = gameToday.away_school?.name || 'Away Team';
+    const homeTeam = gameToday.home_school ? getSchoolDisplayName(gameToday.home_school) : 'Home Team';
+    const awayTeam = gameToday.away_school ? getSchoolDisplayName(gameToday.away_school) : 'Away Team';
     const hasScore =
       gameToday.home_score !== null &&
       gameToday.home_score !== undefined &&

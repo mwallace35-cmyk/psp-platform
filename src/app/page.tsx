@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { OrganizationJsonLd } from '@/components/seo/JsonLd';
 import SportNavigationGrid from '@/components/home/SportNavigationGrid';
 import PotwHomepageWidget from '@/components/pulse/PotwHomepageWidget';
+import { getSchoolDisplayName } from '@/lib/utils/schoolDisplayName';
 
 export const revalidate = 300; // 5 min ISR — live content
 export const dynamic = 'force-dynamic';
@@ -44,7 +45,7 @@ export default async function HomePage() {
     // Recent completed games (last 7 days)
     supabase
       .from('games')
-      .select('id, game_date, sport_id, home_score, away_score, home_school:home_school_id(name, slug), away_school:away_school_id(name, slug)')
+      .select('id, game_date, sport_id, home_score, away_score, home_school:home_school_id(name, slug, city, league_id), away_school:away_school_id(name, slug, city, league_id)')
       .not('home_score', 'is', null)
       .gte('game_date', new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10))
       .order('game_date', { ascending: false })
@@ -81,7 +82,7 @@ export default async function HomePage() {
   if ((recentGamesRes.data ?? []).length === 0) {
     seasonFallbackGamesRes = await supabase
       .from('games')
-      .select('id, game_date, sport_id, home_score, away_score, home_school:home_school_id(name, slug), away_school:away_school_id(name, slug)')
+      .select('id, game_date, sport_id, home_score, away_score, home_school:home_school_id(name, slug, city, league_id), away_school:away_school_id(name, slug, city, league_id)')
       .not('home_score', 'is', null)
       .eq('season_id', currentSeasonId)
       .or('home_score.gt.0,away_score.gt.0')
@@ -217,11 +218,11 @@ export default async function HomePage() {
                         <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">{SPORT_EMOJI[(game.sport_id as string) || '']}</span>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
-                            <span className={`text-sm font-medium ${awayWon ? 'text-gray-100' : 'text-gray-400'}`}>{(away?.name as string) || 'TBD'}</span>
+                            <span className={`text-sm font-medium ${awayWon ? 'text-gray-100' : 'text-gray-400'}`}>{away ? getSchoolDisplayName(away as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}</span>
                             <span className={`text-sm font-bold tabular-nums ${awayWon ? 'text-gray-100' : 'text-gray-400'}`}>{game.away_score as number}</span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className={`text-sm font-medium ${homeWon ? 'text-gray-100' : 'text-gray-400'}`}>{(home?.name as string) || 'TBD'}</span>
+                            <span className={`text-sm font-medium ${homeWon ? 'text-gray-100' : 'text-gray-400'}`}>{home ? getSchoolDisplayName(home as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}</span>
                             <span className={`text-sm font-bold tabular-nums ${homeWon ? 'text-gray-100' : 'text-gray-400'}`}>{game.home_score as number}</span>
                           </div>
                         </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 import SortablePreviewRoster from "@/components/team/SortablePreviewRoster";
 import {
   SPORT_META,
@@ -512,7 +513,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         <td className="py-3 px-4">
                           {opponent ? (
                             <Link href={`/${sport}/teams/${opponent.slug}/${season}`} className="text-blue-400 hover:underline">
-                              {isHome ? "vs " : "at "}{opponent.name}
+                              {isHome ? "vs " : "at "}{getSchoolDisplayName(opponent)}
                             </Link>
                           ) : (
                             <span className="text-gray-400">{isHome ? "vs" : "at"} TBD</span>

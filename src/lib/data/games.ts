@@ -41,8 +41,8 @@ export interface GameDetail {
   playoff_round: string | null;
   notes: string | null;
   data_source: string | null;
-  home_school: { id: number; name: string; slug: string } | null;
-  away_school: { id: number; name: string; slug: string } | null;
+  home_school: { id: number; name: string; slug: string; city?: string | null; league_id?: number | null } | null;
+  away_school: { id: number; name: string; slug: string; city?: string | null; league_id?: number | null } | null;
   seasons: { label: string; year_start: number; year_end: number } | null;
 }
 
@@ -60,8 +60,8 @@ export const getGameById = cache(
               .from("games")
               .select(
                 `id, sport_id, season_id, game_date, game_time, home_school_id, away_school_id, home_score, away_score, period_scores, game_type, playoff_round, notes, data_source,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug),
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
                  seasons(label, year_start, year_end)`
               )
               .eq("id", gameId)
@@ -195,8 +195,8 @@ export const getPlayerGameLog = cache(
                  rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards,
                  points, stats_json, source_type,
                  games!inner(id, game_date, home_score, away_score, home_school_id, away_school_id,
-                   home_school:schools!games_home_school_id_fkey(id, name, slug),
-                   away_school:schools!games_away_school_id_fkey(id, name, slug),
+                   home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                   away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
                    seasons(label)
                  )`
               )
@@ -232,8 +232,8 @@ export interface TeamGame {
   away_school_id: number | null;
   home_score: number | null;
   away_score: number | null;
-  home_school: { id: number; name: string; slug: string } | null;
-  away_school: { id: number; name: string; slug: string } | null;
+  home_school: { id: number; name: string; slug: string; city?: string | null; league_id?: number | null } | null;
+  away_school: { id: number; name: string; slug: string; city?: string | null; league_id?: number | null } | null;
   seasons: { label: string } | null;
 }
 
@@ -259,8 +259,8 @@ export const getPlayerTeamGames = cache(
               .from("games")
               .select(
                 `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug),
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
                  seasons(label)`
               )
               .eq("home_school_id", schoolId)
@@ -272,8 +272,8 @@ export const getPlayerTeamGames = cache(
               .from("games")
               .select(
                 `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug),
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
                  seasons(label)`
               )
               .eq("away_school_id", schoolId)
@@ -347,8 +347,8 @@ export interface ScoresGame {
   away_school_id: number | null;
   home_score: number | null;
   away_score: number | null;
-  home_school: { id: number; name: string; slug: string } | null;
-  away_school: { id: number; name: string; slug: string } | null;
+  home_school: { id: number; name: string; slug: string; city?: string | null; league_id?: number | null } | null;
+  away_school: { id: number; name: string; slug: string; city?: string | null; league_id?: number | null } | null;
   seasons: { label: string } | null;
 }
 
@@ -367,8 +367,8 @@ export const getRecentScores = cache(
               .from("games")
               .select(
                 `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug),
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
                  seasons(label)`
               )
               .not("home_score", "is", null)
@@ -408,8 +408,8 @@ export const getUpcomingGames = cache(
               .from("games")
               .select(
                 `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug),
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
                  seasons(label)`
               )
               .or("home_score.is.null,away_score.is.null")
@@ -465,8 +465,8 @@ export const getGamesBySportWithBoxScores = cache(
               .from("games")
               .select(
                 `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug),
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
                  seasons(label)`
               )
               .eq("sport_id", sportId)
@@ -726,8 +726,8 @@ export const getSchoolRivalries = cache(
               .from("games")
               .select(
                 `id, game_date, home_school_id, away_school_id, home_score, away_score,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug)`
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id)`
               )
               .eq("sport_id", sportId)
               .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)

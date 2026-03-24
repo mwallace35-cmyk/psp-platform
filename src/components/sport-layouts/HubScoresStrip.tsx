@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState, useCallback } from "react";
+import { getSchoolShortDisplayName } from "@/lib/utils/schoolDisplayName";
 
 export interface HubGame {
   id: number;
@@ -10,8 +11,8 @@ export interface HubGame {
   game_date: string | null;
   game_type: string | null;
   playoff_round: string | null;
-  home_school: { id: number; name: string; slug: string; league?: string } | null;
-  away_school: { id: number; name: string; slug: string; league?: string } | null;
+  home_school: { id: number; name: string; slug: string; league?: string; city?: string | null; league_id?: number | null } | null;
+  away_school: { id: number; name: string; slug: string; league?: string; city?: string | null; league_id?: number | null } | null;
   seasons: { label: string } | null;
 }
 
@@ -86,8 +87,8 @@ export default function HubScoresStrip({ games, sportColor, sport }: HubScoresSt
         onScroll={checkScroll}
       >
         {games.map((game, index) => {
-          const homeName = game.home_school?.name ?? "TBD";
-          const awayName = game.away_school?.name ?? "TBD";
+          const homeName = game.home_school ? getSchoolShortDisplayName(game.home_school) : "TBD";
+          const awayName = game.away_school ? getSchoolShortDisplayName(game.away_school) : "TBD";
           const homeScore = game.home_score ?? 0;
           const awayScore = game.away_score ?? 0;
           const homeWon = homeScore > awayScore;
