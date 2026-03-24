@@ -746,49 +746,59 @@ export default async function GameDetailPage({
       )}
 
       {/* Box Score */}
-      {boxScore.length > 0 ? (
-        <section>
-          <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">
-            {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average') ? 'Player Stats (Season Averages)' : 'Box Score'}
-          </h2>
-          {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average') && (
-            <div className="flex items-start gap-2 rounded-lg px-4 py-3 mb-4" style={{ backgroundColor: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
-              <span className="text-amber-400 text-base leading-5 flex-shrink-0" aria-hidden="true">&#9432;</span>
-              <p className="text-amber-300 text-sm leading-5">Per-game averages based on season totals. Actual game stats not available.</p>
-            </div>
-          )}
-          <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-6">
-            {sport === "football" ? (
-              <FootballBoxScore
-                stats={boxScore}
-                homeSchoolId={game.home_school_id}
-                awaySchoolId={game.away_school_id}
-                sport={sport}
-              />
-            ) : sport === "basketball" ? (
-              <BasketballBoxScore
-                stats={boxScore}
-                homeSchoolId={game.home_school_id}
-                awaySchoolId={game.away_school_id}
-                homeScore={game.home_score}
-                awayScore={game.away_score}
-                sport={sport}
-              />
-            ) : (
-              <p className="text-gray-400 text-sm">
-                Box score display not yet available for {meta?.name ?? sport}.
-              </p>
-            )}
+      {(() => {
+        const realBoxScore = boxScore.filter((s: GamePlayerStat) => s.source_type !== 'season_average');
+        const hasRealStats = realBoxScore.length > 0;
 
-            <p className="text-xs text-gray-600 mt-4 border-t border-gray-700 pt-3">
-              {boxScore.some((s: GamePlayerStat) => s.source_type === 'season_average')
-                ? <>Season averages shown &middot; Per-game stats not available &middot; PhillySportsPack.com</>
-                : <>Source: Ted Silary Archive &middot; PhillySportsPack.com</>
-              }
-            </p>
-          </div>
-        </section>
-      ) : teamSeasonData && (teamSeasonData.home?.players.length || teamSeasonData.away?.players.length) ? (
+        return hasRealStats ? (
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">Box Score</h2>
+            <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-6">
+              {sport === "football" ? (
+                <FootballBoxScore
+                  stats={realBoxScore}
+                  homeSchoolId={game.home_school_id}
+                  awaySchoolId={game.away_school_id}
+                  sport={sport}
+                />
+              ) : sport === "basketball" ? (
+                <BasketballBoxScore
+                  stats={realBoxScore}
+                  homeSchoolId={game.home_school_id}
+                  awaySchoolId={game.away_school_id}
+                  homeScore={game.home_score}
+                  awayScore={game.away_score}
+                  sport={sport}
+                />
+              ) : (
+                <p className="text-gray-300 text-sm">
+                  Box score display not yet available for {meta?.name ?? sport}.
+                </p>
+              )}
+              <p className="text-xs text-gray-500 mt-4 border-t border-gray-700 pt-3">
+                Source: Ted Silary Archive &middot; PhillySportsPack.com
+              </p>
+            </div>
+          </section>
+        ) : (
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">Box Score</h2>
+            <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-8 text-center">
+              <p className="text-3xl mb-3" aria-hidden="true">📊</p>
+              <p className="text-gray-300 text-base font-medium mb-1">No box score available for this game</p>
+              <p className="text-gray-400 text-sm mb-4">Were you at this game? Help us build the most complete Philly HS sports database.</p>
+              <Link
+                href="/scores/report"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-colors"
+                style={{ backgroundColor: 'var(--psp-gold)', color: 'var(--psp-navy)' }}
+              >
+                Submit Stats for This Game
+              </Link>
+            </div>
+          </section>
+        );
+      })()}
+      {teamSeasonData && (teamSeasonData.home?.players.length || teamSeasonData.away?.players.length) ? (
         <section>
           <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">
             Season Stats
