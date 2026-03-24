@@ -123,7 +123,7 @@ function StatBlock({ label, a, b, higherWins = true }: StatRow) {
   const bWins = higherWins ? bNum > aNum : bNum < aNum;
   const fmt = (v: number | string) => typeof v === 'number' ? v.toLocaleString() : v;
   return (
-    <div style={{ display:'grid', gridTemplateColumns:'1fr auto 1fr', alignItems:'center', padding:'0.6rem 0', borderBottom:'1px solid #f3f4f6' }}>
+    <div style={{ display:'grid', gridTemplateColumns:'1fr auto 1fr', alignItems:'center', padding:'0.6rem 0', borderBottom:'1px solid var(--psp-gray-100, #f3f4f6)' }}>
       <div style={{ textAlign:'right', paddingRight:'1rem' }}>
         <span style={{ fontSize:'1.1rem', fontWeight:800, color: aWins ? '#c8a84b' : '#1a2744' }}>{fmt(a)}</span>
         {aWins && <span style={{ marginLeft:6, fontSize:'0.65rem', color:'#c8a84b', fontWeight:800 }}>WIN</span>}
@@ -147,7 +147,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
         <h1 className="psp-h1" style={{ color:navy, margin:'0 0 0.5rem' }}>Compare Players</h1>
         <p style={{ color:muted, marginBottom:'2rem' }}>
           Add two player slugs to the URL to compare them head-to-head.<br />
-          <code style={{ background:'#f3f4f6', padding:'2px 6px', borderRadius:4, fontSize:'0.85rem' }}>/players/compare?a=player-one&b=player-two</code>
+          <code style={{ background:'var(--psp-gray-100, #f3f4f6)', padding:'2px 6px', borderRadius:4, fontSize:'0.85rem' }}>/players/compare?a=player-one&amp;b=player-two</code>
         </p>
         <Link href='/players' style={{ display:'inline-block', background:navy, color:'#fff', padding:'0.7rem 1.5rem', borderRadius:8, fontWeight:700, textDecoration:'none' }}>
           Browse Players \u2192

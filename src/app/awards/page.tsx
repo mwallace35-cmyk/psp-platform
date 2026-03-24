@@ -227,9 +227,9 @@ export default async function AwardsHubPage() {
                   }}
                 >
                   <h3
-                    className="font-bebas text-lg uppercase tracking-wider text-[#f0a500]"
+                    className="psp-caption text-[#f0a500]"
                   >
-                    👑 Dynasty Tracker
+                    Dynasty Tracker
                   </h3>
                   <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
                     Most championships all-time
@@ -277,18 +277,18 @@ export default async function AwardsHubPage() {
               className="rounded-lg overflow-hidden border"
               style={{
                 backgroundColor: "rgba(10,22,40,0.8)",
-                borderColor: "rgba(59,130,246,0.3)",
+                borderColor: "rgba(240,165,0,0.3)",
               }}
             >
               <div
                 className="px-4 py-3 border-b"
                 style={{
                   background: "linear-gradient(135deg, #0a1628, #1a2a42)",
-                  borderColor: "#3b82f6",
+                  borderColor: "#f0a500",
                 }}
               >
                 <h3
-                  className="font-bebas text-lg uppercase tracking-wider text-[#3b82f6]"
+                  className="psp-caption text-[#f0a500]"
                 >
                   Quick Links
                 </h3>
@@ -310,7 +310,7 @@ export default async function AwardsHubPage() {
                   >
                     <span>{link.emoji}</span>
                     <span>{link.label}</span>
-                    <span className="ml-auto" style={{ color: "#3b82f6" }}>
+                    <span className="ml-auto" style={{ color: "#f0a500" }}>
                       →
                     </span>
                   </Link>
@@ -335,9 +335,9 @@ export default async function AwardsHubPage() {
                   }}
                 >
                   <h3
-                    className="font-bebas text-lg uppercase tracking-wider text-[#f0a500]"
+                    className="psp-caption text-[#f0a500]"
                   >
-                    ⭐ Most Honored Schools
+                    Most Honored Schools
                   </h3>
                   <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
                     By individual award count

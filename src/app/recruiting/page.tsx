@@ -406,13 +406,13 @@ async function RecruitingContent() {
 
         {/* All-Americans */}
         {data.allAmericanAwards.length > 0 && (
-          <section id="all-americans" className="mb-8 scroll-mt-16">
+          <section id="all-americans" className="mb-8 pb-8 scroll-mt-16 border-b border-gray-800">
             <AllAmericansSpotlight awards={data.allAmericanAwards} />
           </section>
         )}
 
         {/* Class Year Spotlight */}
-        <section id="class-spotlight" className="mb-8 scroll-mt-16">
+        <section id="class-spotlight" className="mb-8 pb-8 scroll-mt-16 border-b border-gray-800">
           <SectionHeader title="Class Year Spotlight" />
           {data.classPlayers.length === 0 || data.classYears.length === 0 ? (
             <EmptyState message="No class year data available yet." />
@@ -422,7 +422,7 @@ async function RecruitingContent() {
         </section>
 
         {/* Pipeline Rankings — Horizontal Scroll */}
-        <section id="pipeline" className="mb-8 scroll-mt-16">
+        <section id="pipeline" className="mb-8 pb-8 scroll-mt-16 border-b border-gray-800">
           <SectionHeader title="Top Recruiting Pipelines" />
           {data.pipelineRankings.length === 0 ? (
             <EmptyState message="No pipeline data available." />
@@ -505,7 +505,7 @@ async function RecruitingContent() {
         </section>
 
         {/* College Destinations — Horizontal Scroll Strip */}
-        <section id="destinations" className="mb-8 scroll-mt-16">
+        <section id="destinations" className="mb-8 pb-8 scroll-mt-16 border-b border-gray-800">
           <SectionHeader title="Where Philly Athletes Go" />
           {data.topDestinations.length === 0 ? (
             <EmptyState message="No destination data available." />

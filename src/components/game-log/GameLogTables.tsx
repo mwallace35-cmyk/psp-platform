@@ -61,7 +61,7 @@ export function FootballGameTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="data-table w-full text-sm">
+      <table className="data-table w-full text-sm" aria-label="Football game log">
         <thead>
           <tr className="border-b border-gray-300">
             <th className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
@@ -175,7 +175,7 @@ export function BasketballGameTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="data-table w-full text-sm">
+      <table className="data-table w-full text-sm" aria-label="Basketball game log">
         <thead>
           <tr className="border-b border-gray-300">
             <th className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>

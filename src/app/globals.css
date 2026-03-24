@@ -480,6 +480,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 /* Remove default focus ring when not keyboard-navigating */
 *:focus:not(:focus-visible) { outline: none; }
 
+/* Fade-in-up animation for grid items */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
 /* Accessibility: Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

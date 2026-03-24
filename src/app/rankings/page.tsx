@@ -56,7 +56,7 @@ export default async function RankingsPage({
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">Power Rankings</h1>
+          <h1 className="psp-h1 text-white mb-2">Power Rankings</h1>
           <p className="text-gray-300 text-lg">Weekly school rankings across Philly HS sports</p>
         </div>
       </div>

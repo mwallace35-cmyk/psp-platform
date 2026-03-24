@@ -221,7 +221,7 @@ function CoachingCard({ a }: { a: AlumniRecord }) {
   const initials = a.person_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-lg hover:border-green-400 transition group">
+    <div className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-lg hover:border-green-400 transition-all duration-200 group animate-fade-in-up">
       {/* Header with avatar */}
       <div className="flex items-start gap-4">
         <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center text-white font-bold text-lg shrink-0">
@@ -307,7 +307,7 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
 
   return (
     <div
-      className={`bg-white rounded-lg border p-4 hover:shadow-md transition group ${
+      className={`bg-white rounded-lg border p-4 hover:shadow-md transition-all duration-200 group animate-fade-in-up ${
         activeTab === 'former-pros' ? 'opacity-80 hover:border-gray-400' :
         activeTab === 'college' ? 'hover:border-blue-400' :
         'hover:border-gold'

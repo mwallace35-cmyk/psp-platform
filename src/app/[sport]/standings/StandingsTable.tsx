@@ -21,15 +21,22 @@ interface LeagueGroup {
   divisions: { name: string | null; standings: LeagueStandings }[];
 }
 
-function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData }: {
+function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueName, seasonLabel }: {
   data: Standing[];
   sport: string;
   hasLeagueRecord: boolean;
   hasPointsData: boolean;
+  leagueName?: string;
+  seasonLabel?: string;
 }) {
+  const ariaLabel = leagueName && seasonLabel
+    ? `${leagueName} standings for ${seasonLabel}`
+    : leagueName
+      ? `${leagueName} standings`
+      : "League standings";
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] shadow-lg">
-      <table className="w-full text-sm text-gray-200">
+      <table className="w-full text-sm text-gray-200" aria-label={ariaLabel}>
         <thead>
           <tr className="border-b border-gray-700 bg-gray-900">
             <th className="px-3 py-3 text-left font-semibold text-gray-300 w-10">#</th>
@@ -158,7 +165,7 @@ export default function StandingsTable({ standings, sport }: { standings: League
               className={`rounded-lg px-4 py-2 font-semibold text-sm transition-colors ${
                 idx === selectedIdx
                   ? "bg-[var(--psp-gold)] text-[var(--psp-navy)]"
-                  : "bg-gray-700 text-white hover:bg-gray-600"
+                  : "bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-200"
               }`}
             >
               {group.baseLeague}
@@ -173,15 +180,17 @@ export default function StandingsTable({ standings, sport }: { standings: League
           {currentGroup.divisions.map((div) => (
             <div key={div.name || 'main'}>
               {div.name && (
-                <h3 className="psp-h3 text-white mb-3">
+                <h2 className="psp-h3 text-white mb-3">
                   {div.name}
-                </h3>
+                </h2>
               )}
               <StandingsSection
                 data={div.standings.standings}
                 sport={sport}
                 hasLeagueRecord={hasLeagueRecord}
                 hasPointsData={hasPointsData}
+                leagueName={div.name ? `${currentGroup.baseLeague} — ${div.name}` : currentGroup.baseLeague}
+                seasonLabel={currentGroup.divisions[0]?.standings.season_label}
               />
             </div>
           ))}
@@ -193,6 +202,8 @@ export default function StandingsTable({ standings, sport }: { standings: League
           sport={sport}
           hasLeagueRecord={hasLeagueRecord}
           hasPointsData={hasPointsData}
+          leagueName={currentGroup.baseLeague}
+          seasonLabel={currentGroup.divisions[0]?.standings.season_label}
         />
       )}
 

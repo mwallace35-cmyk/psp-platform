@@ -51,7 +51,7 @@ function GameCard({ game }: { game: GameData }) {
 
   return (
     <Link href={`/${game.sportId}/games/${game.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-    <div className="flex flex-col gap-3 p-4 sm:p-5 bg-white [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-md transition-shadow cursor-pointer">
+    <div className="flex flex-col gap-3 p-4 sm:p-5 bg-white [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-md transition-all duration-200 cursor-pointer animate-fade-in-up">
       {/* Header with sport badge and game type */}
       <div className="flex items-center justify-between gap-2">
         <div className="inline-flex items-center gap-2">
@@ -155,7 +155,7 @@ export default function RecentGamesSection({ games }: RecentGamesSectionProps) {
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="mb-8 sm:mb-10 lg:mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white font-bebas tracking-wide mb-4 sm:mb-6">
+          <h2 className="psp-h1 text-white mb-4 sm:mb-6">
             Recent Scores
           </h2>
 

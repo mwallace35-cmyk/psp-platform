@@ -276,7 +276,7 @@ function GameCard({ game }: { game: GameData }) {
                           </thead>
                           <tbody>
                             {players.map((p, idx) => (
-                              <tr key={idx} className="border-b border-white/5 hover:bg-white/5">
+                              <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200">
                                 <td className="px-1 py-0.5 text-gray-500">{p.jersey}</td>
                                 <td className="px-1 py-0.5 font-medium">{p.name}</td>
                                 <td className="px-1 py-0.5 text-gray-400">{p.school}</td>
@@ -305,7 +305,7 @@ function GameCard({ game }: { game: GameData }) {
 function RecordRow({ label, record }: { label: string; record: RecordHolder | undefined }) {
   if (!record) return null;
   return (
-    <tr className="border-b border-[var(--psp-gold)]/10 hover:bg-white/5">
+    <tr className="border-b border-[var(--psp-gold)]/10 hover:bg-white/5 transition-colors duration-200">
       <td className="px-4 py-3 font-semibold text-[var(--psp-gold)]">{label}</td>
       <td className="px-4 py-3">
         <span className="font-bold text-lg">{record.value}</span>
@@ -581,7 +581,7 @@ function RostersTab({ games }: { games: GameData[] }) {
                       </thead>
                       <tbody>
                         {players.map((p, idx) => (
-                          <tr key={idx} className="border-b border-white/5 hover:bg-white/5">
+                          <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200">
                             <td className="px-2 py-1 text-gray-500 font-mono">{p.jersey}</td>
                             <td className="px-2 py-1 font-medium">{p.name}</td>
                             <td className="px-2 py-1 text-gray-400">{p.school}</td>

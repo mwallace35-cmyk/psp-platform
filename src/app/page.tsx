@@ -87,7 +87,7 @@ export default async function HomePage() {
       {/* Hero Section */}
       <div className="bg-gradient-to-b from-[var(--psp-navy)] to-[var(--psp-navy-mid)] pt-10 pb-8 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bebas text-white tracking-wide">
+          <h1 className="psp-h1-lg text-white">
             PHILLY<span className="text-[var(--psp-gold)]">SPORTS</span>PACK
           </h1>
           <p className="text-gray-300 text-sm md:text-base mt-2 font-medium tracking-wide">
@@ -143,17 +143,6 @@ export default async function HomePage() {
             {/* POTW Voting Widget */}
             <PotwHomepageWidget nominees={potwNominees} />
 
-            {/* Rankings link */}
-            <Link href="/rankings" className="group flex items-center gap-4 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all">
-              <div className="text-3xl group-hover:scale-110 transition-transform" role="img" aria-label="chart">📊</div>
-              <div>
-                <h2 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h2>
-                <p className="text-[11px] text-gray-400 mt-0.5">See who&apos;s on top this week</p>
-              </div>
-              <svg className="w-4 h-4 text-gray-500 ml-auto group-hover:text-[var(--psp-gold)] transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
           </div>
 
           {/* Sidebar */}
@@ -214,15 +203,17 @@ export default async function HomePage() {
               </Link>
             )}
 
-            {/* Leaderboard links */}
-            <section className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Leaderboards</h2>
-              <div className="space-y-2">
-                <Link href="/football/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition"><span role="img" aria-label="football">🏈</span> Football Leaders</Link>
-                <Link href="/basketball/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition"><span role="img" aria-label="basketball">🏀</span> Basketball Leaders</Link>
-                <Link href="/baseball/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition"><span role="img" aria-label="baseball">⚾</span> Baseball Leaders</Link>
+            {/* Power Rankings */}
+            <Link href="/rankings" className="group flex items-center gap-3 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all">
+              <div className="text-2xl group-hover:scale-110 transition-transform" role="img" aria-label="chart">📊</div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h2>
+                <p className="text-[10px] text-gray-400 mt-0.5">See who&apos;s on top this week</p>
               </div>
-            </section>
+              <svg className="w-4 h-4 text-gray-500 group-hover:text-[var(--psp-gold)] transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
         </div>
       </div>

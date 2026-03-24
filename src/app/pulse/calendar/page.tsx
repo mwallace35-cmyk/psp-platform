@@ -96,7 +96,7 @@ export default async function CalendarPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">{seasonLabel} Game Schedule</h1>
+          <h1 className="psp-h1 text-white mb-2">{seasonLabel} Game Schedule</h1>
           <p className="text-gray-300 text-lg">Full football schedule for Public League and area schools</p>
           <div className="flex flex-wrap gap-6 mt-4 text-sm">
             <div><span className="text-gold font-bold text-xl">{totalGames}</span> <span className="text-gray-400">Total Games</span></div>
@@ -139,7 +139,7 @@ export default async function CalendarPage() {
           <div className="space-y-8">
             {Object.entries(gamesByWeek).map(([week, weekGames]) => (
               <section key={week}>
-                <h2 className="text-lg font-bebas text-navy mb-3 pb-1 border-b-2 border-gold/40 flex items-center gap-2">
+                <h2 className="psp-h4 text-navy mb-3 pb-1 border-b-2 border-gold/40 flex items-center gap-2">
                   <span className="text-gold">Week</span> {week}
                   <span className="text-xs font-sans text-gray-400 ml-auto">{weekGames.length} game{weekGames.length !== 1 ? 's' : ''}</span>
                 </h2>

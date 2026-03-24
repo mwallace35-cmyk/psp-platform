@@ -49,7 +49,7 @@ export default function TeamRoster({
 
             {/* Players Table */}
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label={`Team roster — ${groupName}`}>
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="px-4 py-3 text-left font-semibold text-gray-700">

@@ -117,7 +117,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               {article.sport_id}
             </span>
           </div>
-          <h1 className="text-4xl font-bebas text-white mb-4">{article.title}</h1>
+          <h1 className="psp-h1 text-white mb-4">{article.title}</h1>
           <div className="flex items-center justify-between text-gold text-sm">
             <span>{article.author}</span>
             <span>{new Date(article.created_at).toLocaleDateString()}</span>
@@ -192,7 +192,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         <div className="col-span-1">
           {/* Article Info */}
           <div className="bg-gray-50 rounded-lg p-6 mb-8">
-            <h3 className="font-bebas text-xl text-navy mb-4">About This Article</h3>
+            <h3 className="psp-h3 text-navy mb-4">About This Article</h3>
             <div className="space-y-3 text-sm">
               <div>
                 <p className="text-gray-600">Author</p>
@@ -229,7 +229,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           {/* Related Articles */}
           {relatedArticles && relatedArticles.length > 0 && (
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h3 className="font-bebas text-xl text-navy mb-4">Related Articles</h3>
+              <h3 className="psp-h3 text-navy mb-4">Related Articles</h3>
               <div className="space-y-4">
                 {relatedArticles.map((related) => (
                   <Link

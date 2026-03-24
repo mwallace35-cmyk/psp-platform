@@ -96,7 +96,7 @@ export default async function ForumPostPage({ params }: { params: Promise<{ post
             {post.is_pinned && <span className="text-gold text-xs font-bold">📌 PINNED</span>}
             {post.is_locked && <span className="text-gray-400 text-xs">🔒 LOCKED</span>}
           </div>
-          <h1 className="text-3xl font-bebas text-white">{post.title}</h1>
+          <h1 className="psp-h1 text-white">{post.title}</h1>
         </div>
       </div>
 
@@ -135,7 +135,7 @@ export default async function ForumPostPage({ params }: { params: Promise<{ post
         {/* Replies */}
         {replies.length > 0 && (
           <div className="space-y-4">
-            <h2 className="font-bebas text-navy text-xl">Replies ({replies.length})</h2>
+            <h2 className="psp-h3 text-navy">Replies ({replies.length})</h2>
             {replies.map((reply) => (
               <div key={reply.id} className="bg-white rounded-lg border border-gray-200 p-5">
                 <div className="flex items-center gap-3 mb-3">

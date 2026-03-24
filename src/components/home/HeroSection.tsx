@@ -85,7 +85,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
       {/* Content container */}
       <div className="relative z-10 max-w-4xl mx-auto">
         {/* Main heading */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 font-bebas tracking-wide">
+        <h1 className="psp-h1-lg text-white mb-4 sm:mb-6">
           Philadelphia&apos;s Home for High School Sports
         </h1>
 

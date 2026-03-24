@@ -158,7 +158,8 @@ gtag('config', '${gaId}');
         </div>
         <MobileBottomNav />
         <PushNotificationBanner />
-        <OnboardingWrapper />
+        {/* OnboardingWrapper disabled until auth is ready */}
+        {/* <OnboardingWrapper /> */}
         <Toaster position="bottom-right" theme="dark" richColors />
       </body>
     </html>

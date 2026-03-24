@@ -235,7 +235,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
         >
           <ChevronLeft size={16} /> Previous
         </button>
-        <h2 className="text-2xl font-bebas text-navy">
+        <h2 className="psp-h2 text-navy">
           {sportMeta?.emoji} {selectedWeek}
         </h2>
         <button

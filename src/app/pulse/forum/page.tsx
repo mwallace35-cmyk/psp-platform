@@ -100,7 +100,7 @@ export default async function ForumPage({
       {/* Hero */}
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">The Forum</h1>
+          <h1 className="psp-h1 text-white mb-2">The Forum</h1>
           <p className="text-gray-300 text-lg">Debate, predict, talk trash. This is your space.</p>
           <div className="flex gap-6 mt-4 text-sm">
             <span className="text-gold font-bold">{totalPosts.count ?? 0} topics</span>

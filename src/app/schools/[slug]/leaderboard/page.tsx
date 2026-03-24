@@ -100,16 +100,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 function LeaderList({ title, suffix, rows }: { title: string; suffix: string; rows: LeaderRow[] }) {
   const navy = '#1a2744'; const gold = '#c8a84b'; const muted = '#6b7280';
   return (
-    <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
+    <div style={{ background: 'var(--psp-card-bg, #fff)', border: '1px solid var(--psp-gray-200, #e5e7eb)', borderRadius: 10, overflow: 'hidden' }}>
       <div style={{ background: navy, padding: '0.65rem 1rem' }}>
-        <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '0.9rem', color: '#fff', letterSpacing: '0.05em' }}>{title}</span>
+        <span className="psp-caption" style={{ color: '#fff' }}>{title}</span>
       </div>
       {rows.length === 0 ? (
         <div style={{ padding: '1rem', color: muted, fontSize: '0.82rem' }}>No data yet.</div>
       ) : rows.map((r, i) => (
         <Link key={r.slug || i} href={`/players/${r.slug}`}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 1rem', borderBottom: '1px solid #f3f4f6', textDecoration: 'none', background: i === 0 ? '#fffbf0' : '#fff' }}>
-          <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.1rem', color: i === 0 ? gold : '#9ca3af', width: 20, textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
+          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 1rem', borderBottom: '1px solid var(--psp-gray-100, #f3f4f6)', textDecoration: 'none', background: i === 0 ? '#fffbf0' : 'var(--psp-card-bg, #fff)' }}>
+          <span className="psp-h4" style={{ color: i === 0 ? gold : 'var(--psp-gray-light, #9ca3af)', width: 20, textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, color: navy, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.name}</div>
             {r.gradYear && <div style={{ fontSize: '0.72rem', color: muted }}>Class of {r.gradYear}</div>}
@@ -138,11 +138,11 @@ export default async function SchoolLeaderboardPage({ params }: PageProps) {
       </div>
 
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.6rem', color: navy, margin: 0, letterSpacing: '0.03em' }}>{school.name}</h1>
+        <h1 className="psp-h1" style={{ color: navy }}>{school.name}</h1>
         <p style={{ color: muted, fontSize: '0.88rem', margin: '0.25rem 0 0' }}>All-Time Statistical Leaders</p>
       </div>
 
-      <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.6rem', color: navy, letterSpacing: '0.03em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <h2 className="psp-h2" style={{ color: navy, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ background: navy, color: '#fff', fontSize: '0.6rem', fontWeight: 800, padding: '2px 7px', borderRadius: 3, letterSpacing: 2 }}>FOOTBALL</span>
         Leaders
       </h2>
@@ -150,7 +150,7 @@ export default async function SchoolLeaderboardPage({ params }: PageProps) {
         {fbCats.map(cat => <LeaderList key={cat.key} title={cat.title} suffix={cat.suffix} rows={fbResults[cat.key] ?? []} />)}
       </div>
 
-      <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.6rem', color: navy, letterSpacing: '0.03em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <h2 className="psp-h2" style={{ color: navy, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ background: '#f97316', color: '#fff', fontSize: '0.6rem', fontWeight: 800, padding: '2px 7px', borderRadius: 3, letterSpacing: 2 }}>BASKETBALL</span>
         Leaders
       </h2>

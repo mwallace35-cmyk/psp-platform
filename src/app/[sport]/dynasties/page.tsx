@@ -82,7 +82,7 @@ export default async function DynastiesPage({
               { label: "Dynasties & History" },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl text-white mb-2 font-bebas">
+          <h1 className="psp-h1 text-white mb-2">
             {meta.emoji} 120 Years of Dominance
           </h1>
           <p className="text-gray-300">
@@ -111,7 +111,7 @@ export default async function DynastiesPage({
 
               <div className="space-y-6">
                 <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h2 className="text-xl font-bebas mb-4" style={{ color: meta.color }}>
+                  <h2 className="psp-h3 mb-4" style={{ color: meta.color }}>
                     All-Time Leaders
                   </h2>
                   <ol className="space-y-3">
@@ -140,7 +140,7 @@ export default async function DynastiesPage({
                 </div>
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                  <h3 className="font-bebas text-lg mb-3">About</h3>
+                  <h3 className="psp-h4 mb-3">About</h3>
                   <p className="text-sm text-gray-600">
                     This visualization shows championship dominance organized by decade. Explore
                     how different programs have dominated across different eras of {meta.name.toLowerCase()}.

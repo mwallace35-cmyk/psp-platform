@@ -95,7 +95,7 @@ async function getAvailableYears(): Promise<number[]> {
 function LeaderList({ title, rows }: { title: string; rows: LeaderRow[] }) {
   const navy = '#1a2744'; const gold = '#c8a84b'; const muted = '#6b7280';
   return (
-    <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
+    <div style={{ background: 'var(--psp-card-bg, #fff)', border: '1px solid var(--psp-gray-200, #e5e7eb)', borderRadius: 10, overflow: 'hidden' }}>
       <div style={{ background: navy, padding: '0.65rem 1rem' }}>
         <span className="psp-h4" style={{ color: '#fff' }}>{title}</span>
       </div>
@@ -103,8 +103,8 @@ function LeaderList({ title, rows }: { title: string; rows: LeaderRow[] }) {
         <div style={{ padding: '1rem', color: muted, fontSize: '0.82rem' }}>No data for this season.</div>
       ) : rows.map((r, i) => (
         <Link key={r.slug || i} href={`/players/${r.slug}`}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 1rem', borderBottom: '1px solid #f3f4f6', textDecoration: 'none', background: i === 0 ? '#fffbf0' : '#fff' }}>
-          <span className="psp-h4" style={{ color: i === 0 ? gold : '#9ca3af', width: 20, textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
+          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 1rem', borderBottom: '1px solid var(--psp-gray-100, #f3f4f6)', textDecoration: 'none', background: i === 0 ? '#fffbf0' : 'var(--psp-card-bg, #fff)' }}>
+          <span className="psp-h4" style={{ color: i === 0 ? gold : 'var(--psp-gray-light, #9ca3af)', width: 20, textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, color: navy, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.name}</div>
             <div style={{ fontSize: '0.72rem', color: muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.school}</div>

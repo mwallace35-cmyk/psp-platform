@@ -240,93 +240,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
         </div>
       </div>
 
-      {/* ========== LEAGUE TILES ========== */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: 12,
-        marginBottom: 28,
-      }}>
-        {MAIN_LEAGUES.map(league => {
-          const stats = leagueStats[league.key];
-          const isActive = selectedLeagueKey === league.key;
-          return (
-            <button
-              key={league.key}
-              onClick={() => {
-                setSelectedLeagueKey(isActive ? '' : league.key);
-                setSelectedLetter('');
-                setSearchTerm('');
-              }}
-              style={{
-                background: isActive
-                  ? league.color
-                  : 'var(--surface, #fff)',
-                border: isActive ? 'none' : '1px solid var(--g100)',
-                color: isActive ? '#fff' : 'var(--text)',
-                padding: '14px 16px',
-                borderRadius: 10,
-                cursor: 'pointer',
-                transition: 'all .2s',
-                textAlign: 'left',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-              onMouseEnter={e => {
-                if (!isActive) {
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,.1)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.borderColor = league.color;
-                }
-              }}
-              onMouseLeave={e => {
-                if (!isActive) {
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'var(--g100)';
-                }
-              }}
-            >
-              {/* Colored top accent */}
-              {!isActive && (
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: 3,
-                  background: league.color,
-                }} />
-              )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                <div style={{
-                }}
-                className="psp-caption">
-                  {league.icon} {league.name}
-                </div>
-                <div className="psp-h2" style={{
-                  lineHeight: 1,
-                }}>
-                  {stats?.count || 0}
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: 12, fontSize: 10, fontWeight: 600, opacity: 0.75 }}>
-                {(stats?.champs || 0) > 0 && (
-                  <span>🏆 {stats.champs}</span>
-                )}
-                {(stats?.pros || 0) > 0 && (
-                  <span>⭐ {stats.pros}</span>
-                )}
-                {stats?.winPct !== null && (
-                  <span>{stats.winPct}% avg</span>
-                )}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ========== TOOLBAR: Search + Sort + View + Toggle ========== */}
+      {/* ========== TOOLBAR: Search + League + Sort + View (single consolidated row) ========== */}
       <div style={{
         display: 'flex',
         gap: 10,
@@ -361,6 +275,44 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
           />
         </div>
 
+        {/* Divider */}
+        <div style={{ width: 1, height: 24, background: 'var(--g100)' }} />
+
+        {/* League filter (inline pills) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--g400)', whiteSpace: 'nowrap' }}>League:</span>
+          {MAIN_LEAGUES.map(league => {
+            const isActive = selectedLeagueKey === league.key;
+            return (
+              <button
+                key={league.key}
+                onClick={() => {
+                  setSelectedLeagueKey(isActive ? '' : league.key);
+                  setSelectedLetter('');
+                  setSearchTerm('');
+                }}
+                style={{
+                  padding: '5px 10px',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  borderRadius: 6,
+                  border: isActive ? 'none' : '1px solid var(--g100)',
+                  background: isActive ? league.color : 'transparent',
+                  color: isActive ? '#fff' : 'var(--text, #333)',
+                  cursor: 'pointer',
+                  transition: 'all .15s',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {league.icon} {league.name}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 1, height: 24, background: 'var(--g100)' }} />
+
         {/* Sort */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--g400)', whiteSpace: 'nowrap' }}>Sort:</span>
@@ -389,15 +341,12 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
           </select>
         </div>
 
-        {/* Divider */}
-        <div style={{ width: 1, height: 24, background: 'var(--g100)' }} />
-
         {/* View mode */}
         <div style={{ display: 'flex', gap: 4 }}>
           {([
-            { mode: 'cards' as ViewMode, label: '▦', title: 'Card View' },
-            { mode: 'league' as ViewMode, label: '☰', title: 'League View' },
-            { mode: 'table' as ViewMode, label: '▤', title: 'Table View' },
+            { mode: 'cards' as ViewMode, label: '\u25A6', title: 'Card View' },
+            { mode: 'league' as ViewMode, label: '\u2630', title: 'League View' },
+            { mode: 'table' as ViewMode, label: '\u25A4', title: 'Table View' },
           ]).map(({ mode, label, title }) => (
             <button
               key={mode}
@@ -682,7 +631,7 @@ function SchoolCard({ school, rank }: { school: SchoolData; rank?: number }) {
 
   return (
     <Link href={`/schools/${school.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div style={{
+      <div className="animate-fade-in-up" style={{
         background: 'var(--surface, #fff)',
         border: isClosed ? '1px solid #d6d3d1' : '1px solid var(--g100)',
         borderRadius: 10,

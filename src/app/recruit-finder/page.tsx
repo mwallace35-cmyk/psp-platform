@@ -191,7 +191,7 @@ export default async function RecruitFinderPage() {
         {/* Header */}
         <div className="mb-8">
           <h1
-            className="font-bebas text-[clamp(2rem,5vw,3.5rem)] text-white tracking-[0.05em] mb-2 leading-none"
+            className="psp-h1 text-white mb-2"
           >
             RECRUIT FINDER
           </h1>

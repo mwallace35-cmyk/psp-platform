@@ -109,7 +109,7 @@ function RecentAwardsTab({ awards }: { awards: AwardDetail[] }) {
     <div>
       <div className="px-5 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
         <h3
-          className="text-lg uppercase font-bebas tracking-wider text-[#f0a500]"
+          className="psp-caption text-[#f0a500]"
         >
           Latest Award Selections
         </h3>
@@ -151,7 +151,7 @@ function ChampionshipsTab({ champs }: { champs: ChampionshipHubRecord[] }) {
     <div>
       <div className="px-5 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
         <h3
-          className="text-lg uppercase font-bebas tracking-wider text-[#f0a500]"
+          className="psp-caption text-[#f0a500]"
         >
           Recent Championships
         </h3>
@@ -266,7 +266,7 @@ function POTYTab({ awards }: { awards: AwardDetail[] }) {
     <div>
       <div className="px-5 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
         <h3
-          className="text-lg uppercase font-bebas tracking-wider text-[#f0a500]"
+          className="psp-caption text-[#f0a500]"
         >
           Player of the Year Honorees
         </h3>
@@ -287,7 +287,7 @@ function AllCityTab({ awards }: { awards: AwardDetail[] }) {
     <div>
       <div className="px-5 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
         <h3
-          className="text-lg uppercase font-bebas tracking-wider text-[#f0a500]"
+          className="psp-caption text-[#f0a500]"
         >
           All-City & All-League Selections
         </h3>

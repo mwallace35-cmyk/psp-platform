@@ -31,7 +31,7 @@ export default function CoachClaimPage() {
     </div>
   );
 
-  const inputStyle: React.CSSProperties = { width:'100%', padding:'0.6rem 0.8rem', borderRadius:7, border:'1px solid #d1d5db', fontSize:'0.92rem', boxSizing:'border-box', outline:'none', fontFamily:'inherit' };
+  const inputStyle: React.CSSProperties = { width:'100%', padding:'0.6rem 0.8rem', borderRadius:7, border:'1px solid var(--psp-gray-300, #d1d5db)', fontSize:'0.92rem', boxSizing:'border-box', outline:'none', fontFamily:'inherit' };
   const labelStyle: React.CSSProperties = { display:'block', fontWeight:700, fontSize:'0.8rem', color:navy, marginBottom:'0.3rem', textTransform:'uppercase', letterSpacing:'0.05em' };
 
   return (
@@ -42,7 +42,7 @@ export default function CoachClaimPage() {
         <p style={{ color:muted, fontSize:'0.9rem', lineHeight:1.5 }}>Are you a coach of a Philly-area high school team? Claim your players to manage their profiles, add stats, and get notified of updates.</p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:'2rem', display:'flex', flexDirection:'column', gap:'1.2rem' }}>
+      <form onSubmit={handleSubmit} style={{ background:'var(--psp-card-bg, #fff)', border:'1px solid var(--psp-gray-200, #e5e7eb)', borderRadius:12, padding:'2rem', display:'flex', flexDirection:'column', gap:'1.2rem' }}>
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
           <div>
             <label style={labelStyle}>Your Name *</label>
@@ -94,7 +94,7 @@ export default function CoachClaimPage() {
 
         <button type="submit" disabled={status === 'submitting'}
           className="psp-h4"
-          style={{ background: status === 'submitting' ? '#9ca3af' : navy, color:'#fff', border:'none', borderRadius:8, padding:'0.75rem', cursor: status === 'submitting' ? 'not-allowed' : 'pointer' }}>
+          style={{ background: status === 'submitting' ? 'var(--psp-gray-light, #9ca3af)' : navy, color:'#fff', border:'none', borderRadius:8, padding:'0.75rem', cursor: status === 'submitting' ? 'not-allowed' : 'pointer' }}>
           {status === 'submitting' ? 'Submitting…' : 'Submit Claim Request'}
         </button>
       </form>

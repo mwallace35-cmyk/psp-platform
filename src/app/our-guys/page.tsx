@@ -158,7 +158,7 @@ export default async function OurGuysPage() {
         <div className="absolute bottom-0 left-1/4 w-56 h-56 bg-blue-500/10 rounded-full blur-[120px]" />
 
         <div className="relative max-w-7xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bebas text-white tracking-wide mb-2">Our Guys</h1>
+          <h1 className="psp-h1-lg text-white mb-2">Our Guys</h1>
           <p className="text-gray-400 text-lg mb-5">Philly HS alumni making it at the next level</p>
 
           {/* Stat pills */}
@@ -188,7 +188,7 @@ export default async function OurGuysPage() {
         {topSchools.length > 0 && (
           <section className="py-8">
             <div className="rounded-2xl bg-gradient-to-br from-navy via-navy-mid to-[#0d1b30] p-6 md:p-8">
-              <h2 className="text-2xl md:text-3xl font-bebas text-white tracking-wide mb-1">
+              <h2 className="psp-h2 text-white mb-1">
                 Which Schools Produce the Most Pros?
               </h2>
               <p className="text-gray-400 text-sm mb-6">The Philly high schools sending the most athletes to the pros</p>
@@ -242,7 +242,7 @@ export default async function OurGuysPage() {
         {/* ─── Recently Added Section ─── */}
         {recentlyAdded.length > 0 && (
           <section className="py-4 pb-8">
-            <h2 className="text-2xl md:text-3xl font-bebas text-navy tracking-wide mb-1">
+            <h2 className="psp-h2 text-navy mb-1">
               Latest Additions to Our Guys
             </h2>
             <p className="text-gray-500 text-sm mb-5">Newly tracked athletes and coaches</p>
@@ -299,7 +299,7 @@ export default async function OurGuysPage() {
         {/* ─── Pro League Breakdown ─── */}
         {leagueBreakdown.length > 0 && (
           <section className="py-4 pb-8">
-            <h2 className="text-2xl md:text-3xl font-bebas text-navy tracking-wide mb-1">
+            <h2 className="psp-h2 text-navy mb-1">
               Pro League Breakdown
             </h2>
             <p className="text-gray-500 text-sm mb-5">Active Philly pros by league</p>

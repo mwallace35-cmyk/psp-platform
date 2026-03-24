@@ -122,7 +122,7 @@ export default async function CoachesPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bebas text-white tracking-wide mb-2">
+          <h1 className="psp-h1 text-white mb-2">
             Coaches Directory
           </h1>
           <p className="text-gray-300 text-lg max-w-2xl">

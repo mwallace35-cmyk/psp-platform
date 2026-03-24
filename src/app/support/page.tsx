@@ -53,7 +53,7 @@ export default function SupportPage() {
       <section className="bg-gradient-to-br from-navy via-navy-mid to-navy pt-20 pb-16 px-6 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="text-6xl mb-6">📚</div>
-          <h1 className="font-bebas text-5xl md:text-6xl tracking-widest mb-6 text-gold">
+          <h1 className="psp-h1-lg text-gold mb-6">
             HELP PRESERVE HISTORY
           </h1>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
@@ -68,7 +68,7 @@ export default function SupportPage() {
       {/* Mission Section */}
       <section className="bg-navy-mid py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-bebas text-4xl tracking-widest text-white mb-12 text-center">
+          <h2 className="psp-h2 text-white mb-12 text-center">
             THE MISSION
           </h2>
 
@@ -103,7 +103,7 @@ export default function SupportPage() {
       {/* Why Support */}
       <section className="bg-navy py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-bebas text-4xl tracking-widest text-white mb-12 text-center">
+          <h2 className="psp-h2 text-white mb-12 text-center">
             WHERE YOUR SUPPORT GOES
           </h2>
 
@@ -149,7 +149,7 @@ export default function SupportPage() {
       {/* Support Tiers */}
       <section className="bg-navy-mid py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="font-bebas text-4xl tracking-widest text-white mb-4 text-center">
+          <h2 className="psp-h2 text-white mb-4 text-center">
             SUPPORT LEVELS
           </h2>
           <p className="text-white/70 text-center mb-12 max-w-2xl mx-auto">
@@ -182,7 +182,7 @@ export default function SupportPage() {
 
                 {/* Header */}
                 <div className="mb-6">
-                  <h3 className="font-bebas text-2xl text-white mb-2 tracking-wide">
+                  <h3 className="psp-h3 text-white mb-2">
                     {tier.name}
                   </h3>
                   <div className="mb-3">
@@ -214,7 +214,7 @@ export default function SupportPage() {
           {/* Coming Soon Note */}
           <div className="mt-12 p-6 bg-gradient-to-r from-gold/10 via-blue/5 to-gold/10 border border-gold/30 rounded-lg text-center">
             <div className="text-4xl mb-3">🚀</div>
-            <h3 className="font-bebas text-2xl text-gold mb-3 tracking-wide">
+            <h3 className="psp-h3 text-gold mb-3">
               PAYMENT PROCESSING COMING SOON
             </h3>
             <p className="text-white/80 mb-6">
@@ -230,8 +230,8 @@ export default function SupportPage() {
       {/* Perks Section */}
       <section className="bg-navy py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-bebas text-3xl tracking-widest text-white mb-8 text-center">
-            WHAT YOU'LL GET
+          <h2 className="psp-h2 text-white mb-8 text-center">
+            WHAT YOU&apos;LL GET
           </h2>
 
           <div className="bg-navy-mid p-8 rounded-lg border border-gold/30">
@@ -283,7 +283,7 @@ export default function SupportPage() {
       {/* FAQ Section */}
       <section className="bg-navy-mid py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-bebas text-3xl tracking-widest text-white mb-8 text-center">
+          <h2 className="psp-h2 text-white mb-8 text-center">
             FREQUENTLY ASKED
           </h2>
 
@@ -322,7 +322,7 @@ export default function SupportPage() {
       {/* CTA Footer */}
       <section className="bg-gradient-to-r from-gold/10 via-blue/5 to-gold/10 border-t border-gold/30 py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-bebas text-3xl md:text-4xl tracking-widest text-white mb-4">
+          <h2 className="psp-h2 text-white mb-4">
             Join the Mission
           </h2>
           <p className="text-white/80 mb-6 max-w-xl mx-auto">

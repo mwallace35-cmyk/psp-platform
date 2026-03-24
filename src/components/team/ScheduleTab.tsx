@@ -22,7 +22,7 @@ export function ScheduleTab({ games, sport, schoolSlug }: ScheduleTabProps) {
     <div className="space-y-3">
       {/* Desktop Table View */}
       <div className="hidden md:block bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table className="w-full text-sm text-gray-200">
+        <table className="w-full text-sm text-gray-200" aria-label="Team schedule">
           <thead className="bg-[var(--psp-navy)] text-white">
             <tr>
               <th className="px-4 py-3 text-left font-semibold">Date</th>

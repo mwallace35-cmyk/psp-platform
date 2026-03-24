@@ -175,7 +175,7 @@ export default async function SchedulePage({
           </nav>
           <div className="flex items-center gap-3 mb-2">
             <span className="text-3xl">{meta.emoji}</span>
-            <h1 className="text-4xl md:text-5xl font-bebas text-white">
+            <h1 className="psp-h1 text-white">
               {seasonLabel} {meta.name} Schedule
             </h1>
           </div>

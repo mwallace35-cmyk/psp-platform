@@ -33,7 +33,7 @@ export default function RecruitPage() {
     </div>
   );
 
-  const inputStyle: React.CSSProperties = { width: '100%', padding: '0.6rem 0.8rem', borderRadius: 7, border: '1px solid #d1d5db', fontSize: '0.92rem', boxSizing: 'border-box', fontFamily: 'inherit' };
+  const inputStyle: React.CSSProperties = { width: '100%', padding: '0.6rem 0.8rem', borderRadius: 7, border: '1px solid var(--psp-gray-300, #d1d5db)', fontSize: '0.92rem', boxSizing: 'border-box', fontFamily: 'inherit' };
   const labelStyle: React.CSSProperties = { display: 'block', fontWeight: 700, fontSize: '0.78rem', color: navy, marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.05em' };
   const sectionHead = (label: string) => (
     <div style={{ borderBottom: `2px solid ${gold}`, paddingBottom: '0.4rem', marginBottom: '0.1rem' }}>
@@ -51,7 +51,7 @@ export default function RecruitPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
+      <form onSubmit={handleSubmit} style={{ background: 'var(--psp-card-bg, #fff)', border: '1px solid var(--psp-gray-200, #e5e7eb)', borderRadius: 12, padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
         {sectionHead('Personal Info')}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <div><label style={labelStyle}>First Name *</label><input required style={inputStyle} value={form.firstName} onChange={e => set('firstName', e.target.value)} placeholder="John" /></div>
@@ -92,7 +92,7 @@ export default function RecruitPage() {
           <label style={labelStyle}>Target Level</label>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' as const }}>
             {LEVELS.map(l => (
-              <label key={l} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', fontSize: '0.85rem', padding: '0.3rem 0.7rem', borderRadius: 20, border: `1px solid ${form.targetLevel === l ? navy : '#d1d5db'}`, background: form.targetLevel === l ? navy : '#fff', color: form.targetLevel === l ? '#fff' : '#374151', fontWeight: form.targetLevel === l ? 700 : 400 }}>
+              <label key={l} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer', fontSize: '0.85rem', padding: '0.3rem 0.7rem', borderRadius: 20, border: `1px solid ${form.targetLevel === l ? navy : 'var(--psp-gray-300, #d1d5db)'}`, background: form.targetLevel === l ? navy : 'var(--psp-card-bg, #fff)', color: form.targetLevel === l ? '#fff' : 'var(--psp-gray-dark, #374151)', fontWeight: form.targetLevel === l ? 700 : 400 }}>
                 <input type="radio" name="targetLevel" value={l} checked={form.targetLevel === l} onChange={() => set('targetLevel', l)} style={{ display: 'none' }} />
                 {l}
               </label>
@@ -114,7 +114,7 @@ export default function RecruitPage() {
 
         <button type="submit" disabled={status === 'submitting'}
           className="psp-h4"
-          style={{ background: status === 'submitting' ? '#9ca3af' : gold, color: '#fff', border: 'none', borderRadius: 8, padding: '0.8rem', cursor: status === 'submitting' ? 'not-allowed' : 'pointer' }}>
+          style={{ background: status === 'submitting' ? 'var(--psp-gray-light, #9ca3af)' : gold, color: '#fff', border: 'none', borderRadius: 8, padding: '0.8rem', cursor: status === 'submitting' ? 'not-allowed' : 'pointer' }}>
           {status === 'submitting' ? 'Submitting…' : '🏆 Submit Recruiting Profile'}
         </button>
       </form>

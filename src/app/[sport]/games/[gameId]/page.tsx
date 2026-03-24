@@ -150,7 +150,7 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Rushing
             </h4>
-            <table className="w-full text-sm text-gray-200">
+            <table className="w-full text-sm text-gray-200" aria-label={`${label} rushing statistics`}>
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
                   <th className="text-left py-1 pr-2">Player</th>
@@ -166,7 +166,7 @@ function FootballBoxScore({
                   .map((s) => {
                     const rushTd = getTD(s, 'rush');
                     return (
-                    <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
+                    <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
                           <Link
@@ -202,7 +202,7 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Passing
             </h4>
-            <table className="w-full text-sm text-gray-200">
+            <table className="w-full text-sm text-gray-200" aria-label={`${label} passing statistics`}>
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
                   <th className="text-left py-1 pr-2">Player</th>
@@ -218,7 +218,7 @@ function FootballBoxScore({
                   .map((s) => {
                     const passTd = getTD(s, 'pass');
                     return (
-                    <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
+                    <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
                           <Link
@@ -253,7 +253,7 @@ function FootballBoxScore({
             <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               Receiving
             </h4>
-            <table className="w-full text-sm text-gray-200">
+            <table className="w-full text-sm text-gray-200" aria-label={`${label} receiving statistics`}>
               <thead>
                 <tr className="text-gray-400 border-b border-gray-700">
                   <th className="text-left py-1 pr-2">Player</th>
@@ -269,7 +269,7 @@ function FootballBoxScore({
                   .map((s) => {
                     const recTd = getTD(s, 'rec');
                     return (
-                    <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
+                    <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
                       <td className="py-1.5 pr-2">
                         {s.players?.slug ? (
                           <Link
@@ -361,7 +361,7 @@ function BasketballBoxScore({
         <h3 className="text-lg font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase">
           {label} {displayPts > 0 && <span className="text-white">({displayPts} pts)</span>}
         </h3>
-        <table className="w-full text-sm text-gray-200">
+        <table className="w-full text-sm text-gray-200" aria-label={`${label} scoring statistics`}>
           <thead>
             <tr className="text-gray-400 border-b border-gray-700">
               <th className="text-left py-1 pr-2">Player</th>
@@ -373,7 +373,7 @@ function BasketballBoxScore({
             {teamStats
               .sort((a, b) => (b.points ?? 0) - (a.points ?? 0))
               .map((s) => (
-                <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
+                <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
                   <td className="py-1.5 pr-2">
                     {s.players?.slug ? (
                       <Link
@@ -479,9 +479,15 @@ export default async function GameDetailPage({
     { label: `${opponentFromNotes ?? away?.name ?? "Away"} vs ${home?.name ?? "Home"}` },
   ];
 
+  const h1Away = opponentFromNotes ?? (away ? getSchoolDisplayName(away) : "Away");
+  const h1Home = home ? getSchoolDisplayName(home) : "Home";
+  const h1Score = hasScore ? ` ${game.away_score}-${game.home_score}` : "";
+
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
       <Breadcrumb items={breadcrumbs} />
+
+      <h1 className="sr-only">{`${h1Away} vs ${h1Home}${h1Score} — ${season?.label ?? ""} ${meta?.name ?? sport}`}</h1>
 
       {/* Game Header */}
       <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 overflow-hidden mb-8">
@@ -581,7 +587,7 @@ export default async function GameDetailPage({
       {/* Period Scores (if available) */}
       {game.period_scores && typeof game.period_scores === "object" && Object.keys(game.period_scores).length > 0 && (
         <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-4 mb-6">
-          <h3 className="text-sm font-semibold text-[var(--psp-gold)] uppercase mb-3">Scoring by Period</h3>
+          <h2 className="text-sm font-semibold text-[var(--psp-gold)] uppercase mb-3">Scoring by Period</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {Object.entries(game.period_scores as Record<string, any>).map(([period, scores]) => {
               const scoreObj = typeof scores === "object" ? scores : { home: scores };
@@ -666,7 +672,7 @@ export default async function GameDetailPage({
                     </Link>
                   </h3>
                   {t.players.length > 0 ? (
-                    <table className="w-full text-sm text-gray-200">
+                    <table className="w-full text-sm text-gray-200" aria-label={`${t.schoolName} season statistics`}>
                       <thead>
                         <tr className="text-gray-400 border-b border-gray-700">
                           <th className="text-left py-1 pr-2">Player</th>
@@ -697,7 +703,7 @@ export default async function GameDetailPage({
                       </thead>
                       <tbody>
                         {t.players.map((p) => (
-                          <tr key={p.player_id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]">
+                          <tr key={p.player_id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
                             <td className="py-1.5 pr-2">
                               {p.player_slug ? (
                                 <Link href={`/${sport}/players/${p.player_slug}`} className="text-[var(--psp-blue)] hover:underline">

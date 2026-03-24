@@ -52,7 +52,7 @@ export default function LeaderboardContent({
           style={
             viewMode === 'table'
               ? { background: 'var(--psp-navy)', color: 'white' }
-              : { background: '#e5e7eb', color: '#374151' }
+              : { background: 'var(--psp-gray-200, #e5e7eb)', color: 'var(--psp-gray-dark, #374151)' }
           }
         >
           📊 Table View
@@ -65,7 +65,7 @@ export default function LeaderboardContent({
           style={
             viewMode === 'heatmap'
               ? { background: 'var(--psp-navy)', color: 'white' }
-              : { background: '#e5e7eb', color: '#374151' }
+              : { background: 'var(--psp-gray-200, #e5e7eb)', color: 'var(--psp-gray-dark, #374151)' }
           }
         >
           🔥 Heatmap View

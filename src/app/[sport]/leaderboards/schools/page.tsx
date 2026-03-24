@@ -83,7 +83,7 @@ function WinsTable({ data, sport }: { data: SchoolWinsRow[]; sport: string }) {
       render: (value, row) => (
         <div className="flex items-center gap-2">
           {row?.logo_url && (
-            <img src={row.logo_url as string} alt="" className="w-6 h-6 rounded" loading="lazy" />
+            <img src={row.logo_url as string} alt={`${String(value)} logo`} className="w-6 h-6 rounded" loading="lazy" />
           )}
           <div>
             <SchoolLink name={String(value)} slug={row?.school_slug as string} sport={sport} />

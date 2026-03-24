@@ -234,7 +234,7 @@ export default function RecordsExplorerView({
       {!loading && records.length > 0 && (
         <>
           <div className="overflow-x-auto mb-8">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Records explorer">
               <thead>
                 <tr style={{ background: "rgba(10, 22, 40, 0.05)", borderBottom: "2px solid var(--psp-gold)" }}>
                   {columns.map((col) => (
@@ -252,7 +252,7 @@ export default function RecordsExplorerView({
                 {tableData.map((row, idx) => (
                   <tr
                     key={idx}
-                    className="border-b hover:bg-gray-50"
+                    className="border-b hover:bg-gray-50 transition-colors duration-200"
                     style={{ borderColor: "#e5e7eb" }}
                   >
                     <td className="px-4 py-3">{row.rank}</td>

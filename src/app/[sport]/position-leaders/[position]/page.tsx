@@ -112,7 +112,7 @@ export default async function PositionLeadersPage({
               { label: positionName },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl text-white mb-2 font-bebas">
+          <h1 className="psp-h1 text-white mb-2">
             {meta.emoji} {positionName} Leaders
           </h1>
           <p className="text-gray-300">

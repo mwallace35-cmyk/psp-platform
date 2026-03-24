@@ -18,7 +18,7 @@ export default function TeamSchedule({ schedule }: TeamScheduleProps) {
     <div className="space-y-4">
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-gray-200">
+          <table className="w-full text-sm text-gray-200" aria-label="Team schedule">
             <thead>
               <tr className="bg-[var(--psp-navy)] text-white">
                 <th className="px-4 py-3 text-left font-bold">Date</th>

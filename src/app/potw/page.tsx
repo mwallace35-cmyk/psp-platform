@@ -50,7 +50,7 @@ export default async function PotwPage() {
       <div className="bg-gradient-to-r from-navy to-navy-mid py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <div className="text-6xl mb-4">🏆</div>
-          <h1 className="text-4xl md:text-5xl font-bebas text-white mb-4">Player of the Week</h1>
+          <h1 className="psp-h1 text-white mb-4">Player of the Week</h1>
           <p className="text-gold text-lg">
             Vote for the top performer in Philadelphia high school sports
           </p>
@@ -66,7 +66,7 @@ export default async function PotwPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Content - Nominees */}
           <div className="lg:col-span-3">
-            <h2 className="text-2xl font-bebas text-navy mb-6">This Week&apos;s Nominees</h2>
+            <h2 className="psp-h2 text-navy mb-6">This Week&apos;s Nominees</h2>
 
             {!hasNominees ? (
               <div className="text-center py-16 bg-gray-50 rounded-lg border border-gray-200">
@@ -83,7 +83,7 @@ export default async function PotwPage() {
                   return (
                     <div
                       key={nominee.id}
-                      className={`relative p-6 rounded-lg border transition ${
+                      className={`relative p-6 rounded-lg border transition-all duration-200 animate-fade-in-up ${
                         isLeading
                           ? 'border-gold bg-gold/5 shadow-md'
                           : 'border-gray-200 bg-white hover:border-gold/50'
@@ -133,7 +133,7 @@ export default async function PotwPage() {
                         <div className="mt-4">
                           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-gold rounded-full transition-all duration-500"
+                              className="h-full bg-gold rounded-full transition-all duration-200 ease-out"
                               style={{ width: `${Math.round(((nominee.vote_count || 0) / totalVotes) * 100)}%` }}
                             />
                           </div>
@@ -152,7 +152,7 @@ export default async function PotwPage() {
 
           {/* Sidebar - Past Winners */}
           <div>
-            <h2 className="text-2xl font-bebas text-navy mb-6">Past Winners</h2>
+            <h2 className="psp-h2 text-navy mb-6">Past Winners</h2>
 
             {!winners || winners.length === 0 ? (
               <p className="text-gray-500 text-sm">No past winners yet.</p>

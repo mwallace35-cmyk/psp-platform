@@ -80,7 +80,7 @@ export default function PremiumPage() {
       <section className="bg-gradient-to-br from-navy via-navy-mid to-navy pt-20 pb-16 px-6 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="text-5xl md:text-6xl mb-6">✨</div>
-          <h1 className="font-bebas text-5xl md:text-6xl tracking-widest mb-6 text-gold">
+          <h1 className="psp-h1-lg text-gold mb-6">
             PREMIUM PSP
           </h1>
           <p className="text-xl text-white/90 mb-4">
@@ -96,14 +96,14 @@ export default function PremiumPage() {
       {/* Features Comparison */}
       <section className="bg-navy-mid py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="font-bebas text-4xl tracking-widest text-white mb-12 text-center">
+          <h2 className="psp-h2 text-white mb-12 text-center">
             WHAT YOU GET
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* Free Column */}
             <div className="bg-navy rounded-lg p-8 border border-white/10">
-              <h3 className="font-bebas text-2xl text-white mb-6 tracking-wide">FREE</h3>
+              <h3 className="psp-h3 text-white mb-6">FREE</h3>
               <ul className="space-y-4">
                 {freeFeatures.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3">
@@ -122,7 +122,7 @@ export default function PremiumPage() {
               <div className="absolute top-0 right-0 bg-gold text-navy text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">
                 PREMIUM
               </div>
-              <h3 className="font-bebas text-2xl text-gold mb-6 tracking-wide">FREE + PREMIUM</h3>
+              <h3 className="psp-h3 text-gold mb-6">FREE + PREMIUM</h3>
               <ul className="space-y-4 mb-8">
                 {freeFeatures.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3 opacity-60">
@@ -165,7 +165,7 @@ export default function PremiumPage() {
       {/* Use Cases */}
       <section className="bg-navy py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-bebas text-3xl tracking-widest text-white mb-12 text-center">
+          <h2 className="psp-h2 text-white mb-12 text-center">
             PERFECT FOR
           </h2>
 
@@ -208,7 +208,7 @@ export default function PremiumPage() {
       {/* FAQ */}
       <section className="bg-navy-mid py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-bebas text-3xl tracking-widest text-white mb-8 text-center">
+          <h2 className="psp-h2 text-white mb-8 text-center">
             FAQ
           </h2>
 
@@ -254,7 +254,7 @@ export default function PremiumPage() {
       {/* CTA Footer */}
       <section className="bg-gradient-to-r from-gold/10 via-blue/5 to-gold/10 border-t border-gold/30 py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-bebas text-3xl md:text-4xl tracking-widest text-white mb-4">
+          <h2 className="psp-h2 text-white mb-4">
             Ready to go premium?
           </h2>
           <p className="text-white/80 mb-6">

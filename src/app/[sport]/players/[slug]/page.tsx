@@ -463,7 +463,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       <PlayerProfileTabs sportColor={meta.color} tabs={tabList} />
 
       {/* ============ OVERVIEW SECTION ============ */}
-      <section id="overview" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8">
+      <section id="overview" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main column */}
           <div className="lg:col-span-3 space-y-8">
@@ -723,7 +723,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       <PSPPromo size="banner" variant={2} />
 
       {/* ============ STATS SECTION ============ */}
-      <section id="stats" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8">
+      <section id="stats" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
         <h2
           className="psp-h2 mb-6"
           style={{ color: "var(--psp-navy)" }}
@@ -735,6 +735,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             sport={sport as "football" | "basketball" | "baseball"}
             stats={stats}
             sportColor={meta.color}
+            playerName={player.name}
           />
         ) : (
           <p className="text-gray-500 text-sm">No season statistics available.</p>
@@ -756,7 +757,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
       {/* ============ GAME LOG SECTION ============ */}
       {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
-        <section id="game-log" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8">
+        <section id="game-log" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
           <h2
             className="psp-h2 mb-6"
           >

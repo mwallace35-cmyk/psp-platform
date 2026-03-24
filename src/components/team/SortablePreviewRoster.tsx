@@ -69,10 +69,19 @@ export default function SortablePreviewRoster({
           align === 'center' ? 'text-center' : 'text-left'
         } ${isActive ? 'text-gray-200' : 'text-gray-400'}`}
         onClick={() => handleSort(col)}
+        aria-sort={isActive ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}
+        role="columnheader"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleSort(col);
+          }
+        }}
       >
         {label}
         {isActive && (
-          <span className="ml-1 text-xs">{sortDir === 'asc' ? '▲' : '▼'}</span>
+          <span className="ml-1 text-xs" aria-hidden="true">{sortDir === 'asc' ? '▲' : '▼'}</span>
         )}
       </th>
     );
@@ -80,7 +89,7 @@ export default function SortablePreviewRoster({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm text-gray-200">
+      <table className="w-full text-sm text-gray-200" aria-label="Team roster">
         <thead>
           <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
             <SortHeader col="jersey_number" label="#" />

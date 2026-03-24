@@ -129,7 +129,7 @@ export default async function FootballEfficiencyPage() {
               <p className="text-[#0a1628]/70 text-sm">Min. 50 rushing attempts</p>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Yards per carry leaders">
                 <TableHeader cols={['#', 'Player', 'School', 'Att', 'Yds', 'YPC']} />
                 <tbody className="divide-y divide-[#1a2f4d]">
                   {ypc.length === 0 ? (
@@ -158,7 +158,7 @@ export default async function FootballEfficiencyPage() {
               <p className="text-white/70 text-sm">Min. 50 pass attempts</p>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Completion percentage leaders">
                 <TableHeader cols={['#', 'Player', 'School', 'Att', 'Comp%', 'TD:INT']} />
                 <tbody className="divide-y divide-[#1a2f4d]">
                   {comp.length === 0 ? (
@@ -187,7 +187,7 @@ export default async function FootballEfficiencyPage() {
               <p className="text-white/70 text-sm">Min. 20 targets</p>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Yards per target leaders">
                 <TableHeader cols={['#', 'Player', 'School', 'Tgts', 'Yds', 'YPT']} />
                 <tbody className="divide-y divide-[#1a2f4d]">
                   {ypt.length === 0 ? (

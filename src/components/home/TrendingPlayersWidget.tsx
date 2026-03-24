@@ -147,8 +147,8 @@ export default async function TrendingPlayersWidget() {
           >
             <div
               style={{
-                background: '#fff',
-                border: '1px solid #e5e7eb',
+                background: 'var(--psp-card-bg, #fff)',
+                border: '1px solid var(--psp-gray-200, #e5e7eb)',
                 borderRadius: '10px',
                 padding: '1rem 1.1rem',
                 display: 'flex',
@@ -188,7 +188,7 @@ export default async function TrendingPlayersWidget() {
               </span>
               <div
                 style={{
-                  borderTop: '1px solid #f3f4f6',
+                  borderTop: '1px solid var(--psp-gray-100, #f3f4f6)',
                   paddingTop: '0.5rem',
                   marginTop: 'auto',
                   display: 'flex',

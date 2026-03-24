@@ -108,7 +108,7 @@ export default async function SearchPage({
 
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl text-white tracking-wider mb-4 font-bebas">
+          <h1 className="psp-h1 text-white mb-4">
             Search
           </h1>
           <form action="/search" method="GET">

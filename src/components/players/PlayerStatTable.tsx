@@ -10,6 +10,7 @@ interface PlayerStatTableProps {
   sport: "football" | "basketball" | "baseball";
   stats: (FootballPlayerSeason | BasketballPlayerSeason | BaseballPlayerSeason)[];
   sportColor: string;
+  playerName?: string;
 }
 
 /* ---------- helpers ---------- */
@@ -83,7 +84,7 @@ function primaryStatKey(sport: string): string {
 
 /* ---------- component ---------- */
 
-export default function PlayerStatTable({ sport, stats, sportColor }: PlayerStatTableProps) {
+export default function PlayerStatTable({ sport, stats, sportColor, playerName }: PlayerStatTableProps) {
   if (stats.length === 0) return null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,7 +123,7 @@ export default function PlayerStatTable({ sport, stats, sportColor }: PlayerStat
     <div>
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full text-sm" aria-label="Season-by-season statistics">
+        <table className="w-full text-sm" aria-label={playerName ? `Career statistics for ${playerName}` : "Season-by-season statistics"}>
           <thead>
             <tr style={{ background: "var(--psp-navy)" }}>
               <th

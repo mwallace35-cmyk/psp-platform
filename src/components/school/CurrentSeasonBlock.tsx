@@ -257,7 +257,7 @@ export default function CurrentSeasonBlock({
               </Link>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Current season roster">
                 <thead>
                   <tr className="text-left" style={{ color: "var(--psp-gray-400)" }}>
                     <th className="pb-2 pr-3 font-medium text-xs">#</th>

@@ -184,7 +184,7 @@ export default function RecruitBoard({ recruits, classYears }: Props) {
       ) : (
         <div className="space-y-3">
           {filtered.map((recruit, idx) => (
-            <div key={recruit.id} className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all p-4">
+            <div key={recruit.id} className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 p-4 animate-fade-in-up">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: '#0a1628', color: '#f0a500' }}>{idx + 1}</div>
                 <div className="flex-1 min-w-0">

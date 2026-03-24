@@ -61,7 +61,7 @@ export default function PlayerReactions({ playerSlug }: PlayerReactionsProps) {
   const navy = '#1a2744'; const gold = '#c8a84b';
 
   return (
-    <div style={{ margin: '1.5rem 0', padding: '1rem 1.25rem', background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12 }}>
+    <div style={{ margin: '1.5rem 0', padding: '1rem 1.25rem', background: 'var(--psp-card-bg, #fff)', border: '1px solid var(--psp-gray-200, #e5e7eb)', borderRadius: 12 }}>
       <div className="psp-caption" style={{ marginBottom: '0.75rem' }}>REACT</div>
       <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' as const }}>
         {REACTIONS.map(({ emoji, label, key }) => {
@@ -75,8 +75,8 @@ export default function PlayerReactions({ playerSlug }: PlayerReactionsProps) {
               title={hasReacted ? `You reacted ${label}` : `React ${label}`}
               style={{
                 display: 'flex', alignItems: 'center', gap: '0.35rem',
-                padding: '0.4rem 0.8rem', borderRadius: 20, border: `2px solid ${hasReacted ? gold : '#e5e7eb'}`,
-                background: hasReacted ? '#fffbf0' : '#fff',
+                padding: '0.4rem 0.8rem', borderRadius: 20, border: `2px solid ${hasReacted ? gold : 'var(--psp-gray-200, #e5e7eb)'}`,
+                background: hasReacted ? '#fffbf0' : 'var(--psp-card-bg, #fff)',
                 cursor: hasReacted ? 'default' : 'pointer',
                 transition: 'all 0.15s', fontFamily: 'inherit',
                 transform: animating === key ? 'scale(1.25)' : 'scale(1)',

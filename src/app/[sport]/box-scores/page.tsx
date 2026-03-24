@@ -64,7 +64,7 @@ export default async function BoxScoresPage({ params }: { params: Promise<PagePa
                 { label: "Box Scores" },
               ]}
             />
-            <h1 className="text-4xl md:text-5xl text-white mb-2 font-bebas">
+            <h1 className="psp-h1 text-white mb-2">
               {meta.emoji} {meta.name} Box Scores
             </h1>
           </div>
@@ -100,7 +100,7 @@ export default async function BoxScoresPage({ params }: { params: Promise<PagePa
             ]}
           />
           <div className="mt-6 flex items-baseline gap-4">
-            <h1 className="text-4xl md:text-5xl text-white font-bebas">
+            <h1 className="psp-h1 text-white">
               {meta.emoji} {meta.name} Box Scores
             </h1>
             <span

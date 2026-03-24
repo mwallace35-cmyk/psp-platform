@@ -163,7 +163,7 @@ export default function PlayerCompare() {
       {player1 && player2 && (
         <>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+            <table className="w-full border-collapse" aria-label="Player comparison">
               <thead>
                 <tr>
                   <th className="text-left px-4 py-3 bg-gray-100 font-medium text-sm" style={{ color: "var(--psp-navy)" }}>Stat</th>

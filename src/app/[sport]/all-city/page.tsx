@@ -76,7 +76,7 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
           />
           <div className="mt-4 flex items-start gap-4">
             <div className="flex-1">
-              <h1 className="text-4xl sm:text-5xl font-bebas text-white mb-2">
+              <h1 className="psp-h1 text-white mb-2">
                 All-City Teams
               </h1>
               <p className="text-gray-300 text-lg">
@@ -143,7 +143,7 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
             {/* Top Schools */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
               <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                <h3 className="text-white font-bebas text-xl">Top Schools</h3>
+                <h3 className="psp-h3 text-white">Top Schools</h3>
               </div>
               <div className="p-4 space-y-3">
                 {summary.topSchools.map((school, idx) => (
@@ -164,7 +164,7 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
             {/* About */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
               <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                <h3 className="text-white font-bebas text-xl">About</h3>
+                <h3 className="psp-h3 text-white">About</h3>
               </div>
               <div className="p-4 space-y-3 text-sm text-gray-300">
                 <p>

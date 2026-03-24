@@ -41,7 +41,7 @@ export default async function RecordsExplorerPage() {
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Records Explorer" }]} />
           <div className="mt-6 flex items-baseline gap-4">
-            <h1 className="text-4xl md:text-5xl text-white font-bebas">📊 Records Explorer</h1>
+            <h1 className="psp-h1 text-white">Records Explorer</h1>
             <span
               className="px-4 py-2 rounded-full text-white font-semibold"
               style={{ background: "var(--psp-gold)" }}

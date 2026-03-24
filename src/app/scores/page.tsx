@@ -377,7 +377,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
           className="bg-gradient-to-br from-[var(--psp-navy)] to-[#1a3a52] px-4 pt-8 pb-6 text-center"
         >
           <h1
-            className="text-[2.5rem] font-bebas mb-2 text-white"
+            className="psp-h1 text-white mb-2"
           >
             {SPORT_META[selectedSport as keyof typeof SPORT_META]?.emoji}{" "}
             {selectedSeason}{" "}
@@ -502,7 +502,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
         className="bg-gradient-to-br from-[var(--psp-navy)] to-[#1a3a52] px-4 pt-8 pb-6 text-center"
       >
         <h1
-          className="text-[2.5rem] font-bebas mb-2 text-white"
+          className="psp-h1 text-white mb-2"
         >
           Scores
         </h1>

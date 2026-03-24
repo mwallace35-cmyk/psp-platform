@@ -239,7 +239,7 @@ export default async function RivalryDetailPage({
             <section>
               <h2 className="text-2xl font-bold text-white mb-4 font-heading">Game History</h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-gray-200">
+                <table className="w-full text-sm text-gray-200" aria-label="Rivalry game history">
                   <thead>
                     <tr className="border-b border-gray-700">
                       <th className="text-left py-2 px-3 text-gray-400">Date</th>
@@ -264,7 +264,7 @@ export default async function RivalryDetailPage({
                       return (
                         <tr
                           key={game.game_id}
-                          className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)]"
+                          className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200"
                         >
                           <td className="py-3 px-3 text-gray-300">
                             {formatDate(game.game_date)}

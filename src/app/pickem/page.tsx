@@ -124,8 +124,7 @@ export default async function PickemPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h2
-                        className="text-3xl font-bold mb-2 font-bebas"
-                        style={{ color: "var(--psp-navy)" }}
+                        className="psp-h2 text-navy mb-2"
                       >
                         {currentWeek.title}
                       </h2>

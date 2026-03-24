@@ -108,7 +108,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
   if (loading) {
     return (
       <section className="pt-8 mt-8 border-t border-gray-200">
-        <h2 className="font-bebas text-[28px] font-bold text-[#0a1628] tracking-wider mb-6">
+        <h2 className="psp-h2 text-[var(--psp-navy)] mb-6">
           Awards & Honors
         </h2>
         <div className="flex flex-col gap-3">
@@ -123,7 +123,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
   if (error) {
     return (
       <section className="pt-8 mt-8 border-t border-gray-200">
-        <h2 className="font-bebas text-[28px] font-bold text-[#0a1628] tracking-wider mb-6">
+        <h2 className="psp-h2 text-[var(--psp-navy)] mb-6">
           Awards & Honors
         </h2>
         <p className="text-red-600 text-sm">Error loading awards: {error}</p>
@@ -133,7 +133,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
 
   return (
     <section className="pt-8 mt-8 border-t border-gray-200">
-      <h2 className="font-bebas text-[28px] font-bold text-[#0a1628] tracking-wider mb-6">
+      <h2 className="psp-h2 text-[var(--psp-navy)] mb-6">
         Awards & Honors
       </h2>
       {!awards || awards.length === 0 ? (

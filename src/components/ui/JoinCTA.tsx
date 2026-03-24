@@ -25,7 +25,7 @@ export default function JoinCTA({ action, context, compact = false }: JoinCTAPro
 
   return (
     <div className="my-6 rounded-lg border border-gold/30 bg-gradient-to-br from-navy/40 to-navy-mid/40 p-6 text-center backdrop-blur-sm">
-      <h3 className="mb-2 font-bebas text-xl text-white">
+      <h3 className="mb-2 psp-h3 text-white">
         Join the PhillySportsPack Community
       </h3>
       <p className="mb-4 text-sm text-slate-300">

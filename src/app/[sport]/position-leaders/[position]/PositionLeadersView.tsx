@@ -86,7 +86,7 @@ export default function PositionLeadersView({
 
       {/* Leaders Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Position leaders">
           <thead>
             <tr className="text-white" style={{ backgroundColor: sportColor }}>
               <th className="px-4 py-3 text-left font-semibold">Rank</th>
@@ -110,7 +110,7 @@ export default function PositionLeadersView({
               return (
                 <tr
                   key={leader.player_id}
-                  className="border-t border-gray-200 hover:bg-gray-50"
+                  className="border-t border-gray-200 hover:bg-gray-50 transition-colors duration-200"
                 >
                   <td className="px-4 py-3 font-bold text-gray-600">
                     {getMedalEmoji(rank) || rank}

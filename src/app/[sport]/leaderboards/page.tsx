@@ -104,7 +104,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
             {categories.map((cat) => {
               const leaders = leaderData[cat.slug] || [];
               return (
-                <div key={cat.slug} className="bg-[rgba(255,255,255,0.03)] rounded-xl border border-gray-700/50 overflow-hidden hover:border-gray-600 transition">
+                <div key={cat.slug} className="bg-[rgba(255,255,255,0.03)] rounded-xl border border-gray-700/50 overflow-hidden hover:border-gray-600 transition-colors duration-200 animate-fade-in-up">
                   {/* Category Header */}
                   <div className="flex items-center justify-between px-5 py-3 border-b border-gray-700/50" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, #1a2744 100%)` }}>
                     <div className="flex items-center gap-2">

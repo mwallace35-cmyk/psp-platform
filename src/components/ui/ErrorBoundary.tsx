@@ -36,7 +36,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
         <div className="min-h-screen bg-gradient-to-r from-navy to-navy-mid flex items-center justify-center px-4">
           <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
             <div className="text-4xl mb-4">⚠️</div>
-            <h1 className="text-2xl font-bebas text-navy mb-4">Oops!</h1>
+            <h1 className="psp-h2 text-navy mb-4">Oops!</h1>
             <p className="text-gray-600 mb-6">
               Something went wrong. Our team has been notified and we're working on a fix.
             </p>

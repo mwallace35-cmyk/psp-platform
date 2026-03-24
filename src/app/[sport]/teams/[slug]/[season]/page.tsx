@@ -450,7 +450,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           </h2>
           {games.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-gray-200">
+              <table className="w-full text-sm text-gray-200" aria-label="Team schedule and results">
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
                     <th className="text-left py-3 px-4 text-gray-400 font-semibold">Date</th>
@@ -710,7 +710,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               Head-to-Head History
             </h2>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-gray-200">
+              <table className="w-full text-sm text-gray-200" aria-label="Head-to-head history">
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
                     <th className="text-left py-3 px-4 text-gray-400 font-semibold">Opponent</th>
@@ -776,7 +776,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           {roster.length > 0 ? (
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-gray-700">
+                <table className="w-full text-sm text-gray-700" aria-label="Team roster">
                   {sport === "football" && (
                     <>
                       <thead>
@@ -928,7 +928,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                       </thead>
                       <tbody>
                         {roster.map((p: RosterPlayer, idx: number) => (
-                          <tr key={p.id || idx} className="hover:bg-gray-50" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
+                          <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors duration-200" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
                             <td className="py-3 px-4 text-xs text-gray-400">{idx + 1}</td>
                             <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
                               {p.players ? (
@@ -958,7 +958,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                           const bNum = parseInt(String(b.jersey_number || '999'), 10);
                           return aNum - bNum;
                         }).map((p: RosterPlayer, idx: number) => (
-                          <tr key={p.id || idx} className="hover:bg-gray-50" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
+                          <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors duration-200" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
                             <td className="py-3 px-4 text-xs font-bold text-gray-500">{p.jersey_number ?? '—'}</td>
                             <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
                               {p.players ? (
@@ -994,7 +994,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <div className="lg:col-span-3" />
 
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-6 lg:sticky lg:top-20 lg:self-start">
               {/* Strength of Schedule */}
               {scheduleStrength.length > 0 && (
                 <div

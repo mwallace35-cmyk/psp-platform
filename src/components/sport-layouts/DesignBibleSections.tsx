@@ -93,13 +93,13 @@ export default function DesignBibleSections({ sport }: Props) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', padding: '1.5rem 0', maxWidth: '960px', margin: '0 auto' }}>
       <div>
-        <h3 className="font-bebas" style={headingStyle}>TOP PERFORMERS</h3>
+        <h3 className="psp-h3" style={headingStyle}>TOP PERFORMERS</h3>
         {leaders.rush && <div style={cardStyle}><strong style={{ color: '#f0a500' }}>Rush:</strong> {leaders.rush.name} ({leaders.rush.value.toLocaleString()} yds)</div>}
         {leaders.pass && <div style={cardStyle}><strong style={{ color: '#f0a500' }}>Pass:</strong> {leaders.pass.name} ({leaders.pass.value.toLocaleString()} yds)</div>}
         {leaders.rec && <div style={cardStyle}><strong style={{ color: '#f0a500' }}>Rec:</strong> {leaders.rec.name} ({leaders.rec.value.toLocaleString()} yds)</div>}
         {rankings.length > 0 && (
           <>
-            <h3 className="font-bebas" style={{ ...headingStyle, marginTop: '1.5rem' }}>POWER RANKINGS</h3>
+            <h3 className="psp-h3" style={{ ...headingStyle, marginTop: '1.5rem' }}>POWER RANKINGS</h3>
             {rankings.map((r) => (
               <div key={r.rank} style={cardStyle}>
                 <span style={{ display: 'inline-block', width: '28px', height: '28px', borderRadius: '50%', background: '#f0a500', color: '#0a1628', textAlign: 'center', lineHeight: '28px', fontWeight: 700, fontSize: '14px', marginRight: '0.5rem' }}>{r.rank}</span>
@@ -110,7 +110,7 @@ export default function DesignBibleSections({ sport }: Props) {
         )}
       </div>
       <div>
-        <h3 className="font-bebas" style={headingStyle}>RECENT SCORES</h3>
+        <h3 className="psp-h3" style={headingStyle}>RECENT SCORES</h3>
         {games.length === 0 && <div style={cardStyle}>No recent scores available</div>}
         {games.map((g, i) => (
           <div key={i} style={cardStyle}>

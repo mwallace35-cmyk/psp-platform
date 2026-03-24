@@ -27,7 +27,7 @@ export default function TeamStats({ team }: TeamStatsProps) {
           Team Statistics
         </h2>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Team statistics">
             <tbody>
               {stats.map((stat, idx) => (
                 <tr key={idx} className="border-b border-gray-200 last:border-b-0">

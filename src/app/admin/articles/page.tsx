@@ -265,7 +265,7 @@ export default function ArticlesManagement() {
               </tr>
             ) : (
               articles.map((article) => (
-                <tr key={article.id} className="hover:bg-gray-50">
+                <tr key={article.id} className="hover:bg-gray-50 transition-colors duration-200">
                   <td className="w-12 p-4">
                     <input
                       type="checkbox"

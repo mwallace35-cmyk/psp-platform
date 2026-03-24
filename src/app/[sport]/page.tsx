@@ -320,12 +320,14 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         style={{
           background: `linear-gradient(to right, rgba(10,22,40,0.55), rgba(10,22,40,0.15)), url(/images/banners/${sport === 'track-field' ? 'track' : sport}.jpg) center/cover no-repeat`,
         }}
+        role="img"
+        aria-label={`Philadelphia high school ${meta.name.toLowerCase()} banner`}
       >
         <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="flex items-center gap-4">
-            <span className="text-5xl" aria-hidden="true">{meta.emoji}</span>
+            <span className="text-4xl" aria-hidden="true">{meta.emoji}</span>
             <div className="flex items-center gap-3">
-              <h1 className="text-4xl md:text-5xl font-black font-bebas">
+              <h1 className="psp-h1-lg text-white">
                 {meta.name}
               </h1>
               <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${phaseBadge[seasonInfo.phase].color} ${phaseBadge[seasonInfo.phase].bg}`}>

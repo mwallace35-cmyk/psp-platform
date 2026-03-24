@@ -177,7 +177,7 @@ export default function CoachesDirectory({ coaches }: { coaches: CoachEntry[] })
             <section key={leagueKey}>
               {/* League header */}
               <div className="flex items-center gap-3 mb-3">
-                <h2 className="text-xl font-bebas text-navy tracking-wide">{displayName}</h2>
+                <h2 className="psp-h3 text-navy">{displayName}</h2>
                 <span className="text-xs text-gray-400 font-medium">
                   {leagueCoaches.length} {leagueCoaches.length === 1 ? "coach" : "coaches"}
                 </span>

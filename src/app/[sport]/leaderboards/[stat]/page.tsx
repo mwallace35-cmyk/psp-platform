@@ -422,12 +422,23 @@ export default async function LeaderboardPage({
           </div>
         )}
 
-        {/* Class Year + Position filter dropdowns */}
-        <div className="mb-6">
-          <Suspense fallback={null}>
-            <LeaderboardFilters sport={sport} sportColor={meta.color} />
-          </Suspense>
-        </div>
+        {/* Advanced Filters — collapsible */}
+        <details className="mb-6 group">
+          <summary className="inline-flex items-center gap-2 cursor-pointer text-sm font-semibold px-4 py-2 rounded-lg transition-colors hover:bg-white/5" style={{ color: (filterClass || filterPosition) ? meta.color : "#94a3b8", border: (filterClass || filterPosition) ? `1px solid ${meta.color}40` : "1px solid #334155" }}>
+            <svg className="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            Filters
+            {(filterClass || filterPosition) && (
+              <span className="ml-1 px-1.5 py-0.5 text-[10px] rounded-full font-bold" style={{ background: `${meta.color}25`, color: meta.color }}>
+                {[filterClass && `Class ${filterClass}`, filterPosition].filter(Boolean).join(", ")}
+              </span>
+            )}
+          </summary>
+          <div className="mt-3 pl-1">
+            <Suspense fallback={null}>
+              <LeaderboardFilters sport={sport} sportColor={meta.color} />
+            </Suspense>
+          </div>
+        </details>
 
         <PSPPromo size="banner" variant={1} />
 

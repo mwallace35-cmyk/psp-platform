@@ -70,7 +70,7 @@ function EraStatsTable({ eras, statType }: { eras: EraStatistic[]; statType: str
 
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)]">
-      <table className="w-full text-sm text-gray-200">
+      <table className="w-full text-sm text-gray-200" aria-label="Era champions">
         <thead className="border-b border-gray-700 bg-gray-900">
           <tr>
             <th className="px-4 py-3 text-left font-bold text-white">Era</th>

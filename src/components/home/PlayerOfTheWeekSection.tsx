@@ -78,7 +78,7 @@ export default function PlayerOfTheWeekSection({
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="mb-10 sm:mb-12 lg:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--psp-navy)] [data-theme=dark]:text-white font-bebas tracking-wide mb-3 sm:mb-4">
+          <h2 className="psp-h1 text-[var(--psp-navy)] [data-theme=dark]:text-white mb-3 sm:mb-4">
             Player of the Week
           </h2>
           <p className="text-base sm:text-lg text-[var(--psp-gray-600)] [data-theme=dark]:text-[var(--psp-gray-300)] max-w-2xl">

@@ -55,7 +55,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
               { label: "Awards & Honors" },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl text-white mb-2 font-bebas mt-4">
+          <h1 className="psp-h1 text-white mb-2 mt-4">
             {meta.emoji} {meta.name} Awards & Honors
           </h1>
           <p className="text-gray-300">
@@ -169,7 +169,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             {data.topSchools.length > 0 && (
               <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
                 <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                  <h3 className="text-white font-bebas text-xl">Most Honored Schools</h3>
+                  <h3 className="psp-h3 text-white">Most Honored Schools</h3>
                 </div>
                 <div className="p-4 space-y-3">
                   {data.topSchools.slice(0, 10).map((school, idx) => (
@@ -190,8 +190,8 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
 
             {/* Related Pages */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
-              <div className="bg-[#0a1628] border-b border-[#3b82f6] px-4 py-3">
-                <h3 className="text-white font-bebas text-xl">Related Pages</h3>
+              <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
+                <h3 className="psp-h3 text-white">Related Pages</h3>
               </div>
               <div className="p-4 space-y-2">
                 <Link
@@ -224,7 +224,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             {/* About */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
               <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                <h3 className="text-white font-bebas text-xl">About</h3>
+                <h3 className="psp-h3 text-white">About</h3>
               </div>
               <div className="p-4 space-y-3 text-sm text-gray-300">
                 <p>

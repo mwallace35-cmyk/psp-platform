@@ -71,7 +71,7 @@ export default function GreatestSeasonsView({
           <h2 className="text-2xl font-bebas text-gray-900">{category}</h2>
 
           <div className="overflow-x-auto rounded-lg border border-gray-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Greatest seasons">
               <thead>
                 <tr
                   className="text-white"
@@ -102,7 +102,7 @@ export default function GreatestSeasonsView({
                   return (
                     <tr
                       key={`${season.player_id}-${season.season_id}`}
-                      className="border-t border-gray-200 hover:bg-gray-50"
+                      className="border-t border-gray-200 hover:bg-gray-50 transition-colors duration-200"
                     >
                       <td className="px-4 py-3 font-bold text-gray-600">
                         {getMedalColor(rank)}

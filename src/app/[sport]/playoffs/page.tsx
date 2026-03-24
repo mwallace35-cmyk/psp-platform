@@ -35,7 +35,7 @@ async function PlayoffsLoader({ sport }: { sport: string }) {
       >
         <div className="text-5xl mb-4">&#127942;</div>
         <h2
-          className="text-[22px] font-bold text-white mb-2 font-bebas"
+          className="psp-h2 text-white mb-2"
         >
           Playoff Brackets Coming Soon
         </h2>

@@ -134,7 +134,7 @@ export default function AdvertisePage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-navy via-navy-mid to-navy pt-20 pb-16 px-6 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="font-bebas text-5xl md:text-6xl tracking-widest mb-6 text-gold">
+          <h1 className="psp-h1-lg text-gold mb-6">
             PARTNER WITH PSP
           </h1>
           <p className="text-xl text-white/90 mb-4">
@@ -164,7 +164,7 @@ export default function AdvertisePage() {
       {/* Audience Section */}
       <section className="bg-navy-mid py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="font-bebas text-4xl md:text-5xl tracking-widest text-white mb-12 text-center">
+          <h2 className="psp-h2 text-white mb-12 text-center">
             WHO VISITS PSP
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -185,7 +185,7 @@ export default function AdvertisePage() {
       {/* Sponsorship Tiers */}
       <section className="bg-navy py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="font-bebas text-4xl md:text-5xl tracking-widest text-white mb-4 text-center">
+          <h2 className="psp-h2 text-white mb-4 text-center">
             SPONSORSHIP TIERS
           </h2>
           <p className="text-white/70 text-center mb-12 max-w-2xl mx-auto">
@@ -209,7 +209,7 @@ export default function AdvertisePage() {
                 >
                   {/* Header */}
                   <div className="mb-6">
-                    <h3 className="font-bebas text-2xl text-white mb-2 tracking-wide">
+                    <h3 className="psp-h3 text-white mb-2">
                       {tier.name}
                     </h3>
                     <div className="mb-3">
@@ -252,7 +252,7 @@ export default function AdvertisePage() {
 
           {/* Custom Plans */}
           <div className="mt-12 p-8 bg-gradient-to-r from-gold/10 via-blue/5 to-gold/10 border border-gold/30 rounded-lg text-center">
-            <h3 className="font-bebas text-2xl text-gold mb-2 tracking-wide">
+            <h3 className="psp-h3 text-gold mb-2">
               Looking for something custom?
             </h3>
             <p className="text-white/80 mb-6">
@@ -268,7 +268,7 @@ export default function AdvertisePage() {
       {/* Why Partner */}
       <section className="bg-navy-mid py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-bebas text-4xl md:text-5xl tracking-widest text-white mb-12 text-center">
+          <h2 className="psp-h2 text-white mb-12 text-center">
             WHY PARTNER WITH PSP
           </h2>
 
@@ -311,7 +311,7 @@ export default function AdvertisePage() {
       {/* Contact Form Section */}
       <section className="bg-navy py-16 px-6">
         <div className="max-w-2xl mx-auto">
-          <h2 className="font-bebas text-4xl tracking-widest text-white mb-8 text-center">
+          <h2 className="psp-h2 text-white mb-8 text-center">
             GET IN TOUCH
           </h2>
 
@@ -401,7 +401,7 @@ export default function AdvertisePage() {
       {/* CTA Footer */}
       <section className="bg-gradient-to-r from-gold/10 via-blue/5 to-gold/10 border-t border-gold/30 py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-bebas text-3xl md:text-4xl tracking-widest text-white mb-4">
+          <h2 className="psp-h2 text-white mb-4">
             Ready to reach Philly sports fans?
           </h2>
           <p className="text-white/80 mb-6 max-w-xl mx-auto">

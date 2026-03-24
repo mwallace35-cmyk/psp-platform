@@ -283,7 +283,7 @@ function SortableTable({
                 key={idx}
                 role={onRowClick ? 'button' : undefined}
                 tabIndex={onRowClick ? 0 : undefined}
-                className={`${bgColor} border-b border-gray-100 hover:bg-gray-100 transition focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400 ${
+                className={`${bgColor} border-b border-gray-100 hover:bg-gray-100 transition-colors duration-200 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400 ${
                   onRowClick ? 'cursor-pointer' : ''
                 }`}
                 onClick={() => onRowClick?.(row)}
