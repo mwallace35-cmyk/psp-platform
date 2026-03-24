@@ -52,7 +52,13 @@ interface TeamWithRecords {
   wins: number;
   losses: number;
   ties?: number;
-  schools?: { name: string; slug: string } | null;
+  division?: string | null;
+  schools?: {
+    name: string;
+    slug: string;
+    league_id?: number | null;
+    leagues?: { id: number; name: string } | null;
+  } | null;
   seasons?: { label: string } | null;
 }
 
@@ -172,7 +178,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       getFeaturedArticles(sport, 4),
       getDataFreshness(sport),
       getRecentGamesBySport(sport, 20),
-      getTeamsWithRecords(sport, 1, 10),
+      getTeamsWithRecords(sport, 1, 200),
       getTrackedAlumni({ sport }, 8),
       Promise.allSettled(compoundPromises),
       getRecordWatchData(sport, sport === "basketball" ? 25 : 11),
@@ -357,7 +363,6 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
           sport={sport}
           sportName={meta.name}
           sportColorHex={sportColorHex}
-          maxTeams={5}
         />
       </div>
 

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
   darkTheme?: boolean;
 }
 
-interface Leader { name: string; school: string; value: number; }
+interface Leader { name: string; slug: string; school: string; value: number; }
 interface Game {
   home: string;
   away: string;
@@ -108,7 +109,7 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
         const statQueries = config.stats.map(async ({ column, label, suffix }) => {
           const db = supabase as any;
           const { data } = await db.from(config.table)
-            .select('player_id, ' + column + ', games_played, players!inner(name, schools!inner(name)), seasons!inner(is_current)')
+            .select('player_id, ' + column + ', games_played, players!inner(name, slug, schools!inner(name)), seasons!inner(is_current)')
             .eq('seasons.is_current', true)
             .not(column, 'is', null)
             .gte('games_played', 5)
@@ -117,7 +118,7 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
           if (data?.[0]) {
             const p = Array.isArray(data[0].players) ? data[0].players[0] : data[0].players;
             const s = p?.schools ? (Array.isArray(p.schools) ? p.schools[0] : p.schools) : null;
-            return { label, suffix, leader: { name: p?.name ?? 'Unknown', school: s?.name ?? '', value: data[0][column] ?? 0 } };
+            return { label, suffix, leader: { name: p?.name ?? 'Unknown', slug: p?.slug ?? '', school: s?.name ?? '', value: data[0][column] ?? 0 } };
           }
           return { label, suffix, leader: null };
         });
@@ -230,7 +231,7 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
       <div>
         <h2 className="psp-h3" style={headingStyle}>TOP PERFORMERS</h2>
         {leaders.items.map(({ label, suffix, leader }) => leader && (
-          <div key={label} style={cardStyle}><strong style={{ color: '#f0a500' }}>{label}:</strong> {leader.name} <span style={{ color: darkTheme ? 'rgba(255,255,255,0.5)' : '#64748b' }}>({leader.value.toLocaleString()} {suffix})</span></div>
+          <div key={label} style={cardStyle}><strong style={{ color: '#f0a500' }}>{label}:</strong> {leader.slug ? <Link href={`/${sport}/players/${leader.slug}`} className="hover:text-[var(--psp-gold)] transition-colors">{leader.name}</Link> : leader.name} <span style={{ color: darkTheme ? 'rgba(255,255,255,0.5)' : '#64748b' }}>({leader.value.toLocaleString()} {suffix})</span></div>
         ))}
         {rankingCategories.length > 0 && (
           <>

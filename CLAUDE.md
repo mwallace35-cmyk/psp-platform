@@ -145,3 +145,19 @@ All routes verified returning 200 on March 18, 2026.
 - ISR revalidation: 3600 (1hr) for all pages
 - Direct Supabase client in API routes
 - Sport filtering: use !inner join on season tables
+
+## Box Score Status (as of March 24, 2026)
+| Source | Sport | Games | Rows | Status |
+|--------|-------|-------|------|--------|
+| Archive (teampage) | Basketball | 1,594 | 19,732 | ✅ Complete (historical) |
+| Archive (team_page) | Basketball | 267 | 11,422 | ✅ Complete (historical) |
+| Archive (pergame) | Basketball | 73 | 1,054 | ✅ Complete (historical) |
+| AOP PDFs (2025-26) | Basketball | 14 | 283 | ⚠️ Only 16/141 PDFs are valid (rest are HTML) |
+| Season averages | Basketball | 9,270 | 155,024 | ✅ Generated from season stats |
+| Archive | Football | ~2,800 | ~32,500 | ✅ Complete (historical) |
+| Season averages | Football | ~1,800 | ~35,000 | ✅ Generated from season stats |
+
+### What's NOT done yet:
+- MaxPreps per-game box scores for 2025-26 basketball (schedule URLs extracted but data not scraped/inserted)
+- AOP PDFs: 125 of 141 downloaded files are HTML (auth required), only 16 are real PDFs
+- Need browser-authenticated download for AOP PDFs OR MaxPreps scraping as alternative

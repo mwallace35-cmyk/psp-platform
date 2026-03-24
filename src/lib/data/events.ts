@@ -423,7 +423,7 @@ export async function getTeamsWithRecords(sportId: string, page = 1, pageSize = 
 
           let dataQuery = supabase
             .from("team_seasons")
-            .select("*, schools(name, slug), seasons(label)")
+            .select("*, schools(name, slug, league_id, leagues(id, name)), seasons(label)")
             .eq("sport_id", sportId);
 
           let countQuery = supabase

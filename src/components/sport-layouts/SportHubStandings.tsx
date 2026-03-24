@@ -1,20 +1,55 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import Link from "next/link";
 
-interface TeamWithRecords {
+interface StandingsTeam {
   id: number;
   wins: number;
   losses: number;
   ties?: number;
-  schools?: { name: string; slug: string } | null;
+  division?: string | null;
+  schools?: {
+    name: string;
+    slug: string;
+    league_id?: number | null;
+    leagues?: { id: number; name: string } | null;
+  } | null;
   seasons?: { label: string } | null;
 }
 
 interface SportHubStandingsProps {
-  standings: TeamWithRecords[];
+  standings: StandingsTeam[];
   sport: string;
   sportName: string;
   sportColorHex: string;
-  maxTeams?: number;
+}
+
+// Map league names to short tab labels
+const LEAGUE_TAB_LABELS: Record<string, string> = {
+  "Philadelphia Catholic League": "Catholic League",
+  "Catholic League": "Catholic League",
+  "PCL": "Catholic League",
+  "Philadelphia Public League": "Public League",
+  "Public League": "Public League",
+  "PPL": "Public League",
+  "Inter-Ac League": "Inter-Ac",
+  "Inter-Academic League": "Inter-Ac",
+  "Inter-Ac": "Inter-Ac",
+};
+
+// Canonical order for division sub-headers
+const DIVISION_ORDER: Record<string, string[]> = {
+  "Catholic League": ["Red", "Blue"],
+  "Public League": ["A", "B", "C", "D", "E"],
+};
+
+function getTabLabel(leagueName: string): string {
+  return LEAGUE_TAB_LABELS[leagueName] || leagueName;
+}
+
+function getWinPct(w: number, l: number): number {
+  return w + l > 0 ? w / (w + l) : 0;
 }
 
 export default function SportHubStandings({
@@ -22,11 +57,82 @@ export default function SportHubStandings({
   sport,
   sportName,
   sportColorHex,
-  maxTeams = 5,
 }: SportHubStandingsProps) {
-  if (standings.length === 0) return null;
+  const [activeTab, setActiveTab] = useState("Overall");
 
-  const displayTeams = standings.slice(0, maxTeams);
+  // Derive tabs and grouped data from standings
+  const { tabs, grouped } = useMemo(() => {
+    if (!standings || standings.length === 0) return { tabs: ["Overall"], grouped: {} };
+
+    // Collect unique league tab labels
+    const leagueSet = new Set<string>();
+    for (const team of standings) {
+      const leagueName = team.schools?.leagues?.name;
+      if (leagueName) {
+        leagueSet.add(getTabLabel(leagueName));
+      }
+    }
+
+    // Build tabs: Overall first, then leagues in a predictable order
+    const leagueOrder = ["Catholic League", "Public League", "Inter-Ac"];
+    const sortedLeagues = [...leagueSet].sort((a, b) => {
+      const ai = leagueOrder.indexOf(a);
+      const bi = leagueOrder.indexOf(b);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+    const tabList = ["Overall", ...sortedLeagues];
+
+    // Group teams by tab -> division
+    const groupMap: Record<string, Record<string, StandingsTeam[]>> = {};
+
+    // Overall: all teams, no division grouping
+    groupMap["Overall"] = {
+      "": [...standings].sort(
+        (a, b) => getWinPct(b.wins, b.losses) - getWinPct(a.wins, a.losses)
+      ),
+    };
+
+    // Per-league grouping
+    for (const team of standings) {
+      const leagueName = team.schools?.leagues?.name;
+      if (!leagueName) continue;
+      const tabLabel = getTabLabel(leagueName);
+
+      if (!groupMap[tabLabel]) groupMap[tabLabel] = {};
+
+      const divKey = team.division || "";
+      if (!groupMap[tabLabel][divKey]) groupMap[tabLabel][divKey] = [];
+      groupMap[tabLabel][divKey].push(team);
+    }
+
+    // Sort teams within each division by win%
+    for (const tab of Object.keys(groupMap)) {
+      for (const div of Object.keys(groupMap[tab])) {
+        groupMap[tab][div].sort(
+          (a, b) => getWinPct(b.wins, b.losses) - getWinPct(a.wins, a.losses)
+        );
+      }
+    }
+
+    return { tabs: tabList, grouped: groupMap };
+  }, [standings]);
+
+  if (!standings || standings.length === 0) return null;
+
+  // Get divisions for current tab, sorted in canonical order
+  const currentGroup = grouped[activeTab] || {};
+  const divisionKeys = Object.keys(currentGroup).sort((a, b) => {
+    if (!a && !b) return 0;
+    if (!a) return -1;
+    if (!b) return 1;
+    const order = DIVISION_ORDER[activeTab];
+    if (order) {
+      const ai = order.indexOf(a);
+      const bi = order.indexOf(b);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    }
+    return a.localeCompare(b);
+  });
 
   return (
     <section className="py-8 px-4" aria-label={`${sportName} standings`}>
@@ -41,7 +147,7 @@ export default function SportHubStandings({
             Standings
           </h2>
           <Link
-            href={`/${sport}/teams`}
+            href={`/${sport}/standings`}
             className="text-xs font-semibold uppercase tracking-wider hover:underline"
             style={{ color: sportColorHex }}
           >
@@ -49,89 +155,133 @@ export default function SportHubStandings({
           </Link>
         </div>
 
-        {/* Standings table */}
-        <div className="rounded-lg border border-white/10 bg-[var(--psp-navy-mid)] overflow-hidden">
-          {/* Table header */}
-          <div
-            className="flex items-center px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-white/40 border-b border-white/10"
-          >
-            <span className="w-8 text-center">#</span>
-            <span className="flex-1 pl-2">Team</span>
-            <span className="w-10 text-center">W</span>
-            <span className="w-10 text-center">L</span>
-            {displayTeams.some((t) => t.ties) && (
-              <span className="w-10 text-center">T</span>
-            )}
-            <span className="w-16 text-right pr-2">Record</span>
-          </div>
-
-          {/* Rows */}
-          {displayTeams.map((team, index) => {
-            const winPct =
-              team.wins + team.losses > 0
-                ? (team.wins / (team.wins + team.losses)).toFixed(3)
-                : ".000";
-
-            return (
-              <div
-                key={team.id}
-                className="flex items-center px-4 py-3 border-b border-white/5 last:border-b-0 hover:bg-white/5 transition-colors"
-              >
-                {/* Rank */}
-                <span
-                  className="w-8 text-center text-xs font-bold rounded-full flex items-center justify-center"
+        {/* Tab buttons */}
+        {tabs.length > 1 && (
+          <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
+            {tabs.map((tab) => {
+              const isActive = tab === activeTab;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all border"
                   style={{
-                    width: 24,
-                    height: 24,
-                    background: index < 3 ? sportColorHex : "rgba(255,255,255,0.1)",
-                    color: index < 3 ? "#fff" : "rgba(255,255,255,0.5)",
-                    fontSize: 11,
+                    background: isActive ? sportColorHex : "transparent",
+                    color: isActive ? "#fff" : "rgba(255,255,255,0.6)",
+                    borderColor: isActive ? sportColorHex : "rgba(255,255,255,0.15)",
                   }}
                 >
-                  {index + 1}
-                </span>
+                  {tab}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
-                {/* Team name */}
-                <div className="flex-1 pl-3">
-                  {team.schools?.slug ? (
-                    <Link
-                      href={`/${sport}/schools/${team.schools.slug}`}
-                      className="text-sm font-semibold text-white hover:text-[var(--psp-gold)] transition-colors"
-                      style={{ textDecoration: "none" }}
-                    >
-                      {team.schools.name}
-                    </Link>
-                  ) : (
-                    <span className="text-sm font-semibold text-white/70">
-                      {team.schools?.name || `Team ${team.id}`}
-                    </span>
-                  )}
-                </div>
+        {/* Standings content */}
+        <div className="rounded-lg border border-white/10 bg-[var(--psp-navy-mid)] overflow-hidden">
+          {divisionKeys.map((divKey, divIdx) => {
+            const teams = currentGroup[divKey] || [];
+            const showDivisionHeader = divKey !== "";
+            const divisionLabel =
+              activeTab === "Catholic League"
+                ? `${divKey.toUpperCase()} DIVISION`
+                : activeTab === "Public League"
+                ? `DIVISION ${divKey.toUpperCase()}`
+                : divKey.toUpperCase();
 
-                {/* W */}
-                <span className="w-10 text-center text-sm font-bold text-white">
-                  {team.wins}
-                </span>
-
-                {/* L */}
-                <span className="w-10 text-center text-sm text-white/60">
-                  {team.losses}
-                </span>
-
-                {/* T (only if any team has ties) */}
-                {displayTeams.some((t) => t.ties) && (
-                  <span className="w-10 text-center text-sm text-white/40">
-                    {team.ties || 0}
-                  </span>
+            return (
+              <div key={divKey || "__all"}>
+                {/* Division sub-header */}
+                {showDivisionHeader && (
+                  <div
+                    className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border-b border-white/10"
+                    style={{
+                      color: sportColorHex,
+                      background:
+                        divIdx > 0
+                          ? "rgba(255,255,255,0.02)"
+                          : "transparent",
+                      borderTop:
+                        divIdx > 0
+                          ? "1px solid rgba(255,255,255,0.1)"
+                          : "none",
+                    }}
+                  >
+                    {divisionLabel}
+                  </div>
                 )}
 
-                {/* Win pct */}
-                <span className="w-16 text-right pr-2 text-xs text-white/40 font-mono">
-                  {winPct}
-                </span>
+                {/* Column header (only for first division) */}
+                {divIdx === 0 && (
+                  <div className="flex items-center px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-white/40 border-b border-white/10">
+                    <span className="w-8 text-center">#</span>
+                    <span className="flex-1 pl-2">Team</span>
+                    <span className="w-20 text-right pr-2">Record</span>
+                  </div>
+                )}
+
+                {/* Team rows */}
+                {teams.map((team, index) => {
+                  const record = `${team.wins}-${team.losses}`;
+
+                  return (
+                    <div
+                      key={team.id}
+                      className="flex items-center px-4 py-3 border-b border-white/5 last:border-b-0 hover:bg-white/5 transition-colors"
+                    >
+                      {/* Rank circle */}
+                      <span
+                        className="flex-shrink-0 text-center text-xs font-bold rounded-full flex items-center justify-center"
+                        style={{
+                          width: 24,
+                          height: 24,
+                          background:
+                            index < 3
+                              ? sportColorHex
+                              : "rgba(255,255,255,0.1)",
+                          color:
+                            index < 3 ? "#fff" : "rgba(255,255,255,0.5)",
+                          fontSize: 11,
+                        }}
+                      >
+                        {index + 1}
+                      </span>
+
+                      {/* Team name */}
+                      <div className="flex-1 pl-3 min-w-0">
+                        {team.schools?.slug ? (
+                          <Link
+                            href={`/${sport}/schools/${team.schools.slug}`}
+                            className="text-sm font-semibold text-white hover:text-[var(--psp-gold)] transition-colors truncate block"
+                            style={{ textDecoration: "none" }}
+                          >
+                            {team.schools.name}
+                          </Link>
+                        ) : (
+                          <span className="text-sm font-semibold text-white/70 truncate block">
+                            {team.schools?.name || `Team ${team.id}`}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* W-L record */}
+                      <span className="w-20 text-right pr-2 text-sm font-bold text-white/80 tabular-nums">
+                        {record}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             );
           })}
+
+          {/* Empty state */}
+          {divisionKeys.length === 0 && (
+            <div className="px-4 py-8 text-center text-white/40 text-sm">
+              No standings data available for this grouping.
+            </div>
+          )}
         </div>
       </div>
     </section>
