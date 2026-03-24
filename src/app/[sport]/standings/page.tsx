@@ -50,11 +50,16 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 async function StandingsLoader({ sport, season }: { sport: string; season?: string }) {
   const allSeasons = await getAvailableStandingsSeasons(sport);
 
-  // Filter out future seasons that have no meaningful data
+  // Filter out future seasons — only show seasons that have started
+  // For school year "2025-26", year_start=2025 which started fall 2025
+  // For school year "2026-27", year_start=2026 which hasn't started yet (starts fall 2026)
   const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth(); // 0-indexed
+  // If before August, the current school year started last calendar year
+  const currentSchoolYearStart = currentMonth < 7 ? currentYear - 1 : currentYear;
   const availableSeasons = allSeasons.filter(s => {
     const yearStart = parseInt(s.split('-')[0]);
-    return yearStart <= currentYear;
+    return yearStart <= currentSchoolYearStart;
   });
 
   // Default to most recent completed season
