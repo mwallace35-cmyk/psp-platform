@@ -95,7 +95,7 @@ export default function PremiumPage() {
 
       {/* Features Comparison */}
       <section className="bg-navy-mid py-16 px-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h2 className="font-bebas text-4xl tracking-widest text-white mb-12 text-center">
             WHAT YOU GET
           </h2>

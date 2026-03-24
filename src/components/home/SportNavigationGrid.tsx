@@ -58,8 +58,8 @@ function ShieldBadge({ sport, config }: { sport: { name: string; slug: string };
 
         {/* Sport name below shield */}
         <span
-          className="mt-2 text-sm md:text-base font-black tracking-wider transition-colors"
-          style={{ fontFamily: "'Bebas Neue', sans-serif", color: 'var(--text-body, #e5e7eb)' }}
+          className="psp-caption mt-2 transition-colors"
+          style={{ color: 'var(--text-body, #e5e7eb)' }}
         >
           {sport.name}
         </span>
@@ -89,8 +89,8 @@ export default function SportNavigationGrid({ sports }: SportNavigationGridProps
     <section className="py-12 px-4" style={{ backgroundColor: 'var(--psp-navy, #0a1628)' }}>
       <div className="max-w-6xl mx-auto">
         <h2
-          className="text-center text-2xl md:text-3xl mb-10 tracking-widest"
-          style={{ fontFamily: "'Bebas Neue', sans-serif", color: 'var(--psp-gold, #f0a500)' }}
+          className="psp-h2 text-center mb-10"
+          style={{ color: 'var(--psp-gold, #f0a500)' }}
         >
           EXPLORE BY SPORT
         </h2>

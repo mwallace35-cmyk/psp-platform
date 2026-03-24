@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { toast } from 'sonner';
 import { createBrowserClient } from '@supabase/ssr';
 
 interface GotwVoteButtonProps {
@@ -53,6 +54,7 @@ export default function GotwVoteButton({ nomineeId, matchupLabel }: GotwVoteButt
 
       localStorage.setItem(storageKey, '1');
       setStatus('voted');
+      toast.success('Vote recorded!');
       setTimeout(() => window.location.reload(), 1000);
     } catch {
       setStatus('idle');

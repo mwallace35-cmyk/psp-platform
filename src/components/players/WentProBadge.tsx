@@ -59,7 +59,7 @@ export async function WentProBadge({ playerId }: WentProBadgeProps) {
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
         <span style={{ fontSize: 18 }}>🏆</span>
-        <div style={{ fontWeight: 700, fontSize: 14, fontFamily: "'Bebas Neue', sans-serif" }}>
+        <div className="psp-caption">
           Went Pro
         </div>
       </div>

@@ -77,7 +77,7 @@ export default function GlossaryPage() {
             <Breadcrumb items={[{ label: 'Glossary' }]} className="mb-6" />
 
             {/* Page Title */}
-            <h1 className="text-5xl font-black tracking-wide mb-2" style={{ fontFamily: 'Bebas Neue' }}>
+            <h1 className="psp-h1 text-white mb-2">
               Stats Glossary
             </h1>
             <p className="text-gray-400 mb-8">
@@ -100,9 +100,8 @@ export default function GlossaryPage() {
                       style={{ backgroundColor: group.color }}
                     />
                     <h2
-                      className="text-2xl font-black tracking-wide"
+                      className="psp-h2"
                       style={{
-                        fontFamily: 'Bebas Neue',
                         color: group.color,
                       }}
                     >

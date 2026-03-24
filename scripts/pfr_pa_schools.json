@@ -1,0 +1,590 @@
+{
+  "source": "Pro-Football-Reference.com",
+  "url": "https://www.pro-football-reference.com/schools/high_schools.cgi?hs_state=PA",
+  "scraped_date": "2026-03-23",
+  "description": "Philadelphia-area PA high schools with NFL player connections, scraped from PFR",
+  "total_pa_schools": 512,
+  "total_pa_nfl_players": 1524,
+  "philadelphia_area_schools": [
+    {
+      "pfr_name": "Northeast",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93b835b7",
+      "pfr_player_count": 15,
+      "pfr_active_count": 1,
+      "db_school_id": 149,
+      "db_school_name": "Northeast",
+      "players": [
+        {"name": "Omar Speights", "position": "LB", "teams": "LAR", "from": 2024, "pfr_url": "https://www.pro-football-reference.com/players/S/SpeiOm00.htm", "status": "NEW_INSERT"},
+        {"name": "Brent Grimes", "position": "DB", "teams": "ATL,MIA,TAM", "from": 2007, "pfr_url": "https://www.pro-football-reference.com/players/G/GrimBr20.htm", "status": "already_in_db"},
+        {"name": "Charles Way", "position": "RB", "teams": "NYG", "from": 1995, "pfr_url": "https://www.pro-football-reference.com/players/W/WayxCh00.htm", "status": "already_in_db"},
+        {"name": "Herb Adderley", "position": "DB", "teams": "GNB,DAL", "from": 1961, "pfr_url": "https://www.pro-football-reference.com/players/A/AddeHe00.htm", "status": "already_in_db"},
+        {"name": "John Tracey", "position": "LB-E-DE", "teams": "CRD,STL,PHI,BUF", "from": 1959, "pfr_url": "https://www.pro-football-reference.com/players/T/TracJo00.htm", "status": "already_in_db"},
+        {"name": "Angelo Coia", "position": "SE-WR", "teams": "CHI,WAS,ATL", "from": 1960, "pfr_url": "https://www.pro-football-reference.com/players/C/CoiaAn00.htm", "status": "already_in_db"},
+        {"name": "Johnny Papit", "position": "HB", "teams": "WAS,GNB", "from": 1951, "pfr_url": "https://www.pro-football-reference.com/players/P/PapiJo20.htm", "status": "already_in_db"},
+        {"name": "Walt Stickel", "position": "T-DT", "teams": "CHI,PHI", "from": 1946, "pfr_url": "https://www.pro-football-reference.com/players/S/SticWa20.htm", "status": "already_in_db"},
+        {"name": "Bert Kuczynski", "position": "E", "teams": "DET,PHI", "from": 1943, "pfr_url": "https://www.pro-football-reference.com/players/K/KuczBe20.htm", "status": "already_in_db"},
+        {"name": "Red Pollock", "position": "HB-E", "teams": "CHI", "from": 1935, "pfr_url": "https://www.pro-football-reference.com/players/P/PollRe20.htm", "status": "already_in_db"},
+        {"name": "Roger Mahoney", "position": "C-G-E", "teams": "FRN,MIN", "from": 1928, "pfr_url": "https://www.pro-football-reference.com/players/M/MahoRo20.htm", "status": "already_in_db"},
+        {"name": "Howard Berry", "position": "HB", "teams": "FRN", "from": 1925, "pfr_url": "https://www.pro-football-reference.com/players/B/BerrHo20.htm", "status": "already_in_db"},
+        {"name": "Bill Fiedler", "position": "T", "teams": "PHI", "from": 1938, "pfr_url": "https://www.pro-football-reference.com/players/F/FiedBi20.htm", "status": "already_in_db"},
+        {"name": "Johnny Hendren", "position": "E-T-C", "teams": "CAN", "from": 1923, "pfr_url": "https://www.pro-football-reference.com/players/H/HendJo20.htm", "status": "already_in_db"},
+        {"name": "Bud Sutton", "position": "HB-DB-OE", "teams": "BUF", "from": 1943, "pfr_url": "https://www.pro-football-reference.com/players/S/SuttBu20.htm", "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "St. Joseph's Prep",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bb0475",
+      "pfr_player_count": 12,
+      "pfr_active_count": 5,
+      "db_school_id": 1005,
+      "db_school_name": "St. Joseph's Prep",
+      "players": [
+        {"name": "Marvin Harrison Jr.", "position": "WR", "teams": "ARI", "from": 2024, "status": "already_in_db"},
+        {"name": "Jon Runyan Jr.", "position": "LG", "teams": "GNB,NYG", "from": 2020, "status": "already_in_db"},
+        {"name": "D'Andre Swift", "position": "RB", "teams": "DET,PHI,CHI", "from": 2020, "status": "already_in_db"},
+        {"name": "Jeremiah Trotter Jr.", "position": "LB", "teams": "PHI", "from": 2024, "status": "already_in_db"},
+        {"name": "Olamide Zaccheaus", "position": "WR", "teams": "ATL,PHI,WAS,CHI", "from": 2019, "status": "already_in_db"},
+        {"name": "John Reid", "position": "CB", "teams": "HOU,SEA,TEN", "from": 2020, "status": "already_in_db"},
+        {"name": "Victor Hobson", "position": "LB", "teams": "NYJ,ARI,CIN", "from": 2003, "status": "already_in_db"},
+        {"name": "Rich Gannon", "position": "QB", "teams": "MIN,WAS,KAN,OAK", "from": 1987, "status": "already_in_db"},
+        {"name": "Fran Murray", "position": "B", "teams": "PHI", "from": 1939, "status": "already_in_db"},
+        {"name": "Jim Leonard", "position": "B", "teams": "PHI", "from": 1934, "status": "already_in_db"},
+        {"name": "James Magner", "position": "B", "teams": "FRN", "from": 1931, "status": "already_in_db"},
+        {"name": "Babe Connaughton", "position": "T-E", "teams": "FRN", "from": 1924, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "West Catholic",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93b9e898",
+      "pfr_player_count": 9,
+      "pfr_active_count": 0,
+      "db_school_id": 171,
+      "db_school_name": "West Catholic",
+      "players": [
+        {"name": "Jaryd Jones-Smith", "position": "T", "teams": "LVR,BAL", "from": 2020, "status": "UPDATED_to_pro"},
+        {"name": "Jaelen Strong", "position": "WR", "teams": "HOU,JAX", "from": 2015, "status": "already_in_db"},
+        {"name": "Curtis Brinkley", "position": "RB", "teams": "SDG", "from": 2010, "status": "already_in_db"},
+        {"name": "Jerrell Pippens", "position": "DB", "teams": "CHI,SDG", "from": 2004, "status": "already_in_db"},
+        {"name": "John Michels", "position": "G", "teams": "PHI", "from": 1953, "status": "already_in_db"},
+        {"name": "Dan Brown", "position": "DE", "teams": "WAS", "from": 1950, "status": "already_in_db"},
+        {"name": "Jim Magee", "position": "C-T", "teams": "BOS", "from": 1944, "status": "already_in_db"},
+        {"name": "Mike Mandarino", "position": "T-C-G", "teams": "PHI", "from": 1944, "status": "already_in_db"},
+        {"name": "Dave diFilippo", "position": "G", "teams": "PHI", "from": 1941, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "La Salle College",
+      "pfr_city": "Wyndmoor",
+      "pfr_id": "93bac0ad",
+      "pfr_player_count": 9,
+      "pfr_active_count": 4,
+      "db_school_id": 2882,
+      "db_school_name": "La Salle College High School",
+      "players": [
+        {"name": "Abdul Carter", "position": "DE", "teams": "NYG", "from": 2025, "status": "already_in_db"},
+        {"name": "Zaire Franklin", "position": "OLB", "teams": "IND", "from": 2018, "status": "already_in_db"},
+        {"name": "Marvin Harrison Jr.", "position": "WR", "teams": "ARI", "from": 2024, "note": "PFR lists under La Salle; db has at St Josephs Prep (1005)"},
+        {"name": "Jimmy Morrissey", "position": "OL", "teams": "HOU,IND", "from": 2021, "status": "already_in_db"},
+        {"name": "Ryan Winslow", "position": "P", "teams": "ARI,WAS,CAR", "from": 2019, "status": "already_in_db"},
+        {"name": "George Winslow", "position": "P", "teams": "CLE,NOR", "from": 1987, "status": "already_in_db"},
+        {"name": "Gus Cifelli", "position": "T", "teams": "DET,GNB,PIT,PHI", "from": 1950, "status": "already_in_db"},
+        {"name": "Vince Zizak", "position": "G-T", "teams": "CHI,PHI", "from": 1934, "status": "already_in_db"},
+        {"name": "Ken Simendinger", "position": "HB", "teams": "HRT", "from": 1926, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Germantown",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93b9b5ea",
+      "pfr_player_count": 8,
+      "pfr_active_count": 0,
+      "db_school_id": 157,
+      "db_school_name": "Germantown High School",
+      "players": [
+        {"name": "Will Parks", "position": "S", "teams": "DEN,PHI,MIA,NYJ", "from": 2016, "status": "already_in_db"},
+        {"name": "Lance Johnstone", "position": "DE", "teams": "OAK,MIN", "from": 1996, "status": "already_in_db"},
+        {"name": "Carlos Bradley", "position": "OLB", "teams": "SDG,PHI", "from": 1981, "status": "already_in_db"},
+        {"name": "Steve Coleman", "position": "DE", "teams": "DEN", "from": 1974, "status": "already_in_db"},
+        {"name": "Chuck Janerette", "position": "DT-T-G", "teams": "RAM,NYG,NYJ,DEN", "from": 1960, "status": "already_in_db"},
+        {"name": "Rick Lackman", "position": "HB", "teams": "PHI", "from": 1933, "status": "already_in_db"},
+        {"name": "Hoot Haines", "position": "T-G-E", "teams": "BKN,SIS", "from": 1930, "status": "already_in_db"},
+        {"name": "Charlie Lungren", "position": "B-E", "teams": "RII", "from": 1923, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Roman Catholic",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93ba9631",
+      "pfr_player_count": 8,
+      "pfr_active_count": 0,
+      "db_school_id": 127,
+      "db_school_name": "Roman Catholic",
+      "players": [
+        {"name": "Will Fuller", "position": "WR", "teams": "HOU,MIA", "from": 2016, "status": "already_in_db"},
+        {"name": "Nick Moody", "position": "OLB", "teams": "SFO,SEA,WAS", "from": 2013, "status": "already_in_db"},
+        {"name": "Scott Paxson", "position": "DT", "teams": "PIT,CLE", "from": 2008, "status": "already_in_db"},
+        {"name": "Marvin Harrison", "position": "WR", "teams": "IND", "from": 1996, "status": "already_in_db"},
+        {"name": "Jim Katcavage", "position": "DE-DT", "teams": "NYG", "from": 1956, "status": "already_in_db"},
+        {"name": "Joe Tyrrell", "position": "G", "teams": "PHI", "from": 1952, "status": "already_in_db"},
+        {"name": "Joey Maxwell", "position": "C-E", "teams": "FRN", "from": 1927, "status": "already_in_db"},
+        {"name": "Charlie Carton", "position": "E-T-G-C", "teams": "FRN", "from": 1925, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Frankford",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bb9a3a",
+      "pfr_player_count": 7,
+      "pfr_active_count": 0,
+      "db_school_id": 180,
+      "db_school_name": "Frankford",
+      "players": [
+        {"name": "Zaire Anderson", "position": "LB", "teams": "DEN", "from": 2016, "status": "already_in_db"},
+        {"name": "Jahri Evans", "position": "G", "teams": "NOR,GNB", "from": 2006, "status": "already_in_db"},
+        {"name": "Blair Thomas", "position": "RB", "teams": "NYJ,DAL,NWE,CAR", "from": 1990, "status": "already_in_db"},
+        {"name": "John Diehl", "position": "DT", "teams": "BAL,OAK", "from": 1961, "status": "already_in_db"},
+        {"name": "Mike Jarmoluk", "position": "DT-T-MG", "teams": "CHI,BOS,NYB,PHI", "from": 1946, "status": "already_in_db"},
+        {"name": "Rob Jamieson", "position": "C", "teams": "FRN", "from": 1924, "status": "already_in_db"},
+        {"name": "Carl Thomas", "position": "T-E-BB-FB", "teams": "RCH,BUF", "from": 1920, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Imhotep Charter Regional",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "4d6e62fc",
+      "pfr_player_count": 6,
+      "pfr_active_count": 3,
+      "db_school_id": 209,
+      "db_school_name": "Imhotep Charter",
+      "players": [
+        {"name": "D.J. Moore", "position": "WR", "teams": "CAR,CHI", "from": 2018, "status": "already_in_db"},
+        {"name": "Tykee Smith", "position": "DB", "teams": "TAM", "from": 2024, "status": "UPDATED_to_pro"},
+        {"name": "Yasir Durant", "position": "T", "teams": "KAN,NWE,NOR", "from": 2020, "status": "already_in_db"},
+        {"name": "Shaka Toney", "position": "DE", "teams": "WAS", "from": 2021, "status": "already_in_db"},
+        {"name": "Andre Mintze", "position": "OLB", "teams": "DEN", "from": 2021, "status": "already_in_db"},
+        {"name": "David Williams", "position": "RB", "teams": "JAX", "from": 2018, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "South Philadelphia",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93b82539",
+      "pfr_player_count": 6,
+      "pfr_active_count": 0,
+      "db_school_id": 7065,
+      "db_school_name": "South Philadelphia HS",
+      "players": [
+        {"name": "Dwayne White", "position": "G-C", "teams": "NYJ,STL", "from": 1990, "status": "already_in_db"},
+        {"name": "Bob Petrella", "position": "DB", "teams": "MIA", "from": 1966, "status": "already_in_db"},
+        {"name": "Ray Abruzzese", "position": "B", "teams": "BUF,NYJ", "from": 1962, "status": "already_in_db"},
+        {"name": "John Sandusky", "position": "T-DT", "teams": "CLE,GNB", "from": 1950, "status": "already_in_db"},
+        {"name": "Jack Del Bello", "position": "QB", "teams": "BAL", "from": 1953, "status": "already_in_db"},
+        {"name": "Steve Sader", "position": "FB", "teams": "PHI", "from": 1943, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Central",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93b91001",
+      "pfr_player_count": 6,
+      "pfr_active_count": 0,
+      "db_school_id": 141,
+      "db_school_name": "Central",
+      "players": [
+        {"name": "Vic Bellamy", "position": "DB", "teams": "PHI", "from": 1987, "status": "already_in_db"},
+        {"name": "Eric Hodges", "position": "WR", "teams": "KAN", "from": 1987, "status": "already_in_db"},
+        {"name": "Phil Slosburg", "position": "B", "teams": "BOS,NYB", "from": 1948, "status": "already_in_db"},
+        {"name": "Reds Bassman", "position": "HB", "teams": "PHI", "from": 1936, "status": "already_in_db"},
+        {"name": "Carl Thomas", "position": "T-E-BB-FB", "teams": "RCH,BUF", "from": 1920, "status": "already_in_db"},
+        {"name": "Ben Clime", "position": "G-E-WB", "teams": "RCH", "from": 1920, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "West Philadelphia",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93b93668",
+      "pfr_player_count": 6,
+      "pfr_active_count": 1,
+      "db_school_id": 151,
+      "db_school_name": "West Philadelphia",
+      "players": [
+        {"name": "Teair Tart", "position": "DT", "teams": "TEN,HOU,LAC", "from": 2020, "status": "NEW_INSERT"},
+        {"name": "Bob Bell", "position": "DT-DE", "teams": "DET,STL", "from": 1971, "status": "already_in_db"},
+        {"name": "Oliver Dobbins", "position": "DB", "teams": "BUF", "from": 1964, "status": "already_in_db"},
+        {"name": "Eddie Bell", "position": "DB-LB", "teams": "PHI,NYT", "from": 1955, "status": "already_in_db"},
+        {"name": "Bill Mackrides", "position": "QB", "teams": "PHI,PIT,NYG", "from": 1947, "status": "already_in_db"},
+        {"name": "Fred Sweet", "position": "B", "teams": "PRV", "from": 1925, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "John Bartram",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bacc1f",
+      "pfr_player_count": 6,
+      "pfr_active_count": 0,
+      "db_school_id": 142,
+      "db_school_name": "John Bartram High School",
+      "players": [
+        {"name": "Al-Hajj Shabazz", "position": "CB", "teams": "PIT,HOU", "from": 2016, "status": "already_in_db"},
+        {"name": "Bryan Anderson", "position": "G", "teams": "CHI", "from": 2004, "status": "already_in_db"},
+        {"name": "Erik Williams", "position": "T", "teams": "DAL,BAL", "from": 1991, "status": "already_in_db"},
+        {"name": "Jon Clark", "position": "T", "teams": "CHI,ARI", "from": 1996, "status": "already_in_db"},
+        {"name": "David Martin", "position": "DB", "teams": "SDG,BUF", "from": 1986, "status": "already_in_db"},
+        {"name": "Bo Roberson", "position": "FL-HB-WR", "teams": "SDG,OAK,BUF,MIA", "from": 1961, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "George Washington",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bb4cb2",
+      "pfr_player_count": 6,
+      "pfr_active_count": 0,
+      "db_school_id": 185,
+      "db_school_name": "George Washington",
+      "players": [
+        {"name": "Shareef Miller", "position": "EDGE", "teams": "PHI", "from": 2019, "status": "already_in_db"},
+        {"name": "Sharrif Floyd", "position": "DT", "teams": "MIN", "from": 2013, "status": "already_in_db"},
+        {"name": "Jameel McClain", "position": "LB", "teams": "BAL,NYG", "from": 2008, "status": "already_in_db"},
+        {"name": "Dominique Curry", "position": "WR", "teams": "STL", "from": 2010, "status": "already_in_db"},
+        {"name": "Bruce Perry", "position": "RB", "teams": "PHI", "from": 2005, "status": "already_in_db"},
+        {"name": "Dave Jacobs", "position": "K", "teams": "NYJ,CLE,PHI", "from": 1979, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Cardinal O'Hara",
+      "pfr_city": "Springfield",
+      "pfr_id": "93bbda1b",
+      "pfr_player_count": 6,
+      "pfr_active_count": 0,
+      "db_school_id": 167,
+      "db_school_name": "Cardinal O'Hara (via db mapping)",
+      "players": [
+        {"name": "Tom Savage", "position": "QB", "teams": "HOU", "from": 2014, "status": "already_in_db"},
+        {"name": "Corey Brown", "position": "WR", "teams": "CAR", "from": 2014, "status": "already_in_db"},
+        {"name": "Anthony Walters", "position": "S", "teams": "CHI", "from": 2011, "status": "already_in_db"},
+        {"name": "Kevin Jones", "position": "RB", "teams": "DET,CHI", "from": 2004, "status": "already_in_db"},
+        {"name": "Gerry Feehery", "position": "C-G", "teams": "PHI,KAN", "from": 1983, "status": "already_in_db"},
+        {"name": "Don Clune", "position": "WR", "teams": "NYG,SEA", "from": 1974, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Simon Gratz",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93baf12b",
+      "pfr_player_count": 5,
+      "pfr_active_count": 0,
+      "db_school_id": 1909,
+      "db_school_name": "Simon Gratz",
+      "players": [
+        {"name": "Earl Watford", "position": "OG", "teams": "ARI,CLE,TAM", "from": 2014, "status": "already_in_db"},
+        {"name": "Roderick Coleman", "position": "DT", "teams": "OAK,ATL", "from": 1999, "status": "already_in_db"},
+        {"name": "Leroy Kelly", "position": "RB", "teams": "CLE", "from": 1964, "status": "already_in_db"},
+        {"name": "Alvin Mitchell", "position": "DB", "teams": "CLE,DEN", "from": 1968, "status": "already_in_db"},
+        {"name": "Bernie Kaplan", "position": "G", "teams": "NYG,PHI", "from": 1935, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Cardinal Dougherty",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bb12b5",
+      "pfr_player_count": 5,
+      "pfr_active_count": 0,
+      "db_school_id": 150,
+      "db_school_name": "Cardinal Dougherty",
+      "players": [
+        {"name": "Harry Swayne", "position": "T-DE", "teams": "TAM,SDG,DEN,BAL,MIA", "from": 1987, "status": "already_in_db"},
+        {"name": "John Waerig", "position": "TE", "teams": "DET", "from": 2001, "status": "already_in_db"},
+        {"name": "Florian Kempf", "position": "K", "teams": "HOU,NOR", "from": 1982, "status": "already_in_db"},
+        {"name": "Jim Cooper", "position": "T-C-G", "teams": "DAL", "from": 1977, "status": "already_in_db"},
+        {"name": "Mike Dennery", "position": "LB", "teams": "OAK,MIA", "from": 1974, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Haverford School",
+      "pfr_city": "Haverford",
+      "pfr_id": "93b8f10e",
+      "pfr_player_count": 5,
+      "pfr_active_count": 1,
+      "db_school_id": 259,
+      "db_school_name": "Haverford School",
+      "players": [
+        {"name": "Asim Richards", "position": "OL", "teams": "DAL,NOR", "from": 2023, "status": "already_in_db"},
+        {"name": "Will Barker", "position": "T", "teams": "TAM", "from": 2010, "status": "already_in_db"},
+        {"name": "Mike Mayock", "position": "DB", "teams": "NYG", "from": 1982, "status": "already_in_db"},
+        {"name": "Walt Masters", "position": "B", "teams": "PHI,CRD", "from": 1936, "status": "already_in_db"},
+        {"name": "Heinie Miller", "position": "E-G", "teams": "BUF,MIL", "from": 1920, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Northeast Catholic",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bdd7f7",
+      "pfr_player_count": 5,
+      "pfr_active_count": 0,
+      "db_school_id": 153,
+      "db_school_name": "North Catholic",
+      "players": [
+        {"name": "Jim Gilmore", "position": "T-G", "teams": "PHI,MIA", "from": 1986, "status": "already_in_db"},
+        {"name": "Frank D'Agostino", "position": "G-T", "teams": "PHI,NYT", "from": 1956, "status": "already_in_db"},
+        {"name": "Bucko Kilroy", "position": "G-MG-T-DT", "teams": "PHI", "from": 1943, "status": "already_in_db"},
+        {"name": "Joe Sutton", "position": "DB-HB", "teams": "BUF,PHI", "from": 1949, "status": "NEW_INSERT"},
+        {"name": "Frank Reagan", "position": "B", "teams": "NYG,PHI", "from": 1941, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Chestnut Hill Academy",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bba2fe",
+      "pfr_player_count": 4,
+      "pfr_active_count": 1,
+      "db_school_id": 261,
+      "db_school_name": "Springside Chestnut Hill Academy",
+      "players": [
+        {"name": "Ke'Shawn Williams", "position": "WR", "teams": "PIT,CIN", "from": 2025, "status": "UPDATED_to_pro"},
+        {"name": "Ibraheim Campbell", "position": "SS", "teams": "CLE,HOU,NYJ,DAL,GNB,IND", "from": 2015, "status": "already_in_db"},
+        {"name": "Andre Dixon", "position": "DB", "teams": "DET", "from": 1999, "status": "already_in_db"},
+        {"name": "Lud Wray", "position": "C", "teams": "BUF", "from": 1920, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "William Penn Charter School",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bcfe23",
+      "pfr_player_count": 4,
+      "pfr_active_count": 1,
+      "db_school_id": 161,
+      "db_school_name": "Penn Charter",
+      "players": [
+        {"name": "Mike McGlinchey", "position": "OT", "teams": "SFO,DEN", "from": 2018, "status": "already_in_db"},
+        {"name": "Daryl Worley", "position": "CB", "teams": "CAR,OAK,LVR,BUF,DAL,DET,BAL,TEN", "from": 2016, "status": "already_in_db"},
+        {"name": "Matt Ryan", "position": "QB", "teams": "ATL,IND", "from": 2008, "status": "already_in_db"},
+        {"name": "Kirk Hershey", "position": "E", "teams": "PHI,RAM", "from": 1941, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Southeast Catholic",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bb0c96",
+      "pfr_player_count": 3,
+      "pfr_active_count": 0,
+      "db_school_id": 7066,
+      "db_school_name": "South Catholic High School",
+      "players": [
+        {"name": "Ed Cook", "position": "T-G", "teams": "CRD,STL,ATL", "from": 1958, "status": "already_in_db"},
+        {"name": "Bob Oristaglio", "position": "DE-E", "teams": "BUF,BCL,CLE,PHI", "from": 1949, "status": "already_in_db"},
+        {"name": "Bernie Gallagher", "position": "G", "teams": "LAD", "from": 1947, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Murrell Dobbins Area Vo-Tech",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bd51ef",
+      "pfr_player_count": 3,
+      "pfr_active_count": 0,
+      "db_school_id": 2936,
+      "db_school_name": "Murrell Dobbins Career & Technical",
+      "players": [
+        {"name": "Raheem Brock", "position": "DE", "teams": "IND,SEA", "from": 2002, "status": "already_in_db"},
+        {"name": "Kevin Ingram", "position": "QB", "teams": "NOR", "from": 1987, "status": "already_in_db"},
+        {"name": "Cliff Roberts", "position": "T", "teams": "OAK", "from": 1961, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Malvern Prep",
+      "pfr_city": "Malvern",
+      "pfr_id": "407bf4b9",
+      "pfr_player_count": 3,
+      "pfr_active_count": 0,
+      "db_school_id": 156,
+      "db_school_name": "Malvern Prep",
+      "players": [
+        {"name": "Carl Nassib", "position": "DE", "teams": "CLE,TAM,LVR", "from": 2016, "status": "already_in_db"},
+        {"name": "Ryan Nassib", "position": "QB", "teams": "NYG", "from": 2014, "status": "already_in_db"},
+        {"name": "Wayne Millner", "position": "E-DE", "teams": "BOS,WAS", "from": 1936, "status": "NEW_INSERT"}
+      ]
+    },
+    {
+      "pfr_name": "Benjamin Franklin",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bf128a",
+      "pfr_player_count": 3,
+      "pfr_active_count": 0,
+      "db_school_id": 140,
+      "db_school_name": "Benjamin Franklin",
+      "players": [
+        {"name": "J.T. Turner", "position": "G", "teams": "NYG,WAS", "from": 1977, "status": "already_in_db"},
+        {"name": "George Nock", "position": "RB", "teams": "NYJ,WAS", "from": 1969, "status": "already_in_db"},
+        {"name": "Wendell Tucker", "position": "WR-FL", "teams": "RAM", "from": 1967, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Mastbaum Area Vo-Tech",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93ba0bb3",
+      "pfr_player_count": 2,
+      "pfr_active_count": 0,
+      "db_school_id": 4621,
+      "db_school_name": "Jules E. Mastbaum Vo-Tech",
+      "players": [
+        {"name": "Uhuru Hamiter", "position": "DE", "teams": "NOR,PHI", "from": 1999, "status": "already_in_db"},
+        {"name": "James Brown", "position": "T", "teams": "NYJ,MIA,CLE", "from": 1993, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "St. Thomas More",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93baa1ea",
+      "pfr_player_count": 2,
+      "pfr_active_count": 0,
+      "db_school_id": 4226,
+      "db_school_name": "St. Thomas More",
+      "players": [
+        {"name": "Carmen Cavalli", "position": "DE", "teams": "OAK", "from": 1960, "status": "already_in_db"},
+        {"name": "Al Postus", "position": "TB-DB", "teams": "PIT", "from": 1945, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Archbishop Ryan",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bdff4c",
+      "pfr_player_count": 2,
+      "pfr_active_count": 0,
+      "db_school_id": 175,
+      "db_school_name": "Archbishop Ryan",
+      "players": [
+        {"name": "Frank Wycheck", "position": "TE", "teams": "WAS,HOU,TEN", "from": 1993, "status": "already_in_db"},
+        {"name": "Mike Kullman", "position": "DB", "teams": "PHI", "from": 1987, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Edward Bok Vocational Tech",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93be90de",
+      "pfr_player_count": 2,
+      "pfr_active_count": 1,
+      "db_school_id": 131,
+      "db_school_name": "Edward Bok Technical High School",
+      "players": [
+        {"name": "Jihad Ward", "position": "DE", "teams": "OAK,IND,BAL,JAX,NYG,MIN,TEN", "from": 2016, "status": "already_in_db"},
+        {"name": "Willie McClung", "position": "T-DT", "teams": "PIT,CLE,DET", "from": 1955, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Neumann Goretti",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "abef4c5c",
+      "pfr_player_count": 1,
+      "pfr_active_count": 1,
+      "db_school_id": 198,
+      "db_school_name": "Neumann-Goretti",
+      "players": [
+        {"name": "Christian Barmore", "position": "DL", "teams": "NWE", "from": 2021, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Episcopal Academy",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "35c35cf6",
+      "pfr_player_count": 1,
+      "pfr_active_count": 0,
+      "db_school_id": 138,
+      "db_school_name": "Episcopal Academy",
+      "players": [
+        {"name": "Kyle Eckel", "position": "RB", "teams": "NWE,PHI,NOR", "from": 2007, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Germantown Academy",
+      "pfr_city": "Fort Washington",
+      "pfr_id": "8da9e89c",
+      "pfr_player_count": 1,
+      "pfr_active_count": 0,
+      "db_school_id": 130,
+      "db_school_name": "Germantown Academy",
+      "players": [
+        {"name": "Jim Fraser", "position": "LB-P", "teams": "DEN,KAN,BOS,NOR", "from": 1962, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Father Judge",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93be9064",
+      "pfr_player_count": 1,
+      "pfr_active_count": 0,
+      "db_school_id": 147,
+      "db_school_name": "Father Judge",
+      "players": [
+        {"name": "Mike McCloskey", "position": "TE", "teams": "HOU,PHI", "from": 1983, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Abraham Lincoln",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bf33b6",
+      "pfr_player_count": 1,
+      "pfr_active_count": 0,
+      "db_school_id": 2697,
+      "db_school_name": "Abraham Lincoln",
+      "players": [
+        {"name": "Rich Owens", "position": "DE-DT", "teams": "WAS,MIA,KAN,SEA", "from": 1995, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Roxborough",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93bfa466",
+      "pfr_player_count": 1,
+      "pfr_active_count": 0,
+      "db_school_id": 129,
+      "db_school_name": "Roxborough",
+      "players": [
+        {"name": "Jess Richardson", "position": "DT", "teams": "PHI,BOS", "from": 1953, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Overbrook",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93ba8778",
+      "pfr_player_count": 1,
+      "pfr_active_count": 0,
+      "db_school_id": 159,
+      "db_school_name": "Overbrook",
+      "players": [
+        {"name": "Tom Carr", "position": "DT", "teams": "NOR", "from": 1968, "status": "already_in_db"}
+      ]
+    },
+    {
+      "pfr_name": "Olney",
+      "pfr_city": "Philadelphia",
+      "pfr_id": "93ba8616",
+      "pfr_player_count": 1,
+      "pfr_active_count": 0,
+      "db_school_id": 163,
+      "db_school_name": "Olney",
+      "players": [
+        {"name": "Eddie Carr", "position": "DB-HB", "teams": "SFO", "from": 1947, "status": "already_in_db"}
+      ]
+    }
+  ],
+  "summary": {
+    "schools_matched": 36,
+    "total_pfr_players_scraped": 167,
+    "players_already_in_db": 160,
+    "new_players_inserted": 4,
+    "existing_players_updated_to_pro": 3,
+    "new_inserts": [
+      {"name": "Omar Speights", "school": "Northeast", "db_id": 6196},
+      {"name": "Teair Tart", "school": "West Philadelphia", "db_id": 6197},
+      {"name": "Joe Sutton", "school": "North Catholic", "db_id": 6198},
+      {"name": "Wayne Millner", "school": "Malvern Prep", "db_id": 6199}
+    ],
+    "updated_to_pro": [
+      {"name": "Tykee Smith", "school": "Imhotep Charter", "db_id": 5877},
+      {"name": "Jaryd Jones-Smith", "school": "West Catholic", "db_id": 4944},
+      {"name": "Ke'Shawn Williams", "school": "Springside Chestnut Hill Academy", "db_id": 5847}
+    ]
+  }
+}

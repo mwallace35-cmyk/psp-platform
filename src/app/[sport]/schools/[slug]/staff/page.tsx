@@ -150,8 +150,7 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
             </div>
             <div className="flex-1">
               <h1
-                className="text-4xl md:text-5xl text-white tracking-wider mb-2"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                className="psp-h1 text-white mb-2"
               >
                 {school.name} Coaching Staff
               </h1>
@@ -169,13 +168,13 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
       <PSPPromo size="banner" variant={1} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             {/* Head Coach */}
             {headCoach && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="psp-h2 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Head Coach
                 </h2>
                 <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden hover:shadow-lg transition-shadow">
@@ -196,8 +195,8 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <h3
-                        className="text-xl font-bold"
-                        style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                        className="psp-h3"
+                        style={{ color: "var(--psp-navy)" }}
                       >
                         {headCoach.coaches?.name || "Unknown Coach"}
                       </h3>
@@ -261,7 +260,7 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
             {/* Coordinators */}
             {coordinators.length > 0 && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="psp-h2 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Coordinators
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -293,7 +292,7 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
             {/* Assistants */}
             {assistants.length > 0 && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="psp-h2 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Assistant Coaches
                 </h2>
                 <div className="space-y-2">

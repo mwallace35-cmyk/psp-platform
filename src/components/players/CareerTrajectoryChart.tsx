@@ -106,8 +106,8 @@ function MultiSeasonLine({
   return (
     <div className="w-full">
       <h3
-        className="text-lg font-bold mb-3 tracking-wide"
-        style={{ color: 'var(--psp-navy, #0a1628)', fontFamily: 'Bebas Neue, sans-serif' }}
+        className="psp-h3 mb-3"
+        style={{ color: 'var(--psp-navy, #0a1628)' }}
       >
         Career Trajectory
       </h3>
@@ -205,8 +205,8 @@ function SingleSeasonBar({
   return (
     <div className="w-full">
       <h3
-        className="text-lg font-bold mb-3 tracking-wide"
-        style={{ color: 'var(--psp-navy, #0a1628)', fontFamily: 'Bebas Neue, sans-serif' }}
+        className="psp-h3 mb-3"
+        style={{ color: 'var(--psp-navy, #0a1628)' }}
       >
         {season.label} Season Stats
       </h3>

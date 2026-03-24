@@ -84,9 +84,8 @@ export default function PlayerProfileTabs({ sportColor, tabs }: PlayerProfileTab
                 if (el) tabRefs.current.set(tab.id, el);
               }}
               onClick={() => handleTabClick(tab.id)}
-              className="relative whitespace-nowrap px-5 py-3 text-sm tracking-wider transition-colors flex-shrink-0"
+              className="psp-caption relative whitespace-nowrap px-5 py-3 transition-colors flex-shrink-0"
               style={{
-                fontFamily: "Bebas Neue, sans-serif",
                 fontSize: "1rem",
                 letterSpacing: "0.08em",
                 color: isActive ? "#fff" : "rgba(255,255,255,0.5)",

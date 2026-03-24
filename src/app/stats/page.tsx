@@ -27,7 +27,7 @@ const SPORTS = [
 export default function StatsPage() {
   return (
     <main style={{ padding: "2rem", maxWidth: "960px", margin: "0 auto" }}>
-      <h1 style={{ fontFamily: "var(--font-bebas)", fontSize: "2.5rem", color: "var(--psp-navy)", marginBottom: "0.25rem" }}>
+      <h1 className="psp-h1" style={{ color: "var(--psp-navy)", marginBottom: "0.25rem" }}>
         Stats Hub
       </h1>
       <p style={{ color: "var(--psp-muted)", marginBottom: "2rem" }}>
@@ -36,12 +36,12 @@ export default function StatsPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "1rem", marginBottom: "3rem" }}>
         {SECTIONS.map((s) => (
           <Link key={s.href} href={s.href} style={{ display: "block", background: "var(--psp-card-bg)", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "1.25rem", textDecoration: "none", color: "inherit" }}>
-            <div style={{ fontFamily: "var(--font-bebas)", fontSize: "1.25rem", color: "var(--psp-navy)", marginBottom: "0.25rem" }}>{s.label}</div>
+            <div className="psp-h4" style={{ color: "var(--psp-navy)", marginBottom: "0.25rem" }}>{s.label}</div>
             <div style={{ fontSize: "0.85rem", color: "var(--psp-muted)" }}>{s.desc}</div>
           </Link>
         ))}
       </div>
-      <h2 style={{ fontFamily: "var(--font-bebas)", fontSize: "1.5rem", color: "var(--psp-navy)", marginBottom: "1rem" }}>
+      <h2 className="psp-h2" style={{ color: "var(--psp-navy)", marginBottom: "1rem" }}>
         Browse by Sport
       </h2>
       <p style={{ color: "var(--text-secondary)", marginBottom: "1rem", marginTop: "-0.5rem" }}>View leaderboards and stat leaders for each sport</p>

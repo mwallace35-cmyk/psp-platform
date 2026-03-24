@@ -343,8 +343,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           <div className="flex items-start gap-5 mt-4">
             {/* Avatar */}
             <div
-              className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold flex-shrink-0"
-              style={{ background: `${meta.color}25`, color: "var(--psp-gold)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.05em", border: `2px solid ${meta.color}40` }}
+              className="psp-h2 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center flex-shrink-0"
+              style={{ background: `${meta.color}25`, color: "var(--psp-gold)", border: `2px solid ${meta.color}40` }}
               aria-hidden="true"
             >
               {schoolInitials}
@@ -353,8 +353,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             <div className="flex-1 min-w-0">
               {/* Player name */}
               <h1
-                className="text-3xl md:text-4xl lg:text-5xl text-white tracking-wider leading-none"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                className="psp-h1-lg text-white leading-none"
               >
                 {player.name}
               </h1>
@@ -446,8 +445,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   <div
-                    className="text-3xl md:text-4xl font-bold text-white leading-none"
-                    style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                    className="psp-h1 text-white leading-none"
                   >
                     {hs.value}
                   </div>
@@ -466,9 +464,9 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
       {/* ============ OVERVIEW SECTION ============ */}
       <section id="overview" className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             {/* Data Source Badge */}
             <div className="flex flex-wrap items-center gap-3">
               <DataSourceBadge
@@ -485,7 +483,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Career Trajectory Chart */}
             {sport === "football" && stats.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-5">
-                <h2 className="text-xl font-bold mb-3" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
                   Career Trajectory
                 </h2>
                 <CareerTrajectoryChart
@@ -503,7 +501,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             )}
             {sport === "basketball" && stats.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-5">
-                <h2 className="text-xl font-bold mb-3" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
                   Career Trajectory
                 </h2>
                 <CareerTrajectoryChart
@@ -521,7 +519,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             )}
             {sport === "baseball" && stats.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-5">
-                <h2 className="text-xl font-bold mb-3" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
                   Career Trajectory
                 </h2>
                 <CareerTrajectoryChart
@@ -551,7 +549,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Career context cards */}
             {sport === "football" && footballTotals && footballTotals.rushYards > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                <h3 className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Career Context
                 </h3>
                 <div className="space-y-4">
@@ -583,7 +581,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             )}
             {sport === "basketball" && basketballTotals && basketballTotals.points > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                <h3 className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Career Context
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -727,8 +725,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       {/* ============ STATS SECTION ============ */}
       <section id="stats" className="max-w-7xl mx-auto px-4 py-8">
         <h2
-          className="text-2xl font-bold mb-6"
-          style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}
+          className="psp-h2 mb-6"
+          style={{ color: "var(--psp-navy)" }}
         >
           Season-by-Season Stats
         </h2>
@@ -745,7 +743,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         {/* More from school link */}
         {player.schools && (
           <div className="mt-8 pt-6 border-t border-gray-200">
-            <h3 className="text-lg font-bold mb-2" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+            <h3 className="psp-h3 mb-2" style={{ color: "var(--psp-navy)" }}>
               More from {player.schools?.name}
             </h3>
             <p className="text-sm text-gray-500 mb-3">Explore other players from this school</p>
@@ -791,8 +789,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         <section id="awards" className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
             <h2
-              className="text-2xl font-bold"
-              style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}
+              className="psp-h2"
+              style={{ color: "var(--psp-navy)" }}
             >
               Honors & Awards
             </h2>
@@ -808,7 +806,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {awardYears.map(year => (
               <div key={year}>
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-base font-bold" style={{ color: "var(--psp-gold, #f0a500)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.05em" }}>
+                  <span className="psp-h4" style={{ color: "var(--psp-gold, #f0a500)" }}>
                     {year > 1900 ? `${String(year - 1).slice(-2)}-${String(year).slice(-2)}` : year}
                   </span>
                   <div className="flex-1 h-px" style={{ background: "var(--psp-gray-200, #e2e8f0)" }} />

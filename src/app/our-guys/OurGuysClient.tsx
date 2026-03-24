@@ -162,10 +162,10 @@ function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
 function AlphabetBar({ letters, activeLetter, onSelect }: { letters: Set<string>; activeLetter: string | null; onSelect: (l: string | null) => void }) {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   return (
-    <div className="flex flex-wrap gap-0.5 mb-4">
+    <div className="flex flex-wrap gap-px mb-3">
       <button
         onClick={() => onSelect(null)}
-        className={`w-7 h-7 text-xs font-bold rounded transition ${!activeLetter ? 'bg-gold text-navy' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+        className={`w-6 h-6 text-[10px] font-semibold rounded transition ${!activeLetter ? 'bg-gold text-navy' : 'text-gray-400 hover:text-gray-600'}`}
       >
         All
       </button>
@@ -174,10 +174,10 @@ function AlphabetBar({ letters, activeLetter, onSelect }: { letters: Set<string>
           key={l}
           onClick={() => letters.has(l) ? onSelect(l === activeLetter ? null : l) : undefined}
           disabled={!letters.has(l)}
-          className={`w-7 h-7 text-xs font-bold rounded transition ${
+          className={`w-6 h-6 text-[10px] font-medium rounded transition ${
             l === activeLetter ? 'bg-navy text-white' :
-            letters.has(l) ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' :
-            'bg-gray-50 text-gray-300 cursor-not-allowed'
+            letters.has(l) ? 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' :
+            'text-gray-200 cursor-not-allowed'
           }`}
         >
           {l}
@@ -344,7 +344,7 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
       <div className="flex items-center gap-3 mt-2">
         {a.schools && (
           <Link href={`/schools/${a.schools.slug}`} className="text-xs text-blue-600 hover:text-blue-800">
-            {sportEmoji} {a.schools.name}
+            {a.schools.name}
           </Link>
         )}
         {a.college && activeTab !== 'college' && (
@@ -655,8 +655,8 @@ export default function OurGuysClient({ alumni, counts }: Props) {
             <div className="space-y-8">
               {groupedBySport.map(({ sport, athletes }) => (
                 <div key={sport}>
-                  <div className="flex items-center gap-3 mb-4 pb-2 border-b-2" style={{ borderColor: SPORT_COLORS[sport] || '#6b7280' }}>
-                    <span className="text-2xl">{SPORT_EMOJIS[sport] || ''}</span>
+                  <div className="flex items-center gap-2 mb-4 pb-2 border-b-2" style={{ borderColor: SPORT_COLORS[sport] || '#6b7280' }}>
+                    <span className="text-lg">{SPORT_EMOJIS[sport] || ''}</span>
                     <h2 className="text-xl font-black tracking-wide" style={{ fontFamily: "'Bebas Neue', sans-serif", color: SPORT_COLORS[sport] }}>
                       {SPORT_LABELS[sport] || sport}
                     </h2>

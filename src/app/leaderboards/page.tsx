@@ -76,11 +76,9 @@ export default async function LeaderboardsPage() {
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1rem' }}>
       <div style={{ marginBottom: '2rem' }}>
         <h1
+          className="psp-h1"
           style={{
-            fontFamily: 'var(--font-bebas)',
-            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
             color: 'var(--psp-navy)',
-            letterSpacing: '0.05em',
             marginBottom: '0.5rem',
           }}
         >
@@ -126,7 +124,7 @@ export default async function LeaderboardsPage() {
             <div style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 <span style={{ fontSize: '2rem' }}>🏈</span>
-                <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--psp-navy)', margin: 0 }}>
+                <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                   Football
                 </h2>
                 <span style={{ marginLeft: 'auto', fontSize: '0.62rem', padding: '0.15rem 0.45rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
@@ -177,7 +175,7 @@ export default async function LeaderboardsPage() {
             <div style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 <span style={{ fontSize: '2rem' }}>🏀</span>
-                <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--psp-navy)', margin: 0 }}>
+                <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                   Basketball
                 </h2>
                 <span style={{ marginLeft: 'auto', fontSize: '0.62rem', padding: '0.15rem 0.45rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
@@ -225,7 +223,7 @@ export default async function LeaderboardsPage() {
               <div style={{ padding: '1.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                   <span style={{ fontSize: '2rem' }}>{sport.emoji}</span>
-                  <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--psp-navy)', margin: 0 }}>{sport.name}</h2>
+                  <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>{sport.name}</h2>
                 </div>
                 <StatPills stats={sport.stats} />
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: sport.color, fontWeight: 600, fontSize: '0.875rem' }}>
@@ -240,7 +238,7 @@ export default async function LeaderboardsPage() {
 
       {/* By Class Year */}
       <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: 'var(--psp-surface)', borderRadius: '12px', border: '1px solid var(--psp-border)' }}>
-        <p style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.25rem', letterSpacing: '0.05em', color: 'var(--psp-navy)', margin: '0 0 0.75rem' }}>
+        <p className="psp-h4" style={{ color: 'var(--psp-navy)', margin: '0 0 0.75rem' }}>
           BROWSE BY CLASS YEAR
         </p>
         <p style={{ color: 'var(--psp-muted)', fontSize: '0.85rem', margin: '0 0 1rem' }}>
@@ -270,7 +268,7 @@ export default async function LeaderboardsPage() {
 
       <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: 'var(--psp-navy)', borderRadius: '12px', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <p style={{ color: 'var(--psp-gold-text, #FFC107)', fontFamily: 'var(--font-bebas)', fontSize: '1.25rem', margin: 0 }}>
+          <p className="psp-h4" style={{ color: 'var(--psp-gold-text, #FFC107)', margin: 0 }}>
             LOOKING FOR ALL-TIME RECORDS?
           </p>
           <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem', margin: '0.25rem 0 0' }}>

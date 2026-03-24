@@ -25,8 +25,8 @@ function StatBlock({
     <div className="text-center">
       {icon && <div className={size === "lg" ? "text-4xl mb-2" : "text-2xl mb-1"}>{icon}</div>}
       <div
-        className={`font-bold ${valueSize[size]} tracking-tight`}
-        style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+        className={`psp-h3 ${valueSize[size]}`}
+        style={{ color: "var(--psp-navy)" }}
       >
         {typeof value === "number" ? value.toLocaleString() : value}
       </div>

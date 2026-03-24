@@ -242,8 +242,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
 
             <div className="flex-1 min-w-0">
               <h1
-                className="text-3xl md:text-5xl text-white mb-2 tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                className="psp-h1 text-white mb-2"
               >
                 {school.name}
               </h1>
@@ -286,34 +285,34 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
               {/* Stat Strip */}
               <div className="flex flex-wrap gap-6">
                 <div>
-                  <div className="text-xl md:text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <div className="psp-h2 text-white">
                     {totalChampionships}
                   </div>
                   <div className="text-[11px] text-gray-400 uppercase tracking-wider">Championships</div>
                 </div>
                 <div>
-                  <div className="text-xl md:text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <div className="psp-h2 text-white">
                     {totalWins}-{totalLosses}{totalTies > 0 ? `-${totalTies}` : ""}
                   </div>
                   <div className="text-[11px] text-gray-400 uppercase tracking-wider">All-Time Record</div>
                 </div>
                 {winPct !== null && (
                   <div>
-                    <div className="text-xl md:text-2xl font-bold" style={{ color: "var(--psp-gold)", fontFamily: "Bebas Neue, sans-serif" }}>
+                    <div className="psp-h2" style={{ color: "var(--psp-gold)" }}>
                       {winPct}%
                     </div>
                     <div className="text-[11px] text-gray-400 uppercase tracking-wider">Win %</div>
                   </div>
                 )}
                 <div>
-                  <div className="text-xl md:text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <div className="psp-h2 text-white">
                     {sportsStats.length}
                   </div>
                   <div className="text-[11px] text-gray-400 uppercase tracking-wider">Sports</div>
                 </div>
                 {totalNextLevel > 0 && (
                   <div>
-                    <div className="text-xl md:text-2xl font-bold" style={{ color: "var(--psp-blue)", fontFamily: "Bebas Neue, sans-serif" }}>
+                    <div className="psp-h2" style={{ color: "var(--psp-blue)" }}>
                       {totalNextLevel}
                     </div>
                     <div className="text-[11px] text-gray-400 uppercase tracking-wider">Next Level</div>
@@ -358,16 +357,16 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
       )}
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* ── Main Content ── */}
-          <div className="lg:col-span-2 space-y-10">
+          <div className="lg:col-span-3 space-y-8">
 
             {/* ── Sports Programs ── */}
             {sportsStats.length > 0 && (
               <section>
                 <h2
-                  className="text-2xl font-bold mb-4"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  className="psp-h2 mb-4"
+                  style={{ color: "var(--psp-navy)" }}
                 >
                   Sports Programs
                 </h2>
@@ -381,8 +380,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl">{sport.sport_emoji}</span>
                         <h3
-                          className="text-lg font-bold flex-1 truncate group-hover:text-[var(--psp-gold)] transition-colors"
-                          style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                          className="psp-h3 flex-1 truncate group-hover:text-[var(--psp-gold)] transition-colors"
+                          style={{ color: "var(--psp-navy)" }}
                         >
                           {sport.sport_name}
                         </h3>
@@ -435,8 +434,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
               <section>
                 <div className="flex items-center justify-between mb-4">
                   <h2
-                    className="text-2xl font-bold"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    className="psp-h2"
+                    style={{ color: "var(--psp-navy)" }}
                   >
                     Championships ({championships.length})
                   </h2>
@@ -491,8 +490,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
             {coaches.length > 0 && (
               <section>
                 <h2
-                  className="text-2xl font-bold mb-4"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  className="psp-h2 mb-4"
+                  style={{ color: "var(--psp-navy)" }}
                 >
                   Coaching Staff
                 </h2>
@@ -549,8 +548,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
             {recentGames.length > 0 && (
               <section>
                 <h2
-                  className="text-2xl font-bold mb-4"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  className="psp-h2 mb-4"
+                  style={{ color: "var(--psp-navy)" }}
                 >
                   Recent Results
                 </h2>
@@ -614,8 +613,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
             {recentSeasons.length > 0 && (
               <section>
                 <h2
-                  className="text-2xl font-bold mb-4"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  className="psp-h2 mb-4"
+                  style={{ color: "var(--psp-navy)" }}
                 >
                   Season History
                 </h2>
@@ -677,8 +676,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
               <section>
                 <div className="flex items-center justify-between mb-4">
                   <h2
-                    className="text-2xl font-bold"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    className="psp-h2"
+                    style={{ color: "var(--psp-navy)" }}
                   >
                     Awards & Honors ({awards.length})
                   </h2>
@@ -750,8 +749,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
             {sortedNextLevel.length > 0 && (
               <section>
                 <h2
-                  className="text-2xl font-bold mb-1"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  className="psp-h2 mb-1"
+                  style={{ color: "var(--psp-navy)" }}
                 >
                   Next Level Alumni ({sortedNextLevel.length})
                 </h2>

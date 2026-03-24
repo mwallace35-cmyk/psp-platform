@@ -78,10 +78,10 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
         { name: "Leaderboards", url: `/${sport}/leaderboards` },
       ]} />
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#0a1628]">
         {/* Hero */}
         <div className="bg-[var(--psp-navy)] border-b-4" style={{ borderColor: meta.color }}>
-          <div className="max-w-6xl mx-auto px-4 py-10">
+          <div className="max-w-7xl mx-auto px-4 py-10">
             <Breadcrumb items={[
               { label: meta.name, href: `/${sport}` },
               { label: "Leaderboards" },
@@ -99,14 +99,14 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
         </div>
 
         {/* Mini Leaderboard Grid */}
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {categories.map((cat) => {
               const leaders = leaderData[cat.slug] || [];
               return (
-                <div key={cat.slug} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition">
+                <div key={cat.slug} className="bg-[rgba(255,255,255,0.03)] rounded-xl border border-gray-700/50 overflow-hidden hover:border-gray-600 transition">
                   {/* Category Header */}
-                  <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, #1a2744 100%)` }}>
+                  <div className="flex items-center justify-between px-5 py-3 border-b border-gray-700/50" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, #1a2744 100%)` }}>
                     <div className="flex items-center gap-2">
                       <span className="text-xl">{cat.icon}</span>
                       <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
@@ -128,7 +128,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                       {leaders.map((player, idx) => (
                         <div
                           key={`${player.slug}-${idx}`}
-                          className={`flex items-center px-5 py-2.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} ${idx < leaders.length - 1 ? 'border-b border-gray-100' : ''}`}
+                          className={`flex items-center px-5 py-2.5 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'} ${idx < leaders.length - 1 ? 'border-b border-gray-700/30' : ''}`}
                         >
                           {/* Rank */}
                           <span className={`w-7 text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-gray-400'}`}>
@@ -139,7 +139,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                           <div className="flex-1 min-w-0">
                             <Link
                               href={`/${sport}/players/${player.slug}`}
-                              className="text-sm font-semibold text-[var(--psp-navy)] hover:text-[var(--psp-gold)] transition-colors truncate block"
+                              className="text-sm font-semibold text-gray-100 hover:text-[var(--psp-gold)] transition-colors truncate block"
                             >
                               {player.name}
                             </Link>
@@ -148,7 +148,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
 
                           {/* Stat Value */}
                           <div className="text-right ml-3">
-                            <span className={`text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-[var(--psp-navy)]'}`}>
+                            <span className={`text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-gray-100'}`}>
                               {typeof player.value === 'number' ? player.value.toLocaleString() : player.value}
                             </span>
                             <span className="text-[10px] text-gray-400 ml-1">{cat.valueLabel}</span>
@@ -167,7 +167,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
           </div>
 
           {/* Career Mode CTA */}
-          <div className="mt-8 bg-[var(--psp-navy)] rounded-xl p-6 text-center">
+          <div className="mt-8 bg-[var(--psp-navy-mid)] rounded-xl border border-gray-700/50 p-6 text-center">
             <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
               All-Time Career Leaders
             </h3>
@@ -189,14 +189,14 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
           </div>
 
           {/* Class Year Links */}
-          <div className="mt-6 bg-white rounded-xl border border-gray-200 p-5">
+          <div className="mt-6 bg-[rgba(255,255,255,0.03)] rounded-xl border border-gray-700/50 p-5">
             <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Browse by Class Year</h3>
             <div className="flex flex-wrap gap-2">
               {[2025, 2026, 2027, 2028].map(year => (
                 <Link
                   key={year}
                   href={`/class/${year}`}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-[var(--psp-navy)] hover:bg-[var(--psp-gold)] hover:text-[var(--psp-navy)] transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-white/[0.06] text-gray-200 hover:bg-[var(--psp-gold)] hover:text-[var(--psp-navy)] transition-colors"
                 >
                   Class of {year}
                 </Link>

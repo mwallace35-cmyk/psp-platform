@@ -148,7 +148,7 @@ export default function SupportPage() {
 
       {/* Support Tiers */}
       <section className="bg-navy-mid py-16 px-6">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h2 className="font-bebas text-4xl tracking-widest text-white mb-4 text-center">
             SUPPORT LEVELS
           </h2>

@@ -21,7 +21,7 @@ export default function DataSourcesPage() {
       <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)` }}>
         <div className="max-w-4xl mx-auto px-4">
           <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Data Sources' }]} />
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider mt-4" style={{ fontFamily: 'Bebas Neue, sans-serif' }}>
+          <h1 className="psp-h1 text-white mt-4">
             Data Sources
           </h1>
           <p className="text-sm text-gray-300 mt-3 max-w-2xl">
@@ -33,7 +33,7 @@ export default function DataSourcesPage() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Primary Sources */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
+          <h2 className="psp-h2 mb-6" style={{ color: 'var(--psp-navy)' }}>
             Primary Data Sources
           </h2>
 
@@ -157,7 +157,7 @@ export default function DataSourcesPage() {
 
         {/* Coverage Timeline */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
+          <h2 className="psp-h2 mb-6" style={{ color: 'var(--psp-navy)' }}>
             Data Coverage Timeline
           </h2>
 
@@ -247,7 +247,7 @@ export default function DataSourcesPage() {
 
         {/* Data Quality & Gaps */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
+          <h2 className="psp-h2 mb-6" style={{ color: 'var(--psp-navy)' }}>
             Data Quality & Known Gaps
           </h2>
 
@@ -288,7 +288,7 @@ export default function DataSourcesPage() {
 
         {/* Methodology */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
+          <h2 className="psp-h2 mb-6" style={{ color: 'var(--psp-navy)' }}>
             Our Methodology
           </h2>
 

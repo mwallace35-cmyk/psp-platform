@@ -149,7 +149,7 @@ export default async function ErasPage({ params }: { params: Promise<PageParams>
         {/* Hero Section */}
         <div className="border-b-4 border-[var(--psp-gold)] px-4 py-12 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />
-          <div className="mt-8 max-w-6xl">
+          <div className="mt-8 max-w-7xl">
             <h1 className="text-4xl font-bold text-white sm:text-5xl">
               How the Game <span className="text-[var(--psp-gold)]">Changed</span>
             </h1>
@@ -160,9 +160,10 @@ export default async function ErasPage({ params }: { params: Promise<PageParams>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-3 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Content Area */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             {/* Stat Type Selector */}
             <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6">
               <h2 className="mb-4 text-lg font-bold text-white">Select Statistic</h2>
@@ -281,6 +282,7 @@ export default async function ErasPage({ params }: { params: Promise<PageParams>
               <DataSourceBadge source="PhillySportsPack Database" />
             </div>
           </div>
+        </div>
         </div>
       </div>
     </>

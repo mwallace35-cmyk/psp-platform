@@ -159,8 +159,8 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
   return (
     <div className="mt-12 border-t border-gray-200 pt-8">
       <h2
-        className="text-2xl font-bold mb-6 tracking-wider"
-        style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}
+        className="psp-h2 mb-6"
+        style={{ color: 'var(--psp-navy)' }}
       >
         Comments
       </h2>

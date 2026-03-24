@@ -113,8 +113,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
             </div>
             <div>
               <h1
-                className="text-4xl md:text-5xl text-white tracking-wider"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                className="psp-h1 text-white"
               >
                 {meta.name} Teams
               </h1>
@@ -131,16 +130,15 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
       <PSPPromo size="banner" variant={1} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-10">
+          <div className="lg:col-span-3 space-y-8">
             {sortedLeagues.map(([league, leagueTeams]) => (
               <div key={league}>
                 <h2
-                  className="text-2xl font-bold mb-4 pb-2 border-b-2"
+                  className="psp-h2 mb-4 pb-2 border-b-2"
                   style={{
                     color: "var(--psp-navy)",
-                    fontFamily: "Bebas Neue, sans-serif",
                     borderColor: LEAGUE_COLORS[league] || "var(--psp-gold)",
                   }}
                 >
@@ -165,8 +163,8 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <h3
-                              className="text-lg font-bold group-hover:text-[var(--psp-gold)] transition-colors"
-                              style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                              className="psp-h3 group-hover:text-[var(--psp-gold)] transition-colors"
+                              style={{ color: "var(--psp-navy)" }}
                             >
                               {school.name}
                             </h3>
@@ -226,7 +224,6 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                   className="text-2xl font-bold mb-2 pb-2 border-b-2"
                   style={{
                     color: "var(--psp-gray-400)",
-                    fontFamily: "Bebas Neue, sans-serif",
                     borderColor: "#9ca3af",
                   }}
                 >
@@ -259,8 +256,8 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <h3
-                              className="text-lg font-bold group-hover:text-[var(--psp-gold)] transition-colors"
-                              style={{ color: "var(--psp-gray-500, #6b7280)", fontFamily: "Bebas Neue, sans-serif" }}
+                              className="psp-h3 group-hover:text-[var(--psp-gold)] transition-colors"
+                              style={{ color: "var(--psp-gray-500, #6b7280)" }}
                             >
                               {school.name}
                             </h3>
@@ -328,7 +325,6 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                   className="text-2xl font-bold mb-2 pb-2 border-b-2"
                   style={{
                     color: "var(--psp-gray-400)",
-                    fontFamily: "Bebas Neue, sans-serif",
                     borderColor: "#d97706",
                   }}
                 >

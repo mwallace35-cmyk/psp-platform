@@ -25,7 +25,7 @@ export default function PlayersPage() {
   return (
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1rem' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: 'var(--psp-navy)', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+        <h1 className="psp-h1" style={{ color: 'var(--psp-navy)', marginBottom: '0.5rem' }}>
           PLAYERS
         </h1>
         <p style={{ color: 'var(--psp-muted)', fontSize: '1rem', maxWidth: '600px' }}>
@@ -38,7 +38,7 @@ export default function PlayersPage() {
         <span>Players</span>
       </nav>
       <div style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', color: 'var(--psp-navy)', letterSpacing: '0.05em', marginBottom: '1rem' }}>
+        <h2 className="psp-h2" style={{ color: 'var(--psp-navy)', marginBottom: '1rem' }}>
           BROWSE BY SPORT
         </h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -58,7 +58,7 @@ export default function PlayersPage() {
               <div style={{ padding: '1.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                   <span style={{ fontSize: '2rem' }}>{sport.emoji}</span>
-                  <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.05em', color: 'var(--psp-navy)', margin: 0 }}>{sport.name}</h2>
+                  <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>{sport.name}</h2>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: sport.color, fontWeight: 600, fontSize: '0.875rem', marginTop: '0.75rem' }}>
                   <span>Top {sport.name} Players</span>
@@ -71,7 +71,7 @@ export default function PlayersPage() {
       </div>
       <div style={{ padding: '1.5rem', background: 'var(--psp-navy)', borderRadius: '12px', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <p style={{ color: 'var(--psp-gold-text, #FFC107)', fontFamily: 'var(--font-bebas)', fontSize: '1.25rem', margin: 0 }}>LOOKING FOR A SPECIFIC PLAYER?</p>
+          <p className="psp-h4" style={{ color: 'var(--psp-gold-text, #FFC107)', margin: 0 }}>LOOKING FOR A SPECIFIC PLAYER?</p>
           <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem', margin: '0.25rem 0 0' }}>Use search to find athletes by name, school, or sport.</p>
         </div>
         <Link href="/search" style={{ padding: '0.5rem 1rem', background: 'var(--psp-gold-text, #FFC107)', color: 'var(--psp-navy)', borderRadius: '6px', fontWeight: 700, textDecoration: 'none', fontSize: '0.875rem' }}>

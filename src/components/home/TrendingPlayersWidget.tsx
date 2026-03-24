@@ -111,9 +111,8 @@ export default async function TrendingPlayersWidget() {
         }}
       >
         <h2
+          className="psp-h1"
           style={{
-            fontFamily: 'var(--font-bebas)',
-            fontSize: '2rem',
             color: 'var(--psp-navy, #1a2744)',
             letterSpacing: '0.03em',
             margin: 0,

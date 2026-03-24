@@ -144,7 +144,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
   if (!slugA || !slugB) {
     return (
       <div style={{ maxWidth:640, margin:'4rem auto', padding:'0 1rem', textAlign:'center' }}>
-        <h1 style={{ fontFamily:'var(--font-bebas)', fontSize:'3rem', color:navy, margin:'0 0 0.5rem' }}>Compare Players</h1>
+        <h1 className="psp-h1" style={{ color:navy, margin:'0 0 0.5rem' }}>Compare Players</h1>
         <p style={{ color:muted, marginBottom:'2rem' }}>
           Add two player slugs to the URL to compare them head-to-head.<br />
           <code style={{ background:'#f3f4f6', padding:'2px 6px', borderRadius:4, fontSize:'0.85rem' }}>/players/compare?a=player-one&b=player-two</code>
@@ -162,7 +162,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
     const missing = !playerA ? slugA : slugB;
     return (
       <div style={{ maxWidth:640, margin:'4rem auto', padding:'0 1rem', textAlign:'center' }}>
-        <h2 style={{ fontFamily:'var(--font-bebas)', fontSize:'2rem', color:navy }}>Player not found: {missing}</h2>
+        <h2 className="psp-h1" style={{ color:navy }}>Player not found: {missing}</h2>
         <Link href='/players' style={{ color:gold, fontWeight:700 }}>{String.fromCharCode(8592)} Back to Players</Link>
       </div>
     );
@@ -204,11 +204,11 @@ export default async function ComparePage({ searchParams }: PageProps) {
         <span style={{ margin:'0 0.5rem' }}>{String.fromCharCode(8250)}</span>
         <span>Compare</span>
       </div>
-      <h1 style={{ fontFamily:'var(--font-bebas)', fontSize:'2.5rem', color:navy, margin:'0 0 2rem', letterSpacing:'0.03em', textAlign:'center' }}>Head-to-Head Comparison</h1>
+      <h1 className="psp-h1" style={{ color:navy, margin:'0 0 2rem', textAlign:'center' }}>Head-to-Head Comparison</h1>
       <div style={{ display:'grid', gridTemplateColumns:'1fr auto 1fr', gap:'1rem', marginBottom:'2rem', alignItems:'start' }}>
         <Link href={`/players/${playerA.slug}`} style={{ textDecoration:'none' }}>
           <div style={{ background:'#fff', border:`2px solid ${navy}`, borderRadius:12, padding:'1.25rem', textAlign:'center' }}>
-            <div style={{ fontFamily:'var(--font-bebas)', fontSize:'1.6rem', color:navy, lineHeight:1.1 }}>{playerA.name}</div>
+            <div className="psp-h3" style={{ color:navy, lineHeight:1.1 }}>{playerA.name}</div>
             <div style={{ color:muted, fontSize:'0.8rem', marginTop:4 }}>{schoolName(playerA)}</div>
             {playerA.graduation_year && <div style={{ color:muted, fontSize:'0.75rem' }}>Class of {playerA.graduation_year}</div>}
             {proA && <div style={{ marginTop:6, background:'#f0fdf4', color:'#15803d', fontSize:'0.72rem', fontWeight:700, padding:'3px 8px', borderRadius:4, display:'inline-block' }}>{proA}</div>}
@@ -216,11 +216,11 @@ export default async function ComparePage({ searchParams }: PageProps) {
           </div>
         </Link>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'center' }}>
-          <div style={{ background:gold, color:'#fff', fontFamily:'var(--font-bebas)', fontSize:'1.8rem', width:52, height:52, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', letterSpacing:1 }}>VS</div>
+          <div className="psp-h2" style={{ background:gold, color:'#fff', width:52, height:52, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center' }}>VS</div>
         </div>
         <Link href={`/players/${playerB.slug}`} style={{ textDecoration:'none' }}>
           <div style={{ background:'#fff', border:`2px solid ${navy}`, borderRadius:12, padding:'1.25rem', textAlign:'center' }}>
-            <div style={{ fontFamily:'var(--font-bebas)', fontSize:'1.6rem', color:navy, lineHeight:1.1 }}>{playerB.name}</div>
+            <div className="psp-h3" style={{ color:navy, lineHeight:1.1 }}>{playerB.name}</div>
             <div style={{ color:muted, fontSize:'0.8rem', marginTop:4 }}>{schoolName(playerB)}</div>
             {playerB.graduation_year && <div style={{ color:muted, fontSize:'0.75rem' }}>Class of {playerB.graduation_year}</div>}
             {proB && <div style={{ marginTop:6, background:'#f0fdf4', color:'#15803d', fontSize:'0.72rem', fontWeight:700, padding:'3px 8px', borderRadius:4, display:'inline-block' }}>{proB}</div>}
@@ -230,7 +230,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
       </div>
       {statRows.length > 0 ? (
         <div style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:'1.25rem 1.5rem' }}>
-          <h2 style={{ fontFamily:'var(--font-bebas)', fontSize:'1.5rem', color:navy, margin:'0 0 0.75rem', letterSpacing:'0.03em' }}>Career Stats</h2>
+          <h2 className="psp-h2" style={{ color:navy, margin:'0 0 0.75rem' }}>Career Stats</h2>
           {statRows.map((row) => <StatBlock key={row.label} {...row} />)}
         </div>
       ) : (

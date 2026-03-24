@@ -47,8 +47,7 @@ export default function RecordWatch({ sport, data }: RecordWatchProps) {
       >
         <div>
           <h3
-            className="text-lg font-bold text-white"
-            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+            className="psp-h3 text-white"
           >
             Record Watch
           </h3>

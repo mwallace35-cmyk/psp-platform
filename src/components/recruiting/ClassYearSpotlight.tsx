@@ -13,25 +13,6 @@ const SPORT_COLORS_HEX: Record<string, string> = {
   soccer: "#059669",
 };
 
-const SPORT_EMOJI: Record<string, string> = {
-  football: "\u{1F3C8}",
-  basketball: "\u{1F3C0}",
-  baseball: "\u26BE",
-  "track-field": "\u{1F3C3}",
-  lacrosse: "\u{1F94D}",
-  wrestling: "\u{1F93C}",
-  soccer: "\u26BD",
-};
-
-const SPORT_NAMES: Record<string, string> = {
-  football: "Football",
-  basketball: "Basketball",
-  baseball: "Baseball",
-  "track-field": "Track & Field",
-  lacrosse: "Lacrosse",
-  wrestling: "Wrestling",
-  soccer: "Soccer",
-};
 
 export interface ClassYearPlayer {
   personName: string;
@@ -104,93 +85,67 @@ export default function ClassYearSpotlight({ players, classYears }: ClassYearSpo
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filtered.map((player, i) => {
             const sportColor = SPORT_COLORS_HEX[player.sportId || "football"] || "#16a34a";
-            const sportEmoji = SPORT_EMOJI[player.sportId || "football"] || "\u{1F3C8}";
-            const sportName = SPORT_NAMES[player.sportId || "football"] || "Football";
             return (
               <div
                 key={`${player.personName}-${i}`}
-                className="rounded-xl overflow-hidden transition-shadow hover:shadow-md"
+                className="rounded-lg overflow-hidden transition-shadow hover:shadow-md"
                 style={{
                   backgroundColor: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.08)",
                   borderLeft: `3px solid ${sportColor}`,
                 }}
               >
-                <div className="p-3">
-                  <div className="flex items-start justify-between mb-1">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      {player.playerSlug ? (
-                        <Link
-                          href={`/players/${player.playerSlug}`}
-                          className="font-bold text-white text-sm hover:underline truncate"
-                          style={{ fontFamily: "DM Sans, sans-serif" }}
-                        >
-                          {player.personName}
-                        </Link>
-                      ) : (
-                        <span
-                          className="font-bold text-white text-sm truncate"
-                          style={{ fontFamily: "DM Sans, sans-serif" }}
-                        >
-                          {player.personName}
-                        </span>
-                      )}
-                      {player.positions && player.positions.length > 0 && (
-                        <span
-                          className="text-[10px] px-1.5 py-0.5 rounded-full shrink-0"
-                          style={{
-                            backgroundColor: "rgba(255,255,255,0.08)",
-                            color: "rgba(255,255,255,0.5)",
-                          }}
-                        >
-                          {player.positions[0]}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-sm shrink-0 ml-1" title={sportName}>
-                      {sportEmoji}
-                    </span>
+                <div className="px-3 py-2">
+                  <div className="flex items-center gap-1.5 min-w-0 mb-0.5">
+                    {player.playerSlug ? (
+                      <Link
+                        href={`/players/${player.playerSlug}`}
+                        className="font-bold text-white text-sm hover:underline truncate"
+                        style={{ fontFamily: "DM Sans, sans-serif" }}
+                      >
+                        {player.personName}
+                      </Link>
+                    ) : (
+                      <span
+                        className="font-bold text-white text-sm truncate"
+                        style={{ fontFamily: "DM Sans, sans-serif" }}
+                      >
+                        {player.personName}
+                      </span>
+                    )}
+                    {player.positions && player.positions.length > 0 && (
+                      <span
+                        className="text-[10px] text-gray-500 shrink-0"
+                      >
+                        {player.positions[0]}
+                      </span>
+                    )}
                   </div>
 
-                  {player.schoolName && (
-                    <div className="text-[11px] text-gray-400 mb-1.5">
-                      {player.schoolSlug ? (
-                        <Link
-                          href={`/schools/${player.schoolSlug}`}
-                          className="hover:underline"
-                        >
-                          {player.schoolName}
-                        </Link>
-                      ) : (
-                        player.schoolName
-                      )}
-                    </div>
-                  )}
-
-                  {player.college && (
-                    <div
-                      className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
-                      style={{
-                        backgroundColor: `${sportColor}20`,
-                        color: sportColor,
-                      }}
-                    >
-                      <svg
-                        className="w-2.5 h-2.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      {player.college}
-                    </div>
-                  )}
+                  <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                    {player.schoolName && (
+                      <>
+                        {player.schoolSlug ? (
+                          <Link
+                            href={`/schools/${player.schoolSlug}`}
+                            className="hover:underline"
+                          >
+                            {player.schoolName}
+                          </Link>
+                        ) : (
+                          <span>{player.schoolName}</span>
+                        )}
+                      </>
+                    )}
+                    {player.college && player.schoolName && (
+                      <span className="text-gray-600">&rarr;</span>
+                    )}
+                    {player.college && (
+                      <span style={{ color: sportColor, fontWeight: 600 }}>
+                        {player.college}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             );

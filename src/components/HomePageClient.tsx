@@ -89,7 +89,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         {/* ============ HERO SECTION ============ */}
         <section className="w-full px-5 py-20 md:py-40 bg-gradient-to-br from-[var(--psp-navy)] to-[#1a4d8f] text-white text-center relative overflow-hidden">
           <div className="max-w-4xl mx-auto relative z-10">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-wide" style={{ fontFamily: "var(--font-bebas)" }}>
+            <h1 className="psp-h1-lg mb-4 text-white">
               Philadelphia&apos;s Home for High School Sports
             </h1>
             <p className="text-lg md:text-xl mb-8 opacity-95 max-w-2xl mx-auto">
@@ -120,23 +120,23 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         <section className="w-full px-5 py-10 bg-gray-50 border-y border-gray-200">
           <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-4xl font-bold text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
+              <div className="psp-h1 text-[var(--psp-navy)]">
                 {stats.players.toLocaleString()}+
               </div>
               <div className="text-sm text-gray-600 mt-2">Players Tracked</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
+              <div className="psp-h1 text-[var(--psp-navy)]">
                 {stats.schools.toLocaleString()}+
               </div>
               <div className="text-sm text-gray-600 mt-2">Schools</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>3</div>
+              <div className="psp-h1 text-[var(--psp-navy)]">3</div>
               <div className="text-sm text-gray-600 mt-2">Sports Covered</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>50+</div>
+              <div className="psp-h1 text-[var(--psp-navy)]">50+</div>
               <div className="text-sm text-gray-600 mt-2">Years of Data</div>
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         {/* ============ RECENT SCORES TICKER ============ */}
         <section className="w-full px-5 py-10 bg-[var(--psp-navy)]">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6 text-white" style={{ fontFamily: "var(--font-bebas)" }}>
+            <h2 className="psp-h2 mb-6 text-white">
               Recent Scores
             </h2>
             <div className="flex overflow-x-auto gap-4 pb-3" style={{ WebkitOverflowScrolling: "touch" }}>
@@ -200,7 +200,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         {/* ============ FEATURED CONTENT GRID ============ */}
         <section className="w-full px-5 py-12">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
+            <h2 className="psp-h1 mb-8 text-[var(--psp-navy)]">
               Latest Coverage
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -239,7 +239,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         {/* ============ SPORT NAVIGATION CARDS ============ */}
         <section className="w-full px-5 py-12 bg-gray-50">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
+            <h2 className="psp-h1 mb-8 text-[var(--psp-navy)]">
               Explore by Sport
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -255,7 +255,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                   style={{ backgroundColor: sport.color }}
                 >
                   <span className="text-6xl">{sport.icon}</span>
-                  <h3 className="text-2xl font-semibold" style={{ fontFamily: "var(--font-bebas)" }}>
+                  <h3 className="psp-h3">
                     {sport.name}
                   </h3>
                   <p className="text-sm opacity-90">
@@ -270,7 +270,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         {/* ============ POTW SPOTLIGHT ============ */}
         <section className="w-full px-5 py-12 bg-white">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
+            <h2 className="psp-h1 mb-8 text-[var(--psp-navy)]">
               Player of the Week Spotlight
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -334,7 +334,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         {/* ============ NEWSLETTER CTA ============ */}
         <section className="w-full px-5 py-12 bg-gradient-to-br from-[var(--psp-navy)] to-[#1a4d8f] text-white">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-bebas)" }}>
+            <h2 className="psp-h1 mb-4">
               Stay Updated
             </h2>
             <p className="text-base mb-8 opacity-95 leading-relaxed">
@@ -356,7 +356,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         {/* ============ QUICK COMMUNITY PULSE ============ */}
         <section className="w-full px-5 py-12 bg-gray-50">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold mb-4 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
+            <h2 className="psp-h1 mb-4 text-[var(--psp-navy)]">
               Community Hot Takes
             </h2>
             <p className="text-sm text-gray-600 mb-8 max-w-2xl">
@@ -407,7 +407,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
         {/* ============ PHILLY EVERYWHERE (ALUMNI) ============ */}
         <section className="w-full px-5 py-12 bg-white">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-[var(--psp-navy)]" style={{ fontFamily: "var(--font-bebas)" }}>
+            <h2 className="psp-h1 mb-8 text-[var(--psp-navy)]">
               Philly Everywhere
             </h2>
             <p className="text-base text-gray-600 mb-8 max-w-2xl">

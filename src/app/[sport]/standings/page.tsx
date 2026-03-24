@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
+import SkeletonTable from "@/components/ui/SkeletonTable";
 import SeasonSelector from "./SeasonSelector";
 import {
   SPORT_META,
@@ -122,9 +123,9 @@ export default async function StandingsPage({ params, searchParams }: { params: 
 
       <div className="min-h-screen bg-[#0a1628]">
         {/* Hero Section */}
-        <div className="border-b-4 border-[var(--psp-gold)] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="border-b-4 border-[var(--psp-gold)] px-4 py-8 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />
-          <div className="mt-8 max-w-6xl">
+          <div className="mt-8 max-w-7xl">
             <h1 className="text-4xl font-bold text-white sm:text-5xl">
               {meta.name} <span className="text-[var(--psp-gold)]">Standings</span>
             </h1>
@@ -135,15 +136,12 @@ export default async function StandingsPage({ params, searchParams }: { params: 
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-3 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Standings Column */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <Suspense
-              fallback={
-                <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-400">
-                  Loading standings...
-                </div>
-              }
+              fallback={<SkeletonTable rows={8} columns={5} />}
             >
               <StandingsLoader sport={sport} season={season} />
             </Suspense>
@@ -176,6 +174,7 @@ export default async function StandingsPage({ params, searchParams }: { params: 
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </>

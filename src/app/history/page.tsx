@@ -69,14 +69,14 @@ export default async function HistoryPage() {
   return (
     <div className="min-h-screen bg-[#0a1628]">
       <div className="bg-gradient-to-b from-[#0a1628] to-[#0f1e30] border-b border-[#f0a500]/20 py-14 px-4">
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-7xl mx-auto text-center">
           <p className="text-[#f0a500] text-sm font-semibold uppercase tracking-widest mb-3">Archive</p>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4">This Week in PSP History</h1>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">141 seasons. 55,000+ players. 1,700+ championships. The moments that made Philadelphia high school sports legendary.</p>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-12 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 py-12 space-y-16">
 
         <section>
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2"><span>⭐</span> Legendary Moments</h2>

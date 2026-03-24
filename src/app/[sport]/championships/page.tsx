@@ -133,7 +133,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
       <section className="py-10" style={{ background: "var(--psp-navy)" }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{ label: meta.name, href: `/${sport}` }, { label: "Championships" }]} />
-          <h1 className="text-4xl md:text-5xl text-white mb-3" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="psp-h1 text-white mb-3">
             <span aria-hidden="true">{meta.emoji}</span> {meta.name} Championships
           </h1>
           <div className="flex flex-wrap gap-4 text-sm">
@@ -158,9 +158,9 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
       <PSPPromo size="banner" variant={3} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             {/* Data Source Badge & Methodology */}
             <div>
               <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -196,7 +196,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                 {/* Year header */}
                 <div className="px-5 py-3 flex items-center justify-between"
                   style={{ background: "var(--psp-navy)", borderBottom: "2px solid var(--psp-gold)" }}>
-                  <h2 className="text-xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h2 className="psp-h3 text-white">
                     {yearData.label}
                   </h2>
                   <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(240,165,0,0.15)", color: "var(--psp-gold)" }}>
@@ -308,7 +308,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             {unknownGroup && unknownGroup.champs.length > 0 && (
               <div className="rounded-xl overflow-hidden border" style={{ borderColor: "var(--psp-gray-700, #374151)" }}>
                 <div className="px-5 py-3" style={{ background: "var(--psp-navy)", borderBottom: "2px solid var(--psp-gray-500)" }}>
-                  <h2 className="text-xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h2 className="psp-h3 text-white">
                     Undated Championships
                   </h2>
                 </div>
@@ -344,7 +344,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
               <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
                 <div className="text-center">
                   <div className="text-6xl mb-4">🏆</div>
-                  <h3 className="text-2xl font-bold mb-3 text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h3 className="psp-h2 text-white mb-3">
                     Coming Soon
                   </h3>
                   <p className="text-lg text-gray-300 mb-6 max-w-md mx-auto">
@@ -367,7 +367,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             {/* State dynasty (most prestigious) */}
             {stateDynasties.length > 0 && (
               <div className="rounded-xl border p-5" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "var(--psp-navy-mid, #0f2040)" }}>
-                <h3 className="text-lg font-bold mb-1 text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                <h3 className="psp-h4 text-white mb-1">
                   🏆 State Title Leaders
                 </h3>
                 <p className="text-xs mb-4" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
@@ -395,7 +395,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
 
             {/* All-time dynasty */}
             <div className="rounded-xl border p-5" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "var(--psp-navy-mid, #0f2040)" }}>
-              <h3 className="text-lg font-bold mb-1 text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <h3 className="psp-h4 text-white mb-1">
                 🎖️ All-Time Title Leaders
               </h3>
               <p className="text-xs mb-4" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>

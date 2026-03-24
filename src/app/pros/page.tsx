@@ -81,7 +81,7 @@ export default async function ProsPage({
 
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-navy to-navy-mid py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <Breadcrumb items={breadcrumbs} />
 
           <div className="mt-6">
@@ -123,7 +123,7 @@ export default async function ProsPage({
 
       {/* Sport Filter Tabs */}
       <div className="border-b border-gray-200 bg-white sticky top-14 z-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-4 overflow-x-auto">
             {[
               { slug: "all", label: "All Sports" },
@@ -148,7 +148,7 @@ export default async function ProsPage({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Pro Player Grid */}
           <div className="lg:col-span-3">

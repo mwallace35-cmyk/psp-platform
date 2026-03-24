@@ -51,8 +51,8 @@ export default function RecordTimeline({
     <section className="mb-12">
       <div className="mb-6">
         <h2
-          className="text-2xl font-bold mb-2"
-          style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+          className="psp-h2 mb-2"
+          style={{ color: "var(--psp-navy)" }}
         >
           📅 Longest-Held Records
         </h2>
@@ -134,7 +134,7 @@ export default function RecordTimeline({
                 </div>
 
                 <div className="text-right flex-shrink-0">
-                  <div className="text-2xl font-bold" style={{ color: "var(--psp-gold)", fontFamily: "Bebas Neue, sans-serif" }}>
+                  <div className="psp-h2" style={{ color: "var(--psp-gold)" }}>
                     {record.yearsHeld}
                   </div>
                   <div className="text-xs text-gray-500 mt-1">

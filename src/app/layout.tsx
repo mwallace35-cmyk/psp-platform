@@ -10,6 +10,7 @@ import MobileBottomNav from "@/components/nav/MobileBottomNav";
 import ScoreTicker from "@/components/home/ScoreTicker";
 import PushNotificationBanner from "@/components/ui/PushNotificationBanner";
 import OnboardingWrapper from "@/components/onboarding/OnboardingWrapper";
+import { Toaster } from "sonner";
 import "./globals.css";
 import "./type-scale.css";
 
@@ -158,6 +159,7 @@ gtag('config', '${gaId}');
         <MobileBottomNav />
         <PushNotificationBanner />
         <OnboardingWrapper />
+        <Toaster position="bottom-right" theme="dark" richColors />
       </body>
     </html>
   );

@@ -29,10 +29,10 @@ async function PipelineContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       {/* Hero Section */}
-      <div className="mb-12">
+      <div className="mb-8">
         <h1
-          className="text-5xl font-bold mb-2"
-          style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}
+          className="psp-h1 mb-2"
+          style={{ color: "var(--psp-navy)" }}
         >
           College Pipeline
         </h1>
@@ -43,14 +43,14 @@ async function PipelineContent() {
         {/* Stats removed per design spec — data appears in context below */}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           {/* Colleges Section */}
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
             <h2
-              className="text-2xl font-bold mb-6"
-              style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}
+              className="psp-h2 mb-6"
+              style={{ color: "var(--psp-navy)" }}
             >
               Colleges ({collegePipeline.length})
             </h2>
@@ -95,8 +95,8 @@ async function PipelineContent() {
           {/* Top Pipeline Schools */}
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h3
-              className="text-lg font-bold mb-4"
-              style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}
+              className="psp-h3 mb-4"
+              style={{ color: "var(--psp-navy)" }}
             >
               Top College Producers
             </h3>
@@ -147,8 +147,8 @@ export default function CollegePipelinePage() {
       fallback={
         <div className="max-w-7xl mx-auto px-4 py-12">
           <SkeletonCard showImage={false} showTitle={true} />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-8">
+            <div className="lg:col-span-3">
               <SkeletonCard showImage={false} />
             </div>
             <div>

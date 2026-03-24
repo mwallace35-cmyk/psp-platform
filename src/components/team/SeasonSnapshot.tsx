@@ -29,8 +29,8 @@ export function SeasonSnapshot({
         <div className="flex justify-between items-start">
           <dt className="text-sm font-semibold text-gray-600">Record</dt>
           <dd
-            className="text-3xl font-bold"
-            style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+            className="psp-h1"
+            style={{ color: "var(--psp-navy)" }}
           >
             {wins}-{losses}{ties > 0 ? `-${ties}` : ""}
           </dd>

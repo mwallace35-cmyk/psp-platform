@@ -53,7 +53,7 @@ export default async function TransfersPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">Transfer Tracker</h1>
           <p className="text-gray-300 text-lg">Tracking player movement across Philadelphia high school programs</p>
           <p className="text-gold font-bold mt-4">{countRes.count ?? 0} transfers tracked</p>

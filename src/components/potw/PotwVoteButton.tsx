@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 
 interface PotwVoteButtonProps {
@@ -88,6 +89,7 @@ export default function PotwVoteButton({ nomineeId, playerName = "Player" }: Pot
       setHasVoted(true);
       setVoteSuccess(true);
       setAnnouncementText(`Vote for ${playerName} submitted successfully`);
+      toast.success('Vote recorded!');
       localStorage.setItem(`potw-voted-${weekLabel}`, nomineeId);
 
       // Reload page to show updated vote counts

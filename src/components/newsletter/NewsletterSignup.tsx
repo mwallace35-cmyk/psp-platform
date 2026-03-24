@@ -124,8 +124,7 @@ export default function NewsletterSignup({ variant = 'card' }: NewsletterSignupP
   return (
     <div className="rounded-lg p-6" style={{ background: 'var(--psp-navy)' }}>
       <h3
-        className="text-xl font-bold text-white mb-2 tracking-wider"
-        style={{ fontFamily: 'Bebas Neue, sans-serif' }}
+        className="psp-h3 text-white mb-2"
       >
         Stay in the Game
       </h3>

@@ -127,8 +127,8 @@ export default function SimilarPlayers({
                 </div>
                 <div className="text-right flex-shrink-0">
                   <div
-                    className="text-lg font-bold"
-                    style={{ color: "var(--psp-gold)", fontFamily: "Bebas Neue, sans-serif" }}
+                    className="psp-h3"
+                    style={{ color: "var(--psp-gold)" }}
                   >
                     {player.similarity_score}%
                   </div>

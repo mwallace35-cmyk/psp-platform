@@ -225,11 +225,11 @@ export default function CoachesFilter({
                       {sportEmojis[coach.sport] || "📋"}
                     </span>
                     <h3
+                      className="psp-h4"
                       style={{
                         margin: 0,
                         fontSize: 16,
                         fontWeight: 700,
-                        fontFamily: "'Bebas Neue', sans-serif",
                       }}
                     >
                       {coach.name}

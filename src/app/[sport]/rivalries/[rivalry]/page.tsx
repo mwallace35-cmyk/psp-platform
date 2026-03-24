@@ -231,10 +231,10 @@ export default async function RivalryDetailPage({
 
       <PSPPromo size="banner" variant={1} />
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             {/* Game History Table */}
             <section>
               <h2 className="text-2xl font-bold text-white mb-4 font-heading">Game History</h2>

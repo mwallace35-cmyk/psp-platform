@@ -306,8 +306,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1
-                  className="text-4xl md:text-5xl text-white tracking-wider"
-                  style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                  className="psp-h1 text-white"
                 >
                   {school.name}
                 </h1>
@@ -345,20 +344,20 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           {teamSeason && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl">
               <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                <div className="psp-h2 text-white">
                   {wins}-{losses}{ties > 0 ? `-${ties}` : ""}
                 </div>
                 <div className="text-xs text-gray-400">Season Record</div>
               </div>
               <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                <div className="psp-h2 text-white">
                   {winPctDisplay}
                 </div>
                 <div className="text-xs text-gray-400">Win %</div>
               </div>
               {teamSeason.points_for !== null && (
                 <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                  <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <div className="psp-h2 text-white">
                     {teamSeason.points_for}
                   </div>
                   <div className="text-xs text-gray-400">Points For</div>
@@ -366,7 +365,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               )}
               {teamSeason.points_against !== null && (
                 <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-                  <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <div className="psp-h2 text-white">
                     {teamSeason.points_against}
                   </div>
                   <div className="text-xs text-gray-400">Points Against</div>
@@ -380,7 +379,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <div className="mt-8 max-w-3xl">
               <div className="rounded-xl p-6" style={{ background: "rgba(240, 165, 0, 0.1)", border: "2px solid rgba(240, 165, 0, 0.3)" }}>
                 <div className="text-sm text-gray-300 mb-2">🏟️ Season Kicks Off</div>
-                <div className="text-3xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                <div className="psp-h1 text-white">
                   {games[0]?.game_date
                     ? new Date(games[0].game_date).toLocaleDateString("en-US", {
                       month: "long",
@@ -445,8 +444,8 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         )}
 
         {/* Games Section */}
-        <section id="schedule" className="mb-12 scroll-mt-16">
-          <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+        <section id="schedule" className="mb-8 scroll-mt-16">
+          <h2 className="psp-h2 mb-6">
             {isPreview ? "Schedule" : "Schedule & Results"}
           </h2>
           {games.length > 0 ? (
@@ -565,8 +564,8 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Players to Watch Section (Preview Mode) */}
         {isPreview && returningPlayers.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <section className="mb-8">
+            <h2 className="psp-h2 mb-6">
               Players to Watch 👀
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -603,10 +602,9 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Departed Seniors Section (Preview Mode - Collapsible) */}
         {isPreview && returningPlayers.filter((p) => p.is_senior).length > 0 && (
-          <details className="mb-12">
+          <details className="mb-8">
             <summary
-              className="text-xl font-bold text-gray-400 mb-4 cursor-pointer hover:text-gray-300"
-              style={{ fontFamily: "Bebas Neue, sans-serif" }}
+              className="psp-h3 text-gray-400 mb-4 cursor-pointer hover:text-gray-300"
             >
               Departed Seniors ({returningPlayers.filter((p) => p.is_senior).length})
             </summary>
@@ -628,8 +626,8 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Returning Roster (Preview Mode) */}
         {isPreview && rosterReturning.length > 0 && (
-          <section id="roster" className="mb-12 scroll-mt-16">
-            <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <section id="roster" className="mb-8 scroll-mt-16">
+            <h2 className="psp-h2 mb-2">
               {season} Roster {isPreview && roster.length === 0 ? "(Projected)" : ""}
             </h2>
             <p className="text-sm text-gray-400 mb-6">
@@ -644,15 +642,15 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Last Season Recap Section (Preview Mode) */}
         {isPreview && lastSeasonRecap && (
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <section className="mb-8">
+            <h2 className="psp-h2 mb-6">
               {lastSeasonRecap.season_label} Recap
             </h2>
             <div className="rounded-lg p-6" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }}>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 <div>
                   <div className="text-xs text-gray-400 mb-1">Record</div>
-                  <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <div className="psp-h2 text-white">
                     {lastSeasonRecap.wins}-{lastSeasonRecap.losses}
                     {lastSeasonRecap.ties > 0 ? `-${lastSeasonRecap.ties}` : ""}
                   </div>
@@ -660,7 +658,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 {lastSeasonRecap.points_for !== null && (
                   <div>
                     <div className="text-xs text-gray-400 mb-1">Points For</div>
-                    <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                    <div className="psp-h2 text-white">
                       {lastSeasonRecap.points_for}
                     </div>
                   </div>
@@ -668,7 +666,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 {lastSeasonRecap.points_against !== null && (
                   <div>
                     <div className="text-xs text-gray-400 mb-1">Points Against</div>
-                    <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                    <div className="psp-h2 text-white">
                       {lastSeasonRecap.points_against}
                     </div>
                   </div>
@@ -707,8 +705,8 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Historical Matchups Section (Preview Mode) */}
         {isPreview && matchupHistories.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-6" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <section className="mb-8">
+            <h2 className="psp-h2 mb-6">
               Head-to-Head History
             </h2>
             <div className="overflow-x-auto">
@@ -745,12 +743,12 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Roster & Stats Section */}
         {!isPreview && (
-          <section id="roster" className="mb-12 scroll-mt-16">
+          <section id="roster" className="mb-8 scroll-mt-16">
             {/* Stats anchor */}
             <div id="stats" className="scroll-mt-16" />
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="psp-h2 mb-2">
                   Roster & Stats
                 </h2>
                 <p className="text-sm text-gray-400">{roster.length} players on record</p>
@@ -991,9 +989,9 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
         {/* Sidebar for Preview Mode */}
         {isPreview && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
             {/* Main Content */}
-            <div className="lg:col-span-2" />
+            <div className="lg:col-span-3" />
 
             {/* Sidebar */}
             <div className="space-y-6">
@@ -1003,7 +1001,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                   className="rounded-lg p-4"
                   style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }}
                 >
-                  <h3 className="text-lg font-bold text-white mb-4" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h3 className="psp-h3 text-white mb-4">
                     Strength of Schedule
                   </h3>
                   <div className="space-y-2 text-sm">
@@ -1029,7 +1027,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                   className="rounded-lg p-4"
                   style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }}
                 >
-                  <h3 className="text-lg font-bold text-white mb-4" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h3 className="psp-h3 text-white mb-4">
                     League Outlook
                   </h3>
                   <div className="space-y-2 text-xs">
@@ -1061,7 +1059,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                   className="rounded-lg p-4"
                   style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }}
                 >
-                  <h3 className="text-lg font-bold text-white mb-4" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h3 className="psp-h3 text-white mb-4">
                     College & Pro Alumni
                   </h3>
                   <div className="space-y-2 text-sm">

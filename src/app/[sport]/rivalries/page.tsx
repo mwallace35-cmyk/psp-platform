@@ -150,7 +150,7 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
         {/* Hero Section */}
         <div className="border-b-4 border-[var(--psp-gold)] px-4 py-12 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />
-          <div className="mt-8 max-w-6xl">
+          <div className="mt-8 max-w-7xl">
             <h1 className="text-4xl font-bold text-white sm:text-5xl">
               {meta.name} <span className="text-[var(--psp-gold)]">Rivalries</span>
             </h1>
@@ -161,10 +161,11 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-3 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Featured Rivalry */}
           {topRivalry && (
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <div className="mb-8">
                 <h2 className="mb-4 text-2xl font-bold text-white">🔥 Featured Rivalry</h2>
                 <RivalryCard rivalry={topRivalry} sport={sport} />
@@ -231,6 +232,7 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </>

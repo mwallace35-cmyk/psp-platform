@@ -21,8 +21,8 @@ export default function TeamStats({ team }: TeamStatsProps) {
     <div className="space-y-6">
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h2
-          className="text-xl font-bold mb-4"
-          style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+          className="psp-h3 mb-4"
+          style={{ color: "var(--psp-navy)" }}
         >
           Team Statistics
         </h2>
@@ -57,8 +57,8 @@ export default function TeamStats({ team }: TeamStatsProps) {
 
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h2
-          className="text-xl font-bold mb-4"
-          style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+          className="psp-h3 mb-4"
+          style={{ color: "var(--psp-navy)" }}
         >
           Statistical Leaders
         </h2>

@@ -14,10 +14,10 @@ export default function NotFound() {
     <div className="min-h-screen bg-gradient-to-r from-navy to-navy-mid flex flex-col items-center justify-center px-4">
       <div className="text-center max-w-2xl">
         {/* 404 Number */}
-        <div className="text-9xl font-bebas text-gold mb-4">404</div>
+        <div className="psp-h1 text-9xl text-gold mb-4">404</div>
 
         {/* Message */}
-        <h1 className="text-4xl font-bebas text-white mb-4">Page Not Found</h1>
+        <h1 className="psp-h1 text-white mb-4">Page Not Found</h1>
         <p className="text-gold text-lg mb-8">
           Sorry, we can't find the page you're looking for.
         </p>

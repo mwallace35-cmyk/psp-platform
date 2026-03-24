@@ -79,11 +79,9 @@ export default function ShareableStatCard({
         {/* Stat value (large and prominent) */}
         <div className="mb-6">
           <div
-            className="text-6xl font-bold mb-2"
+            className="psp-h1 mb-2"
             style={{
               color: 'var(--psp-gold)',
-              fontFamily: 'Bebas Neue, sans-serif',
-              letterSpacing: '0.05em',
             }}
           >
             {statValue}

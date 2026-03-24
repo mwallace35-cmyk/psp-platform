@@ -62,7 +62,7 @@ export default function PlayerReactions({ playerSlug }: PlayerReactionsProps) {
 
   return (
     <div style={{ margin: '1.5rem 0', padding: '1rem 1.25rem', background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12 }}>
-      <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '0.85rem', color: '#9ca3af', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>REACT</div>
+      <div className="psp-caption" style={{ marginBottom: '0.75rem' }}>REACT</div>
       <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' as const }}>
         {REACTIONS.map(({ emoji, label, key }) => {
           const hasReacted = reacted.has(key);

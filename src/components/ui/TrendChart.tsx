@@ -31,7 +31,7 @@ function TrendChart({
   if (!data || data.length === 0) {
     return (
       <div className="rounded-lg bg-white border border-[var(--psp-gray-200)] p-6">
-        <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
+        <h3 className="psp-h3 mb-4" style={{ color: 'var(--psp-navy)' }}>
           {title}
         </h3>
         <div className="text-center py-8 text-gray-500">No data available</div>
@@ -80,7 +80,7 @@ function TrendChart({
   return (
     <div className="rounded-lg bg-white border border-[var(--psp-gray-200)] p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold" style={{ color: 'var(--psp-navy)', fontFamily: 'Bebas Neue, sans-serif' }}>
+        <h3 className="psp-h3" style={{ color: 'var(--psp-navy)' }}>
           {title}
         </h3>
         <div className="flex items-center gap-2">

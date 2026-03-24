@@ -124,11 +124,10 @@ export default async function PlayerPage({ params }: PageProps) {
   const gold = 'var(--psp-gold, #c8a84b)';
   const muted = 'var(--psp-muted, #6b7280)';
   const card = 'var(--psp-card-bg, #f8f9fc)';
-  const bebas = 'var(--font-bebas, "Bebas Neue", sans-serif)';
 
   const statBox = (value: number | string, label: string) => (
     <div style={{ textAlign: 'center', background: '#fff', borderRadius: '8px', padding: '0.75rem 0.5rem' }}>
-      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: navy, fontFamily: bebas, letterSpacing: '0.03em' }}>
+      <div className="psp-h3" style={{ color: navy }}>
         {typeof value === 'number' ? value.toLocaleString() : value}
       </div>
       <div style={{ fontSize: '0.68rem', color: muted, textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: '0.1rem' }}>
@@ -158,7 +157,7 @@ export default async function PlayerPage({ params }: PageProps) {
       <div style={{ background: navy, borderRadius: '12px', padding: 'clamp(1.5rem, 4vw, 2.5rem)', marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
           <div>
-            <h1 style={{ fontFamily: bebas, fontSize: 'clamp(2.5rem, 6vw, 4rem)', color: '#fff', letterSpacing: '0.05em', margin: 0, lineHeight: 1 }}>
+            <h1 className="psp-h1-lg" style={{ color: '#fff', margin: 0, lineHeight: 1 }}>
               {player.name}
             </h1>
             {school && (
@@ -203,7 +202,7 @@ export default async function PlayerPage({ params }: PageProps) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
         {footballSeasons.length > 0 && (
           <div style={{ background: card, borderRadius: '12px', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
-            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>🏈 FOOTBALL CAREER</h2>
+            <h2 className="psp-h2" style={{ color: navy, margin: '0 0 1rem' }}>🏈 FOOTBALL CAREER</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem', marginBottom: '1.25rem' }}>
               {(fbTotals.rush_yards ?? 0) > 0 && statBox(fbTotals.rush_yards, 'Rush Yds')}
               {(fbTotals.rush_td ?? 0) > 0 && statBox(fbTotals.rush_td, 'Rush TDs')}
@@ -226,7 +225,7 @@ export default async function PlayerPage({ params }: PageProps) {
 
         {basketballSeasons.length > 0 && (
           <div style={{ background: card, borderRadius: '12px', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
-            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>🏀 BASKETBALL CAREER</h2>
+            <h2 className="psp-h2" style={{ color: navy, margin: '0 0 1rem' }}>🏀 BASKETBALL CAREER</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.625rem', marginBottom: '1.25rem' }}>
               {(bkTotals.points ?? 0) > 0 && statBox(bkTotals.points, 'Points')}
               {(bkTotals.rebounds ?? 0) > 0 && statBox(bkTotals.rebounds, 'Rebounds')}
@@ -246,7 +245,7 @@ export default async function PlayerPage({ params }: PageProps) {
 
         {proTracking && (
           <div style={{ background: card, borderRadius: '12px', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
-            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>⭐ CAREER TRAJECTORY</h2>
+            <h2 className="psp-h2" style={{ color: navy, margin: '0 0 1rem' }}>⭐ CAREER TRAJECTORY</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {proTracking.college && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem', background: '#fff', borderRadius: '8px' }}>
@@ -274,7 +273,7 @@ export default async function PlayerPage({ params }: PageProps) {
 
         {articles.length > 0 && (
           <div style={{ background: card, borderRadius: '12px', padding: '1.5rem', border: '1px solid #e5e7eb' }}>
-            <h2 style={{ fontFamily: bebas, fontSize: '1.5rem', color: navy, margin: '0 0 1rem', letterSpacing: '0.05em' }}>📰 IN THE NEWS</h2>
+            <h2 className="psp-h2" style={{ color: navy, margin: '0 0 1rem' }}>📰 IN THE NEWS</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
               {articles.map((article: any) => (
                 <Link key={article.id} href={`/news/${article.slug}`} style={{ display: 'block', padding: '0.75rem', background: '#fff', borderRadius: '8px', textDecoration: 'none', border: '1px solid #e5e7eb' }}>

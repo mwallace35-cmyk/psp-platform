@@ -114,9 +114,9 @@ function RecruiterPortalContent() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           {/* Search & Filter Form */}
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
             <form onSubmit={handleSearch} className="space-y-4">

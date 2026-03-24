@@ -140,7 +140,7 @@ export default function CareerStatsDashboard({ sport, stats }: Props) {
                 </span>
               )}
             </div>
-            <p className="text-2xl font-black text-[var(--psp-navy,#0a1628)]" style={{ fontFamily: 'Bebas Neue, sans-serif' }}>
+            <p className="psp-h2 text-[var(--psp-navy,#0a1628)]">
               {card.value}
             </p>
             <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">{card.label}</p>

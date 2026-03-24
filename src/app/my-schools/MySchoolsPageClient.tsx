@@ -77,9 +77,7 @@ export default function MySchoolsPageClient() {
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1rem', minHeight: '60vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{
-          fontSize: '2.5rem',
-          fontFamily: 'var(--font-bebas)',
+        <h1 className="psp-h1" style={{
           marginBottom: '0.5rem',
           color: 'var(--psp-navy)',
         }}>
@@ -115,9 +113,7 @@ export default function MySchoolsPageClient() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
         {/* My Bookmarked Schools */}
         <div>
-          <h2 style={{
-            fontSize: '1.5rem',
-            fontFamily: 'var(--font-bebas)',
+          <h2 className="psp-h2" style={{
             marginBottom: '1rem',
             color: 'var(--psp-navy)',
           }}>
@@ -184,9 +180,7 @@ export default function MySchoolsPageClient() {
 
         {/* Popular Schools to Add */}
         <div>
-          <h2 style={{
-            fontSize: '1.5rem',
-            fontFamily: 'var(--font-bebas)',
+          <h2 className="psp-h2" style={{
             marginBottom: '1rem',
             color: 'var(--psp-navy)',
           }}>

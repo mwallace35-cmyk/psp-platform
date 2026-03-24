@@ -99,7 +99,7 @@ export default async function ForumPage({
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">The Forum</h1>
           <p className="text-gray-300 text-lg">Debate, predict, talk trash. This is your space.</p>
           <div className="flex gap-6 mt-4 text-sm">
@@ -112,7 +112,7 @@ export default async function ForumPage({
       <PulseNav />
 
       {/* Community redirect banner */}
-      <div className="max-w-6xl mx-auto px-4 pt-6">
+      <div className="max-w-7xl mx-auto px-4 pt-6">
         <div className="bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/30 rounded-lg p-4 flex items-center gap-3">
           <span className="text-2xl">🏆</span>
           <div className="flex-1">
@@ -125,7 +125,7 @@ export default async function ForumPage({
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
           {/* Sidebar — Categories */}

@@ -24,7 +24,7 @@ export default function RecruitPage() {
   if (status === 'success') return (
     <div style={{ maxWidth: 560, margin: '6rem auto', padding: '0 1rem', textAlign: 'center' }}>
       <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏆</div>
-      <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.4rem', color: navy }}>You&apos;re on the radar!</h2>
+      <h2 className="psp-h1" style={{ color: navy }}>You&apos;re on the radar!</h2>
       <p style={{ color: muted, lineHeight: 1.6, fontSize: '0.95rem' }}>Your recruiting profile has been submitted. College coaches browsing PhillySportsPack will be able to see your interest. We&apos;ll reach out if there&apos;s a match.</p>
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginTop: '1.5rem' }}>
         <a href="/" style={{ background: navy, color: '#fff', padding: '0.6rem 1.2rem', borderRadius: 8, fontWeight: 700, textDecoration: 'none', fontSize: '0.88rem' }}>Home</a>
@@ -37,7 +37,7 @@ export default function RecruitPage() {
   const labelStyle: React.CSSProperties = { display: 'block', fontWeight: 700, fontSize: '0.78rem', color: navy, marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.05em' };
   const sectionHead = (label: string) => (
     <div style={{ borderBottom: `2px solid ${gold}`, paddingBottom: '0.4rem', marginBottom: '0.1rem' }}>
-      <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.1rem', color: navy, letterSpacing: '0.05em' }}>{label}</span>
+      <span className="psp-h4" style={{ color: navy }}>{label}</span>
     </div>
   );
 
@@ -45,7 +45,7 @@ export default function RecruitPage() {
     <div style={{ maxWidth: 680, margin: '3rem auto', padding: '0 1rem 5rem' }}>
       <div style={{ marginBottom: '2rem' }}>
         <a href="/" style={{ color: gold, fontWeight: 600, fontSize: '0.82rem', textDecoration: 'none' }}>{String.fromCharCode(8592)} Home</a>
-        <h1 style={{ fontFamily: 'var(--font-bebas)', fontSize: '3rem', color: navy, margin: '0.5rem 0 0.25rem', letterSpacing: '0.03em' }}>Recruiting Interest</h1>
+        <h1 className="psp-h1" style={{ color: navy, margin: '0.5rem 0 0.25rem' }}>Recruiting Interest</h1>
         <p style={{ color: muted, fontSize: '0.9rem', lineHeight: 1.5, maxWidth: 500 }}>
           Are you a Philly-area student-athlete looking for college opportunities? Register your interest and get discovered by coaches browsing the platform.
         </p>
@@ -113,7 +113,8 @@ export default function RecruitPage() {
         {status === 'error' && <p style={{ color: '#ef4444', fontSize: '0.85rem', margin: 0 }}>Something went wrong. Please try again.</p>}
 
         <button type="submit" disabled={status === 'submitting'}
-          style={{ background: status === 'submitting' ? '#9ca3af' : gold, color: '#fff', border: 'none', borderRadius: 8, padding: '0.8rem', fontFamily: 'var(--font-bebas)', fontSize: '1.2rem', letterSpacing: '0.06em', cursor: status === 'submitting' ? 'not-allowed' : 'pointer' }}>
+          className="psp-h4"
+          style={{ background: status === 'submitting' ? '#9ca3af' : gold, color: '#fff', border: 'none', borderRadius: 8, padding: '0.8rem', cursor: status === 'submitting' ? 'not-allowed' : 'pointer' }}>
           {status === 'submitting' ? 'Submitting…' : '🏆 Submit Recruiting Profile'}
         </button>
       </form>

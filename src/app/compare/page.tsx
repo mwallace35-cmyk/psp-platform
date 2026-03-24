@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function ComparePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}>
+        <h1 className="psp-h1 mb-2" style={{ color: "var(--psp-navy)" }}>
           Compare Players
         </h1>
         <p className="text-gray-500 mb-8">

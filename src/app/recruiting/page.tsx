@@ -377,8 +377,7 @@ async function RecruitingContent() {
           </nav>
 
           <h1
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-1"
-            style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "1px" }}
+            className="psp-h1 text-white mb-1"
           >
             Philly Recruiting Central
           </h1>
@@ -447,7 +446,6 @@ async function RecruitingContent() {
                           style={{
                             backgroundColor: isTop ? "#f0a500" : "rgba(255,255,255,0.1)",
                             color: isTop ? "#0a1628" : "rgba(255,255,255,0.7)",
-                            fontFamily: "Bebas Neue, sans-serif",
                             fontSize: "0.8rem",
                           }}
                         >
@@ -457,7 +455,6 @@ async function RecruitingContent() {
                           className="text-lg font-bold"
                           style={{
                             color: isTop ? "#f0a500" : "rgba(255,255,255,0.9)",
-                            fontFamily: "Bebas Neue, sans-serif",
                           }}
                         >
                           {school.total}
@@ -527,16 +524,14 @@ async function RecruitingContent() {
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span
-                      className="text-[10px] font-bold text-gray-500"
-                      style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                      className="psp-micro text-gray-500"
                     >
                       #{index + 1}
                     </span>
                     <span
-                      className="text-lg font-bold"
+                      className="psp-h3"
                       style={{
                         color: index === 0 ? "#f0a500" : "rgba(255,255,255,0.9)",
-                        fontFamily: "Bebas Neue, sans-serif",
                       }}
                     >
                       {dest.count}
@@ -591,8 +586,7 @@ async function RecruitingContent() {
                   >
                     <span className="text-sm">{emoji}</span>
                     <span
-                      className="font-bold"
-                      style={{ color: sportHex, fontFamily: "Bebas Neue, sans-serif" }}
+                      className="psp-h3" style={{ color: sportHex }}
                     >
                       {count.toLocaleString()}
                     </span>
@@ -618,10 +612,8 @@ async function RecruitingContent() {
             }}
           >
             <h2
-              className="text-3xl sm:text-4xl font-bold mb-2"
+              className="psp-h1 mb-2"
               style={{
-                fontFamily: "Bebas Neue, sans-serif",
-                letterSpacing: "0.5px",
                 color: "#0a1628",
               }}
             >
@@ -672,11 +664,9 @@ async function RecruitingContent() {
 function SectionHeader({ title }: { title: string }) {
   return (
     <h2
-      className="text-xl sm:text-2xl font-bold mb-4"
+      className="psp-h2 mb-4"
       style={{
-        fontFamily: "Bebas Neue, sans-serif",
         color: "rgba(255,255,255,0.9)",
-        letterSpacing: "0.5px",
       }}
     >
       {title}
@@ -706,8 +696,8 @@ function StatPill({
       }}
     >
       <span
-        className="text-lg font-bold leading-none"
-        style={{ color: "#f0a500", fontFamily: "Bebas Neue, sans-serif" }}
+        className="psp-h3 leading-none"
+        style={{ color: "#f0a500" }}
       >
         {value}
       </span>

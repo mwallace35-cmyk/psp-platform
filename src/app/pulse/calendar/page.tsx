@@ -95,7 +95,7 @@ export default async function CalendarPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bebas text-white mb-2">{seasonLabel} Game Schedule</h1>
           <p className="text-gray-300 text-lg">Full football schedule for Public League and area schools</p>
           <div className="flex flex-wrap gap-6 mt-4 text-sm">
@@ -109,7 +109,7 @@ export default async function CalendarPage() {
 
       {/* Sub-nav */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <nav className="flex gap-1 overflow-x-auto py-2 -mb-px">
             {SUB_NAV.map((item) => (
               <Link
@@ -129,7 +129,7 @@ export default async function CalendarPage() {
       </div>
 
       {/* Schedule */}
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {games.length === 0 ? (
           <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
             <p className="text-4xl mb-3">🏈</p>

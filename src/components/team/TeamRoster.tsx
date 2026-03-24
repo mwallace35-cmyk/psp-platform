@@ -39,10 +39,9 @@ export default function TeamRoster({
           <div key={groupName} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             {/* Position Group Header */}
             <div
-              className="px-4 py-3 text-white font-bold text-sm uppercase tracking-wider"
+              className="psp-caption px-4 py-3 text-white"
               style={{
                 background: sportMeta.color,
-                fontFamily: "'Bebas Neue', sans-serif",
               }}
             >
               {groupName} ({groupPlayers.length})

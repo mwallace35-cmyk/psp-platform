@@ -147,7 +147,7 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
         {/* Hero Section */}
         <div className="border-b-4 border-[var(--psp-gold)] px-4 py-12 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />
-          <div className="mt-8 max-w-6xl">
+          <div className="mt-8 max-w-7xl">
             <h1 className="text-4xl font-bold text-white sm:text-5xl">
               🔥 <span className="text-[var(--psp-gold)]">Breakout</span> Alerts
             </h1>
@@ -158,9 +158,10 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-3 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Content Area */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             {breakouts.length > 0 ? (
               <div>
                 <div className="mb-4 flex items-center justify-between">
@@ -242,6 +243,7 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
               <DataSourceBadge source="PhillySportsPack Database" />
             </div>
           </div>
+        </div>
         </div>
       </div>
     </>

@@ -302,7 +302,7 @@ export default function TeamPageClient({
               borderLeft: `4px solid ${school.primary_color || sportMeta.color}`,
             }}
           >
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+            <h3 className="psp-caption text-white">
               Right Now
             </h3>
           </div>
@@ -328,7 +328,7 @@ export default function TeamPageClient({
                 <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">
                   Season Record
                 </div>
-                <div className="text-xl font-black" style={{ color: school.primary_color || sportMeta.color, fontFamily: "'Bebas Neue', sans-serif" }}>
+                <div className="psp-h3" style={{ color: school.primary_color || sportMeta.color }}>
                   {team.currentRecord.wins}-{team.currentRecord.losses}{team.currentRecord.ties > 0 ? `-${team.currentRecord.ties}` : ""}
                 </div>
               </div>
@@ -338,7 +338,7 @@ export default function TeamPageClient({
                 <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">
                   League Standing
                 </div>
-                <div className="text-xl font-black text-[var(--psp-gold)]" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                <div className="psp-h3 text-[var(--psp-gold)]">
                   TBA
                 </div>
                 <div className="text-xs text-gray-600 mt-1">in {team.league}</div>
@@ -393,8 +393,7 @@ export default function TeamPageClient({
                 {/* Season Summary Card */}
                 <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6">
                   <h2
-                    className="text-xl font-bold mb-4"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}
                   >
                     2024-25 Season Summary
                   </h2>
@@ -429,8 +428,7 @@ export default function TeamPageClient({
                 {/* Recent News */}
                 <div>
                   <h2
-                    className="text-xl font-bold mb-4"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}
                   >
                     Latest News
                   </h2>
@@ -488,7 +486,7 @@ export default function TeamPageClient({
             {/* Alumni Pipeline */}
             <div style={{ marginTop: 20 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h2 style={{ fontSize: "1.25rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: 6, color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif" }}>
+                <h2 className="psp-h3" style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--psp-navy)" }}>
                   🌍 Alumni Pipeline
                 </h2>
                 <Link href="/philly-everywhere" style={{ color: "var(--psp-navy)", textDecoration: "none", fontWeight: 700, fontSize: "0.875rem" }}>
@@ -573,7 +571,7 @@ export default function TeamPageClient({
             {teamSeasons && teamSeasons.length > 0 && (
               <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
                 <div className="bg-[var(--psp-navy)] px-5 py-3" style={{ borderLeft: `4px solid var(--psp-gold)` }}>
-                  <h2 className="text-sm font-bold text-white uppercase tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                  <h2 className="psp-caption text-white">
                     Season History
                   </h2>
                 </div>
@@ -606,7 +604,7 @@ export default function TeamPageClient({
                             </span>
                           </div>
                           <div className="flex items-center gap-4">
-                            <span className="text-sm font-bold" style={{ color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif" }}>
+                            <span className="psp-small" style={{ color: "var(--psp-navy)" }}>
                               {w}-{l}{t > 0 ? `-${t}` : ""}
                             </span>
                             <span className="text-xs text-gray-400 w-10 text-right">{pct}%</span>
@@ -630,7 +628,7 @@ export default function TeamPageClient({
 
             {/* Program History Timeline */}
             <div style={{ marginTop: 20 }}>
-              <h2 style={{ fontSize: "1.25rem", fontWeight: "bold", marginBottom: 16, color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif" }}>Program History</h2>
+              <h2 className="psp-h3" style={{ marginBottom: 16, color: "var(--psp-navy)" }}>Program History</h2>
               <div style={{
                 position: "relative",
                 paddingLeft: 24,
@@ -719,8 +717,8 @@ export default function TeamPageClient({
               </h3>
               <div className="text-center">
                 <div
-                  className="text-4xl font-bold mb-2"
-                  style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                  className="psp-h1 mb-2"
+                  style={{ color: "var(--psp-navy)" }}
                 >
                   {team.currentRecord.wins}-{team.currentRecord.losses}
                 </div>

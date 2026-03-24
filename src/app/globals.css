@@ -469,13 +469,13 @@ select {
 
 /* Accessibility: Focus indicators */
 *:focus-visible {
-  outline: 2px solid var(--psp-gold-text);
+  outline: 2px solid var(--psp-gold);
   outline-offset: 2px;
-  border-radius: 2px;
 }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 2px solid var(--psp-gold-text);
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--psp-gold);
   outline-offset: 2px;
+  border-radius: 4px;
 }
 /* Remove default focus ring when not keyboard-navigating */
 *:focus:not(:focus-visible) { outline: none; }

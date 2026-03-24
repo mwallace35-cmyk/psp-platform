@@ -97,14 +97,14 @@ function LeaderList({ title, rows }: { title: string; rows: LeaderRow[] }) {
   return (
     <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
       <div style={{ background: navy, padding: '0.65rem 1rem' }}>
-        <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '1rem', color: '#fff', letterSpacing: '0.05em' }}>{title}</span>
+        <span className="psp-h4" style={{ color: '#fff' }}>{title}</span>
       </div>
       {rows.length === 0 ? (
         <div style={{ padding: '1rem', color: muted, fontSize: '0.82rem' }}>No data for this season.</div>
       ) : rows.map((r, i) => (
         <Link key={r.slug || i} href={`/players/${r.slug}`}
           style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 1rem', borderBottom: '1px solid #f3f4f6', textDecoration: 'none', background: i === 0 ? '#fffbf0' : '#fff' }}>
-          <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.1rem', color: i === 0 ? gold : '#9ca3af', width: 20, textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
+          <span className="psp-h4" style={{ color: i === 0 ? gold : '#9ca3af', width: 20, textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, color: navy, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.name}</div>
             <div style={{ fontSize: '0.72rem', color: muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.school}</div>
@@ -124,7 +124,7 @@ export default async function SeasonLeadersPage({ params }: PageProps) {
   if (!data) {
     return (
       <div style={{ maxWidth: 640, margin: '4rem auto', padding: '0 1rem', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '2rem', color: navy }}>No data for season {year}</h2>
+        <h2 className="psp-h1" style={{ color: navy }}>No data for season {year}</h2>
         <Link href="/stats" style={{ color: gold, fontWeight: 700 }}>{String.fromCharCode(8592)} Back to Stats</Link>
       </div>
     );
@@ -139,7 +139,7 @@ export default async function SeasonLeadersPage({ params }: PageProps) {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap' as const, gap: '1rem' }}>
-        <h1 style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.8rem', color: navy, margin: 0, letterSpacing: '0.03em' }}>{year} Season Leaders</h1>
+        <h1 className="psp-h1" style={{ color: navy, margin: 0 }}>{year} Season Leaders</h1>
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' as const }}>
           {years.slice(0, 8).map(y => (
             <Link key={y} href={`/stats/season/${y}`}
@@ -150,7 +150,7 @@ export default async function SeasonLeadersPage({ params }: PageProps) {
         </div>
       </div>
 
-      <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.8rem', color: navy, letterSpacing: '0.03em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <h2 className="psp-h2" style={{ color: navy, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ background: '#1a2744', color: '#fff', fontSize: '0.65rem', fontWeight: 800, padding: '3px 8px', borderRadius: 3, letterSpacing: 2 }}>FOOTBALL</span>
         Leaders
       </h2>
@@ -158,7 +158,7 @@ export default async function SeasonLeadersPage({ params }: PageProps) {
         {data.fbCols.map(cat => <LeaderList key={cat.key} title={cat.title} rows={data.fbResults[cat.key] ?? []} />)}
       </div>
 
-      <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.8rem', color: navy, letterSpacing: '0.03em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <h2 className="psp-h2" style={{ color: navy, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ background: '#f97316', color: '#fff', fontSize: '0.65rem', fontWeight: 800, padding: '3px 8px', borderRadius: 3, letterSpacing: 2 }}>BASKETBALL</span>
         Leaders
       </h2>

@@ -44,7 +44,7 @@ export default async function StandingsPage() {
   if (!data || data.records.length === 0) {
     return (
       <main style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto' }}>
-        <h1 style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.5rem', color: 'var(--psp-navy)' }}>
+        <h1 className="psp-h1" style={{ color: 'var(--psp-navy)' }}>
           Standings
         </h1>
         <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
@@ -62,7 +62,7 @@ export default async function StandingsPage() {
   }
   return (
     <main style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto' }}>
-      <h1 style={{ fontFamily: 'var(--font-bebas)', fontSize: '2.5rem', color: 'var(--psp-navy)', marginBottom: '0.25rem' }}>
+      <h1 className="psp-h1" style={{ color: 'var(--psp-navy)', marginBottom: '0.25rem' }}>
         Standings
       </h1>
       <p style={{ color: 'var(--psp-muted)', marginBottom: '2rem' }}>{data.season.year} Season</p>
@@ -70,7 +70,7 @@ export default async function StandingsPage() {
         const sportId = Number(sportIdStr);
         return (
           <section key={sportId} style={{ marginBottom: '2.5rem' }}>
-            <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', color: 'var(--psp-navy)', borderBottom: '2px solid var(--psp-gold)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+            <h2 className="psp-h2" style={{ color: 'var(--psp-navy)', borderBottom: '2px solid var(--psp-gold)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
               {SPORT_NAMES[sportId]}
             </h2>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>

@@ -82,7 +82,7 @@ export default async function ArticlesPage({
       </div>
 
       {/* Filters */}
-      <div className="max-w-6xl mx-auto px-4 pt-8">
+      <div className="max-w-7xl mx-auto px-4 pt-8">
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-sm font-medium text-gray-600 mr-2">Filter by sport:</span>
           <Link
@@ -124,7 +124,7 @@ export default async function ArticlesPage({
       <PSPPromo size="banner" variant={3} />
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {!articles || articles.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-4xl mb-4">📰</div>

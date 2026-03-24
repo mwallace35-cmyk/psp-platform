@@ -163,7 +163,7 @@ export default function AdvertisePage() {
 
       {/* Audience Section */}
       <section className="bg-navy-mid py-16 px-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h2 className="font-bebas text-4xl md:text-5xl tracking-widest text-white mb-12 text-center">
             WHO VISITS PSP
           </h2>
@@ -184,7 +184,7 @@ export default function AdvertisePage() {
 
       {/* Sponsorship Tiers */}
       <section className="bg-navy py-16 px-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h2 className="font-bebas text-4xl md:text-5xl tracking-widest text-white mb-4 text-center">
             SPONSORSHIP TIERS
           </h2>

@@ -169,8 +169,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1
-                  className="text-4xl md:text-5xl text-white tracking-wider flex-1"
-                  style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                  className="psp-h1 text-white flex-1"
                 >
                   {school.name}
                 </h1>
@@ -203,25 +202,25 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
           {/* Stat bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-2xl">
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="psp-h2 text-white">
                 {allTimeRecord.w}-{allTimeRecord.l}{allTimeRecord.t > 0 ? `-${allTimeRecord.t}` : ""}
               </div>
               <div className="text-xs text-gray-400">All-Time Record</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="psp-h2 text-white">
                 {championships.length}
               </div>
               <div className="text-xs text-gray-400">Championships</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="psp-h2 text-white">
                 {teamSeasons.length}
               </div>
               <div className="text-xs text-gray-400">Seasons on Record</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <div className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <div className="psp-h2 text-white">
                 {allTimeRecord.w + allTimeRecord.l + allTimeRecord.t > 0
                   ? ((allTimeRecord.w / (allTimeRecord.w + allTimeRecord.l + allTimeRecord.t)) * 100).toFixed(1) + "%"
                   : "—"}
@@ -235,9 +234,9 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
       <PSPPromo size="banner" variant={1} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             {/* Current Season Block - first visible section */}
             {currentSeasonData && (
               <CurrentSeasonBlock
@@ -304,7 +303,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             {championships.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h2 className="psp-h2" style={{ color: "var(--psp-navy)" }}>
                     Championships ({championships.length})
                   </h2>
                   <Link
@@ -355,7 +354,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             {/* Rivalries */}
             {rivalries.length > 0 && (
               <div id="rivalries">
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="psp-h2 mb-4" style={{ color: "var(--psp-navy)" }}>
                   ⚔️ Head-to-Head Records ({rivalries.length})
                 </h2>
                 <RivalryRecord
@@ -382,7 +381,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
             {/* Season-by-season results */}
             {teamSeasons.length > 0 && (
               <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                <h2 className="psp-h2 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Season-by-Season Results
                 </h2>
                 <div className="overflow-x-auto">

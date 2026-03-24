@@ -228,13 +228,9 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
         }} />
 
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{
-            fontSize: 40,
-            fontWeight: 800,
+          <h1 className="psp-h1-lg" style={{
             color: '#fff',
             margin: '0 0 4px',
-            fontFamily: "'Bebas Neue', sans-serif",
-            letterSpacing: 1,
           }}>
             School Directory
           </h1>
@@ -304,18 +300,12 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                 <div style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  letterSpacing: 0.3,
-                }}>
+                }}
+                className="psp-caption">
                   {league.icon} {league.name}
                 </div>
-                <div style={{
-                  fontSize: 22,
-                  fontWeight: 800,
+                <div className="psp-h2" style={{
                   lineHeight: 1,
-                  fontFamily: "'Bebas Neue', sans-serif",
                 }}>
                   {stats?.count || 0}
                 </div>
@@ -539,7 +529,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
                     }}>
                       {leagueConfig?.icon || '🏫'}
                     </div>
-                    <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--psp-navy)', fontFamily: "'Bebas Neue', sans-serif", margin: 0, letterSpacing: 0.5 }}>
+                    <h3 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                       {leagueName}
                     </h3>
                     <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--g400)', fontWeight: 600 }}>
@@ -577,15 +567,15 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: 'var(--psp-navy)', color: '#fff' }}>
-                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>#</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>School</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>League</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Record</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Win %</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>🏆</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Players</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Pros</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 0.5, fontSize: 12 }}>Games</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'left' }}>#</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'left' }}>School</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'left' }}>League</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Record</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Win %</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>🏆</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Players</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Pros</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Games</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -755,12 +745,8 @@ function SchoolCard({ school, rank }: { school: SchoolData; rank?: number }) {
             </div>
           )}
 
-          <h3 style={{
+          <h3 className="psp-small" style={{
             margin: 0,
-            fontSize: 15,
-            fontWeight: 700,
-            fontFamily: "'Bebas Neue', sans-serif",
-            letterSpacing: 0.5,
             lineHeight: 1.2,
             paddingLeft: rank !== undefined && rank <= 20 ? 28 : 0,
             paddingRight: isClosed ? 70 : 0,
