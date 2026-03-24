@@ -147,13 +147,13 @@ function FootballBoxScore({
 
         {rushers.length > 0 && (
           <div className="mb-4">
-            <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
+            <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-2">
               Rushing
             </h4>
             <div className="overflow-x-auto">
             <table className="w-full text-sm text-gray-200" aria-label={`${label} rushing statistics`}>
               <thead>
-                <tr className="text-gray-400 border-b border-gray-700">
+                <tr className="text-gray-300 border-b border-gray-700">
                   <th className="text-left px-3 py-2">Player</th>
                   <th className="text-center px-3 py-2">#</th>
                   <th className="text-right px-3 py-2">Car</th>
@@ -180,7 +180,7 @@ function FootballBoxScore({
                           <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
-                      <td className="text-center px-3 py-2 text-gray-400">
+                      <td className="text-center px-3 py-2 text-gray-300">
                         {s.jersey_number ?? ""}
                       </td>
                       <td className="text-right px-3 py-2">{s.rush_carries ?? 0}</td>
@@ -201,13 +201,13 @@ function FootballBoxScore({
 
         {passers.length > 0 && (
           <div className="mb-4">
-            <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
+            <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-2">
               Passing
             </h4>
             <div className="overflow-x-auto">
             <table className="w-full text-sm text-gray-200" aria-label={`${label} passing statistics`}>
               <thead>
-                <tr className="text-gray-400 border-b border-gray-700">
+                <tr className="text-gray-300 border-b border-gray-700">
                   <th className="text-left px-3 py-2">Player</th>
                   <th className="text-center px-3 py-2">#</th>
                   <th className="text-right px-3 py-2">Comp</th>
@@ -234,7 +234,7 @@ function FootballBoxScore({
                           <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
-                      <td className="text-center px-3 py-2 text-gray-400">
+                      <td className="text-center px-3 py-2 text-gray-300">
                         {s.jersey_number ?? ""}
                       </td>
                       <td className="text-right px-3 py-2">{s.pass_completions ?? 0}</td>
@@ -254,13 +254,13 @@ function FootballBoxScore({
 
         {receivers.length > 0 && (
           <div className="mb-4">
-            <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
+            <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-2">
               Receiving
             </h4>
             <div className="overflow-x-auto">
             <table className="w-full text-sm text-gray-200" aria-label={`${label} receiving statistics`}>
               <thead>
-                <tr className="text-gray-400 border-b border-gray-700">
+                <tr className="text-gray-300 border-b border-gray-700">
                   <th className="text-left px-3 py-2">Player</th>
                   <th className="text-center px-3 py-2">#</th>
                   <th className="text-right px-3 py-2">Rec</th>
@@ -287,7 +287,7 @@ function FootballBoxScore({
                           <span className="text-gray-200">{s.player_name}</span>
                         )}
                       </td>
-                      <td className="text-center px-3 py-2 text-gray-400">
+                      <td className="text-center px-3 py-2 text-gray-300">
                         {s.jersey_number ?? ""}
                       </td>
                       <td className="text-right px-3 py-2">{s.rec_catches ?? 0}</td>
@@ -306,7 +306,7 @@ function FootballBoxScore({
         )}
 
         {teamStats.length === 0 && (
-          <p className="text-gray-500 text-sm italic">No individual stats available</p>
+          <p className="text-gray-400 text-sm italic">No individual stats available</p>
         )}
       </div>
     );
@@ -370,7 +370,7 @@ function BasketballBoxScore({
         <div className="overflow-x-auto">
         <table className="w-full text-sm text-gray-200" aria-label={`${label} scoring statistics`}>
           <thead>
-            <tr className="text-gray-400 border-b border-gray-700">
+            <tr className="text-gray-300 border-b border-gray-700">
               <th className="text-left px-3 py-2">Player</th>
               <th className="text-center px-3 py-2">#</th>
               <th className="text-right px-3 py-2">Pts</th>
@@ -393,7 +393,7 @@ function BasketballBoxScore({
                       <span className="text-gray-200">{s.player_name}</span>
                     )}
                   </td>
-                  <td className="text-center px-3 py-2 text-gray-400">
+                  <td className="text-center px-3 py-2 text-gray-300">
                     {s.jersey_number ?? ""}
                   </td>
                   <td className="text-right px-3 py-2 font-semibold text-[var(--psp-gold)]">
@@ -405,7 +405,7 @@ function BasketballBoxScore({
         </table>
         </div>
         {teamStats.length === 0 && (
-          <p className="text-gray-500 text-sm italic">No individual stats available</p>
+          <p className="text-gray-400 text-sm italic">No individual stats available</p>
         )}
       </div>
     );
@@ -527,12 +527,12 @@ export default async function GameDetailPage({
                   {opponentFromNotes}
                 </span>
               ) : (
-                <span className="text-lg md:text-xl font-bold text-gray-400">Away</span>
+                <span className="text-lg md:text-xl font-bold text-gray-300">Away</span>
               )}
               {hasScore && (
                 <div
                   className={`text-4xl md:text-5xl font-bold mt-2 font-heading ${
-                    awayWon ? "text-[var(--psp-gold)]" : "text-gray-400"
+                    awayWon ? "text-[var(--psp-gold)]" : "text-gray-300"
                   }`}
                 >
                   {game.away_score}
@@ -543,15 +543,15 @@ export default async function GameDetailPage({
             {/* Center */}
             <div className="flex flex-col items-center gap-2">
               {hasScore ? (
-                <span className="text-gray-500 text-sm uppercase tracking-wider">
+                <span className="text-gray-400 text-sm uppercase tracking-wider">
                   {game.playoff_round ? `${game.playoff_round}` : "Final"}
                 </span>
               ) : (
-                <span className="text-gray-500 text-sm">vs</span>
+                <span className="text-gray-400 text-sm">vs</span>
               )}
-              <span className="text-gray-500 text-xs">{formatDate(game.game_date)}</span>
+              <span className="text-gray-400 text-xs">{formatDate(game.game_date)}</span>
               {game.game_time && (
-                <span className="text-gray-500 text-xs">{formatTime(game.game_time)}</span>
+                <span className="text-gray-400 text-xs">{formatTime(game.game_time)}</span>
               )}
             </div>
 
@@ -565,12 +565,12 @@ export default async function GameDetailPage({
                   {getSchoolDisplayName(home)}
                 </Link>
               ) : (
-                <span className="text-lg md:text-xl font-bold text-gray-400">Home</span>
+                <span className="text-lg md:text-xl font-bold text-gray-300">Home</span>
               )}
               {hasScore && (
                 <div
                   className={`text-4xl md:text-5xl font-bold mt-2 font-heading ${
-                    homeWon ? "text-[var(--psp-gold)]" : "text-gray-400"
+                    homeWon ? "text-[var(--psp-gold)]" : "text-gray-300"
                   }`}
                 >
                   {game.home_score}
@@ -601,15 +601,15 @@ export default async function GameDetailPage({
               const scoreObj = typeof scores === "object" ? scores : { home: scores };
               return (
                 <div key={period} className="border border-gray-700 rounded p-3 text-center">
-                  <div className="text-xs text-gray-400 uppercase tracking-wide mb-2">{period}</div>
+                  <div className="text-xs text-gray-300 uppercase tracking-wide mb-2">{period}</div>
                   {scoreObj.home !== undefined && scoreObj.away !== undefined ? (
                     <>
                       <div className="text-sm text-gray-300">{scoreObj.home}</div>
-                      <div className="text-xs text-gray-500 my-1">—</div>
+                      <div className="text-xs text-gray-400 my-1">—</div>
                       <div className="text-sm text-gray-300">{scoreObj.away}</div>
                     </>
                   ) : (
-                    <div className="text-sm text-gray-400">{JSON.stringify(scores)}</div>
+                    <div className="text-sm text-gray-300">{JSON.stringify(scores)}</div>
                   )}
                 </div>
               );
@@ -648,7 +648,7 @@ export default async function GameDetailPage({
                 sport={sport}
               />
             ) : (
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-400 text-sm">
                 Box score display not yet available for {meta?.name ?? sport}.
               </p>
             )}
@@ -666,7 +666,7 @@ export default async function GameDetailPage({
           <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">
             Season Stats
           </h2>
-          <p className="text-gray-500 text-sm mb-4">
+          <p className="text-gray-400 text-sm mb-4">
             {season?.label ?? ""} season statistics for players on each team
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -682,7 +682,7 @@ export default async function GameDetailPage({
                   {t.players.length > 0 ? (
                     <table className="w-full text-sm text-gray-200" aria-label={`${t.schoolName} season statistics`}>
                       <thead>
-                        <tr className="text-gray-400 border-b border-gray-700">
+                        <tr className="text-gray-300 border-b border-gray-700">
                           <th className="text-left py-1 pr-2">Player</th>
                           {sport === "basketball" && (
                             <>
@@ -723,10 +723,10 @@ export default async function GameDetailPage({
                             </td>
                             {sport === "basketball" && (
                               <>
-                                <td className="text-right py-1.5 px-1 text-gray-400">{p.games_played ?? "-"}</td>
+                                <td className="text-right py-1.5 px-1 text-gray-300">{p.games_played ?? "-"}</td>
                                 <td className="text-right py-1.5 px-1 font-semibold text-[var(--psp-gold)]">{p.points ?? "-"}</td>
                                 <td className="text-right py-1.5 px-1">{p.ppg != null ? p.ppg.toFixed(1) : "-"}</td>
-                                <td className="text-right py-1.5 pl-1 text-gray-400">{p.rebounds ?? "-"}</td>
+                                <td className="text-right py-1.5 pl-1 text-gray-300">{p.rebounds ?? "-"}</td>
                               </>
                             )}
                             {sport === "football" && (
@@ -749,7 +749,7 @@ export default async function GameDetailPage({
                       </tbody>
                     </table>
                   ) : (
-                    <p className="text-gray-500 text-sm italic">No season stats available</p>
+                    <p className="text-gray-400 text-sm italic">No season stats available</p>
                   )}
                 </div>
               );
@@ -761,8 +761,8 @@ export default async function GameDetailPage({
         </section>
       ) : (
         <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-8 text-center">
-          <p className="text-gray-400 font-semibold">No detailed statistics available for this game.</p>
-          <p className="text-gray-500 text-sm mt-2 mb-4">
+          <p className="text-gray-300 font-semibold">No detailed statistics available for this game.</p>
+          <p className="text-gray-400 text-sm mt-2 mb-4">
             {hasScore ? (
               <>Final score: <span className="text-[var(--psp-gold)] font-semibold">{game.away_score} - {game.home_score}</span></>
             ) : (

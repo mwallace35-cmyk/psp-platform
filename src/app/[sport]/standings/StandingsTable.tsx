@@ -37,21 +37,22 @@ function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueN
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] shadow-lg">
       <table className="w-full text-sm text-gray-200" aria-label={ariaLabel}>
+        <caption className="sr-only">{ariaLabel}</caption>
         <thead>
           <tr className="border-b border-gray-700 bg-gray-900">
-            <th className="px-3 py-3 text-left font-semibold text-gray-300 w-10">#</th>
-            <th className="px-3 py-3 text-left font-semibold text-gray-300">School</th>
+            <th scope="col" className="px-3 py-3 text-left font-semibold text-gray-300 w-10">#</th>
+            <th scope="col" className="px-3 py-3 text-left font-semibold text-gray-300">School</th>
             {hasLeagueRecord && (
-              <th className="px-3 py-3 text-center font-semibold text-gray-300 w-20">
+              <th scope="col" className="px-3 py-3 text-center font-semibold text-gray-300 w-20">
                 <span className="text-[var(--psp-gold)]">League</span>
               </th>
             )}
-            <th className="px-3 py-3 text-center font-semibold text-gray-300 w-20">Overall</th>
-            <th className="px-3 py-3 text-center font-semibold text-gray-300 w-16">Win %</th>
+            <th scope="col" className="px-3 py-3 text-center font-semibold text-gray-300 w-20">Overall</th>
+            <th scope="col" className="px-3 py-3 text-center font-semibold text-gray-300 w-16">Win %</th>
             {hasPointsData && (
               <>
-                <th className="px-3 py-3 text-center font-semibold text-gray-300 w-14">PF</th>
-                <th className="px-3 py-3 text-center font-semibold text-gray-300 w-14">PA</th>
+                <th scope="col" className="px-3 py-3 text-center font-semibold text-gray-300 w-14">PF</th>
+                <th scope="col" className="px-3 py-3 text-center font-semibold text-gray-300 w-14">PA</th>
               </>
             )}
           </tr>
@@ -96,8 +97,8 @@ function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueN
                 <td className="px-3 py-3 text-center text-gray-300">{winPct}</td>
                 {hasPointsData && (
                   <>
-                    <td className="px-3 py-3 text-center text-gray-400">{row.points_for ?? "-"}</td>
-                    <td className="px-3 py-3 text-center text-gray-400">{row.points_against ?? "-"}</td>
+                    <td className="px-3 py-3 text-center text-gray-300">{row.points_for ?? "-"}</td>
+                    <td className="px-3 py-3 text-center text-gray-300">{row.points_against ?? "-"}</td>
                   </>
                 )}
               </tr>
@@ -141,7 +142,7 @@ export default function StandingsTable({ standings, sport }: { standings: League
 
   if (!currentGroup) {
     return (
-      <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-400">
+      <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-300">
         No standings data available
       </div>
     );
@@ -207,7 +208,7 @@ export default function StandingsTable({ standings, sport }: { standings: League
         />
       )}
 
-      <div className="mt-4 text-sm text-gray-500">
+      <div className="mt-4 text-sm text-gray-400">
         {currentGroup.divisions[0]?.standings.season_label} · {allStandings.length} teams
       </div>
     </div>

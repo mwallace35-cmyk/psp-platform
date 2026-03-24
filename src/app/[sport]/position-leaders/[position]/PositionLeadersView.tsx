@@ -87,14 +87,15 @@ export default function PositionLeadersView({
       {/* Leaders Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-200">
         <table className="w-full text-sm" aria-label="Position leaders">
+          <caption className="sr-only">Position leaders</caption>
           <thead>
             <tr className="text-white" style={{ backgroundColor: sportColor }}>
-              <th className="px-4 py-3 text-left font-semibold">Rank</th>
-              <th className="px-4 py-3 text-left font-semibold">Player</th>
-              <th className="px-4 py-3 text-left font-semibold">School</th>
-              <th className="px-4 py-3 text-center font-semibold">Seasons</th>
-              <th className="px-4 py-3 text-right font-semibold">Career</th>
-              <th className="px-4 py-3 text-right font-semibold">Per Season</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Rank</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Player</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">School</th>
+              <th scope="col" className="px-4 py-3 text-center font-semibold">Seasons</th>
+              <th scope="col" className="px-4 py-3 text-right font-semibold">Career</th>
+              <th scope="col" className="px-4 py-3 text-right font-semibold">Per Season</th>
             </tr>
           </thead>
           <tbody>

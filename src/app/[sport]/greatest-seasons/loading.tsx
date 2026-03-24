@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui";
 
 export default function GreatestSeasonsLoading() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" role="status" aria-busy="true" aria-label="Loading greatest seasons">
       {/* Header Skeleton */}
       <div className="h-32 bg-gray-200 rounded-lg animate-pulse" />
 

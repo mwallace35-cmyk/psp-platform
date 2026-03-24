@@ -32,8 +32,8 @@ function EmptyState({
       className={`empty-state ${className}`}
       style={{
         textAlign: "center",
-        padding: "2rem 1rem",
-        minHeight: "200px",
+        padding: "1.5rem 1rem",
+        minHeight: "160px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

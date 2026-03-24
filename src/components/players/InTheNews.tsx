@@ -36,7 +36,7 @@ export default async function InTheNews({ entityType, entityId, limit = 3 }: Pro
 
   return (
     <div className="mt-6">
-      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">
         📰 In the News
       </h3>
       <div className="space-y-2">
@@ -52,7 +52,7 @@ export default async function InTheNews({ entityType, entityId, limit = 3 }: Pro
                 <p className="text-sm text-gray-200 font-medium group-hover:text-[var(--psp-gold)] transition line-clamp-2">
                   {article!.title}
                 </p>
-                <p className="text-[10px] text-gray-500 mt-1">
+                <p className="text-[10px] text-gray-400 mt-1">
                   {article!.author_name || 'PSP Staff'} · {new Date(article!.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>

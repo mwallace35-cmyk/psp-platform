@@ -19,8 +19,8 @@ interface AllCityArchiveProps {
 const TIER_CONFIG: Record<string, { label: string; bg: string; text: string; border: string }> = {
   "First Team": { label: "1ST TEAM", bg: "bg-[#f0a500]/15", text: "text-[#f0a500]", border: "border-[#f0a500]/30" },
   "Second Team": { label: "2ND TEAM", bg: "bg-blue-500/15", text: "text-blue-400", border: "border-blue-500/30" },
-  "Third Team": { label: "3RD TEAM", bg: "bg-gray-500/15", text: "text-gray-400", border: "border-gray-500/30" },
-  "Honorable Mention": { label: "HON. MENTION", bg: "bg-gray-600/15", text: "text-gray-500", border: "border-gray-600/30" },
+  "Third Team": { label: "3RD TEAM", bg: "bg-gray-500/15", text: "text-gray-300", border: "border-gray-500/30" },
+  "Honorable Mention": { label: "HON. MENTION", bg: "bg-gray-600/15", text: "text-gray-400", border: "border-gray-600/30" },
 };
 
 /** Readable position labels */
@@ -48,7 +48,7 @@ function TierBadge({ tier }: { tier: string }) {
 
 function PositionPill({ position }: { position: string }) {
   return (
-    <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-medium text-gray-400 bg-gray-700/50 rounded">
+    <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-medium text-gray-300 bg-gray-700/50 rounded">
       {position}
     </span>
   );
@@ -76,7 +76,7 @@ function PlayerRow({ award, sport }: { award: AwardRecord; sport: string }) {
             {name}
           </Link>
         ) : (
-          <span className={`font-medium text-sm truncate block ${isNameMissing ? "text-gray-500 italic" : "text-gray-200"}`}>
+          <span className={`font-medium text-sm truncate block ${isNameMissing ? "text-gray-400 italic" : "text-gray-200"}`}>
             {name}
           </span>
         )}
@@ -86,7 +86,7 @@ function PlayerRow({ award, sport }: { award: AwardRecord; sport: string }) {
       {school && (
         <Link
           href={`/${sport}/schools/${school.slug}`}
-          className="text-gray-500 hover:text-gray-400 text-xs truncate max-w-[140px] hidden sm:block"
+          className="text-gray-400 hover:text-gray-300 text-xs truncate max-w-[140px] hidden sm:block"
         >
           {school.name}
         </Link>
@@ -218,7 +218,7 @@ export default function AllCityArchive({ years, sport }: AllCityArchiveProps) {
               <summary className="cursor-pointer px-4 py-3 flex items-center justify-between hover:bg-gray-750/50 transition-all">
                 <div className="flex items-center gap-3">
                   <h3 className="psp-h3 text-white">{yearData.label}</h3>
-                  <span className="text-gray-500 text-xs font-medium">
+                  <span className="text-gray-400 text-xs font-medium">
                     {yearData.awards.length} selections
                   </span>
                 </div>
@@ -235,7 +235,7 @@ export default function AllCityArchive({ years, sport }: AllCityArchiveProps) {
                     return (
                       <div key={type} className="border-b border-gray-700/30 last:border-b-0">
                         <div className="px-4 py-2 bg-gray-800/40">
-                          <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                          <span className="text-xs font-bold tracking-widest text-gray-300 uppercase">
                             {AWARD_TYPE_LABELS[type] || type}
                           </span>
                         </div>

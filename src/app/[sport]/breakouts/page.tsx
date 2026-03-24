@@ -54,7 +54,7 @@ function BreakoutCard({ alert }: { alert: BreakoutAlert }) {
             </Link>
             <Link
               href={`/${alert.sport_id}/schools/${alert.school_slug}`}
-              className="text-sm text-gray-400 hover:text-gray-300"
+              className="text-sm text-gray-300 hover:text-gray-300"
             >
               {alert.school_name}
             </Link>
@@ -63,7 +63,7 @@ function BreakoutCard({ alert }: { alert: BreakoutAlert }) {
             <div className="text-3xl font-bold text-[var(--psp-gold)]">
               +{alert.pct_increase}%
             </div>
-            <div className="text-xs text-gray-400">Year-over-Year</div>
+            <div className="text-xs text-gray-300">Year-over-Year</div>
           </div>
         </div>
       </div>
@@ -72,34 +72,34 @@ function BreakoutCard({ alert }: { alert: BreakoutAlert }) {
       <div className="grid grid-cols-2 gap-3 p-4">
         {/* Current Season */}
         <div className="rounded bg-gray-900 p-3">
-          <div className="text-xs text-gray-400 mb-1">Current</div>
+          <div className="text-xs text-gray-300 mb-1">Current</div>
           <div className="text-2xl font-bold text-white">{alert.current_stat}</div>
-          <div className="text-xs text-gray-500">{alert.current_season}</div>
+          <div className="text-xs text-gray-400">{alert.current_season}</div>
         </div>
 
         {/* Previous Season */}
         <div className="rounded bg-gray-900 p-3">
-          <div className="text-xs text-gray-400 mb-1">Previous</div>
-          <div className="text-2xl font-bold text-gray-400">{alert.previous_stat}</div>
-          <div className="text-xs text-gray-500">{alert.previous_season}</div>
+          <div className="text-xs text-gray-300 mb-1">Previous</div>
+          <div className="text-2xl font-bold text-gray-300">{alert.previous_stat}</div>
+          <div className="text-xs text-gray-400">{alert.previous_season}</div>
         </div>
 
         {/* Per Game */}
         <div className="rounded bg-gray-900 p-3">
-          <div className="text-xs text-gray-400 mb-1">Per Game</div>
+          <div className="text-xs text-gray-300 mb-1">Per Game</div>
           <div className="text-xl font-bold text-[var(--psp-blue)]">
             {alert.avg_per_game.toFixed(1)}
           </div>
-          <div className="text-xs text-gray-500">PPG</div>
+          <div className="text-xs text-gray-400">PPG</div>
         </div>
 
         {/* Projected */}
         <div className="rounded bg-gray-900 p-3">
-          <div className="text-xs text-gray-400 mb-1">Projected</div>
+          <div className="text-xs text-gray-300 mb-1">Projected</div>
           <div className="text-xl font-bold text-[var(--psp-gold)]">
             {alert.projected_total}
           </div>
-          <div className="text-xs text-gray-500">11-game season</div>
+          <div className="text-xs text-gray-400">11-game season</div>
         </div>
       </div>
 
@@ -168,7 +168,7 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
                   <h2 className="text-2xl font-bold text-white">
                     {breakouts.length} Players Breaking Out
                   </h2>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-gray-300">
                     Minimum +100% increase
                   </span>
                 </div>
@@ -180,8 +180,8 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
               </div>
             ) : (
               <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-12 text-center">
-                <p className="text-xl text-gray-400">No breakout alerts yet for this season.</p>
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="text-xl text-gray-300">No breakout alerts yet for this season.</p>
+                <p className="mt-2 text-sm text-gray-400">
                   Players need at least 5 games and 100%+ stat increase.
                 </p>
               </div>
@@ -198,7 +198,7 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
               <p className="text-sm text-gray-300 mb-4">
                 A breakout occurs when a player increases a key stat by 100% or more compared to their previous season.
               </p>
-              <div className="space-y-3 text-xs text-gray-400 border-t border-gray-700 pt-4">
+              <div className="space-y-3 text-xs text-gray-300 border-t border-gray-700 pt-4">
                 <div>
                   <span className="font-semibold text-white">Min. 5 Games</span>
                   <p>Player must play in at least 5 games</p>
@@ -230,7 +230,7 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
                     >
                       <div className="font-semibold text-white">{idx + 1}.</div>
                       <div className="text-sm text-[var(--psp-gold)]">{alert.player_name}</div>
-                      <div className="text-xs text-gray-400">+{alert.pct_increase}%</div>
+                      <div className="text-xs text-gray-300">+{alert.pct_increase}%</div>
                     </Link>
                   ))}
                 </div>
@@ -239,7 +239,7 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
 
             {/* Source Badge */}
             <div className="rounded-lg bg-gray-900 p-6">
-              <div className="text-sm font-bold text-gray-400 uppercase mb-3">Data Source</div>
+              <div className="text-sm font-bold text-gray-300 uppercase mb-3">Data Source</div>
               <DataSourceBadge source="PhillySportsPack Database" />
             </div>
           </div>

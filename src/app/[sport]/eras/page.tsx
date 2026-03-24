@@ -46,7 +46,7 @@ function TrendBadge({ trend, pct }: { trend?: "up" | "down" | "stable"; pct?: nu
   if (!trend || pct === undefined) return null;
 
   const color =
-    trend === "up" ? "text-red-400" : trend === "down" ? "text-green-400" : "text-gray-400";
+    trend === "up" ? "text-red-400" : trend === "down" ? "text-green-400" : "text-gray-300";
   const arrow = trend === "up" ? "↑" : trend === "down" ? "↓" : "→";
 
   return (
@@ -63,7 +63,7 @@ function EraStatsTable({ eras, statType }: { eras: EraStatistic[]; statType: str
   if (eras.length === 0) {
     return (
       <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-8 text-center">
-        <p className="text-gray-400">No era data available for this stat type.</p>
+        <p className="text-gray-300">No era data available for this stat type.</p>
       </div>
     );
   }
@@ -71,13 +71,14 @@ function EraStatsTable({ eras, statType }: { eras: EraStatistic[]; statType: str
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)]">
       <table className="w-full text-sm text-gray-200" aria-label="Era champions">
+        <caption className="sr-only">Era champions</caption>
         <thead className="border-b border-gray-700 bg-gray-900">
           <tr>
-            <th className="px-4 py-3 text-left font-bold text-white">Era</th>
-            <th className="px-4 py-3 text-right font-bold text-white">Avg</th>
-            <th className="px-4 py-3 text-right font-bold text-white">Max</th>
-            <th className="px-4 py-3 text-right font-bold text-white">Samples</th>
-            <th className="px-4 py-3 text-right font-bold text-white">Trend</th>
+            <th scope="col" className="px-4 py-3 text-left font-bold text-white">Era</th>
+            <th scope="col" className="px-4 py-3 text-right font-bold text-white">Avg</th>
+            <th scope="col" className="px-4 py-3 text-right font-bold text-white">Max</th>
+            <th scope="col" className="px-4 py-3 text-right font-bold text-white">Samples</th>
+            <th scope="col" className="px-4 py-3 text-right font-bold text-white">Trend</th>
           </tr>
         </thead>
         <tbody>
@@ -95,7 +96,7 @@ function EraStatsTable({ eras, statType }: { eras: EraStatistic[]; statType: str
               <td className="px-4 py-3 text-right text-gray-300">
                 {era.max_value}
               </td>
-              <td className="px-4 py-3 text-right text-gray-400">
+              <td className="px-4 py-3 text-right text-gray-300">
                 {era.sample_size.toLocaleString()}
               </td>
               <td className="px-4 py-3 text-right">
@@ -278,7 +279,7 @@ export default async function ErasPage({ params }: { params: Promise<PageParams>
 
             {/* Source Badge */}
             <div className="rounded-lg bg-gray-900 p-6">
-              <div className="text-sm font-bold text-gray-400 uppercase mb-3">Data Source</div>
+              <div className="text-sm font-bold text-gray-300 uppercase mb-3">Data Source</div>
               <DataSourceBadge source="PhillySportsPack Database" />
             </div>
           </div>

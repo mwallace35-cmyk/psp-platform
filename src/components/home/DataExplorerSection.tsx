@@ -110,7 +110,7 @@ export default function DataExplorerSection() {
         {/* Info callout */}
         <div className="mt-10 sm:mt-12 lg:mt-16 p-6 sm:p-8 bg-blue-50 [data-theme=dark]:bg-[var(--psp-blue)]/10 rounded-lg border border-blue-200 [data-theme=dark]:border-[var(--psp-blue)]/30">
           <div className="flex gap-4">
-            <div className="text-2xl flex-shrink-0">💡</div>
+            <div className="text-2xl flex-shrink-0" aria-hidden="true">💡</div>
             <div>
               <h3 className="text-lg sm:text-xl font-bold text-blue-900 [data-theme=dark]:text-[var(--psp-blue)] mb-2">
                 Pro Tip: Advanced Search Features

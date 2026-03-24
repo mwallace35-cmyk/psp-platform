@@ -110,7 +110,7 @@ export default function PremiumPage() {
                     <span className="text-2xl flex-shrink-0">{feature.icon}</span>
                     <div>
                       <p className="text-white font-semibold text-sm">{feature.name}</p>
-                      <p className="text-white/60 text-xs mt-0.5">{feature.description}</p>
+                      <p className="text-white/80 text-xs mt-0.5">{feature.description}</p>
                     </div>
                   </li>
                 ))}
@@ -129,7 +129,7 @@ export default function PremiumPage() {
                     <span className="text-2xl flex-shrink-0">{feature.icon}</span>
                     <div>
                       <p className="text-white font-semibold text-sm">{feature.name}</p>
-                      <p className="text-white/60 text-xs mt-0.5">{feature.description}</p>
+                      <p className="text-white/80 text-xs mt-0.5">{feature.description}</p>
                     </div>
                   </li>
                 ))}
@@ -138,7 +138,7 @@ export default function PremiumPage() {
                     <span className="text-2xl flex-shrink-0">{feature.icon}</span>
                     <div>
                       <p className="text-white font-semibold text-sm">{feature.name}</p>
-                      <p className="text-white/60 text-xs mt-0.5">{feature.description}</p>
+                      <p className="text-white/80 text-xs mt-0.5">{feature.description}</p>
                     </div>
                   </li>
                 ))}
@@ -155,7 +155,7 @@ export default function PremiumPage() {
             >
               Coming Soon: Upgrade to Premium
             </button>
-            <p className="text-white/60 text-sm mt-4">
+            <p className="text-white/80 text-sm mt-4">
               Payment processing launching Q2 2026
             </p>
           </div>
@@ -173,7 +173,7 @@ export default function PremiumPage() {
             <div className="p-6 bg-navy-mid rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">📚</div>
               <h3 className="text-white font-bold mb-2 text-lg">Researchers & Writers</h3>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/80 text-sm">
                 Export data in bulk, analyze trends, and cite official stats for articles and papers.
               </p>
             </div>
@@ -181,7 +181,7 @@ export default function PremiumPage() {
             <div className="p-6 bg-navy-mid rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">🎯</div>
               <h3 className="text-white font-bold mb-2 text-lg">Recruiters & Scouts</h3>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/80 text-sm">
                 Advanced filtering by graduation year, position, and performance metrics.
               </p>
             </div>
@@ -189,7 +189,7 @@ export default function PremiumPage() {
             <div className="p-6 bg-navy-mid rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">📊</div>
               <h3 className="text-white font-bold mb-2 text-lg">Coaches & Athletic Directors</h3>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/80 text-sm">
                 Track your program's history, compare schedules, and access opponent data.
               </p>
             </div>
@@ -197,7 +197,7 @@ export default function PremiumPage() {
             <div className="p-6 bg-navy-mid rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">⭐</div>
               <h3 className="text-white font-bold mb-2 text-lg">Serious Fans</h3>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/80 text-sm">
                 Deep dives into records, all-time stats, and program championships without ads.
               </p>
             </div>
@@ -215,35 +215,35 @@ export default function PremiumPage() {
           <div className="space-y-6">
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">Can I cancel anytime?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Yes. Premium is month-to-month with no lock-in. Cancel whenever you want.
               </p>
             </div>
 
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">Will PSP always have free content?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Absolutely. All core stats, profiles, and search will always be free. Premium is optional for power users.
               </p>
             </div>
 
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">What file formats can I export?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Premium users can export data as CSV, JSON, or Excel files. Perfect for analysis in spreadsheets or databases.
               </p>
             </div>
 
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">Do you offer team or school licenses?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Yes! Contact us at <strong>mike@phillysportspack.com</strong> to discuss volume pricing or team subscriptions.
               </p>
             </div>
 
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">Is there an API for developers?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Coming soon! Premium subscribers will get access to our API for custom integrations.
               </p>
             </div>

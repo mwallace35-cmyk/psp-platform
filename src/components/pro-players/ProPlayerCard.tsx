@@ -67,7 +67,7 @@ export default function ProPlayerCard({
         </h3>
 
         {/* School */}
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm text-gray-400 mb-3">
           {player.school_name || player.schools?.name || "Unknown School"}
         </p>
 
@@ -89,7 +89,7 @@ export default function ProPlayerCard({
         <div className="space-y-2 border-t border-gray-200 pt-3">
           {player.pro_team && (
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">
                 Pro Team
               </p>
               <p className="text-sm font-semibold text-navy line-clamp-2">
@@ -100,7 +100,7 @@ export default function ProPlayerCard({
 
           {player.pro_draft_info && (
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">
                 Draft Info
               </p>
               <p className="text-sm text-gray-700 line-clamp-2">
@@ -111,7 +111,7 @@ export default function ProPlayerCard({
 
           {player.college && (
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">
                 College
               </p>
               <p className="text-sm text-gray-700">{player.college}</p>

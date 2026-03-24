@@ -70,7 +70,7 @@ function Breadcrumb({
                 {/* Separator before item (not before first) */}
                 {index > 0 && !isTruncation && (
                   <span
-                    className="dark:text-gray-600 text-gray-500 mx-1"
+                    className="dark:text-gray-600 text-gray-400 mx-1"
                     aria-hidden="true"
                   >
                     {separator}
@@ -81,13 +81,13 @@ function Breadcrumb({
                 {item.href && !isLast ? (
                   <Link
                     href={item.href}
-                    className="dark:text-gray-400 text-gray-600 hover:dark:text-white hover:text-gray-900 transition-colors"
+                    className="dark:text-gray-300 text-gray-600 hover:dark:text-white hover:text-gray-900 transition-colors"
                   >
                     {item.label}
                   </Link>
                 ) : (
                   <span
-                    className={isLast ? 'dark:text-white text-gray-900 font-medium' : 'dark:text-gray-400 text-gray-600'}
+                    className={isLast ? 'dark:text-white text-gray-900 font-medium' : 'dark:text-gray-300 text-gray-600'}
                     aria-current={isLast ? 'page' : undefined}
                   >
                     {item.label}

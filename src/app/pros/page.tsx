@@ -98,7 +98,7 @@ export default async function ProsPage({
           {/* Stats Strip */}
           <div className="grid grid-cols-3 gap-4 mt-8">
             <div className="bg-navy-light rounded-lg p-4 border border-gold">
-              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">
+              <p className="text-xs text-gray-300 uppercase tracking-wide mb-1">
                 Pro Athletes
               </p>
               <p className="text-3xl font-bold text-gold">
@@ -106,13 +106,13 @@ export default async function ProsPage({
               </p>
             </div>
             <div className="bg-navy-light rounded-lg p-4 border border-gold">
-              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">
+              <p className="text-xs text-gray-300 uppercase tracking-wide mb-1">
                 Pro Leagues
               </p>
               <p className="text-3xl font-bold text-gold">4+</p>
             </div>
             <div className="bg-navy-light rounded-lg p-4 border border-gold">
-              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">
+              <p className="text-xs text-gray-300 uppercase tracking-wide mb-1">
                 Hall of Famers
               </p>
               <p className="text-3xl font-bold text-gold">8+</p>
@@ -127,10 +127,10 @@ export default async function ProsPage({
           <div className="flex gap-4 overflow-x-auto">
             {[
               { slug: "all", label: "All Sports" },
-              { slug: "football", label: "🏈 Football" },
-              { slug: "basketball", label: "🏀 Basketball" },
-              { slug: "baseball", label: "⚾ Baseball" },
-            ].map(({ slug, label }) => (
+              { slug: "football", emoji: "🏈", label: "Football" },
+              { slug: "basketball", emoji: "🏀", label: "Basketball" },
+              { slug: "baseball", emoji: "⚾", label: "Baseball" },
+            ].map(({ slug, emoji, label }) => (
               <a
                 key={slug}
                 href={`/pros${slug !== "all" ? `?sport=${slug}` : ""}`}
@@ -140,7 +140,7 @@ export default async function ProsPage({
                     : "border-transparent text-gray-600 hover:text-gold"
                 }`}
               >
-                {label}
+                {emoji && <span aria-hidden="true">{emoji} </span>}{label}
               </a>
             ))}
           </div>
@@ -156,13 +156,7 @@ export default async function ProsPage({
               <h2 className="text-2xl font-bold text-navy">
                 {sport === "all"
                   ? "All Pro Athletes"
-                  : `${
-                      sport === "football"
-                        ? "🏈 Football"
-                        : sport === "basketball"
-                        ? "🏀 Basketball"
-                        : "⚾ Baseball"
-                    } Players`}
+                  : <><span aria-hidden="true">{sport === "football" ? "🏈" : sport === "basketball" ? "🏀" : "⚾"} </span>{sport === "football" ? "Football" : sport === "basketball" ? "Basketball" : "Baseball"} Players</>}
               </h2>
               <p className="text-sm text-gray-600">{proPlayers.length} results</p>
             </div>
@@ -182,7 +176,7 @@ export default async function ProsPage({
           <div className="lg:col-span-1 space-y-6">
             <Suspense
               fallback={
-                <div className="bg-navy-light rounded-lg border border-gold p-6">
+                <div className="bg-navy-light rounded-lg border border-gold p-6" role="status" aria-busy="true" aria-label="Loading pro pipeline">
                   <div className="h-6 bg-gray-700 rounded mb-4 animate-pulse" />
                   <div className="space-y-3">
                     {[...Array(5)].map((_, i) => (

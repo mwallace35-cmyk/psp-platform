@@ -189,7 +189,7 @@ export default function CorrectionsAdmin() {
                   <span className={`px-2 py-1 rounded text-xs font-medium ${statusColors[c.status] || 'bg-gray-100'}`}>
                     {c.status}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-gray-300">
                     {new Date(c.created_at).toLocaleDateString()}
                   </span>
                   <svg
@@ -200,7 +200,7 @@ export default function CorrectionsAdmin() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className={`text-gray-400 transition-transform ${expandedId === c.id ? 'rotate-180' : ''}`}
+                    className={`text-gray-300 transition-transform ${expandedId === c.id ? 'rotate-180' : ''}`}
                   >
                     <path d="m6 9 6 6 6-6" />
                   </svg>
@@ -265,7 +265,7 @@ export default function CorrectionsAdmin() {
                     <div className="space-y-3 pt-2 border-t border-gray-200">
                       <div>
                         <label htmlFor={`admin-notes-${c.id}`} className="block text-xs font-medium text-gray-500 mb-1">
-                          Admin Notes <span className="text-gray-400">(optional)</span>
+                          Admin Notes <span className="text-gray-300">(optional)</span>
                         </label>
                         <textarea
                           id={`admin-notes-${c.id}`}
@@ -278,7 +278,7 @@ export default function CorrectionsAdmin() {
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold min-h-[44px]"
                           aria-describedby={`admin-notes-hint-${c.id}`}
                         />
-                        <div id={`admin-notes-hint-${c.id}`} className="text-xs text-gray-400 mt-1">
+                        <div id={`admin-notes-hint-${c.id}`} className="text-xs text-gray-300 mt-1">
                           Provide context for your decision on this correction request.
                         </div>
                       </div>

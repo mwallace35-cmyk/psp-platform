@@ -24,6 +24,7 @@ function Skeleton({
     <div
       className={`${baseStyles} ${shapeStyles[variant]} ${className}`}
       style={{ width, height, background: "var(--skeleton-bg, #e2e8f0)" }}
+      aria-hidden="true"
     />
   );
 }
@@ -46,7 +47,7 @@ const SkeletonText = React.memo(function SkeletonText({
   width = "100%",
 }: SkeletonTextProps) {
   return (
-    <div className={`space-y-2 ${className}`} style={{ width }}>
+    <div className={`space-y-2 ${className}`} style={{ width }} role="status" aria-busy="true" aria-label="Loading">
       {Array.from({ length: lines }).map((_, i) => (
         <MemoSkeleton
           key={i}
@@ -77,6 +78,9 @@ const SkeletonCard = React.memo(function SkeletonCard({
   return (
     <div
       className={`skeleton-card ${className}`}
+      role="status"
+      aria-busy="true"
+      aria-label="Loading card"
       style={{
         background: "var(--psp-white)",
         borderRadius: "0.5rem",
@@ -128,6 +132,9 @@ const SkeletonTable = React.memo(function SkeletonTable({
         width: "100%",
         borderCollapse: "collapse",
       }}
+      role="status"
+      aria-busy="true"
+      aria-label="Loading table"
     >
       {Array.from({ length: rows }).map((_, rowIdx) => (
         <div

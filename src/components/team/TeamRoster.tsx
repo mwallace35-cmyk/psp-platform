@@ -50,21 +50,22 @@ export default function TeamRoster({
             {/* Players Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-sm" aria-label={`Team roster — ${groupName}`}>
+                <caption className="sr-only">Team roster — {groupName}</caption>
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                    <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-700">
                       Player Name
                     </th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                    <th scope="col" className="px-4 py-3 text-center font-semibold text-gray-700">
                       Position
                     </th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                    <th scope="col" className="px-4 py-3 text-center font-semibold text-gray-700">
                       Class
                     </th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                    <th scope="col" className="px-4 py-3 text-center font-semibold text-gray-700">
                       Height
                     </th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">
+                    <th scope="col" className="px-4 py-3 text-center font-semibold text-gray-700">
                       Weight
                     </th>
                   </tr>

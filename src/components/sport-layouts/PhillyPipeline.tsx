@@ -290,7 +290,7 @@ export default function PhillyPipeline({ sport, sportColor }: PhillyPipelineProp
         className="w-head"
         style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--g200)' }}
       >
-        🏆 Our Guys — {getProLeagueName(sport)}
+        <span aria-hidden="true">🏆</span> Our Guys — {getProLeagueName(sport)}
       </div>
       <div className="w-body" style={{ paddingTop: 0 }}>
         {proAlumni.map((player, index) => (

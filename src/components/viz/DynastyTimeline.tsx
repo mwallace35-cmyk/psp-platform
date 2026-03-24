@@ -107,7 +107,7 @@ function DynastyTimeline({ schoolName, seasons, sport }: DynastyTimelineProps) {
     <div className="w-full bg-white rounded-lg border border-gray-200 p-4">
       <div className="mb-4">
         <h3 className="text-lg font-bold text-navy">{schoolName} Dynasty Timeline</h3>
-        <p className="text-sm text-gray-500">Win percentage by season (2000–Present)</p>
+        <p className="text-sm text-gray-400">Win percentage by season (2000–Present)</p>
       </div>
 
       {/* Main timeline SVG */}
@@ -276,7 +276,7 @@ function DynastyTimeline({ schoolName, seasons, sport }: DynastyTimelineProps) {
               >
                 <div>
                   <p className="font-semibold text-gray-900">{era.coach || 'Unknown Coach'}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-400">
                     {era.startYear}–{era.endYear} ({era.seasons.length} seasons)
                   </p>
                 </div>
@@ -284,7 +284,7 @@ function DynastyTimeline({ schoolName, seasons, sport }: DynastyTimelineProps) {
                   <p className="font-semibold text-navy">
                     {totalWins}-{totalLosses}
                   </p>
-                  <p className="text-xs text-gray-500">{Math.round(eraWinPct * 100)}%</p>
+                  <p className="text-xs text-gray-400">{Math.round(eraWinPct * 100)}%</p>
                 </div>
               </div>
             );

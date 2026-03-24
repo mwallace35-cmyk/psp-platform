@@ -140,16 +140,16 @@ export default function PlayerCompare() {
                       className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
                     >
                       <div className="font-medium text-sm">{r.display_name}</div>
-                      <div className="text-xs text-gray-500">{r.context}</div>
+                      <div className="text-xs text-gray-400">{r.context}</div>
                     </button>
                   ))}
                 </div>
               )}
-              {loading && <div className="mt-2 text-sm text-gray-400">Loading stats...</div>}
+              {loading && <div className="mt-2 text-sm text-gray-300">Loading stats...</div>}
               {player && !loading && (
                 <div className="mt-3 p-4 rounded-lg border border-gray-200 bg-gray-50">
                   <div className="font-bold" style={{ color: "var(--psp-navy)" }}>{player.player.name}</div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-400">
                     {player.player.schools?.name} {player.player.graduation_year ? `• Class of ${player.player.graduation_year}` : ""}
                   </div>
                 </div>
@@ -164,11 +164,12 @@ export default function PlayerCompare() {
         <>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse" aria-label="Player comparison">
+              <caption className="sr-only">Player comparison</caption>
               <thead>
                 <tr>
-                  <th className="text-left px-4 py-3 bg-gray-100 font-medium text-sm" style={{ color: "var(--psp-navy)" }}>Stat</th>
-                  <th className="text-right px-4 py-3 bg-blue-50 font-medium text-sm" style={{ color: "var(--psp-navy)" }}>{player1.player.name}</th>
-                  <th className="text-right px-4 py-3 bg-green-50 font-medium text-sm" style={{ color: "var(--psp-navy)" }}>{player2.player.name}</th>
+                  <th scope="col" className="text-left px-4 py-3 bg-gray-100 font-medium text-sm" style={{ color: "var(--psp-navy)" }}>Stat</th>
+                  <th scope="col" className="text-right px-4 py-3 bg-blue-50 font-medium text-sm" style={{ color: "var(--psp-navy)" }}>{player1.player.name}</th>
+                  <th scope="col" className="text-right px-4 py-3 bg-green-50 font-medium text-sm" style={{ color: "var(--psp-navy)" }}>{player2.player.name}</th>
                 </tr>
               </thead>
               <tbody>
@@ -217,11 +218,11 @@ export default function PlayerCompare() {
       {/* Empty state */}
       {!player1 && !player2 && (
         <div className="text-center py-16 bg-gray-50 rounded-xl border border-gray-200">
-          <div className="text-4xl mb-4">📊</div>
+          <div className="text-4xl mb-4" aria-hidden="true">📊</div>
           <h2 className="text-xl font-bold mb-2" style={{ color: "var(--psp-navy)" }}>
             Select Two Players
           </h2>
-          <p className="text-gray-500 max-w-md mx-auto">
+          <p className="text-gray-400 max-w-md mx-auto">
             Use the search boxes above to find and compare any two Philadelphia high school athletes side-by-side.
           </p>
         </div>

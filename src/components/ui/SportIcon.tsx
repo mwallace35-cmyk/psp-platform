@@ -33,16 +33,32 @@ const sizeMap = {
   lg: "text-4xl w-16 h-16",
 };
 
+const SPORT_LABELS: Record<string, string> = {
+  football: "Football",
+  basketball: "Basketball",
+  baseball: "Baseball",
+  "track-field": "Track and Field",
+  lacrosse: "Lacrosse",
+  wrestling: "Wrestling",
+  soccer: "Soccer",
+  swimming: "Swimming",
+  golf: "Golf",
+  tennis: "Tennis",
+};
+
 export default function SportIcon({ sport, size = "md", className = "" }: SportIconProps) {
   const emoji = SPORT_EMOJI[sport] || "🏅";
   const color = SPORT_COLORS[sport] || "#64748b";
+  const label = SPORT_LABELS[sport] || sport;
 
   return (
     <div
       className={`inline-flex items-center justify-center rounded-xl ${sizeMap[size]} ${className}`}
       style={{ background: `${color}15` }}
+      role="img"
+      aria-label={label}
     >
-      {emoji}
+      <span aria-hidden="true">{emoji}</span>
     </div>
   );
 }

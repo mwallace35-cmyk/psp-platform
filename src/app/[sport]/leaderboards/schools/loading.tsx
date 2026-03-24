@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <main>
+    <main role="status" aria-busy="true" aria-label="Loading school leaderboards">
       <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="h-4 w-48 bg-white/10 rounded mb-4 animate-pulse" />

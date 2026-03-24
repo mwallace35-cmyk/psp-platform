@@ -23,7 +23,7 @@ interface PotwSchoolStandingsProps {
 const SPORT_BADGE_COLORS: Record<string, string> = {
   football: '#16a34a',
   basketball: '#3b82f6',
-  baseball: '#ea580c',
+  baseball: '#dc2626',
   soccer: '#059669',
   lacrosse: '#0891b2',
   'track-field': '#7c3aed',
@@ -68,7 +68,7 @@ export default function PotwSchoolStandings({ nominees }: PotwSchoolStandingsPro
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-5">
       <h3 className="text-lg font-bebas text-navy mb-1 tracking-wider">School Fan Loyalty</h3>
-      <p className="text-xs text-gray-500 mb-4">Which school&apos;s fans vote the most?</p>
+      <p className="text-xs text-gray-400 mb-4">Which school&apos;s fans vote the most?</p>
 
       <div className="space-y-2">
         {standings.map((school, idx) => {
@@ -86,7 +86,7 @@ export default function PotwSchoolStandings({ nominees }: PotwSchoolStandingsPro
               {/* Rank */}
               <span
                 className={`text-sm font-bold w-6 text-center ${
-                  isFirst ? 'text-gold' : 'text-gray-400'
+                  isFirst ? 'text-gold' : 'text-gray-300'
                 }`}
               >
                 {idx + 1}
@@ -111,7 +111,7 @@ export default function PotwSchoolStandings({ nominees }: PotwSchoolStandingsPro
                     return (
                       <span
                         key={sid}
-                        className="text-[10px] font-medium px-1.5 py-0.5 rounded"
+                        className="text-xs font-medium px-1.5 py-0.5 rounded"
                         style={{
                           backgroundColor: `${color}15`,
                           color: color,
@@ -130,7 +130,7 @@ export default function PotwSchoolStandings({ nominees }: PotwSchoolStandingsPro
                 <div className={`text-sm font-bold tabular-nums ${isFirst ? 'text-navy' : 'text-gray-700'}`}>
                   {school.total_votes.toLocaleString()}
                 </div>
-                <div className="text-[10px] text-gray-500">
+                <div className="text-xs text-gray-400">
                   {school.nominee_count} nominee{school.nominee_count !== 1 ? 's' : ''} &middot; {school.avg_votes} avg
                 </div>
               </div>

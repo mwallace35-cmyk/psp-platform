@@ -69,12 +69,12 @@ export default async function RelatedArticles({ entityType, entityId }: RelatedA
                   </p>
                   <div className="flex items-center gap-2 mt-1">
                     {sportMeta && (
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-400">
                         {sportMeta.emoji} {sportMeta.name}
                       </span>
                     )}
                     {article.published_at && (
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-gray-300">
                         {new Date(article.published_at).toLocaleDateString()}
                       </span>
                     )}

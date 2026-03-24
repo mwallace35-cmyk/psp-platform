@@ -2,7 +2,7 @@ import { SkeletonCard, SkeletonText } from "@/components/ui";
 
 export default function AdminDashboardLoading() {
   return (
-    <div>
+    <div role="status" aria-busy="true" aria-label="Loading admin dashboard">
       {/* Header skeleton */}
       <div className="mb-8">
         <div className="h-8 bg-gray-200 rounded w-48 mb-2" />

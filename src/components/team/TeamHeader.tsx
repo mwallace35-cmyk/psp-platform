@@ -44,7 +44,7 @@ export default function TeamHeader({
       style={{ background: heroGradient }}
     >
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
+        <div className="flex items-center gap-2 text-sm text-gray-300 mb-4">
           <Link href={`/${sport}`} className="hover:text-white transition-colors">
             {sportMeta.name}
           </Link>
@@ -71,7 +71,7 @@ export default function TeamHeader({
             </h1>
             <div className="flex flex-wrap gap-4 text-sm">
               <span style={{ color: "var(--psp-gold)" }}>{team.league}</span>
-              <span className="text-gray-400">
+              <span className="text-gray-300">
                 {team.city}, {team.state}
               </span>
             </div>
@@ -84,25 +84,25 @@ export default function TeamHeader({
             <div className="psp-h2 text-white">
               {team.currentRecord.wins}-{team.currentRecord.losses}
             </div>
-            <div className="text-xs text-gray-400">Current Record</div>
+            <div className="text-xs text-gray-300">Current Record</div>
           </div>
           <div className="rounded-xl p-4 bg-white/5">
             <div className="psp-h2 text-white">
               {winPct}%
             </div>
-            <div className="text-xs text-gray-400">Win %</div>
+            <div className="text-xs text-gray-300">Win %</div>
           </div>
           <div className="rounded-xl p-4 bg-white/5">
             <div className="psp-h2 text-white">
               {team.championships}
             </div>
-            <div className="text-xs text-gray-400">Championships</div>
+            <div className="text-xs text-gray-300">Championships</div>
           </div>
           <div className="rounded-xl p-4 bg-white/5">
             <div className="psp-h2" style={{ color: pointDiff > 0 ? "#22c55e" : "#ef4444" }}>
               {pointDiff > 0 ? "+" : ""}{pointDiff}
             </div>
-            <div className="text-xs text-gray-400">Point Diff</div>
+            <div className="text-xs text-gray-300">Point Diff</div>
           </div>
         </div>
       </div>

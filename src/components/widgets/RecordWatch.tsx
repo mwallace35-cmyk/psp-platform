@@ -51,7 +51,7 @@ export default function RecordWatch({ sport, data }: RecordWatchProps) {
           >
             Record Watch
           </h3>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-400">
             Players approaching all-time season records
           </p>
         </div>
@@ -90,12 +90,12 @@ export default function RecordWatch({ sport, data }: RecordWatchProps) {
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <Link
                       href={`/${sport}/schools/${entry.school_slug}`}
-                      className="text-xs text-gray-500 hover:text-gray-400 transition"
+                      className="text-xs text-gray-400 hover:text-gray-300 transition"
                     >
                       {entry.school_name}
                     </Link>
                     <span className="text-gray-700">|</span>
-                    <span className="text-xs text-gray-400 font-medium">
+                    <span className="text-xs text-gray-300 font-medium">
                       {entry.stat_name}
                     </span>
                   </div>
@@ -104,7 +104,7 @@ export default function RecordWatch({ sport, data }: RecordWatchProps) {
                 {/* Status Badge */}
                 {entry.on_pace ? (
                   <span
-                    className="flex-shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
+                    className="flex-shrink-0 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide"
                     style={{
                       backgroundColor: "rgba(240, 165, 0, 0.15)",
                       color: "#f0a500",
@@ -115,7 +115,7 @@ export default function RecordWatch({ sport, data }: RecordWatchProps) {
                   </span>
                 ) : entry.needs_per_game !== null ? (
                   <span
-                    className="flex-shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
+                    className="flex-shrink-0 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide"
                     style={{
                       backgroundColor: "rgba(239, 68, 68, 0.12)",
                       color: "#ef4444",
@@ -154,15 +154,15 @@ export default function RecordWatch({ sport, data }: RecordWatchProps) {
               </div>
 
               {/* Stats Row */}
-              <div className="flex items-center justify-between text-[10px]">
+              <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-3">
-                  <span className="text-gray-400">
+                  <span className="text-gray-300">
                     Current:{" "}
                     <span className="text-white font-semibold tabular-nums">
                       {entry.current_value.toLocaleString()}
                     </span>
                   </span>
-                  <span className="text-gray-400">
+                  <span className="text-gray-300">
                     Pace:{" "}
                     <span
                       className="font-semibold tabular-nums"
@@ -174,7 +174,7 @@ export default function RecordWatch({ sport, data }: RecordWatchProps) {
                     </span>
                   </span>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-400">
                   Record:{" "}
                   <span className="text-gray-300 font-semibold tabular-nums">
                     {entry.record_value.toLocaleString()}
@@ -189,7 +189,7 @@ export default function RecordWatch({ sport, data }: RecordWatchProps) {
               </div>
 
               {/* Games Info */}
-              <div className="text-[10px] text-gray-600 mt-1">
+              <div className="text-xs text-gray-600 mt-1">
                 {entry.games_played} games played
                 {entry.estimated_games_remaining > 0 &&
                   ` / ~${entry.estimated_games_remaining} remaining`}

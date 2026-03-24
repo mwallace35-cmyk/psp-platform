@@ -114,8 +114,16 @@ export default async function PickemPage() {
           <div className="lg:col-span-3 space-y-8">
             {!currentWeek ? (
               <div className="bg-gray-50 rounded-lg p-8 text-center" style={{ color: "var(--psp-gray-500)" }}>
-                <p className="text-lg">No pick'em week available right now.</p>
-                <p className="text-sm">Check back soon for the next week!</p>
+                <div className="text-3xl mb-3">🎯</div>
+                <p className="text-lg font-medium text-gray-700 mb-1">No active pick&apos;em week right now</p>
+                <p className="text-sm mb-4">New pick&apos;em rounds open each week during the season.</p>
+                <Link
+                  href="/scores"
+                  className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg transition-opacity hover:opacity-80"
+                  style={{ background: "var(--psp-navy)", color: "var(--psp-gold)" }}
+                >
+                  View Past Scores
+                </Link>
               </div>
             ) : (
               <>
@@ -147,7 +155,8 @@ export default async function PickemPage() {
                 {/* Games Grid */}
                 {games.length === 0 ? (
                   <div className="bg-gray-50 rounded-lg p-8 text-center" style={{ color: "var(--psp-gray-500)" }}>
-                    No games scheduled for this week yet.
+                    <p className="font-medium text-gray-700 mb-1">Games coming soon</p>
+                    <p className="text-sm">The matchups for this week will be posted shortly.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -219,9 +228,9 @@ export default async function PickemPage() {
           <div className="space-y-6">
             {/* Leaderboard */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 Leaderboard
-              </h3>
+              </h2>
               {leaderboard && leaderboard.length > 0 ? (
                 <ol className="space-y-3">
                   {leaderboard.slice(0, 10).map((entry: any, idx: number) => (
@@ -235,16 +244,16 @@ export default async function PickemPage() {
                 </ol>
               ) : (
                 <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
-                  No picks yet this week.
+                  No picks yet this week. Make your picks to appear on the leaderboard!
                 </p>
               )}
             </div>
 
             {/* How to Play */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 How to Play
-              </h3>
+              </h2>
               <ol className="space-y-2 text-sm" style={{ color: "var(--psp-gray-600)" }}>
                 <li>
                   <strong>1. Pick Winners:</strong> Click on the team you think will win each game

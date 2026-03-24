@@ -41,7 +41,7 @@ const RANKING_TYPE_LABELS: Record<string, { label: string; icon: React.ReactNode
 const SPORT_COLORS: Record<string, string> = {
   football: '#16a34a',
   basketball: '#3b82f6',
-  baseball: '#ea580c',
+  baseball: '#dc2626',
 };
 
 export default function RankingsClient({ rankings, activeSport, sportMeta }: Props) {
@@ -149,7 +149,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
       <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
         <p className="text-4xl mb-3">{sportMeta?.emoji || '📊'}</p>
         <p className="text-gray-700 text-xl font-medium mb-2">{msg.title}</p>
-        <p className="text-gray-500">{msg.subtitle}</p>
+        <p className="text-gray-400">{msg.subtitle}</p>
       </div>
     );
   }
@@ -160,12 +160,12 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
       <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-lg" style={{ backgroundColor: `${typeInfo.color}12`, border: `1px solid ${typeInfo.color}30` }}>
         <span style={{ color: typeInfo.color }}>{typeInfo.icon}</span>
         <span className="font-bold text-sm" style={{ color: typeInfo.color }}>{typeInfo.label} Rankings</span>
-        <span className="text-gray-400 text-xs">|</span>
+        <span className="text-gray-300 text-xs">|</span>
         <span className="text-gray-600 text-sm">{sportMeta?.emoji} {sportMeta?.name}</span>
         {currentRankings[0]?.published_at && (
           <>
-            <span className="text-gray-400 text-xs">|</span>
-            <span className="text-gray-500 text-xs">
+            <span className="text-gray-300 text-xs">|</span>
+            <span className="text-gray-400 text-xs">
               Published {new Date(currentRankings[0].published_at).toLocaleDateString('en-US', {
                 month: 'short', day: 'numeric', year: 'numeric',
               })}
@@ -180,7 +180,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
           <div className="flex items-center gap-2">
             <button
               onClick={() => scrollTimeline('left')}
-              className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition flex-shrink-0"
+              className="p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-gray-600 transition flex-shrink-0"
               aria-label="Scroll left"
             >
               <ChevronLeft size={20} />
@@ -207,7 +207,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
                   >
                     <div className="flex flex-col items-center gap-0.5">
                       <span className="font-bold">{week}</span>
-                      <span className={`text-[10px] ${isSelected ? 'text-white/70' : 'text-gray-400'}`}>
+                      <span className={`text-[10px] ${isSelected ? 'text-white/80' : 'text-gray-300'}`}>
                         {wTypeInfo.label}
                       </span>
                     </div>
@@ -217,7 +217,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
             </div>
             <button
               onClick={() => scrollTimeline('right')}
-              className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition flex-shrink-0"
+              className="p-1 rounded hover:bg-gray-100 text-gray-300 hover:text-gray-600 transition flex-shrink-0"
               aria-label="Scroll right"
             >
               <ChevronRight size={20} />
@@ -231,7 +231,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
         <button
           onClick={goToPreviousWeek}
           disabled={selectedWeekIndex >= weeks.length - 1}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-navy disabled:opacity-30 disabled:cursor-not-allowed transition"
+          className="flex items-center gap-1 text-sm text-gray-400 hover:text-navy disabled:opacity-30 disabled:cursor-not-allowed transition"
         >
           <ChevronLeft size={16} /> Previous
         </button>
@@ -241,7 +241,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
         <button
           onClick={goToNextWeek}
           disabled={selectedWeekIndex <= 0}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-navy disabled:opacity-30 disabled:cursor-not-allowed transition"
+          className="flex items-center gap-1 text-sm text-gray-400 hover:text-navy disabled:opacity-30 disabled:cursor-not-allowed transition"
         >
           Next <ChevronRight size={16} />
         </button>
@@ -297,16 +297,16 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
                 {r.schools ? (
                   <Link href={`/${activeSport}/schools/${r.schools.slug}`} className="font-bold text-navy hover:text-blue-600 transition">
                     {r.schools.name}
-                    {r.schools.mascot && <span className="text-gray-400 font-normal text-sm ml-1">{r.schools.mascot}</span>}
+                    {r.schools.mascot && <span className="text-gray-300 font-normal text-sm ml-1">{r.schools.mascot}</span>}
                   </Link>
                 ) : (
                   <span className="font-bold text-navy">Unknown School</span>
                 )}
                 {r.record_display && (
-                  <p className="text-sm text-gray-500 font-medium">{r.record_display}</p>
+                  <p className="text-sm text-gray-400 font-medium">{r.record_display}</p>
                 )}
                 {r.blurb && (
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2 group-hover:line-clamp-none transition-all">{r.blurb}</p>
+                  <p className="text-sm text-gray-400 mt-1 line-clamp-2 group-hover:line-clamp-none transition-all">{r.blurb}</p>
                 )}
               </div>
 
@@ -334,25 +334,25 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
               )}
 
               {/* Rank Change Indicator */}
-              <div className="flex-shrink-0 w-16 text-right">
+              <div className="flex-shrink-0 w-20 text-right">
                 {rankChange !== null && rankChange > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-green-600 text-sm font-bold">
-                    <TrendingUp size={14} /> {rankChange}
+                  <span className="inline-flex items-center gap-0.5 text-green-600 text-sm font-bold" title={`Up ${rankChange}`}>
+                    <TrendingUp size={14} aria-hidden="true" /> <span aria-label={`Up ${rankChange}`}>&#9650; {rankChange}</span>
                   </span>
                 )}
                 {rankChange !== null && rankChange < 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-red-500 text-sm font-bold">
-                    <TrendingDown size={14} /> {Math.abs(rankChange)}
+                  <span className="inline-flex items-center gap-0.5 text-red-500 text-sm font-bold" title={`Down ${Math.abs(rankChange)}`}>
+                    <TrendingDown size={14} aria-hidden="true" /> <span aria-label={`Down ${Math.abs(rankChange)}`}>&#9660; {Math.abs(rankChange)}</span>
                   </span>
                 )}
                 {rankChange !== null && rankChange === 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-gray-400 text-sm">
-                    <Minus size={14} />
+                  <span className="inline-flex items-center gap-0.5 text-gray-300 text-sm" title="No change">
+                    <Minus size={14} aria-hidden="true" /> <span className="text-xs">EVEN</span>
                   </span>
                 )}
                 {rankChange === null && (
                   <span className="inline-flex items-center gap-1 text-blue-500 text-xs font-bold px-2 py-0.5 bg-blue-50 rounded-full">
-                    <Sparkles size={12} /> NEW
+                    <Sparkles size={12} aria-hidden="true" /> NEW
                   </span>
                 )}
               </div>
@@ -365,11 +365,11 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
       })}
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 mt-4 text-xs text-gray-400">
-        <span className="flex items-center gap-1"><TrendingUp size={12} className="text-green-600" /> Moved up</span>
-        <span className="flex items-center gap-1"><TrendingDown size={12} className="text-red-500" /> Moved down</span>
-        <span className="flex items-center gap-1"><Minus size={12} className="text-gray-400" /> No change</span>
-        <span className="flex items-center gap-1"><Sparkles size={12} className="text-blue-500" /> New entry</span>
+      <div className="flex flex-wrap gap-4 mt-4 text-xs text-gray-300">
+        <span className="flex items-center gap-1"><TrendingUp size={12} className="text-green-600" aria-hidden="true" /> &#9650; Moved up</span>
+        <span className="flex items-center gap-1"><TrendingDown size={12} className="text-red-500" aria-hidden="true" /> &#9660; Moved down</span>
+        <span className="flex items-center gap-1"><Minus size={12} className="text-gray-300" aria-hidden="true" /> EVEN No change</span>
+        <span className="flex items-center gap-1"><Sparkles size={12} className="text-blue-500" aria-hidden="true" /> NEW New entry</span>
         {weeks.length > 1 && (
           <span className="flex items-center gap-1 ml-auto">
             <div className="flex items-end gap-[1px] h-3">

@@ -87,14 +87,14 @@ export default async function ForumPostPage({ params }: { params: Promise<{ post
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-8 px-4">
         <div className="max-w-4xl mx-auto">
-          <Link href="/pulse/forum" className="text-gray-400 hover:text-gold text-sm mb-3 inline-block">
+          <Link href="/pulse/forum" className="text-gray-300 hover:text-gold text-sm mb-3 inline-block">
             &larr; Back to Forum
           </Link>
           <div className="flex items-center gap-2 mb-2">
             <span className={`px-2 py-0.5 rounded text-xs font-medium ${catColor}`}>{post.category}</span>
             {sportMeta && <span>{sportMeta.emoji}</span>}
             {post.is_pinned && <span className="text-gold text-xs font-bold">📌 PINNED</span>}
-            {post.is_locked && <span className="text-gray-400 text-xs">🔒 LOCKED</span>}
+            {post.is_locked && <span className="text-gray-300 text-xs">🔒 LOCKED</span>}
           </div>
           <h1 className="psp-h1 text-white">{post.title}</h1>
         </div>
@@ -113,10 +113,10 @@ export default async function ForumPostPage({ params }: { params: Promise<{ post
               <p className="font-bold text-navy">
                 {post.author_name}
                 {post.author_school_flair && (
-                  <span className="text-gray-400 font-normal text-sm ml-1">({post.author_school_flair})</span>
+                  <span className="text-gray-300 font-normal text-sm ml-1">({post.author_school_flair})</span>
                 )}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-400">
                 {new Date(post.created_at).toLocaleDateString('en-US', {
                   year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit',
                 })}
@@ -126,7 +126,7 @@ export default async function ForumPostPage({ params }: { params: Promise<{ post
           <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">
             {post.body}
           </div>
-          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500">
+          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-sm text-gray-400">
             <span>👁 {post.view_count} views</span>
             <span>💬 {post.reply_count} replies</span>
           </div>
@@ -146,10 +146,10 @@ export default async function ForumPostPage({ params }: { params: Promise<{ post
                     <p className="font-medium text-navy text-sm">
                       {reply.author_name}
                       {reply.author_school_flair && (
-                        <span className="text-gray-400 font-normal ml-1">({reply.author_school_flair})</span>
+                        <span className="text-gray-300 font-normal ml-1">({reply.author_school_flair})</span>
                       )}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-400">
                       {new Date(reply.created_at).toLocaleDateString('en-US', {
                         month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
                       })}
@@ -166,7 +166,7 @@ export default async function ForumPostPage({ params }: { params: Promise<{ post
 
         {/* Reply CTA */}
         {post.is_locked ? (
-          <div className="mt-6 p-4 bg-gray-100 rounded-lg text-center text-gray-500 text-sm">
+          <div className="mt-6 p-4 bg-gray-100 rounded-lg text-center text-gray-400 text-sm">
             🔒 This topic is locked. No new replies.
           </div>
         ) : (

@@ -98,7 +98,7 @@ function SmallMultiples({
         <h3 className="text-lg font-bold text-navy">
           {statName} Comparison
         </h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-400">
           {items.length} {items.length === 1 ? 'school' : 'schools'} — Honest scale for fair comparison
         </p>
       </div>
@@ -142,15 +142,15 @@ function SmallMultiples({
 
                 {/* Stats bar */}
                 <div className="space-y-1 text-xs">
-                  <div className="flex justify-between text-gray-600">
+                  <div className="flex justify-between text-gray-400">
                     <span className="font-semibold">Avg</span>
                     <span className="font-bold text-navy">{stats.avg.toFixed(1)}</span>
                   </div>
-                  <div className="flex justify-between text-gray-600">
+                  <div className="flex justify-between text-gray-400">
                     <span className="font-semibold">Min</span>
                     <span className="text-gray-700">{stats.min.toFixed(1)}</span>
                   </div>
-                  <div className="flex justify-between text-gray-600">
+                  <div className="flex justify-between text-gray-400">
                     <span className="font-semibold">Max</span>
                     <span className="text-gray-700">{stats.max.toFixed(1)}</span>
                   </div>
@@ -170,7 +170,7 @@ function SmallMultiples({
 
       {/* Footer info */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-400">
           <strong>Scale:</strong> {Math.round(globalStats.min)} (low) to {Math.round(globalStats.max)} (high).
           Click any card to view detailed profile.
         </p>

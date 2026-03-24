@@ -131,7 +131,7 @@ function CareerTrajectoryChart({
     <div className="w-full bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex justify-between items-baseline mb-4">
         <h3 className="text-lg font-bold text-navy">Career Trajectory</h3>
-        <p className="text-sm text-gray-500">{stat}</p>
+        <p className="text-sm text-gray-400">{stat}</p>
       </div>
 
       <svg
@@ -349,18 +349,18 @@ function CareerTrajectoryChart({
       {/* Metadata */}
       <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-3 gap-4 text-sm">
         <div>
-          <p className="text-gray-500 text-xs font-semibold uppercase">Peak</p>
+          <p className="text-gray-400 text-xs font-semibold uppercase">Peak</p>
           <p className="text-lg font-bold text-navy">{Math.round(peakValue).toLocaleString()}</p>
-          <p className="text-xs text-gray-600">{seasons[peakIndex]?.year || 'N/A'}</p>
+          <p className="text-xs text-gray-400">{seasons[peakIndex]?.year || 'N/A'}</p>
         </div>
         <div>
-          <p className="text-gray-500 text-xs font-semibold uppercase">Average</p>
+          <p className="text-gray-400 text-xs font-semibold uppercase">Average</p>
           <p className="text-lg font-bold text-navy">
             {Math.round(seasons.reduce((sum, s) => sum + s.value, 0) / seasons.length).toLocaleString()}
           </p>
         </div>
         <div>
-          <p className="text-gray-500 text-xs font-semibold uppercase">Seasons</p>
+          <p className="text-gray-400 text-xs font-semibold uppercase">Seasons</p>
           <p className="text-lg font-bold text-navy">{seasons.length}</p>
         </div>
       </div>

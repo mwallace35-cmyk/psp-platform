@@ -70,7 +70,7 @@ export default function RateStatDisplay({
 }: RateStatDisplayProps) {
   if (value === null) {
     return (
-      <span className={`text-gray-400 ${className}`}>
+      <span className={`text-gray-300 ${className}`}>
         {fullName || abbreviation} — N/A
       </span>
     );
@@ -107,7 +107,7 @@ export default function RateStatDisplay({
             {abbreviation}
           </span>
         </span>
-        <span className="text-xs text-gray-500">{denominatorText}</span>
+        <span className="text-xs text-gray-400">{denominatorText}</span>
       </div>
     );
   }

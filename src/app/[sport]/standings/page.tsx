@@ -68,7 +68,7 @@ async function StandingsLoader({ sport, season }: { sport: string; season?: stri
 
   if (!defaultSeason) {
     return (
-      <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-400">
+      <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-300">
         No standings data available yet.
       </div>
     );
@@ -81,7 +81,7 @@ async function StandingsLoader({ sport, season }: { sport: string; season?: stri
 
   if (!standings || standings.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-400">
+      <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-6 text-center text-gray-300">
         No standings data available for {defaultSeason}.
       </div>
     );
@@ -165,8 +165,8 @@ export default async function StandingsPage({ params, searchParams }: { params: 
 
             {/* Info Card */}
             <div className="rounded-lg bg-gray-900 p-6">
-              <div className="text-sm font-bold text-gray-400 uppercase mb-3">About Standings</div>
-              <p className="text-sm text-gray-400">
+              <div className="text-sm font-bold text-gray-300 uppercase mb-3">About Standings</div>
+              <p className="text-sm text-gray-300">
                 Standings show final-season records for each team. Teams are sorted by wins, then ties, then winning percentage.
               </p>
               <div className="mt-4 pt-4 border-t border-gray-700">

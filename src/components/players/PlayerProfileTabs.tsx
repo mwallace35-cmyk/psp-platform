@@ -87,7 +87,7 @@ export default function PlayerProfileTabs({ sportColor, tabs }: PlayerProfileTab
               className={`psp-caption whitespace-nowrap px-5 py-3 transition-colors duration-200 flex-shrink-0 cursor-pointer bg-transparent border-b-2 ${
                 isActive
                   ? "border-[var(--psp-gold)] text-white"
-                  : "border-transparent text-gray-400 hover:text-gray-200"
+                  : "border-transparent text-gray-300 hover:text-gray-200"
               }`}
               style={{
                 fontSize: "1rem",

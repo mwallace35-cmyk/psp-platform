@@ -195,7 +195,7 @@ export default async function RecruitFinderPage() {
           >
             RECRUIT FINDER
           </h1>
-          <p className="text-white/60 text-base max-w-[600px] m-0">
+          <p className="text-white/80 text-base max-w-[600px] m-0">
             Search top Philadelphia high school athletes by sport, position, class year, and stats.
             Filter and sort to find the recruits you&apos;re looking for.
           </p>

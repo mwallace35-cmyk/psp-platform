@@ -170,7 +170,7 @@ export default async function RivalryDetailPage({
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 font-heading">
               {school1Data.name}
             </h1>
-            <div className="text-2xl text-gray-400 mb-6">vs</div>
+            <div className="text-2xl text-gray-300 mb-6">vs</div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 font-heading">
               {school2Data.name}
             </h1>
@@ -190,7 +190,7 @@ export default async function RivalryDetailPage({
                 {rivalryRecord.school1_wins}-{rivalryRecord.school2_wins}
                 {rivalryRecord.ties > 0 && <span className="text-lg">, {rivalryRecord.ties}T</span>}
               </div>
-              <p className="text-gray-400">
+              <p className="text-gray-300">
                 {rivalryRecord.total_games} games |{' '}
                 {rivalryRecord.latest_game_date
                   ? `Last: ${formatDate(rivalryRecord.latest_game_date)}`
@@ -202,25 +202,25 @@ export default async function RivalryDetailPage({
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl mx-auto">
             <div className="bg-[var(--psp-navy-mid)] rounded-lg p-4 border border-gray-700">
-              <div className="text-xs text-gray-400 uppercase tracking-wide">Total Games</div>
+              <div className="text-xs text-gray-300 uppercase tracking-wide">Total Games</div>
               <div className="text-2xl font-bold text-white font-heading">
                 {rivalryRecord.total_games}
               </div>
             </div>
             <div className="bg-[var(--psp-navy-mid)] rounded-lg p-4 border border-gray-700">
-              <div className="text-xs text-gray-400 uppercase tracking-wide">{school1Data.name}</div>
+              <div className="text-xs text-gray-300 uppercase tracking-wide">{school1Data.name}</div>
               <div className="text-2xl font-bold text-[var(--psp-gold)] font-heading">
                 {rivalryRecord.school1_wins} W
               </div>
             </div>
             <div className="bg-[var(--psp-navy-mid)] rounded-lg p-4 border border-gray-700">
-              <div className="text-xs text-gray-400 uppercase tracking-wide">{school2Data.name}</div>
+              <div className="text-xs text-gray-300 uppercase tracking-wide">{school2Data.name}</div>
               <div className="text-2xl font-bold text-[var(--psp-blue)] font-heading">
                 {rivalryRecord.school2_wins} W
               </div>
             </div>
             <div className="bg-[var(--psp-navy-mid)] rounded-lg p-4 border border-gray-700">
-              <div className="text-xs text-gray-400 uppercase tracking-wide">Ties</div>
+              <div className="text-xs text-gray-300 uppercase tracking-wide">Ties</div>
               <div className="text-2xl font-bold text-gray-300 font-heading">
                 {rivalryRecord.ties}
               </div>
@@ -240,14 +240,15 @@ export default async function RivalryDetailPage({
               <h2 className="text-2xl font-bold text-white mb-4 font-heading">Game History</h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-gray-200" aria-label="Rivalry game history">
+                  <caption className="sr-only">Rivalry game history</caption>
                   <thead>
                     <tr className="border-b border-gray-700">
-                      <th className="text-left py-2 px-3 text-gray-400">Date</th>
-                      <th className="text-left py-2 px-3 text-gray-400">Season</th>
-                      <th className="text-left py-2 px-3 text-gray-400">Away</th>
-                      <th className="text-center py-2 px-3 text-gray-400">Score</th>
-                      <th className="text-left py-2 px-3 text-gray-400">Home</th>
-                      <th className="text-center py-2 px-3 text-gray-400">Box Score</th>
+                      <th scope="col" className="text-left py-2 px-3 text-gray-300">Date</th>
+                      <th scope="col" className="text-left py-2 px-3 text-gray-300">Season</th>
+                      <th scope="col" className="text-left py-2 px-3 text-gray-300">Away</th>
+                      <th scope="col" className="text-center py-2 px-3 text-gray-300">Score</th>
+                      <th scope="col" className="text-left py-2 px-3 text-gray-300">Home</th>
+                      <th scope="col" className="text-center py-2 px-3 text-gray-300">Box Score</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -269,7 +270,7 @@ export default async function RivalryDetailPage({
                           <td className="py-3 px-3 text-gray-300">
                             {formatDate(game.game_date)}
                           </td>
-                          <td className="py-3 px-3 text-gray-400">
+                          <td className="py-3 px-3 text-gray-300">
                             {game.season_label}
                           </td>
                           <td className="py-3 px-3">
@@ -291,17 +292,17 @@ export default async function RivalryDetailPage({
                                   className={
                                     away_won
                                       ? 'text-[var(--psp-gold)]'
-                                      : 'text-gray-400'
+                                      : 'text-gray-300'
                                   }
                                 >
                                   {game.away_score}
                                 </span>
-                                <span className="text-gray-500 mx-1">–</span>
+                                <span className="text-gray-400 mx-1">–</span>
                                 <span
                                   className={
                                     home_won
                                       ? 'text-[var(--psp-gold)]'
-                                      : 'text-gray-400'
+                                      : 'text-gray-300'
                                   }
                                 >
                                   {game.home_score}
@@ -340,7 +341,7 @@ export default async function RivalryDetailPage({
                 </table>
               </div>
               {games.length === 0 && (
-                <div className="text-center py-8 text-gray-400">
+                <div className="text-center py-8 text-gray-300">
                   No games found between these schools
                 </div>
               )}
@@ -398,7 +399,7 @@ export default async function RivalryDetailPage({
                               <span className="text-sm font-semibold text-white">
                                 {decade}
                               </span>
-                              <span className="text-xs text-gray-400">
+                              <span className="text-xs text-gray-300">
                                 {record.school1}–{record.school2}
                                 {record.ties > 0 && `, ${record.ties}T`}
                               </span>
@@ -448,14 +449,14 @@ export default async function RivalryDetailPage({
                   <h3 className="font-bold text-white mb-2">{school.name}</h3>
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div>
-                      <div className="text-gray-400">Series W</div>
+                      <div className="text-gray-300">Series W</div>
                       <div className="font-bold text-[var(--psp-gold)]">
                         {wins}
                       </div>
                     </div>
                     {school.city && (
                       <div>
-                        <div className="text-gray-400">City</div>
+                        <div className="text-gray-300">City</div>
                         <div className="font-semibold text-white">
                           {school.city}
                         </div>
@@ -463,7 +464,7 @@ export default async function RivalryDetailPage({
                     )}
                     {school.league_id && (
                       <div>
-                        <div className="text-gray-400">League</div>
+                        <div className="text-gray-300">League</div>
                         <div className="font-semibold text-white text-xs">Assigned</div>
                       </div>
                     )}

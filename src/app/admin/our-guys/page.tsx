@@ -166,9 +166,9 @@ export default function AdminOurGuysPage() {
               padding: 20,
               marginBottom: 20,
             }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 14px" }}>
+              <h2 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 14px" }}>
                 {editingId ? "Edit Person" : "Add New Person"}
-              </h3>
+              </h2>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
                   <label style={labelStyle}>Name *</label>
@@ -337,9 +337,9 @@ export default function AdminOurGuysPage() {
             padding: 20,
             marginBottom: 20,
           }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 14px" }}>
+            <h2 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 14px" }}>
               Add Social Post
-            </h3>
+            </h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12 }}>
               <div>
                 <label style={labelStyle}>Person</label>

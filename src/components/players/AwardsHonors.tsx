@@ -111,7 +111,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
         <h2 className="psp-h2 text-[var(--psp-navy)] mb-6">
           Awards & Honors
         </h2>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3" role="status" aria-busy="true" aria-label="Loading awards">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-16 bg-gray-50 rounded-lg border border-gray-200 animate-pulse" />
           ))}
@@ -137,7 +137,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
         Awards & Honors
       </h2>
       {!awards || awards.length === 0 ? (
-        <p className="text-gray-500 text-base">No awards recorded yet</p>
+        <p className="text-gray-400 text-base">No awards recorded yet</p>
       ) : (
         <div className="flex flex-col gap-8">
           {sortedYears.map((year) => (
@@ -148,7 +148,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
                   {formatSeasonYear(year)}
                 </span>
                 <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400 font-medium">
+                <span className="text-xs text-gray-300 font-medium">
                   {awardsByYear[year].length} award{awardsByYear[year].length > 1 ? 's' : ''}
                 </span>
               </div>

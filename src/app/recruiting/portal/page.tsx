@@ -105,10 +105,10 @@ function RecruiterPortalContent() {
         >
           Recruiter Portal
         </h1>
-        <p className="text-xl text-gray-600 mb-4">
+        <p className="text-xl text-gray-400 mb-4">
           Discover Philly's next stars — Browse and connect with top high school athletes.
         </p>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-400">
           Contact info requires registration. Free browsing for all coaches.
         </p>
       </div>
@@ -286,8 +286,8 @@ function RecruiterPortalContent() {
                   {/* Player Card */}
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="font-bold text-gray-900">{recruit.name}</h3>
-                      <p className="text-sm text-gray-500">
+                      <h2 className="font-bold text-gray-900">{recruit.name}</h2>
+                      <p className="text-sm text-gray-400">
                         <Link
                           href={`/football/schools/${recruit.school_slug}`}
                           className="hover:underline"
@@ -306,7 +306,7 @@ function RecruiterPortalContent() {
                   </div>
 
                   {/* Measurables */}
-                  <div className="grid grid-cols-3 gap-2 mb-3 text-xs text-gray-600">
+                  <div className="grid grid-cols-3 gap-2 mb-3 text-xs text-gray-400">
                     {recruit.height && <div>Height: {recruit.height}</div>}
                     {recruit.weight && <div>Weight: {recruit.weight} lbs</div>}
                     {recruit.graduation_year && (
@@ -362,7 +362,7 @@ function RecruiterPortalContent() {
             </div>
           ) : (
             <div className="bg-gray-50 rounded-lg p-8 text-center">
-              <p className="text-gray-600">
+              <p className="text-gray-400">
                 No recruits found. Try adjusting your filters.
               </p>
             </div>
@@ -373,7 +373,7 @@ function RecruiterPortalContent() {
         <div className="space-y-6">
           {/* Registration CTA */}
           <div className="bg-blue-600 text-white rounded-lg p-6">
-            <h3 className="font-bold text-lg mb-2">College Coaches</h3>
+            <h2 className="font-bold text-lg mb-2">College Coaches</h2>
             <p className="text-sm mb-4">Register to contact players and unlock recruiting tools.</p>
             <button className="w-full px-4 py-2 bg-white text-blue-600 font-semibold rounded hover:bg-gray-100 transition">
               Register Now
@@ -397,7 +397,7 @@ function RecruiterPortalContent() {
                     className="block p-2 hover:bg-gray-50 rounded transition cursor-pointer"
                   >
                     <p className="font-semibold text-gray-900">{player.name}</p>
-                    <p className="text-xs text-gray-500">{player.school_name}</p>
+                    <p className="text-xs text-gray-400">{player.school_name}</p>
                   </Link>
                 ))}
               </div>
@@ -419,7 +419,7 @@ function RecruiterPortalContent() {
                     <p className="font-semibold text-gray-900 text-sm">
                       {commit.player_name}
                     </p>
-                    <p className="text-xs text-gray-500">{commit.college}</p>
+                    <p className="text-xs text-gray-400">{commit.college}</p>
                   </div>
                 ))}
               </div>

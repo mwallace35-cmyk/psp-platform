@@ -1,6 +1,6 @@
 export default function RecordsExplorerSkeleton() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" role="status" aria-busy="true" aria-label="Loading records explorer">
       {/* Hero Section */}
       <section className="py-10 px-4 bg-gradient-to-r from-[#0a1628] to-[#0f2040] text-white">
         <div className="max-w-7xl mx-auto">

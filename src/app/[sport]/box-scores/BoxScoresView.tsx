@@ -111,7 +111,7 @@ export default function BoxScoresView({
       {/* Empty State */}
       {!loading && games.length === 0 && (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500 text-lg">No box scores found for the selected filters.</p>
+          <p className="text-gray-400 text-lg">No box scores found for the selected filters.</p>
         </div>
       )}
 
@@ -145,7 +145,7 @@ export default function BoxScoresView({
                 >
                   <div className="flex items-center justify-between gap-4">
                     {/* Date */}
-                    <div className="text-xs text-gray-500 w-20 flex-shrink-0">
+                    <div className="text-xs text-gray-400 w-20 flex-shrink-0">
                       {gameDate}
                     </div>
 
@@ -206,7 +206,7 @@ export default function BoxScoresView({
 
                   {/* Season Label */}
                   {game.seasons && (
-                    <div className="text-xs text-gray-500 mt-2">
+                    <div className="text-xs text-gray-400 mt-2">
                       {game.seasons.label}
                     </div>
                   )}

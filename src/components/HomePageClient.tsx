@@ -123,21 +123,21 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
               <div className="psp-h1 text-[var(--psp-navy)]">
                 {stats.players.toLocaleString()}+
               </div>
-              <div className="text-sm text-gray-600 mt-2">Players Tracked</div>
+              <div className="text-sm text-gray-400 mt-2">Players Tracked</div>
             </div>
             <div>
               <div className="psp-h1 text-[var(--psp-navy)]">
                 {stats.schools.toLocaleString()}+
               </div>
-              <div className="text-sm text-gray-600 mt-2">Schools</div>
+              <div className="text-sm text-gray-400 mt-2">Schools</div>
             </div>
             <div>
               <div className="psp-h1 text-[var(--psp-navy)]">3</div>
-              <div className="text-sm text-gray-600 mt-2">Sports Covered</div>
+              <div className="text-sm text-gray-400 mt-2">Sports Covered</div>
             </div>
             <div>
               <div className="psp-h1 text-[var(--psp-navy)]">50+</div>
-              <div className="text-sm text-gray-600 mt-2">Years of Data</div>
+              <div className="text-sm text-gray-400 mt-2">Years of Data</div>
             </div>
           </div>
         </section>
@@ -223,10 +223,10 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                     <h3 className="text-lg font-semibold mb-2 text-[var(--psp-navy)] leading-relaxed">
                       {article.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-3 leading-relaxed flex-1">
+                    <p className="text-sm text-gray-400 mb-3 leading-relaxed flex-1">
                       {article.excerpt}
                     </p>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-400">
                       {formatTimeAgo(article.published_at)}
                     </span>
                   </div>
@@ -288,7 +288,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                         <p className="text-sm text-[var(--psp-gold)] mb-1 font-medium">
                           {nominee.schoolName}
                         </p>
-                        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                           {nominee.sportId}
                         </span>
                       </div>
@@ -296,7 +296,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                         <div className="text-2xl font-bold text-[var(--psp-gold)]">
                           {nominee.votes}
                         </div>
-                        <div className="text-xs text-gray-600 font-medium">
+                        <div className="text-xs text-gray-400 font-medium">
                           votes
                         </div>
                       </div>
@@ -315,7 +315,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                   </div>
                 ))
               ) : (
-                <div className="col-span-full text-center py-10 text-gray-600">
+                <div className="col-span-full text-center py-10 text-gray-400">
                   <p className="text-sm">No POTW nominees available at this time</p>
                 </div>
               )}
@@ -360,7 +360,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
             <h2 className="psp-h1 mb-4 text-[var(--psp-navy)]">
               Community Hot Takes
             </h2>
-            <p className="text-sm text-gray-600 mb-8 max-w-2xl">
+            <p className="text-sm text-gray-400 mb-8 max-w-2xl">
               What the community is talking about this week. Share your takes and join the conversation.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -382,11 +382,11 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                       {take.content}
                     </p>
                     <div className="flex items-center gap-3 pt-2 border-t border-gray-200">
-                      <div className="flex items-center gap-2 text-xs text-gray-600">
+                      <div className="flex items-center gap-2 text-xs text-gray-400">
                         <span>👍 {take.upvotes}</span>
                         <span>👎 {take.downvotes}</span>
                       </div>
-                      <div className="ml-auto text-xs text-gray-500">
+                      <div className="ml-auto text-xs text-gray-400">
                         {formatTimeAgo(take.createdAt)}
                       </div>
                     </div>
@@ -411,7 +411,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
             <h2 className="psp-h1 mb-8 text-[var(--psp-navy)]">
               Philly Everywhere
             </h2>
-            <p className="text-base text-gray-600 mb-8 max-w-2xl">
+            <p className="text-base text-gray-400 mb-8 max-w-2xl">
               Track Philadelphia&apos;s next-level athletes competing at the highest levels of college and professional sports
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
@@ -427,7 +427,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
                   <p className="text-xs text-[var(--psp-gold)] mb-1 font-medium">
                     {alumnus.team}
                   </p>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-gray-400">
                     {alumnus.hs}
                   </p>
                 </div>

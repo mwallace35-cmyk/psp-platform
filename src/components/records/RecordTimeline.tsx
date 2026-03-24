@@ -110,7 +110,7 @@ export default function RecordTimeline({
 
                     {(record.school_name || record.holder_school) && (
                       <>
-                        <span className="text-gray-400">•</span>
+                        <span className="text-gray-300">•</span>
                         {record.school_slug ? (
                           <Link
                             href={`/${sport}/schools/${record.school_slug}`}
@@ -129,7 +129,7 @@ export default function RecordTimeline({
                   </div>
 
                   {record.description && (
-                    <p className="text-xs text-gray-500 mt-2">{record.description}</p>
+                    <p className="text-xs text-gray-400 mt-2">{record.description}</p>
                   )}
                 </div>
 
@@ -137,11 +137,11 @@ export default function RecordTimeline({
                   <div className="psp-h2" style={{ color: "var(--psp-gold)" }}>
                     {record.yearsHeld}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-gray-400 mt-1">
                     years held
                   </div>
                   {record.year_set && (
-                    <div className="text-xs text-gray-400 mt-2">
+                    <div className="text-xs text-gray-300 mt-2">
                       Set in {record.year_set}
                     </div>
                   )}

@@ -8,7 +8,7 @@ interface StatisticsTabProps {
 
 function WinLossBar({ wins = 0, losses = 0, ties = 0 }: { wins: number; losses: number; ties: number }) {
   const total = wins + losses + ties;
-  if (total === 0) return <div className="text-gray-500 text-sm">No data available</div>;
+  if (total === 0) return <div className="text-gray-400 text-sm">No data available</div>;
 
   const winPct = Math.round((wins / total) * 100);
 
@@ -30,7 +30,7 @@ function WinLossBar({ wins = 0, losses = 0, ties = 0 }: { wins: number; losses: 
           />
         )}
       </div>
-      <div className="text-xs text-gray-600">
+      <div className="text-xs text-gray-400">
         {winPct}% Win Rate ({wins}W-{losses}L{ties > 0 ? `-${ties}T` : ""})
       </div>
     </div>
@@ -88,29 +88,29 @@ export function StatisticsTab({
             <div className="text-4xl font-bold text-[var(--psp-navy)]">
               {wins}
             </div>
-            <div className="text-sm text-gray-600 mt-1">Wins</div>
+            <div className="text-sm text-gray-400 mt-1">Wins</div>
           </div>
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div className="text-4xl font-bold text-red-600">{losses}</div>
-            <div className="text-sm text-gray-600 mt-1">Losses</div>
+            <div className="text-sm text-gray-400 mt-1">Losses</div>
           </div>
           {ties > 0 && (
             <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <div className="text-4xl font-bold text-gray-600">{ties}</div>
-              <div className="text-sm text-gray-600 mt-1">Ties</div>
+              <div className="text-4xl font-bold text-gray-400">{ties}</div>
+              <div className="text-sm text-gray-400 mt-1">Ties</div>
             </div>
           )}
           <div className="text-center p-4 bg-blue-50 rounded-lg">
             <div className="text-4xl font-bold text-blue-600">
               {Math.round((wins / (wins + losses + ties)) * 100)}%
             </div>
-            <div className="text-sm text-gray-600 mt-1">Win Pct</div>
+            <div className="text-sm text-gray-400 mt-1">Win Pct</div>
           </div>
         </div>
 
         {/* Win/Loss Visual */}
         <div>
-          <label className="text-sm font-semibold text-gray-600 mb-2 block">
+          <label className="text-sm font-semibold text-gray-400 mb-2 block">
             Record Distribution
           </label>
           <WinLossBar wins={wins} losses={losses} ties={ties} />
@@ -129,7 +129,7 @@ export function StatisticsTab({
               <div className="text-3xl font-bold text-green-700">
                 {pointsFor}
               </div>
-              <div className="text-xs text-gray-600 mt-1">
+              <div className="text-xs text-gray-400 mt-1">
                 {sport === "baseball" ? "Runs For" : sport === "soccer" || sport === "lacrosse" ? "Goals For" : "Points For"}
               </div>
             </div>
@@ -137,7 +137,7 @@ export function StatisticsTab({
               <div className="text-3xl font-bold text-red-700">
                 {pointsAgainst}
               </div>
-              <div className="text-xs text-gray-600 mt-1">
+              <div className="text-xs text-gray-400 mt-1">
                 {sport === "baseball" ? "Runs Against" : sport === "soccer" || sport === "lacrosse" ? "Goals Against" : "Points Against"}
               </div>
             </div>
@@ -153,7 +153,7 @@ export function StatisticsTab({
               >
                 {pointDiff > 0 ? "+" : ""}{pointDiff}
               </div>
-              <div className="text-xs text-gray-600 mt-1">Differential</div>
+              <div className="text-xs text-gray-400 mt-1">Differential</div>
             </div>
           </div>
 
@@ -161,13 +161,13 @@ export function StatisticsTab({
           <div className="mt-4 pt-4 border-t border-gray-200">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-sm text-gray-600 mb-1">Avg Per Game</div>
+                <div className="text-sm text-gray-400 mb-1">Avg Per Game</div>
                 <div className="text-2xl font-bold text-gray-900">
                   {wins > 0 ? (pointsFor / (wins + losses + ties)).toFixed(1) : "0.0"}
                 </div>
               </div>
               <div>
-                <div className="text-sm text-gray-600 mb-1">Allowed Per Game</div>
+                <div className="text-sm text-gray-400 mb-1">Allowed Per Game</div>
                 <div className="text-2xl font-bold text-gray-900">
                   {wins > 0 ? (pointsAgainst / (wins + losses + ties)).toFixed(1) : "0.0"}
                 </div>
@@ -194,7 +194,7 @@ export function StatisticsTab({
       {/* Empty State */}
       {wins === 0 && losses === 0 && pointsFor === 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <p className="text-gray-600">
+          <p className="text-gray-400">
             Statistical data not yet available for this season
           </p>
         </div>

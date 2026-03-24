@@ -159,7 +159,7 @@ export default async function OurGuysPage() {
 
         <div className="relative max-w-7xl mx-auto">
           <h1 className="psp-h1-lg text-white mb-2">Our Guys</h1>
-          <p className="text-gray-400 text-lg mb-5">Philly HS alumni making it at the next level</p>
+          <p className="text-gray-300 text-lg mb-5">Philly HS alumni making it at the next level</p>
 
           {/* Stat pills */}
           <div className="flex flex-wrap gap-3">
@@ -191,7 +191,7 @@ export default async function OurGuysPage() {
               <h2 className="psp-h2 text-white mb-1">
                 Which Schools Produce the Most Pros?
               </h2>
-              <p className="text-gray-400 text-sm mb-6">The Philly high schools sending the most athletes to the pros</p>
+              <p className="text-gray-300 text-sm mb-6">The Philly high schools sending the most athletes to the pros</p>
 
               <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide">
                 {topSchools.map((school, i) => (
@@ -206,7 +206,7 @@ export default async function OurGuysPage() {
                   >
                     {/* Rank badge */}
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-3 ${
-                      i === 0 ? 'bg-gold text-navy' : 'bg-white/10 text-gray-400'
+                      i === 0 ? 'bg-gold text-navy' : 'bg-white/10 text-gray-300'
                     }`}>
                       #{i + 1}
                     </div>
@@ -221,7 +221,7 @@ export default async function OurGuysPage() {
                       <span className={`text-2xl font-bebas ${i === 0 ? 'text-gold' : 'text-white'}`}>
                         {school.count}
                       </span>
-                      <span className="text-xs text-gray-400">active pros</span>
+                      <span className="text-xs text-gray-300">active pros</span>
                     </div>
 
                     {/* Sport breakdown dots */}
@@ -245,7 +245,7 @@ export default async function OurGuysPage() {
             <h2 className="psp-h2 text-navy mb-1">
               Latest Additions to Our Guys
             </h2>
-            <p className="text-gray-500 text-sm mb-5">Newly tracked athletes and coaches</p>
+            <p className="text-gray-400 text-sm mb-5">Newly tracked athletes and coaches</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {recentlyAdded.map(person => {
@@ -275,7 +275,7 @@ export default async function OurGuysPage() {
                           {levelLabel}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                      <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
                         {person.school && (
                           <Link href={`/schools/${person.school.slug}`} className="hover:text-blue-600 truncate">
                             {person.school.name}
@@ -302,7 +302,7 @@ export default async function OurGuysPage() {
             <h2 className="psp-h2 text-navy mb-1">
               Pro League Breakdown
             </h2>
-            <p className="text-gray-500 text-sm mb-5">Active Philly pros by league</p>
+            <p className="text-gray-400 text-sm mb-5">Active Philly pros by league</p>
 
             <div className="flex flex-wrap gap-2.5">
               {leagueBreakdown.map(({ league, count }) => {

@@ -39,11 +39,11 @@ export async function TrendingPlayersWidget({
             <span className="w-6 h-6 rounded-full bg-[#f0a500] flex items-center justify-center text-xs font-bold text-[#0a1628] flex-shrink-0">{i + 1}</span>
             <div className="flex-grow min-w-0">
               <Link href={"/"+sport+"/players/"+p.players?.slug} className="block text-white text-sm font-semibold hover:text-[#f0a500] truncate">{p.players?.name}</Link>
-              <p className="text-xs text-gray-400">{p.schools?.name}</p>
+              <p className="text-xs text-gray-300">{p.schools?.name}</p>
             </div>
             <div className="text-right flex-shrink-0">
               <p className="text-[#f0a500] font-bold">{sport === 'football' ? p.rush_yards : p.ppg}</p>
-              <p className="text-xs text-gray-500">{statLabel}</p>
+              <p className="text-xs text-gray-400">{statLabel}</p>
             </div>
           </div>
         ))}

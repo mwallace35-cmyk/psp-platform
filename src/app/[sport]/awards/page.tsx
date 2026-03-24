@@ -150,7 +150,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
                   <p className="text-gray-600 text-lg">
                     No award data available for {meta.name.toLowerCase()} yet.
                   </p>
-                  <p className="text-gray-400 text-sm mt-2">
+                  <p className="text-gray-300 text-sm mt-2">
                     Check back soon or explore{" "}
                     <Link href="/awards" className="text-blue-400 hover:underline">
                       awards across all sports
@@ -169,7 +169,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             {data.topSchools.length > 0 && (
               <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
                 <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                  <h3 className="psp-h3 text-white">Most Honored Schools</h3>
+                  <h2 className="psp-h3 text-white">Most Honored Schools</h2>
                 </div>
                 <div className="p-4 space-y-3">
                   {data.topSchools.slice(0, 10).map((school, idx) => (
@@ -181,7 +181,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
                       >
                         {school.name}
                       </Link>
-                      <span className="text-gray-400 text-sm">{school.count}</span>
+                      <span className="text-gray-300 text-sm">{school.count}</span>
                     </div>
                   ))}
                 </div>
@@ -191,7 +191,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             {/* Related Pages */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
               <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                <h3 className="psp-h3 text-white">Related Pages</h3>
+                <h2 className="psp-h3 text-white">Related Pages</h2>
               </div>
               <div className="p-4 space-y-2">
                 <Link
@@ -224,7 +224,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             {/* About */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
               <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                <h3 className="psp-h3 text-white">About</h3>
+                <h2 className="psp-h3 text-white">About</h2>
               </div>
               <div className="p-4 space-y-3 text-sm text-gray-300">
                 <p>
@@ -236,11 +236,11 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
                   Browse by year or filter by award category. Use the year
                   dropdown to jump to a specific season, or decade pills to narrow the range.
                 </p>
-                <p className="text-xs text-gray-400 mt-4">
+                <p className="text-xs text-gray-300 mt-4">
                   Data compiled from historical archives and verified sources.
                 </p>
                 <p className="text-xs text-blue-400 mt-2">
-                  Source: <span className="text-gray-400">Ted Silary Archives, MaxPreps, PIAA</span>
+                  Source: <span className="text-gray-300">Ted Silary Archives, MaxPreps, PIAA</span>
                 </p>
               </div>
             </div>

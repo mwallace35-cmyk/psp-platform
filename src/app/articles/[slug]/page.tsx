@@ -192,7 +192,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         <div className="col-span-1">
           {/* Article Info */}
           <div className="bg-gray-50 rounded-lg p-6 mb-8">
-            <h3 className="psp-h3 text-navy mb-4">About This Article</h3>
+            <h2 className="psp-h3 text-navy mb-4">About This Article</h2>
             <div className="space-y-3 text-sm">
               <div>
                 <p className="text-gray-600">Author</p>
@@ -229,7 +229,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           {/* Related Articles */}
           {relatedArticles && relatedArticles.length > 0 && (
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h3 className="psp-h3 text-navy mb-4">Related Articles</h3>
+              <h2 className="psp-h3 text-navy mb-4">Related Articles</h2>
               <div className="space-y-4">
                 {relatedArticles.map((related) => (
                   <Link
@@ -240,7 +240,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                     <p className="text-sm font-medium text-navy group-hover:text-gold transition line-clamp-2">
                       {related.title}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-400 mt-1">
                       {new Date(related.created_at).toLocaleDateString()}
                     </p>
                   </Link>

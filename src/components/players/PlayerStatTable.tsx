@@ -124,14 +124,17 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
         <table className="w-full text-sm" aria-label={playerName ? `Career statistics for ${playerName}` : "Season-by-season statistics"}>
+          <caption className="sr-only">{playerName ? `Career statistics for ${playerName}` : "Season-by-season statistics"}</caption>
           <thead>
             <tr style={{ background: "var(--psp-navy)" }}>
               <th
+                scope="col"
                 className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 font-bebas tracking-[0.08em]"
               >
                 Season
               </th>
               <th
+                scope="col"
                 className="text-left px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 font-bebas tracking-[0.08em]"
               >
                 School
@@ -183,7 +186,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                         {school.name}
                       </Link>
                     ) : (
-                      <span className="text-gray-400">\u2014</span>
+                      <span className="text-gray-300">\u2014</span>
                     )}
                   </td>
                   {visibleCols.map((col) => (
@@ -273,7 +276,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
               <div className="grid grid-cols-3 gap-2 text-center">
                 {visibleCols.slice(0, 6).map((col) => (
                   <div key={col.key}>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">{col.label}</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-gray-300">{col.label}</div>
                     <div
                       className="font-bold text-sm tabular-nums"
                       style={{
@@ -289,7 +292,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                 <div className="grid grid-cols-3 gap-2 text-center mt-2 pt-2 border-t border-gray-100">
                   {visibleCols.slice(6).map((col) => (
                     <div key={col.key}>
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">{col.label}</div>
+                      <div className="text-xs font-bold uppercase tracking-wider text-gray-300">{col.label}</div>
                       <div className="font-bold text-sm tabular-nums" style={{ color: "var(--psp-navy)" }}>
                         {col.getValue(s as never)}
                       </div>
@@ -318,7 +321,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                 }
                 return (
                   <div key={col.key}>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">{col.label}</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-gray-300">{col.label}</div>
                     <div className="font-bold text-sm tabular-nums" style={{ color: "var(--psp-gold)" }}>{display}</div>
                   </div>
                 );

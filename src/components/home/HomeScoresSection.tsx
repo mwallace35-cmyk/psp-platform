@@ -53,9 +53,9 @@ export default async function HomeScoresSection() {
         </Link>
       </div>
       {scoresLabel === 'this-week' ? (
-        <p className="text-[11px] text-gray-400 mb-3">{weekRangeLabel}</p>
+        <p className="text-xs text-gray-300 mb-3">{weekRangeLabel}</p>
       ) : recentGames.length > 0 ? (
-        <p className="text-[11px] text-gray-400 mb-3">No games this week — here are the latest results</p>
+        <p className="text-xs text-gray-300 mb-3">No games this week — here are the latest results</p>
       ) : null}
       {recentGames.length > 0 ? (
         <div className="space-y-2">
@@ -72,15 +72,15 @@ export default async function HomeScoresSection() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${awayWon ? 'text-gray-100' : 'text-gray-400'}`}>{away ? getSchoolDisplayName(away as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}</span>
-                    <span className={`text-sm font-bold tabular-nums ${awayWon ? 'text-gray-100' : 'text-gray-400'}`}>{game.away_score as number}</span>
+                    <span className={`text-sm font-medium ${awayWon ? 'text-gray-100' : 'text-gray-300'}`}>{away ? getSchoolDisplayName(away as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}</span>
+                    <span className={`text-sm font-bold tabular-nums ${awayWon ? 'text-gray-100' : 'text-gray-300'}`}>{game.away_score as number}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${homeWon ? 'text-gray-100' : 'text-gray-400'}`}>{home ? getSchoolDisplayName(home as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}</span>
-                    <span className={`text-sm font-bold tabular-nums ${homeWon ? 'text-gray-100' : 'text-gray-400'}`}>{game.home_score as number}</span>
+                    <span className={`text-sm font-medium ${homeWon ? 'text-gray-100' : 'text-gray-300'}`}>{home ? getSchoolDisplayName(home as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}</span>
+                    <span className={`text-sm font-bold tabular-nums ${homeWon ? 'text-gray-100' : 'text-gray-300'}`}>{game.home_score as number}</span>
                   </div>
                 </div>
-                <span className="text-[10px] text-gray-500 ml-3 shrink-0">
+                <span className="text-xs text-gray-400 ml-3 shrink-0">
                   {new Date(game.game_date as string).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </span>
               </Link>
@@ -89,7 +89,7 @@ export default async function HomeScoresSection() {
         </div>
       ) : (
         <div className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-6 text-center">
-          <p className="text-sm text-gray-400">No recent games to show right now.</p>
+          <p className="text-sm text-gray-300">No recent games to show right now.</p>
           <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] mt-2 inline-block transition">
             Browse all scores &rarr;
           </Link>

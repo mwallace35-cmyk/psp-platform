@@ -1,6 +1,6 @@
 export default function ProsProsLoading() {
   return (
-    <>
+    <div role="status" aria-busy="true" aria-label="Loading pro athletes">
       {/* Hero Section Skeleton */}
       <div className="bg-gradient-to-br from-navy to-navy-mid py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
@@ -101,6 +101,6 @@ export default function ProsProsLoading() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

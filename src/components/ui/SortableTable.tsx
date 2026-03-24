@@ -136,7 +136,7 @@ function SortableTable({
 
   if (data.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-400">
+      <div className="text-center py-12 text-gray-300">
         <p>{emptyMessage}</p>
       </div>
     );
@@ -185,7 +185,7 @@ function SortableTable({
               {/* Rank + Primary Value */}
               <div className="flex items-baseline gap-3 mb-3">
                 {rankCol && rankCol.key !== primaryColumn?.key && (
-                  <div className="text-sm font-semibold text-gray-500 min-w-8">
+                  <div className="text-sm font-semibold text-gray-400 min-w-8">
                     {row[rankCol.key]}
                   </div>
                 )}
@@ -232,6 +232,7 @@ function SortableTable({
       </div>
       <div className="overflow-x-auto border border-gray-200 rounded-lg">
         <table className="w-full text-sm" aria-label={ariaLabel}>
+        {ariaLabel && <caption className="sr-only">{ariaLabel}</caption>}
         <thead className="sticky top-0 z-10 bg-[var(--psp-navy)] text-white" style={{ color: 'white' }}>
           <tr>
             {visibleColumns

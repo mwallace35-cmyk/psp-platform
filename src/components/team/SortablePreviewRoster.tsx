@@ -67,7 +67,7 @@ export default function SortablePreviewRoster({
       <th
         className={`py-3 px-4 font-semibold cursor-pointer select-none hover:text-gray-200 transition ${
           align === 'center' ? 'text-center' : 'text-left'
-        } ${isActive ? 'text-gray-200' : 'text-gray-400'}`}
+        } ${isActive ? 'text-gray-200' : 'text-gray-300'}`}
         onClick={() => handleSort(col)}
         aria-sort={isActive ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}
         role="columnheader"
@@ -90,6 +90,7 @@ export default function SortablePreviewRoster({
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm text-gray-200" aria-label="Team roster">
+        <caption className="sr-only">Team roster</caption>
         <thead>
           <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
             <SortHeader col="jersey_number" label="#" />
@@ -104,7 +105,7 @@ export default function SortablePreviewRoster({
               key={player.player_id}
               style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
             >
-              <td className="py-3 px-4 text-gray-400 font-mono">
+              <td className="py-3 px-4 text-gray-300 font-mono">
                 {player.jersey_number || '\u2014'}
               </td>
               <td className="py-3 px-4">
@@ -140,7 +141,7 @@ export default function SortablePreviewRoster({
                     {player.projected_class}
                   </span>
                 ) : (
-                  <span className="text-gray-500">{'\u2014'}</span>
+                  <span className="text-gray-400">{'\u2014'}</span>
                 )}
               </td>
             </tr>

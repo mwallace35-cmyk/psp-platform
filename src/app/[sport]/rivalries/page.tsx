@@ -68,7 +68,7 @@ function RivalryCard({ rivalry, sport }: { rivalry: RivalryRecord; sport: string
           >
             {rivalry.school1.name}
           </Link>
-          <div className="flex items-center gap-2 text-sm font-bold text-gray-400">
+          <div className="flex items-center gap-2 text-sm font-bold text-gray-300">
             <span className="rounded bg-gray-700 px-2 py-1">vs</span>
           </div>
           <Link
@@ -85,19 +85,19 @@ function RivalryCard({ rivalry, sport }: { rivalry: RivalryRecord; sport: string
         {/* School 1 Wins */}
         <div className="rounded bg-gray-900 p-3">
           <div className="text-xl font-bold text-white">{rivalry.school1_wins}</div>
-          <div className="text-xs text-gray-400">Wins</div>
+          <div className="text-xs text-gray-300">Wins</div>
         </div>
 
         {/* Ties */}
         <div className="rounded bg-gray-900 p-3">
           <div className="text-xl font-bold text-white">{rivalry.ties}</div>
-          <div className="text-xs text-gray-400">Ties</div>
+          <div className="text-xs text-gray-300">Ties</div>
         </div>
 
         {/* School 2 Wins */}
         <div className="rounded bg-gray-900 p-3">
           <div className="text-xl font-bold text-white">{rivalry.school2_wins}</div>
-          <div className="text-xs text-gray-400">Wins</div>
+          <div className="text-xs text-gray-300">Wins</div>
         </div>
       </div>
 
@@ -178,7 +178,7 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
                       {recentGames.map((game) => (
                         <div key={game.game_id} className="flex items-center justify-between border-b border-gray-700 pb-3">
                           <div className="flex-1">
-                            <div className="text-sm text-gray-400">{game.game_date} | {game.season_label}</div>
+                            <div className="text-sm text-gray-300">{game.game_date} | {game.season_label}</div>
                             <div className="text-sm font-semibold text-white">
                               {game.home_school.name} vs {game.away_school.name}
                             </div>
@@ -223,8 +223,8 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
 
             {/* Info Card */}
             <div className="rounded-lg bg-gray-900 p-6">
-              <div className="text-sm font-bold text-gray-400 uppercase mb-3">About Rivalries</div>
-              <p className="text-sm text-gray-400">
+              <div className="text-sm font-bold text-gray-300 uppercase mb-3">About Rivalries</div>
+              <p className="text-sm text-gray-300">
                 Rivalries are determined by the most games played between two schools across all seasons in our database.
               </p>
               <div className="mt-4 pt-4 border-t border-gray-700">

@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-pulse">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-pulse" role="status" aria-busy="true" aria-label="Loading teams">
       {/* Header skeleton */}
       <div className="py-12 md:py-16">
         <div className="h-8 bg-gray-200 rounded w-1/2 mb-4" />

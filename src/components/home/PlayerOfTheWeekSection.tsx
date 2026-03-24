@@ -131,7 +131,7 @@ export default function PlayerOfTheWeekSection({
                   <div className="text-4xl sm:text-5xl font-bold text-[var(--psp-gold)]">
                     {topNominee.votes}
                   </div>
-                  <div className="text-sm text-white/70 font-medium">
+                  <div className="text-sm text-white/80 font-medium">
                     {topNominee.votes === 1 ? 'vote' : 'votes'} so far
                   </div>
                 </div>

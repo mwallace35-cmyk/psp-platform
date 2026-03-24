@@ -69,10 +69,17 @@ export default async function PotwPage() {
             <h2 className="psp-h2 text-navy mb-6">This Week&apos;s Nominees</h2>
 
             {!hasNominees ? (
-              <div className="text-center py-16 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="text-4xl mb-4">🗳️</div>
-                <p className="text-gray-500 text-lg mb-2">No nominees yet this week</p>
-                <p className="text-gray-400 text-sm">Check back soon for this week&apos;s candidates!</p>
+              <div className="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-3xl mb-3">🗳️</div>
+                <p className="text-gray-700 text-lg font-medium mb-1">Nominations Open Monday</p>
+                <p className="text-gray-400 text-sm mb-4">New nominees are announced each Monday morning. Check back soon!</p>
+                {winners && winners.length > 0 && (
+                  <p className="text-sm">
+                    <span className="text-gray-300">In the meantime, see </span>
+                    <span className="text-navy font-semibold">past winners</span>
+                    <span className="text-gray-300"> in the sidebar.</span>
+                  </p>
+                )}
               </div>
             ) : (
               <div className="space-y-4">
@@ -122,7 +129,7 @@ export default async function PotwPage() {
                         <div className="flex items-center gap-4 sm:flex-col sm:items-end">
                           <div className="text-center sm:text-right">
                             <div className="text-3xl font-bold text-navy">{nominee.vote_count || 0}</div>
-                            <div className="text-xs text-gray-500">votes</div>
+                            <div className="text-xs text-gray-400">votes</div>
                           </div>
                           <PotwVoteButton nomineeId={nominee.id} />
                         </div>
@@ -137,7 +144,7 @@ export default async function PotwPage() {
                               style={{ width: `${Math.round(((nominee.vote_count || 0) / totalVotes) * 100)}%` }}
                             />
                           </div>
-                          <div className="text-xs text-gray-500 mt-1 text-right">
+                          <div className="text-xs text-gray-400 mt-1 text-right">
                             {totalVotes > 0 ? Math.round(((nominee.vote_count || 0) / totalVotes) * 100) : 0}%
                           </div>
                         </div>
@@ -155,7 +162,7 @@ export default async function PotwPage() {
             <h2 className="psp-h2 text-navy mb-6">Past Winners</h2>
 
             {!winners || winners.length === 0 ? (
-              <p className="text-gray-500 text-sm">No past winners yet.</p>
+              <p className="text-gray-400 text-sm">No past winners yet.</p>
             ) : (
               <div className="space-y-3">
                 {winners.map((winner) => {
@@ -176,7 +183,7 @@ export default async function PotwPage() {
                           </span>
                         )}
                       </div>
-                      <div className="flex justify-between items-center text-xs text-gray-500 mt-2">
+                      <div className="flex justify-between items-center text-xs text-gray-400 mt-2">
                         <span>Week {winner.week}, {winner.year}</span>
                         <span>{winner.vote_count} votes</span>
                       </div>

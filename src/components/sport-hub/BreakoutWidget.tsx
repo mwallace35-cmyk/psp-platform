@@ -40,7 +40,7 @@ export default async function BreakoutWidget({
                 <div className="font-bold text-[var(--psp-gold)]">
                   {alert.player_name}
                 </div>
-                <div className="text-xs text-gray-400">{alert.school_name}</div>
+                <div className="text-xs text-gray-300">{alert.school_name}</div>
               </div>
               <div className="text-right">
                 <div className="text-sm font-bold text-[var(--psp-gold)]">
@@ -48,7 +48,7 @@ export default async function BreakoutWidget({
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 text-xs text-gray-400">
+            <div className="flex gap-2 text-xs text-gray-300">
               <span>
                 {alert.previous_stat} → {alert.current_stat}
               </span>

@@ -19,13 +19,14 @@ export default function TeamSchedule({ schedule }: TeamScheduleProps) {
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-gray-200" aria-label="Team schedule">
+            <caption className="sr-only">Team schedule</caption>
             <thead>
               <tr className="bg-[var(--psp-navy)] text-white">
-                <th className="px-4 py-3 text-left font-bold">Date</th>
-                <th className="px-4 py-3 text-left font-bold">Opponent</th>
-                <th className="px-4 py-3 text-center font-bold">H/A</th>
-                <th className="px-4 py-3 text-center font-bold">Result</th>
-                <th className="px-4 py-3 text-right font-bold">Score</th>
+                <th scope="col" className="px-4 py-3 text-left font-bold">Date</th>
+                <th scope="col" className="px-4 py-3 text-left font-bold">Opponent</th>
+                <th scope="col" className="px-4 py-3 text-center font-bold">H/A</th>
+                <th scope="col" className="px-4 py-3 text-center font-bold">Result</th>
+                <th scope="col" className="px-4 py-3 text-right font-bold">Score</th>
               </tr>
             </thead>
             <tbody>

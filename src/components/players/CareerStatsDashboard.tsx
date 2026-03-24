@@ -143,8 +143,8 @@ export default function CareerStatsDashboard({ sport, stats }: Props) {
             <p className="psp-h2 text-[var(--psp-navy,#0a1628)]">
               {card.value}
             </p>
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">{card.label}</p>
-            {card.subtitle && <p className="text-[10px] text-gray-400 mt-0.5">{card.subtitle}</p>}
+            <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">{card.label}</p>
+            {card.subtitle && <p className="text-xs text-gray-300 mt-0.5">{card.subtitle}</p>}
           </div>
         );
       })}

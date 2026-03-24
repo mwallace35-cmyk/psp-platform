@@ -67,7 +67,7 @@ export default async function TransfersPage() {
           <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
             <p className="text-4xl mb-3">🔄</p>
             <p className="text-gray-700 text-xl font-medium mb-2">Transfer Tracking Coming Soon</p>
-            <p className="text-gray-500 max-w-md mx-auto">
+            <p className="text-gray-400 max-w-md mx-auto">
               We&apos;re building a comprehensive transfer tracker to follow players who move between Philly-area programs.
               Know about a transfer? Let us know!
             </p>
@@ -91,7 +91,7 @@ export default async function TransfersPage() {
                           <p className="font-bold text-navy">
                             {sportMeta?.emoji} {t.players?.name || 'Unknown Player'}
                             {t.players?.graduation_year && (
-                              <span className="text-gray-400 text-sm font-normal ml-1">
+                              <span className="text-gray-300 text-sm font-normal ml-1">
                                 &apos;{String(t.players.graduation_year).slice(-2)}
                               </span>
                             )}
@@ -102,7 +102,7 @@ export default async function TransfersPage() {
                                 {t.from_school.name}
                               </Link>
                             ) : (
-                              <span className="text-gray-400">Unknown</span>
+                              <span className="text-gray-300">Unknown</span>
                             )}
                             <span className="mx-2 text-gold font-bold">&rarr;</span>
                             {t.to_school ? (
@@ -110,16 +110,16 @@ export default async function TransfersPage() {
                                 {t.to_school.name}
                               </Link>
                             ) : (
-                              <span className="text-gray-400">Unknown</span>
+                              <span className="text-gray-300">Unknown</span>
                             )}
                           </p>
-                          {t.reason && <p className="text-xs text-gray-500 mt-1">{t.reason}</p>}
+                          {t.reason && <p className="text-xs text-gray-400 mt-1">{t.reason}</p>}
                         </div>
                         <div className="flex-shrink-0">
                           {t.verified ? (
                             <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">Verified</span>
                           ) : (
-                            <span className="px-2 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded">Unverified</span>
+                            <span className="px-2 py-1 bg-gray-100 text-gray-400 text-xs font-medium rounded">Unverified</span>
                           )}
                         </div>
                       </div>

@@ -76,7 +76,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
             { label: "Schools", value: overview.schools, icon: "🏫" },
             { label: "Seasons", value: overview.seasons, icon: "📅" },
             { label: "Championships", value: overview.championships, icon: "🏆" },
-          ].map((stat) => (
+          ].filter((stat) => stat.value > 0).map((stat) => (
             <div
               key={stat.label}
               style={{
@@ -88,7 +88,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                 borderTop: `3px solid ${sportColor}`,
               }}
             >
-              <div style={{ fontSize: 22, marginBottom: 4 }}>{stat.icon}</div>
+              <div style={{ fontSize: 22, marginBottom: 4 }} aria-hidden="true">{stat.icon}</div>
               <div
                 className="font-bebas"
                 style={{
@@ -112,7 +112,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
           <>
             <div className="sec-head">
               <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span>🏆</span> Recent Matchups
+                <span aria-hidden="true">🏆</span> Recent Matchups
               </h2>
               <Link href={`/${sport}/teams`} className="more">Full Schedule →</Link>
             </div>
@@ -278,7 +278,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                     </Link>
                     <div className="rsub">{champ.seasons?.label} &mdash; {champ.level}{champ.score ? ` (${champ.score})` : ""}</div>
                   </div>
-                  <div className="rt-rec">🏆</div>
+                  <div className="rt-rec" role="img" aria-label="Champion">🏆</div>
                 </div>
               ))}
             </div>
@@ -330,10 +330,11 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
         <div className="widget">
           <div className="w-head">📊 Data Overview</div>
           <div className="w-body">
-            <div className="w-row"><span className="name">Total Players</span><span className="val">{overview.players.toLocaleString()}</span></div>
-            <div className="w-row"><span className="name">Active Schools</span><span className="val">{overview.schools.toLocaleString()}</span></div>
-            <div className="w-row"><span className="name">Seasons Tracked</span><span className="val">{overview.seasons.toLocaleString()}</span></div>
-            <div className="w-row"><span className="name">Total Titles</span><span className="val">{overview.championships.toLocaleString()}</span></div>
+            {overview.players > 0 && <div className="w-row"><span className="name">Total Players</span><span className="val">{overview.players.toLocaleString()}</span></div>}
+            {overview.schools > 0 && <div className="w-row"><span className="name">Active Schools</span><span className="val">{overview.schools.toLocaleString()}</span></div>}
+            {overview.seasons > 0 && <div className="w-row"><span className="name">Seasons Tracked</span><span className="val">{overview.seasons.toLocaleString()}</span></div>}
+            {overview.championships > 0 && <div className="w-row"><span className="name">Total Titles</span><span className="val">{overview.championships.toLocaleString()}</span></div>}
+            {overview.players === 0 && overview.schools === 0 && <div className="w-row"><span className="name" style={{ color: "var(--psp-gray-400)" }}>Season data coming soon</span></div>}
           </div>
         </div>
 

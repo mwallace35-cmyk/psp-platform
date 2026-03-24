@@ -21,7 +21,7 @@ const SPORT_LABELS: Record<string, string> = {
 const SPORT_COLORS: Record<string, string> = {
   football: '#16a34a',
   basketball: '#3b82f6',
-  baseball: '#ea580c',
+  baseball: '#dc2626',
   soccer: '#059669',
   lacrosse: '#0891b2',
   'track-field': '#7c3aed',
@@ -141,7 +141,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
         >
           {sportLabel} Schools
         </h1>
-        <p className="text-gray-400 text-sm mb-6">
+        <p className="text-gray-300 text-sm mb-6">
           {schools.length} active {sportLabel.toLowerCase()} programs{closedSchools.length > 0 ? ` + ${closedSchools.length} historical` : ''}
         </p>
 
@@ -155,7 +155,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
               }}
             >
               {league}
-              <span className="ml-2 text-xs font-normal text-gray-500">({leagueSchools.length})</span>
+              <span className="ml-2 text-xs font-normal text-gray-400">({leagueSchools.length})</span>
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {leagueSchools.map((school) => (
@@ -178,7 +178,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
                     </span>
                   </div>
                   {school.city && (
-                    <p className="text-gray-500 text-xs ml-4">{school.city}, PA</p>
+                    <p className="text-gray-400 text-xs ml-4">{school.city}, PA</p>
                   )}
                   {school.closed_year && (
                     <p className="text-red-400 text-[10px] ml-4">Closed {school.closed_year}</p>
@@ -213,7 +213,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
                     border: '1px solid rgba(255,255,255,0.05)',
                   }}
                 >
-                  <span className="text-gray-400 text-xs font-medium truncate block group-hover:text-gray-300 transition">
+                  <span className="text-gray-300 text-xs font-medium truncate block group-hover:text-gray-300 transition">
                     {school.name}
                   </span>
                   <span className="text-gray-600 text-[10px]">
@@ -227,7 +227,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
 
         {allSchools.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-gray-500">No {sportLabel.toLowerCase()} programs found</p>
+            <p className="text-gray-400">No {sportLabel.toLowerCase()} programs found</p>
             <Link href="/schools" className="text-blue-400 text-sm mt-2 inline-block hover:underline">
               View all schools
             </Link>

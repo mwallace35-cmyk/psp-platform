@@ -193,7 +193,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
                     </Link>
                     <div className="rsub">{champ.seasons?.label} &mdash; {champ.level}{champ.score ? ` (${champ.score})` : ""}</div>
                   </div>
-                  <div className="rt-rec">🏆</div>
+                  <div className="rt-rec" role="img" aria-label="Champion">🏆</div>
                 </div>
               ))}
             </div>
@@ -237,7 +237,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Leaderboards</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>📊</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">📊</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Top performers by stat</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>{meta.statCategories.join(", ")}</div>
             </div>
@@ -245,7 +245,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/records`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Records</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>🏅</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">🏅</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>All-time records</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Single-season and career milestones</div>
             </div>
@@ -253,7 +253,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/championships`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Championships</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>🏆</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} role="img" aria-label="Trophy">🏆</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Title history</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>League, state, and national titles</div>
             </div>
@@ -261,7 +261,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/schedule`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>{seasonLabel} Schedule</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>📅</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">📅</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Upcoming games</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Week-by-week or filter by team</div>
             </div>
@@ -277,7 +277,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/rivalries`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Rivalries</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>🔥</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">🔥</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Head-to-head records</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Historic matchups & series</div>
             </div>
@@ -285,7 +285,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/eras`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: "var(--psp-blue)" }}>Statistical Eras</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>📊</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">📊</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>How the game changed</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Stats trends across decades</div>
             </div>
@@ -293,7 +293,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/breakouts`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>Breakout Alerts</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>⚡</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">⚡</div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Rising stars</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Year-over-year stat jumps</div>
             </div>
@@ -344,10 +344,11 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
         <div className="widget">
           <div className="w-head">{meta.emoji} Quick Stats</div>
           <div className="w-body">
-            <div className="w-row"><span className="name">Players</span><span className="val">{overview.players.toLocaleString()}</span></div>
-            <div className="w-row"><span className="name">Schools</span><span className="val">{overview.schools.toLocaleString()}</span></div>
-            <div className="w-row"><span className="name">Seasons</span><span className="val">{overview.seasons.toLocaleString()}</span></div>
-            <div className="w-row"><span className="name">Championships</span><span className="val">{overview.championships.toLocaleString()}</span></div>
+            {overview.players > 0 && <div className="w-row"><span className="name">Players</span><span className="val">{overview.players.toLocaleString()}</span></div>}
+            {overview.schools > 0 && <div className="w-row"><span className="name">Schools</span><span className="val">{overview.schools.toLocaleString()}</span></div>}
+            {overview.seasons > 0 && <div className="w-row"><span className="name">Seasons</span><span className="val">{overview.seasons.toLocaleString()}</span></div>}
+            {overview.championships > 0 && <div className="w-row"><span className="name">Championships</span><span className="val">{overview.championships.toLocaleString()}</span></div>}
+            {overview.players === 0 && overview.schools === 0 && <div className="w-row"><span className="name" style={{ color: "var(--psp-gray-400)" }}>Season data coming soon</span></div>}
           </div>
         </div>
 

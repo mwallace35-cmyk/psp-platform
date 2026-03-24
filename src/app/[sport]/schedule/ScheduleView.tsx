@@ -54,7 +54,7 @@ interface Props {
 }
 
 const GAME_TYPE_MAP: Record<string, { label: string; cls: string }> = {
-  scrimmage: { label: "Scrimmage", cls: "bg-gray-200 text-gray-600" },
+  scrimmage: { label: "Scrimmage", cls: "bg-gray-200 text-gray-400" },
   "non-league": { label: "Non-League", cls: "bg-blue-100 text-blue-700" },
   regular: { label: "League", cls: "bg-emerald-100 text-emerald-700" },
   league: { label: "League", cls: "bg-emerald-100 text-emerald-700" },
@@ -257,7 +257,7 @@ export default function ScheduleView({
                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${
                   view === "week"
                     ? "bg-navy text-white shadow-sm"
-                    : "text-gray-600 hover:text-navy"
+                    : "text-gray-400 hover:text-navy"
                 }`}
               >
                 By Week
@@ -267,7 +267,7 @@ export default function ScheduleView({
                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${
                   view === "team"
                     ? "bg-navy text-white shadow-sm"
-                    : "text-gray-600 hover:text-navy"
+                    : "text-gray-400 hover:text-navy"
                 }`}
               >
                 By Team
@@ -308,7 +308,7 @@ export default function ScheduleView({
                   className={`px-3 py-1 rounded-full text-xs font-medium transition ${
                     gameTypeFilter === val
                       ? "bg-navy text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      : "bg-gray-100 text-gray-400 hover:bg-gray-200"
                   }`}
                 >
                   {label}
@@ -324,7 +324,7 @@ export default function ScheduleView({
         {filteredGames.length === 0 ? (
           <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
             <p className="text-3xl mb-3">🏈</p>
-            <p className="text-gray-500 text-lg">
+            <p className="text-gray-400 text-lg">
               No games match your filters.
             </p>
             <button
@@ -346,7 +346,7 @@ export default function ScheduleView({
                   <h2 className="psp-h4 text-navy">
                     <span className="text-gold">Week</span> {weekLabel}
                   </h2>
-                  <span className="text-xs text-gray-400 ml-auto">
+                  <span className="text-xs text-gray-300 ml-auto">
                     {weekItems.length} event
                     {weekItems.length !== 1 ? "s" : ""}
                   </span>
@@ -375,7 +375,7 @@ export default function ScheduleView({
                 </div>
               </section>
             ))}
-            <p className="text-center text-gray-400 text-xs pt-4">
+            <p className="text-center text-gray-300 text-xs pt-4">
               {filteredGames.length} game
               {filteredGames.length !== 1 ? "s" : ""} shown
             </p>
@@ -427,7 +427,7 @@ export default function ScheduleView({
                       >
                         {team.name}
                       </Link>
-                      <div className="flex gap-3 text-xs text-gray-500 mt-0.5">
+                      <div className="flex gap-3 text-xs text-gray-400 mt-0.5">
                         <span>{teamGames.length} games</span>
                         {leagueCount > 0 && (
                           <span>{leagueCount} league</span>
@@ -451,18 +451,19 @@ export default function ScheduleView({
                   {/* Team schedule table */}
                   <div className="border-t border-gray-100">
                     <table className="w-full text-sm text-gray-200" aria-label="Game schedule">
+                      <caption className="sr-only">Game schedule</caption>
                       <thead>
-                        <tr className="text-xs text-gray-500 uppercase bg-gray-50">
-                          <th className="px-4 py-2 text-left w-8">#</th>
-                          <th className="px-4 py-2 text-left">Date</th>
-                          <th className="px-4 py-2 text-left">Opponent</th>
-                          <th className="px-4 py-2 text-left hidden sm:table-cell">
+                        <tr className="text-xs text-gray-400 uppercase bg-gray-50">
+                          <th scope="col" className="px-4 py-2 text-left w-8">#</th>
+                          <th scope="col" className="px-4 py-2 text-left">Date</th>
+                          <th scope="col" className="px-4 py-2 text-left">Opponent</th>
+                          <th scope="col" className="px-4 py-2 text-left hidden sm:table-cell">
                             Type
                           </th>
-                          <th className="px-4 py-2 text-left hidden sm:table-cell">
+                          <th scope="col" className="px-4 py-2 text-left hidden sm:table-cell">
                             Time
                           </th>
-                          <th className="px-4 py-2 text-center">H/A</th>
+                          <th scope="col" className="px-4 py-2 text-center">H/A</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -481,7 +482,7 @@ export default function ScheduleView({
                               key={g.id}
                               className="border-t border-gray-50 hover:bg-gold/5 transition"
                             >
-                              <td className="px-4 py-2 text-gray-400 text-xs">
+                              <td className="px-4 py-2 text-gray-300 text-xs">
                                 {i + 1}
                               </td>
                               <td className="px-4 py-2 text-navy font-medium whitespace-nowrap">
@@ -496,7 +497,7 @@ export default function ScheduleView({
                                     {getSchoolDisplayName(opponent)}
                                   </Link>
                                 ) : (
-                                  <span className="text-gray-400">
+                                  <span className="text-gray-300">
                                     TBD
                                   </span>
                                 )}
@@ -510,7 +511,7 @@ export default function ScheduleView({
                                   </span>
                                 )}
                               </td>
-                              <td className="px-4 py-2 text-gray-500 hidden sm:table-cell whitespace-nowrap">
+                              <td className="px-4 py-2 text-gray-400 hidden sm:table-cell whitespace-nowrap">
                                 {formatTime(g.game_time)}
                               </td>
                               <td className="px-4 py-2 text-center">
@@ -518,7 +519,7 @@ export default function ScheduleView({
                                   className={`inline-block w-6 text-xs font-bold rounded ${
                                     isHome
                                       ? "bg-navy text-white"
-                                      : "bg-gray-200 text-gray-600"
+                                      : "bg-gray-200 text-gray-400"
                                   }`}
                                 >
                                   {isHome ? "H" : "A"}
@@ -533,7 +534,7 @@ export default function ScheduleView({
                 </section>
               );
             })}
-            <p className="text-center text-gray-400 text-xs pt-4">
+            <p className="text-center text-gray-300 text-xs pt-4">
               {gamesByTeam.length} team
               {gamesByTeam.length !== 1 ? "s" : ""} •{" "}
               {filteredGames.length} game
@@ -589,9 +590,9 @@ function GameCard({
       <div className="flex items-center gap-3 px-4 py-3">
         {/* Date + time */}
         <div className="w-24 flex-shrink-0 text-center">
-          <p className="text-xs font-medium text-gray-500">{dayStr}</p>
+          <p className="text-xs font-medium text-gray-400">{dayStr}</p>
           {timeStr && (
-            <p className="text-[11px] text-gray-400">{timeStr}</p>
+            <p className="text-xs text-gray-300">{timeStr}</p>
           )}
         </div>
 
@@ -614,9 +615,9 @@ function GameCard({
                 {getSchoolDisplayName(g.away_school)}
               </Link>
             ) : (
-              <span className="text-gray-400">TBD</span>
+              <span className="text-gray-300">TBD</span>
             )}
-            <span className="text-gray-400 mx-2">@</span>
+            <span className="text-gray-300 mx-2">@</span>
             {g.home_school ? (
               <Link
                 href={`/${sport}/teams/${g.home_school.slug}/${seasonLabel}`}
@@ -627,7 +628,7 @@ function GameCard({
                 {getSchoolDisplayName(g.home_school)}
               </Link>
             ) : (
-              <span className="text-gray-400">TBD</span>
+              <span className="text-gray-300">TBD</span>
             )}
           </p>
           {typeInfo && (
@@ -700,9 +701,9 @@ function ScrimmageGroupCard({
       <div className="flex items-start gap-3 px-4 py-3">
         {/* Date + time */}
         <div className="w-24 flex-shrink-0 text-center pt-1">
-          <p className="text-xs font-medium text-gray-500">{dayStr}</p>
+          <p className="text-xs font-medium text-gray-400">{dayStr}</p>
           {timeStr && (
-            <p className="text-[11px] text-gray-400">{timeStr}</p>
+            <p className="text-xs text-gray-300">{timeStr}</p>
           )}
         </div>
 
@@ -722,7 +723,7 @@ function ScrimmageGroupCard({
           <p className="text-sm text-navy">
             {group.teams.map((t, i) => (
               <span key={t.id}>
-                {i > 0 && <span className="text-gray-400">{i === group.teams.length - 1 ? " & " : ", "}</span>}
+                {i > 0 && <span className="text-gray-300">{i === group.teams.length - 1 ? " & " : ", "}</span>}
                 <Link
                   href={`/${sport}/teams/${t.slug}/${seasonLabel}`}
                   className="font-medium hover:text-blue-600 transition"
@@ -733,11 +734,11 @@ function ScrimmageGroupCard({
             ))}
           </p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-200 text-gray-600">
+            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-200 text-gray-400">
               {group.teams.length}-Team Scrimmage
             </span>
             {location && (
-              <span className="text-[10px] text-gray-400">
+              <span className="text-[10px] text-gray-300">
                 📍 {location}
               </span>
             )}

@@ -44,7 +44,7 @@ export default function ThisDayInHistory() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
+      <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse" role="status" aria-busy="true" aria-label="Loading today in history">
         <div className="h-6 bg-gray-300 rounded mb-4 w-1/3"></div>
         <div className="space-y-3">
           <div className="h-4 bg-gray-200 rounded"></div>
@@ -68,7 +68,7 @@ export default function ThisDayInHistory() {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-2xl">📅</span>
+        <span className="text-2xl" aria-hidden="true">📅</span>
         <h3
           className="font-bold text-lg"
           style={{ color: "var(--psp-navy)" }}
@@ -92,7 +92,7 @@ export default function ThisDayInHistory() {
                   {event.description}
                 </p>
                 {event.score && (
-                  <p className="text-xs text-gray-500">Score: {event.score}</p>
+                  <p className="text-xs text-gray-400">Score: {event.score}</p>
                 )}
               </div>
               <span className="ml-2 px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded font-semibold">

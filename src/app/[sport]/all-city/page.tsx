@@ -98,25 +98,25 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
               <div className="text-[#f0a500] text-2xl font-bold">
                 {summary.totalSelections.toLocaleString()}
               </div>
-              <div className="text-gray-400 text-sm">Total Selections</div>
+              <div className="text-gray-300 text-sm">Total Selections</div>
             </div>
             <div className="text-center">
               <div className="text-blue-400 text-2xl font-bold">
                 {summary.yearsSpanned.max - summary.yearsSpanned.min + 1}
               </div>
-              <div className="text-gray-400 text-sm">Years Spanned</div>
+              <div className="text-gray-300 text-sm">Years Spanned</div>
             </div>
             <div className="text-center">
               <div className="text-green-400 text-2xl font-bold">
                 {summary.schoolsRepresented}
               </div>
-              <div className="text-gray-400 text-sm">Schools Represented</div>
+              <div className="text-gray-300 text-sm">Schools Represented</div>
             </div>
             <div className="text-center">
               <div className="text-purple-400 text-2xl font-bold">
                 {summary.yearsSpanned.min}-{summary.yearsSpanned.max}
               </div>
-              <div className="text-gray-400 text-sm">Timeline</div>
+              <div className="text-gray-300 text-sm">Timeline</div>
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
             {/* Top Schools */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-6">
               <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                <h3 className="psp-h3 text-white">Top Schools</h3>
+                <h2 className="psp-h3 text-white">Top Schools</h2>
               </div>
               <div className="p-4 space-y-3">
                 {summary.topSchools.map((school, idx) => (
@@ -155,7 +155,7 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
                     >
                       {school.name}
                     </Link>
-                    <span className="text-gray-400 text-sm">{school.count}</span>
+                    <span className="text-gray-300 text-sm">{school.count}</span>
                   </div>
                 ))}
               </div>
@@ -164,7 +164,7 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
             {/* About */}
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
               <div className="bg-[#0a1628] border-b border-[#f0a500] px-4 py-3">
-                <h3 className="psp-h3 text-white">About</h3>
+                <h2 className="psp-h3 text-white">About</h2>
               </div>
               <div className="p-4 space-y-3 text-sm text-gray-300">
                 <p>
@@ -173,11 +173,11 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
                 <p>
                   Pre-1969 selections are typically listed as "All-Scholastic" without offense/defense splits. Post-1969 selections typically include offense and defense positions.
                 </p>
-                <p className="text-xs text-gray-400 mt-4">
+                <p className="text-xs text-gray-300 mt-4">
                   Data compiled from historical archives and verified sources.
                 </p>
                 <p className="text-xs text-blue-400 mt-2">
-                  Source: <span className="text-gray-400">Ted Silary Archives</span>
+                  Source: <span className="text-gray-300">Ted Silary Archives</span>
                 </p>
               </div>
             </div>

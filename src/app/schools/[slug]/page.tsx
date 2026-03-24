@@ -279,7 +279,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
               {/* Location */}
               <div className="text-sm text-gray-300 mb-4">
                 {school.city}, {school.state}
-                {school.founded_year && <span className="ml-3 text-gray-400">Est. {school.founded_year}</span>}
+                {school.founded_year && <span className="ml-3 text-gray-300">Est. {school.founded_year}</span>}
               </div>
 
               {/* Stat Strip */}
@@ -288,34 +288,34 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                   <div className="psp-h2 text-white">
                     {totalChampionships}
                   </div>
-                  <div className="text-[11px] text-gray-400 uppercase tracking-wider">Championships</div>
+                  <div className="text-xs text-gray-300 uppercase tracking-wider">Championships</div>
                 </div>
                 <div>
                   <div className="psp-h2 text-white">
                     {totalWins}-{totalLosses}{totalTies > 0 ? `-${totalTies}` : ""}
                   </div>
-                  <div className="text-[11px] text-gray-400 uppercase tracking-wider">All-Time Record</div>
+                  <div className="text-xs text-gray-300 uppercase tracking-wider">All-Time Record</div>
                 </div>
                 {winPct !== null && (
                   <div>
                     <div className="psp-h2" style={{ color: "var(--psp-gold)" }}>
                       {winPct}%
                     </div>
-                    <div className="text-[11px] text-gray-400 uppercase tracking-wider">Win %</div>
+                    <div className="text-xs text-gray-300 uppercase tracking-wider">Win %</div>
                   </div>
                 )}
                 <div>
                   <div className="psp-h2 text-white">
                     {sportsStats.length}
                   </div>
-                  <div className="text-[11px] text-gray-400 uppercase tracking-wider">Sports</div>
+                  <div className="text-xs text-gray-300 uppercase tracking-wider">Sports</div>
                 </div>
                 {totalNextLevel > 0 && (
                   <div>
                     <div className="psp-h2" style={{ color: "var(--psp-blue)" }}>
                       {totalNextLevel}
                     </div>
-                    <div className="text-[11px] text-gray-400 uppercase tracking-wider">Next Level</div>
+                    <div className="text-xs text-gray-300 uppercase tracking-wider">Next Level</div>
                   </div>
                 )}
               </div>
@@ -400,19 +400,19 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                           <div className="text-base font-bold" style={{ color: "var(--psp-gold)" }}>
                             {sport.championship_count}
                           </div>
-                          <div className="text-[11px] text-gray-500">Titles</div>
+                          <div className="text-xs text-gray-400">Titles</div>
                         </div>
                         <div className="flex-1">
                           <div className="text-base font-bold" style={{ color: "var(--psp-blue)" }}>
                             {sport.season_count}
                           </div>
-                          <div className="text-[11px] text-gray-500">Seasons</div>
+                          <div className="text-xs text-gray-400">Seasons</div>
                         </div>
                         <div className="flex-1">
                           <div className="text-base font-bold text-gray-600">
                             {sport.player_count}
                           </div>
-                          <div className="text-[11px] text-gray-500">Players</div>
+                          <div className="text-xs text-gray-400">Players</div>
                         </div>
                         <div className="flex-1 flex items-center justify-end">
                           <span
@@ -471,11 +471,11 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                             <span className="font-bold tabular-nums" style={{ color: "var(--psp-navy)" }}>
                               {c.year}
                             </span>
-                            <span className="text-gray-500 text-xs">
+                            <span className="text-gray-400 text-xs">
                               {c.level}
                             </span>
                             {c.league_name && (
-                              <span className="text-gray-400 text-xs hidden sm:inline">
+                              <span className="text-gray-300 text-xs hidden sm:inline">
                                 • {c.league_name}
                               </span>
                             )}
@@ -514,7 +514,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                             <h3 className="text-sm font-bold group-hover:text-[var(--psp-gold)] transition-colors truncate" style={{ color: "var(--psp-navy)" }}>
                               {coach.name}
                             </h3>
-                            <div className="text-xs text-gray-500">{coach.role} • {yearRange}</div>
+                            <div className="text-xs text-gray-400">{coach.role} • {yearRange}</div>
                           </div>
                           <span className="text-lg ml-2 flex-shrink-0">{SPORT_EMOJI[coach.sport_id] || "📋"}</span>
                         </div>
@@ -525,7 +525,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                                 <span className="font-bold" style={{ color: "var(--psp-navy)" }}>
                                   {coach.record_wins}-{coach.record_losses}{coach.record_ties > 0 ? `-${coach.record_ties}` : ""}
                                 </span>
-                                <span className="text-gray-400 ml-1">Record</span>
+                                <span className="text-gray-300 ml-1">Record</span>
                               </div>
                             )}
                             {coach.championships > 0 && (
@@ -533,7 +533,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                                 <span className="font-bold" style={{ color: "var(--psp-gold)" }}>
                                   {coach.championships}
                                 </span>
-                                <span className="text-gray-400 ml-1">{coach.championships === 1 ? "Title" : "Titles"}</span>
+                                <span className="text-gray-300 ml-1">{coach.championships === 1 ? "Title" : "Titles"}</span>
                               </div>
                             )}
                           </div>
@@ -565,7 +565,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                       const won = schoolScore !== null && oppScore !== null && schoolScore > oppScore;
                       const lost = schoolScore !== null && oppScore !== null && schoolScore < oppScore;
                       const resultLabel = won ? "W" : lost ? "L" : "T";
-                      const resultColor = won ? "text-green-600" : lost ? "text-red-500" : "text-gray-500";
+                      const resultColor = won ? "text-green-600" : lost ? "text-red-500" : "text-gray-400";
                       const dateStr = game.game_date
                         ? new Date(game.game_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
                         : "";
@@ -584,7 +584,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                                 {isHome ? "vs" : "@"} {oppName}
                               </span>
                             </div>
-                            {dateStr && <div className="text-[11px] text-gray-400">{dateStr}</div>}
+                            {dateStr && <div className="text-xs text-gray-300">{dateStr}</div>}
                           </div>
                           <div className="text-right flex-shrink-0">
                             <div className="text-sm font-bold tabular-nums" style={{ color: "var(--psp-navy)" }}>
@@ -722,7 +722,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                             <td className="text-sm">
                               {award.award_name}
                               {award.tier && (
-                                <span className="text-xs text-gray-400 ml-1">({award.tier})</span>
+                                <span className="text-xs text-gray-300 ml-1">({award.tier})</span>
                               )}
                             </td>
                             <td className="text-sm">
@@ -756,7 +756,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                   Next Level Alumni ({sortedNextLevel.length})
                 </h2>
                 {proCount > 0 && (
-                  <p className="text-sm text-gray-500 mb-4">
+                  <p className="text-sm text-gray-400 mb-4">
                     Including {proCount} professional athlete{proCount !== 1 ? "s" : ""}
                   </p>
                 )}
@@ -797,7 +797,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                                     </div>
                                   )}
                                   {athlete.college && (
-                                    <div className="text-xs text-gray-400">
+                                    <div className="text-xs text-gray-300">
                                       via {athlete.college}
                                     </div>
                                   )}
@@ -842,7 +842,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
               <div className="space-y-3">
                 {school.address && (
                   <div className="text-sm">
-                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Address</div>
+                    <div className="text-gray-300 text-xs uppercase tracking-wider mb-0.5">Address</div>
                     <a
                       href={`https://maps.google.com/?q=${encodeURIComponent(school.address)}`}
                       target="_blank"
@@ -856,7 +856,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 )}
                 {school.phone && (
                   <div className="text-sm">
-                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Phone</div>
+                    <div className="text-gray-300 text-xs uppercase tracking-wider mb-0.5">Phone</div>
                     <a href={`tel:${school.phone}`} className="text-gray-700 hover:text-[var(--psp-navy)]">
                       {school.phone}
                     </a>
@@ -864,7 +864,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 )}
                 {school.website_url && (
                   <div className="text-sm">
-                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Website</div>
+                    <div className="text-gray-300 text-xs uppercase tracking-wider mb-0.5">Website</div>
                     <a
                       href={school.website_url}
                       target="_blank"
@@ -878,19 +878,19 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 )}
                 {school.principal && (
                   <div className="text-sm">
-                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Principal</div>
+                    <div className="text-gray-300 text-xs uppercase tracking-wider mb-0.5">Principal</div>
                     <div className="text-gray-700">{school.principal}</div>
                   </div>
                 )}
                 {school.athletic_director && (
                   <div className="text-sm">
-                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Athletic Director</div>
+                    <div className="text-gray-300 text-xs uppercase tracking-wider mb-0.5">Athletic Director</div>
                     <div className="text-gray-700">{school.athletic_director}</div>
                   </div>
                 )}
                 {school.enrollment && (
                   <div className="text-sm">
-                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Enrollment</div>
+                    <div className="text-gray-300 text-xs uppercase tracking-wider mb-0.5">Enrollment</div>
                     <div className="text-gray-700">{school.enrollment.toLocaleString()}</div>
                   </div>
                 )}
@@ -915,7 +915,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                     <span className="group-hover:underline" style={{ color: "var(--psp-navy)" }}>
                       {sport.sport_emoji} {sport.sport_name}
                     </span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-gray-300">
                       {sport.championship_count > 0 ? `${sport.championship_count} 🏆` : `${sport.season_count} seasons`}
                     </span>
                   </Link>

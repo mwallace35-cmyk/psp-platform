@@ -136,7 +136,7 @@ export default function PotwVoteButton({ nomineeId, playerName = "Player" }: Pot
       ) : hasVoted ? (
         <button
           disabled
-          className="px-6 py-3 rounded-lg bg-gray-100 text-gray-500 font-medium text-sm cursor-default"
+          className="px-6 py-3 rounded-lg bg-gray-100 text-gray-400 font-medium text-sm cursor-default"
           aria-pressed="true"
           aria-label={`Vote for ${playerName} - already voted this week`}
         >

@@ -149,7 +149,7 @@ export default function LeaderboardTable({
       primary: true,
       render: (value: unknown, row: Record<string, any>) => (
         <div className="flex items-center gap-2">
-          {row?.pro_team && <span className="text-gold">⭐</span>}
+          {row?.pro_team && <span className="text-gold" role="img" aria-label="Went pro">⭐</span>}
           <Link
             href={`/${sport}/players/${row?.playerSlug || ''}`}
             className="font-medium text-sm hover:underline"

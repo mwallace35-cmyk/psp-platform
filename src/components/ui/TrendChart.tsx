@@ -34,7 +34,7 @@ function TrendChart({
         <h3 className="psp-h3 mb-4" style={{ color: 'var(--psp-navy)' }}>
           {title}
         </h3>
-        <div className="text-center py-8 text-gray-500">No data available</div>
+        <div className="text-center py-8 text-gray-400">No data available</div>
       </div>
     );
   }
@@ -91,7 +91,7 @@ function TrendChart({
           >
             {trendUp ? '▲' : '▼'}
           </span>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-400">
             {trendUp ? '+' : ''}{(lastValue - prevValue).toFixed(0)}
           </span>
         </div>
@@ -196,7 +196,7 @@ function TrendChart({
       </div>
 
       {/* X-axis labels */}
-      <div className="mt-3 flex justify-between text-xs text-gray-600">
+      <div className="mt-3 flex justify-between text-xs text-gray-400">
         {points.map((p, i) => {
           // Show every nth label to avoid crowding
           const showLabel = data.length <= 6 || i % Math.ceil(data.length / 6) === 0 || i === data.length - 1;
@@ -218,7 +218,7 @@ function TrendChart({
 
       {/* Y-axis label */}
       {unit && (
-        <div className="mt-2 text-xs text-gray-500 text-right">
+        <div className="mt-2 text-xs text-gray-400 text-right">
           {unit}
         </div>
       )}

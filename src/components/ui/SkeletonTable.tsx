@@ -14,6 +14,9 @@ export default function SkeletonTable({
   return (
     <div
       className={`animate-pulse rounded-xl bg-[var(--psp-navy-mid)] border border-gray-700/50 overflow-hidden ${className}`}
+      role="status"
+      aria-busy="true"
+      aria-label="Loading table"
     >
       {/* Header row */}
       <div className="flex gap-4 px-4 py-3 border-b border-gray-700/50">

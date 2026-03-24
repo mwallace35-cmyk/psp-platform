@@ -58,7 +58,7 @@ export default function ClassYearSpotlight({ players, classYears }: ClassYearSpo
             >
               Class of {year}
               <span
-                className="ml-1.5 text-[10px] font-normal px-1.5 py-0.5 rounded-full"
+                className="ml-1.5 text-xs font-normal px-1.5 py-0.5 rounded-full"
                 style={{
                   backgroundColor: isActive ? "rgba(10,22,40,0.15)" : "rgba(255,255,255,0.08)",
                   fontFamily: "DM Sans, sans-serif",
@@ -74,7 +74,7 @@ export default function ClassYearSpotlight({ players, classYears }: ClassYearSpo
       {/* Player Grid */}
       {filtered.length === 0 ? (
         <div
-          className="text-center py-8 text-gray-500 text-sm rounded-xl"
+          className="text-center py-8 text-gray-400 text-sm rounded-xl"
           style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
         >
           No college commitments tracked for the Class of {activeYear} yet.
@@ -113,14 +113,14 @@ export default function ClassYearSpotlight({ players, classYears }: ClassYearSpo
                     )}
                     {player.positions && player.positions.length > 0 && (
                       <span
-                        className="text-[10px] text-gray-500 shrink-0"
+                        className="text-xs text-gray-400 shrink-0"
                       >
                         {player.positions[0]}
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                  <div className="flex items-center gap-1.5 text-xs text-gray-300">
                     {player.schoolName && (
                       <>
                         {player.schoolSlug ? (

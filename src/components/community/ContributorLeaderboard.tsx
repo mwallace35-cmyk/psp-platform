@@ -75,7 +75,7 @@ export default function ContributorLeaderboard({
             {/* Streak */}
             {contributor.streak > 0 && (
               <div className={styles.streak}>
-                <span className={styles.streakIcon}>🔥</span>
+                <span className={styles.streakIcon} role="img" aria-label="Streak">🔥</span>
                 <span className={styles.streakCount}>{contributor.streak}</span>
               </div>
             )}

@@ -151,31 +151,31 @@ export default async function CityAllStarGamePage() {
               <p className="font-bebas-neue text-2xl font-bold">
                 {nonPublicWins}–{publicWins}{ties > 0 ? `–${ties}` : ""}
               </p>
-              <p className="text-gray-400 text-xs">Non-Public leads</p>
+              <p className="text-gray-300 text-xs">Non-Public leads</p>
             </div>
             <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
               <p className="text-[var(--psp-gold)] text-xs font-semibold mb-1">GAMES</p>
               <p className="font-bebas-neue text-2xl font-bold">{totalGames}</p>
-              <p className="text-gray-400 text-xs">1975–2019</p>
+              <p className="text-gray-300 text-xs">1975–2019</p>
             </div>
             <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
               <p className="text-blue-400 text-xs font-semibold mb-1">PUBLIC</p>
               <p className="font-bebas-neue text-2xl font-bold">{publicWins}</p>
-              <p className="text-gray-400 text-xs">
+              <p className="text-gray-300 text-xs">
                 {totalGames > 0 ? ((publicWins / totalGames) * 100).toFixed(0) : 0}% win rate
               </p>
             </div>
             <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
               <p className="text-purple-400 text-xs font-semibold mb-1">NON-PUBLIC</p>
               <p className="font-bebas-neue text-2xl font-bold">{nonPublicWins}</p>
-              <p className="text-gray-400 text-xs">
+              <p className="text-gray-300 text-xs">
                 {totalGames > 0 ? ((nonPublicWins / totalGames) * 100).toFixed(0) : 0}% win rate
               </p>
             </div>
             <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-4 text-center">
               <p className="text-[var(--psp-gold)] text-xs font-semibold mb-1">TOUCHDOWNS</p>
               <p className="font-bebas-neue text-2xl font-bold">{totalTds}</p>
-              <p className="text-gray-400 text-xs">All-time scored</p>
+              <p className="text-gray-300 text-xs">All-time scored</p>
             </div>
           </div>
         </div>
@@ -200,7 +200,7 @@ export default async function CityAllStarGamePage() {
           >
             ← Back to Football
           </Link>
-          <p className="text-gray-500 text-xs">
+          <p className="text-gray-400 text-xs">
             Source: tedsilary.com — Philadelphia Scholastic Sports Archives
           </p>
         </div>

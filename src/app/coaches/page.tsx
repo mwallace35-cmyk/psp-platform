@@ -132,19 +132,19 @@ export default async function CoachesPage() {
           <div className="flex flex-wrap gap-6 mt-6 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-gold font-bold text-xl">{totalCoaches}</span>
-              <span className="text-gray-400">Coaches</span>
+              <span className="text-gray-300">Coaches</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gold font-bold text-xl">{footballCount}</span>
-              <span className="text-gray-400">Football</span>
+              <span className="text-gray-300">Football</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gold font-bold text-xl">{basketballCount}</span>
-              <span className="text-gray-400">Basketball</span>
+              <span className="text-gray-300">Basketball</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gold font-bold text-xl">3</span>
-              <span className="text-gray-400">Leagues</span>
+              <span className="text-gray-300">Leagues</span>
             </div>
           </div>
         </div>

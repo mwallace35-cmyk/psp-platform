@@ -277,7 +277,7 @@ export default async function SearchPage({
                   minWidth: 70,
                 }}
               >
-                <span style={{ fontSize: 22 }}>{sport.emoji}</span>
+                <span style={{ fontSize: 22 }} aria-hidden="true">{sport.emoji}</span>
                 <span style={{ fontSize: 10, fontWeight: 700, color: "var(--psp-navy)" }}>{sport.label}</span>
               </Link>
             ))}

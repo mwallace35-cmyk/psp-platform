@@ -85,10 +85,10 @@ export default async function HistoryPage() {
               <div key={m.title} className="bg-[#0f1e30] border border-[#1a2f4d] rounded-lg p-5 hover:border-[#f0a500]/30 transition-colors">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-[#f0a500] text-sm font-bold">{m.sport}</span>
-                  <span className="ml-auto text-gray-500 text-sm">{m.year}</span>
+                  <span className="ml-auto text-gray-400 text-sm">{m.year}</span>
                 </div>
                 <h3 className="text-white font-bold mb-2">{m.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{m.desc}</p>
+                <p className="text-gray-300 text-sm leading-relaxed">{m.desc}</p>
               </div>
             ))}
           </div>
@@ -96,18 +96,18 @@ export default async function HistoryPage() {
 
         {Object.keys(bySport).length > 0 && (
           <section>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2"><span>🏆</span> Recent Champions</h2>
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2"><span aria-hidden="true">🏆</span> Recent Champions</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {Object.keys(bySport).slice(0, 6).map(sport => (
                 <div key={sport} className="bg-[#0f1e30] border border-[#1a2f4d] rounded-lg p-5">
                   <h3 className="text-[#f0a500] font-bold text-lg mb-3 capitalize flex items-center gap-2">
-                    <span>{SPORT_EMOJI[sport.toLowerCase()] ?? '🏅'}</span> {sport}
+                    <span aria-hidden="true">{SPORT_EMOJI[sport.toLowerCase()] ?? '🏅'}</span> {sport}
                   </h3>
                   <div className="space-y-2">
                     {bySport[sport].slice(0, 3).map((c, i) => (
                       <div key={i} className="flex items-center justify-between text-sm">
                         <Link href={"/schools/" + c.school_slug} className="text-white hover:text-[#f0a500] transition-colors font-medium">{c.school_name}</Link>
-                        <span className="text-gray-400">{c.year_start}</span>
+                        <span className="text-gray-300">{c.year_start}</span>
                       </div>
                     ))}
                   </div>
@@ -124,8 +124,8 @@ export default async function HistoryPage() {
               {articles.map(a => (
                 <Link key={a.slug} href={"/news/" + a.slug} className="block bg-[#0f1e30] border border-[#1a2f4d] rounded-lg p-5 hover:border-[#f0a500]/30 transition-colors group">
                   <h3 className="text-white font-bold mb-2 group-hover:text-[#f0a500] transition-colors line-clamp-2">{a.title}</h3>
-                  {a.excerpt && <p className="text-gray-400 text-sm line-clamp-2 mb-3">{a.excerpt}</p>}
-                  {a.published_at && <p className="text-gray-500 text-xs">{new Date(a.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>}
+                  {a.excerpt && <p className="text-gray-300 text-sm line-clamp-2 mb-3">{a.excerpt}</p>}
+                  {a.published_at && <p className="text-gray-400 text-xs">{new Date(a.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>}
                 </Link>
               ))}
             </div>

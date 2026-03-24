@@ -28,6 +28,7 @@ export default function TeamStats({ team }: TeamStatsProps) {
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm" aria-label="Team statistics">
+            <caption className="sr-only">Team statistics</caption>
             <tbody>
               {stats.map((stat, idx) => (
                 <tr key={idx} className="border-b border-gray-200 last:border-b-0">

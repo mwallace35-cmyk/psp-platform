@@ -418,7 +418,7 @@ export default function CoachesFilter({
 
         {filteredCoaches.length === 0 && (
           <div style={{ textAlign: "center", padding: 40, color: "var(--g400)" }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>📋</div>
+            <div style={{ fontSize: 32, marginBottom: 8 }} aria-hidden="true">📋</div>
             <div style={{ fontWeight: 600 }}>No coaches found</div>
             <div style={{ fontSize: 12, marginTop: 4 }}>
               Try adjusting your search or sport filter.

@@ -2,7 +2,7 @@ import { Breadcrumb } from "@/components/ui";
 
 export default function LoadingAlumni() {
   return (
-    <>
+    <div role="status" aria-busy="true" aria-label="Loading alumni">
       {/* Header skeleton */}
       <section className="py-12 md:py-16 bg-gradient-to-r from-gray-200 to-gray-100">
         <div className="max-w-7xl mx-auto px-4">
@@ -71,6 +71,6 @@ export default function LoadingAlumni() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

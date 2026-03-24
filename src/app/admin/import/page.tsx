@@ -155,7 +155,7 @@ export default function ImportWizard() {
                     ? "text-white"
                     : (["upload", "configure", "preview", "confirm", "complete"].indexOf(step) > i)
                     ? "text-white"
-                    : "text-gray-400 bg-gray-200"
+                    : "text-gray-300 bg-gray-200"
                 }`}
                 style={
                   step === s

@@ -80,7 +80,7 @@ export default function GlossaryPage() {
             <h1 className="psp-h1 text-white mb-2">
               Stats Glossary
             </h1>
-            <p className="text-gray-400 mb-8">
+            <p className="text-gray-300 mb-8">
               Complete reference guide for statistical abbreviations and definitions used across PhillySportsPack.
             </p>
 
@@ -112,12 +112,13 @@ export default function GlossaryPage() {
                   {/* Stats Table */}
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm text-gray-200" aria-label="Statistical abbreviations glossary">
+                      <caption className="sr-only">Statistical abbreviations glossary</caption>
                       <thead>
                         <tr className="border-b border-gray-700">
-                          <th className="text-left py-3 px-4 font-semibold text-gray-300 w-32">
+                          <th scope="col" className="text-left py-3 px-4 font-semibold text-gray-300 w-32">
                             Abbreviation
                           </th>
-                          <th className="text-left py-3 px-4 font-semibold text-gray-300">
+                          <th scope="col" className="text-left py-3 px-4 font-semibold text-gray-300">
                             Definition
                           </th>
                         </tr>
@@ -143,7 +144,7 @@ export default function GlossaryPage() {
 
             {/* Footer Note */}
             <div className="mt-12 pt-8 border-t border-gray-800">
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-300">
                 These abbreviations are used consistently across player profiles, leaderboards, and historical
                 records on PhillySportsPack. Hover over any stat abbreviation on the site to see its definition.
               </p>
@@ -156,15 +157,15 @@ export default function GlossaryPage() {
               <div className="widget-header">Quick Facts</div>
               <div className="widget-content space-y-3">
                 <div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wide">Sports Covered</div>
+                  <div className="text-xs text-gray-300 uppercase tracking-wide">Sports Covered</div>
                   <div className="text-xl font-black mt-1">7</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wide">Total Stats</div>
+                  <div className="text-xs text-gray-300 uppercase tracking-wide">Total Stats</div>
                   <div className="text-xl font-black mt-1">{Object.keys(STAT_DEFINITIONS).length}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400 uppercase tracking-wide">Data Coverage</div>
+                  <div className="text-xs text-gray-300 uppercase tracking-wide">Data Coverage</div>
                   <div className="text-xs text-gray-300 mt-1">
                     25 seasons, 76 schools, 28,000+ records
                   </div>
@@ -174,7 +175,7 @@ export default function GlossaryPage() {
 
             <div className="widget">
               <div className="widget-header">About</div>
-              <div className="widget-content text-sm text-gray-400">
+              <div className="widget-content text-sm text-gray-300">
                 PhillySportsPack tracks comprehensive statistics for Philadelphia high school sports. This glossary
                 helps you understand all the abbreviations used throughout the site.
               </div>

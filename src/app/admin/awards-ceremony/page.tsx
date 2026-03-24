@@ -45,7 +45,7 @@ export default function AwardsCeremonyPage() {
         className="p-8 rounded-lg text-center"
         style={{ background: "var(--psp-navy-mid)" }}
       >
-        <p className="text-gray-400">Loading awards...</p>
+        <p className="text-gray-300">Loading awards...</p>
       </div>
     );
   }
@@ -64,7 +64,7 @@ export default function AwardsCeremonyPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Annual Awards Ceremony</h1>
-        <p className="text-gray-400 mt-2">
+        <p className="text-gray-300 mt-2">
           Manage annual awards, nominees, voting, and results
         </p>
       </div>
@@ -74,7 +74,7 @@ export default function AwardsCeremonyPage() {
           className="p-8 rounded-lg text-center"
           style={{ background: "var(--psp-navy-mid)" }}
         >
-          <p className="text-gray-400">No awards created yet</p>
+          <p className="text-gray-300">No awards created yet</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -96,10 +96,10 @@ export default function AwardsCeremonyPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="font-semibold text-white text-lg">
+                    <h2 className="font-semibold text-white text-lg">
                       {award.name}
-                    </h3>
-                    <p className="text-sm text-gray-400 mt-1 capitalize">
+                    </h2>
+                    <p className="text-sm text-gray-300 mt-1 capitalize">
                       {award.category}
                       {award.sport_id && ` • ${award.sport_id}`}
                     </p>
@@ -123,9 +123,9 @@ export default function AwardsCeremonyPage() {
 
                 {award.nominees && award.nominees.length > 0 && (
                   <div className="mt-4 space-y-2">
-                    <h4 className="text-sm font-semibold text-gray-300">
+                    <h3 className="text-sm font-semibold text-gray-300">
                       Nominees & Votes ({totalVotes})
-                    </h4>
+                    </h3>
                     {award.nominees.map((nominee, idx) => (
                       <div
                         key={idx}
@@ -135,7 +135,7 @@ export default function AwardsCeremonyPage() {
                           <p className="text-sm font-medium text-white">
                             {nominee.player_name}
                           </p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-gray-300">
                             {nominee.school_name}
                           </p>
                         </div>
@@ -143,7 +143,7 @@ export default function AwardsCeremonyPage() {
                           <p className="text-lg font-bold text-white">
                             {counts[idx] || 0}
                           </p>
-                          <p className="text-xs text-gray-400">votes</p>
+                          <p className="text-xs text-gray-300">votes</p>
                         </div>
                       </div>
                     ))}
@@ -155,7 +155,7 @@ export default function AwardsCeremonyPage() {
                     className="mt-4 p-3 rounded border-l-4"
                     style={{ borderColor: "var(--psp-gold)" }}
                   >
-                    <p className="text-xs text-gray-400">Winner</p>
+                    <p className="text-xs text-gray-300">Winner</p>
                     <p className="text-white font-semibold mt-1">
                       Winner Announced
                     </p>

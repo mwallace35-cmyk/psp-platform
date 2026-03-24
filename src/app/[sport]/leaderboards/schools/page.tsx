@@ -281,7 +281,7 @@ export default async function SchoolLeaderboardPage({
           <h1 className="psp-h1 text-white mt-4">
             School Rankings
           </h1>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-gray-300 mt-2">
             Top {meta.name.toLowerCase()} programs ranked by {tabLabel.toLowerCase()}
           </p>
           <div className="mt-6">
@@ -398,9 +398,9 @@ function EmptyState({ sport, tab }: { sport: string; tab: string }) {
   return (
     <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
       <div className="text-4xl mb-4">🏫</div>
-      <h3 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>
+      <h2 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>
         No school {tab} data available yet
-      </h3>
+      </h2>
       <p className="text-sm">
         We&apos;re working on gathering school-level data for this sport. Check back soon!
       </p>

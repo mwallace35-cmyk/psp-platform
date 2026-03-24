@@ -183,7 +183,7 @@ export default function NewArticle() {
         <div className="space-y-6">
           {/* Sport */}
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Sport</h3>
+            <h2 className="font-semibold text-gray-900 mb-3">Sport</h2>
             <select
               value={sportId}
               onChange={(e) => setSportId(e.target.value as SportId)}
@@ -199,7 +199,7 @@ export default function NewArticle() {
 
           {/* Author */}
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Author</h3>
+            <h2 className="font-semibold text-gray-900 mb-3">Author</h2>
             <input
               type="text"
               value={author}
@@ -211,7 +211,7 @@ export default function NewArticle() {
 
           {/* Status */}
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Status</h3>
+            <h2 className="font-semibold text-gray-900 mb-3">Status</h2>
             <div className="space-y-2">
               <label className="flex items-center">
                 <input

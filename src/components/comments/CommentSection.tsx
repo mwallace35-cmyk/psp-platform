@@ -114,9 +114,9 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
                   {profile?.display_name || 'Anonymous'}
                 </span>
                 {profile?.school_affiliation && (
-                  <span className="text-xs text-gray-500">{profile.school_affiliation}</span>
+                  <span className="text-xs text-gray-400">{profile.school_affiliation}</span>
                 )}
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-gray-300">
                   {new Date(comment.created_at).toLocaleDateString()}
                 </span>
               </div>
@@ -181,9 +181,9 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
 
       {/* Comments list */}
       {loading ? (
-        <p className="text-gray-500 text-sm py-4">Loading comments...</p>
+        <p className="text-gray-400 text-sm py-4">Loading comments...</p>
       ) : comments.length === 0 ? (
-        <p className="text-gray-500 text-sm py-4">No comments yet. Be the first to share your thoughts!</p>
+        <p className="text-gray-400 text-sm py-4">No comments yet. Be the first to share your thoughts!</p>
       ) : (
         <div className="divide-y divide-gray-100">
           {comments.map((c) => renderComment(c))}

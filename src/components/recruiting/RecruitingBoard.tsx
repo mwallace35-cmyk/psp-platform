@@ -66,12 +66,12 @@ export default function RecruitingBoard({ recruits, sportColor = "#f0a500" }: Pr
                 </span>
               )}
               {r.status && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 uppercase">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 uppercase">
                   {r.status}
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500 flex items-center gap-2 mt-0.5">
+            <div className="text-sm text-gray-400 flex items-center gap-2 mt-0.5">
               {r.position && <span className="font-medium">{r.position}</span>}
               {r.school_name && <span>{r.school_name}</span>}
               <span>Class of {r.class_year}</span>
@@ -84,13 +84,13 @@ export default function RecruitingBoard({ recruits, sportColor = "#f0a500" }: Pr
           </div>
           <div className="flex gap-1.5">
             {r.url_247 && (
-              <a href={r.url_247} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 bg-blue-50 text-blue-700 rounded font-semibold">247</a>
+              <a href={r.url_247} target="_blank" rel="noopener noreferrer" className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded font-semibold">247</a>
             )}
             {r.url_rivals && (
-              <a href={r.url_rivals} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 bg-red-50 text-red-700 rounded font-semibold">RIV</a>
+              <a href={r.url_rivals} target="_blank" rel="noopener noreferrer" className="text-xs px-2 py-1 bg-red-50 text-red-700 rounded font-semibold">RIV</a>
             )}
             {r.url_on3 && (
-              <a href={r.url_on3} target="_blank" rel="noopener noreferrer" className="text-[10px] px-2 py-1 bg-green-50 text-green-700 rounded font-semibold">On3</a>
+              <a href={r.url_on3} target="_blank" rel="noopener noreferrer" className="text-xs px-2 py-1 bg-green-50 text-green-700 rounded font-semibold">On3</a>
             )}
           </div>
         </div>

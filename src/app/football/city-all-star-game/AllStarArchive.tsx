@@ -143,12 +143,12 @@ function GameCard({ game }: { game: GameData }) {
             <p className="font-semibold text-lg">{game.score}</p>
             <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
               {game.mvps && game.mvps.length > 0 && (
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-300">
                   MVP: {game.mvps.map((m) => `${m.name}${m.school ? ` (${m.school})` : ""}`).join(", ")}
                 </p>
               )}
               {game.venue && (
-                <p className="text-sm text-gray-500">📍 {game.venue}</p>
+                <p className="text-sm text-gray-400">📍 {game.venue}</p>
               )}
             </div>
           </div>
@@ -178,8 +178,8 @@ function GameCard({ game }: { game: GameData }) {
                 {game.mvps.map((mvp, idx) => (
                   <p key={idx} className="text-sm">
                     <span className="font-semibold">{mvp.name}</span>
-                    {mvp.school && <span className="text-gray-400"> ({mvp.school})</span>}
-                    {mvp.stats && <span className="text-gray-400"> — {mvp.stats}</span>}
+                    {mvp.school && <span className="text-gray-300"> ({mvp.school})</span>}
+                    {mvp.stats && <span className="text-gray-300"> — {mvp.stats}</span>}
                   </p>
                 ))}
               </div>
@@ -196,8 +196,8 @@ function GameCard({ game }: { game: GameData }) {
                 {game.touchdowns.map((td, idx) => (
                   <p key={idx} className="text-sm">
                     <span className="font-semibold">{td.scorer}</span>
-                    <span className="text-gray-400"> ({td.school})</span>
-                    {td.method && <span className="text-gray-500"> — {td.method}</span>}
+                    <span className="text-gray-300"> ({td.school})</span>
+                    {td.method && <span className="text-gray-400"> — {td.method}</span>}
                   </p>
                 ))}
               </div>
@@ -214,11 +214,11 @@ function GameCard({ game }: { game: GameData }) {
                 {game.td_passes.map((tdp, idx) => (
                   <p key={idx} className="text-sm">
                     <span className="font-semibold">{tdp.passer}</span>
-                    {tdp.passer_school && <span className="text-gray-400"> ({tdp.passer_school})</span>}
-                    <span className="text-gray-500"> to </span>
+                    {tdp.passer_school && <span className="text-gray-300"> ({tdp.passer_school})</span>}
+                    <span className="text-gray-400"> to </span>
                     <span className="font-semibold">{tdp.receiver}</span>
-                    {tdp.receiver_school && <span className="text-gray-400"> ({tdp.receiver_school})</span>}
-                    {tdp.distance && <span className="text-gray-500"> — {tdp.distance}</span>}
+                    {tdp.receiver_school && <span className="text-gray-300"> ({tdp.receiver_school})</span>}
+                    {tdp.distance && <span className="text-gray-400"> — {tdp.distance}</span>}
                   </p>
                 ))}
               </div>
@@ -244,7 +244,7 @@ function GameCard({ game }: { game: GameData }) {
 
           {/* Attendance */}
           {game.attendance && (
-            <p className="text-xs text-gray-500">Attendance: {game.attendance.toLocaleString()}</p>
+            <p className="text-xs text-gray-400">Attendance: {game.attendance.toLocaleString()}</p>
           )}
 
           {/* Roster (if available for this year) */}
@@ -265,7 +265,7 @@ function GameCard({ game }: { game: GameData }) {
                       <div className="overflow-x-auto">
                         <table className="w-full text-xs">
                           <thead>
-                            <tr className="text-gray-400 border-b border-white/10">
+                            <tr className="text-gray-300 border-b border-white/10">
                               <th className="text-left px-1 py-1">#</th>
                               <th className="text-left px-1 py-1">Name</th>
                               <th className="text-left px-1 py-1">School</th>
@@ -277,12 +277,12 @@ function GameCard({ game }: { game: GameData }) {
                           <tbody>
                             {players.map((p, idx) => (
                               <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200">
-                                <td className="px-1 py-0.5 text-gray-500">{p.jersey}</td>
+                                <td className="px-1 py-0.5 text-gray-400">{p.jersey}</td>
                                 <td className="px-1 py-0.5 font-medium">{p.name}</td>
-                                <td className="px-1 py-0.5 text-gray-400">{p.school}</td>
-                                <td className="px-1 py-0.5 text-gray-400">{p.position}</td>
-                                <td className="px-1 py-0.5 text-gray-500">{p.height}</td>
-                                <td className="px-1 py-0.5 text-gray-500">{p.weight}</td>
+                                <td className="px-1 py-0.5 text-gray-300">{p.school}</td>
+                                <td className="px-1 py-0.5 text-gray-300">{p.position}</td>
+                                <td className="px-1 py-0.5 text-gray-400">{p.height}</td>
+                                <td className="px-1 py-0.5 text-gray-400">{p.weight}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -314,8 +314,8 @@ function RecordRow({ label, record }: { label: string; record: RecordHolder | un
         {record.player && (
           <>
             <p className="font-semibold">{record.player}</p>
-            {record.school && <p className="text-sm text-gray-400">{record.school}</p>}
-            {record.year && <p className="text-sm text-gray-400">{record.year}</p>}
+            {record.school && <p className="text-sm text-gray-300">{record.school}</p>}
+            {record.year && <p className="text-sm text-gray-300">{record.year}</p>}
           </>
         )}
         {record.players && record.players.length > 0 && (
@@ -323,8 +323,8 @@ function RecordRow({ label, record }: { label: string; record: RecordHolder | un
             {record.players.map((p, idx) => (
               <div key={idx}>
                 <p className="font-semibold text-sm">{p.name}</p>
-                {p.school && <p className="text-xs text-gray-400">{p.school}</p>}
-                {p.year && <p className="text-xs text-gray-400">{p.year}</p>}
+                {p.school && <p className="text-xs text-gray-300">{p.school}</p>}
+                {p.year && <p className="text-xs text-gray-300">{p.year}</p>}
               </div>
             ))}
           </div>
@@ -466,7 +466,7 @@ function TdScorersTab({ games }: { games: GameData[] }) {
           <h3 className="psp-h2 text-[var(--psp-gold)]">
             All-Time TD Scorers
           </h3>
-          <p className="text-gray-400 text-sm">{allTds.length} touchdowns across 45 games (1975–2019)</p>
+          <p className="text-gray-300 text-sm">{allTds.length} touchdowns across 45 games (1975–2019)</p>
         </div>
         <div className="flex gap-2">
           {(["all", "public", "non-public"] as const).map((f) => (
@@ -514,8 +514,8 @@ function TdScorersTab({ games }: { games: GameData[] }) {
                     {td.team === "public" ? "P" : "N"}
                   </span>
                   <span className="font-semibold">{td.scorer}</span>
-                  <span className="text-gray-400"> ({td.school})</span>
-                  {td.method && <span className="text-gray-500"> — {td.method}</span>}
+                  <span className="text-gray-300"> ({td.school})</span>
+                  {td.method && <span className="text-gray-400"> — {td.method}</span>}
                 </p>
               ))}
             </div>
@@ -537,7 +537,7 @@ function RostersTab({ games }: { games: GameData[] }) {
   if (rosterYears.length === 0) {
     return (
       <div className="bg-white/5 rounded-lg border border-[var(--psp-gold)]/20 p-8 text-center">
-        <p className="text-gray-400">No detailed roster data available yet.</p>
+        <p className="text-gray-300">No detailed roster data available yet.</p>
       </div>
     );
   }
@@ -548,7 +548,7 @@ function RostersTab({ games }: { games: GameData[] }) {
         <h3 className="psp-h2 text-[var(--psp-gold)]">
           Game Rosters
         </h3>
-        <p className="text-gray-400 text-sm">
+        <p className="text-gray-300 text-sm">
           Full rosters with jersey numbers, positions, height, and weight for {rosterYears.length} games
         </p>
       </div>
@@ -556,7 +556,7 @@ function RostersTab({ games }: { games: GameData[] }) {
       {rosterYears.map((game) => (
         <div key={game.year} className="space-y-4">
           <h4 className="psp-h2 border-b border-[var(--psp-gold)]/30 pb-2">
-            {game.year} — <span className="text-gray-400 text-lg">{game.score}</span>
+            {game.year} — <span className="text-gray-300 text-lg">{game.score}</span>
           </h4>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {(["non_public", "public"] as const).map((squad) => {
@@ -570,7 +570,7 @@ function RostersTab({ games }: { games: GameData[] }) {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-gray-400 border-b border-white/20 text-xs uppercase tracking-wide">
+                        <tr className="text-gray-300 border-b border-white/20 text-xs uppercase tracking-wide">
                           <th className="text-left px-2 py-2">#</th>
                           <th className="text-left px-2 py-2">Name</th>
                           <th className="text-left px-2 py-2">School</th>
@@ -582,16 +582,16 @@ function RostersTab({ games }: { games: GameData[] }) {
                       <tbody>
                         {players.map((p, idx) => (
                           <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200">
-                            <td className="px-2 py-1 text-gray-500 font-mono">{p.jersey}</td>
+                            <td className="px-2 py-1 text-gray-400 font-mono">{p.jersey}</td>
                             <td className="px-2 py-1 font-medium">{p.name}</td>
-                            <td className="px-2 py-1 text-gray-400">{p.school}</td>
+                            <td className="px-2 py-1 text-gray-300">{p.school}</td>
                             <td className="px-2 py-1">
                               <span className="bg-white/10 px-1.5 py-0.5 rounded text-xs font-mono">
                                 {p.position}
                               </span>
                             </td>
-                            <td className="px-2 py-1 text-gray-500">{p.height}</td>
-                            <td className="px-2 py-1 text-gray-500">{p.weight}</td>
+                            <td className="px-2 py-1 text-gray-400">{p.height}</td>
+                            <td className="px-2 py-1 text-gray-400">{p.weight}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -642,7 +642,7 @@ export default function AllStarArchive({ games, records, tdLeaders, rosters }: A
             className={`px-4 py-2 font-semibold transition-colors flex items-center gap-2 ${
               activeTab === tab.id
                 ? "text-[var(--psp-gold)] border-b-2 border-[var(--psp-gold)]"
-                : "text-gray-400 hover:text-gray-300"
+                : "text-gray-300 hover:text-gray-300"
             }`}
           >
             {tab.label}
@@ -678,7 +678,7 @@ export default function AllStarArchive({ games, records, tdLeaders, rosters }: A
 
           <div className="space-y-3">
             {filteredGames.length === 0 ? (
-              <p className="text-gray-400">No games found for this period.</p>
+              <p className="text-gray-300">No games found for this period.</p>
             ) : (
               filteredGames.map((game) => <GameCard key={game.year} game={game} />)
             )}

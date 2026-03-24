@@ -104,7 +104,7 @@ export default async function ForumPage({
           <p className="text-gray-300 text-lg">Debate, predict, talk trash. This is your space.</p>
           <div className="flex gap-6 mt-4 text-sm">
             <span className="text-gold font-bold">{totalPosts.count ?? 0} topics</span>
-            <span className="text-gray-400">{totalReplies.count ?? 0} replies</span>
+            <span className="text-gray-300">{totalReplies.count ?? 0} replies</span>
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@ export default async function ForumPage({
           <span className="text-2xl">🏆</span>
           <div className="flex-1">
             <p className="text-navy font-bold text-sm">Looking for community? Vote for Player of the Week!</p>
-            <p className="text-gray-500 text-xs mt-0.5">Cast your vote and rep your school every week.</p>
+            <p className="text-gray-400 text-xs mt-0.5">Cast your vote and rep your school every week.</p>
           </div>
           <Link href="/potw" className="px-4 py-2 bg-gold text-navy font-bold text-sm rounded-md hover:bg-gold/90 transition whitespace-nowrap">
             Vote Now
@@ -132,7 +132,7 @@ export default async function ForumPage({
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden sticky top-4">
               <div className="bg-navy px-4 py-3">
-                <h3 className="psp-h4 text-gold">Categories</h3>
+                <h2 className="psp-h4 text-gold">Categories</h2>
               </div>
               <div className="divide-y divide-gray-100">
                 {CATEGORIES.map(cat => (
@@ -157,7 +157,7 @@ export default async function ForumPage({
               <Link href="/signup" className="inline-block w-full px-4 py-2.5 bg-gold text-navy font-bold rounded-md hover:bg-gold/90 transition text-sm">
                 Start a Topic
               </Link>
-              <p className="text-xs text-gray-500 mt-2">Sign in to post</p>
+              <p className="text-xs text-gray-400 mt-2">Sign in to post</p>
             </div>
 
             {/* Join CTA */}
@@ -174,7 +174,7 @@ export default async function ForumPage({
                 <p className="text-gray-700 text-xl font-medium mb-2">
                   {category === 'trashtalk' ? 'The Trashtalk Zone is Ready' : 'No Topics Yet'}
                 </p>
-                <p className="text-gray-500 mb-4">
+                <p className="text-gray-400 mb-4">
                   {category === 'trashtalk'
                     ? 'Be the first to throw shade. Keep it fun, keep it about sports.'
                     : 'Be the first to start a conversation.'}
@@ -198,21 +198,21 @@ export default async function ForumPage({
                             {post.category}
                           </span>
                           {sportMeta && <span className="text-sm">{sportMeta.emoji}</span>}
-                          {post.is_locked && <span className="text-xs text-gray-400">🔒</span>}
+                          {post.is_locked && <span className="text-xs text-gray-300">🔒</span>}
                         </div>
-                        <h3 className="font-medium text-navy group-hover:text-blue-600 transition truncate">
+                        <h2 className="font-medium text-navy group-hover:text-blue-600 transition truncate">
                           {post.title}
-                        </h3>
-                        <p className="text-xs text-gray-500 mt-1">
+                        </h2>
+                        <p className="text-xs text-gray-400 mt-1">
                           <span className="font-medium">{post.author_name}</span>
-                          {post.author_school_flair && <span className="text-gray-400"> ({post.author_school_flair})</span>}
+                          {post.author_school_flair && <span className="text-gray-300"> ({post.author_school_flair})</span>}
                           {' '}&middot; {timeAgo(post.created_at)}
                           {post.last_reply_at && (
-                            <span className="text-gray-400"> &middot; last reply {timeAgo(post.last_reply_at)}</span>
+                            <span className="text-gray-300"> &middot; last reply {timeAgo(post.last_reply_at)}</span>
                           )}
                         </p>
                       </div>
-                      <div className="flex flex-col items-center gap-1 text-xs text-gray-400 flex-shrink-0 w-16">
+                      <div className="flex flex-col items-center gap-1 text-xs text-gray-300 flex-shrink-0 w-16">
                         <span className="font-bold text-navy text-base">{post.reply_count}</span>
                         <span>replies</span>
                       </div>

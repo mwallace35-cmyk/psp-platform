@@ -12,7 +12,7 @@ interface SportNavigationGridProps {
 const SPORT_CONFIG: Record<string, { emoji: string; color: string; bgGlow: string }> = {
   football:       { emoji: '🏈', color: '#16a34a', bgGlow: 'rgba(22,163,74,0.15)' },
   basketball:     { emoji: '🏀', color: '#3b82f6', bgGlow: 'rgba(59,130,246,0.15)' },
-  baseball:       { emoji: '⚾', color: '#ea580c', bgGlow: 'rgba(234,88,12,0.15)' },
+  baseball:       { emoji: '⚾', color: '#dc2626', bgGlow: 'rgba(220,38,38,0.15)' },
   soccer:         { emoji: '⚽', color: '#059669', bgGlow: 'rgba(5,150,105,0.15)' },
   lacrosse:       { emoji: '🥍', color: '#0891b2', bgGlow: 'rgba(8,145,178,0.15)' },
   wrestling:      { emoji: '🤼', color: '#ca8a04', bgGlow: 'rgba(202,138,4,0.15)' },

@@ -162,7 +162,7 @@ export default async function SchedulePage({
       {/* Hero */}
       <div className="bg-[#0a1628] py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <nav className="text-xs text-gray-400 mb-3">
+          <nav className="text-xs text-gray-300 mb-3">
             <a href="/" className="hover:text-gold transition">
               Home
             </a>
@@ -186,28 +186,28 @@ export default async function SchedulePage({
           <div className="flex flex-wrap gap-6 mt-4 text-sm">
             <div>
               <span className="text-gold font-bold text-xl">{totalGames}</span>{" "}
-              <span className="text-gray-400">Games</span>
+              <span className="text-gray-300">Games</span>
             </div>
             <div>
               <span className="text-gold font-bold text-xl">{totalTeams}</span>{" "}
-              <span className="text-gray-400">Teams</span>
+              <span className="text-gray-300">Teams</span>
             </div>
             <div>
               <span className="text-gold font-bold text-xl">
                 {leagueGames}
               </span>{" "}
-              <span className="text-gray-400">League</span>
+              <span className="text-gray-300">League</span>
             </div>
             <div>
               <span className="text-gold font-bold text-xl">{nonLeague}</span>{" "}
-              <span className="text-gray-400">Non-League</span>
+              <span className="text-gray-300">Non-League</span>
             </div>
             {scrimmages > 0 && (
               <div>
                 <span className="text-gold font-bold text-xl">
                   {scrimmages}
                 </span>{" "}
-                <span className="text-gray-400">Scrimmages</span>
+                <span className="text-gray-300">Scrimmages</span>
               </div>
             )}
           </div>

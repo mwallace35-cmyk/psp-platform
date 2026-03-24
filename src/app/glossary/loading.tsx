@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-pulse">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-pulse" role="status" aria-busy="true" aria-label="Loading glossary">
       {/* Breadcrumb skeleton */}
       <div className="h-4 bg-gray-200 rounded w-1/4 mb-6" />
 

@@ -49,7 +49,7 @@ export function ArticlesTab({ articles, schoolName }: ArticlesTabProps) {
                 </p>
               )}
               {article.created_at && (
-                <p className="text-xs text-gray-400 mt-3">
+                <p className="text-xs text-gray-300 mt-3">
                   {new Date(article.created_at).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -91,7 +91,7 @@ export function ArticlesTab({ articles, schoolName }: ArticlesTabProps) {
                 </p>
               )}
               {article.created_at && (
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-gray-300 mt-2">
                   {new Date(article.created_at).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",

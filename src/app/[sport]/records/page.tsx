@@ -108,8 +108,8 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
         {curatedRecords.length === 0 && computedStatCount === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-xl">
             <div className="text-4xl mb-4">📈</div>
-            <p className="text-gray-500">No records data found for {meta.name} yet.</p>
-            <p className="text-sm text-gray-400 mt-2">Records will be populated as more historical data is added.</p>
+            <p className="text-gray-400">No records data found for {meta.name} yet.</p>
+            <p className="text-sm text-gray-300 mt-2">Records will be populated as more historical data is added.</p>
           </div>
         ) : (
           <>

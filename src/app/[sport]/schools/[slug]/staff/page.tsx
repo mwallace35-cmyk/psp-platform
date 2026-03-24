@@ -328,9 +328,9 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
           {/* Sidebar */}
           <div className="space-y-6">
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 School Info
-              </h3>
+              </h2>
               <dl className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <dt style={{ color: "var(--psp-gray-500)" }}>School</dt>
@@ -350,9 +350,9 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
             </div>
 
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 Quick Links
-              </h3>
+              </h2>
               <div className="space-y-2">
                 <Link
                   href={`/${sport}/schools/${slug}`}

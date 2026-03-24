@@ -98,7 +98,7 @@ export function NotificationPrefs({ onSaveSuccess }: NotificationPrefsProps) {
 
   if (loading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3" role="status" aria-busy="true" aria-label="Loading notification preferences">
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="h-16 bg-gray-200 rounded animate-pulse" />
         ))}

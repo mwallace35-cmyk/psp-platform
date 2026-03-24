@@ -17,7 +17,7 @@ export default function ComparePage() {
         <h1 className="psp-h1 mb-2" style={{ color: "var(--psp-navy)" }}>
           Compare Players
         </h1>
-        <p className="text-gray-500 mb-8">
+        <p className="text-gray-400 mb-8">
           Search for two players to compare their career statistics side-by-side.
         </p>
         <Suspense fallback={

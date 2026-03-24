@@ -10,7 +10,7 @@ interface EraChartProps {
 export default function EraChart({ eras, statType }: EraChartProps) {
   if (!eras || eras.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-400">
+      <div className="text-center py-8 text-gray-300">
         No data available
       </div>
     );
@@ -35,7 +35,7 @@ export default function EraChart({ eras, statType }: EraChartProps) {
                 <span className="text-sm font-semibold text-gray-300">
                   {era.decade_label}
                 </span>
-                <span className={`text-sm font-bold ${isPeak ? "text-[var(--psp-gold)]" : "text-gray-400"}`}>
+                <span className={`text-sm font-bold ${isPeak ? "text-[var(--psp-gold)]" : "text-gray-300"}`}>
                   {era.avg_value.toFixed(1)} {statType.unit || ""}
                 </span>
               </div>
@@ -56,7 +56,7 @@ export default function EraChart({ eras, statType }: EraChartProps) {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 text-xs text-gray-400 border-t border-gray-700 pt-4">
+      <div className="flex flex-wrap gap-4 text-xs text-gray-300 border-t border-gray-700 pt-4">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-gradient-to-r from-[var(--psp-gold)] to-[var(--psp-blue)]" />
           <span>Peak Era</span>

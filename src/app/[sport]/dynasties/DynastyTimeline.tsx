@@ -123,7 +123,7 @@ export default function DynastyTimeline({
               })}
 
               {decadeItem.schools.length > 10 && (
-                <p className="text-sm text-gray-500 italic">
+                <p className="text-sm text-gray-400 italic">
                   +{decadeItem.schools.length - 10} more schools
                 </p>
               )}

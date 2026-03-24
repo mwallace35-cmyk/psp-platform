@@ -45,7 +45,7 @@ export default function SimilarPlayers({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-6" role="status" aria-busy="true" aria-label="Loading similar players">
         <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
           Similar Players
         </h3>
@@ -64,7 +64,7 @@ export default function SimilarPlayers({
         <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
           Similar Players
         </h3>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-400">
           {error || "No similar players found"}
         </p>
         <Link
@@ -115,15 +115,17 @@ export default function SimilarPlayers({
                       <span
                         className="text-xs font-bold px-1.5 py-0.5 rounded"
                         style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
+                        role="img"
+                        aria-label="Top match"
                       >
                         ⭐
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-600 truncate">
+                  <p className="text-xs text-gray-400 truncate">
                     {player.school_name}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">{statLabel}</p>
+                  <p className="text-xs text-gray-400 mt-1">{statLabel}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <div
@@ -133,7 +135,7 @@ export default function SimilarPlayers({
                     {player.similarity_score}%
                   </div>
                   {player.primary_stat_value && (
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-gray-400 mt-1">
                       {player.primary_stat_value.toLocaleString()}
                       <br />
                       {sportId === "basketball" ? "pts" : "yds"}
@@ -145,8 +147,8 @@ export default function SimilarPlayers({
           );
         })}
       </div>
-      <p className="text-xs text-gray-500 mt-4 pt-4 border-t border-gray-200">
-        🏆 Similarity based on position, stats, and graduation era
+      <p className="text-xs text-gray-400 mt-4 pt-4 border-t border-gray-200">
+        <span aria-hidden="true">🏆</span> Similarity based on position, stats, and graduation era
       </p>
     </div>
   );

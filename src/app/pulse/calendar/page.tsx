@@ -27,7 +27,7 @@ interface GameRecord {
 }
 
 const GAME_TYPE_LABELS: Record<string, { label: string; color: string }> = {
-  scrimmage: { label: 'Scrimmage', color: 'bg-gray-100 text-gray-500' },
+  scrimmage: { label: 'Scrimmage', color: 'bg-gray-100 text-gray-400' },
   'non-league': { label: 'Non-League', color: 'bg-blue-50 text-blue-600' },
   regular: { label: 'League', color: 'bg-navy/10 text-navy' },
   league: { label: 'League', color: 'bg-navy/10 text-navy' },
@@ -99,10 +99,10 @@ export default async function CalendarPage() {
           <h1 className="psp-h1 text-white mb-2">{seasonLabel} Game Schedule</h1>
           <p className="text-gray-300 text-lg">Full football schedule for Public League and area schools</p>
           <div className="flex flex-wrap gap-6 mt-4 text-sm">
-            <div><span className="text-gold font-bold text-xl">{totalGames}</span> <span className="text-gray-400">Total Games</span></div>
-            <div><span className="text-gold font-bold text-xl">{leagueGames}</span> <span className="text-gray-400">League</span></div>
-            <div><span className="text-gold font-bold text-xl">{nonLeague}</span> <span className="text-gray-400">Non-League</span></div>
-            <div><span className="text-gold font-bold text-xl">{scrimmages}</span> <span className="text-gray-400">Scrimmages</span></div>
+            <div><span className="text-gold font-bold text-xl">{totalGames}</span> <span className="text-gray-300">Total Games</span></div>
+            <div><span className="text-gold font-bold text-xl">{leagueGames}</span> <span className="text-gray-300">League</span></div>
+            <div><span className="text-gold font-bold text-xl">{nonLeague}</span> <span className="text-gray-300">Non-League</span></div>
+            <div><span className="text-gold font-bold text-xl">{scrimmages}</span> <span className="text-gray-300">Scrimmages</span></div>
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default async function CalendarPage() {
         {games.length === 0 ? (
           <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
             <p className="text-4xl mb-3">🏈</p>
-            <p className="text-gray-500 text-lg">No games scheduled yet. Check back soon!</p>
+            <p className="text-gray-400 text-lg">No games scheduled yet. Check back soon!</p>
           </div>
         ) : (
           <div className="space-y-8">
@@ -141,7 +141,7 @@ export default async function CalendarPage() {
               <section key={week}>
                 <h2 className="psp-h4 text-navy mb-3 pb-1 border-b-2 border-gold/40 flex items-center gap-2">
                   <span className="text-gold">Week</span> {week}
-                  <span className="text-xs font-sans text-gray-400 ml-auto">{weekGames.length} game{weekGames.length !== 1 ? 's' : ''}</span>
+                  <span className="text-xs font-sans text-gray-300 ml-auto">{weekGames.length} game{weekGames.length !== 1 ? 's' : ''}</span>
                 </h2>
                 <div className="space-y-2">
                   {weekGames.map((g) => {
@@ -156,9 +156,9 @@ export default async function CalendarPage() {
                         <div className="flex items-center gap-3 px-4 py-3">
                           {/* Date + time */}
                           <div className="w-24 flex-shrink-0 text-center">
-                            <p className="text-xs font-medium text-gray-500">{dayStr}</p>
+                            <p className="text-xs font-medium text-gray-400">{dayStr}</p>
                             {g.game_time && (
-                              <p className="text-xs text-gray-400">{g.game_time.slice(0, 5).replace(/^0/, '')}</p>
+                              <p className="text-xs text-gray-300">{g.game_time.slice(0, 5).replace(/^0/, '')}</p>
                             )}
                           </div>
 
@@ -173,7 +173,7 @@ export default async function CalendarPage() {
                                   {g.away_school.name}
                                 </Link>
                               ) : 'TBD'}
-                              <span className="text-gray-400 mx-2">@</span>
+                              <span className="text-gray-300 mx-2">@</span>
                               {g.home_school ? (
                                 <Link href={`/football/schools/${g.home_school.slug}`} className="hover:text-blue-600 transition">
                                   {g.home_school.name}

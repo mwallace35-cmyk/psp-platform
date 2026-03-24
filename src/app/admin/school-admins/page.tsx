@@ -26,7 +26,7 @@ export default async function SchoolAdminsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">School Admin Requests</h1>
-        <p className="text-gray-400 mt-2">
+        <p className="text-gray-300 mt-2">
           Manage school admin access requests
         </p>
       </div>
@@ -36,7 +36,7 @@ export default async function SchoolAdminsPage() {
           className="p-8 rounded-lg text-center"
           style={{ background: "var(--psp-navy-mid)" }}
         >
-          <p className="text-gray-400">No pending requests</p>
+          <p className="text-gray-300">No pending requests</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -51,10 +51,10 @@ export default async function SchoolAdminsPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-white">
+                  <h2 className="font-semibold text-white">
                     {request.school_name}
-                  </h3>
-                  <p className="text-sm text-gray-400 mt-1">
+                  </h2>
+                  <p className="text-sm text-gray-300 mt-1">
                     Role: {request.role} • Requested on{" "}
                     {new Date(request.created_at).toLocaleDateString()}
                   </p>
@@ -78,7 +78,7 @@ export default async function SchoolAdminsPage() {
                       await respondToAccessRequest(request.id, false, "");
                       // In a real app, would trigger a refresh or revalidate
                     }}
-                    className="px-4 py-2 rounded-lg font-medium border border-gray-600 text-gray-400 hover:text-white hover:border-gray-400 transition-colors"
+                    className="px-4 py-2 rounded-lg font-medium border border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 transition-colors"
                   >
                     Reject
                   </button>

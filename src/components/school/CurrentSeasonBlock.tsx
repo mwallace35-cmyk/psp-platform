@@ -114,7 +114,7 @@ export default function CurrentSeasonBlock({
             >
               {record}
             </div>
-            <div className="text-xs text-gray-400 mt-1">
+            <div className="text-xs text-gray-300 mt-1">
               Season Record
               {winPct && (
                 <span className="ml-2" style={{ color: sportColor }}>
@@ -136,7 +136,7 @@ export default function CurrentSeasonBlock({
               >
                 {teamSeason.league_finish}
               </div>
-              <div className="text-xs text-gray-400">League Standing</div>
+              <div className="text-xs text-gray-300">League Standing</div>
             </div>
           )}
 
@@ -152,14 +152,14 @@ export default function CurrentSeasonBlock({
               >
                 {teamSeason.playoff_result}
               </div>
-              <div className="text-xs text-gray-400">Playoffs</div>
+              <div className="text-xs text-gray-300">Playoffs</div>
             </div>
           )}
 
           {/* Coach */}
           {teamSeason.coach && (
             <div className="ml-auto text-right hidden md:block">
-              <div className="text-xs text-gray-400">Head Coach</div>
+              <div className="text-xs text-gray-300">Head Coach</div>
               <Link
                 href={`/${sport}/coaches/${teamSeason.coach.slug}`}
                 className="text-sm font-medium hover:underline"
@@ -179,7 +179,7 @@ export default function CurrentSeasonBlock({
           >
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs text-gray-400 mb-1">
+                <div className="text-xs text-gray-300 mb-1">
                   {gameIsUpcoming ? "Next Game" : "Last Result"}
                 </div>
                 <div className="flex items-center gap-2">
@@ -228,7 +228,7 @@ export default function CurrentSeasonBlock({
                     >
                       {gameResultText}
                     </div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-gray-300">
                       {formatGameDate(nextGame.game_date)}
                     </div>
                   </Link>
@@ -258,12 +258,13 @@ export default function CurrentSeasonBlock({
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm" aria-label="Current season roster">
+                <caption className="sr-only">Current season roster</caption>
                 <thead>
                   <tr className="text-left" style={{ color: "var(--psp-gray-400)" }}>
-                    <th className="pb-2 pr-3 font-medium text-xs">#</th>
-                    <th className="pb-2 pr-3 font-medium text-xs">Name</th>
-                    <th className="pb-2 pr-3 font-medium text-xs">Pos</th>
-                    <th className="pb-2 font-medium text-xs">Class</th>
+                    <th scope="col" className="pb-2 pr-3 font-medium text-xs">#</th>
+                    <th scope="col" className="pb-2 pr-3 font-medium text-xs">Name</th>
+                    <th scope="col" className="pb-2 pr-3 font-medium text-xs">Pos</th>
+                    <th scope="col" className="pb-2 font-medium text-xs">Class</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -274,7 +275,7 @@ export default function CurrentSeasonBlock({
                         background: idx % 2 === 1 ? "rgba(255,255,255,0.03)" : "transparent",
                       }}
                     >
-                      <td className="py-1.5 pr-3 text-gray-400 tabular-nums">
+                      <td className="py-1.5 pr-3 text-gray-300 tabular-nums">
                         {entry.jersey_number || "--"}
                       </td>
                       <td className="py-1.5 pr-3">
@@ -289,7 +290,7 @@ export default function CurrentSeasonBlock({
                       <td className="py-1.5 pr-3 text-gray-300">
                         {entry.position || "--"}
                       </td>
-                      <td className="py-1.5 text-gray-400">
+                      <td className="py-1.5 text-gray-300">
                         {classYearAbbr(entry.class_year) || "--"}
                       </td>
                     </tr>

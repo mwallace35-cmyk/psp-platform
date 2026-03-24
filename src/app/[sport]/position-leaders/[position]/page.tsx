@@ -125,10 +125,10 @@ export default async function PositionLeadersPage({
         {leaders.length === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-xl">
             <div className="text-4xl mb-4">🏈</div>
-            <p className="text-gray-500">
+            <p className="text-gray-400">
               No {positionName.toLowerCase()} data found for {meta.name} yet.
             </p>
-            <p className="text-sm text-gray-400 mt-2">
+            <p className="text-sm text-gray-300 mt-2">
               This will be populated as more positional data is added.
             </p>
           </div>

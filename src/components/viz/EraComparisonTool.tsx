@@ -167,7 +167,7 @@ function EraComparisonTool({
     <div className="w-full bg-white rounded-lg border border-gray-200 p-6">
       <div className="mb-6">
         <h3 className="text-lg font-bold text-navy">Era Comparison Tool</h3>
-        <p className="text-sm text-gray-500">Compare player stats across different eras</p>
+        <p className="text-sm text-gray-400">Compare player stats across different eras</p>
       </div>
 
       {/* Controls */}
@@ -187,14 +187,14 @@ function EraComparisonTool({
         </div>
 
         {/* Player count */}
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-400">
           Showing {displayPlayers.length} of {Math.min(players.length, maxPlayers)} players
         </div>
       </div>
 
       {/* Stat selector pills */}
       <div className="mb-6">
-        <p className="text-xs font-semibold text-gray-600 uppercase mb-2">Select Stats</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase mb-2">Select Stats</p>
         <div className="flex flex-wrap gap-2">
           {allStats.slice(0, 8).map((stat) => (
             <button
@@ -346,7 +346,7 @@ function EraComparisonTool({
                   <td className="py-3 px-2 font-semibold text-navy">
                     <div>
                       <p>{player.name}</p>
-                      <p className="text-xs text-gray-500">{player.era}</p>
+                      <p className="text-xs text-gray-400">{player.era}</p>
                     </div>
                   </td>
                   {Array.from(selectedStats).map((stat) => {
@@ -375,7 +375,7 @@ function EraComparisonTool({
 
       {/* Legend */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <p className="text-xs font-semibold text-gray-600 uppercase mb-3">Player Legend</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase mb-3">Player Legend</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {displayPlayers.map((player, idx) => (
             <div key={`legend-${idx}`} className="flex items-center gap-2">

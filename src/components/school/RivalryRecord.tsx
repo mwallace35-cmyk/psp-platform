@@ -28,7 +28,7 @@ export default function RivalryRecord({ rivalries, sport, schoolName }: RivalryR
   if (!rivalries || rivalries.length === 0) {
     return (
       <div className="rounded-xl border border-[var(--psp-gray-200)] p-6 bg-gray-50">
-        <p className="text-sm text-gray-500 text-center">No rivalry data available yet.</p>
+        <p className="text-sm text-gray-400 text-center">No rivalry data available yet.</p>
       </div>
     );
   }

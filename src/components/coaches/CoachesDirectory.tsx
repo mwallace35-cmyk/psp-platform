@@ -146,7 +146,7 @@ export default function CoachesDirectory({ coaches }: { coaches: CoachEntry[] })
       </div>
 
       {/* Results count */}
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-gray-400">
         Showing {filtered.length} {filtered.length === 1 ? "coach" : "coaches"}
         {sportFilter !== "all" && (
           <span>
@@ -161,9 +161,9 @@ export default function CoachesDirectory({ coaches }: { coaches: CoachEntry[] })
       {/* League sections */}
       {orderedKeys.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-          <p className="text-3xl mb-3">📋</p>
+          <p className="text-3xl mb-3" aria-hidden="true">📋</p>
           <p className="text-gray-700 font-medium">No coaches found</p>
-          <p className="text-gray-500 text-sm mt-1">Try adjusting your search or sport filter.</p>
+          <p className="text-gray-400 text-sm mt-1">Try adjusting your search or sport filter.</p>
         </div>
       ) : (
         orderedKeys.map((leagueKey) => {
@@ -178,7 +178,7 @@ export default function CoachesDirectory({ coaches }: { coaches: CoachEntry[] })
               {/* League header */}
               <div className="flex items-center gap-3 mb-3">
                 <h2 className="psp-h3 text-navy">{displayName}</h2>
-                <span className="text-xs text-gray-400 font-medium">
+                <span className="text-xs text-gray-300 font-medium">
                   {leagueCoaches.length} {leagueCoaches.length === 1 ? "coach" : "coaches"}
                 </span>
                 <div className="flex-1 border-t border-gray-200" />
@@ -211,7 +211,7 @@ export default function CoachesDirectory({ coaches }: { coaches: CoachEntry[] })
                             </h3>
                             <Link
                               href={`/${sportSlug}/schools/${coach.school_slug}`}
-                              className="text-xs text-gray-500 hover:text-blue-600 truncate block"
+                              className="text-xs text-gray-400 hover:text-blue-600 truncate block"
                               onClick={(e) => e.stopPropagation()}
                             >
                               {coach.school_name}
@@ -221,10 +221,10 @@ export default function CoachesDirectory({ coaches }: { coaches: CoachEntry[] })
                         </div>
 
                         <div className="flex items-center gap-2 mt-3">
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-navy/10 text-navy font-medium">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-navy/10 text-navy font-medium">
                             {coach.role}
                           </span>
-                          <span className="text-[10px] text-gray-400">{yearRange}</span>
+                          <span className="text-xs text-gray-300">{yearRange}</span>
                         </div>
 
                         {(coach.record_wins > 0 || coach.championships > 0) && (
@@ -235,7 +235,7 @@ export default function CoachesDirectory({ coaches }: { coaches: CoachEntry[] })
                                   {coach.record_wins}-{coach.record_losses}
                                   {coach.record_ties > 0 ? `-${coach.record_ties}` : ""}
                                 </span>
-                                <span className="text-[10px] text-gray-400 ml-1">Record</span>
+                                <span className="text-xs text-gray-300 ml-1">Record</span>
                               </div>
                             )}
                             {coach.championships > 0 && (
@@ -243,7 +243,7 @@ export default function CoachesDirectory({ coaches }: { coaches: CoachEntry[] })
                                 <span className="text-xs font-bold text-gold">
                                   {coach.championships}
                                 </span>
-                                <span className="text-[10px] text-gray-400 ml-1">
+                                <span className="text-xs text-gray-300 ml-1">
                                   {coach.championships === 1 ? "Title" : "Titles"}
                                 </span>
                               </div>

@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-pulse">
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-pulse" role="status" aria-busy="true" aria-label="Loading comparison">
       {/* Page title skeleton */}
       <div className="h-10 bg-gray-200 rounded w-1/2 mb-2" />
       <div className="h-4 bg-gray-200 rounded w-2/3 mb-8" />

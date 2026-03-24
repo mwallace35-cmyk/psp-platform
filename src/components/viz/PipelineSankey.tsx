@@ -170,7 +170,7 @@ function PipelineSankey({ flows, title = 'Player Pipeline', subtitle = 'High Sch
     <div className="w-full bg-white rounded-lg border border-gray-200 p-6">
       <div className="mb-6">
         <h3 className="text-lg font-bold text-navy">{title}</h3>
-        <p className="text-sm text-gray-500">{subtitle}</p>
+        <p className="text-sm text-gray-400">{subtitle}</p>
       </div>
 
       {/* SVG Sankey Diagram */}
@@ -325,7 +325,7 @@ function PipelineSankey({ flows, title = 'Player Pipeline', subtitle = 'High Sch
                             View List
                           </button>
                         ) : (
-                          <span className="text-gray-400">—</span>
+                          <span className="text-gray-300">—</span>
                         )}
                       </td>
                     </tr>

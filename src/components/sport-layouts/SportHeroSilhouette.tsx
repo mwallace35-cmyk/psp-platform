@@ -262,7 +262,7 @@ function GoldGlow({ color }: { color: string }) {
 const SPORT_COLORS: Record<string, string> = {
   basketball: "#3b82f6",
   football: "#16a34a",
-  baseball: "#ea580c",
+  baseball: "#dc2626",
   "track-field": "#7c3aed",
   lacrosse: "#0891b2",
   wrestling: "#ca8a04",

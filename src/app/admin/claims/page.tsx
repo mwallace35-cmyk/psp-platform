@@ -248,7 +248,7 @@ export default function PlayerClaimsAdmin() {
                   <span className={`px-2 py-1 rounded text-xs font-medium ${statusColors[claim.status] || 'bg-gray-100'}`}>
                     {claim.status}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-gray-300">
                     {new Date(claim.created_at).toLocaleDateString()}
                   </span>
                   <svg
@@ -259,7 +259,7 @@ export default function PlayerClaimsAdmin() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className={`text-gray-400 transition-transform ${expandedId === claim.id ? 'rotate-180' : ''}`}
+                    className={`text-gray-300 transition-transform ${expandedId === claim.id ? 'rotate-180' : ''}`}
                   >
                     <path d="m6 9 6 6 6-6" />
                   </svg>

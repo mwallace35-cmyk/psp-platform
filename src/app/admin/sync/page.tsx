@@ -161,9 +161,9 @@ export default function SyncPage() {
             <div key={task.id} className="admin-card p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-bold" style={{ color: "var(--psp-navy)" }}>
+                  <h2 className="text-lg font-bold" style={{ color: "var(--psp-navy)" }}>
                     {task.name}
-                  </h3>
+                  </h2>
                   <div className="text-xs mt-1" style={{ color: "var(--psp-gray-500)" }}>
                     Sport: <span style={{ fontWeight: 600 }}>{task.sport}</span>
                   </div>

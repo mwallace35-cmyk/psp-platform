@@ -1,6 +1,6 @@
 export default function RootLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[var(--psp-navy)] via-[var(--psp-navy-mid)] to-[#1a4d8f]">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--psp-navy)] via-[var(--psp-navy-mid)] to-[#1a4d8f]" role="status" aria-busy="true" aria-label="Loading page">
       {/* Hero skeleton */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 lg:py-32">
         <div className="max-w-4xl mx-auto">

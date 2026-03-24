@@ -671,7 +671,7 @@ function GameCard({
     ? 'bg-[#f0a500]/15 text-[#f0a500] border-[#f0a500]/30'
     : game.game_type?.includes('district')
     ? 'bg-blue-500/15 text-blue-400 border-blue-500/30'
-    : 'bg-gray-500/15 text-gray-400 border-gray-500/30';
+    : 'bg-gray-500/15 text-gray-300 border-gray-500/30';
 
   return (
     <Link

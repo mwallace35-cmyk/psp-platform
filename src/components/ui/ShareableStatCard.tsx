@@ -111,7 +111,7 @@ export default function ShareableStatCard({
         </div>
 
         {/* Branding */}
-        <div className="text-xs text-gray-400">PhillySportsPack.com</div>
+        <div className="text-xs text-gray-300">PhillySportsPack.com</div>
       </div>
 
       {/* Action buttons */}
@@ -133,7 +133,7 @@ export default function ShareableStatCard({
           }}
           title="Copy link to clipboard"
         >
-          <span className="mr-1.5">🔗</span>
+          <span className="mr-1.5" aria-hidden="true">🔗</span>
           {copied ? 'Copied!' : 'Copy Link'}
         </button>
 
@@ -164,7 +164,7 @@ export default function ShareableStatCard({
       </div>
 
       {/* Subtext */}
-      <p className="text-xs text-gray-500 mt-3 text-center">
+      <p className="text-xs text-gray-400 mt-3 text-center">
         Share this stat on social media
       </p>
     </div>

@@ -71,7 +71,7 @@ export function ReferralButton({ className = '', variant = 'secondary' }: Referr
         {loading ? 'Creating...' : copied ? '✓ Copied!' : '📤 Share & Earn'}
       </button>
       {referralUrl && (
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-xs text-gray-400 mt-2">
           Link copied to clipboard!
         </p>
       )}

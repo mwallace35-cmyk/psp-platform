@@ -68,7 +68,7 @@ export default function AdminSidebar({ userEmail }: { userEmail: string }) {
         <nav className="p-4 space-y-6">
           {navItems.map((section: any) => (
             <div key={section.section} className="space-y-1">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 px-4 py-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 px-4 py-2">
                 {section.section}
               </h3>
               {section.items.map((item: any) => {
@@ -84,7 +84,7 @@ export default function AdminSidebar({ userEmail }: { userEmail: string }) {
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                       isActive
                         ? "text-white"
-                        : "text-gray-400 hover:text-white hover:bg-white/5"
+                        : "text-gray-300 hover:text-white hover:bg-white/5"
                     }`}
                     style={isActive ? { background: "var(--psp-navy-mid)", color: "var(--psp-gold)" } : {}}
                   >
@@ -100,10 +100,10 @@ export default function AdminSidebar({ userEmail }: { userEmail: string }) {
 
       {/* User section */}
       <div className="p-4 border-t" style={{ borderColor: "var(--psp-navy-mid)" }}>
-        <div className="text-xs text-gray-400 mb-2 truncate">{userEmail}</div>
+        <div className="text-xs text-gray-300 mb-2 truncate">{userEmail}</div>
         <button
           onClick={handleLogout}
-          className="btn-outline w-full text-sm text-gray-400 border-gray-600 hover:text-white hover:border-gray-400"
+          className="btn-outline w-full text-sm text-gray-300 border-gray-600 hover:text-white hover:border-gray-400"
         >
           Sign Out
         </button>

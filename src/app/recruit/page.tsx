@@ -23,7 +23,7 @@ export default function RecruitPage() {
 
   if (status === 'success') return (
     <div style={{ maxWidth: 560, margin: '6rem auto', padding: '0 1rem', textAlign: 'center' }}>
-      <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏆</div>
+      <div style={{ fontSize: '3rem', marginBottom: '1rem' }} role="img" aria-label="Trophy">🏆</div>
       <h2 className="psp-h1" style={{ color: navy }}>You&apos;re on the radar!</h2>
       <p style={{ color: muted, lineHeight: 1.6, fontSize: '0.95rem' }}>Your recruiting profile has been submitted. College coaches browsing PhillySportsPack will be able to see your interest. We&apos;ll reach out if there&apos;s a match.</p>
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginTop: '1.5rem' }}>
@@ -115,7 +115,7 @@ export default function RecruitPage() {
         <button type="submit" disabled={status === 'submitting'}
           className="psp-h4"
           style={{ background: status === 'submitting' ? 'var(--psp-gray-light, #9ca3af)' : gold, color: '#fff', border: 'none', borderRadius: 8, padding: '0.8rem', cursor: status === 'submitting' ? 'not-allowed' : 'pointer' }}>
-          {status === 'submitting' ? 'Submitting…' : '🏆 Submit Recruiting Profile'}
+          {status === 'submitting' ? 'Submitting\u2026' : <><span aria-hidden="true">🏆</span> Submit Recruiting Profile</>}
         </button>
       </form>
     </div>

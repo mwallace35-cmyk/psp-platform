@@ -288,7 +288,7 @@ export default function PickemAdmin() {
 
               {/* Games for this week */}
               <div className="mt-4 pt-4 border-t border-[var(--psp-gray-200)]">
-                <h4 className="text-sm font-semibold mb-3">Games in this week</h4>
+                <h2 className="text-sm font-semibold mb-3">Games in this week</h2>
                 <div className="space-y-2">
                   {games.filter((g) => g.id).slice(0, 5).map((game) => (
                     <div

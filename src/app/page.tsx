@@ -102,9 +102,9 @@ export default async function HomePage() {
                 name="q"
                 placeholder="Search players, schools, teams..."
                 aria-label="Search players, schools, and teams"
-                className="w-full bg-[var(--psp-navy-mid)] border border-gray-600 rounded-full px-5 py-3 pl-12 text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:border-[var(--psp-gold)] focus:ring-1 focus:ring-[var(--psp-gold)] transition"
+                className="w-full bg-[var(--psp-navy-mid)] border border-gray-600 rounded-full px-5 py-3 pl-12 text-sm text-gray-100 placeholder:text-gray-400 focus:outline-none focus:border-[var(--psp-gold)] focus:ring-1 focus:ring-[var(--psp-gold)] transition"
               />
-              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -165,16 +165,16 @@ export default async function HomePage() {
                         <div className="flex items-center justify-between gap-2">
                           <div className="min-w-0">
                             <p className="text-sm text-gray-100 font-medium">{a.person_name as string}</p>
-                            <p className="text-[10px] text-gray-400 truncate">
+                            <p className="text-xs text-gray-300 truncate">
                               {a.current_org as string} · {school?.name as string}
                             </p>
                           </div>
                           {league ? (
-                            <span className={`shrink-0 text-[10px] font-bold text-white px-2 py-0.5 rounded ${league.bg}`}>
+                            <span className={`shrink-0 text-xs font-bold text-white px-2 py-0.5 rounded ${league.bg}`}>
                               {league.icon} {a.pro_league as string}
                             </span>
                           ) : (a.pro_league as string) ? (
-                            <span className="shrink-0 text-[10px] font-bold text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 px-2 py-0.5 rounded">
+                            <span className="shrink-0 text-xs font-bold text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 px-2 py-0.5 rounded">
                               {a.pro_league as string}
                             </span>
                           ) : null}
@@ -195,7 +195,7 @@ export default async function HomePage() {
                 <div className="text-3xl group-hover:scale-110 transition-transform shrink-0" role="img" aria-label="football">🏈</div>
                 <div className="flex-1 min-w-0">
                   <h2 className="text-sm font-bold text-[var(--psp-gold)] group-hover:text-[var(--psp-gold-light)] transition">Pick&apos;em</h2>
-                  <p className="text-[11px] text-gray-400 mt-0.5">Make your picks for this week&apos;s games</p>
+                  <p className="text-xs text-gray-300 mt-0.5">Make your picks for this week&apos;s games</p>
                 </div>
                 <svg className="w-4 h-4 text-[var(--psp-gold)]/50 group-hover:text-[var(--psp-gold)] transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -208,9 +208,9 @@ export default async function HomePage() {
               <div className="text-2xl group-hover:scale-110 transition-transform" role="img" aria-label="chart">📊</div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h2>
-                <p className="text-[10px] text-gray-400 mt-0.5">See who&apos;s on top this week</p>
+                <p className="text-xs text-gray-300 mt-0.5">See who&apos;s on top this week</p>
               </div>
-              <svg className="w-4 h-4 text-gray-500 group-hover:text-[var(--psp-gold)] transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-gray-400 group-hover:text-[var(--psp-gold)] transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>

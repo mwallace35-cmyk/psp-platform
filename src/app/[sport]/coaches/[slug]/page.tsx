@@ -99,7 +99,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
       ]} />
       <section className="py-12" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
+          <div className="flex items-center gap-2 text-sm text-gray-300 mb-4">
             <Link href={`/${sport}`} className="hover:text-white transition-colors">{meta.name}</Link>
             <span>/</span>
             <span className="text-white">Coaches</span>

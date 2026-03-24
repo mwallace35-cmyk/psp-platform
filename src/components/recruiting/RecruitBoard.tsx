@@ -63,7 +63,7 @@ interface Props {
 const sportColors: Record<string, string> = {
   football: '#16a34a',
   basketball: '#3b82f6',
-  baseball: '#ea580c',
+  baseball: '#dc2626',
   'track-field': '#7c3aed',
   lacrosse: '#0891b2',
   wrestling: '#ca8a04',
@@ -71,7 +71,7 @@ const sportColors: Record<string, string> = {
 };
 
 function StarRating({ stars }: { stars: number | null }) {
-  if (!stars) return <span className="text-gray-400 text-xs">NR</span>;
+  if (!stars) return <span className="text-gray-300 text-xs">NR</span>;
   return (
     <span className="text-sm tracking-tight">
       {Array.from({ length: 5 }, (_, i) => (
@@ -174,12 +174,12 @@ export default function RecruitBoard({ recruits, classYears }: Props) {
         </select>
       </div>
 
-      <p className="text-sm text-gray-500 mb-4">Showing {filtered.length} recruit{filtered.length !== 1 ? 's' : ''}{selectedYear ? ` in Class of ${selectedYear}` : ''}</p>
+      <p className="text-sm text-gray-400 mb-4">Showing {filtered.length} recruit{filtered.length !== 1 ? 's' : ''}{selectedYear ? ` in Class of ${selectedYear}` : ''}</p>
 
       {filtered.length === 0 ? (
         <div className="bg-gray-50 rounded-xl p-12 text-center">
-          <p className="text-gray-500 text-lg">No recruits found matching your filters.</p>
-          <p className="text-gray-400 text-sm mt-2">Recruiting profiles will appear here as they are added to the system.</p>
+          <p className="text-gray-400 text-lg">No recruits found matching your filters.</p>
+          <p className="text-gray-300 text-sm mt-2">Recruiting profiles will appear here as they are added to the system.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -196,17 +196,17 @@ export default function RecruitBoard({ recruits, classYears }: Props) {
                   <div className="flex items-center gap-3 text-sm text-gray-600 mt-0.5 flex-wrap">
                     {recruit.position && (<span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: sportColors[recruit.sport_id] ?? '#6b7280' }}>{recruit.position}</span>)}
                     <span>{recruit.school_name}</span>
-                    <span className="text-gray-400">|</span>
+                    <span className="text-gray-300">|</span>
                     <span>Class of {recruit.class_year}</span>
-                    {recruit.height && (<><span className="text-gray-400">|</span><span>{recruit.height}</span></>)}
-                    {recruit.weight && (<><span className="text-gray-400">|</span><span>{recruit.weight} lbs</span></>)}
+                    {recruit.height && (<><span className="text-gray-300">|</span><span>{recruit.height}</span></>)}
+                    {recruit.weight && (<><span className="text-gray-300">|</span><span>{recruit.weight} lbs</span></>)}
                   </div>
                   <div className="flex items-center gap-4 mt-2 text-sm flex-wrap">
                     {(recruit.status === 'committed' || recruit.status === 'signed') && recruit.committed_school && (<span className="font-semibold" style={{ color: '#15803d' }}>Committed: {recruit.committed_school}</span>)}
                     {recruit.offers.length > 0 && (
-                      <span className="text-gray-500">
+                      <span className="text-gray-400">
                         {recruit.offers.length} offer{recruit.offers.length !== 1 ? 's' : ''}
-                        {recruit.offers.length <= 6 && (<span className="text-gray-400 ml-1">({recruit.offers.map((o) => o.college_name).join(', ')})</span>)}
+                        {recruit.offers.length <= 6 && (<span className="text-gray-300 ml-1">({recruit.offers.map((o) => o.college_name).join(', ')})</span>)}
                       </span>
                     )}
                   </div>
@@ -218,9 +218,9 @@ export default function RecruitBoard({ recruits, classYears }: Props) {
                       if (!r) return null;
                       return (
                         <div key={svc} className="text-center min-w-[50px]">
-                          <div className="text-[10px] font-semibold text-gray-400 uppercase">{svc === '247sports' ? '247' : svc}</div>
+                          <div className="text-[10px] font-semibold text-gray-300 uppercase">{svc === '247sports' ? '247' : svc}</div>
                           <div className="text-sm font-bold" style={{ color: '#0a1628' }}>{r.rating ? Number(r.rating).toFixed(2) : '--'}</div>
-                          {r.state_rank && (<div className="text-[10px] text-gray-500">#{r.state_rank} PA</div>)}
+                          {r.state_rank && (<div className="text-[10px] text-gray-400">#{r.state_rank} PA</div>)}
                         </div>
                       );
                     })}

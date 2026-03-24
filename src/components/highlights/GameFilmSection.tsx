@@ -57,7 +57,7 @@ export default async function GameFilmSection({
 
       {highlights.length > 6 && (
         <div className="text-center mt-6">
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-400 text-sm">
             +{highlights.length - 6} more highlights available
           </p>
         </div>

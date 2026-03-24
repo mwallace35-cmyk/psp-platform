@@ -231,7 +231,7 @@ export default function ConflictManager() {
                   {conflict.status === "resolved" && (
                     <span className="admin-badge badge-success">Resolved</span>
                   )}
-                  <span className="text-gray-400">{expandedId === conflict.id ? "▲" : "▼"}</span>
+                  <span className="text-gray-300">{expandedId === conflict.id ? "▲" : "▼"}</span>
                 </div>
               </div>
 

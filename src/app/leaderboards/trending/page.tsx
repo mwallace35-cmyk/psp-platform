@@ -40,7 +40,7 @@ export default function TrendingPage() {
         <section className="bg-gradient-to-r from-[#f0a500]/10 to-[#0f1e30] border border-[#f0a500]/20 rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-white font-bold text-lg mb-1">Advanced Stats</h3>
-            <p className="text-gray-400 text-sm">YPC, completion %, TD:INT ratio, yards per target — efficiency metrics for football.</p>
+            <p className="text-gray-300 text-sm">YPC, completion %, TD:INT ratio, yards per target — efficiency metrics for football.</p>
           </div>
           <Link href="/football/leaderboards/efficiency" className="flex-shrink-0 px-5 py-2.5 bg-[#f0a500] text-[#0a1628] font-bold rounded-lg hover:bg-[#f0a500]/90 transition-colors text-sm">
             View Efficiency Stats

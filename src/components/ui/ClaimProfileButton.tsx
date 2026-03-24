@@ -559,7 +559,7 @@ const ClaimProfileButton: React.FC<ClaimProfileButtonProps> = ({
         onClick={() => setIsOpen(true)}
         className="gap-2 items-center"
       >
-        <span>👤</span>
+        <span aria-hidden="true">👤</span>
         Is this your profile?
       </Button>
 

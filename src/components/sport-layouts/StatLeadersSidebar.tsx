@@ -446,7 +446,7 @@ export default function StatLeadersSidebar({
           gap: 6,
         }}
       >
-        <span style={{ fontSize: 16 }}>📊</span>
+        <span style={{ fontSize: 16 }} aria-hidden="true">📊</span>
         Stat Leaders
       </div>
 

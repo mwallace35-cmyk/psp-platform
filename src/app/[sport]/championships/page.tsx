@@ -151,7 +151,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                   </span>
                 );
               })}
-            <span className="text-gray-400">
+            <span className="text-gray-300">
               {displayYears.length} seasons
             </span>
           </div>
@@ -243,7 +243,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                                 {c.schools.name}
                               </Link>
                             ) : (
-                              <span className="text-sm text-gray-500 italic">Unknown</span>
+                              <span className="text-sm text-gray-400 italic">Unknown</span>
                             )}
                             {/* Notes / league info */}
                             {(c.notes || c.leagues?.name) && (
@@ -329,7 +329,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                             {c.schools.name}
                           </Link>
                         ) : (
-                          <span className="text-sm text-gray-500 italic">Unknown</span>
+                          <span className="text-sm text-gray-400 italic">Unknown</span>
                         )}
                         {(c.notes || c.leagues?.name) && (
                           <span className="text-xs block truncate" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
@@ -347,9 +347,9 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
               <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
                 <div className="text-center">
                   <div className="text-6xl mb-4">🏆</div>
-                  <h3 className="psp-h2 text-white mb-3">
+                  <h2 className="psp-h2 text-white mb-3">
                     Coming Soon
-                  </h3>
+                  </h2>
                   <p className="text-lg text-gray-300 mb-6 max-w-md mx-auto">
                     We're building out {meta.name.toLowerCase()} championship records. Check back soon!
                   </p>
@@ -370,9 +370,9 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             {/* State dynasty (most prestigious) */}
             {stateDynasties.length > 0 && (
               <div className="rounded-xl border p-5" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "var(--psp-navy-mid, #0f2040)" }}>
-                <h3 className="psp-h4 text-white mb-1">
+                <h2 className="psp-h4 text-white mb-1">
                   🏆 State Title Leaders
-                </h3>
+                </h2>
                 <p className="text-xs mb-4" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
                   PIAA state championships
                 </p>
@@ -398,9 +398,9 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
 
             {/* All-time dynasty */}
             <div className="rounded-xl border p-5" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "var(--psp-navy-mid, #0f2040)" }}>
-              <h3 className="psp-h4 text-white mb-1">
+              <h2 className="psp-h4 text-white mb-1">
                 🎖️ All-Time Title Leaders
-              </h3>
+              </h2>
               <p className="text-xs mb-4" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
                 State + City + League titles combined
               </p>
@@ -426,9 +426,9 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             {/* Related Pages */}
             <div className="rounded-lg overflow-hidden" style={{ background: "rgba(15,32,64,0.8)", border: "1px solid rgba(59,130,246,0.3)" }}>
               <div className="px-4 py-3 border-b" style={{ borderColor: "var(--psp-blue, #3b82f6)" }}>
-                <h3 className="font-bold text-sm uppercase tracking-wider" style={{ color: "var(--psp-blue, #3b82f6)" }}>
+                <h2 className="font-bold text-sm uppercase tracking-wider" style={{ color: "var(--psp-blue, #3b82f6)" }}>
                   Related Pages
-                </h3>
+                </h2>
               </div>
               <div className="p-4 space-y-3">
                 <Link

@@ -369,7 +369,7 @@ async function RecruitingContent() {
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumb */}
           <nav className="text-xs mb-3">
-            <Link href="/" className="text-gray-400 hover:text-white transition-colors">
+            <Link href="/" className="text-gray-300 hover:text-white transition-colors">
               Home
             </Link>
             <span className="text-gray-600 mx-1.5">&rsaquo;</span>
@@ -381,7 +381,7 @@ async function RecruitingContent() {
           >
             Philly Recruiting Central
           </h1>
-          <p className="text-gray-500 text-sm max-w-xl mb-4">
+          <p className="text-gray-400 text-sm max-w-xl mb-4">
             Tracking every Philadelphia athlete&apos;s path to the next level
           </p>
 
@@ -478,7 +478,7 @@ async function RecruitingContent() {
                         </span>
                       )}
 
-                      <div className="flex items-center gap-2 text-[10px] text-gray-400 mb-1.5">
+                      <div className="flex items-center gap-2 text-[10px] text-gray-300 mb-1.5">
                         <span>{school.college} col</span>
                         {school.pro > 0 && (
                           <span style={{ color: "#f0a500" }}>{school.pro} pro</span>
@@ -524,7 +524,7 @@ async function RecruitingContent() {
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span
-                      className="psp-micro text-gray-500"
+                      className="psp-micro text-gray-400"
                     >
                       #{index + 1}
                     </span>
@@ -591,7 +591,7 @@ async function RecruitingContent() {
                       {count.toLocaleString()}
                     </span>
                     <span
-                      className="text-xs text-gray-400 group-hover:underline"
+                      className="text-xs text-gray-300 group-hover:underline"
                       style={{ fontFamily: "DM Sans, sans-serif" }}
                     >
                       {name}
@@ -701,7 +701,7 @@ function StatPill({
       >
         {value}
       </span>
-      <span className="text-xs text-gray-400">{label}</span>
+      <span className="text-xs text-gray-300">{label}</span>
     </div>
   );
 }
@@ -709,7 +709,7 @@ function StatPill({
 function EmptyState({ message }: { message: string }) {
   return (
     <div
-      className="text-center py-8 text-gray-500 text-sm rounded-xl"
+      className="text-center py-8 text-gray-400 text-sm rounded-xl"
       style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
     >
       {message}

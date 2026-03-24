@@ -29,7 +29,7 @@ export default function WidgetsPage() {
         className="p-8 rounded-lg text-center"
         style={{ background: "var(--psp-navy-mid)" }}
       >
-        <p className="text-gray-400">Loading widgets...</p>
+        <p className="text-gray-300">Loading widgets...</p>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default function WidgetsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Embeddable Widgets</h1>
-        <p className="text-gray-400 mt-2">
+        <p className="text-gray-300 mt-2">
           Create and manage embeddable widgets for schools
         </p>
       </div>
@@ -58,7 +58,7 @@ export default function WidgetsPage() {
           className="p-8 rounded-lg text-center"
           style={{ background: "var(--psp-navy-mid)" }}
         >
-          <p className="text-gray-400">No widgets created yet</p>
+          <p className="text-gray-300">No widgets created yet</p>
         </div>
       ) : (
         <div className="grid gap-4">
@@ -73,10 +73,10 @@ export default function WidgetsPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="font-semibold text-white capitalize">
+                  <h2 className="font-semibold text-white capitalize">
                     {widget.widget_type} Widget
-                  </h3>
-                  <p className="text-sm text-gray-400 mt-1">
+                  </h2>
+                  <p className="text-sm text-gray-300 mt-1">
                     School ID: {widget.school_id} • Views: {widget.views}
                   </p>
                 </div>

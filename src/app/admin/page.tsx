@@ -201,41 +201,41 @@ export default async function AdminDashboard() {
       {/* Quick actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
         <a href="/admin/import" className="admin-card hover:shadow-md transition-shadow">
-          <h3 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
+          <h2 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
             📥 Import Data
-          </h3>
+          </h2>
           <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
             Upload HTML, CSV, XLSX, or JSON files
           </p>
         </a>
         <a href="/admin/data" className="admin-card hover:shadow-md transition-shadow">
-          <h3 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
+          <h2 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
             🔍 Browse Data
-          </h3>
+          </h2>
           <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
             Search, filter, and edit records
           </p>
         </a>
         <a href="/admin/conflicts" className="admin-card hover:shadow-md transition-shadow">
-          <h3 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
+          <h2 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
             ⚠️ Resolve Conflicts
-          </h3>
+          </h2>
           <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
             Review and resolve data discrepancies
           </p>
         </a>
         <a href="/admin/corrections" className="admin-card hover:shadow-md transition-shadow">
-          <h3 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
+          <h2 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
             ✏️ Community Corrections
-          </h3>
+          </h2>
           <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
             Review community-submitted data corrections
           </p>
         </a>
         <a href="/admin/articles/new" className="admin-card hover:shadow-md transition-shadow">
-          <h3 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
+          <h2 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
             📝 New Article
-          </h3>
+          </h2>
           <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
             Write a new article or AI-generate game recaps
           </p>

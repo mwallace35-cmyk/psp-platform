@@ -335,7 +335,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 )}
               </div>
               <div className="flex flex-wrap gap-4 text-sm">
-                <span className="text-gray-400">{school.city}, {school.state}</span>
+                <span className="text-gray-300">{school.city}, {school.state}</span>
               </div>
             </div>
           </div>
@@ -347,20 +347,20 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 <div className="psp-h2 text-white">
                   {wins}-{losses}{ties > 0 ? `-${ties}` : ""}
                 </div>
-                <div className="text-xs text-gray-400">Season Record</div>
+                <div className="text-xs text-gray-300">Season Record</div>
               </div>
               <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
                 <div className="psp-h2 text-white">
                   {winPctDisplay}
                 </div>
-                <div className="text-xs text-gray-400">Win %</div>
+                <div className="text-xs text-gray-300">Win %</div>
               </div>
               {teamSeason.points_for !== null && (
                 <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
                   <div className="psp-h2 text-white">
                     {teamSeason.points_for}
                   </div>
-                  <div className="text-xs text-gray-400">Points For</div>
+                  <div className="text-xs text-gray-300">Points For</div>
                 </div>
               )}
               {teamSeason.points_against !== null && (
@@ -368,7 +368,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                   <div className="psp-h2 text-white">
                     {teamSeason.points_against}
                   </div>
-                  <div className="text-xs text-gray-400">Points Against</div>
+                  <div className="text-xs text-gray-300">Points Against</div>
                 </div>
               )}
             </div>
@@ -395,7 +395,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           {/* Coach Info */}
           {teamSeason?.coaches && (
             <div className="mt-6 text-sm">
-              <span className="text-gray-400">Coach: </span>
+              <span className="text-gray-300">Coach: </span>
               <span className="text-white">
                 <Link href={`/${sport}/coaches/${teamSeason.coaches.slug}`} className="hover:text-blue-400">
                   {teamSeason.coaches.name}
@@ -433,7 +433,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   s.label === season
                     ? "text-white"
-                    : "text-gray-400 hover:text-white"
+                    : "text-gray-300 hover:text-white"
                 }`}
                 style={s.label === season ? { background: `${meta.color}40`, color: "white" } : {}}
               >
@@ -453,13 +453,13 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               <table className="w-full text-sm text-gray-200" aria-label="Team schedule and results">
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Date</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Opponent</th>
+                    <th className="text-left py-3 px-4 text-gray-300 font-semibold">Date</th>
+                    <th className="text-left py-3 px-4 text-gray-300 font-semibold">Opponent</th>
                     {!isPreview && (
-                      <th className="text-center py-3 px-4 text-gray-400 font-semibold">Result</th>
+                      <th className="text-center py-3 px-4 text-gray-300 font-semibold">Result</th>
                     )}
-                    <th className="text-center py-3 px-4 text-gray-400 font-semibold">Score</th>
-                    <th className="text-center py-3 px-4 text-gray-400 font-semibold"></th>
+                    <th className="text-center py-3 px-4 text-gray-300 font-semibold">Score</th>
+                    <th className="text-center py-3 px-4 text-gray-300 font-semibold"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -508,14 +508,14 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                           borderLeft: result === "W" ? `3px solid #10b981` : result === "L" ? `3px solid #ef4444` : "none",
                         }}
                       >
-                        <td className="py-3 px-4 text-gray-400">{formatDate(game.game_date)}</td>
+                        <td className="py-3 px-4 text-gray-300">{formatDate(game.game_date)}</td>
                         <td className="py-3 px-4">
                           {opponent ? (
                             <Link href={`/${sport}/teams/${opponent.slug}/${season}`} className="text-blue-400 hover:underline">
                               {isHome ? "vs " : "at "}{getSchoolDisplayName(opponent)}
                             </Link>
                           ) : (
-                            <span className="text-gray-400">{isHome ? "vs" : "at"} TBD</span>
+                            <span className="text-gray-300">{isHome ? "vs" : "at"} TBD</span>
                           )}
                         </td>
                         {!isPreview && (
@@ -528,7 +528,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                                 {result}
                               </span>
                             ) : (
-                              <span className="text-gray-400">—</span>
+                              <span className="text-gray-300">—</span>
                             )}
                           </td>
                         )}
@@ -557,7 +557,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             </div>
           ) : (
             <div className="rounded-lg p-6" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <p className="text-gray-400 text-center">No {isPreview ? "schedule" : "game results"} available for this season</p>
+              <p className="text-gray-300 text-center">No {isPreview ? "schedule" : "game results"} available for this season</p>
             </div>
           )}
         </section>
@@ -604,7 +604,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
         {isPreview && returningPlayers.filter((p) => p.is_senior).length > 0 && (
           <details className="mb-8">
             <summary
-              className="psp-h3 text-gray-400 mb-4 cursor-pointer hover:text-gray-300"
+              className="psp-h3 text-gray-300 mb-4 cursor-pointer hover:text-gray-300"
             >
               Departed Seniors ({returningPlayers.filter((p) => p.is_senior).length})
             </summary>
@@ -615,7 +615,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                   <Link
                     key={player.player_id}
                     href={`/${sport}/players/${player.player_slug}`}
-                    className="block text-sm text-gray-400 hover:text-gray-300"
+                    className="block text-sm text-gray-300 hover:text-gray-300"
                   >
                     {player.player_name}
                   </Link>
@@ -630,11 +630,11 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <h2 className="psp-h2 text-white mb-2">
               {season} Roster {isPreview && roster.length === 0 ? "(Projected)" : ""}
             </h2>
-            <p className="text-sm text-gray-400 mb-6">
+            <p className="text-sm text-gray-300 mb-6">
               {isPreview && roster.length === 0 ? `Based on ${prevSeason} roster — seniors graduated` : `${rosterReturning.length} players`}
             </p>
             <SortablePreviewRoster players={rosterReturning as any} sport={sport} />
-            <div className="mt-4 text-xs text-gray-500">
+            <div className="mt-4 text-xs text-gray-400">
               {rosterReturning.length} returning players
             </div>
           </section>
@@ -649,7 +649,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
             <div className="rounded-lg p-6" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }}>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 <div>
-                  <div className="text-xs text-gray-400 mb-1">Record</div>
+                  <div className="text-xs text-gray-300 mb-1">Record</div>
                   <div className="psp-h2 text-white">
                     {lastSeasonRecap.wins}-{lastSeasonRecap.losses}
                     {lastSeasonRecap.ties > 0 ? `-${lastSeasonRecap.ties}` : ""}
@@ -657,7 +657,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 </div>
                 {lastSeasonRecap.points_for !== null && (
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">Points For</div>
+                    <div className="text-xs text-gray-300 mb-1">Points For</div>
                     <div className="psp-h2 text-white">
                       {lastSeasonRecap.points_for}
                     </div>
@@ -665,7 +665,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 )}
                 {lastSeasonRecap.points_against !== null && (
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">Points Against</div>
+                    <div className="text-xs text-gray-300 mb-1">Points Against</div>
                     <div className="psp-h2 text-white">
                       {lastSeasonRecap.points_against}
                     </div>
@@ -675,7 +675,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
               {lastSeasonRecap.coach_name && (
                 <div className="text-sm text-gray-300 mb-4">
-                  <span className="text-gray-400">Coach: </span>
+                  <span className="text-gray-300">Coach: </span>
                   {lastSeasonRecap.coach_name}
                 </div>
               )}
@@ -683,7 +683,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               {lastSeasonRecap.notable_wins.length > 0 && (
                 <div>
                   <div className="text-sm font-bold text-gray-300 mb-2">Notable Wins</div>
-                  <ul className="space-y-1 text-sm text-gray-400">
+                  <ul className="space-y-1 text-sm text-gray-300">
                     {lastSeasonRecap.notable_wins.map((win, idx) => (
                       <li key={idx}>
                         {win.opponent} {win.score}
@@ -695,7 +695,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
 
               {lastSeasonRecap.playoff_result && (
                 <div className="text-sm text-gray-300 mt-4">
-                  <span className="text-gray-400">Playoff: </span>
+                  <span className="text-gray-300">Playoff: </span>
                   {lastSeasonRecap.playoff_result}
                 </div>
               )}
@@ -713,9 +713,9 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               <table className="w-full text-sm text-gray-200" aria-label="Head-to-head history">
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)" }}>
-                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Opponent</th>
-                    <th className="text-center py-3 px-4 text-gray-400 font-semibold">All-Time</th>
-                    <th className="text-center py-3 px-4 text-gray-400 font-semibold">Last Meeting</th>
+                    <th className="text-left py-3 px-4 text-gray-300 font-semibold">Opponent</th>
+                    <th className="text-center py-3 px-4 text-gray-300 font-semibold">All-Time</th>
+                    <th className="text-center py-3 px-4 text-gray-300 font-semibold">Last Meeting</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -751,7 +751,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                 <h2 className="psp-h2 text-white mb-2">
                   Roster & Stats
                 </h2>
-                <p className="text-sm text-gray-400">{roster.length} players on record</p>
+                <p className="text-sm text-gray-300">{roster.length} players on record</p>
               </div>
               <Link
                 href={`/${sport}/teams/${school.slug}/roster?season=${season}`}
@@ -791,16 +791,16 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         <tr style={{ background: "var(--psp-navy-mid, #0f2040)" }}>
                           <th className="py-2 px-4 sticky left-0" style={{ background: "var(--psp-navy-mid, #0f2040)" }}></th>
                           <th className="py-2 px-4 sticky left-8" style={{ background: "var(--psp-navy-mid, #0f2040)" }}></th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right" style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}>CAR</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right">YDS</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right">TD</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right" style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}>CMP/ATT</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right">YDS</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right">TD/INT</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right" style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}>REC</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right">YDS</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right" style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}>TD</th>
-                          <th className="py-2 px-4 text-xs text-gray-400 text-right">PTS</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right" style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}>CAR</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right">YDS</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right">TD</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right" style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}>CMP/ATT</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right">YDS</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right">TD/INT</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right" style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}>REC</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right">YDS</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right" style={{ borderLeft: "1px solid rgba(255,255,255,0.1)" }}>TD</th>
+                          <th className="py-2 px-4 text-xs text-gray-300 text-right">PTS</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -818,7 +818,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                           const hasRec = (stats.rec_yards as number | null) !== null && (stats.rec_yards as number) !== 0;
                           return (
                             <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
-                              <td className="py-3 px-4 text-xs font-bold text-gray-500 sticky left-0 bg-white">{p.jersey_number ?? '—'}</td>
+                              <td className="py-3 px-4 text-xs font-bold text-gray-400 sticky left-0 bg-white">{p.jersey_number ?? '—'}</td>
                               <td className="py-3 px-4 font-medium sticky left-8 bg-white" style={{ color: "var(--psp-navy)" }}>
                                 {p.players ? (
                                   <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
@@ -892,7 +892,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                           const stats = p as any;
                           return (
                             <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
-                              <td className="py-3 px-4 text-xs font-bold text-gray-500">{p.jersey_number ?? '—'}</td>
+                              <td className="py-3 px-4 text-xs font-bold text-gray-400">{p.jersey_number ?? '—'}</td>
                               <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
                                 {p.players ? (
                                   <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
@@ -929,7 +929,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                       <tbody>
                         {roster.map((p: RosterPlayer, idx: number) => (
                           <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors duration-200" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
-                            <td className="py-3 px-4 text-xs text-gray-400">{idx + 1}</td>
+                            <td className="py-3 px-4 text-xs text-gray-300">{idx + 1}</td>
                             <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
                               {p.players ? (
                                 <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
@@ -937,7 +937,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                                 </Link>
                               ) : "Unknown"}
                             </td>
-                            <td className="py-3 px-4 text-sm text-gray-500">{String((p as unknown as Record<string, unknown>).honor_level || "—")}</td>
+                            <td className="py-3 px-4 text-sm text-gray-400">{String((p as unknown as Record<string, unknown>).honor_level || "—")}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -959,7 +959,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                           return aNum - bNum;
                         }).map((p: RosterPlayer, idx: number) => (
                           <tr key={p.id || idx} className="hover:bg-gray-50 transition-colors duration-200" style={{ borderBottom: "1px solid var(--psp-gray-100, #f3f4f6)" }}>
-                            <td className="py-3 px-4 text-xs font-bold text-gray-500">{p.jersey_number ?? '—'}</td>
+                            <td className="py-3 px-4 text-xs font-bold text-gray-400">{p.jersey_number ?? '—'}</td>
                             <td className="py-3 px-4 font-medium" style={{ color: "var(--psp-navy)" }}>
                               {p.players ? (
                                 <Link href={`/${sport}/players/${p.players.slug}`} className="hover:underline" style={{ color: "var(--psp-blue, #3b82f6)" }}>
@@ -978,8 +978,8 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
           ) : (
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-8 text-center">
               <div className="text-3xl mb-3">📋</div>
-              <p className="text-gray-500 font-medium">No individual player stats available for this season</p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-gray-400 font-medium">No individual player stats available for this season</p>
+              <p className="text-sm text-gray-300 mt-1">
                 Player stats are available for seasons 2001-2019. Try selecting an earlier season above.
               </p>
             </div>
@@ -1012,7 +1012,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         className="flex justify-between items-center hover:bg-white/5 p-2 rounded transition-colors"
                       >
                         <span className="text-gray-300">{opp.opponent_name}</span>
-                        <span className="text-gray-400 text-xs font-mono">
+                        <span className="text-gray-300 text-xs font-mono">
                           {opp.last_season_record}
                         </span>
                       </Link>
@@ -1044,7 +1044,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         <span className={standing.is_current_team ? "text-blue-300 font-bold" : "text-gray-300"}>
                           {standing.school_name}
                         </span>
-                        <span className="text-gray-400 font-mono">
+                        <span className="text-gray-300 font-mono">
                           {standing.wins}-{standing.losses}
                         </span>
                       </Link>
@@ -1070,7 +1070,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         className="block hover:text-blue-400 transition-colors"
                       >
                         <div className="text-gray-300">{alumni.player_name}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-400">
                           {alumni.level}
                           {alumni.organization ? ` • ${alumni.organization}` : ""}
                         </div>

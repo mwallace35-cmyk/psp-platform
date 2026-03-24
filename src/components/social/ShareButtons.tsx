@@ -56,7 +56,7 @@ export default function ShareButtons({ url, title, description }: ShareButtonsPr
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Share</span>
+      <span className="text-xs font-medium text-gray-300 uppercase tracking-wider">Share</span>
       {hasNativeShare && (
         <button
           onClick={handleNativeShare}

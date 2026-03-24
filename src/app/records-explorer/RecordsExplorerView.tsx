@@ -226,7 +226,7 @@ export default function RecordsExplorerView({
       {/* Empty State */}
       {!loading && records.length === 0 && (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500 text-lg">No records found matching your filters.</p>
+          <p className="text-gray-400 text-lg">No records found matching your filters.</p>
         </div>
       )}
 
@@ -235,11 +235,13 @@ export default function RecordsExplorerView({
         <>
           <div className="overflow-x-auto mb-8">
             <table className="w-full text-sm" aria-label="Records explorer">
+              <caption className="sr-only">Records explorer</caption>
               <thead>
                 <tr style={{ background: "rgba(10, 22, 40, 0.05)", borderBottom: "2px solid var(--psp-gold)" }}>
                   {columns.map((col) => (
                     <th
                       key={col.key}
+                      scope="col"
                       className="px-4 py-3 text-left font-semibold"
                       style={{ color: "var(--psp-navy)" }}
                     >

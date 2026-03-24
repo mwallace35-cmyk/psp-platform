@@ -166,7 +166,7 @@ export default function CommentsModeration() {
                   <p className="text-sm text-gray-700 whitespace-pre-wrap">{c.body}</p>
 
                   {c.parent_comment_id && (
-                    <p className="text-xs text-gray-400 mt-1">Reply to comment #{c.parent_comment_id}</p>
+                    <p className="text-xs text-gray-300 mt-1">Reply to comment #{c.parent_comment_id}</p>
                   )}
                 </div>
 

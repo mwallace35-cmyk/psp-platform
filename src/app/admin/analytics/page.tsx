@@ -173,7 +173,7 @@ export default function AnalyticsPage() {
 
       {/* Quick Links */}
       <div className="bg-gray-50 rounded-lg p-6">
-        <h3 className="font-bold text-gray-900 mb-4">Quick Actions</h3>
+        <h2 className="font-bold text-gray-900 mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <a href="/admin/comments" className="px-4 py-2 bg-white border border-gray-200 rounded-md text-sm hover:shadow-sm transition">
             Review Comments ({stats.pendingComments})

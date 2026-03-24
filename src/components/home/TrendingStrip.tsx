@@ -57,7 +57,7 @@ export default function TrendingStrip() {
         <div className="flex items-center gap-6 justify-between overflow-hidden">
           {/* Trending Label */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <span className="text-xl">🔥</span>
+            <span className="text-xl" aria-hidden="true">🔥</span>
             <span
               className="font-bold text-sm whitespace-nowrap"
               style={{ color: "var(--psp-gold)" }}

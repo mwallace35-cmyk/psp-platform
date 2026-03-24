@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 const STATIC_SPORTS = [
-  { name: 'Baseball',      slug: 'baseball',    emoji: '⚾', stats: ['Batting Average', 'Home Runs', 'RBIs', 'ERA'],          color: '#1B4D8E' },
+  { name: 'Baseball',      slug: 'baseball',    emoji: '⚾', stats: ['Batting Average', 'Home Runs', 'RBIs', 'ERA'],          color: '#dc2626' },
   { name: 'Soccer',        slug: 'soccer',      emoji: '⚽', stats: ['Goals', 'Assists', 'Clean Sheets', 'Saves'],            color: '#228B22' },
   { name: 'Lacrosse',      slug: 'lacrosse',    emoji: '🥍', stats: ['Goals', 'Assists', 'Ground Balls', 'Saves'],            color: '#6A0DAD' },
   { name: 'Track & Field', slug: 'track-field', emoji: '🏃', stats: ['100m Time', 'Mile Time', 'Long Jump', 'Shot Put'],      color: '#B8860B' },

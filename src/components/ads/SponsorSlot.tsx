@@ -63,7 +63,7 @@ export default function SponsorSlot({ placement, sportId }: SponsorSlotProps) {
       </div>
 
       {/* Subtext */}
-      <div className="text-xs text-white/60 mt-2">
+      <div className="text-xs text-white/80 mt-2">
         {placement === 'sidebar' && (
           <>
             <p className="mb-2">Support Philly sports journalism</p>

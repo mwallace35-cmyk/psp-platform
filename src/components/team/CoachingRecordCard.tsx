@@ -50,7 +50,7 @@ export default async function CoachingRecordCard({
       <div className="px-4 py-3">
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-300">
             Head Coach
           </h4>
           <span
@@ -70,7 +70,7 @@ export default async function CoachingRecordCard({
         <div className="grid grid-cols-2 gap-3 mb-3">
           {/* School record */}
           <div>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">
               At {schoolName.length > 15 ? schoolName.slice(0, 15) + "..." : schoolName}
             </p>
             <p className="text-sm font-bold" style={{ color: schoolRecordColor }}>
@@ -81,7 +81,7 @@ export default async function CoachingRecordCard({
 
           {/* Career record */}
           <div>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">
+            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">
               Career
             </p>
             <p className="text-sm font-bold" style={{ color: careerRecordColor }}>
@@ -94,7 +94,7 @@ export default async function CoachingRecordCard({
         {/* Championships */}
         {record.school_championships > 0 && (
           <div className="flex items-center gap-1.5 mb-3">
-            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Championships:</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-wider">Championships:</span>
             <span className="text-xs font-bold text-[var(--psp-gold)]">
               {record.school_championships}
             </span>
@@ -104,7 +104,7 @@ export default async function CoachingRecordCard({
         {/* Link to coaches page */}
         <Link
           href="/coaches"
-          className="text-[11px] font-semibold uppercase tracking-wider hover:underline transition-colors"
+          className="text-xs font-semibold uppercase tracking-wider hover:underline transition-colors"
           style={{ color: sportColor }}
         >
           All Coaches &rarr;

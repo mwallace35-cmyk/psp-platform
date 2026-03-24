@@ -47,7 +47,7 @@ type SortDir = "asc" | "desc";
 const SPORTS = [
   { value: "football", label: "Football", color: "var(--fb)" },
   { value: "basketball", label: "Basketball", color: "#3b82f6" },
-  { value: "baseball", label: "Baseball", color: "var(--bb)" },
+  { value: "baseball", label: "Baseball", color: "var(--base)" },
 ];
 
 const POSITIONS: Record<string, string[]> = {

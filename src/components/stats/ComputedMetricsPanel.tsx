@@ -248,7 +248,7 @@ export default function ComputedMetricsPanel({
           Computed Metrics
         </h3>
         <div className="text-center py-8">
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-400 text-sm">
             Insufficient data to compute derived metrics
           </p>
           {warning && (
@@ -312,7 +312,7 @@ export default function ComputedMetricsPanel({
           </span>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-400">
             Based on {gamesPlayed} game{gamesPlayed !== 1 ? 's' : ''}
           </p>
           <p className="text-xs font-medium text-[var(--psp-navy)]">
@@ -361,7 +361,7 @@ export default function ComputedMetricsPanel({
             {/* Performance Level */}
             <div className="flex items-center gap-2">
               <div className="flex-1">
-                <p className="text-xs text-gray-600 uppercase tracking-wide font-medium">
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">
                   {getPerformanceLevel(metric.value || 0, metric.unit)}
                 </p>
               </div>
@@ -385,7 +385,7 @@ export default function ComputedMetricsPanel({
       {/* Assessment note */}
       {reliability !== 'high' && (
         <div className="mt-6 pt-4 border-t border-gray-200">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-400">
             <strong>Assessment:</strong> {assessment.recommendation}
           </p>
         </div>

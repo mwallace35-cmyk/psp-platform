@@ -18,7 +18,7 @@ function WinLossBar({
   const total = wins + losses + ties;
 
   if (total === 0) {
-    return <div className="text-xs text-gray-500">No record</div>;
+    return <div className="text-xs text-gray-400">No record</div>;
   }
 
   const winPercentage = (wins / total) * 100;
@@ -49,9 +49,17 @@ function WinLossBar({
                   width: `${winPercentage}%`,
                   backgroundColor: 'var(--psp-success, #22c55e)',
                   transition: 'width 0.3s ease-in-out',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
                 }}
                 title={`${wins} wins`}
-              />
+              >
+                {height >= 16 && winPercentage > 15 && (
+                  <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'white', lineHeight: 1 }}>W</span>
+                )}
+              </div>
             )}
             {losses > 0 && (
               <div
@@ -59,9 +67,17 @@ function WinLossBar({
                   width: `${lossPercentage}%`,
                   backgroundColor: 'var(--psp-danger, #ef4444)',
                   transition: 'width 0.3s ease-in-out',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
                 }}
                 title={`${losses} losses`}
-              />
+              >
+                {height >= 16 && lossPercentage > 15 && (
+                  <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'white', lineHeight: 1 }}>L</span>
+                )}
+              </div>
             )}
             {ties > 0 && (
               <div
@@ -69,9 +85,17 @@ function WinLossBar({
                   width: `${tiePercentage}%`,
                   backgroundColor: 'var(--psp-gray-400, #9ca3af)',
                   transition: 'width 0.3s ease-in-out',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
                 }}
                 title={`${ties} ties`}
-              />
+              >
+                {height >= 16 && tiePercentage > 15 && (
+                  <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'white', lineHeight: 1 }}>T</span>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -84,12 +108,25 @@ function WinLossBar({
           </div>
         )}
       </div>
-      {/* Win percentage label below the bar */}
-      <div
-        className="text-center text-xs font-semibold"
-        style={{ color: 'var(--psp-navy, #0a1628)' }}
-      >
-        {winPercent}%
+      {/* Win percentage and W/L legend */}
+      <div className="flex items-center justify-between text-xs" style={{ color: 'var(--psp-navy, #0a1628)' }}>
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1">
+            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, backgroundColor: 'var(--psp-success, #22c55e)' }} />
+            <span>W {wins}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, backgroundColor: 'var(--psp-danger, #ef4444)' }} />
+            <span>L {losses}</span>
+          </span>
+          {ties > 0 && (
+            <span className="flex items-center gap-1">
+              <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, backgroundColor: 'var(--psp-gray-400, #9ca3af)' }} />
+              <span>T {ties}</span>
+            </span>
+          )}
+        </div>
+        <span className="font-semibold">{winPercent}%</span>
       </div>
     </div>
   );

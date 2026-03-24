@@ -59,7 +59,7 @@ export default function SupportPage() {
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
             PhillySportsPack is a passion project dedicated to preserving and celebrating 25 years of Philadelphia high school sports data.
           </p>
-          <p className="text-white/70 max-w-2xl mx-auto">
+          <p className="text-white/80 max-w-2xl mx-auto">
             Founded by Ted Silary and built on the collective memory of thousands of coaches, athletes, and fans, PSP is a gift to the Philly sports community. Your support helps us keep this digital archive alive and continuously growing.
           </p>
         </div>
@@ -76,7 +76,7 @@ export default function SupportPage() {
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-5xl mb-4">📊</div>
               <h3 className="text-white font-bold mb-3 text-lg">Preserve Data</h3>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/80 text-sm">
                 Digitize 25 years of Philadelphia high school sports history before it's lost to time. From newspaper clippings to historical records, we're building the ultimate archive.
               </p>
             </div>
@@ -84,7 +84,7 @@ export default function SupportPage() {
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-5xl mb-4">⭐</div>
               <h3 className="text-white font-bold mb-3 text-lg">Celebrate Athletes</h3>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/80 text-sm">
                 Honor the achievements of thousands of student athletes, coaches, and programs that shaped the Philly sports landscape.
               </p>
             </div>
@@ -92,7 +92,7 @@ export default function SupportPage() {
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-5xl mb-4">🔗</div>
               <h3 className="text-white font-bold mb-3 text-lg">Build Community</h3>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/80 text-sm">
                 Create a gathering place for parents, coaches, athletes, alumni, and fans to connect and celebrate Philly HS sports.
               </p>
             </div>
@@ -110,35 +110,35 @@ export default function SupportPage() {
           <div className="space-y-6">
             <div className="p-6 bg-navy-mid rounded-lg border-l-4 border-gold">
               <h3 className="text-gold font-bold mb-2 text-lg">🖥️ Technology & Hosting</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Database servers, backup infrastructure, CDN, and continuous deployment keep the site running 24/7.
               </p>
             </div>
 
             <div className="p-6 bg-navy-mid rounded-lg border-l-4 border-gold">
               <h3 className="text-gold font-bold mb-2 text-lg">🔍 Data Collection & Curation</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Digitizing archives, fact-checking records, and enriching data with player bios, college/pro placements, and verified stats.
               </p>
             </div>
 
             <div className="p-6 bg-navy-mid rounded-lg border-l-4 border-gold">
               <h3 className="text-gold font-bold mb-2 text-lg">📱 Platform Development</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Building new features, improving search, adding mobile responsiveness, and expanding to new sports and features.
               </p>
             </div>
 
             <div className="p-6 bg-navy-mid rounded-lg border-l-4 border-gold">
               <h3 className="text-gold font-bold mb-2 text-lg">🎯 Community Programs</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Supporting Player of the Week voting, forums, live game coverage integration, and recruiting tools for schools.
               </p>
             </div>
 
             <div className="p-6 bg-navy-mid rounded-lg border-l-4 border-gold">
               <h3 className="text-gold font-bold mb-2 text-lg">🎓 Educational Initiatives</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Partner with schools and programs to integrate PSP data into curricula and athletic programs.
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function SupportPage() {
           <h2 className="psp-h2 text-white mb-4 text-center">
             SUPPORT LEVELS
           </h2>
-          <p className="text-white/70 text-center mb-12 max-w-2xl mx-auto">
+          <p className="text-white/80 text-center mb-12 max-w-2xl mx-auto">
             Choose the support level that works for you. Every contribution—big or small—helps keep Philly sports history alive.
           </p>
 
@@ -187,9 +187,9 @@ export default function SupportPage() {
                   </h3>
                   <div className="mb-3">
                     <span className="text-4xl font-bold text-gold">{tier.amount}</span>
-                    <span className="text-white/60 text-sm ml-1">{tier.frequency}</span>
+                    <span className="text-white/80 text-sm ml-1">{tier.frequency}</span>
                   </div>
-                  <p className="text-white/70 text-sm">{tier.description}</p>
+                  <p className="text-white/80 text-sm">{tier.description}</p>
                 </div>
 
                 {/* CTA Button */}
@@ -220,7 +220,7 @@ export default function SupportPage() {
             <p className="text-white/80 mb-6">
               We're integrating with Stripe to enable secure donations and monthly subscriptions. Check back soon to support the mission!
             </p>
-            <p className="text-white/60 text-sm">
+            <p className="text-white/80 text-sm">
               In the meantime, reach out to <strong>mike@phillysportspack.com</strong> if you'd like to discuss sponsorship or partnership opportunities.
             </p>
           </div>
@@ -240,7 +240,7 @@ export default function SupportPage() {
                 <span className="text-gold text-xl flex-shrink-0">✓</span>
                 <div>
                   <p className="text-white font-semibold">Supporter Badge</p>
-                  <p className="text-white/60 text-sm">Special badge on your profile (when account system launches)</p>
+                  <p className="text-white/80 text-sm">Special badge on your profile (when account system launches)</p>
                 </div>
               </li>
 
@@ -248,7 +248,7 @@ export default function SupportPage() {
                 <span className="text-gold text-xl flex-shrink-0">✓</span>
                 <div>
                   <p className="text-white font-semibold">Early Access to Features</p>
-                  <p className="text-white/60 text-sm">Get first access to new tools, data, and community features</p>
+                  <p className="text-white/80 text-sm">Get first access to new tools, data, and community features</p>
                 </div>
               </li>
 
@@ -256,7 +256,7 @@ export default function SupportPage() {
                 <span className="text-gold text-xl flex-shrink-0">✓</span>
                 <div>
                   <p className="text-white font-semibold">Name in Credits</p>
-                  <p className="text-white/60 text-sm">Monthly supporters appear in our "Hall of Supporters" page</p>
+                  <p className="text-white/80 text-sm">Monthly supporters appear in our "Hall of Supporters" page</p>
                 </div>
               </li>
 
@@ -264,7 +264,7 @@ export default function SupportPage() {
                 <span className="text-gold text-xl flex-shrink-0">✓</span>
                 <div>
                   <p className="text-white font-semibold">Direct Impact</p>
-                  <p className="text-white/60 text-sm">Every dollar directly funds preservation, data entry, and platform improvements</p>
+                  <p className="text-white/80 text-sm">Every dollar directly funds preservation, data entry, and platform improvements</p>
                 </div>
               </li>
 
@@ -272,7 +272,7 @@ export default function SupportPage() {
                 <span className="text-gold text-xl flex-shrink-0">✓</span>
                 <div>
                   <p className="text-white font-semibold">Insider Updates</p>
-                  <p className="text-white/60 text-sm">Get behind-the-scenes updates on new sports, data acquisitions, and platform roadmap</p>
+                  <p className="text-white/80 text-sm">Get behind-the-scenes updates on new sports, data acquisitions, and platform roadmap</p>
                 </div>
               </li>
             </ul>
@@ -290,28 +290,28 @@ export default function SupportPage() {
           <div className="space-y-6">
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">Is PSP a 501(c)(3) nonprofit?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Not yet, but that's on the roadmap. For now, PSP is an independent project run by volunteers. We're exploring nonprofit status to provide tax-deductible donations and formalize our mission.
               </p>
             </div>
 
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">How much does it cost to run PSP?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Monthly infrastructure costs are approximately $300-500 (database, hosting, CDN). Development, data curation, and community management are currently volunteer-based. Your support helps us scale sustainably.
               </p>
             </div>
 
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">Will PSP always be free to use?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Yes. Core stats, profiles, and search will always be free. Premium features (advanced filtering, exports, ad-free) will be optional for power users. Donations and sponsorships help keep the base platform free for everyone.
               </p>
             </div>
 
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <h3 className="text-gold font-bold mb-2 text-lg">Can I make a larger one-time donation?</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Absolutely! Contact us at <strong>mike@phillysportspack.com</strong> to discuss major gifts or planned giving. All contributions are deeply appreciated.
               </p>
             </div>
@@ -342,7 +342,7 @@ export default function SupportPage() {
               Business Sponsorship
             </Link>
           </div>
-          <p className="text-white/60 text-sm mt-6">
+          <p className="text-white/80 text-sm mt-6">
             Questions? Email <strong>mike@phillysportspack.com</strong>
           </p>
         </div>

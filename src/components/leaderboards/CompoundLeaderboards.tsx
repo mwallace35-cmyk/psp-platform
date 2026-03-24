@@ -42,7 +42,7 @@ export default function CompoundLeaderboards({
         >
           Combined Stat Leaders
         </h2>
-        <p className="text-sm text-gray-400 mb-6">
+        <p className="text-sm text-gray-300 mb-6">
           Multi-stat formulas that highlight the most versatile players this
           season
         </p>
@@ -70,7 +70,7 @@ export default function CompoundLeaderboards({
                   >
                     {category.label}
                   </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-gray-400 mt-0.5">
                     {category.description}
                   </p>
                 </div>
@@ -132,12 +132,12 @@ export default function CompoundLeaderboards({
                                 {entry.school_slug ? (
                                   <Link
                                     href={`/${sport}/schools/${entry.school_slug}`}
-                                    className="text-xs text-gray-500 hover:text-gray-400 transition truncate block"
+                                    className="text-xs text-gray-400 hover:text-gray-300 transition truncate block"
                                   >
                                     {entry.school_name}
                                   </Link>
                                 ) : (
-                                  <span className="text-xs text-gray-500 truncate block">
+                                  <span className="text-xs text-gray-400 truncate block">
                                     {entry.school_name}
                                   </span>
                                 )}
@@ -162,9 +162,9 @@ export default function CompoundLeaderboards({
                                 ([label, val]) => (
                                   <span
                                     key={label}
-                                    className="text-[10px] text-gray-500"
+                                    className="text-xs text-gray-400"
                                   >
-                                    <span className="text-gray-400 tabular-nums">
+                                    <span className="text-gray-300 tabular-nums">
                                       {typeof val === "number" && val % 1 !== 0
                                         ? val.toFixed(1)
                                         : val.toLocaleString()}

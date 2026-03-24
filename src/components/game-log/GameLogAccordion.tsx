@@ -174,7 +174,7 @@ export default function GameLogAccordion({
 
   if (games.length === 0) {
     return (
-      <div className="py-8 px-4 text-center text-gray-500">
+      <div className="py-8 px-4 text-center text-gray-400">
         No game log available.
       </div>
     );
@@ -188,7 +188,7 @@ export default function GameLogAccordion({
           Game Log ({games.length} games)
         </h2>
         {totalBoxScoreGames < games.length && (
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-gray-400 mt-1">
             Individual stats available for {totalBoxScoreGames} of {games.length} games
           </p>
         )}

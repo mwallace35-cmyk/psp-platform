@@ -123,7 +123,7 @@ function StatHeatmap({
     <div className="w-full bg-white rounded-lg border border-gray-200 p-4">
       <div className="mb-4">
         <h3 className="text-lg font-bold text-navy">Statistical Heatmap</h3>
-        <p className="text-sm text-gray-500">Values color-coded by percentile within each column</p>
+        <p className="text-sm text-gray-400">Values color-coded by percentile within each column</p>
       </div>
 
       {/* Legend */}
@@ -237,7 +237,7 @@ function StatHeatmap({
                           </span>
                         )}
                         {isHovered && isNumeric && (
-                          <span className="ml-2 text-xs text-gray-600">
+                          <span className="ml-2 text-xs text-gray-400">
                             ({Math.round(getPercentile(col.key, value))}%)
                           </span>
                         )}
@@ -251,7 +251,7 @@ function StatHeatmap({
       </div>
 
       {/* Footer info */}
-      <div className="mt-4 text-xs text-gray-600">
+      <div className="mt-4 text-xs text-gray-400">
         <p>
           <strong>Top 3 Highlight:</strong> Gold ring indicates top 3 values in each column.
           <br />

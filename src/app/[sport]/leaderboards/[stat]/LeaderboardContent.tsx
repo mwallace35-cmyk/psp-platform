@@ -6,7 +6,7 @@ import SortableTable, { SortableColumn } from '@/components/ui/SortableTable';
 
 const ClientStatHeatmap = dynamic(() => import('@/components/viz/ClientStatHeatmap'), {
   ssr: false,
-  loading: () => <div className="text-center py-8 text-gray-500 text-sm">Loading heatmap...</div>,
+  loading: () => <div className="text-center py-8 text-gray-400 text-sm">Loading heatmap...</div>,
 });
 
 interface LeaderboardContentProps {

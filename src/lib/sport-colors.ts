@@ -31,9 +31,9 @@ export const SPORT_COLORS: Record<SportSlug, SportColorScheme> = {
   baseball: {
     name: 'Baseball',
     primaryColor: '#0a1628',
-    secondaryColor: '#166534',
-    gradient: 'linear-gradient(135deg, #0a1628 0%, #166534 100%)',
-    accentColor: '#22c55e',
+    secondaryColor: '#991b1b',
+    gradient: 'linear-gradient(135deg, #0a1628 0%, #991b1b 100%)',
+    accentColor: '#dc2626',
   },
   soccer: {
     name: 'Soccer',

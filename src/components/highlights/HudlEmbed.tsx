@@ -79,8 +79,8 @@ export default function HudlEmbed({
         className={`${sizeConfig.height} bg-[var(--psp-navy)] rounded-lg border-2 border-[var(--psp-gold)] flex items-center justify-center ${className}`}
       >
         <div className="text-center px-4">
-          <p className="text-gray-400 font-semibold">Highlight unavailable</p>
-          <p className="text-gray-500 text-sm mt-1">Invalid Hudl URL</p>
+          <p className="text-gray-300 font-semibold">Highlight unavailable</p>
+          <p className="text-gray-400 text-sm mt-1">Invalid Hudl URL</p>
         </div>
       </div>
     );
@@ -131,7 +131,7 @@ export default function HudlEmbed({
         {/* Error state */}
         {error && (
           <div className="absolute inset-0 flex items-center justify-center bg-[var(--psp-navy-mid)] text-center px-4">
-            <p className="text-gray-400 text-sm">{error}</p>
+            <p className="text-gray-300 text-sm">{error}</p>
           </div>
         )}
 

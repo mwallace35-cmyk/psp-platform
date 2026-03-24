@@ -63,7 +63,7 @@ function AnimatedCounter({
         {displayValue.toLocaleString()}
         {suffix}
       </div>
-      <div className="text-xs sm:text-sm text-white/70 mt-1">{label}</div>
+      <div className="text-xs sm:text-sm text-white/80 mt-1">{label}</div>
     </div>
   );
 }
@@ -110,7 +110,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
               className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white text-[var(--psp-navy)] placeholder-gray-500 rounded-lg text-base sm:text-lg focus:outline-none transition-shadow"
               disabled
             />
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-300">
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6"
                 fill="none"
@@ -126,7 +126,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
               </svg>
             </div>
           </div>
-          <p className="text-sm text-white/70 mt-2">Search by school name, player name, or stat</p>
+          <p className="text-sm text-white/80 mt-2">Search by school name, player name, or stat</p>
         </div>
 
         {/* Quick action cards */}
@@ -167,7 +167,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
                 <div className="text-white text-sm sm:text-base font-semibold group-hover:text-[var(--psp-gold)] transition-colors">
                   {card.label}
                 </div>
-                <div className="text-white/70 text-xs">{card.description}</div>
+                <div className="text-white/80 text-xs">{card.description}</div>
               </div>
             </Link>
           ))}

@@ -51,7 +51,7 @@ export default function PremiumBanner() {
           </Link>
           <button
             onClick={handleDismiss}
-            className="p-2 hover:bg-white/10 rounded-md transition-colors text-white/60 hover:text-white/90"
+            className="p-2 hover:bg-white/10 rounded-md transition-colors text-white/80 hover:text-white/90"
             aria-label="Dismiss premium banner"
             title="Dismiss for 7 days"
           >

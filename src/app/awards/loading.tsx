@@ -1,6 +1,6 @@
 export default function AwardsLoading() {
   return (
-    <main className="flex-1 min-h-screen bg-gradient-to-b from-[#0a1628] to-[#0f2040]">
+    <main className="flex-1 min-h-screen bg-gradient-to-b from-[#0a1628] to-[#0f2040]" role="status" aria-busy="true" aria-label="Loading awards">
       {/* Hero skeleton */}
       <div className="border-b-4 border-[#f0a500]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center">

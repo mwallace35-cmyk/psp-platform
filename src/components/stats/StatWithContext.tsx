@@ -101,7 +101,7 @@ export default function StatWithContext({
 }: StatWithContextProps) {
   if (value === null) {
     return (
-      <div className={`text-gray-400 text-sm ${className}`}>
+      <div className={`text-gray-300 text-sm ${className}`}>
         <span className="line-through">{label}</span>
         <span className="ml-2">—</span>
       </div>

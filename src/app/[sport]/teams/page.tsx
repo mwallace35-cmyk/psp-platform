@@ -117,7 +117,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
               >
                 {meta.name} Teams
               </h1>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-gray-300 mt-1">
                 {sortedLeagues.reduce((sum, [, t]) => sum + t.length, 0)} teams across {sortedLeagues.length} leagues
                 {closedTeams.length > 0 && ` � ${closedTeams.length} closed programs`}
                 {discontinuedSchools.length > 0 && ` � ${discontinuedSchools.length} discontinued`}
@@ -168,7 +168,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                             >
                               {school.name}
                             </h3>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-gray-400 mt-1">
                               {school.city}, {school.state}
                             </p>
                           </div>
@@ -187,27 +187,27 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
 
                         <div className="grid grid-cols-3 gap-2 text-xs">
                           <div className="bg-gray-50 rounded p-2">
-                            <div className="text-gray-500">All-Time</div>
+                            <div className="text-gray-400">All-Time</div>
                             <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-navy)" }}>
                               {team.totalWins}-{team.totalLosses}
                               {team.totalTies > 0 ? `-${team.totalTies}` : ""}
                             </div>
                           </div>
                           <div className="bg-gray-50 rounded p-2">
-                            <div className="text-gray-500">Win %</div>
+                            <div className="text-gray-400">Win %</div>
                             <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-navy)" }}>
                               {winPct}%
                             </div>
                           </div>
                           <div className="bg-gray-50 rounded p-2">
-                            <div className="text-gray-500">Titles</div>
+                            <div className="text-gray-400">Titles</div>
                             <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gold)" }}>
                               {team.championships > 0 ? `🏆 ${team.championships}` : "—"}
                             </div>
                           </div>
                         </div>
 
-                        <div className="text-xs text-gray-400 mt-2">
+                        <div className="text-xs text-gray-300 mt-2">
                           {team.seasonCount} seasons on record
                         </div>
                       </Link>
@@ -232,7 +232,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                     ({sortedClosedTeams.length})
                   </span>
                 </h2>
-                <p className="text-xs text-gray-400 mb-4">
+                <p className="text-xs text-gray-300 mb-4">
                   Schools no longer competing. Records preserved for historical reference.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -261,7 +261,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                             >
                               {school.name}
                             </h3>
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-gray-300 mt-1">
                               {school.city}, {school.state}
                               {team.closedYear && (
                                 <span className="ml-2 text-red-400 font-semibold">
@@ -288,27 +288,27 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
 
                         <div className="grid grid-cols-3 gap-2 text-xs">
                           <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
-                            <div className="text-gray-400">All-Time</div>
+                            <div className="text-gray-300">All-Time</div>
                             <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gray-500, #6b7280)" }}>
                               {team.totalWins}-{team.totalLosses}
                               {team.totalTies > 0 ? `-${team.totalTies}` : ""}
                             </div>
                           </div>
                           <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
-                            <div className="text-gray-400">Win %</div>
+                            <div className="text-gray-300">Win %</div>
                             <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gray-500, #6b7280)" }}>
                               {winPct}%
                             </div>
                           </div>
                           <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
-                            <div className="text-gray-400">Titles</div>
+                            <div className="text-gray-300">Titles</div>
                             <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gold)" }}>
                               {team.championships > 0 ? `🏆 ${team.championships}` : "—"}
                             </div>
                           </div>
                         </div>
 
-                        <div className="text-xs text-gray-400 mt-2">
+                        <div className="text-xs text-gray-300 mt-2">
                           {team.seasonCount} seasons on record
                         </div>
                       </Link>
@@ -333,7 +333,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                     ({discontinuedSchools.length})
                   </span>
                 </h2>
-                <p className="text-xs text-gray-400 mb-4">
+                <p className="text-xs text-gray-300 mb-4">
                   Schools that still exist but no longer field a {meta.name.toLowerCase()} team. Historical records preserved.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -356,7 +356,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                           >
                             {school.name}
                           </h3>
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-gray-300 mt-1">
                             {school.city}, {school.state}
                             <span className="ml-2 text-amber-500 font-semibold">
                               Program Discontinued
@@ -379,7 +379,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                         </div>
                       )}
 
-                      <div className="text-xs text-gray-400 mt-1">
+                      <div className="text-xs text-gray-300 mt-1">
                         View historical records →
                       </div>
                     </Link>
@@ -391,10 +391,10 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
             {teams.length === 0 && (
               <div className="text-center py-16">
                 <div className="text-4xl mb-4">{meta.emoji}</div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: "var(--psp-navy)" }}>
+                <h2 className="text-lg font-bold mb-2" style={{ color: "var(--psp-navy)" }}>
                   No teams found
-                </h3>
-                <p className="text-sm text-gray-500">
+                </h2>
+                <p className="text-sm text-gray-400">
                   Team data for {meta.name.toLowerCase()} is being compiled.
                 </p>
               </div>
@@ -405,9 +405,9 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
           <div className="space-y-6">
             {/* League Breakdown */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 League Breakdown
-              </h3>
+              </h2>
               <div className="space-y-2">
                 {sortedLeagues.map(([league, leagueTeams]) => (
                   <div
@@ -428,9 +428,9 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
 
             {/* Quick Links */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 Quick Links
-              </h3>
+              </h2>
               <div className="space-y-2">
                 <Link href={`/${sport}/leaderboards/${sport === "football" ? "rushing" : "scoring"}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
                   📊 Leaderboards

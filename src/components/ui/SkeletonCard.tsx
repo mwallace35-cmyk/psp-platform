@@ -6,6 +6,9 @@ export default function SkeletonCard({ className = "" }: { className?: string })
   return (
     <div
       className={`animate-pulse rounded-xl bg-[var(--psp-navy-mid)] border border-gray-700/50 p-6 ${className}`}
+      role="status"
+      aria-busy="true"
+      aria-label="Loading card"
     >
       {/* Title line */}
       <div className="h-4 w-3/5 rounded bg-white/5 mb-4" />

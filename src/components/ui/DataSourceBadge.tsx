@@ -22,7 +22,7 @@ const sourceIcons: Record<string, string> = {
 const confidenceConfig: Record<string, { icon: string; label: string; color: string }> = {
   verified: { icon: '✓', label: 'Verified', color: 'text-green-600' },
   estimated: { icon: '~', label: 'Estimated', color: 'text-amber-600' },
-  partial: { icon: '?', label: 'Partial', color: 'text-gray-500' },
+  partial: { icon: '?', label: 'Partial', color: 'text-gray-400' },
 };
 
 export default function DataSourceBadge({

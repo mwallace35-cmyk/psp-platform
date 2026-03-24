@@ -92,7 +92,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                 {meta.name} Leaderboards
               </h1>
             </div>
-            <p className="text-gray-400 mt-2">
+            <p className="text-gray-300 mt-2">
               Current season statistical leaders for Philadelphia high school {meta.name.toLowerCase()}.
             </p>
           </div>
@@ -144,7 +144,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                             className={`flex items-center px-5 py-2.5 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'} ${idx < leaders.length - 1 ? 'border-b border-gray-700/30' : ''}`}
                           >
                             {/* Rank */}
-                            <span className={`w-7 text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-gray-400'}`}>
+                            <span className={`w-7 text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-gray-300'}`}>
                               {idx + 1}
                             </span>
 
@@ -156,7 +156,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                               >
                                 {player.name}
                               </Link>
-                              <span className="text-xs text-gray-400 truncate block">{player.school}</span>
+                              <span className="text-xs text-gray-300 truncate block">{player.school}</span>
                             </div>
 
                             {/* Stat Value */}
@@ -164,13 +164,13 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                               <span className={`text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-gray-100'}`}>
                                 {typeof player.value === 'number' ? player.value.toLocaleString() : player.value}
                               </span>
-                              <span className="text-[10px] text-gray-400 ml-1">{cat.valueLabel}</span>
+                              <span className="text-[10px] text-gray-300 ml-1">{cat.valueLabel}</span>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="px-5 py-8 text-center text-gray-400 text-sm">
+                      <div className="px-5 py-8 text-center text-gray-300 text-sm">
                         Data coming soon
                       </div>
                     )}
@@ -190,7 +190,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
             </div>
 
             <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-gray-700/50 p-6">
-              <p className="text-gray-400 text-sm mb-5">
+              <p className="text-gray-300 text-sm mb-5">
                 Career statistical leaders and all-time records across Philadelphia high school {meta.name.toLowerCase()}.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
@@ -205,7 +205,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                       <span className="text-sm font-semibold text-gray-100 group-hover:text-[var(--psp-gold)] transition-colors block">
                         {cat.label}
                       </span>
-                      <span className="text-[10px] text-gray-400 uppercase tracking-wider">Career Leaders</span>
+                      <span className="text-[10px] text-gray-300 uppercase tracking-wider">Career Leaders</span>
                     </div>
                   </Link>
                 ))}
@@ -225,7 +225,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
 
           {/* Class Year Links */}
           <div className="bg-[rgba(255,255,255,0.03)] rounded-xl border border-gray-700/50 p-5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Browse by Class Year</h3>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Browse by Class Year</h2>
             <div className="flex flex-wrap gap-2">
               {[2025, 2026, 2027, 2028].map(year => (
                 <Link

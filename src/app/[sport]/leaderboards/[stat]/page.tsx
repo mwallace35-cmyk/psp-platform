@@ -347,7 +347,7 @@ export default async function LeaderboardPage({
           <h1 className="psp-h1 text-white mt-4">
             {isCareer && "Career "}{statConfig.label} Leaders
           </h1>
-          <p className="text-sm text-gray-400 mt-2">{subtitle}</p>
+          <p className="text-sm text-gray-300 mt-2">{subtitle}</p>
           <div className="mt-6">
             <ShareButtons
               url={`/${sport}/leaderboards/${stat}${isCareer ? "?mode=career" : ""}`}
@@ -478,9 +478,9 @@ export default async function LeaderboardPage({
           <div className="rounded-xl border p-8 my-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
             <div className="text-center">
               <div className="text-5xl mb-4">🔍</div>
-              <h3 className="psp-h3 text-white mb-3">
+              <h2 className="psp-h3 text-white mb-3">
                 No Results
-              </h3>
+              </h2>
               <p className="text-gray-300 mb-4">
                 No {statConfig.label.toLowerCase()} leaders found
                 {filterClass ? ` in the Class of ${filterClass}` : ""}
@@ -493,9 +493,9 @@ export default async function LeaderboardPage({
           <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
             <div className="text-center">
               <div className="text-6xl mb-4">📊</div>
-              <h3 className="psp-h3 text-white mb-3">
+              <h2 className="psp-h3 text-white mb-3">
                 Coming Soon
-              </h3>
+              </h2>
               <p className="text-lg text-gray-300 mb-6 max-w-md mx-auto">
                 We&apos;re building out {isCareer ? "career " : ""}{statConfig.label.toLowerCase()} leaderboards for {meta.name.toLowerCase()}. Check back soon!
               </p>

@@ -30,7 +30,7 @@ export default async function MilestoneTracker() {
           gap: "0.5rem",
         }}
       >
-        <span>🎯</span> Watch These Milestones
+        <span aria-hidden="true">🎯</span> Watch These Milestones
       </h3>
 
       <div style={{ display: "grid", gap: "0.75rem" }}>

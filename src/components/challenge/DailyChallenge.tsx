@@ -85,7 +85,7 @@ export default function DailyChallenge() {
     return (
       <div className="text-center py-12">
         <div className="inline-block w-12 h-12 border-4 border-[var(--psp-gold)]/30 border-t-[var(--psp-gold)] rounded-full animate-spin" />
-        <p className="text-gray-400 mt-4">Loading today's challenge...</p>
+        <p className="text-gray-300 mt-4">Loading today's challenge...</p>
       </div>
     );
   }
@@ -97,7 +97,7 @@ export default function DailyChallenge() {
         <h2 className="text-xl md:text-2xl text-gray-200 font-medium mb-2">
           {dailyQuestion.statLabel}
         </h2>
-        <p className="text-gray-400">Click to select your answer</p>
+        <p className="text-gray-300">Click to select your answer</p>
       </div>
 
       {/* Player Cards */}
@@ -127,9 +127,9 @@ export default function DailyChallenge() {
                 <p className="text-[var(--psp-gold)] text-sm font-medium">
                   {dailyQuestion.player1.school}
                 </p>
-                <p className="text-gray-400 text-xs mt-1">{dailyQuestion.player1.year}</p>
+                <p className="text-gray-300 text-xs mt-1">{dailyQuestion.player1.year}</p>
                 <div className="mt-4 pt-4 border-t border-gray-600">
-                  <p className="text-gray-400 text-xs">Stats Hidden</p>
+                  <p className="text-gray-300 text-xs">Stats Hidden</p>
                 </div>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function DailyChallenge() {
                     {dailyQuestion.player1.school}
                   </p>
                   <div className="mt-4 pt-4 border-t border-gray-600">
-                    <p className="text-gray-400 text-xs mb-2">{dailyQuestion.statLabel}</p>
+                    <p className="text-gray-300 text-xs mb-2">{dailyQuestion.statLabel}</p>
                     <p className="text-[var(--psp-gold)] font-[var(--font-bebas)] text-3xl">
                       {typeof dailyQuestion.player1Value === 'number' &&
                       dailyQuestion.player1Value % 1 !== 0
@@ -184,9 +184,9 @@ export default function DailyChallenge() {
                 <p className="text-[var(--psp-gold)] text-sm font-medium">
                   {dailyQuestion.player2.school}
                 </p>
-                <p className="text-gray-400 text-xs mt-1">{dailyQuestion.player2.year}</p>
+                <p className="text-gray-300 text-xs mt-1">{dailyQuestion.player2.year}</p>
                 <div className="mt-4 pt-4 border-t border-gray-600">
-                  <p className="text-gray-400 text-xs">Stats Hidden</p>
+                  <p className="text-gray-300 text-xs">Stats Hidden</p>
                 </div>
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function DailyChallenge() {
                     {dailyQuestion.player2.school}
                   </p>
                   <div className="mt-4 pt-4 border-t border-gray-600">
-                    <p className="text-gray-400 text-xs mb-2">{dailyQuestion.statLabel}</p>
+                    <p className="text-gray-300 text-xs mb-2">{dailyQuestion.statLabel}</p>
                     <p className="text-[var(--psp-gold)] font-[var(--font-bebas)] text-3xl">
                       {typeof dailyQuestion.player2Value === 'number' &&
                       dailyQuestion.player2Value % 1 !== 0
@@ -233,7 +233,7 @@ export default function DailyChallenge() {
           <div className="bg-black/30 rounded-lg p-6 mb-6 border border-[var(--psp-gold)]/20">
             <div className="grid grid-cols-2 gap-4">
               <div className={`text-center ${selectedAnswer === 1 && isCorrect ? 'ring-2 ring-[var(--psp-gold)] rounded p-3' : ''}`}>
-                <p className="text-gray-400 text-sm mb-2">{dailyQuestion.player1.name}</p>
+                <p className="text-gray-300 text-sm mb-2">{dailyQuestion.player1.name}</p>
                 <p className="font-[var(--font-bebas)] text-3xl text-white">
                   {typeof dailyQuestion.player1Value === 'number' &&
                   dailyQuestion.player1Value % 1 !== 0
@@ -243,7 +243,7 @@ export default function DailyChallenge() {
                 {dailyQuestion.answer === 1 && <p className="text-[var(--psp-gold)] text-xs mt-2">WINNER</p>}
               </div>
               <div className={`text-center ${selectedAnswer === 2 && isCorrect ? 'ring-2 ring-[var(--psp-gold)] rounded p-3' : ''}`}>
-                <p className="text-gray-400 text-sm mb-2">{dailyQuestion.player2.name}</p>
+                <p className="text-gray-300 text-sm mb-2">{dailyQuestion.player2.name}</p>
                 <p className="font-[var(--font-bebas)] text-3xl text-white">
                   {typeof dailyQuestion.player2Value === 'number' &&
                   dailyQuestion.player2Value % 1 !== 0
@@ -264,7 +264,7 @@ export default function DailyChallenge() {
             >
               📤 Share Result
             </Button>
-            <p className="text-gray-400 text-center sm:text-left sm:py-2">
+            <p className="text-gray-300 text-center sm:text-left sm:py-2">
               Come back tomorrow for a new challenge!
             </p>
           </div>

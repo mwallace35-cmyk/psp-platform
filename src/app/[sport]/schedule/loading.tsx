@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-gray-50 animate-pulse">
+    <div className="min-h-screen bg-gray-50 animate-pulse" role="status" aria-busy="true" aria-label="Loading schedule">
       <div className="bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="h-3 w-40 bg-white/10 rounded mb-4" />

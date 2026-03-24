@@ -43,7 +43,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function Sear
         aria-activedescendant={getActivedescendantId()}
         className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:bg-white/15 focus:border-[var(--psp-gold)] focus:outline-none transition-colors"
       />
-      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true">
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" aria-hidden="true">
         🔍
       </span>
     </div>

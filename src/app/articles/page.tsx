@@ -114,7 +114,7 @@ export default async function ArticlesPage({
         </div>
 
         {count !== null && (
-          <p className="text-sm text-gray-500 mt-4">
+          <p className="text-sm text-gray-400 mt-4">
             {count} article{count !== 1 ? 's' : ''} found
             {selectedSport !== 'all' && ` in ${SPORT_META[selectedSport as keyof typeof SPORT_META]?.name || selectedSport}`}
           </p>
@@ -128,7 +128,7 @@ export default async function ArticlesPage({
         {!articles || articles.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-4xl mb-4">📰</div>
-            <p className="text-gray-500 text-lg mb-2">No articles found.</p>
+            <p className="text-gray-400 text-lg mb-2">No articles found.</p>
             {selectedSport !== 'all' && (
               <Link href="/articles" className="text-gold hover:text-gold/80 text-sm font-medium">
                 View all articles &rarr;

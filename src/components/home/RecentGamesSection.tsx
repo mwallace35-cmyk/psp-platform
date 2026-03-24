@@ -225,7 +225,7 @@ export default function RecentGamesSection({ games }: RecentGamesSectionProps) {
             </div>
           </>
         ) : (
-          <div className="text-center py-8 sm:py-12 text-white/70">
+          <div className="text-center py-8 sm:py-12 text-white/80">
             <p>No games found for the selected sport.</p>
           </div>
         )}

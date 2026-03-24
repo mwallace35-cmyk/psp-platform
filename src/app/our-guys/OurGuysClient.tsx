@@ -73,7 +73,7 @@ const SPORT_LABELS: Record<string, string> = {
 const SPORT_COLORS: Record<string, string> = {
   football: '#16a34a',
   basketball: '#3b82f6',
-  baseball: '#ea580c',
+  baseball: '#dc2626',
   soccer: '#059669',
   lacrosse: '#0891b2',
   'track-field': '#7c3aed',
@@ -117,28 +117,28 @@ function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
               <span className="text-xs font-bold uppercase tracking-widest text-gold">Featured</span>
               {league && (
                 <span className={`px-2 py-0.5 rounded text-xs font-bold text-white ${league.bg}`}>
-                  {league.icon} {a.pro_league}
+                  <span aria-hidden="true">{league.icon}</span> {a.pro_league}
                 </span>
               )}
             </div>
             <h2 className="psp-h2 text-white">{a.person_name}</h2>
             <div className="flex items-center gap-3 mt-2">
               {a.current_org && <span className="text-gray-300 text-sm font-medium">{a.current_org}</span>}
-              {a.current_role && a.current_role !== 'postgres' && <span className="text-gray-400 text-sm">{a.current_role}</span>}
+              {a.current_role && a.current_role !== 'postgres' && <span className="text-gray-300 text-sm">{a.current_role}</span>}
             </div>
             {a.schools && (
               <Link href={`/schools/${a.schools.slug}`} className="text-xs text-blue-400 hover:text-blue-300 mt-2 inline-block">
                 HS: {a.schools.name}
               </Link>
             )}
-            {a.draft_info && <p className="text-xs text-gray-500 mt-1">{a.draft_info}</p>}
-            {a.bio_note && <p className="text-sm text-gray-400 mt-3 line-clamp-2 max-w-xl">{a.bio_note}</p>}
+            {a.draft_info && <p className="text-xs text-gray-400 mt-1">{a.draft_info}</p>}
+            {a.bio_note && <p className="text-sm text-gray-300 mt-3 line-clamp-2 max-w-xl">{a.bio_note}</p>}
           </div>
           <div className="hidden md:flex flex-col items-center gap-1 ml-6">
             <div className="w-20 h-20 rounded-full bg-navy-mid border-2 border-gold flex items-center justify-center text-3xl">
               {SPORT_EMOJIS[a.sport_id || ''] || '🏅'}
             </div>
-            {a.status === 'retired' && <span className="text-[10px] text-gray-500 uppercase tracking-wider">Legend</span>}
+            {a.status === 'retired' && <span className="text-[10px] text-gray-400 uppercase tracking-wider">Legend</span>}
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ function AlphabetBar({ letters, activeLetter, onSelect }: { letters: Set<string>
     <div className="flex flex-wrap gap-px mb-3">
       <button
         onClick={() => onSelect(null)}
-        className={`w-6 h-6 text-[10px] font-semibold rounded transition ${!activeLetter ? 'bg-gold text-navy' : 'text-gray-400 hover:text-gray-600'}`}
+        className={`w-6 h-6 text-[10px] font-semibold rounded transition ${!activeLetter ? 'bg-gold text-navy' : 'text-gray-300 hover:text-gray-400'}`}
       >
         All
       </button>
@@ -176,7 +176,7 @@ function AlphabetBar({ letters, activeLetter, onSelect }: { letters: Set<string>
           disabled={!letters.has(l)}
           className={`w-6 h-6 text-[10px] font-medium rounded transition ${
             l === activeLetter ? 'bg-navy text-white' :
-            letters.has(l) ? 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' :
+            letters.has(l) ? 'text-gray-400 hover:text-gray-700 hover:bg-gray-100' :
             'text-gray-200 cursor-not-allowed'
           }`}
         >
@@ -239,7 +239,7 @@ function CoachingCard({ a }: { a: AlumniRecord }) {
       </div>
 
       {/* Bio note */}
-      {a.bio_note && <p className="text-xs text-gray-500 mt-3 leading-relaxed">{a.bio_note}</p>}
+      {a.bio_note && <p className="text-xs text-gray-400 mt-3 leading-relaxed">{a.bio_note}</p>}
 
       {/* HS link */}
       {a.schools && (
@@ -252,7 +252,7 @@ function CoachingCard({ a }: { a: AlumniRecord }) {
 
       {/* College */}
       {a.college && (
-        <p className="text-xs text-gray-400 mt-1">🎓 {a.college}</p>
+        <p className="text-xs text-gray-300 mt-1">🎓 {a.college}</p>
       )}
 
       {/* Action buttons */}
@@ -320,25 +320,25 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
             {a.person_name}
           </h3>
           {isInactive && activeTab !== 'former-pros' && (
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-500 shrink-0">
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-400 shrink-0">
               {a.status === 'retired' ? 'Retired' : a.status === 'deceased' ? 'Deceased' : 'Inactive'}
             </span>
           )}
         </div>
         {league && (
           <span className={`px-2 py-0.5 rounded text-xs font-bold text-white shrink-0 ${league.bg} ${activeTab === 'former-pros' ? 'opacity-70' : ''}`}>
-            {league.icon} {a.pro_league}
+            <span aria-hidden="true">{league.icon}</span> {a.pro_league}
           </span>
         )}
       </div>
 
       {a.current_org && (
-        <p className={`text-sm font-medium ${activeTab === 'former-pros' ? 'text-gray-600' : 'text-gray-700'}`}>
+        <p className={`text-sm font-medium ${activeTab === 'former-pros' ? 'text-gray-400' : 'text-gray-700'}`}>
           {a.current_org}
         </p>
       )}
       {a.current_role && a.current_role !== 'postgres' && (
-        <p className="text-xs text-gray-500">{a.current_role}</p>
+        <p className="text-xs text-gray-400">{a.current_role}</p>
       )}
 
       <div className="flex items-center gap-3 mt-2">
@@ -348,11 +348,11 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
           </Link>
         )}
         {a.college && activeTab !== 'college' && (
-          <span className="text-xs text-gray-400">{a.college}</span>
+          <span className="text-xs text-gray-300">{a.college}</span>
         )}
       </div>
 
-      {a.bio_note && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{a.bio_note}</p>}
+      {a.bio_note && <p className="text-xs text-gray-300 mt-2 line-clamp-2">{a.bio_note}</p>}
 
       {/* Footer: socials + player profile link */}
       <div className="flex items-center justify-between mt-3">
@@ -530,12 +530,12 @@ export default function OurGuysClient({ alumni, counts }: Props) {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-3 pl-10 rounded-xl border border-gray-200 text-sm bg-white shadow-sm focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold"
         />
-        <svg className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="absolute left-3 top-3.5 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <span className="absolute right-3 top-3 text-xs text-gray-300 hidden sm:inline">Cmd+K</span>
         {searchTerm && (
-          <button onClick={() => setSearchTerm('')} className="absolute right-16 top-3 text-gray-400 hover:text-gray-600 text-sm">
+          <button onClick={() => setSearchTerm('')} className="absolute right-16 top-3 text-gray-300 hover:text-gray-400 text-sm">
             Clear
           </button>
         )}
@@ -550,7 +550,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
             className={`flex-1 py-3 text-center text-sm font-bold font-bebas tracking-wider transition-colors ${
               activeTab === tab.key
                 ? 'text-navy border-b-3 border-gold'
-                : 'text-gray-400 hover:text-gray-600'
+                : 'text-gray-300 hover:text-gray-400'
             }`}
             style={activeTab === tab.key ? { borderBottomWidth: 3 } : {}}
           >
@@ -569,7 +569,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
             <button
               onClick={() => setSportFilter('all')}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                sportFilter === 'all' ? 'bg-navy text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                sportFilter === 'all' ? 'bg-navy text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
               }`}
             >
               All Sports
@@ -579,7 +579,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
                 key={sport}
                 onClick={() => setSportFilter(sport === sportFilter ? 'all' : sport)}
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                  sportFilter === sport ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  sportFilter === sport ? 'text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                 }`}
                 style={sportFilter === sport ? { backgroundColor: SPORT_COLORS[sport] } : {}}
               >
@@ -596,10 +596,10 @@ export default function OurGuysClient({ alumni, counts }: Props) {
                     key={league}
                     onClick={() => setLeagueFilter(league === leagueFilter ? null : league)}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                      leagueFilter === league ? 'bg-navy text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      leagueFilter === league ? 'bg-navy text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                     }`}
                   >
-                    {LEAGUE_BADGES[league]?.icon || '🏅'} {league} ({count})
+                    <span aria-hidden="true">{LEAGUE_BADGES[league]?.icon || '🏅'}</span> {league} ({count})
                   </button>
                 ))}
               </>
@@ -637,7 +637,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
           <AlphabetBar letters={availableLetters} activeLetter={activeLetter} onSelect={setActiveLetter} />
 
           {/* Results count */}
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-gray-300 mb-4">
             Showing {filtered.length} of {currentList.length}
           </p>
 
@@ -645,8 +645,8 @@ export default function OurGuysClient({ alumni, counts }: Props) {
           {filtered.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-4xl mb-4">🔍</p>
-              <p className="text-gray-600 font-medium">No athletes found</p>
-              <p className="text-gray-400 text-sm mt-1">Try adjusting your filters or search</p>
+              <p className="text-gray-400 font-medium">No athletes found</p>
+              <p className="text-gray-300 text-sm mt-1">Try adjusting your filters or search</p>
               <button onClick={resetFilters} className="mt-4 text-sm text-blue-600 hover:text-blue-800 font-medium">
                 Reset all filters
               </button>
@@ -682,7 +682,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
           {/* Top Colleges */}
           {availableColleges.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-400 mb-3">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-300 mb-3">
                 {activeTab === 'college' ? 'Filter by College' : 'Top Colleges'}
               </h3>
               <div className="space-y-1.5">
@@ -695,7 +695,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
                     }`}
                   >
                     <span className="truncate">{col}</span>
-                    <span className="text-xs font-bold text-gray-400 shrink-0 ml-2">{count}</span>
+                    <span className="text-xs font-bold text-gray-300 shrink-0 ml-2">{count}</span>
                   </button>
                 ))}
               </div>
@@ -705,7 +705,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
           {/* Top High Schools */}
           {availableSchools.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-400 mb-3">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-300 mb-3">
                 Filter by High School
               </h3>
               <div className="space-y-1.5">
@@ -718,7 +718,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
                     }`}
                   >
                     <span className="truncate">{school}</span>
-                    <span className="text-xs font-bold text-gray-400 shrink-0 ml-2">{data.count}</span>
+                    <span className="text-xs font-bold text-gray-300 shrink-0 ml-2">{data.count}</span>
                   </button>
                 ))}
               </div>
@@ -727,7 +727,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
 
           {/* Quick Links */}
           <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-gray-400 mb-3">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-gray-300 mb-3">
               Explore
             </h3>
             <div className="space-y-2">

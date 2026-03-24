@@ -7,6 +7,9 @@ export default function SkeletonHero({ className = "" }: { className?: string })
     <div
       className={`animate-pulse w-full bg-[var(--psp-navy-mid)] ${className}`}
       style={{ height: 200 }}
+      role="status"
+      aria-busy="true"
+      aria-label="Loading hero section"
     >
       <div className="max-w-7xl mx-auto px-4 flex flex-col justify-center h-full gap-4">
         {/* Title placeholder */}

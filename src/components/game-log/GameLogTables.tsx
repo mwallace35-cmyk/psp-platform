@@ -62,30 +62,31 @@ export function FootballGameTable({
   return (
     <div className="overflow-x-auto">
       <table className="data-table w-full text-sm" aria-label="Football game log">
+        <caption className="sr-only">Football game log</caption>
         <thead>
           <tr className="border-b border-gray-300">
-            <th className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Date
             </th>
-            <th className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Opponent
             </th>
-            <th className="text-center px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-center px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Score
             </th>
-            <th className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Rush Yds
             </th>
-            <th className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Pass Yds
             </th>
-            <th className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Rec Yds
             </th>
-            <th className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               PTS
             </th>
-            <th className="text-center px-3 py-2" />
+            <th scope="col" className="text-center px-3 py-2" />
           </tr>
         </thead>
         <tbody>
@@ -105,7 +106,7 @@ export function FootballGameTable({
                 key={game.gameId}
                 className={`border-b border-gray-200 hover:bg-gray-50 ${!game.hasBoxScore ? 'opacity-60' : ''}`}
               >
-                <td className="px-3 py-3 text-xs text-gray-500">{formatDate(game.gameDate)}</td>
+                <td className="px-3 py-3 text-xs text-gray-400">{formatDate(game.gameDate)}</td>
                 <td className="px-3 py-3 text-xs">
                   {opponent ? (
                     <Link
@@ -134,7 +135,7 @@ export function FootballGameTable({
                     <td className="text-right px-3 py-3 font-bold">{game.points ?? '—'}</td>
                   </>
                 ) : (
-                  <td colSpan={4} className="text-center text-xs text-gray-400 italic px-3 py-3">no individual stats</td>
+                  <td colSpan={4} className="text-center text-xs text-gray-300 italic px-3 py-3">no individual stats</td>
                 )}
                 <td className="text-center px-3 py-3">
                   {game.hasBoxScore ? (
@@ -176,21 +177,22 @@ export function BasketballGameTable({
   return (
     <div className="overflow-x-auto">
       <table className="data-table w-full text-sm" aria-label="Basketball game log">
+        <caption className="sr-only">Basketball game log</caption>
         <thead>
           <tr className="border-b border-gray-300">
-            <th className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Date
             </th>
-            <th className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-left px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Opponent
             </th>
-            <th className="text-center px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-center px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Score
             </th>
-            <th className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               PTS
             </th>
-            <th className="text-center px-3 py-2" />
+            <th scope="col" className="text-center px-3 py-2" />
           </tr>
         </thead>
         <tbody>
@@ -208,7 +210,7 @@ export function BasketballGameTable({
                 key={game.gameId}
                 className={`border-b border-gray-200 hover:bg-gray-50 ${!game.hasBoxScore ? 'opacity-60' : ''}`}
               >
-                <td className="px-3 py-3 text-xs text-gray-500">{formatDate(game.gameDate)}</td>
+                <td className="px-3 py-3 text-xs text-gray-400">{formatDate(game.gameDate)}</td>
                 <td className="px-3 py-3 text-xs">
                   {opponent ? (
                     <Link
@@ -230,7 +232,7 @@ export function BasketballGameTable({
                   ) : scoreStr}
                 </td>
                 <td className="text-right px-3 py-3 font-bold">
-                  {game.hasBoxScore ? (game.bbPoints ?? '—') : <span className="text-gray-400 font-normal italic text-xs">—</span>}
+                  {game.hasBoxScore ? (game.bbPoints ?? '—') : <span className="text-gray-300 font-normal italic text-xs">—</span>}
                 </td>
                 <td className="text-center px-3 py-3">
                   {game.hasBoxScore ? (

@@ -1,6 +1,6 @@
 export default function TeamSeasonSkeleton() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" role="status" aria-busy="true" aria-label="Loading team season">
       {/* Header */}
       <div
         className="py-12 md:py-16"
@@ -12,7 +12,7 @@ export default function TeamSeasonSkeleton() {
             {[...Array(4)].map((_, i) => (
               <div key={i} className="flex items-center gap-2">
                 <div className="h-4 w-20 bg-gray-400 rounded animate-pulse"></div>
-                {i < 3 && <span className="text-gray-400">/</span>}
+                {i < 3 && <span className="text-gray-300">/</span>}
               </div>
             ))}
           </div>

@@ -95,10 +95,10 @@ export default async function DynastiesPage({
         {decadeData.length === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-xl">
             <div className="text-4xl mb-4">🏆</div>
-            <p className="text-gray-500">
+            <p className="text-gray-400">
               No championship data found for {meta.name} yet.
             </p>
-            <p className="text-sm text-gray-400 mt-2">
+            <p className="text-sm text-gray-300 mt-2">
               Championship records will be populated as historical data is added.
             </p>
           </div>
@@ -130,7 +130,7 @@ export default async function DynastiesPage({
                           >
                             {leader.school_name}
                           </a>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-gray-400">
                             {leader.total_championships} titles
                           </p>
                         </div>
@@ -140,8 +140,8 @@ export default async function DynastiesPage({
                 </div>
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                  <h3 className="psp-h4 text-[var(--psp-navy)] mb-3">About</h3>
-                  <p className="text-sm text-gray-600">
+                  <h2 className="psp-h4 text-[var(--psp-navy)] mb-3">About</h2>
+                  <p className="text-sm text-gray-400">
                     This visualization shows championship dominance organized by decade. Explore
                     how different programs have dominated across different eras of {meta.name.toLowerCase()}.
                   </p>

@@ -1,6 +1,6 @@
 export default function CoachProfileSkeleton() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" role="status" aria-busy="true" aria-label="Loading coach profile">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#0a1628] to-[#0f2040] text-white py-12 px-4">
         <div className="max-w-7xl mx-auto">

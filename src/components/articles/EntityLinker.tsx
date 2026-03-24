@@ -145,7 +145,7 @@ export default function EntityLinker({ articleId }: EntityLinkerProps) {
               <span className="font-medium">{e.entity_name}</span>
               <button
                 onClick={() => handleUnlink(e.entity_type, e.entity_id)}
-                className="ml-1 text-gray-400 hover:text-red-500 transition"
+                className="ml-1 text-gray-300 hover:text-red-500 transition"
                 aria-label={`Remove ${e.entity_name} from article`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
@@ -198,7 +198,7 @@ export default function EntityLinker({ articleId }: EntityLinkerProps) {
             </div>
           )}
           {searching && (
-            <div className="absolute right-3 top-2.5 text-xs text-gray-400">Searching...</div>
+            <div className="absolute right-3 top-2.5 text-xs text-gray-300">Searching...</div>
           )}
         </div>
       </div>

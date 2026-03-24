@@ -105,7 +105,7 @@ export default async function FootballEfficiencyPage() {
 
   const TableHeader = ({ cols }: { cols: string[] }) => (
     <thead><tr className="border-b border-[#1a2f4d]">
-      {cols.map((c, i) => <th key={i} className={`px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase ${i > 2 ? 'text-right' : ''}`}>{c}</th>)}
+      {cols.map((c, i) => <th key={i} className={`px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase ${i > 2 ? 'text-right' : ''}`}>{c}</th>)}
     </tr></thead>
   );
 
@@ -133,14 +133,14 @@ export default async function FootballEfficiencyPage() {
                 <TableHeader cols={['#', 'Player', 'School', 'Att', 'Yds', 'YPC']} />
                 <tbody className="divide-y divide-[#1a2f4d]">
                   {ypc.length === 0 ? (
-                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">No data available</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">No data available</td></tr>
                   ) : ypc.map((p, i) => (
                     <tr key={p.slug + i} className="hover:bg-[#1a2f4d]/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-bold text-gray-400">{i + 1}</td>
+                      <td className="px-4 py-3 text-sm font-bold text-gray-300">{i + 1}</td>
                       <td className="px-4 py-3 text-sm"><Link href={"/football/players/" + p.slug} className="text-white font-semibold hover:text-[#f0a500]">{p.name}</Link></td>
-                      <td className="px-4 py-3 text-sm text-gray-400">{p.school}</td>
-                      <td className="px-4 py-3 text-sm text-right text-gray-400">{p.rushAtt}</td>
-                      <td className="px-4 py-3 text-sm text-right text-gray-400">{p.rushYards}</td>
+                      <td className="px-4 py-3 text-sm text-gray-300">{p.school}</td>
+                      <td className="px-4 py-3 text-sm text-right text-gray-300">{p.rushAtt}</td>
+                      <td className="px-4 py-3 text-sm text-right text-gray-300">{p.rushYards}</td>
                       <td className="px-4 py-3 text-sm text-right font-bold text-[#f0a500]">{p.ypc}</td>
                     </tr>
                   ))}
@@ -162,13 +162,13 @@ export default async function FootballEfficiencyPage() {
                 <TableHeader cols={['#', 'Player', 'School', 'Att', 'Comp%', 'TD:INT']} />
                 <tbody className="divide-y divide-[#1a2f4d]">
                   {comp.length === 0 ? (
-                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">No data available</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">No data available</td></tr>
                   ) : comp.map((p, i) => (
                     <tr key={p.slug + i} className="hover:bg-[#1a2f4d]/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-bold text-gray-400">{i + 1}</td>
+                      <td className="px-4 py-3 text-sm font-bold text-gray-300">{i + 1}</td>
                       <td className="px-4 py-3 text-sm"><Link href={"/football/players/" + p.slug} className="text-white font-semibold hover:text-[#f0a500]">{p.name}</Link></td>
-                      <td className="px-4 py-3 text-sm text-gray-400">{p.school}</td>
-                      <td className="px-4 py-3 text-sm text-right text-gray-400">{p.passAtt}</td>
+                      <td className="px-4 py-3 text-sm text-gray-300">{p.school}</td>
+                      <td className="px-4 py-3 text-sm text-right text-gray-300">{p.passAtt}</td>
                       <td className="px-4 py-3 text-sm text-right font-bold text-[#22c55e]">{p.compPct}%</td>
                       <td className="px-4 py-3 text-sm text-right font-bold text-[#22c55e]">{p.tdInt}</td>
                     </tr>
@@ -191,14 +191,14 @@ export default async function FootballEfficiencyPage() {
                 <TableHeader cols={['#', 'Player', 'School', 'Tgts', 'Yds', 'YPT']} />
                 <tbody className="divide-y divide-[#1a2f4d]">
                   {ypt.length === 0 ? (
-                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">No data available</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">No data available</td></tr>
                   ) : ypt.map((p, i) => (
                     <tr key={p.slug + i} className="hover:bg-[#1a2f4d]/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-bold text-gray-400">{i + 1}</td>
+                      <td className="px-4 py-3 text-sm font-bold text-gray-300">{i + 1}</td>
                       <td className="px-4 py-3 text-sm"><Link href={"/football/players/" + p.slug} className="text-white font-semibold hover:text-[#f0a500]">{p.name}</Link></td>
-                      <td className="px-4 py-3 text-sm text-gray-400">{p.school}</td>
-                      <td className="px-4 py-3 text-sm text-right text-gray-400">{p.recTargets}</td>
-                      <td className="px-4 py-3 text-sm text-right text-gray-400">{p.recYards}</td>
+                      <td className="px-4 py-3 text-sm text-gray-300">{p.school}</td>
+                      <td className="px-4 py-3 text-sm text-right text-gray-300">{p.recTargets}</td>
+                      <td className="px-4 py-3 text-sm text-right text-gray-300">{p.recYards}</td>
                       <td className="px-4 py-3 text-sm text-right font-bold text-[#a855f7]">{p.ypt}</td>
                     </tr>
                   ))}

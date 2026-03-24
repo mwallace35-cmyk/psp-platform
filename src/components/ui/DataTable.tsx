@@ -38,6 +38,7 @@ export default function DataTable<T extends Record<string, unknown>>({
   return (
     <div className="overflow-x-auto">
       <table className="data-table" aria-label={ariaLabel}>
+        {ariaLabel && <caption className="sr-only">{ariaLabel}</caption>}
         <thead>
           <tr>
             {columns.map((col) => (

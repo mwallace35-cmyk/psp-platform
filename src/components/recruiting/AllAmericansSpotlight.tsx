@@ -129,7 +129,7 @@ export default function AllAmericansSpotlight({ awards }: AllAmericansSpotlightP
           All-American Game Selections
         </h2>
       </div>
-      <p className="text-gray-400 text-sm mb-6">
+      <p className="text-gray-300 text-sm mb-6">
         Philadelphia athletes selected for the nation&apos;s most prestigious
         high school all-star games
       </p>
@@ -169,7 +169,7 @@ export default function AllAmericansSpotlight({ awards }: AllAmericansSpotlightP
 
       {/* Card Grid */}
       {cards.length === 0 ? (
-        <div className="text-center py-12 text-gray-500 text-sm">
+        <div className="text-center py-12 text-gray-400 text-sm">
           No All-American game selections found for this sport.
         </div>
       ) : (
@@ -228,7 +228,7 @@ export default function AllAmericansSpotlight({ awards }: AllAmericansSpotlightP
 
                 {/* School */}
                 {card.schoolName && (
-                  <div className="text-xs text-gray-400 mb-3 ml-7">
+                  <div className="text-xs text-gray-300 mb-3 ml-7">
                     {card.schoolSlug ? (
                       <Link
                         href={`/schools/${card.schoolSlug}`}

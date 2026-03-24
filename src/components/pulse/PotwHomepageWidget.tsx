@@ -83,7 +83,7 @@ function CountdownTimer({ endsAt }: { endsAt: string }) {
   if (!timeLeft) return null;
   return (
     <div className="flex items-center gap-2 text-sm">
-      <span className="text-gray-400">Voting closes in</span>
+      <span className="text-gray-300">Voting closes in</span>
       <span className="font-mono font-bold text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 px-2 py-0.5 rounded">
         {timeLeft}
       </span>
@@ -162,7 +162,7 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
             </div>
             <div>
               <h2 className="text-xl font-bebas text-white tracking-wider">Player of the Week</h2>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-300">
                 {totalVotes > 0 ? `${totalVotes.toLocaleString()} votes cast` : 'Cast your vote now'}
                 {' '}&bull;{' '}LIVE
               </p>
@@ -216,9 +216,9 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
                       <span className="text-lg">{sportMeta?.emoji || '🏅'}</span>
                       <h3 className="text-sm font-bold text-white truncate">{nominee.player_name}</h3>
                     </div>
-                    <p className="text-[11px] text-gray-400 truncate">{nominee.school_name}</p>
+                    <p className="text-xs text-gray-300 truncate">{nominee.school_name}</p>
                     {nominee.stat_line && (
-                      <p className="text-[11px] text-gray-300 mt-1.5 bg-white/5 rounded px-2 py-1 inline-block font-medium">
+                      <p className="text-xs text-gray-300 mt-1.5 bg-white/5 rounded px-2 py-1 inline-block font-medium">
                         {nominee.stat_line}
                       </p>
                     )}
@@ -227,13 +227,13 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
                     <div className="text-right">
                       <span className="text-xl font-bold text-white tabular-nums">{voteCount}</span>
-                      <span className="text-[10px] text-gray-500 block">votes</span>
+                      <span className="text-[10px] text-gray-400 block">votes</span>
                     </div>
                     <button
                       onClick={() => handleVote(nominee.id)}
                       disabled={hasVoted || isVoting}
                       aria-label={`Vote for ${nominee.player_name}`}
-                      className={`px-3 py-1.5 rounded-md text-[11px] font-bold text-white transition-all ${
+                      className={`px-3 py-1.5 rounded-md text-xs font-bold text-white transition-all ${
                         isVotedFor
                           ? 'bg-green-600 cursor-default'
                           : hasVoted
@@ -257,7 +257,7 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
                         style={{ width: `${pct}%`, backgroundColor: colors.bar }}
                       />
                     </div>
-                    <p className="text-[10px] text-gray-500 mt-0.5 text-right tabular-nums">{pct}%</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5 text-right tabular-nums">{pct}%</p>
                   </div>
                 )}
               </div>

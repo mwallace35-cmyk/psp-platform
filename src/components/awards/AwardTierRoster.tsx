@@ -101,7 +101,7 @@ const TIER_COLORS: Record<string, string> = {
 const SPORT_BADGE_COLORS: Record<string, string> = {
   football: '#16a34a',
   basketball: '#3b82f6',
-  baseball: '#ea580c',
+  baseball: '#dc2626',
 };
 
 const SELECTOR_TABS = [
@@ -201,8 +201,9 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
 
       {/* Empty state */}
       {filteredTiers.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#94a3b8' }}>
-          No awards found for this selection.
+        <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#94a3b8' }}>
+          <p style={{ fontSize: '1rem', fontWeight: 600, color: '#64748b', marginBottom: 4 }}>No awards found for this selection</p>
+          <p style={{ fontSize: '0.8rem' }}>Try selecting a different year or award category above.</p>
         </div>
       )}
 

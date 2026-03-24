@@ -24,7 +24,7 @@ import ClientDynastyTimeline from "@/components/viz/ClientDynastyTimeline";
 
 // Dynamic import for heavy client component
 const CorrectionForm = nextDynamic(() => import("@/components/corrections/CorrectionForm"), {
-  loading: () => <div className="text-center py-4 text-gray-500 text-sm">Loading form...</div>,
+  loading: () => <div className="text-center py-4 text-gray-400 text-sm">Loading form...</div>,
 });
 
 export const revalidate = 86400; // ISR: daily
@@ -183,8 +183,8 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                 {school.leagues && (
                   <span style={{ color: "var(--psp-gold)" }}>{school.leagues?.name}</span>
                 )}
-                <span className="text-gray-400">{school.city}, {school.state}</span>
-                {school.mascot && <span className="text-gray-400">Mascot: {school.mascot}</span>}
+                <span className="text-gray-300">{school.city}, {school.state}</span>
+                {school.mascot && <span className="text-gray-300">Mascot: {school.mascot}</span>}
                 {school.closed_year && (
                   <span className="text-red-400">Closed {school.closed_year}</span>
                 )}
@@ -205,19 +205,19 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               <div className="text-white font-bebas text-2xl leading-none tracking-wide">
                 {allTimeRecord.w}-{allTimeRecord.l}{allTimeRecord.t > 0 ? `-${allTimeRecord.t}` : ""}
               </div>
-              <div className="text-xs text-gray-400 mt-1">All-Time Record</div>
+              <div className="text-xs text-gray-300 mt-1">All-Time Record</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
               <div className="text-white font-bebas text-2xl leading-none tracking-wide">
                 {championships.length}
               </div>
-              <div className="text-xs text-gray-400 mt-1">Championships</div>
+              <div className="text-xs text-gray-300 mt-1">Championships</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
               <div className="text-white font-bebas text-2xl leading-none tracking-wide">
                 {teamSeasons.length}
               </div>
-              <div className="text-xs text-gray-400 mt-1">Seasons on Record</div>
+              <div className="text-xs text-gray-300 mt-1">Seasons on Record</div>
             </div>
             <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.05)" }}>
               <div className="text-white font-bebas text-2xl leading-none tracking-wide">
@@ -225,7 +225,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                   ? ((allTimeRecord.w / (allTimeRecord.w + allTimeRecord.l + allTimeRecord.t)) * 100).toFixed(1) + "%"
                   : "—"}
               </div>
-              <div className="text-xs text-gray-400 mt-1">Win Percentage</div>
+              <div className="text-xs text-gray-300 mt-1">Win Percentage</div>
             </div>
           </div>
         </div>
@@ -444,9 +444,9 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
           <div className="space-y-6">
             {/* School info card */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 School Info
-              </h3>
+              </h2>
               <dl className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <dt style={{ color: "var(--psp-gray-500)" }}>Location</dt>
@@ -485,9 +485,9 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
 
             {/* Quick links */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 Quick Links
-              </h3>
+              </h2>
               <div className="space-y-2">
                 <Link href={`/${sport}/leaderboards/rushing?school=${slug}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
                   📊 Stat Leaders at {school.name}
@@ -514,9 +514,9 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
 
             {/* Notable Players */}
             <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 Notable Players
-              </h3>
+              </h2>
               {notablePlayers.length > 0 ? (
                 <ul className="space-y-3">
                   {notablePlayers.map((player: NotablePlayer) => (
@@ -556,7 +556,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-gray-400">No notable players with next-level data yet.</p>
+                <p className="text-sm text-gray-300">No notable players with next-level data yet.</p>
               )}
             </div>
 

@@ -23,13 +23,14 @@ export function ScheduleTab({ games, sport, schoolSlug }: ScheduleTabProps) {
       {/* Desktop Table View */}
       <div className="hidden md:block bg-white rounded-lg border border-gray-200 overflow-hidden">
         <table className="w-full text-sm text-gray-200" aria-label="Team schedule">
+          <caption className="sr-only">Team schedule</caption>
           <thead className="bg-[var(--psp-navy)] text-white">
             <tr>
-              <th className="px-4 py-3 text-left font-semibold">Date</th>
-              <th className="px-4 py-3 text-left font-semibold">Opponent</th>
-              <th className="px-4 py-3 text-center font-semibold">Result</th>
-              <th className="px-4 py-3 text-right font-semibold">Score</th>
-              <th className="px-4 py-3 text-center font-semibold">Action</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Date</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Opponent</th>
+              <th scope="col" className="px-4 py-3 text-center font-semibold">Result</th>
+              <th scope="col" className="px-4 py-3 text-right font-semibold">Score</th>
+              <th scope="col" className="px-4 py-3 text-center font-semibold">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -58,7 +59,7 @@ export function ScheduleTab({ games, sport, schoolSlug }: ScheduleTabProps) {
                     <div className="text-gray-900 font-medium">
                       {isHomeGame ? `vs ${game.away_school?.name}` : `@ ${game.home_school?.name}`}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-400">
                       {isHomeGame ? "Home" : "Away"}
                     </div>
                   </td>
@@ -86,7 +87,7 @@ export function ScheduleTab({ games, sport, schoolSlug }: ScheduleTabProps) {
                         </span>
                       </div>
                     ) : (
-                      <span className="text-xs text-gray-400">Upcoming</span>
+                      <span className="text-xs text-gray-300">Upcoming</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -163,7 +164,7 @@ export function ScheduleTab({ games, sport, schoolSlug }: ScheduleTabProps) {
                   )}
                 </div>
               ) : (
-                <span className="text-xs text-gray-400">Upcoming</span>
+                <span className="text-xs text-gray-300">Upcoming</span>
               )}
             </div>
           );

@@ -67,10 +67,10 @@ export default function Footer() {
       </div>
       <div className="footer-bottom">
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "1rem 1.5rem", textAlign: "center" }}>
-          <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.875rem", opacity: 0.8 }}>
+          <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.875rem", opacity: 0.9 }}>
             Preserving Philadelphia's athletic legacy, one stat at a time.
           </p>
-          <p style={{ margin: 0, fontSize: "0.75rem", opacity: 0.7 }}>
+          <p style={{ margin: 0, fontSize: "0.75rem", opacity: 0.85 }}>
             &copy; {new Date().getFullYear()} PhillySportsPack.com &mdash; All rights reserved.
           </p>
         </div>

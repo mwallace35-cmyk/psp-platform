@@ -98,7 +98,7 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
 
             <div className="relative p-6 flex flex-col h-full">
               {/* Icon */}
-              <div className="text-4xl mb-3">{item.icon}</div>
+              <div className="text-4xl mb-3" aria-hidden="true">{item.icon}</div>
 
               {/* Label */}
               <h3

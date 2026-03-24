@@ -322,9 +322,9 @@ export default function HighlightsAdmin() {
               className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 flex items-center justify-between"
             >
               <div>
-                <h3 className="font-medium" style={{ color: "var(--psp-navy)" }}>
+                <h2 className="font-medium" style={{ color: "var(--psp-navy)" }}>
                   {highlight.title}
-                </h3>
+                </h2>
                 <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
                   {highlight.players?.name} • {highlight.sport_id}
                   {highlight.is_featured && (

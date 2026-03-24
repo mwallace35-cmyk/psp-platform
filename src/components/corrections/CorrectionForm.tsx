@@ -94,7 +94,7 @@ export default function CorrectionForm({ entityType, entityId, entityName }: Cor
         <ToastContainer toasts={toasts.map(t => ({ ...t, onClose: removeToast }))} />
         <button
           onClick={() => setIsOpen(true)}
-          className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gold transition"
+          className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-gold transition"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
@@ -117,7 +117,7 @@ export default function CorrectionForm({ entityType, entityId, entityName }: Cor
     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-3">
       <div className="flex justify-between items-center mb-3">
         <h4 className="font-semibold text-gray-900 text-sm">Report an Issue — {entityName}</h4>
-        <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600" aria-label="Close correction form">
+        <button onClick={() => setIsOpen(false)} className="text-gray-300 hover:text-gray-600" aria-label="Close correction form">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
         </button>
       </div>

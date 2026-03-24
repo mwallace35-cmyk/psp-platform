@@ -31,7 +31,7 @@ export default async function PlayerHighlightsSection({
           <span>🎬</span> Highlights
         </h2>
         <div className="bg-[var(--psp-navy)] rounded-lg border border-gray-700 p-8 text-center">
-          <p className="text-gray-400 mb-4">No highlights available yet</p>
+          <p className="text-gray-300 mb-4">No highlights available yet</p>
           {hudlProfileUrl && (
             <a
               href={hudlProfileUrl}
@@ -72,7 +72,7 @@ export default async function PlayerHighlightsSection({
       {/* Additional highlights - horizontal scrollable */}
       {additionalHighlights.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">
+          <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-4">
             More Highlights ({additionalHighlights.length})
           </h3>
           <div className="overflow-x-auto pb-2 -mx-4 px-4">

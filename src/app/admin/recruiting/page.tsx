@@ -114,9 +114,9 @@ export default function AdminRecruitingPage() {
         <div style={{
           background: "var(--card)", border: "1px solid var(--g200)", borderRadius: 8, padding: 20, marginBottom: 20,
         }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 14px" }}>
+          <h2 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 14px" }}>
             {editingId ? "Edit Recruit" : "Add Recruit"}
-          </h3>
+          </h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
             <div>
               <label style={labelStyle}>Player Name *</label>
@@ -181,7 +181,7 @@ export default function AdminRecruitingPage() {
           </div>
 
           {/* External URLs */}
-          <h4 style={{ fontSize: 12, fontWeight: 700, margin: "16px 0 8px", color: "var(--g400)" }}>External Profile URLs</h4>
+          <h3 style={{ fontSize: 12, fontWeight: 700, margin: "16px 0 8px", color: "var(--g400)" }}>External Profile URLs</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div>
               <label style={labelStyle}>247Sports URL</label>

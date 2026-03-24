@@ -128,13 +128,13 @@ export default function NewsletterSignup({ variant = 'card' }: NewsletterSignupP
       >
         Stay in the Game
       </h3>
-      <p className="text-sm text-gray-400 mb-4">
+      <p className="text-sm text-gray-300 mb-4">
         Get weekly updates on Philly high school sports delivered to your inbox.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label htmlFor="newsletter-email-card" className="text-sm text-white/70 mb-1 block">Email address <span aria-label="required" className="text-gold">*</span></label>
+          <label htmlFor="newsletter-email-card" className="text-sm text-white/80 mb-1 block">Email address <span aria-label="required" className="text-gold">*</span></label>
           <input
             ref={emailInputRef}
             id="newsletter-email-card"
@@ -170,7 +170,7 @@ export default function NewsletterSignup({ variant = 'card' }: NewsletterSignupP
                 className={`px-2.5 py-1 rounded-full text-xs font-medium transition min-h-[44px] flex items-center justify-center ${
                   selectedSports.includes(sport)
                     ? 'text-white'
-                    : 'bg-white/10 text-gray-400 hover:bg-white/20'
+                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
                 }`}
                 style={selectedSports.includes(sport) ? { background: 'var(--psp-gold)', color: 'var(--psp-navy)' } : {}}
               >

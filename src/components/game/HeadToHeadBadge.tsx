@@ -38,7 +38,7 @@ export default async function HeadToHeadBadge({
     <div className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700 px-4 py-3 inline-flex flex-col gap-1.5">
       {/* All-time record */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
           All-Time:
         </span>
         <span className="text-sm font-bold text-white">
@@ -50,7 +50,7 @@ export default async function HeadToHeadBadge({
             {aWins} {awayShort}
           </span>
           {h2h.ties > 0 && (
-            <span className="text-gray-400"> ({h2h.ties}T)</span>
+            <span className="text-gray-300"> ({h2h.ties}T)</span>
           )}
         </span>
       </div>
@@ -58,7 +58,7 @@ export default async function HeadToHeadBadge({
       {/* Streak indicator */}
       {h2h.streak && (
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] text-gray-500 uppercase tracking-wider">
+          <span className="text-[10px] text-gray-400 uppercase tracking-wider">
             Streak:
           </span>
           <span className="text-xs font-semibold text-[var(--psp-gold)]">

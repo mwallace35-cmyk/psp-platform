@@ -175,7 +175,7 @@ export default function AdvertisePage() {
               >
                 <div className="text-4xl mb-3">{segment.icon}</div>
                 <h3 className="text-white font-bold mb-2 text-lg">{segment.title}</h3>
-                <p className="text-white/70 text-sm">{segment.description}</p>
+                <p className="text-white/80 text-sm">{segment.description}</p>
               </div>
             ))}
           </div>
@@ -188,7 +188,7 @@ export default function AdvertisePage() {
           <h2 className="psp-h2 text-white mb-4 text-center">
             SPONSORSHIP TIERS
           </h2>
-          <p className="text-white/70 text-center mb-12 max-w-2xl mx-auto">
+          <p className="text-white/80 text-center mb-12 max-w-2xl mx-auto">
             Flexible pricing for local businesses, schools, and community partners. All packages include custom reporting and support.
           </p>
 
@@ -214,9 +214,9 @@ export default function AdvertisePage() {
                     </h3>
                     <div className="mb-3">
                       <span className="text-4xl font-bold text-gold">${tier.price}</span>
-                      <span className="text-white/60 text-sm">{tier.frequency}</span>
+                      <span className="text-white/80 text-sm">{tier.frequency}</span>
                     </div>
-                    <p className="text-white/70 text-xs leading-snug">{tier.description}</p>
+                    <p className="text-white/80 text-xs leading-snug">{tier.description}</p>
                   </div>
 
                   {/* Features */}
@@ -276,7 +276,7 @@ export default function AdvertisePage() {
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">🎯</div>
               <h3 className="text-white font-bold mb-2 text-lg">Targeted Audience</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Reach coaches, athletes, parents, and recruiters actively engaged with Philadelphia high school sports.
               </p>
             </div>
@@ -284,7 +284,7 @@ export default function AdvertisePage() {
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">📊</div>
               <h3 className="text-white font-bold mb-2 text-lg">Performance Tracking</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Get detailed analytics on impressions, clicks, and engagement for your sponsorship.
               </p>
             </div>
@@ -292,7 +292,7 @@ export default function AdvertisePage() {
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">🤝</div>
               <h3 className="text-white font-bold mb-2 text-lg">Community-First</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Partner with a non-profit-style platform dedicated to preserving and celebrating Philly sports history.
               </p>
             </div>
@@ -300,7 +300,7 @@ export default function AdvertisePage() {
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
               <div className="text-4xl mb-3">⭐</div>
               <h3 className="text-white font-bold mb-2 text-lg">Brand Association</h3>
-              <p className="text-white/70">
+              <p className="text-white/80">
                 Align your brand with the definitive source for Philadelphia high school sports data and stories.
               </p>
             </div>
@@ -392,7 +392,7 @@ export default function AdvertisePage() {
             </button>
           </form>
 
-          <p className="text-center text-white/60 text-sm mt-6">
+          <p className="text-center text-white/80 text-sm mt-6">
             We'll get back to you within 24 hours with more information about your sponsorship options.
           </p>
         </div>

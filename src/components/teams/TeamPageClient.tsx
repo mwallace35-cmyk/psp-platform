@@ -279,7 +279,7 @@ export default function TeamPageClient({
     `px-4 py-2 text-sm font-bold border-b-2 transition-colors ${
       activeTab === tab
         ? `border-[var(--psp-gold)] text-[var(--psp-navy)]`
-        : "border-transparent text-gray-500 hover:text-gray-700"
+        : "border-transparent text-gray-400 hover:text-gray-700"
     }`;
 
   return (
@@ -402,25 +402,25 @@ export default function TeamPageClient({
                       <div className="text-3xl font-bold" style={{ color: "var(--psp-navy)" }}>
                         {team.currentRecord.wins}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">Wins</div>
+                      <div className="text-sm text-gray-400 mt-1">Wins</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold" style={{ color: "var(--psp-navy)" }}>
                         {team.currentRecord.losses}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">Losses</div>
+                      <div className="text-sm text-gray-400 mt-1">Losses</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold" style={{ color: "var(--psp-gold)" }}>
                         {team.pointsFor}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">Points For</div>
+                      <div className="text-sm text-gray-400 mt-1">Points For</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold" style={{ color: "#ef4444" }}>
                         {team.pointsAgainst}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">Points Against</div>
+                      <div className="text-sm text-gray-400 mt-1">Points Against</div>
                     </div>
                   </div>
                 </div>
@@ -455,7 +455,7 @@ export default function TeamPageClient({
                           <p className="text-xs text-gray-600 line-clamp-2 mt-1">
                             {article.snippet}
                           </p>
-                          <p className="text-xs text-gray-400 mt-2">{article.date}</p>
+                          <p className="text-xs text-gray-300 mt-2">{article.date}</p>
                         </div>
                       </div>
                     ))}
@@ -560,7 +560,7 @@ export default function TeamPageClient({
                       <p className="text-sm text-gray-600 mt-2">
                         {article.snippet}
                       </p>
-                      <p className="text-xs text-gray-400 mt-3">{article.date}</p>
+                      <p className="text-xs text-gray-300 mt-3">{article.date}</p>
                     </div>
                   </div>
                 ))}
@@ -597,7 +597,7 @@ export default function TeamPageClient({
                         >
                           <div className="flex items-center gap-3">
                             {isChampYear && (
-                              <span className="text-base" title="Championship season">🏆</span>
+                              <span className="text-base" role="img" aria-label="Championship season">🏆</span>
                             )}
                             <span className="font-semibold text-sm" style={{ color: "var(--psp-navy)" }}>
                               {label}
@@ -607,7 +607,7 @@ export default function TeamPageClient({
                             <span className="psp-small" style={{ color: "var(--psp-navy)" }}>
                               {w}-{l}{t > 0 ? `-${t}` : ""}
                             </span>
-                            <span className="text-xs text-gray-400 w-10 text-right">{pct}%</span>
+                            <span className="text-xs text-gray-300 w-10 text-right">{pct}%</span>
                             <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">→</span>
                           </div>
                         </Link>
@@ -722,7 +722,7 @@ export default function TeamPageClient({
                 >
                   {team.currentRecord.wins}-{team.currentRecord.losses}
                 </div>
-                <div className="text-sm text-gray-500">{winPct}% Win Rate</div>
+                <div className="text-sm text-gray-400">{winPct}% Win Rate</div>
               </div>
             </div>
 

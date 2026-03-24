@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const SPORTS = [
   { name: 'Football',      slug: 'football',    emoji: '\uD83C\uDFC8', color: '#8B4513' },
   { name: 'Basketball',    slug: 'basketball',  emoji: '\uD83C\uDFC0', color: '#FF6B00' },
-  { name: 'Baseball',      slug: 'baseball',    emoji: '\u26BE',        color: '#1B4D8E' },
+  { name: 'Baseball',      slug: 'baseball',    emoji: '\u26BE',        color: '#dc2626' },
   { name: 'Soccer',        slug: 'soccer',      emoji: '\u26BD',        color: '#228B22' },
   { name: 'Lacrosse',      slug: 'lacrosse',    emoji: '\uD83E\uDD4D', color: '#6A0DAD' },
   { name: 'Track & Field', slug: 'track-field', emoji: '\uD83C\uDFC3', color: '#B8860B' },

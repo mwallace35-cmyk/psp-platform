@@ -147,7 +147,7 @@ export default function SummerLeagueSection() {
                   alignItems: "center",
                   gap: 6
                 }}>
-                  <span style={{ fontSize: 14 }}>⚾</span>
+                  <span style={{ fontSize: 14 }} aria-hidden="true">⚾</span>
                   {program.ageGroup}
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default function SummerLeagueSection() {
         alignItems: "flex-start",
         gap: 10
       }}>
-        <span style={{ fontSize: 16, marginTop: 2 }}>📅</span>
+        <span style={{ fontSize: 16, marginTop: 2 }} aria-hidden="true">📅</span>
         <div>
           <strong>Season:</strong> June – August. Programs run concurrently with regular season high school preparation and offer competitive play for development and recruitment visibility.
         </div>

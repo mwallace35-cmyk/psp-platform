@@ -72,7 +72,7 @@ export default function NewsletterCTA() {
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${
               activeTab === 'free'
                 ? 'bg-gold text-navy shadow-lg'
-                : 'bg-navy-mid text-white/70 hover:text-white'
+                : 'bg-navy-mid text-white/80 hover:text-white'
             }`}
           >
             Free Newsletter
@@ -82,7 +82,7 @@ export default function NewsletterCTA() {
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${
               activeTab === 'premium'
                 ? 'bg-gold text-navy shadow-lg'
-                : 'bg-navy-mid text-white/70 hover:text-white'
+                : 'bg-navy-mid text-white/80 hover:text-white'
             }`}
           >
             Premium Access
@@ -103,7 +103,7 @@ export default function NewsletterCTA() {
               </ul>
             </div>
 
-            <p className="text-white/60 text-sm mb-4">
+            <p className="text-white/80 text-sm mb-4">
               <strong className="text-white">Join 500+ Philly sports fans</strong> who stay updated on the action
             </p>
 

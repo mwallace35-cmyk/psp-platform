@@ -1,6 +1,6 @@
 export default function CityAllStarGameLoading() {
   return (
-    <main className="min-h-screen bg-[var(--psp-navy)] text-white">
+    <main className="min-h-screen bg-[var(--psp-navy)] text-white" role="status" aria-busy="true" aria-label="Loading all-star game">
       {/* Breadcrumbs Skeleton */}
       <div className="border-b border-[var(--psp-gold)]/20">
         <div className="container mx-auto px-4 py-4">

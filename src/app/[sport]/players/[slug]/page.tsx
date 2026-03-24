@@ -22,15 +22,15 @@ import type { Metadata } from "next";
 
 // Dynamic imports for heavy client components (below fold)
 const CorrectionForm = nextDynamic(() => import("@/components/corrections/CorrectionForm"), {
-  loading: () => <div className="text-center py-4 text-gray-500 text-sm">Loading form...</div>,
+  loading: () => <div className="text-center py-4 text-gray-400 text-sm">Loading form...</div>,
 });
 
 const CareerTrajectoryChart = nextDynamic(() => import("@/components/players/CareerTrajectoryChart"), {
-  loading: () => <div className="w-full bg-white rounded-lg border border-gray-200 p-4 h-[340px] animate-pulse" />,
+  loading: () => <div className="w-full bg-white rounded-lg border border-gray-200 p-4 h-[340px] animate-pulse" role="status" aria-busy="true" aria-label="Loading chart" />,
 });
 
 const SimilarPlayers = nextDynamic(() => import("@/components/player/SimilarPlayers"), {
-  loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" />,
+  loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" role="status" aria-busy="true" aria-label="Loading similar players" />,
 });
 
 export const revalidate = 86400; // ISR: daily
@@ -374,7 +374,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   </span>
                 )}
                 {player.graduation_year && (
-                  <span className="text-sm text-gray-400">Class of {player.graduation_year}</span>
+                  <span className="text-sm text-gray-300">Class of {player.graduation_year}</span>
                 )}
                 {player.is_multi_sport && (
                   <span className="px-2 py-0.5 text-xs font-bold rounded-md" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
@@ -598,13 +598,13 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           <div className="space-y-6">
             {/* Player info card */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <h2 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 Player Info
-              </h3>
+              </h2>
               <dl className="space-y-3 text-sm">
                 {player.primary_school_id && player.schools && (
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">School</dt>
+                    <dt className="text-gray-400">School</dt>
                     <dd>
                       <Link href={`/${sport}/schools/${player.schools?.slug}`} className="font-medium hover:underline" style={{ color: "var(--psp-navy)" }}>
                         {player.schools?.name}
@@ -614,25 +614,25 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 )}
                 {player.positions && player.positions.length > 0 && (
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">Position</dt>
+                    <dt className="text-gray-400">Position</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.positions.join(", ")}</dd>
                   </div>
                 )}
                 {player.graduation_year && (
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">Class</dt>
+                    <dt className="text-gray-400">Class</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.graduation_year}</dd>
                   </div>
                 )}
                 {player.height && (
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">Height</dt>
+                    <dt className="text-gray-400">Height</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.height}</dd>
                   </div>
                 )}
                 {footballTotals && fbVis?.rush_carries && footballTotals.rushCarries > 0 && (
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">Yards/Carry</dt>
+                    <dt className="text-gray-400">Yards/Carry</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
                       {(footballTotals.rushYards / footballTotals.rushCarries).toFixed(1)}
                     </dd>
@@ -640,7 +640,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 )}
                 {footballTotals && footballTotals.gamesPlayed > 0 && (
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">Career Games</dt>
+                    <dt className="text-gray-400">Career Games</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{footballTotals.gamesPlayed}</dd>
                   </div>
                 )}
@@ -661,25 +661,25 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Pro/college info */}
             {(player.college || player.pro_team) && (
               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+                <h2 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                   Next Level
-                </h3>
+                </h2>
                 <dl className="space-y-3 text-sm">
                   {player.college && (
                     <div className="flex justify-between">
-                      <dt className="text-gray-500">College</dt>
+                      <dt className="text-gray-400">College</dt>
                       <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.college}</dd>
                     </div>
                   )}
                   {player.pro_team && (
                     <div className="flex justify-between">
-                      <dt className="text-gray-500">Pro Team</dt>
+                      <dt className="text-gray-400">Pro Team</dt>
                       <dd className="font-medium" style={{ color: "var(--psp-gold)" }}>{player.pro_team}</dd>
                     </div>
                   )}
                   {player.pro_draft_info && (
                     <div className="flex justify-between">
-                      <dt className="text-gray-500">Draft</dt>
+                      <dt className="text-gray-400">Draft</dt>
                       <dd className="font-medium text-xs" style={{ color: "var(--psp-navy)" }}>{player.pro_draft_info}</dd>
                     </div>
                   )}
@@ -690,9 +690,9 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Cross-sport links */}
             {crossSportPlayers && crossSportPlayers.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+                <h2 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                   Also Plays
-                </h3>
+                </h2>
                 <div className="space-y-3">
                   {crossSportPlayers
                     .filter((cp: any) => cp.sports && cp.sports.length > 0 && cp.sports.includes(sport) === false)
@@ -738,16 +738,16 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             playerName={player.name}
           />
         ) : (
-          <p className="text-gray-500 text-sm">No season statistics available.</p>
+          <p className="text-gray-400 text-sm">No season statistics available.</p>
         )}
 
         {/* More from school link */}
         {player.schools && (
           <div className="mt-8 pt-6 border-t border-gray-200">
-            <h3 className="psp-h3 mb-2" style={{ color: "var(--psp-navy)" }}>
+            <h2 className="psp-h3 mb-2" style={{ color: "var(--psp-navy)" }}>
               More from {player.schools?.name}
-            </h3>
-            <p className="text-sm text-gray-500 mb-3">Explore other players from this school</p>
+            </h2>
+            <p className="text-sm text-gray-400 mb-3">Explore other players from this school</p>
             <Link href={`/${sport}/schools/${player.schools?.slug}`} className="inline-block px-5 py-2.5 rounded-lg font-medium text-sm" style={{ background: "var(--psp-navy)", color: "white" }}>
               View {player.schools?.name} roster
             </Link>

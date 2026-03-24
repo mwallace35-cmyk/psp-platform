@@ -32,8 +32,8 @@ export function ReferralLeaderboard() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h3 className="font-bold text-lg text-[#0a1628] mb-4">🔝 Top Scouts</h3>
+      <div className="bg-white rounded-lg border border-gray-200 p-4" role="status" aria-busy="true" aria-label="Loading leaderboard">
+        <h3 className="font-bold text-lg text-[#0a1628] mb-4"><span role="img" aria-label="Top">🔝</span> Top Scouts</h3>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-12 bg-gray-200 rounded animate-pulse" />
@@ -47,7 +47,7 @@ export function ReferralLeaderboard() {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <h3 className="font-bold text-lg text-[#0a1628] mb-4">🔝 Top Scouts</h3>
-        <p className="text-gray-500 text-sm">No scouts yet. Start sharing to climb the leaderboard!</p>
+        <p className="text-gray-400 text-sm">No scouts yet. Start sharing to climb the leaderboard!</p>
       </div>
     );
   }
@@ -67,12 +67,12 @@ export function ReferralLeaderboard() {
               </div>
               <div>
                 <p className="font-semibold text-[#0a1628]">{scout.username}</p>
-                <p className="text-xs text-gray-500">{scout.badges} badges</p>
+                <p className="text-xs text-gray-400">{scout.badges} badges</p>
               </div>
             </div>
             <div className="text-right">
               <p className="font-bold text-[#3b82f6]">{scout.clicks} clicks</p>
-              <p className="text-xs text-gray-500">{scout.signups} signups</p>
+              <p className="text-xs text-gray-400">{scout.signups} signups</p>
             </div>
           </div>
         ))}

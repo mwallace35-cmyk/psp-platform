@@ -28,7 +28,7 @@ export function HistoryTab({
       {championships && championships.length > 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-[var(--psp-navy)] mb-4 flex items-center gap-2">
-            <span>🏆</span> Championships ({championships.length})
+            <span aria-hidden="true">🏆</span> Championships ({championships.length})
           </h3>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -51,7 +51,7 @@ export function HistoryTab({
                     {champ.level || "Championship"}
                   </div>
                   {champ.opponent?.name && (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-400 mt-1">
                       vs {champ.opponent.name}
                     </div>
                   )}
@@ -81,21 +81,22 @@ export function HistoryTab({
         {/* Desktop Table */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm" aria-label="Season history">
+            <caption className="sr-only">Season history</caption>
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left font-semibold text-gray-900">
+                <th scope="col" className="px-6 py-3 text-left font-semibold text-gray-900">
                   Season
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-900">
+                <th scope="col" className="px-6 py-3 text-center font-semibold text-gray-900">
                   Record
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-900">
+                <th scope="col" className="px-6 py-3 text-center font-semibold text-gray-900">
                   Win %
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-900">
+                <th scope="col" className="px-6 py-3 text-center font-semibold text-gray-900">
                   PF/PA
                 </th>
-                <th className="px-6 py-3 text-center font-semibold text-gray-900">
+                <th scope="col" className="px-6 py-3 text-center font-semibold text-gray-900">
                   Coach
                 </th>
                 <th className="px-6 py-3 text-center font-semibold text-gray-900">
@@ -125,7 +126,7 @@ export function HistoryTab({
                   >
                     <td className="px-6 py-3 font-semibold text-gray-900">
                       {season.label}
-                      {hasChamp && <span className="ml-2">🏆</span>}
+                      {hasChamp && <span className="ml-2" role="img" aria-label="Champion">🏆</span>}
                     </td>
                     <td className="px-6 py-3 text-center text-gray-900">
                       {season.wins}-{season.losses}
@@ -193,7 +194,7 @@ export function HistoryTab({
                 <div className="flex justify-between items-start mb-2">
                   <div className="font-semibold text-gray-900">
                     {season.label}
-                    {hasChamp && <span className="ml-2">🏆</span>}
+                    {hasChamp && <span className="ml-2" role="img" aria-label="Champion">🏆</span>}
                   </div>
                   <div className="text-sm font-bold text-gray-900">
                     {season.wins}-{season.losses}

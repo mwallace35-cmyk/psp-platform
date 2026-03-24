@@ -74,7 +74,7 @@ export default function GotwVoteButton({ nomineeId, matchupLabel }: GotwVoteButt
           ? 'bg-gray-400 text-white cursor-wait'
           : status === 'voted'
           ? 'bg-green-600 text-white cursor-default'
-          : 'bg-gray-300 text-gray-500 cursor-default'
+          : 'bg-gray-300 text-gray-400 cursor-default'
       }`}
     >
       {status === 'idle' && 'Vote'}

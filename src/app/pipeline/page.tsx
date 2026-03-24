@@ -36,7 +36,7 @@ async function PipelineContent() {
         >
           College Pipeline
         </h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl text-gray-400 mb-8">
           Where Philly's best athletes play next — An interactive look at our college placements.
         </p>
 
@@ -63,7 +63,7 @@ async function PipelineContent() {
                 >
                   <div className="flex-1">
                     <p className="font-semibold text-gray-900">{college.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-400">
                       {Object.entries(college.sports)
                         .map(([sport, count]) => `${count} ${sport}`)
                         .join(", ")}
@@ -76,14 +76,14 @@ async function PipelineContent() {
                     >
                       {college.count}
                     </p>
-                    <p className="text-xs text-gray-500">athletes</p>
+                    <p className="text-xs text-gray-400">athletes</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {collegePipeline.length > 20 && (
-              <p className="text-sm text-gray-500 mt-4 text-center">
+              <p className="text-sm text-gray-400 mt-4 text-center">
                 ... and {collegePipeline.length - 20} more colleges
               </p>
             )}
@@ -106,7 +106,7 @@ async function PipelineContent() {
                   <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 transition cursor-pointer">
                     <div>
                       <p className="font-semibold text-gray-900">{school.name}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-400">
                         {school.city}, {school.state}
                       </p>
                     </div>

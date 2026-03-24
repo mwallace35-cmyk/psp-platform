@@ -93,7 +93,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading profile...</p>
+        <p className="text-gray-400">Loading profile...</p>
       </div>
     );
   }
@@ -107,7 +107,7 @@ export default function ProfilePage() {
           <h1 className="psp-h1" style={{ color: 'var(--psp-navy)' }}>
             Your Profile
           </h1>
-          <p className="text-sm text-gray-500">{email}</p>
+          <p className="text-sm text-gray-400">{email}</p>
         </div>
         <Link href="/" className="text-sm hover:underline" style={{ color: 'var(--psp-gold)' }}>
           Back to Home
