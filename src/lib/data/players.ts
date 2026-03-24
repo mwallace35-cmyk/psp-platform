@@ -70,7 +70,7 @@ export async function getFootballPlayerStats(playerId: number) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("football_player_seasons")
-            .select("id, player_id, school_id, season_id, rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards, points_scored, seasons(year_start, year_end, label), schools!football_player_seasons_school_id_fkey(name, slug)")
+            .select("id, player_id, school_id, season_id, games_played, rush_carries, rush_yards, rush_td, pass_comp, pass_yards, pass_td, receptions, rec_yards, rec_td, total_td, total_yards, points, interceptions, seasons(year_start, year_end, label), schools!football_player_seasons_school_id_fkey(name, slug)")
             .eq("player_id", playerId)
             .order("created_at", { ascending: true });
           // Sort by season year client-side
@@ -97,7 +97,7 @@ export async function getBasketballPlayerStats(playerId: number) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("basketball_player_seasons")
-            .select("id, player_id, school_id, season_id, games_played, points_scored, rebounds, assists, steals, blocks, seasons(year_start, year_end, label), schools(name, slug)")
+            .select("id, player_id, school_id, season_id, games_played, points, ppg, rebounds, assists, steals, blocks, seasons(year_start, year_end, label), schools(name, slug)")
             .eq("player_id", playerId)
             .order("created_at", { ascending: true });
           return sortBySeasonYear((data ?? []) as unknown as PlayerSeasonRecord[]) as unknown as BasketballPlayerSeason[];
@@ -123,7 +123,7 @@ export async function getBaseballPlayerStats(playerId: number) {
           const supabase = await createClient();
           const { data } = await supabase
             .from("baseball_player_seasons")
-            .select("id, player_id, school_id, season_id, games_played, at_bats, hits, doubles, triples, home_runs, rbi, seasons(year_start, year_end, label), schools(name, slug)")
+            .select("id, player_id, school_id, season_id, games_played, at_bats, hits, doubles, triples, home_runs, rbi, batting_avg, era, runs, stolen_bases, walks, obp, slg, seasons(year_start, year_end, label), schools(name, slug)")
             .eq("player_id", playerId)
             .order("created_at", { ascending: true });
           return sortBySeasonYear((data ?? []) as unknown as PlayerSeasonRecord[]) as unknown as BaseballPlayerSeason[];
