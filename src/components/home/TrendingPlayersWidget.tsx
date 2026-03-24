@@ -205,7 +205,7 @@ export default async function TrendingPlayersWidget() {
                 >
                   {p.statValue}
                 </span>
-                <span style={{ fontSize: '0.72rem', color: 'var(--psp-muted, #6b7280)' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--psp-muted, #6b7280)' }}>
                   {p.statLabel}
                 </span>
               </div>

@@ -128,21 +128,21 @@ export default async function LeaderboardsPage() {
                 <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                   Football
                 </h2>
-                <span style={{ marginLeft: 'auto', fontSize: '0.62rem', padding: '0.15rem 0.45rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
+                <span style={{ marginLeft: 'auto', fontSize: '0.75rem', padding: '0.15rem 0.45rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
                   LIVE
                 </span>
               </div>
               {fbRows.length > 0 ? (
                 <div style={{ marginBottom: '0.75rem' }}>
-                  <p style={{ fontSize: '0.62rem', fontWeight: 700, color: 'var(--psp-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
+                  <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--psp-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
                     Rush Yards Leaders
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     {fbRows.map((row, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
-                        <span style={{ color: '#8B4513', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.72rem' }}>{i + 1}.</span>
+                        <span style={{ color: '#8B4513', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.75rem' }}>{i + 1}.</span>
                         <span style={{ fontWeight: 600, color: 'var(--psp-navy)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
-                        <span style={{ color: 'var(--psp-muted)', fontSize: '0.7rem', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
+                        <span style={{ color: 'var(--psp-muted)', fontSize: '0.75rem', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
                         <span style={{ fontWeight: 700, color: '#8B4513', fontSize: '0.78rem', minWidth: '3.5rem', textAlign: 'right' }}>
                           {row.rush_yards != null ? Number(row.rush_yards).toLocaleString() : '—'}{' '}yds
                         </span>
@@ -179,21 +179,21 @@ export default async function LeaderboardsPage() {
                 <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                   Basketball
                 </h2>
-                <span style={{ marginLeft: 'auto', fontSize: '0.62rem', padding: '0.15rem 0.45rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
+                <span style={{ marginLeft: 'auto', fontSize: '0.75rem', padding: '0.15rem 0.45rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
                   LIVE
                 </span>
               </div>
               {bbRows.length > 0 ? (
                 <div style={{ marginBottom: '0.75rem' }}>
-                  <p style={{ fontSize: '0.62rem', fontWeight: 700, color: 'var(--psp-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
+                  <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--psp-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
                     PPG Leaders
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     {bbRows.map((row, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
-                        <span style={{ color: '#FF6B00', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.72rem' }}>{i + 1}.</span>
+                        <span style={{ color: '#FF6B00', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.75rem' }}>{i + 1}.</span>
                         <span style={{ fontWeight: 600, color: 'var(--psp-navy)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
-                        <span style={{ color: 'var(--psp-muted)', fontSize: '0.7rem', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
+                        <span style={{ color: 'var(--psp-muted)', fontSize: '0.75rem', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
                         <span style={{ fontWeight: 700, color: '#FF6B00', fontSize: '0.78rem', minWidth: '3.5rem', textAlign: 'right' }}>
                           {row.ppg ?? '—'} PPG
                         </span>

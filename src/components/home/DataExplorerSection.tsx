@@ -69,10 +69,10 @@ export default function DataExplorerSection() {
               className="group relative p-6 sm:p-8 bg-white [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-lg hover:border-[var(--psp-gold)] [data-theme=dark]:hover:border-[var(--psp-gold)]/60 transition-all"
             >
               {/* Gold accent top border on hover */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-[var(--psp-gold)] opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-[var(--psp-gold)] opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity rounded-t-lg" />
 
               {/* Icon */}
-              <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 transition-transform">
+              <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 group-focus-visible:scale-110 transition-transform">
                 {tile.icon}
               </div>
 
@@ -87,10 +87,10 @@ export default function DataExplorerSection() {
               </p>
 
               {/* Arrow indicator */}
-              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--psp-blue)] [data-theme=dark]:text-[var(--psp-gold)] opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--psp-blue)] [data-theme=dark]:text-[var(--psp-gold)] opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity">
                 <span>Explore</span>
                 <svg
-                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  className="w-4 h-4 transform group-hover:translate-x-1 group-focus-visible:translate-x-1 transition-transform"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

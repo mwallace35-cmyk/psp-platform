@@ -82,7 +82,7 @@ export default function CoachClaimPage() {
         <div>
           <label style={labelStyle}>Player Profile URLs / Names</label>
           <textarea style={{...inputStyle, height:90, resize:'vertical' as const}} value={form.playerSlugs} onChange={e => set('playerSlugs', e.target.value)} placeholder="List players you coach, e.g. John Smith (Class of 2025), Jane Doe..." />
-          <span style={{ fontSize:'0.72rem', color:muted }}>List the players you coach so we can link your claim to their profiles.</span>
+          <span style={{ fontSize:'0.75rem', color:muted }}>List the players you coach so we can link your claim to their profiles.</span>
         </div>
 
         <div>

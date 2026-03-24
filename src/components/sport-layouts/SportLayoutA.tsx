@@ -105,7 +105,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
             </div>
             <div className="stories">
               {moreStories.map((article: FeaturedArticle) => (
-                <Link key={article.id} href={`/articles/${article.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                <Link key={article.id} href={`/articles/${article.slug}`} className="rounded-md focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
                   <div className="story">
                     <div
                       className="s-img"
@@ -117,7 +117,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
                     />
                     <div className="s-body">
                       <div className="s-tag" style={{ color: sportColor }}>{meta.name}</div>
-                      <h4>{article.title}</h4>
+                      <h3>{article.title}</h3>
                       <p>{article.excerpt}</p>
                     </div>
                   </div>
@@ -141,7 +141,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               marginBottom: 20,
             }}>
               {recentGames.slice(0, 4).map((game) => (
-                <Link key={game.id} href={`/${sport}/games/${game.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                <Link key={game.id} href={`/${sport}/games/${game.id}`} className="rounded-md focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
                   <div style={{
                     background: "var(--psp-white)",
                     border: "1px solid var(--g100)",
@@ -234,7 +234,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
         {/* Quick Nav Cards */}
         <div className="sec-head">{sport === "baseball" ? <BilingualHeader english={`Explore ${meta.name}`} spanish={baseballSpanish["Explore Baseball"]} /> : <h2>Explore {meta.name}</h2>}</div>
         <div className="ldr-grid">
-          <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Leaderboards</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">📊</div>
@@ -242,7 +242,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>{meta.statCategories.join(", ")}</div>
             </div>
           </Link>
-          <Link href={`/${sport}/records`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/${sport}/records`} className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Records</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">🏅</div>
@@ -250,7 +250,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Single-season and career milestones</div>
             </div>
           </Link>
-          <Link href={`/${sport}/championships`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/${sport}/championships`} className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Championships</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }} role="img" aria-label="Trophy">🏆</div>
@@ -258,7 +258,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>League, state, and national titles</div>
             </div>
           </Link>
-          <Link href={`/${sport}/schedule`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/${sport}/schedule`} className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>{seasonLabel} Schedule</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">📅</div>
@@ -266,7 +266,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Week-by-week or filter by team</div>
             </div>
           </Link>
-          <Link href={`/${sport}/awards`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/${sport}/awards`} className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Awards & Honors</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }}>🌟</div>
@@ -274,7 +274,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>All-City and All-Scholastic selections</div>
             </div>
           </Link>
-          <Link href={`/${sport}/rivalries`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/${sport}/rivalries`} className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Rivalries</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">🔥</div>
@@ -282,7 +282,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Historic matchups & series</div>
             </div>
           </Link>
-          <Link href={`/${sport}/eras`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/${sport}/eras`} className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: "var(--psp-blue)" }}>Statistical Eras</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">📊</div>
@@ -290,7 +290,7 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               <div style={{ fontSize: 11, color: "var(--g400)" }}>Stats trends across decades</div>
             </div>
           </Link>
-          <Link href={`/${sport}/breakouts`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link href={`/${sport}/breakouts`} className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: "var(--psp-gold)" }}>Breakout Alerts</div>
             <div style={{ padding: "12px" }}>
               <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">⚡</div>

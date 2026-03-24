@@ -126,7 +126,7 @@ export default function PremiumPage() {
               <h3 className="psp-h3 text-gold mb-6">FREE + PREMIUM</h3>
               <ul className="space-y-4 mb-8">
                 {freeFeatures.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-3 opacity-60">
+                  <li key={idx} className="flex items-start gap-3 opacity-75">
                     <span className="text-2xl flex-shrink-0">{feature.icon}</span>
                     <div>
                       <p className="text-white font-semibold text-sm">{feature.name}</p>

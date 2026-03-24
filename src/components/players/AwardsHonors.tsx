@@ -215,7 +215,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
                           </span>
                         )}
                         {award.category && (
-                          <span className="text-[10px] uppercase tracking-wider font-medium" style={{ color: style.text, opacity: 0.6 }}>
+                          <span className="text-[10px] uppercase tracking-wider font-medium" style={{ color: style.text, opacity: 0.75 }}>
                             {award.category}
                           </span>
                         )}

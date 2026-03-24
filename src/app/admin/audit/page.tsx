@@ -169,7 +169,7 @@ export default function AuditLog() {
                   </div>
                   <div className={`text-xs font-mono mt-0.5 ${changeColor(entry.old_value, entry.new_value)}`}>
                     {entry.old_value && (
-                      <span className="line-through opacity-60 mr-2">{entry.old_value}</span>
+                      <span className="line-through opacity-75 mr-2">{entry.old_value}</span>
                     )}
                     {entry.new_value && <span>{entry.new_value}</span>}
                   </div>

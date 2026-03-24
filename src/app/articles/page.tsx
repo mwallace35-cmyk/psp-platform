@@ -155,7 +155,7 @@ export default async function ArticlesPage({
                           fill
                           priority={index === 0}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition"
+                          className="object-cover group-hover:scale-105 group-focus-visible:scale-105 transition"
                         />
                       </div>
                     )}

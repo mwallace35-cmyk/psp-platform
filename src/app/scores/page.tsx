@@ -677,18 +677,18 @@ function GameCard({
   return (
     <Link
       href={`/${sport}/games/${game.id}`}
-      className="bg-gradient-to-br from-[#1a1a1a] to-[#222] border border-[#333] rounded-lg px-3 py-2.5 flex flex-row justify-between items-center gap-2 no-underline cursor-pointer transition-[border-color] duration-200"
+      className="bg-gradient-to-br from-[#1a1a1a] to-[#222] border border-[#333] rounded-lg px-3 py-2.5 flex flex-row justify-between items-center gap-2 no-underline cursor-pointer transition-[border-color] duration-200 focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
     >
       {/* Left: date or sport badge */}
       {showSport ? (
         <div className="flex items-center gap-[0.3rem] min-w-[75px]">
           <SportIcon sport={game.sport_id} size="sm" />
-          <span className="text-[0.7rem] text-[#999] font-semibold">
+          <span className="text-xs text-[#999] font-semibold">
             {SPORT_META[game.sport_id as keyof typeof SPORT_META]?.name || game.sport_id}
           </span>
         </div>
       ) : showDate && game.game_date ? (
-        <span className="text-[0.7rem] text-[#888] min-w-[70px] font-medium">
+        <span className="text-xs text-[#888] min-w-[70px] font-medium">
           {formatDate(game.game_date)}
         </span>
       ) : null}
@@ -723,7 +723,7 @@ function GameCard({
       {/* Right: game type badge */}
       {game.game_type && game.game_type !== 'regular' && (
         <span
-          className={`text-[0.6rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-sm whitespace-nowrap border ${gameTypeBadgeClass}`}
+          className={`text-xs font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-sm whitespace-nowrap border ${gameTypeBadgeClass}`}
         >
           {game.game_type === 'playoff' ? <><span role="img" aria-label="trophy">🏆</span> Playoff</> :
            game.game_type === 'championship' ? <><span role="img" aria-label="medal">🥇</span> Championship</> :

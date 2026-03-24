@@ -257,7 +257,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                     </span>
                     {team.team && (
                       <span style={{
-                        fontSize: '0.65rem',
+                        fontSize: '0.75rem',
                         background: `${tierColor}30`,
                         color: tierColor,
                         padding: '2px 8px',
@@ -269,7 +269,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                       </span>
                     )}
                   </div>
-                  <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)' }}>
                     {team.players.length} players
                   </span>
                 </div>
@@ -353,13 +353,13 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
 
                           {/* Class */}
                           {player.graduation_year ? (
-                            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.06)', padding: '1px 6px', borderRadius: 4, fontWeight: 600 }}>
+                            <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.06)', padding: '1px 6px', borderRadius: 4, fontWeight: 600 }}>
                               &apos;{String(player.graduation_year).slice(-2)}
                             </span>
                           ) : <span />}
 
                           {/* Year */}
-                          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>
+                          <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', textAlign: 'right' }}>
                             {player.year ? `${String(player.year - 1).slice(-2)}-${String(player.year).slice(-2)}` : ''}
                           </span>
                         </div>

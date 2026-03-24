@@ -852,7 +852,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                             </span>
                           )}
                           {a.category && (
-                            <span className="text-[10px] uppercase tracking-wider font-medium capitalize" style={{ color: colors.text, opacity: 0.6 }}>
+                            <span className="text-[10px] uppercase tracking-wider font-medium capitalize" style={{ color: colors.text, opacity: 0.75 }}>
                               {a.category}
                             </span>
                           )}

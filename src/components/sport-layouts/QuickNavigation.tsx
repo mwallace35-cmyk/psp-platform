@@ -83,7 +83,7 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
           <Link
             key={item.label}
             href={item.href}
-            className="group relative overflow-hidden rounded-lg border-2 transition-all duration-300 hover:shadow-lg"
+            className="group relative overflow-hidden rounded-lg border-2 transition-all duration-300 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] focus-visible:outline-none"
             style={{
               borderColor: "#f0a500",
               backgroundColor: "#0a1628",
@@ -102,7 +102,7 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
 
               {/* Label */}
               <h3
-                className="text-lg font-black mb-1 group-hover:translate-x-1 transition-transform duration-300 font-bebas uppercase tracking-wider"
+                className="text-lg font-black mb-1 group-hover:translate-x-1 group-focus-visible:translate-x-1 transition-transform duration-300 font-bebas uppercase tracking-wider"
                 style={{
                   color: "#f0a500",
                 }}
@@ -126,7 +126,7 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
               {/* Arrow indicator (hidden on desktop hover) */}
               <div className="mt-4 flex items-center gap-2">
                 <span
-                  className="text-xs font-semibold uppercase tracking-wider group-hover:translate-x-1 transition-transform duration-300"
+                  className="text-xs font-semibold uppercase tracking-wider group-hover:translate-x-1 group-focus-visible:translate-x-1 transition-transform duration-300"
                   style={{
                     fontFamily: "'DM Sans', sans-serif",
                     color: "#3b82f6",
@@ -135,7 +135,7 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
                   Explore
                 </span>
                 <span
-                  className="group-hover:translate-x-0.5 transition-transform duration-300"
+                  className="group-hover:translate-x-0.5 group-focus-visible:translate-x-0.5 transition-transform duration-300"
                   style={{ color: "#3b82f6" }}
                   aria-hidden="true"
                 >

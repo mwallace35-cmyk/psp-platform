@@ -190,9 +190,9 @@ export default async function HomePage() {
             {activePickemCount > 0 && (
               <Link
                 href="/pickem"
-                className="group flex items-center gap-4 bg-gradient-to-br from-[var(--psp-navy-mid)] to-[#0d1a30] rounded-lg border border-[var(--psp-gold)]/30 p-4 hover:border-[var(--psp-gold)]/60 hover:shadow-lg hover:shadow-[var(--psp-gold)]/10 transition-all"
+                className="group flex items-center gap-4 bg-gradient-to-br from-[var(--psp-navy-mid)] to-[#0d1a30] rounded-lg border border-[var(--psp-gold)]/30 p-4 hover:border-[var(--psp-gold)]/60 hover:shadow-lg hover:shadow-[var(--psp-gold)]/10 transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
               >
-                <div className="text-3xl group-hover:scale-110 transition-transform shrink-0" role="img" aria-label="football">🏈</div>
+                <div className="text-3xl group-hover:scale-110 group-focus-visible:scale-110 transition-transform shrink-0" role="img" aria-label="football">🏈</div>
                 <div className="flex-1 min-w-0">
                   <h2 className="text-sm font-bold text-[var(--psp-gold)] group-hover:text-[var(--psp-gold-light)] transition">Pick&apos;em</h2>
                   <p className="text-xs text-gray-300 mt-0.5">Make your picks for this week&apos;s games</p>
@@ -204,8 +204,8 @@ export default async function HomePage() {
             )}
 
             {/* Power Rankings */}
-            <Link href="/rankings" className="group flex items-center gap-3 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all">
-              <div className="text-2xl group-hover:scale-110 transition-transform" role="img" aria-label="chart">📊</div>
+            <Link href="/rankings" className="group flex items-center gap-3 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none">
+              <div className="text-2xl group-hover:scale-110 group-focus-visible:scale-110 transition-transform" role="img" aria-label="chart">📊</div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h2>
                 <p className="text-xs text-gray-300 mt-0.5">See who&apos;s on top this week</p>

@@ -323,7 +323,7 @@ export default function AdvertisePage() {
               </label>
               <input
                 type="text"
-                className="w-full px-4 py-3 rounded-md bg-navy border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-gold"
+                className="w-full px-4 py-3 rounded-md bg-navy border border-white/20 text-white placeholder-white/70 focus:outline-none focus:border-gold"
                 placeholder="John Doe"
                 required
               />
@@ -335,7 +335,7 @@ export default function AdvertisePage() {
               </label>
               <input
                 type="email"
-                className="w-full px-4 py-3 rounded-md bg-navy border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-gold"
+                className="w-full px-4 py-3 rounded-md bg-navy border border-white/20 text-white placeholder-white/70 focus:outline-none focus:border-gold"
                 placeholder="john@example.com"
                 required
               />
@@ -347,7 +347,7 @@ export default function AdvertisePage() {
               </label>
               <input
                 type="text"
-                className="w-full px-4 py-3 rounded-md bg-navy border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-gold"
+                className="w-full px-4 py-3 rounded-md bg-navy border border-white/20 text-white placeholder-white/70 focus:outline-none focus:border-gold"
                 placeholder="Your business or organization"
                 required
               />
@@ -378,7 +378,7 @@ export default function AdvertisePage() {
                 Tell Us About Your Sponsorship Goals
               </label>
               <textarea
-                className="w-full px-4 py-3 rounded-md bg-navy border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-gold resize-none"
+                className="w-full px-4 py-3 rounded-md bg-navy border border-white/20 text-white placeholder-white/70 focus:outline-none focus:border-gold resize-none"
                 rows={5}
                 placeholder="What are you looking to achieve with a PSP sponsorship?"
                 required

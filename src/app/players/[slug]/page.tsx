@@ -169,7 +169,7 @@ export default async function PlayerPage({ params }: PageProps) {
           </div>
           {proTracking && (
             <div style={{ background: gold, borderRadius: '8px', padding: '0.625rem 1rem', textAlign: 'center', flexShrink: 0 }}>
-              <div style={{ fontSize: '0.65rem', fontWeight: 800, color: navy, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Next Level</div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: navy, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Next Level</div>
               <div style={{ fontSize: '1rem', fontWeight: 800, color: navy, lineHeight: 1.2 }}>{proTracking.current_org ?? proTracking.college ?? 'Pro Athlete'}</div>
               {proTracking.current_level && <div style={{ fontSize: '0.75rem', color: navy, opacity: 0.8 }}>{proTracking.current_level}</div>}
             </div>
@@ -252,7 +252,7 @@ export default async function PlayerPage({ params }: PageProps) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem', background: '#fff', borderRadius: '8px' }}>
                   <span style={{ fontSize: '1.4rem' }}>🎓</span>
                   <div>
-                    <div style={{ fontSize: '0.65rem', color: muted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>College</div>
+                    <div style={{ fontSize: '0.75rem', color: muted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>College</div>
                     <div style={{ fontWeight: 700, color: navy }}>{proTracking.college}</div>
                     {proTracking.college_sport && <div style={{ fontSize: '0.8rem', color: muted }}>{proTracking.college_sport}</div>}
                   </div>
@@ -262,7 +262,7 @@ export default async function PlayerPage({ params }: PageProps) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem', background: '#fff', borderRadius: '8px' }}>
                   <span style={{ fontSize: '1.4rem' }}>🏆</span>
                   <div>
-                    <div style={{ fontSize: '0.65rem', color: muted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{proTracking.pro_league ?? 'Pro'}</div>
+                    <div style={{ fontSize: '0.75rem', color: muted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{proTracking.pro_league ?? 'Pro'}</div>
                     <div style={{ fontWeight: 700, color: navy }}>{proTracking.pro_team}</div>
                     {proTracking.draft_info && <div style={{ fontSize: '0.8rem', color: muted }}>{proTracking.draft_info}</div>}
                   </div>

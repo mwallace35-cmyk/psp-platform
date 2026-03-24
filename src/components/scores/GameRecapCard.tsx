@@ -45,7 +45,7 @@ export default function GameRecapCard({
   return (
     <div style={{ background:'var(--psp-card-bg,#f8f9fc)', border:'1px solid #e5e7eb', borderRadius:10, padding:'1.25rem 1.5rem', display:'flex', flexDirection:'column', gap:'0.75rem' }}>
       <div style={{ display:'flex', alignItems:'center', gap:'0.75rem' }}>
-        <span style={{ background:'var(--psp-navy,#1a2744)', color:'#fff', fontSize:'0.65rem', fontWeight:800, padding:'2px 8px', borderRadius:3, letterSpacing:1.5, textTransform:'uppercase' as const }}>{sport}</span>
+        <span style={{ background:'var(--psp-navy,#1a2744)', color:'#fff', fontSize:'0.75rem', fontWeight:800, padding:'2px 8px', borderRadius:3, letterSpacing:1.5, textTransform:'uppercase' as const }}>{sport}</span>
         <span style={{ color:'var(--psp-muted,#6b7280)', fontSize:'0.8rem' }}>{new Date(date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
       </div>
       <Link href={`/${sport}/games/${gameId}`} style={{ textDecoration:'none', color:'inherit', display:'block' }}>

@@ -387,9 +387,13 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                         }}>
                         {idx + 1}
                       </span>
+                      {d.slug ? (
                       <Link href={`/${sport}/schools/${d.slug}`} className="flex-1 text-sm font-medium hover:underline truncate" style={{ color: "white" }}>
                         {d.name}
                       </Link>
+                    ) : (
+                      <span className="flex-1 text-sm font-medium truncate" style={{ color: "white" }}>{d.name}</span>
+                    )}
                       <span className="font-bold text-sm" style={{ color: "var(--psp-gold)" }}>{d.count}</span>
                     </div>
                   ))}
@@ -415,9 +419,13 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                       }}>
                       {idx + 1}
                     </span>
-                    <Link href={`/${sport}/schools/${d.slug}`} className="flex-1 text-sm font-medium hover:underline truncate" style={{ color: "white" }}>
-                      {d.name}
-                    </Link>
+                    {d.slug ? (
+                      <Link href={`/${sport}/schools/${d.slug}`} className="flex-1 text-sm font-medium hover:underline truncate" style={{ color: "white" }}>
+                        {d.name}
+                      </Link>
+                    ) : (
+                      <span className="flex-1 text-sm font-medium truncate" style={{ color: "white" }}>{d.name}</span>
+                    )}
                     <span className="font-bold text-sm" style={{ color: "var(--psp-gold)" }}>{d.count}</span>
                   </div>
                 ))}

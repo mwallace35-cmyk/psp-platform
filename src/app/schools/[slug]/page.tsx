@@ -348,7 +348,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 <p className="text-[var(--psp-gold)] font-bebas text-xl">{seasonLabel} Schedule Available</p>
                 <p className="text-gray-300 text-sm">{upcomingGameCount} game{upcomingGameCount !== 1 ? "s" : ""} scheduled — view the full {upcomingSport} schedule</p>
               </div>
-              <span className="text-[var(--psp-gold)] text-sm font-medium group-hover:translate-x-1 transition-transform flex-shrink-0 hidden sm:block">
+              <span className="text-[var(--psp-gold)] text-sm font-medium group-hover:translate-x-1 group-focus-visible:translate-x-1 transition-transform flex-shrink-0 hidden sm:block">
                 View Schedule →
               </span>
             </div>
@@ -416,7 +416,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                         </div>
                         <div className="flex-1 flex items-center justify-end">
                           <span
-                            className="text-xs font-medium group-hover:translate-x-0.5 transition-transform"
+                            className="text-xs font-medium group-hover:translate-x-0.5 group-focus-visible:translate-x-0.5 transition-transform"
                             style={{ color: "var(--psp-blue)" }}
                           >
                             View →

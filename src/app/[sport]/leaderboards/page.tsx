@@ -118,7 +118,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
               {categories.map((cat) => {
                 const leaders = leaderData[cat.slug] || [];
                 return (
-                  <div key={cat.slug} className="bg-[rgba(255,255,255,0.03)] rounded-xl border border-gray-700/50 overflow-hidden hover:border-gray-600 transition-colors duration-200 animate-fade-in-up">
+                  <div key={cat.slug} className="bg-[rgba(255,255,255,0.03)] rounded-xl border border-gray-700/50 overflow-hidden hover:border-gray-600 transition-colors duration-200 animate-fade-in-up focus-within:ring-2 focus-within:ring-[var(--psp-gold)] focus-within:ring-offset-2 focus-within:ring-offset-[#0a1628]">
                     {/* Category Header */}
                     <div className="flex items-center justify-between px-5 py-3 border-b border-gray-700/50" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, #1a2744 100%)` }}>
                       <div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                               <span className={`text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-gray-100'}`}>
                                 {typeof player.value === 'number' ? player.value.toLocaleString() : player.value}
                               </span>
-                              <span className="text-[10px] text-gray-300 ml-1">{cat.valueLabel}</span>
+                              <span className="text-xs text-gray-300 ml-1">{cat.valueLabel}</span>
                             </div>
                           </div>
                         ))}
@@ -199,14 +199,14 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                   <Link
                     key={cat.slug}
                     href={`/${sport}/leaderboards/${cat.slug}?mode=career`}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-700/50 bg-white/[0.03] hover:border-[var(--psp-gold)]/50 hover:bg-[var(--psp-gold)]/5 transition-colors group"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-700/50 bg-white/[0.03] hover:border-[var(--psp-gold)]/50 hover:bg-[var(--psp-gold)]/5 transition-colors group focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] focus-visible:outline-none"
                   >
                     <span className="text-xl">{cat.icon}</span>
                     <div>
                       <span className="text-sm font-semibold text-gray-100 group-hover:text-[var(--psp-gold)] transition-colors block">
                         {cat.label}
                       </span>
-                      <span className="text-[10px] text-gray-300 uppercase tracking-wider">Career Leaders</span>
+                      <span className="text-xs text-gray-300 uppercase tracking-wider">Career Leaders</span>
                     </div>
                   </Link>
                 ))}
@@ -232,7 +232,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                 <Link
                   key={year}
                   href={`/class/${year}`}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-white/[0.06] text-gray-200 hover:bg-[var(--psp-gold)] hover:text-[var(--psp-navy)] transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-white/[0.06] text-gray-200 hover:bg-[var(--psp-gold)] hover:text-[var(--psp-navy)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] focus-visible:outline-none"
                 >
                   Class of {year}
                 </Link>

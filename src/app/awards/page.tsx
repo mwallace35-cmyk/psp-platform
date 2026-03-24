@@ -144,7 +144,7 @@ export default async function AwardsHubPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-3xl">{sport.emoji}</span>
                   <h3
-                    className="psp-h4 group-hover:translate-x-1 transition-transform duration-300"
+                    className="psp-h4 group-hover:translate-x-1 group-focus-visible:translate-x-1 transition-transform duration-300"
                     style={{
                       color: sport.color,
                     }}
@@ -185,7 +185,7 @@ export default async function AwardsHubPage() {
                   )}
                 </div>
                 <div
-                  className="mt-3 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider group-hover:translate-x-1 transition-transform duration-300"
+                  className="mt-3 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider group-hover:translate-x-1 group-focus-visible:translate-x-1 transition-transform duration-300"
                   style={{ color: "#3b82f6" }}
                 >
                   View All Awards →

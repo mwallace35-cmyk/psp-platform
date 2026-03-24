@@ -198,7 +198,7 @@ export default async function OurGuysPage() {
                   <Link
                     key={school.slug}
                     href={`/schools/${school.slug}`}
-                    className={`flex-shrink-0 w-44 md:w-52 rounded-xl p-4 transition hover:scale-[1.02] ${
+                    className={`flex-shrink-0 w-44 md:w-52 rounded-xl p-4 transition hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none ${
                       i === 0
                         ? 'bg-gradient-to-br from-gold/20 to-gold/5 border-2 border-gold/40'
                         : 'bg-white/5 border border-white/10 hover:border-white/20'

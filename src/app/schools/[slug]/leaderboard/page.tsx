@@ -112,9 +112,9 @@ function LeaderList({ title, suffix, rows }: { title: string; suffix: string; ro
           <span className="psp-h4" style={{ color: i === 0 ? gold : 'var(--psp-gray-light, #9ca3af)', width: 20, textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, color: navy, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.name}</div>
-            {r.gradYear && <div style={{ fontSize: '0.72rem', color: muted }}>Class of {r.gradYear}</div>}
+            {r.gradYear && <div style={{ fontSize: '0.75rem', color: muted }}>Class of {r.gradYear}</div>}
           </div>
-          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: i === 0 ? gold : navy, flexShrink: 0 }}>{r.value.toLocaleString()} <span style={{ fontWeight: 400, fontSize: '0.72rem', color: muted }}>{suffix}</span></span>
+          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: i === 0 ? gold : navy, flexShrink: 0 }}>{r.value.toLocaleString()} <span style={{ fontWeight: 400, fontSize: '0.75rem', color: muted }}>{suffix}</span></span>
         </Link>
       ))}
     </div>

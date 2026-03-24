@@ -162,7 +162,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
                 <Link
                   key={school.id}
                   href={`/${sport}/schools/${school.slug}`}
-                  className="group rounded-lg p-3 transition hover:scale-[1.02]"
+                  className="group rounded-lg p-3 transition hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
                   style={{
                     backgroundColor: 'rgba(255,255,255,0.03)',
                     border: '1px solid rgba(255,255,255,0.08)',
@@ -181,9 +181,9 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
                     <p className="text-gray-400 text-xs ml-4">{school.city}, PA</p>
                   )}
                   {school.closed_year && (
-                    <p className="text-red-400 text-[10px] ml-4">Closed {school.closed_year}</p>
+                    <p className="text-red-400 text-xs ml-4">Closed {school.closed_year}</p>
                   )}
-                  <p className="text-gray-600 text-[10px] ml-4 mt-1">
+                  <p className="text-gray-600 text-xs ml-4 mt-1">
                     {school.seasonCount} season{school.seasonCount !== 1 ? 's' : ''}
                   </p>
                 </Link>
@@ -207,16 +207,16 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
                 <Link
                   key={school.id}
                   href={`/${sport}/schools/${school.slug}`}
-                  className="group rounded-lg p-2 transition opacity-60 hover:opacity-90"
+                  className="group rounded-lg p-2 transition opacity-75 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
                   style={{
                     backgroundColor: 'rgba(255,255,255,0.02)',
                     border: '1px solid rgba(255,255,255,0.05)',
                   }}
                 >
                   <span className="text-gray-300 text-xs font-medium truncate block group-hover:text-gray-300 transition">
-                    {school.name}
+                    {school.name} <span className="text-gray-500">(Closed)</span>
                   </span>
-                  <span className="text-gray-600 text-[10px]">
+                  <span className="text-gray-600 text-xs">
                     Closed {school.closed_year}
                   </span>
                 </Link>

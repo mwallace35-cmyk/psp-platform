@@ -478,7 +478,7 @@ async function RecruitingContent() {
                         </span>
                       )}
 
-                      <div className="flex items-center gap-2 text-[10px] text-gray-300 mb-1.5">
+                      <div className="flex items-center gap-2 text-xs text-gray-300 mb-1.5">
                         <span>{school.college} col</span>
                         {school.pro > 0 && (
                           <span style={{ color: "#f0a500" }}>{school.pro} pro</span>
@@ -578,7 +578,7 @@ async function RecruitingContent() {
                   <Link
                     key={sport}
                     href={`/sports/${sport}/pipeline`}
-                    className="group inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm transition-all hover:scale-105"
+                    className="group inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm transition-all hover:scale-105 focus-visible:scale-105 focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
                     style={{
                       backgroundColor: "rgba(255,255,255,0.03)",
                       border: `1px solid ${sportHex}40`,
@@ -628,7 +628,7 @@ async function RecruitingContent() {
             </p>
             <Link
               href="/recruit-finder"
-              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 focus-visible:scale-105 focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none"
               style={{
                 backgroundColor: "#0a1628",
                 color: "#f0a500",

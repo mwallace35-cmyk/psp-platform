@@ -138,10 +138,10 @@ export default function WhatsNewFeed({ items }: WhatsNewFeedProps) {
               </p>
 
               {/* Arrow indicator on hover */}
-              <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-[var(--psp-blue)] [data-theme=dark]:text-[var(--psp-gold)] opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-[var(--psp-blue)] [data-theme=dark]:text-[var(--psp-gold)] opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity">
                 <span>Read More</span>
                 <svg
-                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  className="w-4 h-4 transform group-hover:translate-x-1 group-focus-visible:translate-x-1 transition-transform"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

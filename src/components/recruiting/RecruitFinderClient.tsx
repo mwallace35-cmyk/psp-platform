@@ -243,7 +243,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
           options={LEAGUES}
         />
         <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-          <label style={{ fontSize: "0.7rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
             Min Stat
           </label>
           <input
@@ -402,7 +402,7 @@ function FilterSelect({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-      <label style={{ fontSize: "0.7rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+      <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
         {label}
       </label>
       <select
@@ -467,7 +467,7 @@ function SortTh({
 const thStyle: React.CSSProperties = {
   padding: "0.65rem 0.75rem",
   textAlign: "left",
-  fontSize: "0.72rem",
+  fontSize: "0.75rem",
   fontWeight: 700,
   textTransform: "uppercase",
   letterSpacing: "0.05em",

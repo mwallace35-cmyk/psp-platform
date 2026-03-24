@@ -127,11 +127,11 @@ function StatBlock({ label, a, b, higherWins = true }: StatRow) {
     <div style={{ display:'grid', gridTemplateColumns:'1fr auto 1fr', alignItems:'center', padding:'0.6rem 0', borderBottom:'1px solid var(--psp-gray-100, #f3f4f6)' }}>
       <div style={{ textAlign:'right', paddingRight:'1rem' }}>
         <span style={{ fontSize:'1.1rem', fontWeight:800, color: aWins ? '#c8a84b' : '#1a2744' }}>{fmt(a)}</span>
-        {aWins && <span style={{ marginLeft:6, fontSize:'0.65rem', color:'#c8a84b', fontWeight:800 }}>WIN</span>}
+        {aWins && <span style={{ marginLeft:6, fontSize:'0.75rem', color:'#c8a84b', fontWeight:800 }}>WIN</span>}
       </div>
-      <div style={{ textAlign:'center', fontSize:'0.72rem', color:'#6b7280', fontWeight:600, textTransform:'uppercase' as const, letterSpacing:'0.06em', minWidth:110 }}>{label}</div>
+      <div style={{ textAlign:'center', fontSize:'0.75rem', color:'#6b7280', fontWeight:600, textTransform:'uppercase' as const, letterSpacing:'0.06em', minWidth:110 }}>{label}</div>
       <div style={{ textAlign:'left', paddingLeft:'1rem' }}>
-        {bWins && <span style={{ marginRight:6, fontSize:'0.65rem', color:'#c8a84b', fontWeight:800 }}>WIN</span>}
+        {bWins && <span style={{ marginRight:6, fontSize:'0.75rem', color:'#c8a84b', fontWeight:800 }}>WIN</span>}
         <span style={{ fontSize:'1.1rem', fontWeight:800, color: bWins ? '#c8a84b' : '#1a2744' }}>{fmt(b)}</span>
       </div>
     </div>
@@ -212,7 +212,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
             <div className="psp-h3" style={{ color:navy, lineHeight:1.1 }}>{playerA.name}</div>
             <div style={{ color:muted, fontSize:'0.8rem', marginTop:4 }}>{schoolName(playerA)}</div>
             {playerA.graduation_year && <div style={{ color:muted, fontSize:'0.75rem' }}>Class of {playerA.graduation_year}</div>}
-            {proA && <div style={{ marginTop:6, background:'#f0fdf4', color:'#15803d', fontSize:'0.72rem', fontWeight:700, padding:'3px 8px', borderRadius:4, display:'inline-block' }}>{proA}</div>}
+            {proA && <div style={{ marginTop:6, background:'#f0fdf4', color:'#15803d', fontSize:'0.75rem', fontWeight:700, padding:'3px 8px', borderRadius:4, display:'inline-block' }}>{proA}</div>}
             <div style={{ marginTop:6, background:navy, color:'#fff', fontSize:'0.6rem', fontWeight:800, padding:'2px 7px', borderRadius:3, letterSpacing:1.5, textTransform:'uppercase' as const, display:'inline-block' }}>{sportLabel(sportA)}</div>
           </div>
         </Link>
@@ -224,7 +224,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
             <div className="psp-h3" style={{ color:navy, lineHeight:1.1 }}>{playerB.name}</div>
             <div style={{ color:muted, fontSize:'0.8rem', marginTop:4 }}>{schoolName(playerB)}</div>
             {playerB.graduation_year && <div style={{ color:muted, fontSize:'0.75rem' }}>Class of {playerB.graduation_year}</div>}
-            {proB && <div style={{ marginTop:6, background:'#f0fdf4', color:'#15803d', fontSize:'0.72rem', fontWeight:700, padding:'3px 8px', borderRadius:4, display:'inline-block' }}>{proB}</div>}
+            {proB && <div style={{ marginTop:6, background:'#f0fdf4', color:'#15803d', fontSize:'0.75rem', fontWeight:700, padding:'3px 8px', borderRadius:4, display:'inline-block' }}>{proB}</div>}
             <div style={{ marginTop:6, background:navy, color:'#fff', fontSize:'0.6rem', fontWeight:800, padding:'2px 7px', borderRadius:3, letterSpacing:1.5, textTransform:'uppercase' as const, display:'inline-block' }}>{sportLabel(sportB)}</div>
           </div>
         </Link>

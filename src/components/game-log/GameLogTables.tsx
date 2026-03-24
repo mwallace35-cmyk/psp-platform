@@ -104,7 +104,7 @@ export function FootballGameTable({
             return (
               <tr
                 key={game.gameId}
-                className={`border-b border-gray-200 hover:bg-gray-50 ${!game.hasBoxScore ? 'opacity-60' : ''}`}
+                className={`border-b border-gray-200 hover:bg-gray-50 ${!game.hasBoxScore ? 'opacity-75' : ''}`}
               >
                 <td className="px-3 py-3 text-xs text-gray-400">{formatDate(game.gameDate)}</td>
                 <td className="px-3 py-3 text-xs">
@@ -208,7 +208,7 @@ export function BasketballGameTable({
             return (
               <tr
                 key={game.gameId}
-                className={`border-b border-gray-200 hover:bg-gray-50 ${!game.hasBoxScore ? 'opacity-60' : ''}`}
+                className={`border-b border-gray-200 hover:bg-gray-50 ${!game.hasBoxScore ? 'opacity-75' : ''}`}
               >
                 <td className="px-3 py-3 text-xs text-gray-400">{formatDate(game.gameDate)}</td>
                 <td className="px-3 py-3 text-xs">

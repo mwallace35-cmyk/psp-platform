@@ -21,8 +21,8 @@ const SPORT_CONFIG: Record<string, { emoji: string; color: string; bgGlow: strin
 
 function ShieldBadge({ sport, config }: { sport: { name: string; slug: string }; config: { emoji: string; color: string; bgGlow: string } }) {
   return (
-    <Link href={`/${sport.slug}`} className="group block">
-      <div className="relative flex flex-col items-center transition-transform duration-200 group-hover:scale-105">
+    <Link href={`/${sport.slug}`} className="group block rounded-lg focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none">
+      <div className="relative flex flex-col items-center transition-transform duration-200 group-hover:scale-105 group-focus-visible:scale-105">
         {/* Shield / Badge shape */}
         <div
           className="relative w-28 h-32 md:w-32 md:h-36 flex flex-col items-center justify-center transition-all duration-200 group-hover:shadow-lg"
@@ -42,7 +42,7 @@ function ShieldBadge({ sport, config }: { sport: { name: string; slug: string };
             }}
           >
             {/* Emoji */}
-            <span className="text-3xl md:text-4xl mb-1 drop-shadow-sm transition-transform group-hover:scale-110" role="img" aria-label={sport.name}>
+            <span className="text-3xl md:text-4xl mb-1 drop-shadow-sm transition-transform group-hover:scale-110 group-focus-visible:scale-110" role="img" aria-label={sport.name}>
               {config.emoji}
             </span>
             {/* Accent line */}

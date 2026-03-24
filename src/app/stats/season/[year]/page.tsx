@@ -107,7 +107,7 @@ function LeaderList({ title, rows }: { title: string; rows: LeaderRow[] }) {
           <span className="psp-h4" style={{ color: i === 0 ? gold : 'var(--psp-gray-light, #9ca3af)', width: 20, textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, color: navy, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.name}</div>
-            <div style={{ fontSize: '0.72rem', color: muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.school}</div>
+            <div style={{ fontSize: '0.75rem', color: muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{r.school}</div>
           </div>
           <span style={{ fontWeight: 800, fontSize: '1rem', color: i === 0 ? gold : navy, flexShrink: 0 }}>{r.value.toLocaleString()}</span>
         </Link>
@@ -151,7 +151,7 @@ export default async function SeasonLeadersPage({ params }: PageProps) {
       </div>
 
       <h2 className="psp-h2" style={{ color: navy, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ background: '#1a2744', color: '#fff', fontSize: '0.65rem', fontWeight: 800, padding: '3px 8px', borderRadius: 3, letterSpacing: 2 }}>FOOTBALL</span>
+        <span style={{ background: '#1a2744', color: '#fff', fontSize: '0.75rem', fontWeight: 800, padding: '3px 8px', borderRadius: 3, letterSpacing: 2 }}>FOOTBALL</span>
         Leaders
       </h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
@@ -159,7 +159,7 @@ export default async function SeasonLeadersPage({ params }: PageProps) {
       </div>
 
       <h2 className="psp-h2" style={{ color: navy, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ background: '#f97316', color: '#fff', fontSize: '0.65rem', fontWeight: 800, padding: '3px 8px', borderRadius: 3, letterSpacing: 2 }}>BASKETBALL</span>
+        <span style={{ background: '#f97316', color: '#fff', fontSize: '0.75rem', fontWeight: 800, padding: '3px 8px', borderRadius: 3, letterSpacing: 2 }}>BASKETBALL</span>
         Leaders
       </h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '1rem' }}>

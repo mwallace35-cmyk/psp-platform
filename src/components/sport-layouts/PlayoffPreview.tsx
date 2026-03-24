@@ -179,7 +179,7 @@ export default function PlayoffPreview() {
             style={{
               background: "#0a1628",
               color: "#f0a500",
-              fontSize: "0.7rem",
+              fontSize: "0.75rem",
               fontWeight: 700,
               padding: "0.3rem 0.6rem",
               borderRadius: "4px",
@@ -362,7 +362,7 @@ export default function PlayoffPreview() {
                       style={{
                         background: "#f0a500",
                         color: "#0a1628",
-                        fontSize: "0.65rem",
+                        fontSize: "0.75rem",
                         fontWeight: 800,
                         padding: "0.15rem 0.4rem",
                         borderRadius: "3px",
@@ -373,7 +373,7 @@ export default function PlayoffPreview() {
                     </span>
                     <span
                       style={{
-                        fontSize: "0.7rem",
+                        fontSize: "0.75rem",
                         color: "#94a3b8",
                       }}
                     >
@@ -402,7 +402,7 @@ export default function PlayoffPreview() {
                   </div>
                   <div
                     style={{
-                      fontSize: "0.7rem",
+                      fontSize: "0.75rem",
                       color: "#64748b",
                       margin: "0.15rem 0",
                       fontWeight: 600,
@@ -444,7 +444,7 @@ export default function PlayoffPreview() {
                   {m.location !== "TBD" && (
                     <div
                       style={{
-                        fontSize: "0.7rem",
+                        fontSize: "0.75rem",
                         color: "#64748b",
                         marginTop: "0.35rem",
                       }}

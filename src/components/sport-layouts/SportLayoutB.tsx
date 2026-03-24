@@ -123,7 +123,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
               marginBottom: 20,
             }}>
               {recentGames.slice(0, 4).map((game) => (
-                <Link key={game.id} href={`/${sport}/games/${game.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                <Link key={game.id} href={`/${sport}/games/${game.id}`} className="rounded-md focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
                   <div style={{
                     background: "var(--psp-white)",
                     border: "1px solid var(--g100)",
@@ -206,7 +206,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
             <Link
               key={cat}
               href={`/${sport}/leaderboards/${cat}`}
-              className="ldr-card"
+              className="ldr-card focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none"
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <div className="ldr-head" style={{ background: sportColor }}>
@@ -294,7 +294,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
             </div>
             <div className="headline-list">
               {featured.map((article) => (
-                <Link key={article.id} href={`/articles/${article.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                <Link key={article.id} href={`/articles/${article.slug}`} className="rounded-md focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none" style={{ textDecoration: "none", color: "inherit" }}>
                   <div className="hl-item">
                     <div
                       className="hl-img"

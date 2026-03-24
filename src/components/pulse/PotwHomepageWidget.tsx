@@ -227,7 +227,7 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
                     <div className="text-right">
                       <span className="text-xl font-bold text-white tabular-nums">{voteCount}</span>
-                      <span className="text-[10px] text-gray-400 block">votes</span>
+                      <span className="text-xs text-gray-400 block">votes</span>
                     </div>
                     <button
                       onClick={() => handleVote(nominee.id)}
@@ -257,7 +257,7 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
                         style={{ width: `${pct}%`, backgroundColor: colors.bar }}
                       />
                     </div>
-                    <p className="text-[10px] text-gray-400 mt-0.5 text-right tabular-nums">{pct}%</p>
+                    <p className="text-xs text-gray-400 mt-0.5 text-right tabular-nums">{pct}%</p>
                   </div>
                 )}
               </div>

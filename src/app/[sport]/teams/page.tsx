@@ -158,7 +158,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                       <Link
                         key={school.id}
                         href={`/${sport}/schools/${school.slug}`}
-                        className="group block bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-lg hover:border-[var(--psp-gold)] transition-all"
+                        className="group block bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-lg hover:border-[var(--psp-gold)] transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none"
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div>
@@ -246,7 +246,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                       <Link
                         key={school.id}
                         href={`/${sport}/schools/${school.slug}`}
-                        className="group block rounded-lg border p-4 hover:shadow-lg transition-all"
+                        className="group block rounded-lg border p-4 hover:shadow-lg transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none"
                         style={{
                           background: "var(--psp-gray-50, #f9fafb)",
                           borderColor: "var(--psp-gray-200, #e5e7eb)",
@@ -341,7 +341,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                     <Link
                       key={school.id}
                       href={`/${sport}/schools/${school.slug}`}
-                      className="group block rounded-lg border p-4 hover:shadow-lg transition-all"
+                      className="group block rounded-lg border p-4 hover:shadow-lg transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none"
                       style={{
                         background: "var(--psp-gray-50, #f9fafb)",
                         borderColor: "var(--psp-gray-200, #e5e7eb)",

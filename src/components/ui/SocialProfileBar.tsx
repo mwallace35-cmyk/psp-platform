@@ -116,7 +116,7 @@ const SocialLink: React.FC<SocialLinkProps> = ({ icon, url, label, size }) => {
       target="_blank"
       rel="noopener noreferrer"
       title={label}
-      className="text-[var(--psp-navy)] hover:text-[var(--psp-gold)] transition-all duration-200 transform hover:scale-110"
+      className="text-[var(--psp-navy)] hover:text-[var(--psp-gold)] focus-visible:text-[var(--psp-gold)] transition-all duration-200 transform hover:scale-110 focus-visible:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 rounded-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{ width: buttonSize, height: buttonSize }}

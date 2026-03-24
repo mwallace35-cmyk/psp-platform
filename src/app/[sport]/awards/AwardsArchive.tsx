@@ -79,14 +79,18 @@ function PlayerRow({ award, sport }: { award: AwardRecord; sport: string }) {
           </span>
         )}
       </div>
-      {school && (
+      {school && school.slug ? (
         <Link
           href={`/${sport}/schools/${school.slug}`}
           className="text-gray-400 hover:text-gray-300 text-xs truncate max-w-[140px] hidden sm:block"
         >
-          {school.name}
+          {school.name ?? 'Unknown'}
         </Link>
-      )}
+      ) : school?.name ? (
+        <span className="text-gray-400 text-xs truncate max-w-[140px] hidden sm:block">
+          {school.name}
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -558,7 +562,7 @@ export default function AwardsArchive({ tabs, sport }: AwardsArchiveProps) {
                       <div key={sg.label} className="border-b border-gray-700/30 last:border-b-0">
                         <div className="px-4 py-2 bg-gray-800/40 flex items-center gap-2">
                           <SourceBadge label={sg.label} />
-                          <span className="text-gray-600 text-[10px]">
+                          <span className="text-gray-600 text-xs">
                             {sg.awards.length} {sg.awards.length === 1 ? "selection" : "selections"}
                           </span>
                         </div>
@@ -611,7 +615,7 @@ export default function AwardsArchive({ tabs, sport }: AwardsArchiveProps) {
                   <div key={sg.label} className="border-b border-gray-700/30 last:border-b-0">
                     <div className="px-4 py-2 bg-gray-800/40 flex items-center gap-2">
                       <SourceBadge label={sg.label} />
-                      <span className="text-gray-600 text-[10px]">
+                      <span className="text-gray-600 text-xs">
                         {sg.awards.length} {sg.awards.length === 1 ? "selection" : "selections"}
                       </span>
                     </div>

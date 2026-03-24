@@ -31,13 +31,13 @@ function TickerItem({ game }: { game: LiveGame }) {
   const statusColor = isLive ? '#22c55e' : 'rgba(255,255,255,0.45)';
   return (
     <Link href={`/${game.sport}/games/${game.id}`} style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem', padding:'0.35rem 1.25rem', textDecoration:'none', borderRight:'1px solid rgba(255,255,255,0.08)' }}>
-      <span style={{ color:'rgba(255,255,255,0.45)', fontSize:'0.65rem', fontWeight:700, letterSpacing:1 }}>{sportAbbr}</span>
+      <span style={{ color:'rgba(255,255,255,0.45)', fontSize:'0.75rem', fontWeight:700, letterSpacing:1 }}>{sportAbbr}</span>
       <span style={{ color: game.status==='final'&&!homeWinning ? '#fff' : 'rgba(255,255,255,0.7)', fontSize:'0.8rem', fontWeight: game.status==='final'&&!homeWinning ? 700 : 400 }}>{abbreviateName(game.away_team.name)}</span>
       <span style={{ color:'var(--psp-gold,#c8a84b)', fontSize:'0.85rem', fontWeight:800 }}>{game.away_team.score}</span>
       <span style={{ color:'rgba(255,255,255,0.25)', fontSize:'0.75rem' }}>@</span>
       <span style={{ color: game.status==='final'&&homeWinning ? '#fff' : 'rgba(255,255,255,0.7)', fontSize:'0.8rem', fontWeight: game.status==='final'&&homeWinning ? 700 : 400 }}>{abbreviateName(game.home_team.name)}</span>
       <span style={{ color:'var(--psp-gold,#c8a84b)', fontSize:'0.85rem', fontWeight:800 }}>{game.home_team.score}</span>
-      <span style={{ color:statusColor, fontSize:'0.65rem', fontWeight:700, letterSpacing:0.5 }}>{isLive ? (game.time ?? 'LIVE') : 'FINAL'}</span>
+      <span style={{ color:statusColor, fontSize:'0.75rem', fontWeight:700, letterSpacing:0.5 }}>{isLive ? (game.time ?? 'LIVE') : 'FINAL'}</span>
     </Link>
   );
 }
@@ -76,14 +76,14 @@ export default function ScoreTicker() {
       <div style={{ display:'flex', alignItems:'stretch' }}>
         <div style={{ display:'flex', alignItems:'center', padding:'0.3rem 0.75rem', background: hasLive ? '#dc2626' : 'rgba(255,255,255,0.08)', flexShrink:0, gap:'0.4rem' }}>
           {hasLive && <span style={{ width:7, height:7, borderRadius:'50%', background:'#fff', display:'inline-block', animation:'livePulse 1.4s ease-in-out infinite' }} />}
-          <span style={{ color:'#fff', fontSize:'0.7rem', fontWeight:800, letterSpacing:1.5, textTransform:'uppercase' as const }}>{hasLive ? 'Live' : 'Scores'}</span>
+          <span style={{ color:'#fff', fontSize:'0.75rem', fontWeight:800, letterSpacing:1.5, textTransform:'uppercase' as const }}>{hasLive ? 'Live' : 'Scores'}</span>
         </div>
         <div style={{ overflow:'hidden', flex:1 }}>
           <div style={{ display:'flex', animation:`tickerScroll ${duration}s linear infinite`, whiteSpace:'nowrap', alignItems:'center' }}>
             {[...games, ...games].map((g, i) => <TickerItem key={`${g.id}-${i}`} game={g} />)}
           </div>
         </div>
-        <Link href="/scores/live" style={{ display:'flex', alignItems:'center', padding:'0.3rem 0.75rem', color:'var(--psp-gold,#c8a84b)', fontSize:'0.7rem', fontWeight:700, textDecoration:'none', flexShrink:0, borderLeft:'1px solid rgba(255,255,255,0.1)', letterSpacing:0.5 }}>All →</Link>
+        <Link href="/scores/live" style={{ display:'flex', alignItems:'center', padding:'0.3rem 0.75rem', color:'var(--psp-gold,#c8a84b)', fontSize:'0.75rem', fontWeight:700, textDecoration:'none', flexShrink:0, borderLeft:'1px solid rgba(255,255,255,0.1)', letterSpacing:0.5 }}>All →</Link>
       </div>
       <style>{`
         @keyframes tickerScroll { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }

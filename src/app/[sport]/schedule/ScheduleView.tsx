@@ -738,7 +738,7 @@ function ScrimmageGroupCard({
               {group.teams.length}-Team Scrimmage
             </span>
             {location && (
-              <span className="text-[10px] text-gray-300">
+              <span className="text-xs text-gray-300">
                 📍 {location}
               </span>
             )}

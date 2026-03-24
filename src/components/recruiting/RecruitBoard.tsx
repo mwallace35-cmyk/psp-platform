@@ -218,9 +218,9 @@ export default function RecruitBoard({ recruits, classYears }: Props) {
                       if (!r) return null;
                       return (
                         <div key={svc} className="text-center min-w-[50px]">
-                          <div className="text-[10px] font-semibold text-gray-300 uppercase">{svc === '247sports' ? '247' : svc}</div>
+                          <div className="text-xs font-semibold text-gray-300 uppercase">{svc === '247sports' ? '247' : svc}</div>
                           <div className="text-sm font-bold" style={{ color: '#0a1628' }}>{r.rating ? Number(r.rating).toFixed(2) : '--'}</div>
-                          {r.state_rank && (<div className="text-[10px] text-gray-400">#{r.state_rank} PA</div>)}
+                          {r.state_rank && (<div className="text-xs text-gray-400">#{r.state_rank} PA</div>)}
                         </div>
                       );
                     })}
