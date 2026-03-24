@@ -40,9 +40,11 @@ const LEAGUE_TAB_LABELS: Record<string, string> = {
 
 // Canonical order for division sub-headers
 const DIVISION_ORDER: Record<string, string[]> = {
-  "Catholic League": ["Red", "Blue"],
+  "Catholic League": ["Red", "Blue", "Independent"],
   "Public League": ["A", "B", "C", "D", "E"],
 };
+
+const MAX_OVERALL_TEAMS = 15;
 
 function getTabLabel(leagueName: string): string {
   return LEAGUE_TAB_LABELS[leagueName] || leagueName;
@@ -85,11 +87,15 @@ export default function SportHubStandings({
     // Group teams by tab -> division
     const groupMap: Record<string, Record<string, StandingsTeam[]>> = {};
 
-    // Overall: all teams, no division grouping
+    // Overall: only Philly-area schools (PCL=1, PPL=2, Inter-Ac=3), sorted by win%
+    const phillyTeams = standings.filter(t => {
+      const lid = t.schools?.league_id;
+      return lid === 1 || lid === 2 || lid === 3;
+    });
     groupMap["Overall"] = {
-      "": [...standings].sort(
-        (a, b) => getWinPct(b.wins, b.losses) - getWinPct(a.wins, a.losses)
-      ),
+      "": [...phillyTeams]
+        .sort((a, b) => getWinPct(b.wins, b.losses) - getWinPct(a.wins, a.losses))
+        .slice(0, MAX_OVERALL_TEAMS),
     };
 
     // Per-league grouping
