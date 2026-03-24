@@ -53,6 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ postId: s
 
   return {
     title: data ? `${data.title} — Forum | PhillySportsPack.com` : 'Forum | PhillySportsPack.com',
+    alternates: { canonical: `https://phillysportspack.com/pulse/forum/${postId}` },
     robots: { index: true, follow: true },
   };
 }

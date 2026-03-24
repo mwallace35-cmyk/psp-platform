@@ -8,12 +8,25 @@ import {
   getTrackedAlumni,
 } from "@/lib/data";
 import TeamPageClient from "@/components/teams/TeamPageClient";
+import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 export const dynamic = "force-dynamic";
 type PageProps = {
   params: Promise<{ sport: string; slug: string }>;
 };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { sport, slug } = await params;
+  const sportMeta = SPORT_META[sport as keyof typeof SPORT_META];
+  const school = await getSchoolBySlug(slug);
+  if (!school || !sportMeta) return { title: "Team Not Found" };
+  return {
+    title: `${school.name} ${sportMeta.name} | PhillySportsPack`,
+    description: `${school.name} ${sportMeta.name} — season history, rosters, championships, and alumni.`,
+    alternates: { canonical: `https://phillysportspack.com/${sport}/teams/${slug}` },
+  };
+}
 
 export default async function TeamDetailPage({ params }: PageProps) {
   const { sport, slug } = await params;

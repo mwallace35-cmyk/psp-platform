@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: 'Leaderboards | Philadelphia High School Sports Stats',
   description:
     'Top statistical leaders across all Philadelphia high school sports – football, basketball, baseball, soccer, lacrosse, track & field, and wrestling.',
+  alternates: { canonical: 'https://phillysportspack.com/leaderboards' },
   openGraph: {
     title: 'Leaderboards | PhillySportsPack.com',
     description: 'Top statistical leaders across all Philadelphia high school sports.',

@@ -6,6 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Advertise with PSP | Sponsorship Opportunities',
   description: 'Partner with PhillySportsPack. Reach 1000+ daily visitors and the Philly sports community. Flexible sponsorship tiers starting at $50/mo.',
+  alternates: { canonical: 'https://phillysportspack.com/advertise' },
   openGraph: {
     title: 'Advertise with PhillySportsPack',
     description: 'Sponsorship opportunities and advertising packages for Philadelphia high school sports.',

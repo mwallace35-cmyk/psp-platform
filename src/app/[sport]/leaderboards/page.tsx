@@ -37,6 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   return {
     title: `${meta.name} Leaderboards — PhillySportsPack`,
     description: `Current season statistical leaders for Philadelphia high school ${meta.name.toLowerCase()}. Toggle to career mode for all-time records.`,
+    alternates: { canonical: `https://phillysportspack.com/${sport}/leaderboards` },
   };
 }
 

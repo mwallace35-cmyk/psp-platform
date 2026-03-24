@@ -1,9 +1,16 @@
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
+import { Metadata } from "next";
 import { createStaticClient } from "@/lib/supabase/static";
 import { captureError } from "@/lib/error-tracking";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+
+export const metadata: Metadata = {
+  title: "About | PhillySportsPack",
+  description: "PhillySportsPack is the definitive Philadelphia high school sports database — 55,000+ players, 700+ schools, 7 sports, 25+ years of history.",
+  alternates: { canonical: "https://phillysportspack.com/about" },
+};
 import HeroSectionNew from "@/components/home/HeroSectionNew";
 import LiveStatsStrip from "@/components/home/LiveStatsStrip";
 import SportNavigationGrid from "@/components/home/SportNavigationGrid";

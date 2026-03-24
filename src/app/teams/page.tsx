@@ -4,6 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Teams | Philadelphia High School Sports Stats',
   description: 'Browse high school sports teams across Philadelphia. School rosters, season records, and standings.',
+  alternates: { canonical: 'https://phillysportspack.com/teams' },
   openGraph: {
     title: 'Teams | PhillySportsPack.com',
     description: 'High school sports teams across Philadelphia.',

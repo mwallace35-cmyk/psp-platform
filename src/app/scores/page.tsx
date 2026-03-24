@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "Scores | PhillySportsPack",
   description:
     "Recent scores from Philadelphia high school sports. Filter by season, sport, and school.",
+  alternates: { canonical: "https://phillysportspack.com/scores" },
   openGraph: {
     title: "Scores | PhillySportsPack",
     description: "Recent scores from Philadelphia high school sports.",

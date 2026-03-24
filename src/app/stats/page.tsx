@@ -4,6 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Stats | Philadelphia High School Sports",
   description: "Statistics hub for Philadelphia high school sports.",
+  alternates: { canonical: "https://phillysportspack.com/stats" },
 };
 
 const SECTIONS = [

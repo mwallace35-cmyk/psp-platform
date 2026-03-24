@@ -8,7 +8,7 @@ interface PageProps { params: Promise<{ year: string }> }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { year } = await params;
-  return { title: `${year} Season Leaders | PhillySportsPack`, description: `Top Philadelphia high school statistical leaders for the ${year} season.` };
+  return { title: `${year} Season Leaders | PhillySportsPack`, description: `Top Philadelphia high school statistical leaders for the ${year} season.`, alternates: { canonical: `https://phillysportspack.com/stats/season/${year}` } };
 }
 
 interface LeaderRow { slug: string; name: string; school: string; value: number; }

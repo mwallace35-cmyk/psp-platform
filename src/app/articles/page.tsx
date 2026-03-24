@@ -8,7 +8,7 @@ import PSPPromo from '@/components/ads/PSPPromo';
 export const revalidate = 1800;
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: 'Articles | PhillySportsPack.com',
+  title: 'Articles',
   description: 'Read news and articles about Philadelphia high school sports.',
   metadataBase: new URL('https://phillysportspack.com'),
   alternates: { canonical: 'https://phillysportspack.com/articles' },
@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: { card: 'summary_large_image', title: 'Articles | PhillySportsPack.com', description: 'Read news and articles about Philadelphia high school sports.', images: ['https://phillysportspack.com/og-default.png'] },
+
   robots: { index: true, follow: true },
 };
 
@@ -46,7 +47,7 @@ export default async function ArticlesPage({
   // Build query
   let query = supabase
     .from('articles')
-    .select('*', { count: 'exact' })
+    .select('id, slug, title, excerpt, featured_image_url, sport_id, author_name, created_at, status, deleted_at', { count: 'exact' })
     .eq('status', 'published')
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
@@ -181,7 +182,7 @@ export default async function ArticlesPage({
                       </p>
 
                       <div className="flex justify-between items-center pt-4 border-t border-gray-100 text-xs text-gray-600">
-                        <span>{article.author}</span>
+                        <span>{article.author_name || 'PSP Staff'}</span>
                         <span>{new Date(article.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>

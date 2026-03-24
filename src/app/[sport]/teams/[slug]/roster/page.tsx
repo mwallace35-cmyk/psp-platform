@@ -33,6 +33,7 @@ export async function generateMetadata({
   return {
     title: `${school.name} ${seasonLabel} Roster | ${SPORT_META[sport].name} | PhillySportsPack`,
     description: `${school.name} ${SPORT_META[sport].name} roster for the ${seasonLabel} season.`,
+    alternates: { canonical: `https://phillysportspack.com/${sport}/teams/${slug}/roster` },
   };
 }
 

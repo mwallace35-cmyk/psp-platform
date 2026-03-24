@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Trending Players | PhillySportsPack',
   description: "See who's hot right now across Philadelphia high school sports.",
+  alternates: { canonical: 'https://phillysportspack.com/leaderboards/trending' },
 };
 
 export default function TrendingPage() {

@@ -9,6 +9,7 @@ import SearchFilters from "@/components/search/SearchFilters";
 export const metadata: Metadata = {
   title: "Search — PhillySportsPack",
   description: "Search players, schools, coaches, and seasons in the Philadelphia high school sports database.",
+  alternates: { canonical: "https://phillysportspack.com/search" },
 };
 
 export const revalidate = 3600; // ISR: revalidate every hour

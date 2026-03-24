@@ -337,7 +337,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                           </span>
 
                           {/* Player name */}
-                          {player.player_slug ? (
+                          {player.player_slug && player.player_slug !== 'undefined' ? (
                             <Link href={`/${sport}/players/${player.player_slug}`}
                               style={{ fontWeight: 600, fontSize: '0.85rem', color: '#fff', textDecoration: 'none' }}>
                               {player.player_name}

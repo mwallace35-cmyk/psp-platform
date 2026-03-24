@@ -10,10 +10,11 @@ interface PageProps {
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
   const { a, b } = await searchParams;
-  if (!a || !b) return { title: 'Compare Players | PhillySportsPack' };
+  if (!a || !b) return { title: 'Compare Players | PhillySportsPack', alternates: { canonical: 'https://phillysportspack.com/players/compare' } };
   return {
     title: `${a} vs ${b} | Player Comparison | PhillySportsPack`,
     description: 'Head-to-head career stat comparison for Philadelphia high school athletes.',
+    alternates: { canonical: 'https://phillysportspack.com/players/compare' },
   };
 }
 

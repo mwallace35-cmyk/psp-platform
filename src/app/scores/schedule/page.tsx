@@ -9,6 +9,7 @@ import SportIcon from "@/components/ui/SportIcon";
 export const metadata: Metadata = {
   title: "Schedule | PhillySportsPack",
   description: "Upcoming games and schedule for Philadelphia high school sports. Football, basketball, baseball, and more.",
+  alternates: { canonical: "https://phillysportspack.com/scores/schedule" },
   openGraph: {
     title: "Schedule | PhillySportsPack",
     description: "Upcoming games and schedule for Philadelphia high school sports.",

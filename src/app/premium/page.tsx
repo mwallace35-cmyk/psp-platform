@@ -6,6 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Premium PSP | Advanced Stats & Features',
   description: 'Unlock premium features for PhillySportsPack. Advanced search, data exports, and ad-free browsing. $5/month.',
+  alternates: { canonical: 'https://phillysportspack.com/premium' },
   openGraph: {
     title: 'Premium PhillySportsPack',
     description: 'Advanced stats, data exports, and ad-free experience.',

@@ -75,6 +75,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${player.name} | ${school?.name ?? 'PhillySportsPack'}`,
     description: `${player.name} — ${school?.name ?? 'Philadelphia'} athlete profile. Stats, career history, and highlights. Class of ${player.graduation_year ?? 'N/A'}.`,
+    alternates: { canonical: `https://phillysportspack.com/players/${slug}` },
     openGraph: {
       title: `${player.name} | PhillySportsPack`,
       description: `${player.name} — ${school?.name ?? 'Philadelphia'}, Class of ${player.graduation_year ?? 'N/A'}`,

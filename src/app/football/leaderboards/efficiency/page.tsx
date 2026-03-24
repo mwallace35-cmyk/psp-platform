@@ -6,8 +6,17 @@ import {
   withRetry,
 } from '@/lib/data/common';
 
+import type { Metadata } from "next";
+
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Football Efficiency Stats | PhillySportsPack",
+  description: "Advanced efficiency metrics for Philadelphia high school football — yards per carry, completion percentage, and yards per target.",
+  alternates: { canonical: "https://phillysportspack.com/football/leaderboards/efficiency" },
+};
+
 interface EffRow {
   players?: { name?: string | null; slug?: string | null; schools?: { name?: string | null; slug?: string | null } | null } | null;
   rush_yards?: number | null;

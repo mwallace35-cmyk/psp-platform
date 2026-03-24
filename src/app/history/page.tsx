@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'This Week in PSP History | PhillySportsPack',
   description: '141 seasons of Philadelphia high school sports history — championships, records, and legends.',
+  alternates: { canonical: 'https://phillysportspack.com/history' },
 };
 
 const MOMENTS = [

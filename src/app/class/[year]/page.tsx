@@ -56,6 +56,7 @@ export async function generateMetadata({
   return {
     title: `Class of ${year} | Philadelphia High School Sports`,
     description: `Top performers from the Class of ${year} across football, basketball, and baseball in Philadelphia high school sports.`,
+    alternates: { canonical: `https://phillysportspack.com/class/${year}` },
   };
 }
 

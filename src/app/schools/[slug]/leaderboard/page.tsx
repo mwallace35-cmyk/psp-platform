@@ -94,7 +94,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const data = await getSchoolData(slug);
   if (!data) return { title: 'School Not Found' };
-  return { title: `${data.school.name} All-Time Leaders | PhillySportsPack`, description: `All-time statistical leaders from ${data.school.name} in football and basketball.` };
+  return { title: `${data.school.name} All-Time Leaders | PhillySportsPack`, description: `All-time statistical leaders from ${data.school.name} in football and basketball.`, alternates: { canonical: `https://phillysportspack.com/schools/${slug}/leaderboard` } };
 }
 
 function LeaderList({ title, suffix, rows }: { title: string; suffix: string; rows: LeaderRow[] }) {

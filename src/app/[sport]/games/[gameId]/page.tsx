@@ -40,9 +40,11 @@ export async function generateMetadata({
       : "";
   const season = game.seasons?.label ?? "";
 
+  const { sport: sportSlug } = await params;
   return {
     title: `${away} at ${home}${score} | ${season} ${(sport) ? SPORT_META[sport].name : "Game"}`,
     description: `Box score and game details for ${away} vs ${home}${score}. ${season} Philadelphia high school${sport ? ` ${SPORT_META[sport].name}` : ""}.`,
+    alternates: { canonical: `https://phillysportspack.com/${sportSlug}/games/${gameId}` },
   };
 }
 

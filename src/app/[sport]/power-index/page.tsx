@@ -27,6 +27,7 @@ export async function generateMetadata({
   return {
     title: `PSP Power Index | ${sportName} | PhillySportsPack`,
     description: `Comprehensive power rankings for Philadelphia high school ${sportName} based on championships, win percentage, recruiting, and pro athletes.`,
+    alternates: { canonical: `https://phillysportspack.com/${sport}/power-index` },
     openGraph: {
       title: `PSP Power Index | ${sportName}`,
       description: `Comprehensive power rankings for Philadelphia high school ${sportName}.`,

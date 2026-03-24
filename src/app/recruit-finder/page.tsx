@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Recruit Finder | Philadelphia High School Sports",
   description:
     "Search and filter top Philadelphia high school football, basketball, and baseball recruits by class year, position, league, and stats.",
+  alternates: { canonical: "https://phillysportspack.com/recruit-finder" },
   openGraph: {
     title: "Recruit Finder | PhillySportsPack.com",
     description: "Find top Philadelphia high school recruits across football, basketball, and baseball.",

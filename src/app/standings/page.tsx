@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 export const metadata: Metadata = {
   title: 'Standings | Philadelphia High School Sports',
   description: 'Current season standings for Philadelphia high school sports.',
+  alternates: { canonical: 'https://phillysportspack.com/standings' },
 };
 
 export const revalidate = 3600;

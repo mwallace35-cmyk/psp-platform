@@ -6,6 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Support PSP | Help Preserve Philly Sports History',
   description: 'Help preserve and celebrate Philadelphia high school sports. Support PhillySportsPack with a donation or monthly subscription.',
+  alternates: { canonical: 'https://phillysportspack.com/support' },
   openGraph: {
     title: 'Support PhillySportsPack',
     description: 'Help preserve 25 years of Philadelphia high school sports data and stories.',

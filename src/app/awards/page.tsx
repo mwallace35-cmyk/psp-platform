@@ -22,6 +22,7 @@ export const metadata: Metadata = {
   title: "Awards & Honors Hub | PhillySportsPack",
   description:
     "The complete archive of Philadelphia high school sports honors — All-City teams, championships, Player of the Year, dynasties, and pro athletes across all sports since 1887.",
+  alternates: { canonical: "https://phillysportspack.com/awards" },
   openGraph: {
     title: "Awards & Honors Hub | PhillySportsPack",
     description:
