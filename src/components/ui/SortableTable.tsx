@@ -231,8 +231,8 @@ function SortableTable({
         {sortAnnouncement}
       </div>
       <div className="overflow-x-auto border border-gray-200 rounded-lg">
-        <table className="w-full text-sm text-gray-700" aria-label={ariaLabel}>
-        <thead className="sticky top-0 z-10 bg-navy text-white">
+        <table className="w-full text-sm" aria-label={ariaLabel}>
+        <thead className="sticky top-0 z-10 bg-[var(--psp-navy)] text-white" style={{ color: 'white' }}>
           <tr>
             {visibleColumns
               .map((col) => (
@@ -245,7 +245,7 @@ function SortableTable({
                   onKeyDown={(e) => col.sortable !== false && handleHeaderKeyDown(e, col.key)}
                   aria-sort={col.sortable !== false ? getAriaSort(col.key) : undefined}
                   aria-label={getHeaderAriaLabel(col)}
-                  className={`px-4 py-3 text-left font-semibold border-b border-gray-300 transition ${
+                  className={`px-3 py-3 text-left font-semibold text-xs uppercase tracking-wider border-b border-gray-600 whitespace-nowrap transition ${
                     col.sortable !== false ? 'cursor-pointer hover:bg-gray-800 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400' : ''
                   }`}
                   style={{
@@ -264,7 +264,7 @@ function SortableTable({
               ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-gray-700">
           {sortedData.map((row, idx) => {
             const isTopThree = highlightTop3 && idx < 3;
             const bgColor =

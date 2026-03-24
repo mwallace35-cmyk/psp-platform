@@ -1379,6 +1379,13 @@ export const getStatTotalCount = cache(async (
 
           const supabase = createStaticClient();
 
+          // Always filter by current season to match the leaderboard data
+          const { data: currentSeason } = await supabase
+            .from("seasons")
+            .select("id")
+            .eq("is_current", true)
+            .single();
+
           let query = (supabase as any)
             .from(mapping.table)
             .select("id", { count: "exact", head: true })
@@ -1387,6 +1394,8 @@ export const getStatTotalCount = cache(async (
 
           if (seasonId) {
             query = query.eq("season_id", seasonId);
+          } else if (currentSeason?.id) {
+            query = query.eq("season_id", currentSeason.id);
           }
 
           const { count } = await query;
