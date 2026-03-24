@@ -1,69 +1,113 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from "react";
 
-type Tab = 'overview' | 'stats' | 'gamelog' | 'awards';
-
-interface Props {
-  awardsCount: number;
-  hasGameLog: boolean;
-  overview: React.ReactNode;
-  stats: React.ReactNode;
-  gamelog: React.ReactNode;
-  awards: React.ReactNode;
+interface PlayerProfileTabsProps {
+  sportColor: string;
+  tabs: { id: string; label: string }[];
 }
 
-const TABS: { key: Tab; label: string; icon: string }[] = [
-  { key: 'overview', label: 'Overview', icon: '\uD83D\uDCCA' },
-  { key: 'stats', label: 'Stats', icon: '\uD83D\uDCCB' },
-  { key: 'gamelog', label: 'Game Log', icon: '\uD83D\uDCC5' },
-  { key: 'awards', label: 'Awards', icon: '\uD83C\uDFC6' },
-];
+export default function PlayerProfileTabs({ sportColor, tabs }: PlayerProfileTabsProps) {
+  const [activeTab, setActiveTab] = useState(tabs[0]?.id ?? "overview");
+  const tabBarRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const isClickScrolling = useRef(false);
 
-export default function PlayerProfileTabs({ awardsCount, hasGameLog, overview, stats, gamelog, awards }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>('overview');
+  const scrollTabIntoView = useCallback((tabId: string) => {
+    const btn = tabRefs.current.get(tabId);
+    if (btn && tabBarRef.current) {
+      btn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, []);
 
-  const visibleTabs = TABS.filter(t => {
-    if (t.key === 'gamelog' && !hasGameLog) return false;
-    if (t.key === 'awards' && awardsCount === 0) return false;
-    return true;
-  });
+  useEffect(() => {
+    const sectionIds = tabs.map((t) => t.id);
+    const elements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[];
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isClickScrolling.current) return;
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visible.length > 0) {
+          const id = visible[0].target.id;
+          setActiveTab(id);
+          scrollTabIntoView(id);
+        }
+      },
+      {
+        rootMargin: "-80px 0px -60% 0px",
+        threshold: 0,
+      }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [tabs, scrollTabIntoView]);
+
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+    scrollTabIntoView(tabId);
+
+    const section = document.getElementById(tabId);
+    if (section) {
+      isClickScrolling.current = true;
+      section.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => {
+        isClickScrolling.current = false;
+      }, 1000);
+    }
+  };
 
   return (
-    <div>
-      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 mb-6">
-        <div className="flex gap-0">
-          {visibleTabs.map(tab => (
+    <div
+      className="sticky top-0 z-30"
+      style={{ background: "var(--psp-navy)", borderBottom: `3px solid ${sportColor}22` }}
+    >
+      <div
+        ref={tabBarRef}
+        className="max-w-7xl mx-auto px-4 flex gap-1 overflow-x-auto scrollbar-hide"
+        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" } as React.CSSProperties}
+      >
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
             <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1.5 px-4 py-3 text-sm font-bold transition-colors ${
-                activeTab === tab.key
-                  ? 'text-[var(--psp-navy,#0a1628)]'
-                  : 'text-gray-400 hover:text-gray-600'
-              }`}
+              key={tab.id}
+              ref={(el) => {
+                if (el) tabRefs.current.set(tab.id, el);
+              }}
+              onClick={() => handleTabClick(tab.id)}
+              className="relative whitespace-nowrap px-5 py-3 text-sm tracking-wider transition-colors flex-shrink-0"
               style={{
-                borderBottom: activeTab === tab.key ? '3px solid var(--psp-gold, #f0a500)' : '3px solid transparent',
-                fontFamily: 'Bebas Neue, sans-serif',
-                letterSpacing: '0.05em',
+                fontFamily: "Bebas Neue, sans-serif",
+                fontSize: "1rem",
+                letterSpacing: "0.08em",
+                color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
               }}
             >
-              <span className="text-base">{tab.icon}</span>
               {tab.label}
-              {tab.key === 'awards' && awardsCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--psp-gold,#f0a500)] text-[var(--psp-navy,#0a1628)]">
-                  {awardsCount}
-                </span>
-              )}
+              <span
+                className="absolute bottom-0 left-2 right-2 rounded-t-sm transition-all duration-200"
+                style={{
+                  height: isActive ? "3px" : "0px",
+                  background: sportColor,
+                  opacity: isActive ? 1 : 0,
+                }}
+              />
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
-
-      {activeTab === 'overview' && overview}
-      {activeTab === 'stats' && stats}
-      {activeTab === 'gamelog' && gamelog}
-      {activeTab === 'awards' && awards}
     </div>
   );
 }

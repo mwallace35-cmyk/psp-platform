@@ -14,6 +14,9 @@ import GameLogAccordion from "@/components/game-log/GameLogAccordion";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
 import PlayerHighlightsSection from "@/components/highlights/PlayerHighlightsSection";
+import PlayerStatTable from "@/components/players/PlayerStatTable";
+import PlayerProfileTabs from "@/components/players/PlayerProfileTabs";
+import InTheNews from "@/components/players/InTheNews";
 import type { MergedGameEntry, SeasonAward } from "@/components/game-log/GameLogAccordion";
 import type { Metadata } from "next";
 
@@ -40,7 +43,7 @@ type PageParams = { sport: string; slug: string };
  * All other players are generated on first request via ISR.
  * With 52,000+ players, generating all at build time is impractical.
  */
-// Dynamic — too many slug combos to pre-render
+// Dynamic -- too many slug combos to pre-render
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { sport, slug } = await params;
   const validSport = await validateSportParamForMetadata({ sport });
@@ -56,18 +59,18 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 
   const ogImageUrl = buildOgImageUrl({
     title: player.name,
-    subtitle: `${SPORT_META[validSport].name} — Career Profile`,
+    subtitle: `${SPORT_META[validSport].name} -- Career Profile`,
     sport: validSport,
     type: "player",
   });
   return {
-    title: `${player.name} — ${school} ${SPORT_META[validSport].name} — PhillySportsPack`,
+    title: `${player.name} -- ${school} ${SPORT_META[validSport].name} -- PhillySportsPack`,
     description,
     alternates: {
       canonical: `https://phillysportspack.com/${validSport}/players/${slug}`,
     },
     openGraph: {
-      title: `${player.name} — ${school} ${SPORT_META[validSport].name} — PhillySportsPack`,
+      title: `${player.name} -- ${school} ${SPORT_META[validSport].name} -- PhillySportsPack`,
       description,
       url: `https://phillysportspack.com/${validSport}/players/${slug}`,
       type: "profile",
@@ -75,7 +78,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
     },
     twitter: {
       card: "summary_large_image",
-      title: `${player.name} — ${school} ${SPORT_META[validSport].name} — PhillySportsPack`,
+      title: `${player.name} -- ${school} ${SPORT_META[validSport].name} -- PhillySportsPack`,
       description,
       images: [ogImageUrl],
     },
@@ -211,10 +214,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
   // Sort merged games by season descending, then by date descending within each season
   mergedGames.sort((a, b) => {
-    // First sort by season label descending (e.g., "2011-12" > "2010-11")
     const seasonCmp = (b.seasonLabel || "").localeCompare(a.seasonLabel || "");
     if (seasonCmp !== 0) return seasonCmp;
-    // Within same season, sort by date descending
     return (b.gameDate || "").localeCompare(a.gameDate || "");
   });
 
@@ -234,6 +235,80 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     ? player.schools.name.split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase()
     : "??";
 
+  /* ===== Hero stat cards: pick top 3 stats from most recent season ===== */
+  const heroStats: { label: string; value: string; sub?: string }[] = [];
+  const mostRecent = stats.length > 0 ? stats[stats.length - 1] : null; // stats are usually sorted ascending
+
+  if (sport === "football" && footballTotals) {
+    // Decide if QB or skill position based on career totals
+    const isQB = footballTotals.passYards > footballTotals.rushYards;
+    if (isQB) {
+      heroStats.push(
+        { label: "Pass Yards", value: footballTotals.passYards.toLocaleString() },
+        { label: "Pass TDs", value: String(footballTotals.passTd) },
+        { label: "Total TDs", value: String(footballTotals.totalTd) },
+      );
+    } else {
+      heroStats.push(
+        { label: "Rush Yards", value: footballTotals.rushYards.toLocaleString() },
+        { label: "TDs", value: String(footballTotals.totalTd) },
+      );
+      if (footballTotals.rushCarries > 0) {
+        heroStats.push({ label: "YPC", value: (footballTotals.rushYards / footballTotals.rushCarries).toFixed(1) });
+      } else if (footballTotals.recYards > 0) {
+        heroStats.push({ label: "Rec Yards", value: footballTotals.recYards.toLocaleString() });
+      }
+    }
+  } else if (sport === "basketball" && basketballTotals) {
+    const ppg = basketballTotals.games > 0 ? (basketballTotals.points / basketballTotals.games).toFixed(1) : "0";
+    const rpg = basketballTotals.games > 0 ? (basketballTotals.rebounds / basketballTotals.games).toFixed(1) : "0";
+    const apg = basketballTotals.games > 0 ? (basketballTotals.assists / basketballTotals.games).toFixed(1) : "0";
+    heroStats.push(
+      { label: "PPG", value: ppg },
+      { label: "RPG", value: rpg },
+      { label: "APG", value: apg },
+    );
+  } else if (sport === "baseball" && stats.length > 0) {
+    const bbStats = stats as BaseballPlayerSeason[];
+    const last = bbStats[bbStats.length - 1];
+    heroStats.push(
+      { label: "AVG", value: last.batting_avg != null ? last.batting_avg.toFixed(3) : ".000" },
+      { label: "HR", value: String(last.home_runs || 0) },
+    );
+    if (last.era != null) heroStats.push({ label: "ERA", value: last.era.toFixed(2) });
+  }
+
+  /* ===== Build tab list ===== */
+  const tabList: { id: string; label: string }[] = [
+    { id: "overview", label: "Overview" },
+    { id: "stats", label: "Stats" },
+  ];
+  if (mergedGames.length > 0 && (sport === "football" || sport === "basketball")) {
+    tabList.push({ id: "game-log", label: "Game Log" });
+  }
+  if ((awards as Award[]).length > 0) {
+    tabList.push({ id: "awards", label: "Awards" });
+  }
+
+  /* ===== Awards grouping (for awards section) ===== */
+  const TIER_COLORS: Record<string, { bg: string; border: string; text: string; badge: string }> = {
+    "First Team": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e", badge: "#f59e0b" },
+    "Second Team": { bg: "#e0e7ff", border: "#6366f1", text: "#3730a3", badge: "#6366f1" },
+    "Third Team": { bg: "#ecfdf5", border: "#10b981", text: "#065f46", badge: "#10b981" },
+    "Honorable Mention": { bg: "#f3f4f6", border: "#9ca3af", text: "#374151", badge: "#9ca3af" },
+    "MVP": { bg: "#fef3c7", border: "#d97706", text: "#92400e", badge: "#d97706" },
+  };
+  const CAT_ICONS: Record<string, string> = { offense: "\u26A1", defense: "\uD83D\uDEE1\uFE0F", specialist: "\uD83C\uDFAF" };
+  const DEFAULT_STYLE = { bg: "#f3f4f6", border: "#d1d5db", text: "#374151", badge: "#6b7280" };
+
+  const awardsByYear: Record<number, Award[]> = {};
+  (awards as Award[]).forEach(a => {
+    const y = a.year || (a.seasons?.label ? parseInt(a.seasons.label.split("-")[0]) + 1 : 0);
+    if (!awardsByYear[y]) awardsByYear[y] = [];
+    awardsByYear[y].push(a);
+  });
+  const awardYears = Object.keys(awardsByYear).map(Number).sort((a, b) => b - a);
+
   return (
     <>
       <BreadcrumbJsonLd items={[
@@ -252,85 +327,100 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         proTeam={player.pro_team}
       />
 
-      {/* Player header */}
-      <section
-        className="py-12 md:py-16"
-        style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 60%, ${meta.color}22 100%)` }}
-      >
-        <div className="max-w-7xl mx-auto px-4">
+      {/* ============ HERO SECTION ============ */}
+      <section className="relative" style={{ background: "var(--psp-navy)" }}>
+        {/* Sport-colored accent bar at very top */}
+        <div className="h-1" style={{ background: meta.color }} />
+
+        <div className="max-w-7xl mx-auto px-4 pt-6 pb-10 md:pt-8 md:pb-12">
+          {/* Breadcrumb */}
           <Breadcrumb items={[
             { label: meta.name, href: `/${sport}` },
             { label: "Players" },
             { label: player.name }
           ]} />
 
-          <div className="flex items-start gap-6">
+          <div className="flex items-start gap-5 mt-4">
+            {/* Avatar */}
             <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-xl font-bold flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.1)", color: "var(--psp-gold)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.05em" }}
+              className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold flex-shrink-0"
+              style={{ background: `${meta.color}25`, color: "var(--psp-gold)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.05em", border: `2px solid ${meta.color}40` }}
               aria-hidden="true"
             >
               {schoolInitials}
             </div>
-            <div className="flex-1">
+
+            <div className="flex-1 min-w-0">
+              {/* Player name */}
               <h1
-                className="text-4xl md:text-5xl text-white mb-2 tracking-wider"
+                className="text-3xl md:text-4xl lg:text-5xl text-white tracking-wider leading-none"
                 style={{ fontFamily: "Bebas Neue, sans-serif" }}
               >
                 {player.name}
               </h1>
-              <div className="flex flex-wrap gap-4 text-sm">
+
+              {/* Meta row: school, position, class, jersey, badges */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2">
                 {player.schools && (
-                  <Link href={`/${sport}/schools/${player.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
+                  <Link href={`/${sport}/schools/${player.schools?.slug}`} className="text-sm font-semibold hover:underline" style={{ color: "var(--psp-gold)" }}>
                     {player.schools?.name}
                   </Link>
                 )}
                 {player.positions && player.positions.length > 0 && (
-                  <span className="text-gray-400">{player.positions.join(", ")}</span>
+                  <span
+                    className="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-md"
+                    style={{ background: `${meta.color}30`, color: meta.color, border: `1px solid ${meta.color}50` }}
+                  >
+                    {player.positions.join(" / ")}
+                  </span>
                 )}
                 {player.graduation_year && (
-                  <span className="text-gray-400">Class of {player.graduation_year}</span>
+                  <span className="text-sm text-gray-400">Class of {player.graduation_year}</span>
                 )}
                 {player.is_multi_sport && (
-                  <span className="px-2 py-0.5 text-xs rounded-full" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
+                  <span className="px-2 py-0.5 text-xs font-bold rounded-md" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
                     Multi-Sport
                   </span>
                 )}
                 {player.pro_team && (
-                  <span className="px-2 py-0.5 text-xs rounded-full font-semibold" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
-                    ⭐ Pro Athlete
+                  <span className="px-2 py-0.5 text-xs font-bold rounded-md" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
+                    Pro Athlete
                   </span>
                 )}
                 {player.college && !player.pro_team && (
-                  <span className="px-2 py-0.5 text-xs rounded-full font-semibold bg-blue-600 text-white">
-                    🎓 College
+                  <span className="px-2 py-0.5 text-xs font-bold rounded-md bg-blue-600 text-white">
+                    College
                   </span>
                 )}
                 {(awards as Award[]).length > 0 && (
-                  <span className="px-2 py-0.5 text-xs rounded-full font-semibold" style={{ background: "rgba(240,165,0,0.2)", color: "var(--psp-gold)", border: "1px solid rgba(240,165,0,0.3)" }}>
-                    🏅 {(awards as Award[]).length} Award{(awards as Award[]).length !== 1 ? "s" : ""}
+                  <span
+                    className="px-2 py-0.5 text-xs font-bold rounded-md"
+                    style={{ background: "rgba(240,165,0,0.2)", color: "var(--psp-gold)", border: "1px solid rgba(240,165,0,0.3)" }}
+                  >
+                    {(awards as Award[]).length} Award{(awards as Award[]).length !== 1 ? "s" : ""}
                   </span>
                 )}
               </div>
-              <div className="mt-4 flex flex-wrap items-center gap-4">
+
+              {/* Actions row */}
+              <div className="mt-4 flex flex-wrap items-center gap-3">
                 <ShareButtons
                   url={`/${sport}/players/${slug}`}
-                  title={`${player.name} — ${meta.name} Stats | PhillySportsPack`}
+                  title={`${player.name} -- ${meta.name} Stats | PhillySportsPack`}
                   description={`Check out ${player.name}'s career stats on PhillySportsPack.com`}
                 />
                 <Link
                   href={`/compare?players=${slug}&sport=${sport}`}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
                   style={{ background: "var(--psp-blue, #3b82f6)", color: "white" }}
                   title="Compare with another player"
                 >
-                  <span>⚖️</span>
                   Compare
                 </Link>
               </div>
 
               {/* Social Profile Bar */}
-              <div className="mt-6">
+              <div className="mt-4">
                 <SocialProfileBar
                   hudlUrl={player.hudl_profile_url || recruitingProfile?.url_hudl}
                   on3Url={recruitingProfile?.url_on3}
@@ -346,68 +436,38 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             </div>
           </div>
 
-          {/* Career stat highlights — football */}
-          {footballTotals && (
-            <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl">
-              {[
-                { label: "Rush Yards", value: footballTotals.rushYards.toLocaleString(), stat: "rushing" },
-                { label: "Rush TDs", value: footballTotals.rushTd, stat: null },
-                ...(footballTotals.passYards > 0 ? [{ label: "Pass Yards", value: footballTotals.passYards.toLocaleString(), stat: "passing" }] : []),
-                ...(footballTotals.recYards > 0 ? [{ label: "Rec Yards", value: footballTotals.recYards.toLocaleString(), stat: "receiving" }] : []),
-                { label: "Total TDs", value: footballTotals.totalTd, stat: null },
-              ].slice(0, 4).map((s) => (
-                <div key={s.label} className="rounded-xl p-4 group cursor-pointer" style={{ background: "rgba(255,255,255,0.05)" }}>
-                  <dt className="text-xs text-gray-400">{s.label}</dt>
-                  <dd className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>{s.value}</dd>
-                  {s.stat && (
-                    <div className="mt-2 pt-2 border-t border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link
-                        href={`/${sport}/leaderboards/${s.stat}`}
-                        className="text-xs text-blue-300 hover:text-blue-100 font-medium"
-                      >
-                        View Leaderboard →
-                      </Link>
-                    </div>
-                  )}
+          {/* ---- Hero Stat Highlight Cards ---- */}
+          {heroStats.length > 0 && (
+            <div className="flex flex-wrap gap-4 mt-8">
+              {heroStats.map((hs) => (
+                <div
+                  key={hs.label}
+                  className="rounded-xl px-6 py-4 min-w-[120px] flex-1 max-w-[200px]"
+                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}
+                >
+                  <div
+                    className="text-3xl md:text-4xl font-bold text-white leading-none"
+                    style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                  >
+                    {hs.value}
+                  </div>
+                  <div className="text-xs font-bold uppercase tracking-wider mt-1.5" style={{ color: meta.color }}>
+                    {hs.label}
+                  </div>
                 </div>
               ))}
-            </dl>
-          )}
-
-          {/* Career stat highlights — basketball */}
-          {basketballTotals && (
-            <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 max-w-3xl">
-              {[
-                { label: "Career Points", value: basketballTotals.points.toLocaleString(), stat: "scoring" },
-                { label: "PPG", value: basketballTotals.games > 0 ? (basketballTotals.points / basketballTotals.games).toFixed(1) : "—", stat: null },
-                { label: "Games", value: basketballTotals.games, stat: null },
-                { label: "Rebounds", value: basketballTotals.rebounds, stat: "rebounds" },
-              ].map((s) => (
-                <div key={s.label} className="rounded-xl p-4 group cursor-pointer" style={{ background: "rgba(255,255,255,0.05)" }}>
-                  <dt className="text-xs text-gray-400">{s.label}</dt>
-                  <dd className="text-2xl font-bold text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>{s.value}</dd>
-                  {s.stat && (
-                    <div className="mt-2 pt-2 border-t border-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link
-                        href={`/${sport}/leaderboards/${s.stat}`}
-                        className="text-xs text-blue-300 hover:text-blue-100 font-medium"
-                      >
-                        View Leaderboard →
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </dl>
+            </div>
           )}
         </div>
       </section>
 
-      <PSPPromo size="banner" variant={2} />
+      {/* ============ STICKY TAB NAVIGATION ============ */}
+      <PlayerProfileTabs sportColor={meta.color} tabs={tabList} />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* ============ OVERVIEW SECTION ============ */}
+      <section id="overview" className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main content */}
+          {/* Main column */}
           <div className="lg:col-span-2 space-y-8">
             {/* Data Source Badge */}
             <div className="flex flex-wrap items-center gap-3">
@@ -424,251 +484,62 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* Career Trajectory Chart */}
             {sport === "football" && stats.length > 0 && (
-              <CareerTrajectoryChart
-                sport={sport}
-                seasons={(stats as FootballPlayerSeason[]).map((s) => ({
-                  label: s.seasons?.label || "Unknown",
-                  stats: {
-                    pass_yards: s.pass_yards || 0,
-                    rush_yards: s.rush_yards || 0,
-                    rec_yards: s.rec_yards || 0,
-                  },
-                }))}
-              />
-            )}
-
-            {/* Football Season-by-season stats */}
-            {sport === "football" && stats.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                  Season-by-Season Stats
+              <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <h2 className="text-xl font-bold mb-3" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                  Career Trajectory
                 </h2>
-
-                {/* Desktop table */}
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="data-table" aria-label={`${player.name} season-by-season football statistics`}>
-                    <thead>
-                      <tr>
-                        <th scope="col">Season</th>
-                        <th scope="col">School</th>
-                        {fbVis?.games_played && <th scope="col" className="text-right">GP</th>}
-                        {fbVis?.rush_carries && <th scope="col" className="text-right">Carries</th>}
-                        <th scope="col" className="text-right">Rush Yds</th>
-                        <th scope="col" className="text-right">Rush TD</th>
-                        {fbVis?.pass_yards && <th scope="col" className="text-right">Pass Yds</th>}
-                        {fbVis?.pass_td && <th scope="col" className="text-right">Pass TD</th>}
-                        {fbVis?.rec_yards && <th scope="col" className="text-right">Rec Yds</th>}
-                        {fbVis?.rec_td && <th scope="col" className="text-right">Rec TD</th>}
-                        <th scope="col" className="text-right">Total TD</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(stats as FootballPlayerSeason[]).map((s) => (
-                        <tr key={s.id}>
-                          <td className="font-medium whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>{s.seasons?.label}</td>
-                          <td className="text-xs">
-                            <Link href={`/${sport}/schools/${s.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
-                              {s.schools?.name}
-                            </Link>
-                          </td>
-                          {fbVis?.games_played && <td className="text-right">{s.games_played || "—"}</td>}
-                          {fbVis?.rush_carries && <td className="text-right">{s.rush_carries || "—"}</td>}
-                          <td className="text-right">{s.rush_yards || "—"}</td>
-                          <td className="text-right">{s.rush_td || "—"}</td>
-                          {fbVis?.pass_yards && <td className="text-right">{s.pass_yards || "—"}</td>}
-                          {fbVis?.pass_td && <td className="text-right">{s.pass_td || "—"}</td>}
-                          {fbVis?.rec_yards && <td className="text-right">{s.rec_yards || "—"}</td>}
-                          {fbVis?.rec_td && <td className="text-right">{s.rec_td || "—"}</td>}
-                          <td className="text-right font-bold">{s.total_td || "—"}</td>
-                        </tr>
-                      ))}
-                      {stats.length > 1 && footballTotals && (
-                        <tr className="font-bold" style={{ background: "var(--psp-gray-50)" }}>
-                          <td colSpan={2}>Career Totals</td>
-                          {fbVis?.games_played && <td className="text-right">{footballTotals.gamesPlayed}</td>}
-                          {fbVis?.rush_carries && <td className="text-right">{footballTotals.rushCarries.toLocaleString()}</td>}
-                          <td className="text-right">{footballTotals.rushYards.toLocaleString()}</td>
-                          <td className="text-right">{footballTotals.rushTd}</td>
-                          {fbVis?.pass_yards && <td className="text-right">{footballTotals.passYards.toLocaleString()}</td>}
-                          {fbVis?.pass_td && <td className="text-right">{footballTotals.passTd}</td>}
-                          {fbVis?.rec_yards && <td className="text-right">{footballTotals.recYards.toLocaleString()}</td>}
-                          {fbVis?.rec_td && <td className="text-right">{footballTotals.recTd}</td>}
-                          <td className="text-right">{footballTotals.totalTd}</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile card layout */}
-                <div className="md:hidden space-y-3">
-                  {(stats as FootballPlayerSeason[]).map((s) => (
-                    <div key={s.id} className="bg-white rounded-lg border border-gray-200 p-4">
-                      <div className="flex justify-between items-baseline mb-2">
-                        <span className="font-bold text-sm" style={{ color: "var(--psp-navy)" }}>{s.seasons?.label}</span>
-                        <Link href={`/${sport}/schools/${s.schools?.slug}`} className="text-xs hover:underline" style={{ color: "var(--psp-gold)" }}>
-                          {s.schools?.name}
-                        </Link>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 text-center">
-                        {fbVis?.games_played && (
-                          <div>
-                            <div className="text-xs text-gray-500">GP</div>
-                            <div className="font-bold text-sm">{s.games_played || "—"}</div>
-                          </div>
-                        )}
-                        <div>
-                          <div className="text-xs text-gray-500">Rush Yds</div>
-                          <div className="font-bold text-sm">{s.rush_yards || "—"}</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-gray-500">Rush TD</div>
-                          <div className="font-bold text-sm">{s.rush_td || "—"}</div>
-                        </div>
-                        {fbVis?.rush_carries && (
-                          <div>
-                            <div className="text-xs text-gray-500">Carries</div>
-                            <div className="font-bold text-sm">{s.rush_carries || "—"}</div>
-                          </div>
-                        )}
-                        {fbVis?.pass_yards && (
-                          <div>
-                            <div className="text-xs text-gray-500">Pass Yds</div>
-                            <div className="font-bold text-sm">{s.pass_yards || "—"}</div>
-                          </div>
-                        )}
-                        {fbVis?.pass_td && (
-                          <div>
-                            <div className="text-xs text-gray-500">Pass TD</div>
-                            <div className="font-bold text-sm">{s.pass_td || "—"}</div>
-                          </div>
-                        )}
-                        <div>
-                          <div className="text-xs text-gray-500">Total TD</div>
-                          <div className="font-bold text-sm" style={{ color: "var(--psp-gold)" }}>{s.total_td || "—"}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {stats.length > 1 && footballTotals && (
-                    <div className="bg-gray-50 rounded-lg border-2 border-gray-300 p-4">
-                      <div className="font-bold text-sm mb-2" style={{ color: "var(--psp-navy)" }}>Career Totals</div>
-                      <div className="grid grid-cols-3 gap-2 text-center">
-                        {fbVis?.games_played && (
-                          <div><div className="text-xs text-gray-500">GP</div><div className="font-bold text-sm">{footballTotals.gamesPlayed}</div></div>
-                        )}
-                        <div><div className="text-xs text-gray-500">Rush Yds</div><div className="font-bold text-sm">{footballTotals.rushYards.toLocaleString()}</div></div>
-                        <div><div className="text-xs text-gray-500">Rush TD</div><div className="font-bold text-sm">{footballTotals.rushTd}</div></div>
-                        {fbVis?.rush_carries && (
-                          <div><div className="text-xs text-gray-500">Carries</div><div className="font-bold text-sm">{footballTotals.rushCarries.toLocaleString()}</div></div>
-                        )}
-                        {fbVis?.pass_yards && (
-                          <div><div className="text-xs text-gray-500">Pass Yds</div><div className="font-bold text-sm">{footballTotals.passYards.toLocaleString()}</div></div>
-                        )}
-                        <div><div className="text-xs text-gray-500">Total TD</div><div className="font-bold text-sm" style={{ color: "var(--psp-gold)" }}>{footballTotals.totalTd}</div></div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <CareerTrajectoryChart
+                  sport={sport}
+                  seasons={(stats as FootballPlayerSeason[]).map((s) => ({
+                    label: s.seasons?.label || "Unknown",
+                    stats: {
+                      pass_yards: s.pass_yards || 0,
+                      rush_yards: s.rush_yards || 0,
+                      rec_yards: s.rec_yards || 0,
+                    },
+                  }))}
+                />
               </div>
             )}
-
-            {/* Basketball chart */}
             {sport === "basketball" && stats.length > 0 && (
-              <CareerTrajectoryChart
-                sport={sport}
-                seasons={(stats as BasketballPlayerSeason[]).map((s) => ({
-                  label: s.seasons?.label || "Unknown",
-                  stats: {
-                    points: s.points || 0,
-                    rebounds: s.rebounds || 0,
-                    assists: s.assists || 0,
-                  },
-                }))}
-              />
-            )}
-
-            {/* Basketball Season-by-season stats */}
-            {sport === "basketball" && stats.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                  Season-by-Season Stats
+              <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <h2 className="text-xl font-bold mb-3" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                  Career Trajectory
                 </h2>
-                {/* Desktop table */}
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="data-table" aria-label={`${player.name} season-by-season basketball statistics`}>
-                    <thead>
-                      <tr>
-                        <th scope="col">Season</th>
-                        <th scope="col">School</th>
-                        <th scope="col" className="text-right">GP</th>
-                        <th scope="col" className="text-right">PTS</th>
-                        <th scope="col" className="text-right">PPG</th>
-                        <th scope="col" className="text-right">REB</th>
-                        <th scope="col" className="text-right">AST</th>
-                        <th scope="col" className="text-right">STL</th>
-                        <th scope="col" className="text-right">BLK</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(stats as BasketballPlayerSeason[]).map((s) => (
-                        <tr key={s.id}>
-                          <td className="font-medium whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>{s.seasons?.label}</td>
-                          <td className="text-xs">
-                            <Link href={`/${sport}/schools/${s.schools?.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
-                              {s.schools?.name}
-                            </Link>
-                          </td>
-                          <td className="text-right">{s.games_played ?? "—"}</td>
-                          <td className="text-right">{s.points ?? "—"}</td>
-                          <td className="text-right">{s.ppg ?? "—"}</td>
-                          <td className="text-right">{s.rebounds ?? "—"}</td>
-                          <td className="text-right">{s.assists ?? "—"}</td>
-                          <td className="text-right">{s.steals ?? "—"}</td>
-                          <td className="text-right">{s.blocks ?? "—"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                {/* Mobile card layout */}
-                <div className="md:hidden space-y-3">
-                  {(stats as BasketballPlayerSeason[]).map((s) => (
-                    <div key={s.id} className="bg-white rounded-lg border border-gray-200 p-4">
-                      <div className="flex justify-between items-baseline mb-2">
-                        <span className="font-bold text-sm" style={{ color: "var(--psp-navy)" }}>{s.seasons?.label}</span>
-                        <Link href={`/${sport}/schools/${s.schools?.slug}`} className="text-xs hover:underline" style={{ color: "var(--psp-gold)" }}>
-                          {s.schools?.name}
-                        </Link>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 text-center">
-                        <div><div className="text-xs text-gray-500">GP</div><div className="font-bold text-sm">{s.games_played ?? "—"}</div></div>
-                        <div><div className="text-xs text-gray-500">PTS</div><div className="font-bold text-sm">{s.points ?? "—"}</div></div>
-                        <div><div className="text-xs text-gray-500">PPG</div><div className="font-bold text-sm">{s.ppg ?? "—"}</div></div>
-                        <div><div className="text-xs text-gray-500">REB</div><div className="font-bold text-sm">{s.rebounds ?? "—"}</div></div>
-                        <div><div className="text-xs text-gray-500">AST</div><div className="font-bold text-sm">{s.assists ?? "—"}</div></div>
-                        <div><div className="text-xs text-gray-500">STL</div><div className="font-bold text-sm">{s.steals ?? "—"}</div></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <CareerTrajectoryChart
+                  sport={sport}
+                  seasons={(stats as BasketballPlayerSeason[]).map((s) => ({
+                    label: s.seasons?.label || "Unknown",
+                    stats: {
+                      points: s.points || 0,
+                      rebounds: s.rebounds || 0,
+                      assists: s.assists || 0,
+                    },
+                  }))}
+                />
               </div>
             )}
-
-            {/* Baseball chart */}
             {sport === "baseball" && stats.length > 0 && (
-              <CareerTrajectoryChart
-                sport={sport}
-                seasons={(stats as BaseballPlayerSeason[]).map((s) => ({
-                  label: s.seasons?.label || "Unknown",
-                  stats: {
-                    hits: (s as any).hits || 0,
-                    rbi: (s as any).rbi || 0,
-                    home_runs: s.home_runs || 0,
-                  },
-                }))}
-              />
+              <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <h2 className="text-xl font-bold mb-3" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                  Career Trajectory
+                </h2>
+                <CareerTrajectoryChart
+                  sport={sport}
+                  seasons={(stats as BaseballPlayerSeason[]).map((s) => ({
+                    label: s.seasons?.label || "Unknown",
+                    stats: {
+                      hits: (s as any).hits || 0,
+                      rbi: (s as any).rbi || 0,
+                      home_runs: s.home_runs || 0,
+                    },
+                  }))}
+                />
+              </div>
             )}
+
+            {/* In The News */}
+            <InTheNews entityType="player" entityId={player.id} />
 
             {/* Player Highlights Section */}
             <PlayerHighlightsSection
@@ -677,138 +548,49 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               hudlProfileUrl={player.hudl_profile_url}
             />
 
-            {/* Game Log Accordion — collapsible seasons with award badges */}
-            {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
-              <>
-              {mergedGames.some(g => g.sourceType === 'season_average') && (
-                <p className="text-xs text-amber-400/80 italic mb-2">Some game stats are estimated from season averages</p>
-              )}
-              <GameLogAccordion
-                games={mergedGames}
-                awards={(awards as Award[]).map(a => ({
-                  id: a.id,
-                  award_name: a.award_name,
-                  award_type: a.award_type,
-                  category: a.category,
-                  seasonLabel: a.seasons?.label,
-                }))}
-                sport={sport}
-                playerSchoolId={player.primary_school_id ?? null}
-                playerName={player.name}
-              />
-              </>
-            )}
-
-            {/* Awards */}
-            {(awards as Award[]).length > 0 && (() => {
-              const TIER_COLORS: Record<string, { bg: string; border: string; text: string; badge: string }> = {
-                "First Team": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e", badge: "#f59e0b" },
-                "Second Team": { bg: "#e0e7ff", border: "#6366f1", text: "#3730a3", badge: "#6366f1" },
-                "Third Team": { bg: "#ecfdf5", border: "#10b981", text: "#065f46", badge: "#10b981" },
-                "Honorable Mention": { bg: "#f3f4f6", border: "#9ca3af", text: "#374151", badge: "#9ca3af" },
-                "MVP": { bg: "#fef3c7", border: "#d97706", text: "#92400e", badge: "#d97706" },
-              };
-              const CAT_ICONS: Record<string, string> = { offense: "\u26A1", defense: "\uD83D\uDEE1\uFE0F", specialist: "\uD83C\uDFAF" };
-              const DEFAULT_STYLE = { bg: "#f3f4f6", border: "#d1d5db", text: "#374151", badge: "#6b7280" };
-
-              // Group by year
-              const byYear: Record<number, Award[]> = {};
-              (awards as Award[]).forEach(a => {
-                const y = a.year || (a.seasons?.label ? parseInt(a.seasons.label.split("-")[0]) + 1 : 0);
-                if (!byYear[y]) byYear[y] = [];
-                byYear[y].push(a);
-              });
-              const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
-
-              return (
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                      Honors & Awards
-                    </h2>
-                    <Link
-                      href={`/${sport}/awards`}
-                      className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
-                      style={{ background: "rgba(59,130,246,0.1)", color: "var(--psp-blue, #3b82f6)", border: "1px solid rgba(59,130,246,0.2)" }}
-                    >
-                      All {meta.name} Awards
-                    </Link>
-                  </div>
-                  <div className="space-y-6">
-                    {years.map(year => (
-                      <div key={year}>
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="text-base font-bold" style={{ color: "var(--psp-gold, #f0a500)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.05em" }}>
-                            {year > 1900 ? `${String(year - 1).slice(-2)}-${String(year).slice(-2)}` : year}
-                          </span>
-                          <div className="flex-1 h-px" style={{ background: "var(--psp-gray-200, #e2e8f0)" }} />
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                          {byYear[year].map(a => {
-                            const tier = a.award_tier || "";
-                            const colors = TIER_COLORS[tier] || DEFAULT_STYLE;
-                            const catIcon = CAT_ICONS[a.category || ""] || "\uD83C\uDFC6";
-                            let label = a.award_name || a.award_type || "Award";
-                            label = label.replace(/^(football|basketball|baseball|soccer|lacrosse|wrestling|track-field)-/, "").replace(/-/g, " ");
-                            if (tier) {
-                              label = label.replace(/First Team/i, "").replace(/Second Team/i, "").replace(/Third Team/i, "").replace(/Honorable Mention/i, "").replace(/Red Division/i, "").trim().replace(/[-\s]+$/, "") || label;
-                            }
-
-                            return (
-                              <div
-                                key={a.id}
-                                className="rounded-xl px-4 py-3 transition-transform hover:-translate-y-0.5"
-                                style={{
-                                  background: colors.bg,
-                                  border: `2px solid ${colors.border}`,
-                                  minWidth: "180px",
-                                  maxWidth: "300px",
-                                  boxShadow: `0 2px 8px ${colors.border}20`,
-                                }}
-                              >
-                                <div className="flex items-start gap-2">
-                                  <span className="text-lg shrink-0">{catIcon}</span>
-                                  <div className="min-w-0">
-                                    <p className="font-semibold text-sm leading-tight capitalize" style={{ color: colors.text }}>
-                                      {label}
-                                    </p>
-                                    {a.position && (
-                                      <p className="text-xs mt-0.5" style={{ color: colors.text, opacity: 0.7 }}>{a.position}</p>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-2 mt-2">
-                                  {tier && (
-                                    <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: colors.badge }}>
-                                      {tier}
-                                    </span>
-                                  )}
-                                  {a.category && (
-                                    <span className="text-[10px] uppercase tracking-wider font-medium capitalize" style={{ color: colors.text, opacity: 0.6 }}>
-                                      {a.category}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
+            {/* Career context cards */}
+            {sport === "football" && footballTotals && footballTotals.rushYards > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="text-lg font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                  Career Context
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-gray-600">
+                      {player.name} totaled <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.rushYards.toLocaleString()}</span> career rushing yards
+                      {footballTotals.passYards > 0 && (<>, <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.passYards.toLocaleString()}</span> passing yards</>)}
+                      {footballTotals.recYards > 0 && (<>, <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.recYards.toLocaleString()}</span> receiving yards</>)}
+                      {" "}and <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.totalTd}</span> total touchdowns.
+                    </p>
+                    <div className="flex flex-wrap gap-3 mt-3">
+                      <Link href={`/${sport}/leaderboards/rushing`} className="text-xs font-medium hover:underline" style={{ color: "var(--psp-blue)" }}>
+                        Rushing leaders
+                      </Link>
+                      {footballTotals.passYards > 0 && (
+                        <Link href={`/${sport}/leaderboards/passing`} className="text-xs font-medium hover:underline" style={{ color: "var(--psp-blue)" }}>
+                          Passing leaders
+                        </Link>
+                      )}
+                      {footballTotals.recYards > 0 && (
+                        <Link href={`/${sport}/leaderboards/receiving`} className="text-xs font-medium hover:underline" style={{ color: "var(--psp-blue)" }}>
+                          Receiving leaders
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
-              );
-            })()}
-
-            {/* Related: More from this school */}
-            {player.schools && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
-                  More from {player.schools?.name}
-                </h2>
-                <p className="text-sm text-gray-500 mb-4">Explore other players from this school</p>
-                <Link href={`/${sport}/schools/${player.schools?.slug}`} className="inline-block px-6 py-3 rounded-lg font-medium" style={{ background: "var(--psp-navy)", color: "white" }}>
-                  View all {player.schools?.name} players →
+              </div>
+            )}
+            {sport === "basketball" && basketballTotals && basketballTotals.points > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="text-lg font-bold mb-4" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                  Career Context
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {player.name} scored <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{basketballTotals.points.toLocaleString()} career points</span> at {player.schools?.name || "a Philadelphia school"}.
+                </p>
+                <Link href={`/${sport}/leaderboards/scoring`} className="text-xs font-medium hover:underline mt-3 inline-block" style={{ color: "var(--psp-blue)" }}>
+                  See scoring leaders
                 </Link>
               </div>
             )}
@@ -816,15 +598,15 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Player info */}
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-              <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+            {/* Player info card */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h3 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 Player Info
               </h3>
               <dl className="space-y-3 text-sm">
                 {player.primary_school_id && player.schools && (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--psp-gray-500)" }}>School</dt>
+                    <dt className="text-gray-500">School</dt>
                     <dd>
                       <Link href={`/${sport}/schools/${player.schools?.slug}`} className="font-medium hover:underline" style={{ color: "var(--psp-navy)" }}>
                         {player.schools?.name}
@@ -834,25 +616,25 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 )}
                 {player.positions && player.positions.length > 0 && (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Position</dt>
+                    <dt className="text-gray-500">Position</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.positions.join(", ")}</dd>
                   </div>
                 )}
                 {player.graduation_year && (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Class</dt>
+                    <dt className="text-gray-500">Class</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.graduation_year}</dd>
                   </div>
                 )}
                 {player.height && (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Height</dt>
+                    <dt className="text-gray-500">Height</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.height}</dd>
                   </div>
                 )}
                 {footballTotals && fbVis?.rush_carries && footballTotals.rushCarries > 0 && (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Yards/Carry</dt>
+                    <dt className="text-gray-500">Yards/Carry</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
                       {(footballTotals.rushYards / footballTotals.rushCarries).toFixed(1)}
                     </dd>
@@ -860,7 +642,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 )}
                 {footballTotals && footballTotals.gamesPlayed > 0 && (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--psp-gray-500)" }}>Career Games</dt>
+                    <dt className="text-gray-500">Career Games</dt>
                     <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{footballTotals.gamesPlayed}</dd>
                   </div>
                 )}
@@ -880,26 +662,26 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* Pro/college info */}
             {(player.college || player.pro_team) && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-                <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                   Next Level
                 </h3>
                 <dl className="space-y-3 text-sm">
                   {player.college && (
                     <div className="flex justify-between">
-                      <dt style={{ color: "var(--psp-gray-500)" }}>College</dt>
+                      <dt className="text-gray-500">College</dt>
                       <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.college}</dd>
                     </div>
                   )}
                   {player.pro_team && (
                     <div className="flex justify-between">
-                      <dt style={{ color: "var(--psp-gray-500)" }}>Pro Team</dt>
+                      <dt className="text-gray-500">Pro Team</dt>
                       <dd className="font-medium" style={{ color: "var(--psp-gold)" }}>{player.pro_team}</dd>
                     </div>
                   )}
                   {player.pro_draft_info && (
                     <div className="flex justify-between">
-                      <dt style={{ color: "var(--psp-gray-500)" }}>Draft</dt>
+                      <dt className="text-gray-500">Draft</dt>
                       <dd className="font-medium text-xs" style={{ color: "var(--psp-navy)" }}>{player.pro_draft_info}</dd>
                     </div>
                   )}
@@ -909,8 +691,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* Cross-sport links */}
             {crossSportPlayers && crossSportPlayers.length > 0 && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-                <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                   Also Plays
                 </h3>
                 <div className="space-y-3">
@@ -936,98 +718,158 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             )}
 
             <RelatedArticles entityType="player" entityId={player.id} />
-
-            {/* Career context & leaderboard positioning */}
-            {sport === "football" && footballTotals && footballTotals.rushYards > 0 && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-                <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
-                  Career Context
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-semibold mb-2" style={{ color: "var(--psp-navy)" }}>
-                      Rushing Yards
-                    </p>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {player.name} totaled <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.rushYards.toLocaleString()}</span> career rushing yards.
-                    </p>
-                    <Link
-                      href={`/${sport}/leaderboards/rushing`}
-                      className="text-xs font-medium hover:underline"
-                      style={{ color: "var(--psp-blue)" }}
-                    >
-                      See rushing leaders →
-                    </Link>
-                  </div>
-                  {footballTotals.passYards > 0 && (
-                    <div>
-                      <p className="text-sm font-semibold mb-2" style={{ color: "var(--psp-navy)" }}>
-                        Passing Yards
-                      </p>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {player.name} threw for <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.passYards.toLocaleString()}</span> career passing yards.
-                      </p>
-                      <Link
-                        href={`/${sport}/leaderboards/passing`}
-                        className="text-xs font-medium hover:underline"
-                        style={{ color: "var(--psp-blue)" }}
-                      >
-                        See passing leaders →
-                      </Link>
-                    </div>
-                  )}
-                  {footballTotals.recYards > 0 && (
-                    <div>
-                      <p className="text-sm font-semibold mb-2" style={{ color: "var(--psp-navy)" }}>
-                        Receiving Yards
-                      </p>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {player.name} caught for <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.recYards.toLocaleString()}</span> career receiving yards.
-                      </p>
-                      <Link
-                        href={`/${sport}/leaderboards/receiving`}
-                        className="text-xs font-medium hover:underline"
-                        style={{ color: "var(--psp-blue)" }}
-                      >
-                        See receiving leaders →
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Basketball career context */}
-            {sport === "basketball" && basketballTotals && basketballTotals.points > 0 && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-                <h3 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
-                  Career Context
-                </h3>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm font-semibold mb-2" style={{ color: "var(--psp-navy)" }}>
-                      Scoring
-                    </p>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {player.name} scored <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{basketballTotals.points.toLocaleString()} career points</span> at {player.schools?.name || "a Philadelphia school"}.
-                    </p>
-                    <Link
-                      href={`/${sport}/leaderboards/scoring`}
-                      className="text-xs font-medium hover:underline"
-                      style={{ color: "var(--psp-blue)" }}
-                    >
-                      See scoring leaders →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
-
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Claim Profile Button */}
+      <PSPPromo size="banner" variant={2} />
+
+      {/* ============ STATS SECTION ============ */}
+      <section id="stats" className="max-w-7xl mx-auto px-4 py-8">
+        <h2
+          className="text-2xl font-bold mb-6"
+          style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}
+        >
+          Season-by-Season Stats
+        </h2>
+        {stats.length > 0 && (sport === "football" || sport === "basketball" || sport === "baseball") ? (
+          <PlayerStatTable
+            sport={sport as "football" | "basketball" | "baseball"}
+            stats={stats}
+            sportColor={meta.color}
+          />
+        ) : (
+          <p className="text-gray-500 text-sm">No season statistics available.</p>
+        )}
+
+        {/* More from school link */}
+        {player.schools && (
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <h3 className="text-lg font-bold mb-2" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+              More from {player.schools?.name}
+            </h3>
+            <p className="text-sm text-gray-500 mb-3">Explore other players from this school</p>
+            <Link href={`/${sport}/schools/${player.schools?.slug}`} className="inline-block px-5 py-2.5 rounded-lg font-medium text-sm" style={{ background: "var(--psp-navy)", color: "white" }}>
+              View {player.schools?.name} roster
+            </Link>
+          </div>
+        )}
+      </section>
+
+      {/* ============ GAME LOG SECTION ============ */}
+      {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
+        <section id="game-log" className="max-w-7xl mx-auto px-4 py-8">
+          <h2
+            className="text-2xl font-bold mb-6"
+            style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}
+          >
+            Game Log
+          </h2>
+          {mergedGames.some(g => g.sourceType === 'season_average') && (
+            <div className="mb-4 px-4 py-3 rounded-lg text-sm" style={{ background: "rgba(240, 165, 0, 0.08)", border: "1px solid rgba(240, 165, 0, 0.2)", color: "#92400e" }}>
+              Some game stats are estimated from season averages and may not reflect actual per-game performance.
+            </div>
+          )}
+          <GameLogAccordion
+            games={mergedGames}
+            awards={(awards as Award[]).map(a => ({
+              id: a.id,
+              award_name: a.award_name,
+              award_type: a.award_type,
+              category: a.category,
+              seasonLabel: a.seasons?.label,
+            }))}
+            sport={sport}
+            playerSchoolId={player.primary_school_id ?? null}
+            playerName={player.name}
+          />
+        </section>
+      )}
+
+      {/* ============ AWARDS SECTION ============ */}
+      {(awards as Award[]).length > 0 && (
+        <section id="awards" className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2
+              className="text-2xl font-bold"
+              style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}
+            >
+              Honors & Awards
+            </h2>
+            <Link
+              href={`/${sport}/awards`}
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
+              style={{ background: "rgba(59,130,246,0.1)", color: "var(--psp-blue, #3b82f6)", border: "1px solid rgba(59,130,246,0.2)" }}
+            >
+              All {meta.name} Awards
+            </Link>
+          </div>
+          <div className="space-y-6">
+            {awardYears.map(year => (
+              <div key={year}>
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-base font-bold" style={{ color: "var(--psp-gold, #f0a500)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.05em" }}>
+                    {year > 1900 ? `${String(year - 1).slice(-2)}-${String(year).slice(-2)}` : year}
+                  </span>
+                  <div className="flex-1 h-px" style={{ background: "var(--psp-gray-200, #e2e8f0)" }} />
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {awardsByYear[year].map(a => {
+                    const tier = a.award_tier || "";
+                    const colors = TIER_COLORS[tier] || DEFAULT_STYLE;
+                    const catIcon = CAT_ICONS[a.category || ""] || "\uD83C\uDFC6";
+                    let label = a.award_name || a.award_type || "Award";
+                    label = label.replace(/^(football|basketball|baseball|soccer|lacrosse|wrestling|track-field)-/, "").replace(/-/g, " ");
+                    if (tier) {
+                      label = label.replace(/First Team/i, "").replace(/Second Team/i, "").replace(/Third Team/i, "").replace(/Honorable Mention/i, "").replace(/Red Division/i, "").trim().replace(/[-\s]+$/, "") || label;
+                    }
+
+                    return (
+                      <div
+                        key={a.id}
+                        className="rounded-xl px-4 py-3 transition-transform hover:-translate-y-0.5"
+                        style={{
+                          background: colors.bg,
+                          border: `2px solid ${colors.border}`,
+                          minWidth: "180px",
+                          maxWidth: "300px",
+                          boxShadow: `0 2px 8px ${colors.border}20`,
+                        }}
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className="text-lg shrink-0">{catIcon}</span>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sm leading-tight capitalize" style={{ color: colors.text }}>
+                              {label}
+                            </p>
+                            {a.position && (
+                              <p className="text-xs mt-0.5" style={{ color: colors.text, opacity: 0.7 }}>{a.position}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          {tier && (
+                            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: colors.badge }}>
+                              {tier}
+                            </span>
+                          )}
+                          {a.category && (
+                            <span className="text-[10px] uppercase tracking-wider font-medium capitalize" style={{ color: colors.text, opacity: 0.6 }}>
+                              {a.category}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ============ BOTTOM CTAs ============ */}
       <div className="max-w-7xl mx-auto px-4 py-4">
         <ClaimProfileButton
           playerId={player.id}
@@ -1036,7 +878,6 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         />
       </div>
 
-      {/* Correction Form */}
       <div className="max-w-7xl mx-auto px-4 pb-4">
         <CorrectionForm entityType="player" entityId={player.id} entityName={player.name} />
       </div>

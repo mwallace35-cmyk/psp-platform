@@ -54,7 +54,7 @@ export const getLeagueStandings = cache(
             // Build query
             let query = supabase.from("team_seasons").select(
               `id, school_id, wins, losses, ties, league_wins, league_losses, league_finish, points_for, points_against,
-               schools(id, name, slug, short_name, city, state, league_id, leagues(id, name)),
+               schools(id, name, slug, short_name, city, state, league_id, division, leagues(id, name)),
                seasons(label, year_start, year_end)`
             );
 
@@ -135,14 +135,19 @@ export const getLeagueStandings = cache(
               const school = ts.schools as any;
               const leagueName = school?.leagues?.name || "Other";
               const schoolLeagueId = school?.league_id || 0;
+              const division = school?.division || null;
               const season = (ts.seasons as any) || {};
               const seasonLabel = season.label || "Unknown";
-              const key = `${schoolLeagueId}:${seasonLabel}`;
+
+              // Group by division within league if division exists
+              const divisionSuffix = division ? `:${division}` : '';
+              const key = `${schoolLeagueId}${divisionSuffix}:${seasonLabel}`;
+              const displayName = division ? `${leagueName} — ${division} Division` : leagueName;
 
               if (!standingsMap[key]) {
                 standingsMap[key] = {
                   league_id: schoolLeagueId,
-                  league_name: leagueName,
+                  league_name: displayName,
                   season_label: seasonLabel,
                   teams: [],
                 };
