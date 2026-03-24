@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
-import { SPORT_META } from "@/lib/data";
+import { SPORT_META, getFootballLeaders, getBasketballLeaders } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
@@ -11,41 +11,22 @@ export const dynamic = "force-dynamic";
 
 type PageParams = { sport: string };
 
-// Map of sport → stat categories with display labels and descriptions
-const STAT_CATEGORIES: Record<string, { slug: string; label: string; description: string; icon: string }[]> = {
+const STAT_CATEGORIES: Record<string, { slug: string; label: string; icon: string; statKey: string; valueKey: string; valueLabel: string }[]> = {
   football: [
-    { slug: "rushing", label: "Rushing", description: "Carries, yards, yards per carry, touchdowns", icon: "🏃" },
-    { slug: "passing", label: "Passing", description: "Completions, attempts, yards, touchdowns, interceptions", icon: "🎯" },
-    { slug: "receiving", label: "Receiving", description: "Catches, yards, yards per catch, touchdowns", icon: "🙌" },
-    { slug: "scoring", label: "Scoring", description: "Total points, touchdowns, extra points, field goals", icon: "🏆" },
+    { slug: "rushing", label: "Rushing", icon: "🏃", statKey: "rushing", valueKey: "rush_yards", valueLabel: "Yds" },
+    { slug: "passing", label: "Passing", icon: "🎯", statKey: "passing", valueKey: "pass_yards", valueLabel: "Yds" },
+    { slug: "receiving", label: "Receiving", icon: "🙌", statKey: "receiving", valueKey: "rec_yards", valueLabel: "Yds" },
+    { slug: "scoring", label: "Scoring", icon: "🏆", statKey: "scoring", valueKey: "total_td", valueLabel: "TDs" },
   ],
   basketball: [
-    { slug: "scoring", label: "Scoring", description: "Total points, points per game, field goals", icon: "🏀" },
-    { slug: "ppg", label: "Points Per Game", description: "Season and career PPG leaders", icon: "📊" },
-    { slug: "rebounds", label: "Rebounds", description: "Total rebounds, rebounds per game", icon: "💪" },
-    { slug: "assists", label: "Assists", description: "Total assists, assists per game", icon: "🤝" },
+    { slug: "scoring", label: "Scoring", icon: "🏀", statKey: "scoring", valueKey: "points", valueLabel: "Pts" },
+    { slug: "ppg", label: "Points Per Game", icon: "📊", statKey: "ppg", valueKey: "ppg", valueLabel: "PPG" },
+    { slug: "rebounds", label: "Rebounds", icon: "💪", statKey: "rebounds", valueKey: "rebounds", valueLabel: "Reb" },
+    { slug: "assists", label: "Assists", icon: "🤝", statKey: "assists", valueKey: "assists", valueLabel: "Ast" },
   ],
   baseball: [
-    { slug: "batting", label: "Batting", description: "Average, hits, home runs, RBI", icon: "⚾" },
-    { slug: "pitching", label: "Pitching", description: "ERA, wins, strikeouts, saves", icon: "🔥" },
-    { slug: "home-runs", label: "Home Runs", description: "Season and career home run leaders", icon: "💣" },
-  ],
-  "track-field": [
-    { slug: "sprints", label: "Sprints", description: "100m, 200m, 400m event leaders", icon: "⚡" },
-    { slug: "distance", label: "Distance", description: "800m, 1600m, 3200m event leaders", icon: "🏃" },
-    { slug: "field", label: "Field Events", description: "Long jump, high jump, shot put, discus", icon: "🎯" },
-  ],
-  lacrosse: [
-    { slug: "goals", label: "Goals", description: "Season and career goal leaders", icon: "🥍" },
-    { slug: "assists", label: "Assists", description: "Season and career assist leaders", icon: "🤝" },
-  ],
-  wrestling: [
-    { slug: "wins", label: "Wins", description: "Season and career win leaders", icon: "🏅" },
-    { slug: "pins", label: "Pins", description: "Season and career pin leaders", icon: "📌" },
-  ],
-  soccer: [
-    { slug: "goals", label: "Goals", description: "Season and career goal leaders", icon: "⚽" },
-    { slug: "assists", label: "Assists", description: "Season and career assist leaders", icon: "🤝" },
+    { slug: "batting", label: "Batting", icon: "⚾", statKey: "batting", valueKey: "hits", valueLabel: "H" },
+    { slug: "home-runs", label: "Home Runs", icon: "💣", statKey: "home-runs", valueKey: "home_runs", valueLabel: "HR" },
   ],
 };
 
@@ -55,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   const meta = SPORT_META[sport];
   return {
     title: `${meta.name} Leaderboards — PhillySportsPack`,
-    description: `Statistical leaderboards for Philadelphia high school ${meta.name.toLowerCase()}. Season and career leaders across all categories.`,
+    description: `Current season statistical leaders for Philadelphia high school ${meta.name.toLowerCase()}. Toggle to career mode for all-time records.`,
   };
 }
 
@@ -64,172 +45,164 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
   const meta = SPORT_META[sport];
   const categories = STAT_CATEGORIES[sport] || [];
 
-  const uiBreadcrumbs = [
-    { label: "Home", href: "/" },
-    { label: meta.name, href: `/${sport}` },
-    { label: "Leaderboards" },
-  ];
+  // Fetch top 5 for each category in parallel
+  const leaderData: Record<string, { name: string; school: string; slug: string; value: number | string }[]> = {};
 
-  const jsonLdBreadcrumbs = [
-    { name: "Home", url: "/" },
-    { name: meta.name, url: `/${sport}` },
-    { name: "Leaderboards", url: `/${sport}/leaderboards` },
-  ];
+  if (categories.length > 0) {
+    const fetches = categories.map(async (cat) => {
+      try {
+        let leaders: any[] = [];
+        if (sport === "football") {
+          leaders = await getFootballLeaders(cat.statKey, 5);
+        } else if (sport === "basketball") {
+          leaders = await getBasketballLeaders(cat.statKey, 5);
+        }
+        leaderData[cat.slug] = leaders.slice(0, 5).map((r: any) => ({
+          name: r.players?.name || r.player_name || "Unknown",
+          school: r.schools?.name || r.players?.schools?.name || "",
+          slug: r.players?.slug || "",
+          value: r[cat.valueKey] ?? 0,
+        }));
+      } catch {
+        leaderData[cat.slug] = [];
+      }
+    });
+    await Promise.allSettled(fetches);
+  }
 
   return (
     <>
-      <BreadcrumbJsonLd items={jsonLdBreadcrumbs} />
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
-        <Breadcrumb items={uiBreadcrumbs} />
+      <BreadcrumbJsonLd items={[
+        { name: "Home", url: "/" },
+        { name: meta.name, url: `/${sport}` },
+        { name: "Leaderboards", url: `/${sport}/leaderboards` },
+      ]} />
 
+      <div className="min-h-screen bg-gray-50">
         {/* Hero */}
-        <div
-          style={{
-            background: "var(--psp-navy)",
-            borderRadius: 12,
-            padding: "32px 24px",
-            marginBottom: 32,
-            borderBottom: `3px solid ${meta.color}`,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-            <span style={{ fontSize: 32 }}>{meta.emoji}</span>
-            <h1
-              style={{
-                fontFamily: "var(--font-heading)",
-                fontSize: "2rem",
-                color: "#fff",
-                margin: 0,
-              }}
-            >
-              {meta.name} Leaderboards
-            </h1>
-          </div>
-          <p style={{ color: "#94a3b8", fontSize: "1rem", margin: 0 }}>
-            Current season statistical leaders for Philadelphia high school {meta.name.toLowerCase()}.
-            Choose a category below. Toggle to career mode for all-time records.
-          </p>
-        </div>
-
-        {/* Category Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 16,
-            marginBottom: 32,
-          }}
-        >
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/${sport}/leaderboards/${cat.slug}`}
-              style={{
-                display: "block",
-                background: "var(--card-bg, #111)",
-                border: "1px solid #333",
-                borderRadius: 8,
-                padding: "20px 20px",
-                textDecoration: "none",
-                transition: "border-color 0.15s, transform 0.15s",
-              }}
-              className="hover:border-gold hover:-translate-y-0.5"
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                <span style={{ fontSize: 24 }}>{cat.icon}</span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-heading)",
-                    fontSize: "1.25rem",
-                    color: "#fff",
-                  }}
-                >
-                  {cat.label}
-                </span>
-              </div>
-              <p style={{ color: "#94a3b8", fontSize: "0.875rem", margin: 0, lineHeight: 1.5 }}>
-                {cat.description}
-              </p>
-              <div
-                style={{
-                  marginTop: 12,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4,
-                  color: "var(--psp-gold)",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                }}
-              >
-                View Leaders &rarr;
-              </div>
-            </Link>
-          ))}
-
-          {/* School Leaderboard Card */}
-          <Link
-            href={`/${sport}/leaderboards/schools`}
-            style={{
-              display: "block",
-              background: "var(--card-bg, #111)",
-              border: "1px solid #333",
-              borderRadius: 8,
-              padding: "20px 20px",
-              textDecoration: "none",
-              transition: "border-color 0.15s, transform 0.15s",
-            }}
-            className="hover:border-gold hover:-translate-y-0.5"
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-              <span style={{ fontSize: 24 }}>🏫</span>
-              <span
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  fontSize: "1.25rem",
-                  color: "#fff",
-                }}
-              >
-                School Rankings
-              </span>
+        <div className="bg-[var(--psp-navy)] border-b-4" style={{ borderColor: meta.color }}>
+          <div className="max-w-6xl mx-auto px-4 py-10">
+            <Breadcrumb items={[
+              { label: meta.name, href: `/${sport}` },
+              { label: "Leaderboards" },
+            ]} />
+            <div className="flex items-center gap-3 mt-4">
+              <span className="text-4xl">{meta.emoji}</span>
+              <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                {meta.name} Leaderboards
+              </h1>
             </div>
-            <p style={{ color: "#94a3b8", fontSize: "0.875rem", margin: 0, lineHeight: 1.5 }}>
-              All-time wins, championships, and total stat production by school.
+            <p className="text-gray-400 mt-2">
+              Current season statistical leaders for Philadelphia high school {meta.name.toLowerCase()}.
             </p>
-            <div
-              style={{
-                marginTop: 12,
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-                color: "var(--psp-gold)",
-                fontSize: "0.8rem",
-                fontWeight: 600,
-              }}
-            >
-              View Schools &rarr;
-            </div>
-          </Link>
+          </div>
         </div>
 
-        {/* Toggle hint */}
-        <div
-          style={{
-            background: "var(--card-bg, #111)",
-            border: "1px solid #333",
-            borderRadius: 8,
-            padding: "16px 20px",
-            marginBottom: 48,
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <span style={{ fontSize: 18 }}>💡</span>
-          <p style={{ color: "#94a3b8", fontSize: "0.875rem", margin: 0 }}>
-            Each leaderboard supports <strong style={{ color: "#e2e8f0" }}>Season</strong> and{" "}
-            <strong style={{ color: "#e2e8f0" }}>Career</strong> modes. Use the toggle at the top of
-            any leaderboard to switch between single-season leaders and all-time career totals.
-          </p>
+        {/* Mini Leaderboard Grid */}
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {categories.map((cat) => {
+              const leaders = leaderData[cat.slug] || [];
+              return (
+                <div key={cat.slug} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition">
+                  {/* Category Header */}
+                  <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, #1a2744 100%)` }}>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{cat.icon}</span>
+                      <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                        {cat.label}
+                      </h2>
+                    </div>
+                    <Link
+                      href={`/${sport}/leaderboards/${cat.slug}`}
+                      className="text-xs font-semibold px-3 py-1 rounded-full transition-colors"
+                      style={{ color: 'var(--psp-gold)', border: '1px solid var(--psp-gold)' }}
+                    >
+                      View All →
+                    </Link>
+                  </div>
+
+                  {/* Top 5 List */}
+                  {leaders.length > 0 ? (
+                    <div>
+                      {leaders.map((player, idx) => (
+                        <div
+                          key={`${player.slug}-${idx}`}
+                          className={`flex items-center px-5 py-2.5 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} ${idx < leaders.length - 1 ? 'border-b border-gray-100' : ''}`}
+                        >
+                          {/* Rank */}
+                          <span className={`w-7 text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-gray-400'}`}>
+                            {idx + 1}
+                          </span>
+
+                          {/* Player + School */}
+                          <div className="flex-1 min-w-0">
+                            <Link
+                              href={`/${sport}/players/${player.slug}`}
+                              className="text-sm font-semibold text-[var(--psp-navy)] hover:text-[var(--psp-gold)] transition-colors truncate block"
+                            >
+                              {player.name}
+                            </Link>
+                            <span className="text-xs text-gray-400 truncate block">{player.school}</span>
+                          </div>
+
+                          {/* Stat Value */}
+                          <div className="text-right ml-3">
+                            <span className={`text-sm font-bold ${idx === 0 ? 'text-[var(--psp-gold)]' : 'text-[var(--psp-navy)]'}`}>
+                              {typeof player.value === 'number' ? player.value.toLocaleString() : player.value}
+                            </span>
+                            <span className="text-[10px] text-gray-400 ml-1">{cat.valueLabel}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="px-5 py-8 text-center text-gray-400 text-sm">
+                      Data coming soon
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Career Mode CTA */}
+          <div className="mt-8 bg-[var(--psp-navy)] rounded-xl p-6 text-center">
+            <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+              All-Time Career Leaders
+            </h3>
+            <p className="text-gray-400 text-sm mb-4">
+              See who holds the all-time career records across Philadelphia high school {meta.name.toLowerCase()}.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/${sport}/leaderboards/${cat.slug}?mode=career`}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors border"
+                  style={{ borderColor: 'var(--psp-gold)', color: 'var(--psp-gold)' }}
+                >
+                  {cat.icon} Career {cat.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Class Year Links */}
+          <div className="mt-6 bg-white rounded-xl border border-gray-200 p-5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Browse by Class Year</h3>
+            <div className="flex flex-wrap gap-2">
+              {[2025, 2026, 2027, 2028].map(year => (
+                <Link
+                  key={year}
+                  href={`/class/${year}`}
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-[var(--psp-navy)] hover:bg-[var(--psp-gold)] hover:text-[var(--psp-navy)] transition-colors"
+                >
+                  Class of {year}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>
