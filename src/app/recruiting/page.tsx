@@ -5,6 +5,8 @@ import { createStaticClient } from "@/lib/supabase/static";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import ClassYearSpotlight from "@/components/recruiting/ClassYearSpotlight";
 import type { ClassYearPlayer } from "@/components/recruiting/ClassYearSpotlight";
+import AllAmericansSpotlight from "@/components/recruiting/AllAmericansSpotlight";
+import type { AllAmericanAward } from "@/components/recruiting/AllAmericansSpotlight";
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -77,6 +79,7 @@ async function getRecruitingData() {
     destinationsRes,
     sportBreakdownRes,
     classDataRes,
+    allAmericansRes,
   ] = await Promise.allSettled([
     // 0: College count
     supabase
@@ -127,6 +130,15 @@ async function getRecruitingData() {
       .eq("current_level", "college")
       .not("player_id", "is", null)
       .limit(2000),
+    // 7: All-American game selections
+    (supabase as any)
+      .from("awards")
+      .select(
+        "player_name, award_name, year, sport_id, category, position, player_id, school_id, players:player_id(slug), schools:school_id(name, slug)"
+      )
+      .eq("award_type", "all-american-game")
+      .order("year", { ascending: false })
+      .limit(200),
   ]);
 
   /* --- Extract results safely --- */
@@ -163,6 +175,11 @@ async function getRecruitingData() {
   const classDataRaw: any[] =
     classDataRes.status === "fulfilled"
       ? (classDataRes.value.data ?? [])
+      : [];
+
+  const allAmericansRaw: any[] =
+    allAmericansRes.status === "fulfilled"
+      ? (allAmericansRes.value.data ?? [])
       : [];
 
   /* --- Process pipeline rankings --- */
@@ -277,6 +294,23 @@ async function getRecruitingData() {
     (p) => topClassYears.includes(p.graduationYear!)
   );
 
+  /* --- Process All-American game selections --- */
+  const allAmericanAwards: AllAmericanAward[] = allAmericansRaw.map((row: any) => {
+    const player = Array.isArray(row.players) ? row.players[0] : row.players;
+    const school = Array.isArray(row.schools) ? row.schools[0] : row.schools;
+    return {
+      playerName: row.player_name || "Unknown",
+      playerSlug: player?.slug ?? null,
+      schoolName: school?.name ?? null,
+      schoolSlug: school?.slug ?? null,
+      awardName: row.award_name || "All-American Game",
+      year: row.year ?? null,
+      sportId: row.sport_id || "basketball",
+      category: row.category ?? null,
+      position: row.position ?? null,
+    };
+  });
+
   /* --- Estimate D1 commits --- */
   const D1_KEYWORDS = [
     "Penn State", "Temple", "Villanova", "Pittsburgh", "Rutgers",
@@ -311,6 +345,7 @@ async function getRecruitingData() {
     sportBreakdown,
     classPlayers: classPlayersFiltered,
     classYears: topClassYears,
+    allAmericanAwards,
   };
 }
 
@@ -356,6 +391,15 @@ async function RecruitingContent() {
           <StatCard value={data.proCount.toLocaleString()} label="Pro Athletes" />
         </div>
       </div>
+
+      {/* ================================================================
+          ALL-AMERICAN GAME SPOTLIGHT
+      ================================================================ */}
+      {data.allAmericanAwards.length > 0 && (
+        <section className="mb-10">
+          <AllAmericansSpotlight awards={data.allAmericanAwards} />
+        </section>
+      )}
 
       {/* ================================================================
           RECENT COMMITS
