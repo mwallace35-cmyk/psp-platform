@@ -48,15 +48,31 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
   const sportColor = SPORT_COLORS[sport] || '#6b7280';
   const supabase = createStaticClient();
 
-  // Get all schools that have team_seasons for this sport
-  const { data: teamSeasons } = await supabase
-    .from('team_seasons')
-    .select('school_id, schools!inner(id, name, slug, city, league_id, leagues:league_id(name), primary_color, closed_year)')
-    .eq('sport_id', sport)
-    .not('school_id', 'is', null)
-    .order('school_id');
+  // Get all schools from the directory view + find which ones have data for this sport
+  // Three sources of sport presence: games, team_seasons, and player_seasons
+  const [dirRes, gamesRes, tsRes] = await Promise.all([
+    supabase.from('school_directory_mv').select('*').order('name'),
+    supabase
+      .from('games')
+      .select('home_school_id, away_school_id')
+      .eq('sport_id', sport)
+      .limit(10000),
+    supabase
+      .from('team_seasons')
+      .select('school_id')
+      .eq('sport_id', sport),
+  ]);
 
-  // Dedupe schools and count seasons
+  // Build set of all school IDs that have this sport
+  const sportSchoolIds = new Set<number>();
+  for (const g of gamesRes.data || []) {
+    if (g.home_school_id) sportSchoolIds.add(g.home_school_id);
+    if (g.away_school_id) sportSchoolIds.add(g.away_school_id);
+  }
+  for (const ts of tsRes.data || []) {
+    if (ts.school_id) sportSchoolIds.add(ts.school_id);
+  }
+
   const schoolMap = new Map<number, {
     id: number;
     name: string;
@@ -68,25 +84,21 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
     seasonCount: number;
   }>();
 
-  for (const ts of teamSeasons || []) {
-    const school = Array.isArray(ts.schools) ? ts.schools[0] : ts.schools;
-    if (!school) continue;
-    const existing = schoolMap.get(school.id);
-    if (existing) {
-      existing.seasonCount++;
-    } else {
-      const league = Array.isArray(school.leagues) ? school.leagues[0] : school.leagues;
-      schoolMap.set(school.id, {
-        id: school.id,
-        name: school.name,
-        slug: school.slug,
-        city: school.city || '',
-        league: league?.name || null,
-        color: school.primary_color || null,
-        closed_year: school.closed_year || null,
-        seasonCount: 1,
-      });
-    }
+  for (const row of dirRes.data || []) {
+    if (!sportSchoolIds.has(row.id)) continue;
+    const colors = row.colors && typeof row.colors === 'object' && 'primary' in row.colors
+      ? (row.colors as { primary?: string }).primary || null
+      : null;
+    schoolMap.set(row.id, {
+      id: row.id,
+      name: row.name,
+      slug: row.slug,
+      city: row.city || '',
+      league: row.league_name || null,
+      color: colors,
+      closed_year: row.closed_year || null,
+      seasonCount: row.team_season_count || 1,
+    });
   }
 
   const schools = Array.from(schoolMap.values()).sort((a, b) => a.name.localeCompare(b.name));
