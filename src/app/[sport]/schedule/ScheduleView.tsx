@@ -67,6 +67,7 @@ const GAME_TYPE_MAP: Record<string, { label: string; cls: string }> = {
 
 type ViewMode = "week" | "team";
 type GameTypeFilter = "all" | "scrimmage" | "non-league" | "regular";
+type TimeFilter = "all" | "upcoming" | "results";
 
 export default function ScheduleView({
   games,
@@ -78,6 +79,7 @@ export default function ScheduleView({
   const [selectedTeam, setSelectedTeam] = useState<string>("all");
   const [gameTypeFilter, setGameTypeFilter] =
     useState<GameTypeFilter>("all");
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>("all");
 
   // Core teams = 5+ games (the actual Philly area teams, not one-off opponents)
   const coreTeams = useMemo(
@@ -107,8 +109,20 @@ export default function ScheduleView({
         result = result.filter((g) => g.game_type === gameTypeFilter);
       }
     }
+    if (timeFilter === "upcoming") {
+      const today = new Date().toISOString().slice(0, 10);
+      result = result.filter(
+        (g) =>
+          (g.home_score === null && g.away_score === null) ||
+          g.game_date >= today
+      );
+    } else if (timeFilter === "results") {
+      result = result.filter(
+        (g) => g.home_score !== null && g.away_score !== null
+      );
+    }
     return result;
-  }, [games, selectedTeam, gameTypeFilter]);
+  }, [games, selectedTeam, gameTypeFilter, timeFilter]);
 
   // Group multi-team scrimmages by shared notes
   const weekItems = useMemo(() => {
@@ -274,6 +288,29 @@ export default function ScheduleView({
               </button>
             </div>
 
+            {/* Time filter */}
+            <div className="flex gap-1">
+              {(
+                [
+                  ["all", "All"],
+                  ["upcoming", "Upcoming"],
+                  ["results", "Results"],
+                ] as [TimeFilter, string][]
+              ).map(([val, label]) => (
+                <button
+                  key={val}
+                  onClick={() => setTimeFilter(val)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition ${
+                    timeFilter === val
+                      ? "bg-navy text-white"
+                      : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
             {/* Team filter (only in week view) */}
             {view === "week" && (
               <select
@@ -331,6 +368,7 @@ export default function ScheduleView({
               onClick={() => {
                 setSelectedTeam("all");
                 setGameTypeFilter("all");
+                setTimeFilter("all");
               }}
               className="mt-3 text-blue-600 text-sm hover:underline"
             >

@@ -20,8 +20,8 @@ export async function generateMetadata({
   const meta = SPORT_META[sport];
   const seasonLabel = getCurrentSeasonLabel();
   return {
-    title: `${seasonLabel} ${meta.name} Schedule — PhillySportsPack`,
-    description: `Complete ${seasonLabel} Philadelphia high school ${meta.name.toLowerCase()} schedule. View week-by-week or filter by team.`,
+    title: `${seasonLabel} ${meta.name} Schedule & Results — PhillySportsPack`,
+    description: `Complete ${seasonLabel} Philadelphia high school ${meta.name.toLowerCase()} schedule & results. View week-by-week or filter by team.`,
     alternates: {
       canonical: `https://phillysportspack.com/${sport}/schedule`,
     },
@@ -176,7 +176,7 @@ export default async function SchedulePage({
           <div className="flex items-center gap-3 mb-2">
             <span className="text-3xl">{meta.emoji}</span>
             <h1 className="psp-h1 text-white">
-              {seasonLabel} {meta.name} Schedule
+              {seasonLabel} {meta.name} Schedule & Results
             </h1>
           </div>
           <p className="text-gray-300 text-lg">

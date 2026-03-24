@@ -352,6 +352,30 @@ function BasketballBoxScore({
   const homeStats = stats.filter((s) => s.school_id === homeSchoolId);
   const awayStats = stats.filter((s) => s.school_id === awaySchoolId);
 
+  const getStat = (s: GamePlayerStat, key: string): number | null => {
+    const json = s.stats_json as Record<string, unknown> | null;
+    const val = json?.[key];
+    return typeof val === "number" ? val : null;
+  };
+
+  const fmtShot = (s: GamePlayerStat, madeKey: string, attKey: string): string => {
+    const made = getStat(s, madeKey);
+    const att = getStat(s, attKey);
+    if (made == null && att == null) return "-";
+    return `${made ?? 0}-${att ?? 0}`;
+  };
+
+  const sumStat = (rows: GamePlayerStat[], key: string): number =>
+    rows.reduce((t, s) => t + (getStat(s, key) ?? 0), 0);
+
+  const sumShot = (rows: GamePlayerStat[], madeKey: string, attKey: string): string =>
+    `${sumStat(rows, madeKey)}-${sumStat(rows, attKey)}`;
+
+  /** True when at least one row in the array has real box score data */
+  const hasRealBoxScore = (rows: GamePlayerStat[]): boolean =>
+    rows.some((s) => s.source_type != null && s.source_type !== "season_average");
+
+  /* ---- Estimated / season-average table (3 columns) ---- */
   function TeamScoring({
     teamStats,
     label,
@@ -361,7 +385,6 @@ function BasketballBoxScore({
     label: string;
     gameScore?: number | null;
   }) {
-    // Use actual game score when available, fall back to summed box score stats
     const displayPts = gameScore ?? teamStats.reduce((sum, s) => sum + (s.points ?? 0), 0);
 
     return (
@@ -369,21 +392,93 @@ function BasketballBoxScore({
         <h3 className="text-lg font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase">
           {label} {displayPts > 0 && <span className="text-white">({displayPts} pts)</span>}
         </h3>
+        <p className="text-xs text-gray-400 mb-2 italic">Player Stats (Season Averages)</p>
         <div className="overflow-x-auto">
-        <table className="w-full text-sm text-gray-200" aria-label={`${label} scoring statistics`}>
-          <thead>
-            <tr className="text-gray-300 border-b border-gray-700">
-              <th className="text-left px-3 py-2">Player</th>
-              <th className="text-center px-3 py-2">#</th>
-              <th className="text-right px-3 py-2">Pts</th>
-            </tr>
-          </thead>
-          <tbody>
-            {teamStats
-              .sort((a, b) => (b.points ?? 0) - (a.points ?? 0))
-              .map((s) => (
+          <table className="w-full text-sm text-gray-200" aria-label={`${label} scoring statistics`}>
+            <thead>
+              <tr className="text-gray-300 border-b border-gray-700">
+                <th className="text-left px-3 py-2">Player</th>
+                <th className="text-center px-3 py-2">#</th>
+                <th className="text-right px-3 py-2">Pts</th>
+              </tr>
+            </thead>
+            <tbody>
+              {teamStats
+                .sort((a, b) => (b.points ?? 0) - (a.points ?? 0))
+                .map((s) => (
+                  <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
+                    <td className="px-3 py-2">
+                      {s.players?.slug ? (
+                        <Link
+                          href={`/${sport}/players/${s.players.slug}`}
+                          className="text-[var(--psp-blue)] hover:underline"
+                        >
+                          {s.player_name}
+                        </Link>
+                      ) : (
+                        <span className="text-gray-200">{s.player_name}</span>
+                      )}
+                    </td>
+                    <td className="text-center px-3 py-2 text-gray-300">
+                      {s.jersey_number ?? ""}
+                    </td>
+                    <td className="text-right px-3 py-2 font-semibold text-[var(--psp-gold)]">
+                      {s.points ?? 0}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+        {teamStats.length === 0 && (
+          <p className="text-gray-400 text-sm italic">No individual stats available</p>
+        )}
+      </div>
+    );
+  }
+
+  /* ---- Full box score table (13 columns) ---- */
+  function TeamBoxScore({
+    teamStats,
+    label,
+    gameScore,
+  }: {
+    teamStats: GamePlayerStat[];
+    label: string;
+    gameScore?: number | null;
+  }) {
+    const displayPts = gameScore ?? teamStats.reduce((sum, s) => sum + (s.points ?? 0), 0);
+    const sorted = [...teamStats].sort((a, b) => (getStat(b, "min") ?? 0) - (getStat(a, "min") ?? 0));
+
+    return (
+      <div className="mb-8">
+        <h3 className="text-lg font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase">
+          {label} {displayPts > 0 && <span className="text-white">({displayPts} pts)</span>}
+        </h3>
+        <p className="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wide">Game Box Score</p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-gray-200 whitespace-nowrap" aria-label={`${label} box score`}>
+            <thead>
+              <tr className="text-gray-300 border-b border-gray-700">
+                <th className="text-left px-2 py-2 sticky left-0 bg-[var(--psp-navy)] z-10">Player</th>
+                <th className="text-center px-2 py-2">#</th>
+                <th className="text-center px-2 py-2">MIN</th>
+                <th className="text-center px-2 py-2">FG</th>
+                <th className="text-center px-2 py-2">3PT</th>
+                <th className="text-center px-2 py-2">FT</th>
+                <th className="text-center px-2 py-2">REB</th>
+                <th className="text-center px-2 py-2">AST</th>
+                <th className="text-center px-2 py-2">STL</th>
+                <th className="text-center px-2 py-2">BLK</th>
+                <th className="text-center px-2 py-2">TO</th>
+                <th className="text-center px-2 py-2">PF</th>
+                <th className="text-center px-2 py-2 text-[var(--psp-gold)] font-semibold">PTS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((s) => (
                 <tr key={s.id} className="border-b border-gray-800 hover:bg-[var(--psp-navy-mid)] transition-colors duration-200">
-                  <td className="px-3 py-2">
+                  <td className="px-2 py-2 sticky left-0 bg-[var(--psp-navy)] z-10">
                     {s.players?.slug ? (
                       <Link
                         href={`/${sport}/players/${s.players.slug}`}
@@ -395,16 +490,38 @@ function BasketballBoxScore({
                       <span className="text-gray-200">{s.player_name}</span>
                     )}
                   </td>
-                  <td className="text-center px-3 py-2 text-gray-300">
-                    {s.jersey_number ?? ""}
-                  </td>
-                  <td className="text-right px-3 py-2 font-semibold text-[var(--psp-gold)]">
-                    {s.points ?? 0}
-                  </td>
+                  <td className="text-center px-2 py-2 text-gray-300">{s.jersey_number ?? ""}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "min") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{fmtShot(s, "fgm", "fga")}</td>
+                  <td className="text-center px-2 py-2">{fmtShot(s, "fg3m", "fg3a")}</td>
+                  <td className="text-center px-2 py-2">{fmtShot(s, "ftm", "fta")}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "reb") ?? getStat(s, "rebounds") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "ast") ?? getStat(s, "assists") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "stl") ?? getStat(s, "steals") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "blk") ?? getStat(s, "blocks") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "tov") ?? getStat(s, "turnovers") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "pf") ?? getStat(s, "fouls") ?? "-"}</td>
+                  <td className="text-center px-2 py-2 font-semibold text-[var(--psp-gold)]">{s.points ?? 0}</td>
                 </tr>
               ))}
-          </tbody>
-        </table>
+              {/* Totals row */}
+              <tr className="border-t-2 border-gray-600 font-semibold text-white">
+                <td className="px-2 py-2 sticky left-0 bg-[var(--psp-navy)] z-10 uppercase text-gray-300">Totals</td>
+                <td className="text-center px-2 py-2"></td>
+                <td className="text-center px-2 py-2"></td>
+                <td className="text-center px-2 py-2">{sumShot(teamStats, "fgm", "fga")}</td>
+                <td className="text-center px-2 py-2">{sumShot(teamStats, "fg3m", "fg3a")}</td>
+                <td className="text-center px-2 py-2">{sumShot(teamStats, "ftm", "fta")}</td>
+                <td className="text-center px-2 py-2">{sumStat(teamStats, "reb") + sumStat(teamStats, "rebounds")}</td>
+                <td className="text-center px-2 py-2">{sumStat(teamStats, "ast") + sumStat(teamStats, "assists")}</td>
+                <td className="text-center px-2 py-2">{sumStat(teamStats, "stl") + sumStat(teamStats, "steals")}</td>
+                <td className="text-center px-2 py-2">{sumStat(teamStats, "blk") + sumStat(teamStats, "blocks")}</td>
+                <td className="text-center px-2 py-2">{sumStat(teamStats, "tov") + sumStat(teamStats, "turnovers")}</td>
+                <td className="text-center px-2 py-2">{sumStat(teamStats, "pf") + sumStat(teamStats, "fouls")}</td>
+                <td className="text-center px-2 py-2 text-[var(--psp-gold)]">{teamStats.reduce((t, s) => t + (s.points ?? 0), 0)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         {teamStats.length === 0 && (
           <p className="text-gray-400 text-sm italic">No individual stats available</p>
@@ -419,17 +536,25 @@ function BasketballBoxScore({
   if (schoolIds.length === 1) {
     const schoolName = stats[0]?.schools?.name ?? "Team";
     const singleScore = stats[0]?.school_id === homeSchoolId ? homeScore : awayScore;
-    return <TeamScoring teamStats={stats} label={schoolName} gameScore={singleScore} />;
+    const useFullBox = hasRealBoxScore(stats);
+    return useFullBox
+      ? <TeamBoxScore teamStats={stats} label={schoolName} gameScore={singleScore} />
+      : <TeamScoring teamStats={stats} label={schoolName} gameScore={singleScore} />;
   }
 
+  const awayReal = hasRealBoxScore(awayStats);
+  const homeReal = hasRealBoxScore(homeStats);
+  const AwayComp = awayReal ? TeamBoxScore : TeamScoring;
+  const HomeComp = homeReal ? TeamBoxScore : TeamScoring;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <TeamScoring
+    <div className={awayReal || homeReal ? "space-y-6" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
+      <AwayComp
         teamStats={awayStats}
         label={stats.find((s) => s.school_id === awaySchoolId)?.schools?.name ?? "Away"}
         gameScore={awayScore}
       />
-      <TeamScoring
+      <HomeComp
         teamStats={homeStats}
         label={stats.find((s) => s.school_id === homeSchoolId)?.schools?.name ?? "Home"}
         gameScore={homeScore}

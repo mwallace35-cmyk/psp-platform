@@ -19,13 +19,13 @@ from datetime import date
 
 # School code -> school_id mapping
 SCHOOL_MAP = {
-    "AC": {"id": 166, "name": "Archbishop Carroll"},
+    "AC": {"id": 145, "name": "Archbishop Carroll"},
     "AR": {"id": 175, "name": "Archbishop Ryan"},
-    "AW": {"id": 197, "name": "Archbishop Wood"},
+    "AW": {"id": 144, "name": "Archbishop Wood"},
     "BP": {"id": 177, "name": "Bonner-Prendergast"},
     "CE": {"id": 2780, "name": "Conwell-Egan Catholic"},
     "CO": {"id": 167, "name": "Cardinal O'Hara"},
-    "DP": {"id": 138, "name": "Devon Prep"},
+    "DP": {"id": 254, "name": "Devon Prep"},
     "FJ": {"id": 147, "name": "Father Judge"},
     "LC": {"id": 971, "name": "Lansdale Catholic"},
     "LS": {"id": 2882, "name": "La Salle College High School"},

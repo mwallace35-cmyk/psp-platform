@@ -24,7 +24,7 @@ function buildTabs(sport: string, extras?: Tab[]): Tab[] {
     { href: `/${sport}/playoffs`, label: 'Playoffs' },
   ];
   if (extras) base.push(...extras);
-  base.push({ href: `/${sport}/schedule`, label: 'Schedule' });
+  base.push({ href: `/${sport}/schedule`, label: 'Schedule & Results' });
   return base;
 }
 
