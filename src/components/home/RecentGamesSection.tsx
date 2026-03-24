@@ -50,7 +50,8 @@ function GameCard({ game }: { game: GameData }) {
         : 'bg-gray-100 text-gray-700';
 
   return (
-    <div className="flex flex-col gap-3 p-4 sm:p-5 bg-white [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-md transition-shadow">
+    <Link href={`/${game.sportId}/games/${game.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <div className="flex flex-col gap-3 p-4 sm:p-5 bg-white [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-md transition-shadow cursor-pointer">
       {/* Header with sport badge and game type */}
       <div className="flex items-center justify-between gap-2">
         <div className="inline-flex items-center gap-2">
@@ -127,6 +128,7 @@ function GameCard({ game }: { game: GameData }) {
         {formatDate(game.gameDate)}
       </div>
     </div>
+    </Link>
   );
 }
 

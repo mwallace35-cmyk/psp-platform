@@ -218,7 +218,11 @@ export default function CurrentSeasonBlock({
                     {formatGameDate(nextGame.game_date)}
                   </div>
                 ) : (
-                  <>
+                  <Link
+                    href={`/${sport}/games/${nextGame.id}`}
+                    className="hover:opacity-80 transition-opacity"
+                    style={{ textDecoration: "none" }}
+                  >
                     <div
                       className="text-lg font-bold"
                       style={{ fontFamily: "Bebas Neue, sans-serif", color: gameResultColor }}
@@ -228,7 +232,7 @@ export default function CurrentSeasonBlock({
                     <div className="text-xs text-gray-400">
                       {formatGameDate(nextGame.game_date)}
                     </div>
-                  </>
+                  </Link>
                 )}
               </div>
             </div>

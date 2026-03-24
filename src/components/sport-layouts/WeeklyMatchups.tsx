@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 interface School {
   name: string;
@@ -79,8 +80,12 @@ const WeeklyMatchups: React.FC<WeeklyMatchupsProps> = ({ games, sport, sportColo
           const scored = hasScore(game);
 
           return (
-            <div
+            <Link
               key={game.id}
+              href={`/${sport}/games/${game.id}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+            <div
               style={{
                 backgroundColor: 'white',
                 border: '1px solid var(--g100, #e5e7eb)',
@@ -88,6 +93,8 @@ const WeeklyMatchups: React.FC<WeeklyMatchupsProps> = ({ games, sport, sportColo
                 padding: '12px 14px',
                 position: 'relative',
                 borderLeft: `4px solid ${leagueColor}`,
+                cursor: 'pointer',
+                transition: 'box-shadow 0.2s ease',
               }}
             >
               {/* Game of the Week Badge */}
@@ -197,6 +204,7 @@ const WeeklyMatchups: React.FC<WeeklyMatchupsProps> = ({ games, sport, sportColo
                 </div>
               )}
             </div>
+            </Link>
           );
         })}
       </div>

@@ -48,14 +48,16 @@ export default function GameRecapCard({
         <span style={{ background:'var(--psp-navy,#1a2744)', color:'#fff', fontSize:'0.65rem', fontWeight:800, padding:'2px 8px', borderRadius:3, letterSpacing:1.5, textTransform:'uppercase' as const }}>{sport}</span>
         <span style={{ color:'var(--psp-muted,#6b7280)', fontSize:'0.8rem' }}>{new Date(date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
       </div>
-      <div>
-        {[{name:awayName,score:awayScore},{name:homeName,score:homeScore}].map(team=>(
-          <div key={team.name} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.3rem' }}>
-            <span style={{ fontWeight:winner===team.name?700:400, color:winner===team.name?'var(--psp-navy,#1a2744)':'var(--psp-muted,#6b7280)', fontSize:'0.95rem' }}>{team.name}</span>
-            <span style={{ fontWeight:800, fontSize:'1.25rem', color:winner===team.name?'var(--psp-navy,#1a2744)':'var(--psp-muted,#6b7280)' }}>{team.score}</span>
-          </div>
-        ))}
-      </div>
+      <Link href={`/${sport}/games/${gameId}`} style={{ textDecoration:'none', color:'inherit', display:'block' }}>
+        <div style={{ cursor:'pointer' }}>
+          {[{name:awayName,score:awayScore},{name:homeName,score:homeScore}].map(team=>(
+            <div key={team.name} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.3rem' }}>
+              <span style={{ fontWeight:winner===team.name?700:400, color:winner===team.name?'var(--psp-navy,#1a2744)':'var(--psp-muted,#6b7280)', fontSize:'0.95rem' }}>{team.name}</span>
+              <span style={{ fontWeight:800, fontSize:'1.25rem', color:winner===team.name?'var(--psp-navy,#1a2744)':'var(--psp-muted,#6b7280)' }}>{team.score}</span>
+            </div>
+          ))}
+        </div>
+      </Link>
       <div style={{ borderTop:'1px solid #e5e7eb', paddingTop:'0.75rem', display:'flex', alignItems:'center', gap:'0.75rem' }}>
         {recapSlug ? (
           <>

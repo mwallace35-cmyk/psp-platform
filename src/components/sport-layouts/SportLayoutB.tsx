@@ -122,27 +122,31 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
               marginBottom: 20,
             }}>
               {recentGames.slice(0, 4).map((game) => (
-                <div key={game.id} style={{
-                  background: "var(--psp-white)",
-                  border: "1px solid var(--g100)",
-                  borderRadius: 6,
-                  padding: "12px 14px",
-                  borderTop: `3px solid ${sportColor}`,
-                }}>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)", marginBottom: 4 }}>
-                    {game.home_school?.name || "Home"}
-                  </div>
-                  <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>
-                    vs {game.away_school?.name || "Away"}
-                  </div>
-                  {game.home_score !== null && game.away_score !== null ? (
-                    <div style={{ fontSize: 16, fontWeight: 800, color: sportColor }}>
-                      {game.home_score}-{game.away_score}
+                <Link key={game.id} href={`/${sport}/games/${game.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <div style={{
+                    background: "var(--psp-white)",
+                    border: "1px solid var(--g100)",
+                    borderRadius: 6,
+                    padding: "12px 14px",
+                    borderTop: `3px solid ${sportColor}`,
+                    cursor: "pointer",
+                    transition: "box-shadow 0.2s ease",
+                  }}>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)", marginBottom: 4 }}>
+                      {game.home_school?.name || "Home"}
                     </div>
-                  ) : (
-                    <div style={{ fontSize: 11, color: "var(--g400)" }}>Final pending</div>
-                  )}
-                </div>
+                    <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>
+                      vs {game.away_school?.name || "Away"}
+                    </div>
+                    {game.home_score !== null && game.away_score !== null ? (
+                      <div style={{ fontSize: 16, fontWeight: 800, color: sportColor }}>
+                        {game.home_score}-{game.away_score}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 11, color: "var(--g400)" }}>Final pending</div>
+                    )}
+                  </div>
+                </Link>
               ))}
             </div>
           </>

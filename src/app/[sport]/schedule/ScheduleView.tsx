@@ -638,11 +638,14 @@ function GameCard({
 
         {/* Score or Preview link */}
         {hasScore ? (
-          <div className="text-right flex-shrink-0">
+          <Link
+            href={`/${sport}/games/${g.id}`}
+            className="text-right flex-shrink-0 hover:text-blue-600 transition"
+          >
             <p className="text-sm font-bold text-navy">
               {g.away_score} – {g.home_score}
             </p>
-          </div>
+          </Link>
         ) : (
           g.home_school?.slug && (
             <Link

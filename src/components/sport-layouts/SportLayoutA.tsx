@@ -140,31 +140,35 @@ export default function SportLayoutA({ sport, sportColor, meta, overview, champi
               marginBottom: 20,
             }}>
               {recentGames.slice(0, 4).map((game) => (
-                <div key={game.id} style={{
-                  background: "var(--psp-white)",
-                  border: "1px solid var(--g100)",
-                  borderRadius: 6,
-                  padding: "12px 14px",
-                  borderLeft: `3px solid ${sportColor}`,
-                }}>
-                  <div style={{ fontSize: 10, color: sportColor, fontWeight: 700, textTransform: "uppercase", marginBottom: 6 }}>
-                    {game.game_date ? new Date(game.game_date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Date TBA"}
-                  </div>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)", marginBottom: 2 }}>
-                    {game.home_school?.name || "Home"}
-                  </div>
-                  <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>vs</div>
-                  <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text)", marginBottom: 6 }}>
-                    {game.away_school?.name || "Away"}
-                  </div>
-                  {game.home_score !== null && game.away_score !== null ? (
-                    <div style={{ fontSize: 14, fontWeight: 800, color: sportColor }}>
-                      {game.home_score}-{game.away_score}
+                <Link key={game.id} href={`/${sport}/games/${game.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <div style={{
+                    background: "var(--psp-white)",
+                    border: "1px solid var(--g100)",
+                    borderRadius: 6,
+                    padding: "12px 14px",
+                    borderLeft: `3px solid ${sportColor}`,
+                    cursor: "pointer",
+                    transition: "box-shadow 0.2s ease",
+                  }}>
+                    <div style={{ fontSize: 10, color: sportColor, fontWeight: 700, textTransform: "uppercase", marginBottom: 6 }}>
+                      {game.game_date ? new Date(game.game_date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Date TBA"}
                     </div>
-                  ) : (
-                    <div style={{ fontSize: 11, color: "var(--g400)" }}>Final score pending</div>
-                  )}
-                </div>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)", marginBottom: 2 }}>
+                      {game.home_school?.name || "Home"}
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--g400)", marginBottom: 2 }}>vs</div>
+                    <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text)", marginBottom: 6 }}>
+                      {game.away_school?.name || "Away"}
+                    </div>
+                    {game.home_score !== null && game.away_score !== null ? (
+                      <div style={{ fontSize: 14, fontWeight: 800, color: sportColor }}>
+                        {game.home_score}-{game.away_score}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 11, color: "var(--g400)" }}>Final score pending</div>
+                    )}
+                  </div>
+                </Link>
               ))}
             </div>
           </>
