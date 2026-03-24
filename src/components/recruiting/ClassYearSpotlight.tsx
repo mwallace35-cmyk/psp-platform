@@ -46,12 +46,11 @@ export interface ClassYearPlayer {
 
 interface ClassYearSpotlightProps {
   players: ClassYearPlayer[];
+  classYears: number[];
 }
 
-const CLASS_YEARS = [2026, 2027, 2028, 2029];
-
-export default function ClassYearSpotlight({ players }: ClassYearSpotlightProps) {
-  const [activeYear, setActiveYear] = useState(2026);
+export default function ClassYearSpotlight({ players, classYears }: ClassYearSpotlightProps) {
+  const [activeYear, setActiveYear] = useState(classYears[0] ?? 2026);
 
   const filtered = useMemo(() => {
     return players.filter((p) => p.graduationYear === activeYear);
@@ -61,7 +60,7 @@ export default function ClassYearSpotlight({ players }: ClassYearSpotlightProps)
     <div>
       {/* Tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        {CLASS_YEARS.map((year) => {
+        {classYears.map((year) => {
           const count = players.filter((p) => p.graduationYear === year).length;
           const isActive = year === activeYear;
           return (

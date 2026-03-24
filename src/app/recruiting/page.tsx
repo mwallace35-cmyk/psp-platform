@@ -103,25 +103,30 @@ async function getRecruitingData() {
       .select(
         "high_school_id, current_level, sport_id, college, schools:high_school_id(name, slug)"
       )
-      .in("current_level", ["college", "pro"]),
+      .in("current_level", ["college", "pro"])
+      .limit(3000),
     // 4: Destinations
     supabase
       .from("next_level_tracking")
       .select("college, sport_id")
       .not("college", "is", null)
-      .neq("college", ""),
+      .neq("college", "")
+      .limit(3000),
     // 5: Sport breakdown
     supabase
       .from("next_level_tracking")
       .select("sport_id")
-      .in("current_level", ["college", "pro"]),
-    // 6: Class year data
+      .in("current_level", ["college", "pro"])
+      .limit(3000),
+    // 6: Class year data — Supabase default limit is 1000, must set higher
     (supabase as any)
       .from("next_level_tracking")
       .select(
         "person_name, college, sport_id, schools:high_school_id(name, slug), players:player_id(graduation_year, positions, slug)"
       )
-      .eq("current_level", "college"),
+      .eq("current_level", "college")
+      .not("player_id", "is", null)
+      .limit(2000),
   ]);
 
   /* --- Extract results safely --- */
@@ -252,23 +257,60 @@ async function getRecruitingData() {
     };
   });
 
-  // Only keep players with a valid graduation year in 2026-2029
-  const classPlayersFiltered = classPlayers.filter(
-    (p) =>
-      p.graduationYear !== null &&
-      p.graduationYear >= 2026 &&
-      p.graduationYear <= 2029
+  // Keep all players with a valid graduation year
+  const classPlayersWithYear = classPlayers.filter(
+    (p) => p.graduationYear !== null
   );
+
+  // Find the top 4 class years by count (most recent first among ties)
+  const yearCounts = new Map<number, number>();
+  for (const p of classPlayersWithYear) {
+    yearCounts.set(p.graduationYear!, (yearCounts.get(p.graduationYear!) || 0) + 1);
+  }
+  const topClassYears = Array.from(yearCounts.entries())
+    .sort((a, b) => b[1] - a[1] || b[0] - a[0])
+    .slice(0, 4)
+    .map(([year]) => year)
+    .sort((a, b) => b - a); // Sort descending by year for display
+
+  const classPlayersFiltered = classPlayersWithYear.filter(
+    (p) => topClassYears.includes(p.graduationYear!)
+  );
+
+  /* --- Estimate D1 commits --- */
+  const D1_KEYWORDS = [
+    "Penn State", "Temple", "Villanova", "Pittsburgh", "Rutgers",
+    "Maryland", "Syracuse", "Virginia", "North Carolina", "West Virginia",
+    "Connecticut", "Boston College", "Miami", "Ohio State", "Michigan",
+    "Alabama", "Georgia", "LSU", "Florida", "Clemson", "Oregon", "USC",
+    "Notre Dame", "Oklahoma", "Texas", "Tennessee", "Iowa", "Wisconsin",
+    "Minnesota", "Nebraska", "Indiana", "Purdue", "Illinois",
+    "South Carolina", "Mississippi", "Arkansas", "Kentucky", "Missouri",
+    "Arizona", "Colorado", "Utah", "Washington", "Stanford", "California",
+    "Duke", "Wake Forest", "Louisville", "Cincinnati", "UCF", "Houston",
+    "BYU", "Baylor", "TCU", "Kansas", "Oklahoma State", "Texas Tech",
+    "James Madison", "Old Dominion", "Liberty", "Marshall", "Navy", "Army",
+    "Air Force", "Tulane", "Memphis", "SMU",
+  ];
+  const d1Count = topDestinations
+    .filter((d) =>
+      D1_KEYWORDS.some((k) =>
+        d.college.toLowerCase().includes(k.toLowerCase())
+      )
+    )
+    .reduce((sum, d) => sum + d.count, 0);
 
   return {
     collegeCount,
     proCount,
+    d1Count,
     totalAthletes: collegeCount + proCount,
     recentCommits,
     pipelineRankings,
     topDestinations,
     sportBreakdown,
     classPlayers: classPlayersFiltered,
+    classYears: topClassYears,
   };
 }
 
@@ -310,59 +352,7 @@ async function RecruitingContent() {
         {/* Stat Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard value={data.collegeCount.toLocaleString()} label="College Athletes" />
-          <StatCard
-            value={
-              data.sportBreakdown.find((s) => s.sport === "football")
-                ? Math.round(
-                    data.pipelineRankings.reduce(
-                      (sum, s) => sum + s.college,
-                      0
-                    ) * 0 +
-                      data.collegeCount * 0 +
-                      // D1 estimate: schools like Penn State, Temple, Villanova
-                      (() => {
-                        const d1Keywords = [
-                          "Penn State",
-                          "Temple",
-                          "Villanova",
-                          "Pittsburgh",
-                          "Rutgers",
-                          "Maryland",
-                          "Syracuse",
-                          "Virginia",
-                          "North Carolina",
-                          "West Virginia",
-                          "Connecticut",
-                          "Boston College",
-                          "Miami",
-                          "Ohio State",
-                          "Michigan",
-                          "Alabama",
-                          "Georgia",
-                          "LSU",
-                          "Florida",
-                          "Clemson",
-                          "Oregon",
-                          "USC",
-                          "Notre Dame",
-                          "Oklahoma",
-                          "Texas",
-                          "Tennessee",
-                        ];
-                        return data.topDestinations
-                          .filter((d) =>
-                            d1Keywords.some((k) =>
-                              d.college.toLowerCase().includes(k.toLowerCase())
-                            )
-                          )
-                          .reduce((sum, d) => sum + d.count, 0);
-                      })()
-                  ).toLocaleString()
-                : "0"
-            }
-            label="D1 Commits"
-            accent
-          />
+          <StatCard value={data.d1Count.toLocaleString()} label="D1 Commits" accent />
           <StatCard value={data.proCount.toLocaleString()} label="Pro Athletes" />
         </div>
       </div>
@@ -462,10 +452,10 @@ async function RecruitingContent() {
       ================================================================ */}
       <section className="mb-12">
         <SectionHeader title="Class Year Spotlight" />
-        {data.classPlayers.length === 0 ? (
+        {data.classPlayers.length === 0 || data.classYears.length === 0 ? (
           <EmptyState message="No class year data available yet." />
         ) : (
-          <ClassYearSpotlight players={data.classPlayers} />
+          <ClassYearSpotlight players={data.classPlayers} classYears={data.classYears} />
         )}
       </section>
 
