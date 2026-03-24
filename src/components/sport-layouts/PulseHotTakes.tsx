@@ -76,36 +76,11 @@ export default function PulseHotTakes({ sport, limit = 3 }: Omit<PulseHotTakesPr
       try {
         setIsLoading(true);
 
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from('hot_takes')
-          .select('*')
-          .eq('sport', sport)
-          .order('created_at', { ascending: false })
-          .limit(limit || 3);
-
-        if (error) {
-          console.error('Error fetching hot takes from database:', error);
+        // hot_takes table was dropped — use sample data only
+        setHotTakes(SAMPLE_HOT_TAKES);
+        if (false) {
+          // dead code — kept for future when hot_takes is re-created
           setHotTakes(SAMPLE_HOT_TAKES);
-          return;
-        }
-
-        if (data && data.length > 0) {
-          type DBHotTake = {
-            id?: string | number;
-            user_handle?: string;
-            content?: string;
-            created_at?: string;
-            type?: string;
-          };
-          const formattedTakes = data.map((take: DBHotTake) => ({
-            id: take.id?.toString() || Math.random().toString(),
-            user: take.user_handle || 'PSP_Community',
-            text: take.content || '',
-            time: take.created_at ? formatTimeAgo(take.created_at) : 'recently',
-            type: (take.type as 'hot_take' | 'insider' | 'poll') || 'hot_take',
-          }));
-          setHotTakes(formattedTakes);
         } else {
           setHotTakes(SAMPLE_HOT_TAKES);
         }

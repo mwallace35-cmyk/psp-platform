@@ -171,18 +171,8 @@ async function getPotwNominees() {
 }
 
 async function getHotTakes() {
-  try {
-    const supabase = createStaticClient();
-    const { data } = await supabase
-      .from("hot_takes")
-      .select("id, user_handle, content, type, upvotes, downvotes, created_at")
-      .order("created_at", { ascending: false })
-      .limit(3);
-    return data || [];
-  } catch (error) {
-    captureError(error, { function: "getHotTakes", context: "data_fetching" });
-    return [];
-  }
+  // hot_takes table was dropped — return empty array
+  return [] as { id: string; user_handle: string; content: string; type: string; upvotes: number; downvotes: number; created_at: string }[];
 }
 
 // ============ INTERFACES ============

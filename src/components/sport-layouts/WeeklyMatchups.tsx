@@ -63,14 +63,7 @@ const WeeklyMatchups: React.FC<WeeklyMatchupsProps> = ({ games, sport, sportColo
       </h2>
 
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '16px',
-          '@media (max-width: 640px)': {
-            gridTemplateColumns: '1fr',
-          },
-        } as React.CSSProperties & { '@media (max-width: 640px)': Record<string, string> }}
+        className="grid gap-4 sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] grid-cols-1"
       >
         {games.map((game, index) => {
           const leagueColor = getLeagueColor(game.league);
