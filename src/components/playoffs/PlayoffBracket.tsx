@@ -198,8 +198,8 @@ function GameCard({
             padding: "3px 0",
             letterSpacing: "1.5px",
             textTransform: "uppercase",
-            fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
           }}
+          className="font-bebas"
         >
           CHAMPIONSHIP
         </div>
@@ -354,14 +354,7 @@ export default function PlayoffBracket({ bracketName, games, sportColor }: Props
         }}
       >
         <h3
-          style={{
-            fontSize: "20px",
-            fontWeight: 700,
-            color: "white",
-            margin: 0,
-            fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-            letterSpacing: "0.5px",
-          }}
+          className="psp-h3 text-white"
         >
           {bracketName}
         </h3>

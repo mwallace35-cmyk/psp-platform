@@ -315,16 +315,17 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       <Breadcrumb items={[{label: meta.name}]} />
 
       {/* Sport Hero — AI-Generated Banner */}
-      <div className="text-white px-4 relative overflow-hidden flex items-center" style={{
-        background: `linear-gradient(to right, rgba(10,22,40,0.55), rgba(10,22,40,0.15)), url(/images/banners/${sport === 'track-field' ? 'track' : sport}.jpg) center/cover no-repeat`,
-        backgroundColor: '#0a1628',
-        height: '140px',
-      }}>
+      <div
+        className="text-white px-4 relative overflow-hidden flex items-center h-[140px] bg-[#0a1628]"
+        style={{
+          background: `linear-gradient(to right, rgba(10,22,40,0.55), rgba(10,22,40,0.15)), url(/images/banners/${sport === 'track-field' ? 'track' : sport}.jpg) center/cover no-repeat`,
+        }}
+      >
         <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="flex items-center gap-4">
-            <span style={{ fontSize: 48 }} aria-hidden="true">{meta.emoji}</span>
+            <span className="text-5xl" aria-hidden="true">{meta.emoji}</span>
             <div className="flex items-center gap-3">
-              <h1 className="text-4xl md:text-5xl font-black" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+              <h1 className="text-4xl md:text-5xl font-black font-bebas">
                 {meta.name}
               </h1>
               <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${phaseBadge[seasonInfo.phase].color} ${phaseBadge[seasonInfo.phase].bg}`}>
@@ -339,15 +340,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
             <DesignBibleSections sport={sport} />
 
       {/* Editorial Intro */}
-      <div style={{
-        maxWidth: "900px",
-        margin: "2rem auto",
-        padding: "0 1.5rem",
-        fontSize: "1.1rem",
-        lineHeight: 1.7,
-        color: "var(--text-body)",
-        fontFamily: "var(--font-dm-sans)",
-      }}>
+      <div className="max-w-[900px] mx-auto my-8 px-6 text-[1.1rem] leading-[1.7]" style={{ color: "var(--text-body)", fontFamily: "var(--font-dm-sans)" }}>
         <p>{sportIntro}</p>
       </div>
 

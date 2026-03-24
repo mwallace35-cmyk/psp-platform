@@ -374,26 +374,17 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
         {/* Hero */}
         <div
-          style={{
-            background: "linear-gradient(135deg, var(--psp-navy) 0%, #1a3a52 100%)",
-            padding: "2rem 1rem 1.5rem",
-            textAlign: "center",
-          }}
+          className="bg-gradient-to-br from-[var(--psp-navy)] to-[#1a3a52] px-4 pt-8 pb-6 text-center"
         >
           <h1
-            style={{
-              fontSize: "2.5rem",
-              fontFamily: "var(--font-bebas)",
-              marginBottom: "0.5rem",
-              color: "white",
-            }}
+            className="text-[2.5rem] font-bebas mb-2 text-white"
           >
             {SPORT_META[selectedSport as keyof typeof SPORT_META]?.emoji}{" "}
             {selectedSeason}{" "}
             {SPORT_META[selectedSport as keyof typeof SPORT_META]?.name || selectedSport}{" "}
             Scores
           </h1>
-          <p style={{ fontSize: "1rem", color: "#ccc", marginBottom: "1.5rem" }}>
+          <p className="text-base text-[#ccc] mb-6">
             {totalCount} game{totalCount !== 1 ? "s" : ""} � Organized by{" "}
             {selectedSport === "football" ? "week" : "month"}
           </p>
@@ -410,20 +401,17 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
         {/* Round-grouped scores */}
         <div
-          style={{
-            maxWidth: "960px",
-            margin: "0 auto",
-            padding: "1.5rem 1rem 2rem",
-          }}
+          className="max-w-[960px] mx-auto px-4 pt-6 pb-8"
         >
           {rounds.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#999" }}>
-              <p style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
+            <div className="text-center py-12 px-4 text-[#999]">
+              <p className="text-[1.1rem] mb-4">
                 No scores found for {selectedSeason} {SPORT_META[selectedSport as keyof typeof SPORT_META]?.name}.
               </p>
               <Link
                 href="/scores"
-                style={{ color: "var(--psp-gold)", textDecoration: "none", fontWeight: 600 }}
+                className="font-semibold no-underline"
+                style={{ color: "var(--psp-gold)" }}
               >
                 Clear all filters →
               </Link>
@@ -435,59 +423,39 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
               return (
                 <div
                   key={roundIdx}
-                  style={{
-                    marginBottom: "2.5rem",
-                  }}
+                  className="mb-10"
                 >
                   {/* Round header */}
                   <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      gap: "0.75rem",
-                      marginBottom: "1rem",
-                      paddingBottom: "0.5rem",
-                      borderBottom: "2px solid var(--psp-gold)",
-                    }}
+                    className="flex items-baseline gap-3 mb-4 pb-2 border-b-2"
+                    style={{ borderColor: "var(--psp-gold)" }}
                   >
                     <h2
-                      style={{
-                        fontSize: "1.6rem",
-                        fontFamily: "var(--font-bebas)",
-                        color: "var(--psp-gold)",
-                        margin: 0,
-                      }}
+                      className="text-[1.6rem] font-bebas m-0"
+                      style={{ color: "var(--psp-gold)" }}
                     >
                       {round.label}
                     </h2>
                     {round.dateRange && (
-                      <span style={{ color: "#999", fontSize: "0.85rem" }}>
+                      <span className="text-[#999] text-[0.85rem]">
                         {round.dateRange}
                       </span>
                     )}
-                    <span style={{ color: "#666", fontSize: "0.8rem", marginLeft: "auto" }}>
+                    <span className="text-[#666] text-[0.8rem] ml-auto">
                       {round.games.length} game{round.games.length !== 1 ? "s" : ""}
                     </span>
                   </div>
 
                   {/* League sub-groups */}
                   {leagueGroups.map((lg) => (
-                    <div key={lg.leagueKey} style={{ marginBottom: "1.25rem" }}>
+                    <div key={lg.leagueKey} className="mb-5">
                       <h3
-                        style={{
-                          fontSize: "0.8rem",
-                          fontWeight: 700,
-                          color: "#999",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.08em",
-                          marginBottom: "0.5rem",
-                          paddingLeft: "0.25rem",
-                        }}
+                        className="text-[0.8rem] font-bold text-[#999] uppercase tracking-[0.08em] mb-2 pl-1"
                       >
                         {lg.leagueLabel}
                       </h3>
 
-                      <div style={{ display: "grid", gap: "0.35rem" }}>
+                      <div className="grid gap-[0.35rem]">
                         {lg.games.map((game) => (
                           <GameCard key={game.id} game={game} sport={selectedSport} showDate={selectedSport !== "football"} />
                         ))}
@@ -499,15 +467,11 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
             })
           )}
 
-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+          <div className="text-center mt-8">
             <Link
               href="/scores/schedule"
-              style={{
-                color: "var(--psp-gold)",
-                textDecoration: "none",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-              }}
+              className="font-semibold text-[0.9rem] no-underline"
+              style={{ color: "var(--psp-gold)" }}
             >
               View Upcoming Schedule →
             </Link>
@@ -535,23 +499,14 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
       {/* Hero Section */}
       <div
-        style={{
-          background: "linear-gradient(135deg, var(--psp-navy) 0%, #1a3a52 100%)",
-          padding: "2rem 1rem 1.5rem",
-          textAlign: "center",
-        }}
+        className="bg-gradient-to-br from-[var(--psp-navy)] to-[#1a3a52] px-4 pt-8 pb-6 text-center"
       >
         <h1
-          style={{
-            fontSize: "2.5rem",
-            fontFamily: "var(--font-bebas)",
-            marginBottom: "0.5rem",
-            color: "white",
-          }}
+          className="text-[2.5rem] font-bebas mb-2 text-white"
         >
           Scores
         </h1>
-        <p style={{ fontSize: "1rem", color: "#ccc", marginBottom: "1.5rem" }}>
+        <p className="text-base text-[#ccc] mb-6">
           Find games by sport, season, and team
         </p>
 
@@ -567,22 +522,13 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
       {/* Scores List */}
       <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto",
-          padding: "1.5rem 1rem 2rem",
-        }}
+        className="max-w-[900px] mx-auto px-4 pt-6 pb-8"
       >
         {/* Results count */}
         <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1.5rem",
-          }}
+          className="flex justify-between items-center mb-6"
         >
-          <p style={{ color: "#999", fontSize: "0.85rem" }}>
+          <p className="text-[#999] text-[0.85rem]">
             {totalCount === 0
               ? "No games found"
               : totalCount <= PAGE_SIZE
@@ -591,29 +537,22 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
           </p>
           <Link
             href="/scores/schedule"
-            style={{
-              color: "var(--psp-gold)",
-              textDecoration: "none",
-              fontWeight: 600,
-              fontSize: "0.85rem",
-            }}
+            className="font-semibold text-[0.85rem] no-underline"
+            style={{ color: "var(--psp-gold)" }}
           >
             Upcoming Schedule →
           </Link>
         </div>
 
         {sortedDates.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#999" }}>
-            <p style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
+          <div className="text-center py-12 px-4 text-[#999]">
+            <p className="text-[1.1rem] mb-4">
               No scores found for these filters.
             </p>
             <Link
               href="/scores"
-              style={{
-                color: "var(--psp-gold)",
-                textDecoration: "none",
-                fontWeight: 600,
-              }}
+              className="font-semibold no-underline"
+              style={{ color: "var(--psp-gold)" }}
             >
               Clear all filters →
             </Link>
@@ -630,21 +569,15 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
             }).format(dateObj);
 
             return (
-              <div key={date} style={{ marginBottom: "2rem" }}>
+              <div key={date} className="mb-8">
                 <h2
-                  style={{
-                    fontSize: "1.3rem",
-                    fontFamily: "var(--font-bebas)",
-                    color: "var(--psp-gold)",
-                    marginBottom: "0.75rem",
-                    paddingBottom: "0.5rem",
-                    borderBottom: "2px solid #333",
-                  }}
+                  className="text-[1.3rem] font-bebas mb-3 pb-2 border-b-2 border-[#333]"
+                  style={{ color: "var(--psp-gold)" }}
                 >
                   {dateLabel}
                 </h2>
 
-                <div style={{ display: "grid", gap: "0.5rem" }}>
+                <div className="grid gap-2">
                   {games.map((game) => (
                     <GameCard key={game.id} game={game} sport={game.sport_id} showDate={false} showSport={selectedSport === "all"} />
                   ))}
@@ -672,46 +605,25 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
             return (
               <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "0.75rem",
-                  marginTop: "2rem",
-                  paddingBottom: "1rem",
-                }}
+                className="flex justify-center items-center gap-3 mt-8 pb-4"
               >
                 {currentPage > 1 && (
                   <Link
                     href={pageUrl(currentPage - 1)}
-                    style={{
-                      color: "var(--psp-gold)",
-                      textDecoration: "none",
-                      fontWeight: 600,
-                      fontSize: "0.9rem",
-                      padding: "0.5rem 1rem",
-                      border: "1px solid #444",
-                      borderRadius: "6px",
-                    }}
+                    className="font-semibold text-[0.9rem] no-underline px-4 py-2 border border-[#444] rounded-md"
+                    style={{ color: "var(--psp-gold)" }}
                   >
                     ← Previous
                   </Link>
                 )}
-                <span style={{ color: "#999", fontSize: "0.85rem" }}>
+                <span className="text-[#999] text-[0.85rem]">
                   Page {currentPage} of {totalPages}
                 </span>
                 {currentPage < totalPages && (
                   <Link
                     href={pageUrl(currentPage + 1)}
-                    style={{
-                      color: "var(--psp-gold)",
-                      textDecoration: "none",
-                      fontWeight: 600,
-                      fontSize: "0.9rem",
-                      padding: "0.5rem 1rem",
-                      border: "1px solid #444",
-                      borderRadius: "6px",
-                    }}
+                    className="font-semibold text-[0.9rem] no-underline px-4 py-2 border border-[#444] rounded-md"
+                    style={{ color: "var(--psp-gold)" }}
                   >
                     Next →
                   </Link>
@@ -748,100 +660,56 @@ function GameCard({
     game.home_score !== null &&
     game.away_score > game.home_score;
 
+  const gameTypeBadgeClass =
+    game.game_type === 'playoff' || game.game_type?.includes('playoff')
+      ? 'bg-orange-600/15 text-orange-400 border-orange-600/30'
+      : game.game_type?.includes('championship') || game.game_type?.includes('final')
+      ? 'bg-[#f0a500]/15 text-[#f0a500] border-[#f0a500]/30'
+      : game.game_type?.includes('district')
+      ? 'bg-blue-500/15 text-blue-400 border-blue-500/30'
+      : 'bg-gray-500/15 text-gray-400 border-gray-500/30';
+
   return (
     <Link
       href={`/${sport}/games/${game.id}`}
-      style={{
-        background: "linear-gradient(135deg, #1a1a1a 0%, #222 100%)",
-        border: "1px solid #333",
-        borderRadius: "8px",
-        padding: "0.6rem 0.75rem",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: "0.5rem",
-        textDecoration: "none",
-        cursor: "pointer",
-        transition: "border-color 0.2s ease",
-      }}
+      className="bg-gradient-to-br from-[#1a1a1a] to-[#222] border border-[#333] rounded-lg px-3 py-2.5 flex flex-row justify-between items-center gap-2 no-underline cursor-pointer transition-[border-color] duration-200"
     >
       {/* Left: date or sport badge */}
       {showSport ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.3rem",
-            minWidth: "75px",
-          }}
-        >
+        <div className="flex items-center gap-[0.3rem] min-w-[75px]">
           <SportIcon sport={game.sport_id} size="sm" />
-          <span style={{ fontSize: "0.7rem", color: "#999", fontWeight: 600 }}>
+          <span className="text-[0.7rem] text-[#999] font-semibold">
             {SPORT_META[game.sport_id as keyof typeof SPORT_META]?.name || game.sport_id}
           </span>
         </div>
       ) : showDate && game.game_date ? (
-        <span
-          style={{
-            fontSize: "0.7rem",
-            color: "#888",
-            minWidth: "70px",
-            fontWeight: 500,
-          }}
-        >
+        <span className="text-[0.7rem] text-[#888] min-w-[70px] font-medium">
           {formatDate(game.game_date)}
         </span>
       ) : null}
 
       {/* Game Score */}
-      <div
-        style={{
-          flex: 1,
-          display: "grid",
-          gridTemplateColumns: "1fr auto 1fr",
-          alignItems: "center",
-          gap: "0.4rem",
-          textAlign: "center",
-        }}
-      >
+      <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-[0.4rem] text-center">
         <span
-          style={{
-            color: awayWin ? "var(--psp-gold)" : "#ccc",
-            fontWeight: awayWin ? 700 : 500,
-            fontSize: "0.85rem",
-            textAlign: "right",
-          }}
+          className={`text-[0.85rem] text-right ${awayWin ? 'font-bold' : 'font-medium'}`}
+          style={{ color: awayWin ? "var(--psp-gold)" : "#ccc" }}
         >
           {game.away_school ? getSchoolDisplayName(game.away_school) : "TBD"}
         </span>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.35rem",
-            fontSize: "1.3rem",
-            fontFamily: "var(--font-bebas)",
-            fontWeight: 700,
-          }}
-        >
+        <div className="flex items-center gap-[0.35rem] text-[1.3rem] font-bold" style={{ fontFamily: "var(--font-bebas)" }}>
           <span style={{ color: awayWin ? "var(--psp-gold)" : "#999" }}>
             {game.away_score ?? "-"}
           </span>
-          <span style={{ color: "#555", fontSize: "0.85rem" }}>–</span>
+          <span className="text-[#555] text-[0.85rem]">&ndash;</span>
           <span style={{ color: homeWin ? "var(--psp-gold)" : "#999" }}>
             {game.home_score ?? "-"}
           </span>
         </div>
 
         <span
-          style={{
-            color: homeWin ? "var(--psp-gold)" : "#ccc",
-            fontWeight: homeWin ? 700 : 500,
-            fontSize: "0.85rem",
-            textAlign: "left",
-          }}
+          className={`text-[0.85rem] text-left ${homeWin ? 'font-bold' : 'font-medium'}`}
+          style={{ color: homeWin ? "var(--psp-gold)" : "#ccc" }}
         >
           {game.home_school ? getSchoolDisplayName(game.home_school) : "TBD"}
         </span>
@@ -850,37 +718,12 @@ function GameCard({
       {/* Right: game type badge */}
       {game.game_type && game.game_type !== 'regular' && (
         <span
-          style={{
-            fontSize: "0.6rem",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            padding: "0.15rem 0.4rem",
-            borderRadius: "3px",
-            whiteSpace: "nowrap",
-            ...(game.game_type === 'playoff' || game.game_type?.includes('playoff') ? {
-              background: "rgba(234, 88, 12, 0.15)",
-              color: "#f97316",
-              border: "1px solid rgba(234, 88, 12, 0.3)",
-            } : game.game_type?.includes('championship') || game.game_type?.includes('final') ? {
-              background: "rgba(240, 165, 0, 0.15)",
-              color: "#f0a500",
-              border: "1px solid rgba(240, 165, 0, 0.3)",
-            } : game.game_type?.includes('district') ? {
-              background: "rgba(59, 130, 246, 0.15)",
-              color: "#60a5fa",
-              border: "1px solid rgba(59, 130, 246, 0.3)",
-            } : {
-              background: "rgba(107, 114, 128, 0.15)",
-              color: "#9ca3af",
-              border: "1px solid rgba(107, 114, 128, 0.3)",
-            }),
-          }}
+          className={`text-[0.6rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-sm whitespace-nowrap border ${gameTypeBadgeClass}`}
         >
-          {game.game_type === 'playoff' ? '🏆 Playoff' :
-           game.game_type?.includes('championship') ? '🥇 Championship' :
-           game.game_type?.includes('final') ? '🥇 Final' :
-           game.game_type?.includes('district') ? '📍 District' :
+          {game.game_type === 'playoff' ? <><span role="img" aria-label="trophy">🏆</span> Playoff</> :
+           game.game_type?.includes('championship') ? <><span role="img" aria-label="medal">🥇</span> Championship</> :
+           game.game_type?.includes('final') ? <><span role="img" aria-label="medal">🥇</span> Final</> :
+           game.game_type?.includes('district') ? <><span role="img" aria-label="location">📍</span> District</> :
            game.game_type}
         </span>
       )}

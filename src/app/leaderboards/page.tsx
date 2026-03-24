@@ -123,7 +123,7 @@ export default async function LeaderboardsPage() {
             <div style={{ height: '4px', background: '#8B4513' }} />
             <div style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '2rem' }}>🏈</span>
+                <span style={{ fontSize: '2rem' }} role="img" aria-label="football">🏈</span>
                 <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                   Football
                 </h2>
@@ -174,7 +174,7 @@ export default async function LeaderboardsPage() {
             <div style={{ height: '4px', background: '#FF6B00' }} />
             <div style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '2rem' }}>🏀</span>
+                <span style={{ fontSize: '2rem' }} role="img" aria-label="basketball">🏀</span>
                 <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                   Basketball
                 </h2>
@@ -222,7 +222,7 @@ export default async function LeaderboardsPage() {
               <div style={{ height: '4px', background: sport.color }} />
               <div style={{ padding: '1.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                  <span style={{ fontSize: '2rem' }}>{sport.emoji}</span>
+                  <span style={{ fontSize: '2rem' }} role="img" aria-label={sport.name}>{sport.emoji}</span>
                   <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>{sport.name}</h2>
                 </div>
                 <StatPills stats={sport.stats} />

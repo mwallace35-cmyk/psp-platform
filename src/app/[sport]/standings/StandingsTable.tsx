@@ -173,7 +173,7 @@ export default function StandingsTable({ standings, sport }: { standings: League
           {currentGroup.divisions.map((div) => (
             <div key={div.name || 'main'}>
               {div.name && (
-                <h3 className="text-lg font-bold text-white mb-3" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.05em' }}>
+                <h3 className="psp-h3 text-white mb-3">
                   {div.name}
                 </h3>
               )}

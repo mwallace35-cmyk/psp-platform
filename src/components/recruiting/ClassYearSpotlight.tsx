@@ -48,14 +48,12 @@ export default function ClassYearSpotlight({ players, classYears }: ClassYearSpo
             <button
               key={year}
               onClick={() => setActiveYear(year)}
-              className="px-4 py-1.5 rounded-full font-semibold text-sm transition-all"
+              className="px-4 py-1.5 rounded-full font-semibold text-sm transition-all font-bebas tracking-wide"
               style={{
                 backgroundColor: isActive ? "#f0a500" : "rgba(255,255,255,0.06)",
                 color: isActive ? "#0a1628" : "rgba(255,255,255,0.5)",
                 border: isActive ? "none" : "1px solid rgba(255,255,255,0.1)",
-                fontFamily: "Bebas Neue, sans-serif",
                 fontSize: "0.95rem",
-                letterSpacing: "0.5px",
               }}
             >
               Class of {year}

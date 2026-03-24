@@ -36,17 +36,16 @@ export default function SeasonSelector({
     >
       <label
         htmlFor="season-nav"
+        className="font-bebas text-base tracking-wider"
         style={{
-          fontFamily: "Bebas Neue, sans-serif",
-          fontSize: "1rem",
           color: "var(--psp-gold)",
-          letterSpacing: "0.05em",
         }}
       >
         Season:
       </label>
       <select
         id="season-nav"
+        className="font-bebas tracking-wider"
         value={currentSeason}
         onChange={(e) => {
           router.push(`/${sport}/teams/${schoolSlug}/${e.target.value}`);
@@ -59,8 +58,6 @@ export default function SeasonSelector({
           padding: "0.5rem 2.5rem 0.5rem 0.75rem",
           fontSize: "1rem",
           fontWeight: 700,
-          fontFamily: "Bebas Neue, sans-serif",
-          letterSpacing: "0.05em",
           cursor: "pointer",
           appearance: "auto",
           minWidth: "140px",

@@ -250,8 +250,8 @@ export default function PickemAdmin() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3
-                    className="text-lg font-bold"
-                    style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                    className="text-lg font-bold font-bebas"
+                    style={{ color: "var(--psp-navy)" }}
                   >
                     {week.title}
                   </h3>

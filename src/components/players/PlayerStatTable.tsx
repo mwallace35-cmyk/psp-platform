@@ -126,22 +126,19 @@ export default function PlayerStatTable({ sport, stats, sportColor }: PlayerStat
           <thead>
             <tr style={{ background: "var(--psp-navy)" }}>
               <th
-                className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-300"
-                style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.08em" }}
+                className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 font-bebas tracking-[0.08em]"
               >
                 Season
               </th>
               <th
-                className="text-left px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-300"
-                style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.08em" }}
+                className="text-left px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 font-bebas tracking-[0.08em]"
               >
                 School
               </th>
               {visibleCols.map((col) => (
                 <th
                   key={col.key}
-                  className="text-right px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-300"
-                  style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.08em" }}
+                  className="text-right px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 font-bebas tracking-[0.08em]"
                 >
                   {col.label}
                 </th>
@@ -214,8 +211,7 @@ export default function PlayerStatTable({ sport, stats, sportColor }: PlayerStat
               >
                 <td
                   colSpan={2}
-                  className="px-4 py-3 font-bold text-sm uppercase tracking-wider text-white"
-                  style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.08em" }}
+                  className="px-4 py-3 font-bold text-sm uppercase tracking-wider text-white font-bebas tracking-[0.08em]"
                 >
                   Career Totals
                 </td>
@@ -261,7 +257,7 @@ export default function PlayerStatTable({ sport, stats, sportColor }: PlayerStat
               }}
             >
               <div className="flex justify-between items-baseline mb-3">
-                <span className="font-bold text-sm" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}>
+                <span className="font-bold text-sm font-bebas tracking-wider" style={{ color: "var(--psp-navy)" }}>
                   {isBest && (
                     <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: "var(--psp-gold)", verticalAlign: "middle" }} />
                   )}
@@ -307,7 +303,7 @@ export default function PlayerStatTable({ sport, stats, sportColor }: PlayerStat
         {/* Mobile career totals */}
         {stats.length > 1 && (
           <div className="rounded-lg p-4" style={{ background: "var(--psp-navy)" }}>
-            <div className="font-bold text-sm uppercase tracking-wider text-white mb-3" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+            <div className="font-bold text-sm uppercase tracking-wider text-white mb-3 font-bebas">
               Career Totals
             </div>
             <div className="grid grid-cols-3 gap-2 text-center">

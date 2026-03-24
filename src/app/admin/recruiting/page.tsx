@@ -102,7 +102,7 @@ export default function AdminRecruitingPage() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontSize: 20, fontFamily: "'Bebas Neue', sans-serif", margin: 0 }}>Recruiting Manager</h1>
+          <h1 className="psp-h4">Recruiting Manager</h1>
           <p style={{ fontSize: 12, color: "var(--g400)", margin: "4px 0 0" }}>
             Track recruiting profiles, star ratings, commitments, and external links.
           </p>

@@ -351,8 +351,8 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3
-                            className="text-lg font-bold group-hover:text-[var(--psp-gold)] transition-colors"
-                            style={{ color: "var(--psp-gray-500, #6b7280)", fontFamily: "Bebas Neue, sans-serif" }}
+                            className="text-lg font-bold group-hover:text-[var(--psp-gold)] transition-colors font-bebas"
+                            style={{ color: "var(--psp-gray-500, #6b7280)" }}
                           >
                             {school.name}
                           </h3>

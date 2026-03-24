@@ -90,11 +90,11 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
             >
               <div style={{ fontSize: 22, marginBottom: 4 }}>{stat.icon}</div>
               <div
+                className="font-bebas"
                 style={{
                   fontSize: 28,
                   fontWeight: 800,
                   color: "var(--psp-navy)",
-                  fontFamily: '"Bebas Neue", sans-serif',
                   lineHeight: 1,
                 }}
               >

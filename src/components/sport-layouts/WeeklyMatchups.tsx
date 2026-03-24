@@ -54,13 +54,9 @@ const WeeklyMatchups: React.FC<WeeklyMatchupsProps> = ({ games, sport, sportColo
   return (
     <div style={{ width: '100%' }}>
       <h2
+        className="psp-h2"
         style={{
-          fontFamily: 'Bebas Neue, sans-serif',
-          fontSize: '24px',
-          fontWeight: '700',
-          letterSpacing: '0.5px',
           marginBottom: '20px',
-          color: '#1A2744',
         }}
       >
         This Week in Philly {sport}

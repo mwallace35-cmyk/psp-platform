@@ -172,19 +172,16 @@ export default async function RecruitFinderPage() {
 
   return (
     <div
-      style={{
-        minHeight: "100vh",
-        background: "var(--psp-navy, #0a1628)",
-        padding: "2rem 1rem",
-      }}
+      className="min-h-screen py-8 px-4"
+      style={{ background: "var(--psp-navy, #0a1628)" }}
     >
-      <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+      <div className="max-w-[1280px] mx-auto">
         {/* Breadcrumb */}
         <nav
           aria-label="Breadcrumb"
-          style={{ marginBottom: "1rem", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}
+          className="mb-4 text-[0.85rem] text-white/50"
         >
-          <Link href="/" style={{ color: "var(--psp-gold)", textDecoration: "none" }}>
+          <Link href="/" className="no-underline" style={{ color: "var(--psp-gold)" }}>
             Home
           </Link>
           {" > "}
@@ -192,20 +189,13 @@ export default async function RecruitFinderPage() {
         </nav>
 
         {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
+        <div className="mb-8">
           <h1
-            style={{
-              fontFamily: "'Bebas Neue', 'DM Sans', system-ui, sans-serif",
-              fontSize: "clamp(2rem, 5vw, 3.5rem)",
-              color: "#fff",
-              letterSpacing: "0.05em",
-              marginBottom: "0.5rem",
-              lineHeight: 1,
-            }}
+            className="font-bebas text-[clamp(2rem,5vw,3.5rem)] text-white tracking-[0.05em] mb-2 leading-none"
           >
             RECRUIT FINDER
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "1rem", maxWidth: "600px", margin: 0 }}>
+          <p className="text-white/60 text-base max-w-[600px] m-0">
             Search top Philadelphia high school athletes by sport, position, class year, and stats.
             Filter and sort to find the recruits you&apos;re looking for.
           </p>

@@ -165,7 +165,7 @@ export default function RecruitBoard({ recruits, classYears }: Props) {
           <option value="all">All Statuses</option>
           {statuses.map((s) => (<option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>))}
         </select>
-        <input type="text" placeholder="Search name, school, position..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="text-sm border rounded-lg px-3 py-1.5 text-gray-700 flex-1 min-w-[200px]" />
+        <input type="text" placeholder="Search name, school, position..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="text-sm border rounded-lg px-3 py-1.5 text-gray-700 flex-1 min-w-[200px]" aria-label="Search recruits by name, school, or position" />
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} className="text-sm border rounded-lg px-3 py-1.5 text-gray-700">
           <option value="rating">Sort: Rating</option>
           <option value="name">Sort: Name</option>
@@ -189,7 +189,7 @@ export default function RecruitBoard({ recruits, classYears }: Props) {
                 <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: '#0a1628', color: '#f0a500' }}>{idx + 1}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Link href={`/player/${recruit.player_slug}`} className="font-bold text-lg hover:underline" style={{ color: 'var(--psp-navy)', fontFamily: 'var(--font-bebas, "Bebas Neue", sans-serif)', letterSpacing: '0.5px' }}>{recruit.player_name}</Link>
+                    <Link href={`/player/${recruit.player_slug}`} className="font-bold text-lg hover:underline font-bebas tracking-wide" style={{ color: 'var(--psp-navy)' }}>{recruit.player_name}</Link>
                     <StatusBadge status={recruit.status} />
                     <StarRating stars={recruit.star_rating} />
                   </div>

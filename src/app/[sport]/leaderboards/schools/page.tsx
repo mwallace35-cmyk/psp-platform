@@ -278,7 +278,7 @@ export default async function SchoolLeaderboardPage({
             { label: "Leaderboards", href: `/${sport}/leaderboards/rushing` },
             { label: "School Rankings" },
           ]} />
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider mt-4" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="psp-h1 text-white mt-4">
             School Rankings
           </h1>
           <p className="text-sm text-gray-400 mt-2">

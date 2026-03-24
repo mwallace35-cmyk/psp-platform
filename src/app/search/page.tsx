@@ -118,6 +118,7 @@ export default async function SearchPage({
                 name="q"
                 defaultValue={q}
                 placeholder="Search players, schools, coaches..."
+                aria-label="Search players, schools, and coaches"
                 className="flex-1 px-4 py-3 rounded-lg text-sm bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:bg-white/15 focus:border-[var(--psp-gold)] focus:outline-none"
               />
               <button type="submit" className="btn-primary px-6 py-3">
@@ -202,7 +203,7 @@ export default async function SearchPage({
               <div key={leagueName} style={{ marginBottom: 24 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <div style={{ width: 4, height: 20, background: color, borderRadius: 2 }} />
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif" }}>
+                  <h3 className="psp-h4" style={{ color: "var(--psp-navy)" }}>
                     {leagueName}
                   </h3>
                 </div>
@@ -312,7 +313,7 @@ export default async function SearchPage({
               </div>
               {Object.entries(grouped).map(([type, items]) => (
                 <div key={type}>
-                  <h2 className="text-xl font-bold mb-3 flex items-center gap-2" style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}>
+                  <h2 className="psp-h3 mb-3 flex items-center gap-2">
                     <span>{typeLabels[type]?.icon || "📋"}</span>
                     {typeLabels[type]?.label || type} ({items.length})
                   </h2>

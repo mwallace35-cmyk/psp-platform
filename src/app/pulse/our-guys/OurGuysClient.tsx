@@ -657,7 +657,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
                 <div key={sport}>
                   <div className="flex items-center gap-3 mb-4 pb-2 border-b-2" style={{ borderColor: SPORT_COLORS[sport] || '#6b7280' }}>
                     <span className="text-2xl">{SPORT_EMOJIS[sport] || ''}</span>
-                    <h2 className="text-xl font-black tracking-wide" style={{ fontFamily: "'Bebas Neue', sans-serif", color: SPORT_COLORS[sport] }}>
+                    <h2 className="psp-h3" style={{ color: SPORT_COLORS[sport] }}>
                       {SPORT_LABELS[sport] || sport}
                     </h2>
                     <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: SPORT_COLORS[sport] }}>

@@ -47,7 +47,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
   return (
     <div className="min-h-screen bg-white">
       {/* Header — matches standard sport sub-page layout */}
-      <section className="py-10" style={{ background: 'var(--psp-navy)' }}>
+      <section className="py-10" style={{ background: "var(--psp-navy)" }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb
             items={[
@@ -70,24 +70,14 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {/* All Awards Hub link */}
           <Link
             href="/awards"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
-            style={{
-              border: "1px solid rgba(59,130,246,0.3)",
-              background: "rgba(59,130,246,0.08)",
-              color: "#3b82f6",
-            }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-blue-500/30 bg-blue-500/[0.08] text-blue-500"
           >
             ← All Sports Awards
           </Link>
           {/* Championships link */}
           <Link
             href={`/${sport}/championships`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
-            style={{
-              border: "1px solid rgba(240,165,0,0.3)",
-              background: "rgba(240,165,0,0.08)",
-              color: "#f0a500",
-            }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-[#f0a500]/30 bg-[#f0a500]/[0.08] text-[#f0a500]"
           >
             🏆 Championships
           </Link>
@@ -96,23 +86,13 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             <>
               <Link
                 href="/football/all-city"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
-                style={{
-                  border: "1px solid rgba(16,163,97,0.3)",
-                  background: "rgba(16,163,97,0.08)",
-                  color: "#10a361",
-                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-emerald-600/30 bg-emerald-600/[0.08] text-emerald-600"
               >
                 📋 All-City Archive (1932–2018)
               </Link>
               <Link
                 href="/football/city-all-star-game"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
-                style={{
-                  border: "1px solid rgba(168,85,247,0.3)",
-                  background: "rgba(168,85,247,0.08)",
-                  color: "#a855f7",
-                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-purple-500/30 bg-purple-500/[0.08] text-purple-500"
               >
                 🎯 City All-Star Game
               </Link>
@@ -121,12 +101,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {sport === "basketball" && (
             <Link
               href="/basketball/leaderboards/scoring"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
-              style={{
-                border: "1px solid rgba(234,88,12,0.3)",
-                background: "rgba(234,88,12,0.08)",
-                color: "#ea580c",
-              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-orange-600/30 bg-orange-600/[0.08] text-orange-600"
             >
               📊 Scoring Leaders
             </Link>
@@ -134,12 +109,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {sport === "baseball" && (
             <Link
               href="/pros"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80"
-              style={{
-                border: "1px solid rgba(220,38,38,0.3)",
-                background: "rgba(220,38,38,0.08)",
-                color: "#dc2626",
-              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-red-600/30 bg-red-600/[0.08] text-red-600"
             >
               ⚾ MLB Pipeline
             </Link>

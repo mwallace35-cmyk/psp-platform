@@ -137,8 +137,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
         />
 
         <h1
-          className="text-3xl md:text-4xl font-bold text-white mt-4 mb-2"
-          style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+          className="psp-h1 text-white mt-4 mb-2"
         >
           {sportLabel} Schools
         </h1>
@@ -149,9 +148,8 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
         {sortedLeagues.map(([league, leagueSchools]) => (
           <div key={league} className="mb-8">
             <h2
-              className="text-lg font-bold mb-3 pb-2 border-b"
+              className="psp-h4 mb-3 pb-2 border-b"
               style={{
-                fontFamily: "'Bebas Neue', sans-serif",
                 color: sportColor,
                 borderColor: `${sportColor}40`,
               }}
@@ -199,7 +197,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
           <div className="mb-8 mt-4">
             <h2
               className="text-lg font-bold mb-3 pb-2 border-b border-gray-700"
-              style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#9ca3af' }}
+              style={{ color: '#9ca3af' }}
             >
               Historical Programs
               <span className="ml-2 text-xs font-normal text-gray-600">({closedSchools.length} closed)</span>

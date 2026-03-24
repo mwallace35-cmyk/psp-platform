@@ -463,7 +463,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       <PlayerProfileTabs sportColor={meta.color} tabs={tabList} />
 
       {/* ============ OVERVIEW SECTION ============ */}
-      <section id="overview" className="max-w-7xl mx-auto px-4 py-8">
+      <section id="overview" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main column */}
           <div className="lg:col-span-3 space-y-8">
@@ -723,7 +723,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       <PSPPromo size="banner" variant={2} />
 
       {/* ============ STATS SECTION ============ */}
-      <section id="stats" className="max-w-7xl mx-auto px-4 py-8">
+      <section id="stats" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8">
         <h2
           className="psp-h2 mb-6"
           style={{ color: "var(--psp-navy)" }}
@@ -756,10 +756,9 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
       {/* ============ GAME LOG SECTION ============ */}
       {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
-        <section id="game-log" className="max-w-7xl mx-auto px-4 py-8">
+        <section id="game-log" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8">
           <h2
-            className="text-2xl font-bold mb-6"
-            style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif", letterSpacing: "0.04em" }}
+            className="psp-h2 mb-6"
           >
             Game Log
           </h2>
@@ -786,7 +785,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
       {/* ============ AWARDS SECTION ============ */}
       {(awards as Award[]).length > 0 && (
-        <section id="awards" className="max-w-7xl mx-auto px-4 py-8">
+        <section id="awards" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
             <h2
               className="psp-h2"

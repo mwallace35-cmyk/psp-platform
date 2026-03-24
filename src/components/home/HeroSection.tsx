@@ -104,6 +104,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
             <input
               type="text"
               placeholder="Find your school, your player, your stats..."
+              aria-label="Search players, schools, and stats"
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
               className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white text-[var(--psp-navy)] placeholder-gray-500 rounded-lg text-base sm:text-lg focus:outline-none transition-shadow"

@@ -124,11 +124,7 @@ export default function AllAmericansSpotlight({ awards }: AllAmericansSpotlightP
       <div className="flex items-center gap-3 mb-2">
         <span className="text-2xl">&#11088;</span>
         <h2
-          className="text-2xl sm:text-3xl font-bold text-white"
-          style={{
-            fontFamily: "Bebas Neue, sans-serif",
-            letterSpacing: "0.5px",
-          }}
+          className="text-2xl sm:text-3xl font-bold text-white font-bebas tracking-wide"
         >
           All-American Game Selections
         </h2>
@@ -147,13 +143,11 @@ export default function AllAmericansSpotlight({ awards }: AllAmericansSpotlightP
             <button
               key={tab.id}
               onClick={() => setActiveSport(tab.id)}
-              className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all"
+              className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all font-bebas tracking-wide"
               style={{
                 backgroundColor: isActive ? tab.color : "rgba(255,255,255,0.08)",
                 color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
-                fontFamily: "Bebas Neue, sans-serif",
                 fontSize: "1.05rem",
-                letterSpacing: "0.5px",
               }}
             >
               {tab.label}
@@ -221,10 +215,9 @@ export default function AllAmericansSpotlight({ awards }: AllAmericansSpotlightP
                   </div>
                   {/* Year(s) */}
                   <span
-                    className="text-sm font-bold flex-shrink-0 ml-2"
+                    className="text-sm font-bold flex-shrink-0 ml-2 font-bebas"
                     style={{
                       color: "rgba(255,255,255,0.5)",
-                      fontFamily: "Bebas Neue, sans-serif",
                     }}
                   >
                     {Array.from(new Set(card.awards.map((a) => a.year).filter(Boolean)))

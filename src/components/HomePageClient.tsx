@@ -344,6 +344,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
               <input
                 type="email"
                 placeholder="Enter your email"
+                aria-label="Email address for newsletter"
                 className="flex-1 min-w-0 px-4 py-3 rounded-lg border-none text-base bg-white text-[var(--psp-navy)]"
               />
               <button className="px-8 py-3 bg-[var(--psp-gold)] text-[var(--psp-navy)] rounded-lg font-semibold text-base transition-all duration-300 hover:bg-[var(--psp-gold-light)] hover:-translate-y-1">

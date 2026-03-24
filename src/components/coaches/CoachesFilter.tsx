@@ -173,6 +173,7 @@ export default function CoachesFilter({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="filter-input"
+            aria-label="Search coaches by name or school"
             style={{ width: "100%", padding: "10px 14px", fontSize: 13 }}
           />
         </div>

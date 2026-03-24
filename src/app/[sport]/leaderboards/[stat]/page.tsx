@@ -344,7 +344,7 @@ export default async function LeaderboardPage({
               { label: `${isCareer ? "Career " : ""}${statConfig.label}` },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl text-white tracking-wider mt-4" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+          <h1 className="psp-h1 text-white mt-4">
             {isCareer && "Career "}{statConfig.label} Leaders
           </h1>
           <p className="text-sm text-gray-400 mt-2">{subtitle}</p>
@@ -467,7 +467,7 @@ export default async function LeaderboardPage({
           <div className="rounded-xl border p-8 my-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
             <div className="text-center">
               <div className="text-5xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold mb-3 text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <h3 className="psp-h3 text-white mb-3">
                 No Results
               </h3>
               <p className="text-gray-300 mb-4">
@@ -482,7 +482,7 @@ export default async function LeaderboardPage({
           <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
             <div className="text-center">
               <div className="text-6xl mb-4">📊</div>
-              <h3 className="text-2xl font-bold mb-3 text-white" style={{ fontFamily: "Bebas Neue, sans-serif" }}>
+              <h3 className="psp-h3 text-white mb-3">
                 Coming Soon
               </h3>
               <p className="text-lg text-gray-300 mb-6 max-w-md mx-auto">

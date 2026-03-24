@@ -18,7 +18,7 @@ export default async function AdminSocialPage() {
     <div style={{ padding: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontFamily: "'Bebas Neue', sans-serif", margin: 0, color: 'var(--text)' }}>
+          <h1 className="psp-h2" style={{ color: 'var(--text)' }}>
             Social Feed Manager
           </h1>
           <p style={{ fontSize: 13, color: 'var(--g400)', margin: '4px 0 0' }}>

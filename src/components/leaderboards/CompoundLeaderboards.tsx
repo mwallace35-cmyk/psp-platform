@@ -38,8 +38,7 @@ export default function CompoundLeaderboards({
     <section className="py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <h2
-          className="text-2xl md:text-3xl font-bold mb-2 text-white"
-          style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+          className="psp-h2 text-white mb-2"
         >
           Combined Stat Leaders
         </h2>
@@ -67,8 +66,7 @@ export default function CompoundLeaderboards({
                   style={{ borderColor: "rgba(255,255,255,0.08)" }}
                 >
                   <h3
-                    className="text-lg font-bold text-white"
-                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                    className="psp-h4 text-white"
                   >
                     {category.label}
                   </h3>

@@ -97,12 +97,7 @@ export default async function AwardsHubPage() {
           <Breadcrumb items={[{ label: "Awards & Honors" }]} />
           <div className="mt-4 text-center">
             <h1
-              className="text-5xl sm:text-6xl font-black mb-3"
-              style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                color: "#f0a500",
-                letterSpacing: "0.04em",
-              }}
+              className="psp-h1-lg text-[#f0a500] mb-3"
             >
               AWARDS &amp; HONORS
             </h1>
@@ -124,12 +119,7 @@ export default async function AwardsHubPage() {
       {/* Sport Cards Grid */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h2
-          className="text-2xl sm:text-3xl mb-6"
-          style={{
-            fontFamily: "'Bebas Neue', sans-serif",
-            color: "#f0a500",
-            letterSpacing: "0.04em",
-          }}
+          className="psp-h2 text-[#f0a500] mb-6"
         >
           EXPLORE BY SPORT
         </h2>
@@ -153,11 +143,9 @@ export default async function AwardsHubPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-3xl">{sport.emoji}</span>
                   <h3
-                    className="text-xl font-black group-hover:translate-x-1 transition-transform duration-300"
+                    className="psp-h4 group-hover:translate-x-1 transition-transform duration-300"
                     style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
                       color: sport.color,
-                      letterSpacing: "0.04em",
                     }}
                   >
                     {sport.name}
@@ -239,12 +227,7 @@ export default async function AwardsHubPage() {
                   }}
                 >
                   <h3
-                    className="text-lg uppercase"
-                    style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
-                      color: "#f0a500",
-                      letterSpacing: "0.05em",
-                    }}
+                    className="font-bebas text-lg uppercase tracking-wider text-[#f0a500]"
                   >
                     👑 Dynasty Tracker
                   </h3>
@@ -305,12 +288,7 @@ export default async function AwardsHubPage() {
                 }}
               >
                 <h3
-                  className="text-lg uppercase"
-                  style={{
-                    fontFamily: "'Bebas Neue', sans-serif",
-                    color: "#3b82f6",
-                    letterSpacing: "0.05em",
-                  }}
+                  className="font-bebas text-lg uppercase tracking-wider text-[#3b82f6]"
                 >
                   Quick Links
                 </h3>
@@ -357,12 +335,7 @@ export default async function AwardsHubPage() {
                   }}
                 >
                   <h3
-                    className="text-lg uppercase"
-                    style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
-                      color: "#f0a500",
-                      letterSpacing: "0.05em",
-                    }}
+                    className="font-bebas text-lg uppercase tracking-wider text-[#f0a500]"
                   >
                     ⭐ Most Honored Schools
                   </h3>

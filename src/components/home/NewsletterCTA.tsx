@@ -111,6 +111,7 @@ export default function NewsletterCTA() {
               <input
                 type="email"
                 placeholder="Your email address"
+                aria-label="Email address for newsletter"
                 className={styles.newsletterInput}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

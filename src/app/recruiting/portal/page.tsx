@@ -101,8 +101,7 @@ function RecruiterPortalContent() {
       {/* Hero */}
       <div className="mb-12 text-center">
         <h1
-          className="text-5xl font-bold mb-2"
-          style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}
+          className="psp-h1 mb-2"
         >
           Recruiter Portal
         </h1>

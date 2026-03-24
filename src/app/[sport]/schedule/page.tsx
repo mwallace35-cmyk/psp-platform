@@ -73,12 +73,26 @@ export default async function SchedulePage({
   const supabase = createStaticClient();
   const seasonLabel = getCurrentSeasonLabel();
 
-  // Get current/upcoming season
-  const { data: seasonData } = await supabase
+  // Get current/upcoming season — try exact match first, then fall back to most recent
+  let seasonData: { id: number; label: string } | null = null;
+  const { data: exactSeason } = await supabase
     .from("seasons")
     .select("id, label")
     .eq("label", seasonLabel)
     .single();
+
+  if (exactSeason) {
+    seasonData = exactSeason;
+  } else {
+    // Fallback: get the most recent season by label descending
+    const { data: latestSeason } = await supabase
+      .from("seasons")
+      .select("id, label")
+      .order("label", { ascending: false })
+      .limit(1)
+      .single();
+    seasonData = latestSeason;
+  }
 
   if (!seasonData) notFound();
 

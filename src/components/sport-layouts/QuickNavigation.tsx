@@ -102,12 +102,9 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
 
               {/* Label */}
               <h3
-                className="text-lg font-black mb-1 group-hover:translate-x-1 transition-transform duration-300"
+                className="text-lg font-black mb-1 group-hover:translate-x-1 transition-transform duration-300 font-bebas uppercase tracking-wider"
                 style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
                   color: "#f0a500",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
                 }}
               >
                 {item.label}

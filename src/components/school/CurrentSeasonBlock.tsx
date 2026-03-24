@@ -110,8 +110,7 @@ export default function CurrentSeasonBlock({
           {/* Big record */}
           <div>
             <div
-              className="text-5xl md:text-6xl text-white tracking-wide leading-none"
-              style={{ fontFamily: "Bebas Neue, sans-serif" }}
+              className="text-5xl md:text-6xl text-white tracking-wide leading-none font-bebas"
             >
               {record}
             </div>
@@ -132,8 +131,8 @@ export default function CurrentSeasonBlock({
               style={{ background: `${sportColor}15`, border: `1px solid ${sportColor}30` }}
             >
               <div
-                className="text-lg font-bold"
-                style={{ color: sportColor, fontFamily: "Bebas Neue, sans-serif" }}
+                className="text-lg font-bold font-bebas"
+                style={{ color: sportColor }}
               >
                 {teamSeason.league_finish}
               </div>
@@ -148,8 +147,8 @@ export default function CurrentSeasonBlock({
               style={{ background: "rgba(240,165,0,0.1)", border: "1px solid rgba(240,165,0,0.25)" }}
             >
               <div
-                className="text-lg font-bold"
-                style={{ color: "var(--psp-gold)", fontFamily: "Bebas Neue, sans-serif" }}
+                className="text-lg font-bold font-bebas"
+                style={{ color: "var(--psp-gold)" }}
               >
                 {teamSeason.playoff_result}
               </div>
@@ -212,8 +211,8 @@ export default function CurrentSeasonBlock({
               <div className="text-right">
                 {gameIsUpcoming ? (
                   <div
-                    className="text-lg font-bold"
-                    style={{ fontFamily: "Bebas Neue, sans-serif", color: sportColor }}
+                    className="text-lg font-bold font-bebas"
+                    style={{ color: sportColor }}
                   >
                     {formatGameDate(nextGame.game_date)}
                   </div>
@@ -224,8 +223,8 @@ export default function CurrentSeasonBlock({
                     style={{ textDecoration: "none" }}
                   >
                     <div
-                      className="text-lg font-bold"
-                      style={{ fontFamily: "Bebas Neue, sans-serif", color: gameResultColor }}
+                      className="text-lg font-bold font-bebas"
+                      style={{ color: gameResultColor }}
                     >
                       {gameResultText}
                     </div>

@@ -257,13 +257,9 @@ export default async function ClassYearPage({
         {/* Header */}
         <div style={{ marginBottom: "2rem" }}>
           <h1
+            className="psp-h1-lg text-white"
             style={{
-              fontFamily: "'Bebas Neue', 'DM Sans', system-ui, sans-serif",
-              fontSize: "clamp(2.5rem, 6vw, 4rem)",
-              color: "#fff",
-              letterSpacing: "0.05em",
               marginBottom: "0.5rem",
-              lineHeight: 1,
             }}
           >
             CLASS OF {year}
@@ -342,13 +338,7 @@ export default async function ClassYearPage({
                     }}
                   />
                   <h2
-                    style={{
-                      fontFamily: "'Bebas Neue', 'DM Sans', system-ui, sans-serif",
-                      fontSize: "1.75rem",
-                      color: "#fff",
-                      letterSpacing: "0.05em",
-                      margin: 0,
-                    }}
+                    className="psp-h2 text-white"
                   >
                     {section.sport}
                   </h2>
@@ -394,11 +384,11 @@ export default async function ClassYearPage({
                           {/* Rank + Name */}
                           <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "0.5rem" }}>
                             <span
+                              className="font-bebas"
                               style={{
                                 color: section.color,
                                 fontWeight: 800,
                                 fontSize: "1.1rem",
-                                fontFamily: "'Bebas Neue', 'DM Sans', system-ui, sans-serif",
                                 minWidth: "1.5rem",
                               }}
                             >
@@ -514,9 +504,9 @@ export default async function ClassYearPage({
         >
           <div>
             <p
+              className="font-bebas"
               style={{
                 color: "var(--psp-gold)",
-                fontFamily: "'Bebas Neue', 'DM Sans', system-ui, sans-serif",
                 fontSize: "1.25rem",
                 margin: 0,
               }}

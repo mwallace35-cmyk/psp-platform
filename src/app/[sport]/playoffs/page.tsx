@@ -30,32 +30,18 @@ async function PlayoffsLoader({ sport }: { sport: string }) {
   if (brackets.length === 0) {
     return (
       <div
-        style={{
-          background: "var(--psp-navy, #0a1628)",
-          borderRadius: "12px",
-          padding: "60px 20px",
-          textAlign: "center",
-        }}
+        className="rounded-xl px-5 py-[60px] text-center"
+        style={{ background: "var(--psp-navy, #0a1628)" }}
       >
-        <div style={{ fontSize: "48px", marginBottom: "16px" }}>&#127942;</div>
+        <div className="text-5xl mb-4">&#127942;</div>
         <h2
-          style={{
-            fontSize: "22px",
-            fontWeight: 700,
-            color: "white",
-            margin: "0 0 8px",
-            fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-          }}
+          className="text-[22px] font-bold text-white mb-2 font-bebas"
         >
           Playoff Brackets Coming Soon
         </h2>
         <p
-          style={{
-            fontSize: "14px",
-            color: "rgba(255,255,255,0.5)",
-            margin: 0,
-            fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
-          }}
+          className="text-sm text-white/50 m-0"
+          style={{ fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)" }}
         >
           Bracket data will be available once the playoff season begins.
           <br />
@@ -78,7 +64,7 @@ export default async function PlayoffsPage({ params }: { params: Promise<PagePar
   ];
 
   return (
-    <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 16px 40px" }}>
+    <main className="max-w-[1200px] mx-auto px-4 pb-10">
       <Breadcrumb items={breadcrumbs} />
       <BreadcrumbJsonLd
         items={[
@@ -89,14 +75,8 @@ export default async function PlayoffsPage({ params }: { params: Promise<PagePar
       />
 
       <h1
-        style={{
-          fontSize: "32px",
-          fontWeight: 700,
-          color: "var(--psp-navy, #0a1628)",
-          margin: "16px 0 24px",
-          fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-          letterSpacing: "0.5px",
-        }}
+        className="text-[32px] font-bold mt-4 mb-6 font-bebas tracking-[0.5px]"
+        style={{ color: "var(--psp-navy, #0a1628)" }}
       >
         {meta.name} Playoffs
       </h1>
@@ -104,14 +84,8 @@ export default async function PlayoffsPage({ params }: { params: Promise<PagePar
       <Suspense
         fallback={
           <div
-            style={{
-              background: "var(--psp-navy, #0a1628)",
-              borderRadius: "12px",
-              padding: "60px 20px",
-              textAlign: "center",
-              color: "rgba(255,255,255,0.5)",
-              fontSize: "14px",
-            }}
+            className="rounded-xl px-5 py-[60px] text-center text-white/50 text-sm"
+            style={{ background: "var(--psp-navy, #0a1628)" }}
           >
             Loading playoff brackets...
           </div>

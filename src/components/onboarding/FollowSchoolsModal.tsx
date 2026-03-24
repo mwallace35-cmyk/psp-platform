@@ -136,14 +136,7 @@ export default function FollowSchoolsModal() {
         }}
       >
         <h2
-          style={{
-            fontFamily: "var(--font-bebas), 'Bebas Neue', sans-serif",
-            fontSize: "2rem",
-            letterSpacing: "0.04em",
-            color: "var(--psp-gold)",
-            margin: 0,
-            lineHeight: 1.1,
-          }}
+          className="psp-h1 text-[var(--psp-gold)]"
         >
           Follow Your Schools
         </h2>
@@ -277,15 +270,14 @@ export default function FollowSchoolsModal() {
         </span>
         <button
           onClick={handleDone}
+          className="font-bebas tracking-wider"
           style={{
             padding: "0.75rem 2rem",
             borderRadius: "var(--radius-md)",
             border: "none",
             background: "var(--psp-gold)",
             color: "var(--psp-navy)",
-            fontFamily: "var(--font-bebas), 'Bebas Neue', sans-serif",
             fontSize: "1.15rem",
-            letterSpacing: "0.06em",
             cursor: "pointer",
             fontWeight: 400,
             transition: "background 0.15s ease, transform 0.1s ease",
@@ -338,12 +330,9 @@ function SchoolGroup({
   return (
     <div style={{ marginBottom: "1rem" }}>
       <h3
+        className="font-bebas text-sm uppercase tracking-widest"
         style={{
-          fontFamily: "var(--font-bebas), 'Bebas Neue', sans-serif",
-          fontSize: "0.95rem",
-          letterSpacing: "0.1em",
           color: "var(--psp-gold)",
-          textTransform: "uppercase",
           margin: "0 0 0.5rem",
           paddingBottom: "0.35rem",
           borderBottom: "1px solid var(--psp-navy-light)",

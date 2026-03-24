@@ -169,13 +169,9 @@ const ContextAwareHero: React.FC<ContextAwareHeroProps> = ({
         }}
       >
         <h2
+          className="psp-h1 text-white"
           style={{
-            fontFamily: 'Bebas Neue, sans-serif',
-            fontSize: '32px',
-            fontWeight: '700',
-            lineHeight: '1.2',
             marginBottom: '12px',
-            letterSpacing: '0.5px',
           }}
         >
           {featuredArticle.title}
@@ -223,13 +219,9 @@ const ContextAwareHero: React.FC<ContextAwareHeroProps> = ({
     >
       <div>
         <h2
+          className="psp-h1 text-white"
           style={{
-            fontFamily: 'Bebas Neue, sans-serif',
-            fontSize: '32px',
-            fontWeight: '700',
-            lineHeight: '1.2',
             marginBottom: '12px',
-            letterSpacing: '0.5px',
           }}
         >
           Philadelphia High School {sport}

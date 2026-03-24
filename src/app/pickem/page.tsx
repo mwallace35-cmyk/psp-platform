@@ -96,8 +96,7 @@ export default async function PickemPage() {
             </div>
             <div className="flex-1">
               <h1
-                className="text-4xl md:text-5xl text-white tracking-wider mb-2"
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+                className="psp-h1 text-white mb-2"
               >
                 Pick'em
               </h1>
@@ -125,8 +124,8 @@ export default async function PickemPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h2
-                        className="text-3xl font-bold mb-2"
-                        style={{ color: "var(--psp-navy)", fontFamily: "Bebas Neue, sans-serif" }}
+                        className="text-3xl font-bold mb-2 font-bebas"
+                        style={{ color: "var(--psp-navy)" }}
                       >
                         {currentWeek.title}
                       </h2>

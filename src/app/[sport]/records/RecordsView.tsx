@@ -139,6 +139,8 @@ export default function RecordsView({
   const [activeScope, setActiveScope] = useState<string | null>(null);
   const [eraFilter, setEraFilter] = useState("All Time");
   const [schoolSearch, setSchoolSearch] = useState("");
+  const [curatedPage, setCuratedPage] = useState(1);
+  const RECORDS_PER_PAGE = 25;
 
   // Get sport-specific categories
   const categories = SPORT_CATEGORIES[sport] || SPORT_CATEGORIES.football;
@@ -296,14 +298,7 @@ export default function RecordsView({
         background: "#0a1628",
       }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>🏆</div>
-        <h3 style={{
-          fontSize: 24,
-          fontWeight: "bold",
-          marginBottom: 12,
-          color: "#fff",
-          fontFamily: "Bebas Neue, sans-serif",
-          letterSpacing: "0.05em",
-        }}>
+        <h3 className="psp-h3 text-white" style={{ marginBottom: 12 }}>
           Coming Soon
         </h3>
         <p style={{
@@ -367,6 +362,7 @@ export default function RecordsView({
                 setActiveCategory(cat);
                 setActiveStat(null);
                 setActiveScope(null);
+                setCuratedPage(1);
               }}
               style={{
                 padding: "8px 16px",
@@ -387,7 +383,7 @@ export default function RecordsView({
           );
         })}
         <button
-          onClick={() => setActiveCategory("__schools__")}
+          onClick={() => { setActiveCategory("__schools__"); setCuratedPage(1); }}
           style={{
             padding: "8px 16px",
             fontSize: 13,
@@ -424,7 +420,7 @@ export default function RecordsView({
           </label>
           <select
             value={eraFilter}
-            onChange={(e) => setEraFilter(e.target.value)}
+            onChange={(e) => { setEraFilter(e.target.value); setCuratedPage(1); }}
             style={{
               padding: "6px 10px",
               fontSize: 13,
@@ -470,7 +466,7 @@ export default function RecordsView({
                   return (
                     <button
                       key={stat}
-                      onClick={() => setActiveStat(stat)}
+                      onClick={() => { setActiveStat(stat); setCuratedPage(1); }}
                       style={{
                         padding: "6px 12px",
                         fontSize: 12,
@@ -504,7 +500,7 @@ export default function RecordsView({
                   return (
                     <button
                       key={scope}
-                      onClick={() => { setActiveScope(scope); setActiveStat(null); }}
+                      onClick={() => { setActiveScope(scope); setActiveStat(null); setCuratedPage(1); }}
                       style={{
                         padding: "6px 12px",
                         fontSize: 12,
@@ -528,15 +524,7 @@ export default function RecordsView({
           {/* Fix #4: Sequential layout (Leaderboard first, Archive below) */}
           {/* Computed Leaderboards */}
           <div style={{ marginBottom: 40 }}>
-            <h3
-              style={{
-                fontSize: 18,
-                fontWeight: 700,
-                color: "var(--psp-navy, #0a1628)",
-                marginBottom: 12,
-                fontFamily: "var(--font-heading, 'Bebas Neue', sans-serif)",
-              }}
-            >
+            <h3 className="psp-h3" style={{ marginBottom: 12 }}>
               {activeStatForDisplay ? `${activeStatForDisplay} Leaderboard` : `${initialCategory} Leaderboard`}
             </h3>
             {leaderboardRecords.length > 0 ? (
@@ -639,23 +627,64 @@ export default function RecordsView({
 
           {/* Curated Archive Records */}
           <div>
-            <h3
-              style={{
-                fontSize: 18,
-                fontWeight: 700,
-                color: "var(--psp-navy, #0a1628)",
-                marginBottom: 12,
-                fontFamily: "var(--font-heading, 'Bebas Neue', sans-serif)",
-              }}
-            >
+            <h3 className="psp-h3" style={{ marginBottom: 12 }}>
               Archive Records
             </h3>
             {curatedForCategory.length > 0 ? (
-              <div style={{ display: "grid", gap: 12 }}>
-                {curatedForCategory.map((rec) => (
-                  <CuratedRecordCard key={rec.id} record={rec} sport={sport} sportColor={sportColor} />
-                ))}
-              </div>
+              <>
+                <div style={{ display: "grid", gap: 12 }}>
+                  {curatedForCategory
+                    .slice((curatedPage - 1) * RECORDS_PER_PAGE, curatedPage * RECORDS_PER_PAGE)
+                    .map((rec) => (
+                      <CuratedRecordCard key={rec.id} record={rec} sport={sport} sportColor={sportColor} />
+                    ))}
+                </div>
+                {curatedForCategory.length > RECORDS_PER_PAGE && (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 24 }}>
+                    <button
+                      onClick={() => setCuratedPage((p) => Math.max(1, p - 1))}
+                      disabled={curatedPage === 1}
+                      style={{
+                        padding: "8px 20px",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: curatedPage === 1 ? "#9ca3af" : "#fff",
+                        background: curatedPage === 1 ? "#e5e7eb" : "var(--psp-navy, #0a1628)",
+                        border: "none",
+                        borderRadius: 6,
+                        cursor: curatedPage === 1 ? "not-allowed" : "pointer",
+                        transition: "all 200ms ease",
+                        fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
+                      }}
+                    >
+                      Prev
+                    </button>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "var(--psp-navy, #0a1628)" }}>
+                      Page{" "}
+                      <span style={{ color: "var(--psp-gold, #f0a500)" }}>{curatedPage}</span>
+                      {" "}of {Math.ceil(curatedForCategory.length / RECORDS_PER_PAGE)}
+                    </span>
+                    <button
+                      onClick={() => setCuratedPage((p) => Math.min(Math.ceil(curatedForCategory.length / RECORDS_PER_PAGE), p + 1))}
+                      disabled={curatedPage >= Math.ceil(curatedForCategory.length / RECORDS_PER_PAGE)}
+                      style={{
+                        padding: "8px 20px",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: curatedPage >= Math.ceil(curatedForCategory.length / RECORDS_PER_PAGE) ? "#9ca3af" : "#fff",
+                        background: curatedPage >= Math.ceil(curatedForCategory.length / RECORDS_PER_PAGE) ? "#e5e7eb" : "var(--psp-navy, #0a1628)",
+                        border: "none",
+                        borderRadius: 6,
+                        cursor: curatedPage >= Math.ceil(curatedForCategory.length / RECORDS_PER_PAGE) ? "not-allowed" : "pointer",
+                        transition: "all 200ms ease",
+                        fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
+                      }}
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div style={{ padding: "24px", textAlign: "center", color: "#9ca3af" }}>
                 <div style={{ fontSize: 32, marginBottom: 8 }}>📜</div>
@@ -722,14 +751,7 @@ function RecordOfTheDayHero({
           >
             📜 Record of the Day
           </div>
-          <h2
-            style={{
-              fontSize: 32,
-              fontWeight: 700,
-              margin: "0 0 12px 0",
-              fontFamily: "var(--font-heading, 'Bebas Neue', sans-serif)",
-            }}
-          >
+          <h2 className="psp-h1" style={{ margin: "0 0 12px 0" }}>
             {record.record_value || record.record_number?.toLocaleString() || "Record"}
           </h2>
           <div style={{ fontSize: 16, marginBottom: 12 }}>
@@ -840,7 +862,7 @@ function CuratedRecordCard({
           </div>
           {record.description && <div style={{ fontSize: 11, color: "#9ca3af" }}>{record.description}</div>}
         </div>
-        <div style={{ fontSize: 18, fontWeight: 700, color: sportColor, whiteSpace: "nowrap", fontFamily: "var(--font-heading, 'Bebas Neue', sans-serif)" }}>
+        <div className="font-bebas text-lg tracking-wide" style={{ color: sportColor, whiteSpace: "nowrap" }}>
           {record.record_value || record.record_number?.toLocaleString() || "—"}
         </div>
       </div>
@@ -905,7 +927,7 @@ function SchoolRecordsTab({
                 borderBottom: `3px solid ${sportColor}`,
               }}
             >
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", margin: 0, fontFamily: "var(--font-heading, 'Bebas Neue', sans-serif)" }}>
+              <h3 className="psp-h4 text-white">
                 <Link href={`/${sport}/schools/${schoolBook.school_slug}`} style={{ color: "#fff", textDecoration: "none" }}>
                   {schoolBook.school_name} →
                 </Link>

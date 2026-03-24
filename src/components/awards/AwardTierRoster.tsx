@@ -217,13 +217,9 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
               paddingLeft: 16,
               marginBottom: 12,
             }}>
-              <h3 style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: '1.1rem',
+              <h3 className="font-bebas text-lg tracking-wider uppercase" style={{
                 color: '#0a1628',
-                letterSpacing: '1.5px',
                 margin: 0,
-                textTransform: 'uppercase',
               }}>
                 {tier.tierName}
               </h3>
@@ -249,12 +245,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                   borderBottom: '1px solid rgba(240,165,0,0.1)',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
-                      fontSize: '0.95rem',
-                      color: '#fff',
-                      letterSpacing: '0.5px',
-                    }}>
+                    <span className="font-bebas text-base tracking-wide text-white">
                       {team.selector ? `${team.selector} ${team.level}` : team.level}
                     </span>
                     {team.team && (
@@ -311,7 +302,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
                     return (
                     <div key={group.label}>
                       {group.label && (
-                        <div style={{ padding: '6px 16px', background: 'rgba(240,165,0,0.08)', fontSize: 11, fontWeight: 700, color: '#f0a500', letterSpacing: 2, fontFamily: "'Bebas Neue', sans-serif" }}>
+                        <div className="font-bebas tracking-widest" style={{ padding: '6px 16px', background: 'rgba(240,165,0,0.08)', fontSize: 11, fontWeight: 700, color: '#f0a500' }}>
                           {group.label}
                         </div>
                       )}

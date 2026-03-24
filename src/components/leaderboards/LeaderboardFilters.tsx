@@ -90,12 +90,9 @@ export default function LeaderboardFilters({ sport, sportColor }: LeaderboardFil
     <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
       {/* Class Year label + dropdown */}
       <span
+        className="font-bebas text-xs tracking-wider uppercase"
         style={{
-          fontFamily: "Bebas Neue, sans-serif",
-          fontSize: "0.8rem",
           color: "#64748b",
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
         }}
       >
         Class
@@ -117,12 +114,9 @@ export default function LeaderboardFilters({ sport, sportColor }: LeaderboardFil
       {positions.length > 0 && (
         <>
           <span
+            className="font-bebas text-xs tracking-wider uppercase"
             style={{
-              fontFamily: "Bebas Neue, sans-serif",
-              fontSize: "0.8rem",
               color: "#64748b",
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
             }}
           >
             Position

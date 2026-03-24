@@ -340,12 +340,13 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
       }}>
         {/* Search */}
         <div style={{ flex: 1, minWidth: 180, position: 'relative' }}>
-          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'var(--g400)', pointerEvents: 'none' }}>🔍</span>
+          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'var(--g400)', pointerEvents: 'none' }} aria-hidden="true">🔍</span>
           <input
             type="text"
             placeholder="Search schools..."
             value={searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setSelectedLetter(''); }}
+            aria-label="Search schools"
             style={{
               width: '100%',
               padding: '8px 12px 8px 32px',
@@ -529,9 +530,9 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
                     }}>
                       {leagueConfig?.icon || '🏫'}
                     </div>
-                    <h3 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
+                    <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                       {leagueName}
-                    </h3>
+                    </h2>
                     <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--g400)', fontWeight: 600 }}>
                       {leagueSchools.length} {leagueSchools.length === 1 ? 'school' : 'schools'}
                     </span>

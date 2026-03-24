@@ -143,9 +143,9 @@ gtag('config', '${gaId}');
       <body className="antialiased">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-[var(--psp-gold-text)] focus:text-[var(--psp-navy)] focus:p-4 focus:text-sm focus:font-bold focus:top-0 focus:left-0"
+          className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:z-[100] focus-visible:p-4 focus-visible:bg-[var(--psp-gold)] focus-visible:text-[var(--psp-navy)] focus-visible:text-sm focus-visible:font-bold focus-visible:top-0 focus-visible:left-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          Skip to main content
+          Skip to content
         </a>
         <WebVitalsReporter />
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>

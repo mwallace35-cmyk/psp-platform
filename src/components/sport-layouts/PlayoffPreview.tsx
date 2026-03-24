@@ -159,13 +159,7 @@ export default function PlayoffPreview() {
             <span style={{ fontSize: "1.5rem" }}>🏀</span>
             <div>
               <h2
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: "1.4rem",
-                  color: "#0a1628",
-                  margin: 0,
-                  letterSpacing: "0.5px",
-                }}
+                className="psp-h3"
               >
                 PIAA State Playoffs — Quarterfinals
               </h2>
@@ -331,12 +325,10 @@ export default function PlayoffPreview() {
             }}
           >
             <h3
+              className="font-bebas text-lg tracking-wide"
               style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: "1.1rem",
                 color: "#f0a500",
                 margin: "0 0 0.75rem",
-                letterSpacing: "0.5px",
               }}
             >
               Philly-Area Quarterfinal Matchups

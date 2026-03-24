@@ -114,11 +114,11 @@ describe('StatBlock', () => {
     expect(labelDiv.style.color).toBe('var(--psp-gray-500)');
   });
 
-  it('uses Bebas Neue font for value', () => {
+  it('uses psp-h3 class for value styling', () => {
     const { container } = render(<StatBlock label="Font" value={75} />);
     const valueElement = screen.getByText('75');
     const parentDiv = valueElement.closest('div');
-    expect(parentDiv?.style.fontFamily).toContain('Bebas Neue');
+    expect(parentDiv?.className).toContain('psp-h3');
   });
 
   it('renders all props together', () => {

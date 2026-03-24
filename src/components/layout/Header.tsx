@@ -229,12 +229,6 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50">
-      <a
-        href="#main-content"
-        className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-2 focus-visible:left-2 focus-visible:z-50 focus-visible:px-4 focus-visible:py-2 focus-visible:bg-blue-600 focus-visible:text-white focus-visible:font-semibold focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-      >
-        Skip to main content
-      </a>
       <div
         aria-live="polite"
         aria-atomic="true"
@@ -493,7 +487,7 @@ export default function Header() {
             {/* Quick Links Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
               <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Quick Links</div>
-              <Link href="/awards" onClick={handleMobileToggle}>🏆 Awards &amp; Honors</Link>
+              <Link href="/awards" onClick={handleMobileToggle}><span role="img" aria-label="trophy">🏆</span> Awards &amp; Honors</Link>
               <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
               <Link href="/scores" onClick={handleMobileToggle}>Scores</Link>
               <Link href="/articles" onClick={handleMobileToggle}>News</Link>

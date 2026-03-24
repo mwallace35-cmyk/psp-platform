@@ -42,7 +42,7 @@ function ShieldBadge({ sport, config }: { sport: { name: string; slug: string };
             }}
           >
             {/* Emoji */}
-            <span className="text-3xl md:text-4xl mb-1 drop-shadow-sm transition-transform group-hover:scale-110">
+            <span className="text-3xl md:text-4xl mb-1 drop-shadow-sm transition-transform group-hover:scale-110" role="img" aria-label={sport.name}>
               {config.emoji}
             </span>
             {/* Accent line */}

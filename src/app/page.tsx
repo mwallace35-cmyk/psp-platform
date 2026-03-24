@@ -101,6 +101,7 @@ export default async function HomePage() {
                 type="text"
                 name="q"
                 placeholder="Search players, schools, teams..."
+                aria-label="Search players, schools, and teams"
                 className="w-full bg-[var(--psp-navy-mid)] border border-gray-600 rounded-full px-5 py-3 pl-12 text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:border-[var(--psp-gold)] focus:ring-1 focus:ring-[var(--psp-gold)] transition"
               />
               <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,9 +145,9 @@ export default async function HomePage() {
 
             {/* Rankings link */}
             <Link href="/rankings" className="group flex items-center gap-4 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-5 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all">
-              <div className="text-3xl group-hover:scale-110 transition-transform">📊</div>
+              <div className="text-3xl group-hover:scale-110 transition-transform" role="img" aria-label="chart">📊</div>
               <div>
-                <h3 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h3>
+                <h2 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h2>
                 <p className="text-[11px] text-gray-400 mt-0.5">See who&apos;s on top this week</p>
               </div>
               <svg className="w-4 h-4 text-gray-500 ml-auto group-hover:text-[var(--psp-gold)] transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,9 +203,9 @@ export default async function HomePage() {
                 href="/pickem"
                 className="group flex items-center gap-4 bg-gradient-to-br from-[var(--psp-navy-mid)] to-[#0d1a30] rounded-lg border border-[var(--psp-gold)]/30 p-4 hover:border-[var(--psp-gold)]/60 hover:shadow-lg hover:shadow-[var(--psp-gold)]/10 transition-all"
               >
-                <div className="text-3xl group-hover:scale-110 transition-transform shrink-0">🏈</div>
+                <div className="text-3xl group-hover:scale-110 transition-transform shrink-0" role="img" aria-label="football">🏈</div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-[var(--psp-gold)] group-hover:text-[var(--psp-gold-light)] transition">Pick&apos;em</h3>
+                  <h2 className="text-sm font-bold text-[var(--psp-gold)] group-hover:text-[var(--psp-gold-light)] transition">Pick&apos;em</h2>
                   <p className="text-[11px] text-gray-400 mt-0.5">Make your picks for this week&apos;s games</p>
                 </div>
                 <svg className="w-4 h-4 text-[var(--psp-gold)]/50 group-hover:text-[var(--psp-gold)] transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,11 +216,11 @@ export default async function HomePage() {
 
             {/* Leaderboard links */}
             <section className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Leaderboards</h3>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Leaderboards</h2>
               <div className="space-y-2">
-                <Link href="/football/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">🏈 Football Leaders</Link>
-                <Link href="/basketball/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">🏀 Basketball Leaders</Link>
-                <Link href="/baseball/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition">⚾ Baseball Leaders</Link>
+                <Link href="/football/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition"><span role="img" aria-label="football">🏈</span> Football Leaders</Link>
+                <Link href="/basketball/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition"><span role="img" aria-label="basketball">🏀</span> Basketball Leaders</Link>
+                <Link href="/baseball/leaderboards" className="block text-sm text-gray-200 hover:text-[var(--psp-gold)] transition"><span role="img" aria-label="baseball">⚾</span> Baseball Leaders</Link>
               </div>
             </section>
           </div>

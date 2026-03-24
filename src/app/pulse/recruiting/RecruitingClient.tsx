@@ -150,7 +150,7 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
         marginBottom: 20,
         borderBottom: "3px solid #f0a500",
       }}>
-        <h1 style={{ fontSize: 32, fontFamily: "'Bebas Neue', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
+        <h1 className="psp-h1" style={{ margin: "0 0 6px" }}>
           Philly Recruiting Central
         </h1>
         <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "0 0 20px" }}>
@@ -163,16 +163,13 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
             <button
               key={year}
               onClick={() => setClassYear(year)}
+              className="font-bebas text-sm font-bold tracking-wide"
               style={{
                 padding: "8px 20px",
                 borderRadius: 20,
                 border: classYear === year ? "2px solid #f0a500" : "2px solid rgba(255,255,255,0.2)",
                 background: classYear === year ? "#f0a500" : "transparent",
                 color: classYear === year ? "#0a1628" : "#fff",
-                fontWeight: 700,
-                fontSize: 14,
-                fontFamily: "'Bebas Neue', sans-serif",
-                letterSpacing: 1,
                 cursor: "pointer",
                 transition: ".15s",
               }}
@@ -212,14 +209,10 @@ export default function RecruitingClient({ recruits, commitments }: RecruitingCl
           padding: "20px",
           background: "linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.04) 100%)",
         }}>
-          <h2 style={{
-            fontSize: 20,
-            fontFamily: "'Bebas Neue', sans-serif",
-            fontWeight: 700,
+          <h2 className="psp-h4" style={{
             color: "var(--text)",
             marginTop: 0,
             marginBottom: 16,
-            letterSpacing: 0.5,
           }}>
             🎉 Recent Commitments
           </h2>

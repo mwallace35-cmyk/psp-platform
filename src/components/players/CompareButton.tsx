@@ -43,7 +43,7 @@ export default function CompareButton({ playerSlug, playerName }: CompareButtonP
               <button onClick={() => setOpen(false)} style={{ background:'none', border:'none', fontSize:'1.3rem', cursor:'pointer', color:'#9ca3af' }}>{"✕"}</button>
             </div>
             <p style={{ margin:'0 0 0.75rem', fontSize:'0.82rem', color:'#6b7280' }}>Search for another player to compare against.</p>
-            <input type='text' value={query} onChange={(e) => search(e.target.value)} placeholder='Search player name...' autoFocus style={{ width:'100%', padding:'0.6rem 0.85rem', border:'1.5px solid #d1d5db', borderRadius:8, fontSize:'0.9rem', outline:'none', boxSizing:'border-box' as const }} />
+            <input type='text' value={query} onChange={(e) => search(e.target.value)} placeholder='Search player name...' autoFocus aria-label="Search player name to compare" style={{ width:'100%', padding:'0.6rem 0.85rem', border:'1.5px solid #d1d5db', borderRadius:8, fontSize:'0.9rem', outline:'none', boxSizing:'border-box' as const }} />
             {loading && <div style={{ color:'#9ca3af', fontSize:'0.8rem', marginTop:8 }}>Searching{"…"}</div>}
             {results.length > 0 && (
               <div style={{ marginTop:8, border:'1px solid #e5e7eb', borderRadius:8, overflow:'hidden' }}>

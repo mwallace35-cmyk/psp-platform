@@ -88,7 +88,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
             ]} />
             <div className="flex items-center gap-3 mt-4">
               <span className="text-4xl">{meta.emoji}</span>
-              <h1 className="text-4xl md:text-5xl text-white tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+              <h1 className="psp-h1 text-white">
                 {meta.name} Leaderboards
               </h1>
             </div>
@@ -109,7 +109,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                   <div className="flex items-center justify-between px-5 py-3 border-b border-gray-700/50" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, #1a2744 100%)` }}>
                     <div className="flex items-center gap-2">
                       <span className="text-xl">{cat.icon}</span>
-                      <h2 className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                      <h2 className="psp-h4 text-white">
                         {cat.label}
                       </h2>
                     </div>
@@ -168,7 +168,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
 
           {/* Career Mode CTA */}
           <div className="mt-8 bg-[var(--psp-navy-mid)] rounded-xl border border-gray-700/50 p-6 text-center">
-            <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+            <h3 className="psp-h3 text-white mb-2">
               All-Time Career Leaders
             </h3>
             <p className="text-gray-400 text-sm mb-4">

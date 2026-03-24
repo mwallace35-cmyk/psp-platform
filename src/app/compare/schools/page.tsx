@@ -90,8 +90,7 @@ function SchoolCompareContent() {
       {/* Header */}
       <div className="mb-8">
         <h1
-          className="text-4xl font-bold mb-2"
-          style={{ fontFamily: "Bebas Neue, sans-serif", color: "var(--psp-navy)" }}
+          className="psp-h1 mb-2"
         >
           Compare Schools
         </h1>
