@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { SPORT_META, getSportOverview, getRecentChampions, getSchoolsBySport, getFeaturedArticles, getDataFreshness, getRecentGamesBySport, getTeamsWithRecords, getTrackedAlumni, type Championship, getCompoundLeaders, getCompoundCategoriesForSport, COMPOUND_CATEGORIES, getRecordWatchData, getSeasonPhaseForSport } from "@/lib/data";
@@ -365,6 +366,61 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
           sportColorHex={sportColorHex}
         />
       </div>
+
+      {/* City All-Star Game Card (football only) */}
+      {sport === "football" && (
+        <div className="bg-[var(--psp-navy)]">
+          <div className="max-w-7xl mx-auto px-4 py-6">
+            <Link
+              href="/football/city-all-star-game"
+              className="block max-w-sm"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="bg-[var(--psp-navy-mid)] border border-[var(--psp-gold)]/25 rounded-xl p-5 hover:border-[var(--psp-gold)]/50 transition-colors group">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl shrink-0" role="img" aria-label="Football">
+                    🏈
+                  </span>
+                  <div className="min-w-0">
+                    <h3
+                      className="text-[var(--psp-gold)] font-bold tracking-wide mb-1"
+                      style={{
+                        fontFamily: "var(--font-bebas)",
+                        fontSize: "1.15rem",
+                        letterSpacing: "0.06em",
+                      }}
+                    >
+                      CITY ALL-STAR GAME
+                    </h3>
+                    <p className="text-gray-300 text-sm leading-snug">
+                      May &middot; Northeast HS
+                    </p>
+                    <p className="text-gray-400 text-sm">
+                      Public vs. Non-Public
+                    </p>
+                    <p className="text-gray-500 text-xs mt-1">Since 1975</p>
+                    <span className="inline-flex items-center gap-1 text-[var(--psp-gold)] text-xs font-bold mt-2 group-hover:gap-2 transition-all">
+                      Details
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Editorial Intro */}
       <div className="bg-[var(--psp-navy)]">
