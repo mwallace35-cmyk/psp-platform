@@ -211,7 +211,7 @@ export default function CityAllStarClient({
               textUnderlineOffset: "2px",
             }}
           >
-            phillyhof.org
+            phillyhof.org (City All Star Chapter)
           </a>
           .
         </p>
@@ -298,7 +298,7 @@ export default function CityAllStarClient({
               textDecoration: "none",
             }}
           >
-            Visit phillyhof.org for tickets
+            Visit phillyhof.org (City All Star Chapter) for tickets
             <svg
               width="14"
               height="14"

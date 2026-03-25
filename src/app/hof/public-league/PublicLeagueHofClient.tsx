@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import type { PublicLeagueInductee } from "./page";
 
@@ -81,6 +81,12 @@ export default function PublicLeagueHofClient({
   const [schoolFilter, setSchoolFilter] = useState("");
   const [decadeFilter, setDecadeFilter] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [visibleCount, setVisibleCount] = useState(24);
+
+  /* Reset visible count when any filter changes */
+  useEffect(() => {
+    setVisibleCount(24);
+  }, [search, sportFilter, schoolFilter, decadeFilter]);
 
   const filtered = useMemo(() => {
     let list = inductees;
@@ -335,6 +341,10 @@ export default function PublicLeagueHofClient({
             maxWidth: "80rem",
             margin: "0 auto",
             padding: "2.5rem 1rem 0",
+            position: "sticky",
+            top: "64px",
+            zIndex: 10,
+            background: "var(--psp-navy)",
           }}
         >
           <div
@@ -577,17 +587,51 @@ export default function PublicLeagueHofClient({
         }}
       >
         {hasData && hasFiltered && viewMode === "grid" && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
-              gap: "1rem",
-            }}
-          >
-            {filtered.map((inductee) => (
-              <InducteeCard key={inductee.id} inductee={inductee} />
-            ))}
-          </div>
+          <>
+            <p
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.8rem",
+                color: "#64748b",
+                margin: "0 0 0.75rem",
+              }}
+            >
+              Showing {Math.min(visibleCount, filtered.length)} of{" "}
+              {filtered.length} inductee{filtered.length !== 1 ? "s" : ""}
+            </p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+                gap: "1rem",
+              }}
+            >
+              {filtered.slice(0, visibleCount).map((inductee) => (
+                <InducteeCard key={inductee.id} inductee={inductee} />
+              ))}
+            </div>
+            {visibleCount < filtered.length && (
+              <div style={{ textAlign: "center", marginTop: "2rem" }}>
+                <button
+                  onClick={() => setVisibleCount((c) => c + 24)}
+                  style={{
+                    padding: "0.75rem 2rem",
+                    borderRadius: "var(--radius-md, 8px)",
+                    border: "1px solid rgba(240, 165, 0, 0.3)",
+                    background: "rgba(240, 165, 0, 0.1)",
+                    color: "var(--psp-gold)",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.9rem",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    transition: "background 0.2s ease",
+                  }}
+                >
+                  Load More ({filtered.length - visibleCount} remaining)
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {hasData && hasFiltered && viewMode === "school" && (
@@ -635,7 +679,7 @@ export default function PublicLeagueHofClient({
                   style={{
                     display: "grid",
                     gridTemplateColumns:
-                      "repeat(auto-fill, minmax(340px, 1fr))",
+                      "repeat(auto-fill, minmax(320px, 1fr))",
                     gap: "1rem",
                   }}
                 >

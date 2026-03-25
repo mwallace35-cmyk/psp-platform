@@ -385,6 +385,35 @@ export default function HallOfFamePage() {
           Featured Legends
         </h2>
 
+        <div style={{ position: "relative", maxWidth: "1100px", margin: "0 auto" }}>
+          {/* Left fade */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: "40px",
+              background: "linear-gradient(to right, var(--psp-navy-mid), transparent)",
+              zIndex: 1,
+              pointerEvents: "none",
+              borderRadius: "var(--radius-md) 0 0 var(--radius-md)",
+            }}
+          />
+          {/* Right fade */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: "40px",
+              background: "linear-gradient(to left, var(--psp-navy-mid), transparent)",
+              zIndex: 1,
+              pointerEvents: "none",
+              borderRadius: "0 var(--radius-md) var(--radius-md) 0",
+            }}
+          />
         <div
           style={{
             display: "flex",
@@ -392,8 +421,6 @@ export default function HallOfFamePage() {
             overflowX: "auto",
             paddingBottom: "0.5rem",
             scrollSnapType: "x mandatory",
-            maxWidth: "1100px",
-            margin: "0 auto",
           }}
           className="hof-scroll-strip"
         >
@@ -401,7 +428,9 @@ export default function HallOfFamePage() {
             <div
               key={athlete.name}
               style={{
-                flex: "0 0 220px",
+                flex: "1 1 220px",
+                minWidth: "200px",
+                maxWidth: "280px",
                 scrollSnapAlign: "start",
                 background: "var(--psp-navy)",
                 border: "1px solid rgba(240,165,0,0.15)",
@@ -473,6 +502,7 @@ export default function HallOfFamePage() {
               </p>
             </div>
           ))}
+        </div>
         </div>
       </section>
 

@@ -325,8 +325,15 @@ export default async function CityAllStarGamePage() {
                 letterSpacing: "0.04em",
               }}
             >
-              2025 Season Schedule
+              2025 Season Schedule (Completed)
             </h2>
+
+            <p
+              className="text-gray-400 text-sm text-center mb-4"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
+            >
+              2026 schedule will be announced soon.
+            </p>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left">
