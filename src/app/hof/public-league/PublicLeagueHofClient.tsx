@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { PublicLeagueInductee } from "./page";
 
-/* ─── Sport emoji map (display names used in the DB sport column) ─── */
+/* ─── Sport emoji map ─── */
 const SPORT_EMOJI: Record<string, string> = {
   Football: "\uD83C\uDFC8",
   Basketball: "\uD83C\uDFC0",
@@ -24,10 +24,43 @@ const SPORT_EMOJI: Record<string, string> = {
   Boxing: "\uD83E\uDD4A",
 };
 
+/* ─── Sport color map for avatar backgrounds ─── */
+const SPORT_COLOR: Record<string, string> = {
+  Football: "#16a34a",
+  Basketball: "#3b82f6",
+  Baseball: "#ea580c",
+  Track: "#7c3aed",
+  "Track & Field": "#7c3aed",
+  "Track and Field": "#7c3aed",
+  Soccer: "#059669",
+  Lacrosse: "#0891b2",
+  Wrestling: "#ca8a04",
+  Swimming: "#0ea5e9",
+  Tennis: "#84cc16",
+  Golf: "#22c55e",
+  Volleyball: "#f59e0b",
+  Softball: "#f97316",
+  "Cross Country": "#8b5cf6",
+  Boxing: "#dc2626",
+};
+
 function getSportEmoji(sport: string | null): string {
   if (!sport) return "\uD83C\uDFC6";
   return SPORT_EMOJI[sport] ?? "\uD83C\uDFC6";
 }
+
+function getSportColor(sport: string | null): string {
+  if (!sport) return "#ea580c";
+  return SPORT_COLOR[sport] ?? "#ea580c";
+}
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0]?.toUpperCase() ?? "?";
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+type ViewMode = "grid" | "school";
 
 /* ─── Props ─── */
 interface Props {
@@ -47,6 +80,7 @@ export default function PublicLeagueHofClient({
   const [sportFilter, setSportFilter] = useState("");
   const [schoolFilter, setSchoolFilter] = useState("");
   const [decadeFilter, setDecadeFilter] = useState("");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
   const filtered = useMemo(() => {
     let list = inductees;
@@ -84,9 +118,32 @@ export default function PublicLeagueHofClient({
     return list;
   }, [inductees, search, sportFilter, schoolFilter, decadeFilter]);
 
+  /* Group by school for "By School" view */
+  const groupedBySchool = useMemo(() => {
+    if (viewMode !== "school") return new Map<string, PublicLeagueInductee[]>();
+    const map = new Map<string, PublicLeagueInductee[]>();
+    for (const ind of filtered) {
+      const key = ind.school_name ?? ind.high_school ?? "Unknown School";
+      const arr = map.get(key);
+      if (arr) {
+        arr.push(ind);
+      } else {
+        map.set(key, [ind]);
+      }
+    }
+    /* Sort groups by count desc, then alpha */
+    const sorted = [...map.entries()].sort((a, b) => {
+      if (b[1].length !== a[1].length) return b[1].length - a[1].length;
+      return a[0].localeCompare(b[0]);
+    });
+    return new Map(sorted);
+  }, [filtered, viewMode]);
+
   const hasData = inductees.length > 0;
   const hasFiltered = filtered.length > 0;
-  const activeFilterCount = [sportFilter, schoolFilter, decadeFilter].filter(Boolean).length + (search ? 1 : 0);
+  const activeFilterCount =
+    [sportFilter, schoolFilter, decadeFilter].filter(Boolean).length +
+    (search ? 1 : 0);
 
   return (
     <div style={{ background: "var(--psp-navy)", minHeight: "100vh" }}>
@@ -292,7 +349,7 @@ export default function PublicLeagueHofClient({
             <div style={{ flex: "1 1 220px", minWidth: "180px" }}>
               <input
                 type="text"
-                placeholder="Search by name..."
+                placeholder="Search by name or school..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 style={{
@@ -378,22 +435,140 @@ export default function PublicLeagueHofClient({
             )}
           </div>
 
-          {/* Result count */}
-          <p
+          {/* Result count + view toggle row */}
+          <div
             style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "0.8rem",
-              color: "#64748b",
-              margin: "0.75rem 0 0",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "0.75rem",
+              marginTop: "1rem",
             }}
           >
-            {filtered.length} inductee{filtered.length !== 1 ? "s" : ""}
-            {activeFilterCount > 0 && ` (filtered from ${inductees.length})`}
-          </p>
+            {/* Prominent result count */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: "1.5rem",
+                  color: "var(--psp-gold)",
+                  lineHeight: 1,
+                }}
+              >
+                {filtered.length}
+              </span>
+              <span
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.85rem",
+                  color: "#94a3b8",
+                }}
+              >
+                inductee{filtered.length !== 1 ? "s" : ""}
+                {activeFilterCount > 0 && (
+                  <span style={{ color: "#64748b" }}>
+                    {" "}
+                    of {inductees.length} total
+                  </span>
+                )}
+              </span>
+            </div>
+
+            {/* View toggle */}
+            <div
+              style={{
+                display: "flex",
+                borderRadius: "var(--radius-md, 8px)",
+                overflow: "hidden",
+                border: "1px solid rgba(255,255,255,0.12)",
+              }}
+            >
+              <button
+                onClick={() => setViewMode("grid")}
+                style={{
+                  padding: "0.4rem 0.85rem",
+                  background:
+                    viewMode === "grid"
+                      ? "rgba(240, 165, 0, 0.2)"
+                      : "var(--psp-navy-mid)",
+                  color:
+                    viewMode === "grid" ? "var(--psp-gold)" : "#64748b",
+                  border: "none",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{
+                    verticalAlign: "middle",
+                    marginRight: "0.35rem",
+                  }}
+                >
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                </svg>
+                Grid
+              </button>
+              <button
+                onClick={() => setViewMode("school")}
+                style={{
+                  padding: "0.4rem 0.85rem",
+                  background:
+                    viewMode === "school"
+                      ? "rgba(240, 165, 0, 0.2)"
+                      : "var(--psp-navy-mid)",
+                  color:
+                    viewMode === "school" ? "var(--psp-gold)" : "#64748b",
+                  border: "none",
+                  borderLeft: "1px solid rgba(255,255,255,0.12)",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{
+                    verticalAlign: "middle",
+                    marginRight: "0.35rem",
+                  }}
+                >
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                By School
+              </button>
+            </div>
+          </div>
         </section>
       )}
 
-      {/* ══════════ INDUCTEE GRID ══════════ */}
+      {/* ══════════ INDUCTEE GRID / SCHOOL VIEW ══════════ */}
       <section
         style={{
           maxWidth: "80rem",
@@ -401,16 +576,74 @@ export default function PublicLeagueHofClient({
           padding: "1.5rem 1rem 3rem",
         }}
       >
-        {hasData && hasFiltered && (
+        {hasData && hasFiltered && viewMode === "grid" && (
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
               gap: "1rem",
             }}
           >
             {filtered.map((inductee) => (
               <InducteeCard key={inductee.id} inductee={inductee} />
+            ))}
+          </div>
+        )}
+
+        {hasData && hasFiltered && viewMode === "school" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            {[...groupedBySchool.entries()].map(([schoolName, members]) => (
+              <div key={schoolName}>
+                {/* School group header */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                    marginBottom: "0.75rem",
+                    paddingBottom: "0.5rem",
+                    borderBottom: "1px solid rgba(240, 165, 0, 0.2)",
+                  }}
+                >
+                  <h2
+                    style={{
+                      fontFamily: "'Bebas Neue', sans-serif",
+                      fontSize: "1.35rem",
+                      color: "var(--psp-gold)",
+                      letterSpacing: "0.03em",
+                      margin: 0,
+                    }}
+                  >
+                    {schoolName}
+                  </h2>
+                  <span
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      color: "#94a3b8",
+                      background: "rgba(255,255,255,0.06)",
+                      padding: "0.2rem 0.5rem",
+                      borderRadius: "9999px",
+                    }}
+                  >
+                    {members.length}
+                  </span>
+                </div>
+                {/* School group grid */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(340px, 1fr))",
+                    gap: "1rem",
+                  }}
+                >
+                  {members.map((inductee) => (
+                    <InducteeCard key={inductee.id} inductee={inductee} />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -545,83 +778,233 @@ export default function PublicLeagueHofClient({
   );
 }
 
-/* ─── Inductee Card ─── */
+/* ─── Redesigned Inductee Card ─── */
 function InducteeCard({ inductee }: { inductee: PublicLeagueInductee }) {
   const schoolDisplay = inductee.school_name ?? inductee.high_school;
+  const avatarColor = getSportColor(inductee.sport);
+  const initials = getInitials(inductee.name);
+  const descriptionText = inductee.achievements ?? inductee.bio ?? null;
 
-  const card = (
+  /* Build the name element -- linked if player_id exists */
+  const nameEl = inductee.player_id ? (
+    <Link
+      href={`/players/${inductee.player_id}`}
+      style={{
+        fontFamily: "'Bebas Neue', sans-serif",
+        fontSize: "1.25rem",
+        color: "#fff",
+        letterSpacing: "0.02em",
+        lineHeight: 1.2,
+        textDecoration: "none",
+      }}
+    >
+      {inductee.name}
+    </Link>
+  ) : (
+    <span
+      style={{
+        fontFamily: "'Bebas Neue', sans-serif",
+        fontSize: "1.25rem",
+        color: "#fff",
+        letterSpacing: "0.02em",
+        lineHeight: 1.2,
+      }}
+    >
+      {inductee.name}
+    </span>
+  );
+
+  return (
     <div
       className="pl-hof-card"
       style={{
         background: "var(--psp-navy-mid)",
         borderRadius: "var(--radius-lg, 12px)",
-        padding: "1.25rem 1.25rem 1.25rem 1.5rem",
+        padding: "1.25rem",
         border: "1px solid rgba(255,255,255,0.08)",
         borderLeft: "4px solid #ea580c",
         display: "flex",
         flexDirection: "column",
-        gap: "0.5rem",
+        gap: "0",
+        minHeight: "180px",
       }}
     >
-      {/* Top row: name + emoji */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "0.5rem",
-        }}
-      >
-        <h3
+      {/* ── Top row: Avatar + Details ── */}
+      <div style={{ display: "flex", gap: "0.875rem" }}>
+        {/* Initials avatar */}
+        <div
           style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "1rem",
-            fontWeight: 700,
+            width: "48px",
+            height: "48px",
+            minWidth: "48px",
+            borderRadius: "50%",
+            background: `linear-gradient(135deg, ${avatarColor}, ${avatarColor}cc)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: "1.1rem",
             color: "#fff",
-            margin: 0,
-            lineHeight: 1.3,
+            letterSpacing: "0.04em",
           }}
         >
-          {inductee.name}
-        </h3>
-        <span
-          style={{ fontSize: "1.1rem", flexShrink: 0 }}
-          title={inductee.sport ?? ""}
-        >
-          {getSportEmoji(inductee.sport)}
-        </span>
+          {initials}
+        </div>
+
+        {/* Right side details */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Name row */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              flexWrap: "wrap",
+            }}
+          >
+            {nameEl}
+            {/* Legend badge */}
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.2rem",
+                background: "rgba(234, 88, 12, 0.15)",
+                color: "#ea580c",
+                padding: "0.15rem 0.45rem",
+                borderRadius: "4px",
+                fontSize: "0.6rem",
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                fontFamily: "'DM Sans', sans-serif",
+                flexShrink: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="none"
+              >
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+              </svg>
+              LEGEND
+            </span>
+          </div>
+
+          {/* School */}
+          {schoolDisplay && (
+            <p
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.82rem",
+                color: "#94a3b8",
+                margin: "0.25rem 0 0",
+                lineHeight: 1.3,
+              }}
+            >
+              {inductee.school_slug ? (
+                <Link
+                  href={`/schools/${inductee.school_slug}`}
+                  style={{
+                    color: "#94a3b8",
+                    textDecoration: "underline",
+                    textDecorationColor: "rgba(148,163,184,0.3)",
+                    textUnderlineOffset: "2px",
+                  }}
+                >
+                  {schoolDisplay}
+                </Link>
+              ) : (
+                schoolDisplay
+              )}
+            </p>
+          )}
+
+          {/* Sport + Position line */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginTop: "0.35rem",
+              flexWrap: "wrap",
+            }}
+          >
+            {inductee.sport && (
+              <span
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  color: "#ea580c",
+                }}
+              >
+                {getSportEmoji(inductee.sport)}{" "}
+                {inductee.sport}
+              </span>
+            )}
+            {inductee.position && (
+              <>
+                <span style={{ color: "#475569", fontSize: "0.7rem" }}>
+                  |
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.75rem",
+                    color: "#cbd5e1",
+                  }}
+                >
+                  {inductee.position}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* School */}
-      {schoolDisplay && (
+      {/* ── Achievements / Bio snippet ── */}
+      {descriptionText && (
         <p
           style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "0.85rem",
+            fontSize: "0.78rem",
             color: "#94a3b8",
-            margin: 0,
-            lineHeight: 1.4,
+            margin: "0.75rem 0 0",
+            lineHeight: 1.5,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
           }}
         >
-          {inductee.school_slug ? (
-            <Link
-              href={`/schools/${inductee.school_slug}`}
-              style={{
-                color: "#94a3b8",
-                textDecoration: "underline",
-                textDecorationColor: "rgba(148,163,184,0.3)",
-                textUnderlineOffset: "2px",
-              }}
-            >
-              {schoolDisplay}
-            </Link>
-          ) : (
-            schoolDisplay
-          )}
+          {descriptionText}
         </p>
       )}
 
-      {/* Bottom row: sport + year */}
+      {/* ── Professional career ── */}
+      {inductee.professional_career && (
+        <p
+          style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "0.75rem",
+            color: "#3b82f6",
+            margin: "0.4rem 0 0",
+            lineHeight: 1.4,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {inductee.professional_career}
+        </p>
+      )}
+
+      {/* ── Bottom row: Class of + Induction year ── */}
       <div
         style={{
           display: "flex",
@@ -629,29 +1012,35 @@ function InducteeCard({ inductee }: { inductee: PublicLeagueInductee }) {
           justifyContent: "space-between",
           gap: "0.5rem",
           marginTop: "auto",
+          paddingTop: "0.75rem",
+          borderTop: "1px solid rgba(255,255,255,0.05)",
         }}
       >
-        {inductee.sport && (
+        {inductee.graduation_year ? (
           <span
             style={{
               fontFamily: "'DM Sans', sans-serif",
               fontSize: "0.75rem",
               fontWeight: 600,
-              color: "#ea580c",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
+              color: "#cbd5e1",
             }}
           >
-            {inductee.sport}
+            Class of {inductee.graduation_year}
           </span>
+        ) : (
+          <span />
         )}
         <span
           style={{
+            display: "inline-block",
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "0.75rem",
-            fontWeight: 600,
+            fontSize: "0.7rem",
+            fontWeight: 700,
             color: "#64748b",
-            marginLeft: "auto",
+            background: "rgba(255,255,255,0.05)",
+            padding: "0.2rem 0.5rem",
+            borderRadius: "4px",
+            letterSpacing: "0.03em",
           }}
         >
           Inducted {inductee.induction_year}
@@ -659,20 +1048,6 @@ function InducteeCard({ inductee }: { inductee: PublicLeagueInductee }) {
       </div>
     </div>
   );
-
-  /* Wrap in link if player_id exists */
-  if (inductee.player_id) {
-    return (
-      <Link
-        href={`/players/${inductee.player_id}`}
-        style={{ textDecoration: "none", display: "block" }}
-      >
-        {card}
-      </Link>
-    );
-  }
-
-  return card;
 }
 
 /* ─── Shared select style ─── */

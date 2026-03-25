@@ -25,26 +25,37 @@ interface SchoolHof {
   slug: string;
   label: string;
   colors: [string, string]; // [primary, secondary]
+  website?: string; // external HOF or school site
 }
 
 const SCHOOL_DIRECTORY: SchoolHof[] = [
+  {
+    name: "South Philadelphia",
+    slug: "south-philadelphia",
+    label: "Athletic Hall of Fame",
+    colors: ["#dc2626", "#f0a500"],
+    website: "https://sphsalumni.com",
+  },
   {
     name: "Roman Catholic",
     slug: "roman-catholic",
     label: "Athletic Hall of Fame",
     colors: ["#7c3aed", "#f0a500"],
+    website: "https://www.romancatholichs.com",
   },
   {
     name: "La Salle College High School",
     slug: "la-salle-college",
     label: "Athletic Hall of Fame",
     colors: ["#1e40af", "#f0a500"],
+    website: "https://www.lschs.org",
   },
   {
     name: "St. Joseph's Prep",
     slug: "st-josephs-prep",
     label: "Athletic Hall of Fame",
     colors: ["#991b1b", "#fff"],
+    website: "https://www.sjprep.org",
   },
   {
     name: "Archbishop Wood",
@@ -417,12 +428,14 @@ export default function SchoolHallsOfFamePage() {
             gap: "1rem",
           }}
         >
-          {SCHOOL_DIRECTORY.map((school) => (
-            <Link
-              key={school.slug}
-              href={`/schools/${school.slug}`}
-              style={{ textDecoration: "none", display: "block" }}
-            >
+          {SCHOOL_DIRECTORY.map((school) => {
+            const isExternal = !!school.website;
+            const linkHref = school.website ?? `/schools/${school.slug}`;
+            const linkLabel = isExternal
+              ? "Visit School Site"
+              : "View on PSP";
+
+            const cardInner = (
               <div
                 className="school-hof-card"
                 style={{
@@ -436,6 +449,7 @@ export default function SchoolHallsOfFamePage() {
                   gap: "0.5rem",
                   transition:
                     "border-color 0.2s ease, box-shadow 0.2s ease",
+                  height: "100%",
                 }}
               >
                 {/* School name */}
@@ -472,6 +486,7 @@ export default function SchoolHallsOfFamePage() {
                     display: "flex",
                     gap: "0.375rem",
                     marginTop: "auto",
+                    paddingTop: "0.25rem",
                   }}
                 >
                   {school.colors.map((color, idx) => (
@@ -490,9 +505,60 @@ export default function SchoolHallsOfFamePage() {
                     />
                   ))}
                 </div>
+
+                {/* Link label */}
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.25rem",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    color: "var(--psp-gold)",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  {linkLabel}
+                  {isExternal ? (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                  ) : (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  )}
+                </span>
               </div>
-            </Link>
-          ))}
+            );
+
+            if (isExternal) {
+              return (
+                <a
+                  key={school.slug}
+                  href={linkHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: "none", display: "block" }}
+                >
+                  {cardInner}
+                </a>
+              );
+            }
+
+            return (
+              <Link
+                key={school.slug}
+                href={linkHref}
+                style={{ textDecoration: "none", display: "block" }}
+              >
+                {cardInner}
+              </Link>
+            );
+          })}
         </div>
       </section>
 

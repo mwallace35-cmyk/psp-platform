@@ -31,6 +31,8 @@ export interface PublicLeagueInductee {
   position: string | null;
   achievements: string | null;
   professional_career: string | null;
+  graduation_year: number | null;
+  bio: string | null;
   school_slug: string | null;
   school_name: string | null;
 }
@@ -53,6 +55,8 @@ async function getPublicLeagueInductees(): Promise<PublicLeagueInductee[]> {
       position,
       achievements,
       professional_career,
+      graduation_year,
+      bio,
       schools!hof_inductees_school_id_fkey ( slug, name )
     `
     )
@@ -83,6 +87,8 @@ async function getPublicLeagueInductees(): Promise<PublicLeagueInductee[]> {
       position: row.position,
       achievements: row.achievements,
       professional_career: row.professional_career,
+      graduation_year: row.graduation_year ?? null,
+      bio: row.bio ?? null,
       school_slug: school?.slug ?? null,
       school_name: school?.name ?? row.high_school ?? null,
     };

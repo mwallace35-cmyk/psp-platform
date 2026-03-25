@@ -2,25 +2,27 @@ import Link from "next/link";
 
 export const revalidate = 3600;
 
-/* ─── HOF Organization Card Data ─── */
-const HOF_CARDS = [
+/* ─── HOF Card Data ─── */
+
+/* Top row: PSP-built pages (featured, prominent) */
+const FEATURED_HOF_CARDS = [
   {
-    id: "philly-hof",
-    org: "Philadelphia Sports Hall of Fame",
-    type: "Multi-Discipline",
-    badge: "PHILLY LEGEND",
-    badgeColor: "#7c3aed",
+    id: "public-league",
+    org: "PSP Public League Hall of Fame",
+    type: "Sports",
+    badge: "PUBLIC LEAGUE LEGEND",
+    badgeColor: "#ea580c",
     badgeIcon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        <path d="M12 2 L15 8 L22 8 L17 13 L19 20 L12 16 L5 20 L7 13 L2 8 L9 8 Z" />
       </svg>
     ),
-    accent: "#7c3aed",
+    accent: "#f0a500",
     description:
-      "The premier hall honoring the greatest athletes, coaches, and contributors across all Philadelphia sports.",
-    href: "https://phillyhall.org",
-    external: true,
-    cta: "Visit phillyhall.org",
+      "Honoring the legends of Philadelphia Public League athletics, curated by PhillySportsPack from Ted Silary's lifetime of coverage.",
+    href: "/hof/public-league",
+    external: false,
+    cta: "View Inductees",
   },
   {
     id: "city-allstar",
@@ -41,43 +43,10 @@ const HOF_CARDS = [
     external: false,
     cta: "View Inductees",
   },
-  {
-    id: "pa-state",
-    org: "Pennsylvania Sports Hall of Fame",
-    type: "Multi-Discipline",
-    badge: "PA STATE",
-    badgeColor: "#3b82f6",
-    badgeIcon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2 L16 10 L12 18 L8 10 Z" />
-        <line x1="12" y1="2" x2="12" y2="18" />
-      </svg>
-    ),
-    accent: "#7c3aed",
-    description:
-      "The statewide hall of fame recognizing outstanding athletes and contributors from across the Commonwealth of Pennsylvania.",
-    href: "https://pasportshof.org",
-    external: true,
-    cta: "Visit pasportshof.org",
-  },
-  {
-    id: "public-league",
-    org: "PSP Public League Hall of Fame",
-    type: "Sports",
-    badge: "PUBLIC LEAGUE LEGEND",
-    badgeColor: "#ea580c",
-    badgeIcon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2 L15 8 L22 8 L17 13 L19 20 L12 16 L5 20 L7 13 L2 8 L9 8 Z" />
-      </svg>
-    ),
-    accent: "#f0a500",
-    description:
-      "Honoring the legends of Philadelphia Public League athletics, curated by PhillySportsPack from Ted Silary's lifetime of coverage.",
-    href: "/hof/public-league",
-    external: false,
-    cta: "View Inductees",
-  },
+];
+
+/* Bottom row: secondary / external */
+const SECONDARY_HOF_CARDS = [
   {
     id: "schools",
     org: "School Halls of Fame",
@@ -97,6 +66,43 @@ const HOF_CARDS = [
     external: false,
     cta: "Browse Schools",
   },
+  {
+    id: "philly-hof",
+    org: "Philadelphia Sports Hall of Fame",
+    type: "Multi-Discipline",
+    badge: "PHILLY LEGEND",
+    badgeColor: "#7c3aed",
+    badgeIcon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      </svg>
+    ),
+    accent: "#7c3aed",
+    description:
+      "The premier hall honoring the greatest athletes, coaches, and contributors across all Philadelphia sports.",
+    href: "https://www.philadelphiasportshalloffame.org/",
+    external: true,
+    cta: "Visit philadelphiasportshalloffame.org",
+  },
+  {
+    id: "pa-state",
+    org: "Pennsylvania Sports Hall of Fame",
+    type: "Multi-Discipline",
+    badge: "PA STATE",
+    badgeColor: "#3b82f6",
+    badgeIcon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2 L16 10 L12 18 L8 10 Z" />
+        <line x1="12" y1="2" x2="12" y2="18" />
+      </svg>
+    ),
+    accent: "#7c3aed",
+    description:
+      "The statewide hall of fame recognizing outstanding athletes and contributors from across the Commonwealth of Pennsylvania.",
+    href: "https://pasportshof.org",
+    external: true,
+    cta: "Visit pasportshof.org",
+  },
 ];
 
 /* ─── Featured Athletes ─── */
@@ -107,6 +113,145 @@ const FEATURED_ATHLETES = [
   { name: "Jahri Evans", school: "Frankford HS", sport: "Football", slug: null },
   { name: "Herb Adderley", school: "Northeast HS", sport: "Football", slug: null },
 ];
+
+/* ─── Shared card renderer ─── */
+function HofCard({
+  card,
+  featured,
+}: {
+  card: (typeof FEATURED_HOF_CARDS)[number];
+  featured?: boolean;
+}) {
+  const cardContent = (
+    <div
+      style={{
+        background: "var(--psp-navy-mid)",
+        borderRadius: "var(--radius-lg)",
+        padding: featured ? "2rem" : "1.25rem",
+        border: "1px solid rgba(255,255,255,0.08)",
+        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+        display: "flex",
+        flexDirection: "column" as const,
+        gap: featured ? "1rem" : "0.5rem",
+        cursor: "pointer",
+        height: "100%",
+      }}
+      className="hof-card"
+    >
+      {/* Badge row */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.375rem",
+            background: `${card.badgeColor}20`,
+            color: card.badgeColor,
+            padding: featured ? "0.3rem 0.75rem" : "0.2rem 0.5rem",
+            borderRadius: "var(--radius-full)",
+            fontSize: featured ? "0.75rem" : "0.65rem",
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase" as const,
+            fontFamily: "'DM Sans', sans-serif",
+          }}
+        >
+          {card.badgeIcon}
+          {card.badge}
+        </span>
+
+        <span
+          style={{
+            fontSize: featured ? "0.7rem" : "0.6rem",
+            fontWeight: 600,
+            color: card.type === "Multi-Discipline" ? "#a78bfa" : "#f0a500",
+            textTransform: "uppercase" as const,
+            letterSpacing: "0.08em",
+            fontFamily: "'DM Sans', sans-serif",
+            marginLeft: "auto",
+          }}
+        >
+          {card.type}
+        </span>
+      </div>
+
+      {/* Org name */}
+      <h3
+        className={featured ? "psp-h3" : undefined}
+        style={{
+          color: "#fff",
+          margin: 0,
+          fontFamily: featured ? undefined : "'DM Sans', sans-serif",
+          fontSize: featured ? undefined : "1rem",
+          fontWeight: featured ? undefined : 700,
+          lineHeight: 1.3,
+        }}
+      >
+        {card.org}
+      </h3>
+
+      {/* Description */}
+      <p
+        style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: featured ? "0.9rem" : "0.8rem",
+          color: "#94a3b8",
+          lineHeight: 1.6,
+          margin: 0,
+          flex: 1,
+        }}
+      >
+        {card.description}
+      </p>
+
+      {/* CTA */}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.375rem",
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: featured ? "0.95rem" : "0.8rem",
+          fontWeight: 700,
+          color: "var(--psp-gold)",
+          marginTop: featured ? "0.5rem" : "0.25rem",
+        }}
+      >
+        {card.cta}
+        {card.external ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        )}
+      </span>
+    </div>
+  );
+
+  if (card.external) {
+    return (
+      <a
+        href={card.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ textDecoration: "none", display: "block" }}
+      >
+        {cardContent}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={card.href} style={{ textDecoration: "none", display: "block" }}>
+      {cardContent}
+    </Link>
+  );
+}
 
 export default function HallOfFamePage() {
   return (
@@ -190,147 +335,33 @@ export default function HallOfFamePage() {
           Hall of Fame Directory
         </h2>
 
+        {/* ── Top row: 2 featured PSP-built cards ── */}
         <div
+          className="hof-featured-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(2, 1fr)",
             gap: "1.5rem",
+            marginBottom: "1.5rem",
           }}
-          className="hof-card-grid"
         >
-          {HOF_CARDS.map((card) => {
-            const isMulti = card.type === "Multi-Discipline";
-            const borderAccent = isMulti ? "#7c3aed" : "var(--psp-gold)";
+          {FEATURED_HOF_CARDS.map((card) => (
+            <HofCard key={card.id} card={card} featured />
+          ))}
+        </div>
 
-            const cardContent = (
-              <div
-                key={card.id}
-                style={{
-                  background: "var(--psp-navy-mid)",
-                  borderRadius: "var(--radius-lg)",
-                  padding: "1.5rem",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.75rem",
-                  cursor: "pointer",
-                }}
-                className="hof-card"
-                data-accent={borderAccent}
-              >
-                {/* Badge row */}
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.375rem",
-                      background: `${card.badgeColor}20`,
-                      color: card.badgeColor,
-                      padding: "0.25rem 0.625rem",
-                      borderRadius: "var(--radius-full)",
-                      fontSize: "0.7rem",
-                      fontWeight: 700,
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      fontFamily: "'DM Sans', sans-serif",
-                    }}
-                  >
-                    {card.badgeIcon}
-                    {card.badge}
-                  </span>
-
-                  <span
-                    style={{
-                      fontSize: "0.65rem",
-                      fontWeight: 600,
-                      color: isMulti ? "#a78bfa" : "#f0a500",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                      fontFamily: "'DM Sans', sans-serif",
-                      marginLeft: "auto",
-                    }}
-                  >
-                    {card.type}
-                  </span>
-                </div>
-
-                {/* Org name */}
-                <h3
-                  className="psp-h3"
-                  style={{ color: "#fff", margin: 0 }}
-                >
-                  {card.org}
-                </h3>
-
-                {/* Description */}
-                <p
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "0.9rem",
-                    color: "#94a3b8",
-                    lineHeight: 1.6,
-                    margin: 0,
-                    flex: 1,
-                  }}
-                >
-                  {card.description}
-                </p>
-
-                {/* CTA */}
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.375rem",
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "0.875rem",
-                    fontWeight: 700,
-                    color: "var(--psp-gold)",
-                    marginTop: "0.5rem",
-                  }}
-                >
-                  {card.cta}
-                  {card.external ? (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15 3 21 3 21 9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
-                    </svg>
-                  ) : (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                  )}
-                </span>
-              </div>
-            );
-
-            if (card.external) {
-              return (
-                <a
-                  key={card.id}
-                  href={card.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textDecoration: "none", display: "contents" }}
-                >
-                  {cardContent}
-                </a>
-              );
-            }
-
-            return (
-              <Link
-                key={card.id}
-                href={card.href}
-                style={{ textDecoration: "none", display: "contents" }}
-              >
-                {cardContent}
-              </Link>
-            );
-          })}
+        {/* ── Bottom row: 3 secondary / external cards ── */}
+        <div
+          className="hof-secondary-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "1rem",
+          }}
+        >
+          {SECONDARY_HOF_CARDS.map((card) => (
+            <HofCard key={card.id} card={card} />
+          ))}
         </div>
       </section>
 
@@ -497,12 +528,17 @@ export default function HallOfFamePage() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            .hof-card-grid {
-              grid-template-columns: repeat(2, 1fr);
-            }
             @media (max-width: 768px) {
-              .hof-card-grid {
+              .hof-featured-grid {
                 grid-template-columns: 1fr !important;
+              }
+              .hof-secondary-grid {
+                grid-template-columns: 1fr !important;
+              }
+            }
+            @media (min-width: 769px) and (max-width: 960px) {
+              .hof-secondary-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
               }
             }
             .hof-card:hover {
