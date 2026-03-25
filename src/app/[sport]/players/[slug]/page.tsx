@@ -10,6 +10,7 @@ import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import PlayerHofBadges from "@/components/hof/PlayerHofBadges";
+import MultiSportBanner from "@/components/players/MultiSportBanner";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import GameLogAccordion from "@/components/game-log/GameLogAccordion";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
@@ -462,6 +463,18 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
       {/* ============ STICKY TAB NAVIGATION ============ */}
       <PlayerProfileTabs sportColor={meta.color} tabs={tabList} />
+
+      {/* ============ MULTI-SPORT BANNER ============ */}
+      {player.primary_school_id && (
+        <div className="max-w-7xl mx-auto px-4 pt-6">
+          <MultiSportBanner
+            playerName={player.name}
+            schoolId={player.primary_school_id}
+            currentSport={sport}
+            schoolName={typeof player.schools === 'object' && player.schools && 'name' in player.schools ? (player.schools as any).name : undefined}
+          />
+        </div>
+      )}
 
       {/* ============ OVERVIEW SECTION ============ */}
       <section id="overview" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
