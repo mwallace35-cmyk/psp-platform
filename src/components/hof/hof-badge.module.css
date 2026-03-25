@@ -1,0 +1,56 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.label {
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* sm: inline with text */
+.sm {
+  gap: 0.25rem;
+}
+.sm .iconWrap {
+  width: 24px;
+  height: 24px;
+}
+.sm .label {
+  font-size: 0.7rem;
+}
+
+/* md: sidebar */
+.md .iconWrap {
+  width: 40px;
+  height: 40px;
+}
+.md .label {
+  font-size: 0.85rem;
+}
+
+/* lg: card header */
+.lg {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+.lg .iconWrap {
+  width: 56px;
+  height: 56px;
+}
+.lg .label {
+  font-size: 1.1rem;
+}

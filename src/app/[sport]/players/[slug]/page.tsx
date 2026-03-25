@@ -9,6 +9,7 @@ import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
+import PlayerHofBadges from "@/components/hof/PlayerHofBadges";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import GameLogAccordion from "@/components/game-log/GameLogAccordion";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
@@ -686,6 +687,9 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 </dl>
               </div>
             )}
+
+            {/* Hall of Fame Badges */}
+            <PlayerHofBadges playerId={player.id} />
 
             {/* Cross-sport links */}
             {crossSportPlayers && crossSportPlayers.length > 0 && (
