@@ -786,9 +786,15 @@ function InducteeCard({ inductee }: { inductee: PublicLeagueInductee }) {
   const descriptionText = inductee.achievements ?? inductee.bio ?? null;
 
   /* Build the name element -- linked if player_id exists */
-  const nameEl = inductee.player_id ? (
+  const playerSlug = (inductee as any).player_slug;
+  const sportSlug = inductee.sport?.toLowerCase().includes('basketball') ? 'basketball'
+    : inductee.sport?.toLowerCase().includes('football') ? 'football'
+    : inductee.sport?.toLowerCase().includes('baseball') ? 'baseball'
+    : inductee.sport?.toLowerCase().includes('track') ? 'track-field'
+    : 'football';
+  const nameEl = playerSlug ? (
     <Link
-      href={`/players/${inductee.player_id}`}
+      href={`/players/${playerSlug}`}
       style={{
         fontFamily: "'Bebas Neue', sans-serif",
         fontSize: "1.25rem",

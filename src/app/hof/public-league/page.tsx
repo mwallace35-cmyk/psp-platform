@@ -27,6 +27,7 @@ export interface PublicLeagueInductee {
   high_school: string | null;
   school_id: number | null;
   player_id: number | null;
+  player_slug: string | null;
   role: string | null;
   position: string | null;
   achievements: string | null;
@@ -57,7 +58,8 @@ async function getPublicLeagueInductees(): Promise<PublicLeagueInductee[]> {
       professional_career,
       graduation_year,
       bio,
-      schools!hof_inductees_school_id_fkey ( slug, name )
+      schools!hof_inductees_school_id_fkey ( slug, name ),
+      players!hof_inductees_player_id_fkey ( slug )
     `
     )
     .eq("organization_id", 4)
@@ -83,6 +85,7 @@ async function getPublicLeagueInductees(): Promise<PublicLeagueInductee[]> {
       high_school: row.high_school,
       school_id: row.school_id,
       player_id: row.player_id,
+      player_slug: (Array.isArray(row.players) ? row.players[0]?.slug : row.players?.slug) ?? null,
       role: row.role,
       position: row.position,
       achievements: row.achievements,
