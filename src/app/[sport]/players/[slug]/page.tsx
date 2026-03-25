@@ -115,7 +115,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   // Parallelize remaining fetches
   const [awards, gameLog, teamGames, crossSportPlayers, recruitingProfile] = await Promise.all([
     getPlayerAwards(player.id),
-    (sport === "football" || sport === "basketball") ? getPlayerGameLog(player.id) : Promise.resolve([]),
+    (sport === "football" || sport === "basketball") ? getPlayerGameLog(player.id, sport) : Promise.resolve([]),
     (sport === "football" || sport === "basketball") && player.primary_school_id && seasonIds.length > 0
       ? getPlayerTeamGames(player.primary_school_id, sport, seasonIds)
       : Promise.resolve([]),

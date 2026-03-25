@@ -182,7 +182,7 @@ export interface PlayerGameLog {
  * Get a player's game-by-game stats (game log)
  */
 export const getPlayerGameLog = cache(
-  async (playerId: number): Promise<PlayerGameLog[]> => {
+  async (playerId: number, sportId?: string): Promise<PlayerGameLog[]> => {
     return withErrorHandling(
       async () => {
         return withRetry(
@@ -191,7 +191,7 @@ export const getPlayerGameLog = cache(
             const { data } = await supabase
               .from("game_player_stats")
               .select(
-                `id, game_id, player_name, jersey_number,
+                `id, game_id, player_name, jersey_number, sport_id,
                  rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards,
                  points, stats_json, source_type,
                  games!inner(id, game_date, home_score, away_score, home_school_id, away_school_id,
@@ -201,6 +201,21 @@ export const getPlayerGameLog = cache(
                  )`
               )
               .eq("player_id", playerId);
+            // Filter by sport if provided (important for multi-sport athletes)
+            if (sportId && data) {
+              const filtered = (data as any[]).filter((row: any) => {
+                const gameDate = row.games?.game_date;
+                // Use the sport_id on the game_player_stats row itself
+                return row.sport_id === sportId || !row.sport_id;
+              });
+              const sorted = (filtered as unknown as PlayerGameLog[]) ?? [];
+              sorted.sort((a, b) => {
+                const dateA = a.games?.game_date || '';
+                const dateB = b.games?.game_date || '';
+                return dateB.localeCompare(dateA);
+              });
+              return sorted;
+            }
             // Sort by game_date descending (newest first) — PostgREST can't sort by nested relation fields
             const sorted = (data as unknown as PlayerGameLog[]) ?? [];
             sorted.sort((a, b) => {
