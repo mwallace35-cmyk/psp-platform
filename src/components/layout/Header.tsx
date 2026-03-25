@@ -62,6 +62,7 @@ const MORE_ITEMS = [
   { href: "/pipeline", label: "Pipeline" },
   { href: "/coaches", label: "Coaches" },
   { href: "/pickem", label: "Pick'em" },
+  { href: "/hof", label: "\uD83C\uDFC6 Hall of Fame" },
 ];
 
 // Mobile menu still uses PULSE_ITEMS
