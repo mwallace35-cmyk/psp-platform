@@ -148,7 +148,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           <div className="prose prose-sm max-w-none mb-8">
             <div
               dangerouslySetInnerHTML={{
-                __html: renderMarkdown(article.content),
+                __html: renderMarkdown(article.body || article.content || ''),
               }}
             />
           </div>
