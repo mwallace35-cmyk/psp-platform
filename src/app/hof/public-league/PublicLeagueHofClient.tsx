@@ -110,8 +110,8 @@ export default function PublicLeagueHofClient({
       const decadeStart = parseInt(decadeFilter.replace("s", ""), 10);
       list = list.filter(
         (i) =>
-          i.induction_year >= decadeStart &&
-          i.induction_year < decadeStart + 10
+          (i.graduation_year ?? 0) >= decadeStart &&
+          (i.graduation_year ?? 0) < decadeStart + 10
       );
     }
 
@@ -1049,7 +1049,7 @@ function InducteeCard({ inductee }: { inductee: PublicLeagueInductee }) {
             letterSpacing: "0.03em",
           }}
         >
-          Inducted {inductee.induction_year}
+          {inductee.induction_year > 0 ? `Inducted ${inductee.induction_year}` : 'Public League Legend'}
         </span>
       </div>
     </div>

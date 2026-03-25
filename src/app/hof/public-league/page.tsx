@@ -117,8 +117,8 @@ export default async function PublicLeagueHofPage() {
   const decades = Array.from(
     new Set(
       inductees
-        .map((i) => `${Math.floor(i.induction_year / 10) * 10}s`)
-        .filter(Boolean)
+        .filter((i) => i.graduation_year && i.graduation_year > 0)
+        .map((i) => `${Math.floor((i.graduation_year ?? 0) / 10) * 10}s`)
     )
   ).sort();
 
