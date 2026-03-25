@@ -255,7 +255,7 @@ export default async function SearchPage({
           }}>
             {[
               { label: "Football", href: "/football", emoji: "🏈", color: "#16a34a" },
-              { label: "Basketball", href: "/basketball", emoji: "🏀", color: "#ea580c" },
+              { label: "Basketball", href: "/basketball", emoji: "🏀", color: "#3b82f6" },
               { label: "Baseball", href: "/baseball", emoji: "⚾", color: "#dc2626" },
               { label: "Track", href: "/track-field", emoji: "🏃", color: "#7c3aed" },
               { label: "Lacrosse", href: "/lacrosse", emoji: "🥍", color: "#0891b2" },

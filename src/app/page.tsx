@@ -112,6 +112,29 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Beta Banner */}
+      <div className="max-w-7xl mx-auto px-4 mt-4 mb-4">
+        <div className="relative overflow-hidden rounded-xl border border-[var(--psp-gold)]/30 bg-gradient-to-r from-[var(--psp-navy-mid)] to-[#0f2040] p-5 md:p-6">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--psp-gold)]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--psp-gold)]/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+          <div className="relative flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-5">
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-[var(--psp-gold)] text-[var(--psp-navy)] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '0.85rem', letterSpacing: '0.1em' }}>
+                Beta
+              </span>
+            </div>
+            <div className="flex-1">
+              <p className="text-white text-sm md:text-base font-medium" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                Welcome to <span className="text-[var(--psp-gold)] font-bold">PhillySportsPack</span> — we&apos;re building the definitive Philly high school sports database. You&apos;re seeing an early look while we fine-tune the experience. Expect new features, more data, and a few rough edges.
+              </p>
+              <p className="text-gray-400 text-xs md:text-sm mt-1.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                Got feedback? Hit us up at <a href="mailto:mwallace35@gmail.com" className="text-[var(--psp-gold)] hover:underline">mwallace35@gmail.com</a> &mdash; we want to hear from you.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Sport Navigation */}
       <div className="max-w-7xl mx-auto px-4 -mt-2 mb-6">
         <SportNavigationGrid sports={[

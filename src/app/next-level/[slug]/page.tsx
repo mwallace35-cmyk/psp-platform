@@ -139,7 +139,7 @@ export default async function ProAthleteProfilePage({
           >
             <span style={{ fontSize: 40 }}>{sportEmoji}</span>
             <div>
-              <h1 style={{ margin: "0 0 8px 0", fontSize: 40 }}>
+              <h1 style={{ margin: "0 0 8px 0", fontSize: 40, fontFamily: "'Bebas Neue', sans-serif" }}>
                 {athlete.person_name}
               </h1>
               {athlete.status && (

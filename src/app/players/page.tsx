@@ -35,7 +35,7 @@ export default function PlayersPage() {
       </div>
       <nav aria-label="Breadcrumb" style={{ marginBottom: '1.5rem', fontSize: '0.875rem', color: 'var(--psp-muted)' }}>
         <Link href="/" style={{ color: 'var(--psp-gold-text)', textDecoration: 'none' }}>Home</Link>
-        {' \u203A '}
+        {' \u203a '}
         <span>Players</span>
       </nav>
       <div style={{ marginBottom: '2.5rem' }}>
@@ -63,7 +63,7 @@ export default function PlayersPage() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: sport.color, fontWeight: 600, fontSize: '0.875rem', marginTop: '0.75rem' }}>
                   <span>Top {sport.name} Players</span>
-                  <span>\u2192</span>
+                  <span>{"\u2192"}</span>
                 </div>
               </div>
             </div>

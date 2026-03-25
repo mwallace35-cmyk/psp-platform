@@ -134,7 +134,6 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
   ];
 
   const breadcrumbItems = [
-    { label: "Home", href: "/" },
     { label: meta.name, href: `/${sport}` },
     { label: "Breakout Alerts", href: `/${sport}/breakouts` },
   ];
@@ -148,8 +147,8 @@ export default async function BreakoutsPage({ params }: { params: Promise<PagePa
         <div className="border-b-4 border-[var(--psp-gold)] px-4 py-12 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />
           <div className="mt-8 max-w-7xl">
-            <h1 className="text-4xl font-bold text-white sm:text-5xl">
-              🔥 <span className="text-[var(--psp-gold)]">Breakout</span> Alerts
+            <h1 className="psp-h1 text-white">
+              <span className="text-[var(--psp-gold)]">Breakout</span> Alerts
             </h1>
             <p className="mt-4 text-lg text-gray-300">
               Biggest year-over-year stat jumps in Philadelphia high school sports.

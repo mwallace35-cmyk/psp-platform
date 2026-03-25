@@ -137,7 +137,6 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
   ];
 
   const breadcrumbItems = [
-    { label: "Home", href: "/" },
     { label: meta.name, href: `/${sport}` },
     { label: "Rivalries", href: `/${sport}/rivalries` },
   ];
@@ -151,7 +150,7 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
         <div className="border-b-4 border-[var(--psp-gold)] px-4 py-12 sm:px-6 lg:px-8">
           <Breadcrumb items={breadcrumbItems} />
           <div className="mt-8 max-w-7xl">
-            <h1 className="text-4xl font-bold text-white sm:text-5xl">
+            <h1 className="psp-h1 text-white">
               {meta.name} <span className="text-[var(--psp-gold)]">Rivalries</span>
             </h1>
             <p className="mt-4 text-lg text-gray-300">

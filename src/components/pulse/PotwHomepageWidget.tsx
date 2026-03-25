@@ -23,7 +23,7 @@ interface PotwHomepageWidgetProps {
 
 const SPORT_VOTE_COLORS: Record<string, { bg: string; hover: string; ring: string; bar: string }> = {
   football:     { bg: 'bg-green-600',   hover: 'hover:bg-green-500',   ring: 'ring-green-500/30',   bar: '#16a34a' },
-  basketball:   { bg: 'bg-orange-600',  hover: 'hover:bg-orange-500',  ring: 'ring-orange-500/30',  bar: '#ea580c' },
+  basketball:   { bg: 'bg-blue-600',    hover: 'hover:bg-blue-500',    ring: 'ring-blue-500/30',    bar: '#3b82f6' },
   baseball:     { bg: 'bg-red-600',     hover: 'hover:bg-red-500',     ring: 'ring-red-500/30',     bar: '#dc2626' },
   soccer:       { bg: 'bg-emerald-600', hover: 'hover:bg-emerald-500', ring: 'ring-emerald-500/30', bar: '#059669' },
   lacrosse:     { bg: 'bg-cyan-600',    hover: 'hover:bg-cyan-500',    ring: 'ring-cyan-500/30',    bar: '#0891b2' },

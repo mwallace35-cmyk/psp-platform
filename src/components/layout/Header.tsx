@@ -86,6 +86,7 @@ export default function Header() {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const announcementRef = useRef<HTMLDivElement>(null);
+  const desktopNavRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   const isActive = useCallback((href: string) => pathname === href || pathname.startsWith(href + "/"), [pathname]);
@@ -175,6 +176,24 @@ export default function Header() {
     }
   }, [openDropdown, handleDropdownToggle, handleDropdownClose]);
 
+  // Close dropdowns on route change
+  useEffect(() => {
+    setOpenDropdown(null);
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    if (!openDropdown) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (desktopNavRef.current && !desktopNavRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openDropdown]);
+
   // Update aria-live announcement when dropdowns change
   useEffect(() => {
     if (openDropdown) {
@@ -259,7 +278,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2" ref={desktopNavRef}>
             {/* Scores — direct link */}
             <Link href="/scores" className={`nav-link ${isActive("/scores") ? "active" : ""}`} aria-current={isActive("/scores") ? "page" : undefined}>
               Scores
@@ -360,7 +379,11 @@ export default function Header() {
             </div>
 
             {/* More Sports Dropdown */}
-            <div className="nav-dd">
+            <div
+              className="nav-dd"
+              onMouseEnter={() => setOpenDropdown("moreSports")}
+              onMouseLeave={() => setOpenDropdown(prev => prev === "moreSports" ? null : prev)}
+            >
               <button
                 className="nav-link"
                 style={{ background: "none", border: "none", cursor: "pointer" }}
@@ -369,7 +392,6 @@ export default function Header() {
                 aria-label="More Sports menu"
                 onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "moreSports")}
                 onClick={() => handleDropdownToggle("moreSports")}
-                onBlur={handleDropdownClose}
               >
                 More Sports &#9662;
               </button>
@@ -395,7 +417,11 @@ export default function Header() {
             </Link>
 
             {/* More Dropdown */}
-            <div className="nav-dd">
+            <div
+              className="nav-dd"
+              onMouseEnter={() => setOpenDropdown("more")}
+              onMouseLeave={() => setOpenDropdown(prev => prev === "more" ? null : prev)}
+            >
               <button
                 className="nav-link"
                 style={{ background: "none", border: "none", cursor: "pointer" }}
@@ -404,7 +430,6 @@ export default function Header() {
                 aria-label="More menu"
                 onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "more")}
                 onClick={() => handleDropdownToggle("more")}
-                onBlur={handleDropdownClose}
               >
                 More &#9662;
               </button>
@@ -432,7 +457,11 @@ export default function Header() {
             </Link>
 
             {/* Account Dropdown */}
-            <div className="nav-dd">
+            <div
+              className="nav-dd"
+              onMouseEnter={() => setOpenDropdown("account")}
+              onMouseLeave={() => setOpenDropdown(prev => prev === "account" ? null : prev)}
+            >
               <button
                 className="nav-link"
                 style={{ background: "none", border: "none", cursor: "pointer" }}
@@ -441,7 +470,6 @@ export default function Header() {
                 aria-label="Account menu"
                 onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "account")}
                 onClick={() => handleDropdownToggle("account")}
-                onBlur={handleDropdownClose}
                 title="Account"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

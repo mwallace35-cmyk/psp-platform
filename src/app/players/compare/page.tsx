@@ -151,7 +151,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
           <code style={{ background:'var(--psp-gray-100, #f3f4f6)', padding:'2px 6px', borderRadius:4, fontSize:'0.85rem' }}>/players/compare?a=player-one&amp;b=player-two</code>
         </p>
         <Link href='/players' style={{ display:'inline-block', background:navy, color:'#fff', padding:'0.7rem 1.5rem', borderRadius:8, fontWeight:700, textDecoration:'none' }}>
-          Browse Players \u2192
+          {"Browse Players \u2192"}
         </Link>
       </div>
     );

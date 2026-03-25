@@ -123,7 +123,7 @@ export default async function FootballEfficiencyPage() {
       <div className="bg-gradient-to-b from-[#0a1628] to-[#0f1e30] border-b border-[#f0a500]/20 py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <Link href="/football/leaderboards" className="text-[#f0a500] text-sm hover:underline mb-3 inline-block">← Back to Leaderboards</Link>
-          <h1 className="text-4xl font-black text-white mb-2">Football Efficiency Stats</h1>
+          <h1 className="psp-h1 text-white mb-2">Football Efficiency Stats</h1>
           <p className="text-gray-300">Advanced metrics measuring per-play performance (2024-25 season)</p>
         </div>
       </div>

@@ -21,7 +21,7 @@ const SPORT_EMOJI: Record<string, string> = {
 
 const SPORT_COLORS: Record<string, { accent: string; glow: string }> = {
   football:      { accent: '#16a34a', glow: '#22c55e' },
-  basketball:    { accent: '#ea580c', glow: '#fb923c' },
+  basketball:    { accent: '#3b82f6', glow: '#60a5fa' },
   baseball:      { accent: '#dc2626', glow: '#ef4444' },
   soccer:        { accent: '#059669', glow: '#10b981' },
   lacrosse:      { accent: '#0891b2', glow: '#06b6d4' },

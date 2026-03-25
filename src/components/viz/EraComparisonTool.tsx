@@ -17,7 +17,7 @@ interface EraComparisonToolProps {
 
 const SPORT_COLORS: Record<string, string> = {
   football: '#16a34a',
-  basketball: '#ea580c',
+  basketball: '#3b82f6',
   baseball: '#dc2626',
   track: '#7c3aed',
   lacrosse: '#0891b2',

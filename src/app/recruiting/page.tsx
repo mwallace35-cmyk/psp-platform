@@ -57,7 +57,7 @@ const SPORT_COLORS_CSS: Record<string, string> = {
 
 const SPORT_COLORS_HEX: Record<string, string> = {
   football: "#16a34a",
-  basketball: "#ea580c",
+  basketball: "#3b82f6",
   baseball: "#dc2626",
   "track-field": "#7c3aed",
   lacrosse: "#0891b2",

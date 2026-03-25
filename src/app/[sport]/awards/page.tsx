@@ -46,8 +46,8 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header — matches standard sport sub-page layout */}
-      <section className="py-10" style={{ background: "var(--psp-navy)" }}>
+      {/* Hero Section — dark navy with gold border */}
+      <section className="border-b-4 border-[var(--psp-gold)] py-10" style={{ background: '#0a1628', color: '#fff' }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb
             items={[

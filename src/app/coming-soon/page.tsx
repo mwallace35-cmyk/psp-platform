@@ -5,7 +5,7 @@ import { useState, type FormEvent } from "react";
 
 const SPORTS = [
   { emoji: "\uD83C\uDFC8", name: "Football", color: "#16a34a" },
-  { emoji: "\uD83C\uDFC0", name: "Basketball", color: "#ea580c" },
+  { emoji: "\uD83C\uDFC0", name: "Basketball", color: "#3b82f6" },
   { emoji: "\u26BE", name: "Baseball", color: "#dc2626" },
   { emoji: "\uD83C\uDFC3", name: "Track & Field", color: "#7c3aed" },
   { emoji: "\uD83E\uDD4D", name: "Lacrosse", color: "#0891b2" },
@@ -305,6 +305,7 @@ export default function ComingSoonPage() {
       <h1
         style={{
           fontSize: "clamp(36px, 8vw, 56px)",
+          fontFamily: "'Bebas Neue', sans-serif",
           fontWeight: 800,
           lineHeight: 1.05,
           marginBottom: 20,

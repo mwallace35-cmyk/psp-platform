@@ -352,6 +352,11 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         />
       </div>
 
+      {/* 2.5 QUICK ACCESS — Navigation cards for key sections */}
+      <div className="bg-[var(--psp-navy)]">
+        <QuickNavigation sport={sport} sportColor={sportColorHex} />
+      </div>
+
       {/* 3-4-5. SCORES + RANKINGS + LEADERS — Compact dark theme */}
       <div className="bg-[var(--psp-navy)]">
         <DesignBibleSections sport={sport} compact darkTheme />
@@ -434,9 +439,6 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
 
       {/* Score Banner */}
       <HubScoresStrip games={recentGames} sportColor={sportColorHex} sport={sport} />
-
-      {/* Quick Navigation */}
-      <QuickNavigation sport={sport} sportColor={sportColorHex} />
 
       {/* Layout Switcher (Client Component) — Editorial/Dashboard toggle */}
       <SportLayoutSwitcher

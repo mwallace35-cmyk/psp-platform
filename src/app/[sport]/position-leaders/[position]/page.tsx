@@ -100,9 +100,10 @@ export default async function PositionLeadersPage({
       />
 
       <section
-        className="py-10"
+        className="py-10 border-b-4 border-[var(--psp-gold)]"
         style={{
-          background: `linear-gradient(135deg, var(--psp-navy) 0%, ${meta.color}33 100%)`,
+          background: '#0a1628',
+          color: '#fff',
         }}
       >
         <div className="max-w-7xl mx-auto px-4">

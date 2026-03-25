@@ -22,7 +22,7 @@ export default async function NotificationSettingsPage() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[#0a1628] mb-2">Notification Settings</h1>
+            <h1 className="psp-h1 mb-2" style={{ color: '#0a1628' }}>Notification Settings</h1>
             <p className="text-gray-600">
               Customize how and when you receive updates from PhillySportsPack
             </p>

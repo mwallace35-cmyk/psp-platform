@@ -59,7 +59,7 @@ export default function TeamsPage() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: sport.color, fontWeight: 600, fontSize: '0.875rem', marginTop: '0.75rem' }}>
                   <span>View {sport.name} Teams</span>
-                  <span>\u2192</span>
+                  <span>{"\u2192"}</span>
                 </div>
               </div>
             </div>

@@ -20,7 +20,7 @@ export default function DataSourcesPage() {
       {/* Hero Section */}
       <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)` }}>
         <div className="max-w-4xl mx-auto px-4">
-          <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Data Sources' }]} />
+          <Breadcrumb items={[{ label: 'Data Sources' }]} />
           <h1 className="psp-h1 text-white mt-4">
             Data Sources
           </h1>

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import {
   SPORT_META,
@@ -10,7 +9,7 @@ import {
 import type { SchoolWinsRow, SchoolChampionshipRow, SchoolStatProductionRow } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import SortableTable, { SortableColumn } from "@/components/ui/SortableTable";
+import { WinsTable, ChampionshipsTable, FootballStatsTable, BasketballStatsTable } from "./SchoolLeaderboardTables";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import type { Metadata } from "next";
@@ -35,198 +34,16 @@ export async function generateMetadata({ params, searchParams }: {
   const sport = await validateSportParamForMetadata(params);
   if (!sport) return {};
   const sp = await searchParams;
-  // Validate sport param
   const meta = SPORT_META[sport];
   const tab = (sp?.tab as string) || "wins";
   const tabLabel = TABS.find(t => t.key === tab)?.label || "Rankings";
   return {
-    title: `School ${tabLabel} — ${meta.name} — PhillySportsPack`,
+    title: `School ${tabLabel} \u2014 ${meta.name} \u2014 PhillySportsPack`,
     description: `Top Philadelphia high school ${meta.name.toLowerCase()} programs ranked by ${tabLabel.toLowerCase()}.`,
     alternates: {
       canonical: `https://phillysportspack.com/${sport}/leaderboards/schools${tab !== "wins" ? `?tab=${tab}` : ""}`,
     },
   };
-}
-
-function formatNum(n: unknown): string {
-  if (n == null) return "—";
-  const num = typeof n === "string" ? parseFloat(n) : (n as number);
-  if (isNaN(num)) return "—";
-  return num.toLocaleString();
-}
-
-function formatPct(n: unknown): string {
-  if (n == null) return "—";
-  const num = typeof n === "string" ? parseFloat(n) : (n as number);
-  if (isNaN(num)) return "—";
-  return (num * 100).toFixed(1) + "%";
-}
-
-function SchoolLink({ name, slug, sport }: { name: string; slug: string; sport: string }) {
-  return (
-    <Link
-      href={`/${sport}/schools/${slug}`}
-      className="font-medium text-sm hover:underline"
-      style={{ color: "var(--psp-navy)" }}
-    >
-      {name}
-    </Link>
-  );
-}
-
-// ─── Wins Tab ──────────────────────────────────────────────
-function WinsTable({ data, sport }: { data: SchoolWinsRow[]; sport: string }) {
-  const columns: SortableColumn[] = [
-    { key: "rank", label: "#", align: "center", sortable: false },
-    {
-      key: "school_name", label: "School", sortable: true, primary: true,
-      render: (value, row) => (
-        <div className="flex items-center gap-2">
-          {row?.logo_url && (
-            <img src={row.logo_url as string} alt={`${String(value)} logo`} className="w-6 h-6 rounded" loading="lazy" />
-          )}
-          <div>
-            <SchoolLink name={String(value)} slug={row?.school_slug as string} sport={sport} />
-            {row?.league_name && (
-              <div className="text-xs" style={{ color: "var(--psp-gray-400)" }}>{row.league_name as string}</div>
-            )}
-          </div>
-        </div>
-      ),
-    },
-    { key: "total_wins", label: "W", align: "right", sortable: true, render: (v) => formatNum(v) },
-    { key: "total_losses", label: "L", align: "right", sortable: true, render: (v) => formatNum(v) },
-    { key: "total_ties", label: "T", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-    { key: "win_pct", label: "Win%", align: "right", sortable: true, render: (v) => formatPct(v) },
-    { key: "total_seasons", label: "Seasons", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-    { key: "championship_count", label: "Titles", align: "right", sortable: true, render: (v) => {
-      const n = Number(v);
-      return n > 0 ? <span style={{ color: "var(--psp-gold)" }} className="font-semibold">{n}</span> : "0";
-    }},
-    { key: "total_points_for", label: "PF", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-  ];
-
-  const tableData = data.map((row, idx) => ({
-    id: String(row.school_id),
-    rank: idx + 1,
-    ...row,
-  }));
-
-  return (
-    <SortableTable
-      columns={columns}
-      data={tableData}
-      highlightTop3={true}
-      mobileCardMode={true}
-      emptyMessage="No school records available"
-      ariaLabel="School wins leaderboard"
-    />
-  );
-}
-
-// ─── Championships Tab ─────────────────────────────────────
-function ChampionshipsTable({ data, sport }: { data: SchoolChampionshipRow[]; sport: string }) {
-  const columns: SortableColumn[] = [
-    { key: "rank", label: "#", align: "center", sortable: false },
-    {
-      key: "school_name", label: "School", sortable: true, primary: true,
-      render: (value, row) => <SchoolLink name={String(value)} slug={row?.school_slug as string} sport={sport} />,
-    },
-    {
-      key: "total_championships", label: "Total", align: "right", sortable: true,
-      render: (v) => <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{formatNum(v)}</span>,
-    },
-    { key: "fb_champs", label: "FB", align: "right", sortable: true, render: (v) => formatNum(v) },
-    { key: "bb_champs", label: "BB", align: "right", sortable: true, render: (v) => formatNum(v) },
-    { key: "base_champs", label: "BSB", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-    { key: "other_champs", label: "Other", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-  ];
-
-  const tableData = data.map((row, idx) => ({
-    id: String(row.school_id),
-    rank: idx + 1,
-    ...row,
-  }));
-
-  return (
-    <SortableTable
-      columns={columns}
-      data={tableData}
-      highlightTop3={true}
-      mobileCardMode={true}
-      emptyMessage="No championship data available"
-      ariaLabel="School championships leaderboard"
-    />
-  );
-}
-
-// ─── Stat Production Tab ───────────────────────────────────
-function FootballStatsTable({ data, sport }: { data: SchoolStatProductionRow[]; sport: string }) {
-  const columns: SortableColumn[] = [
-    { key: "rank", label: "#", align: "center", sortable: false },
-    {
-      key: "school_name", label: "School", sortable: true, primary: true,
-      render: (value, row) => <SchoolLink name={String(value)} slug={row?.school_slug as string} sport={sport} />,
-    },
-    { key: "total_players", label: "Players", align: "right", sortable: true, render: (v) => formatNum(v) },
-    { key: "total_rush_yards", label: "Rush Yds", align: "right", sortable: true, render: (v) => formatNum(v) },
-    { key: "total_pass_yards", label: "Pass Yds", align: "right", sortable: true, render: (v) => formatNum(v) },
-    { key: "total_yards", label: "Total Yds", align: "right", sortable: true, render: (v) => {
-      return <span className="font-semibold">{formatNum(v)}</span>;
-    }},
-    { key: "total_td", label: "Total TD", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-    { key: "total_points", label: "Points", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-  ];
-
-  const tableData = data.map((row, idx) => ({
-    id: String(row.school_id),
-    rank: idx + 1,
-    ...row,
-  }));
-
-  return (
-    <SortableTable
-      columns={columns}
-      data={tableData}
-      highlightTop3={true}
-      mobileCardMode={true}
-      emptyMessage="No stat production data available"
-      ariaLabel="School stat production leaderboard"
-    />
-  );
-}
-
-function BasketballStatsTable({ data, sport }: { data: SchoolStatProductionRow[]; sport: string }) {
-  const columns: SortableColumn[] = [
-    { key: "rank", label: "#", align: "center", sortable: false },
-    {
-      key: "school_name", label: "School", sortable: true, primary: true,
-      render: (value, row) => <SchoolLink name={String(value)} slug={row?.school_slug as string} sport={sport} />,
-    },
-    { key: "total_players", label: "Players", align: "right", sortable: true, render: (v) => formatNum(v) },
-    {
-      key: "total_points", label: "Total Points", align: "right", sortable: true,
-      render: (v) => <span className="font-semibold">{formatNum(v)}</span>,
-    },
-    { key: "total_games", label: "Games", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-  ];
-
-  const tableData = data.map((row, idx) => ({
-    id: String(row.school_id),
-    rank: idx + 1,
-    ...row,
-  }));
-
-  return (
-    <SortableTable
-      columns={columns}
-      data={tableData}
-      highlightTop3={true}
-      mobileCardMode={true}
-      emptyMessage="No stat production data available"
-      ariaLabel="School stat production leaderboard"
-    />
-  );
 }
 
 // ─── Main Page ─────────────────────────────────────────────
@@ -240,7 +57,6 @@ export default async function SchoolLeaderboardPage({
   const sport = await validateSportParam(params);
   const sp = await searchParams;
 
-  // Sport param validated by validateSportParam
   const meta = SPORT_META[sport];
 
   const tab = ((sp?.tab as string) || "wins") as TabKey;

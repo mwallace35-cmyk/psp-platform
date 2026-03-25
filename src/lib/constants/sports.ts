@@ -23,7 +23,7 @@ export const SPORT_COLORS: Record<string, string> = {
  */
 export const SPORT_COLORS_HEX: Record<string, string> = {
   football: "#16a34a",
-  basketball: "#ea580c",
+  basketball: "#3b82f6",
   baseball: "#dc2626",
   "track-field": "#7c3aed",
   lacrosse: "#0891b2",
@@ -38,7 +38,7 @@ export const SPORT_COLORS_HEX: Record<string, string> = {
  */
 export const SPORT_GRADIENTS: Record<string, string> = {
   football: "from-[#0a1628] to-[#16a34a]",
-  basketball: "from-[#0a1628] to-[#ea580c]",
+  basketball: "from-[#0a1628] to-[#3b82f6]",
   baseball: "from-[#0a1628] to-[#dc2626]",
   "track-field": "from-[#0a1628] to-[#7c3aed]",
   lacrosse: "from-[#0a1628] to-[#0891b2]",

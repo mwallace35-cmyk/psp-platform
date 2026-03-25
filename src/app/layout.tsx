@@ -36,7 +36,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: {
     default: "PhillySportsPack.com | Philadelphia High School Sports Database",
-    template: "%s | PhillySportsPack.com",
+    template: "%s",
   },
   description:
     "Complete Philadelphia high school sports database covering football, basketball, baseball, soccer, lacrosse, track & field, wrestling. Stats, records, championships, and player profiles across 400+ schools and 10,000+ athletes.",

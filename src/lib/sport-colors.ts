@@ -24,9 +24,9 @@ export const SPORT_COLORS: Record<SportSlug, SportColorScheme> = {
   basketball: {
     name: 'Basketball',
     primaryColor: '#0a1628',
-    secondaryColor: '#c2410c',
-    gradient: 'linear-gradient(135deg, #0a1628 0%, #c2410c 100%)',
-    accentColor: '#ea580c',
+    secondaryColor: '#2563eb',
+    gradient: 'linear-gradient(135deg, #0a1628 0%, #2563eb 100%)',
+    accentColor: '#3b82f6',
   },
   baseball: {
     name: 'Baseball',

@@ -175,18 +175,17 @@ export default function SimilarPlayers({ slug, sport }: SimilarPlayersProps) {
                 marginBottom: '12px',
               }}
             >
-              <Link href={`/players/${player.slug}`}>
-                <a
-                  style={{
-                    color: DESIGN_TOKENS.navy,
-                    textDecoration: 'none',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    fontFamily: 'DM Sans, sans-serif',
-                  }}
-                >
-                  {player.name ?? 'Unknown'}
-                </a>
+              <Link
+                href={`/players/${player.slug}`}
+                style={{
+                  color: DESIGN_TOKENS.navy,
+                  textDecoration: 'none',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  fontFamily: 'DM Sans, sans-serif',
+                }}
+              >
+                {player.name ?? 'Unknown'}
               </Link>
 
               <div

@@ -157,7 +157,7 @@ export default function LoginPage() {
     >
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-4xl text-white">PSP Admin</h1>
+          <h1 className="psp-h1 text-white">PSP Admin</h1>
           <p style={{ color: "var(--psp-gold)" }}>PhillySportsPack.com</p>
         </div>
 

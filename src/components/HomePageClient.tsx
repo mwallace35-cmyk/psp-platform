@@ -245,7 +245,7 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { name: "Football", color: "#16a34a", icon: "🏈", href: "/football", desc: "120+ schools, 5,000+ players tracked" },
-                { name: "Basketball", color: "#ea580c", icon: "🏀", href: "/basketball", desc: "120+ schools, 5,000+ players tracked" },
+                { name: "Basketball", color: "#3b82f6", icon: "🏀", href: "/basketball", desc: "120+ schools, 5,000+ players tracked" },
                 { name: "Baseball", color: "#dc2626", icon: "⚾", href: "/baseball", desc: "120+ schools, 5,000+ players tracked" },
               ].map((sport, idx) => (
                 <Link

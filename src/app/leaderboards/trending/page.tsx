@@ -16,7 +16,7 @@ export default function TrendingPage() {
       <div className="bg-gradient-to-b from-[#0a1628] to-[#0f1e30] border-b border-[#f0a500]/20 py-12 px-4">
         <div className="max-w-4xl mx-auto">
           <p className="text-[#f0a500] text-sm font-semibold uppercase tracking-widest mb-2">Leaderboards</p>
-          <h1 className="text-4xl font-black text-white mb-3">Trending This Week</h1>
+          <h1 className="psp-h1 text-white mb-3">Trending This Week</h1>
           <p className="text-gray-300 text-lg">Top performers across Philadelphia high school sports right now.</p>
         </div>
       </div>

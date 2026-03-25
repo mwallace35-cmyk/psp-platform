@@ -175,7 +175,7 @@ async function getClassYearData(gradYear: number): Promise<SportSection[]> {
     sections.push({
       sport: "Baseball",
       sportSlug: "baseball",
-      color: "var(--bb, #ea580c)",
+      color: "var(--base, #dc2626)",
       primaryStatLabel: "Batting Avg",
       players: bbPlayers,
     });

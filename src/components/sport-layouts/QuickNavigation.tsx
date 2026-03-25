@@ -29,6 +29,12 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
   // Build navigation items
   const navItems: QuickNavItem[] = [
     {
+      icon: "🏟️",
+      label: "Teams",
+      description: "All teams by league with records",
+      href: `/${sport}/teams`,
+    },
+    {
       icon: "📊",
       label: "Leaderboards",
       description: "Top performers & stat leaders",
@@ -47,17 +53,23 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
       href: `/${sport}/championships`,
     },
     {
-      icon: "⭐",
-      label: "Awards & Honors",
-      description: "All-City, All-League, Player of the Year & more",
-      href: `/${sport}/awards`,
+      icon: "📅",
+      label: "Schedule & Results",
+      description: "Game scores & upcoming matchups",
+      href: `/scores?sport=${sport}`,
+    },
+    {
+      icon: "📈",
+      label: "Standings",
+      description: "Current league standings & records",
+      href: `/${sport}/standings`,
     },
     ...(sport === "football"
       ? [
           {
             icon: "🎯",
             label: "City All-Star Game",
-            description: "Public vs Non-Public rivalry (1975–2019)",
+            description: "Public vs Non-Public rivalry (1975-2019)",
             href: `/${sport}/city-all-star-game`,
           },
         ]

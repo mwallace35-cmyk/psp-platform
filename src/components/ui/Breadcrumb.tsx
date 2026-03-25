@@ -23,8 +23,9 @@ function Breadcrumb({
   mobile = false,
   includeSchema = true,
 }: BreadcrumbProps) {
-  // Add home link at the beginning
-  const allItems: BreadcrumbItem[] = [{ label: 'Home', href: '/' }, ...items];
+  // Add home link at the beginning (filter out any Home items passed by callers to prevent duplicates)
+  const filteredItems = items.filter(item => item.label !== 'Home');
+  const allItems: BreadcrumbItem[] = [{ label: 'Home', href: '/' }, ...filteredItems];
 
   // Determine which items to display (truncate middle on mobile if needed)
   let displayItems = allItems;

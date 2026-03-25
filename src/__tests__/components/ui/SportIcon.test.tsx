@@ -146,7 +146,7 @@ describe('SportIcon', () => {
 
   it('exports SPORT_COLORS constant', () => {
     expect(SPORT_COLORS.football).toBe('#16a34a');
-    expect(SPORT_COLORS.basketball).toBe('#ea580c');
+    expect(SPORT_COLORS.basketball).toBe('#3b82f6');
     expect(Object.keys(SPORT_COLORS).length).toBeGreaterThan(0);
   });
 

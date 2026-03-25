@@ -56,7 +56,7 @@ export default async function BoxScoresPage({ params }: { params: Promise<PagePa
           ]}
         />
 
-        <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, ${meta.color}33 100%)` }}>
+        <section className="py-10 border-b-4 border-[var(--psp-gold)]" style={{ background: '#0a1628', color: '#fff' }}>
           <div className="max-w-7xl mx-auto px-4">
             <Breadcrumb
               items={[
@@ -91,7 +91,7 @@ export default async function BoxScoresPage({ params }: { params: Promise<PagePa
         ]}
       />
 
-      <section className="py-10" style={{ background: `linear-gradient(135deg, var(--psp-navy) 0%, ${meta.color}33 100%)` }}>
+      <section className="py-10 border-b-4 border-[var(--psp-gold)]" style={{ background: '#0a1628', color: '#fff' }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb
             items={[

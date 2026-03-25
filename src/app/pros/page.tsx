@@ -71,7 +71,6 @@ export default async function ProsPage({
   ];
 
   const breadcrumbs = [
-    { label: "Home", href: "/" },
     { label: "Before They Were Famous", href: "/pros" },
   ];
 
@@ -85,7 +84,7 @@ export default async function ProsPage({
           <Breadcrumb items={breadcrumbs} />
 
           <div className="mt-6">
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">
+            <h1 className="psp-h1 text-white mb-3">
               Before They Were Famous
             </h1>
             <p className="text-lg text-gray-300 max-w-2xl">

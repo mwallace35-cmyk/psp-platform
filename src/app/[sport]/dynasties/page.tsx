@@ -70,9 +70,10 @@ export default async function DynastiesPage({
       />
 
       <section
-        className="py-10"
+        className="py-10 border-b-4 border-[var(--psp-gold)]"
         style={{
-          background: "var(--psp-navy)",
+          background: '#0a1628',
+          color: '#fff',
         }}
       >
         <div className="max-w-7xl mx-auto px-4">
