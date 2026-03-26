@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { SchoolLogo, Breadcrumb } from "@/components/ui";
 
+interface ChampionshipBadge {
+  season: string;
+  label: string;
+}
+
 interface TeamHeaderProps {
   team: {
     name: string;
@@ -29,6 +34,7 @@ interface TeamHeaderProps {
     color: string;
     emoji: string;
   };
+  currentSeasonChampionships?: ChampionshipBadge[];
 }
 
 export default function TeamHeader({
@@ -36,14 +42,47 @@ export default function TeamHeader({
   school,
   sport,
   sportMeta,
+  currentSeasonChampionships = [],
 }: TeamHeaderProps) {
   const totalGames = team.currentRecord.wins + team.currentRecord.losses + team.currentRecord.ties;
   const winPct = totalGames > 0 ? ((team.currentRecord.wins / totalGames) * 100).toFixed(1) : "0.0";
   const pointDiff = team.pointsFor - team.pointsAgainst;
   const record = `${team.currentRecord.wins}-${team.currentRecord.losses}${team.currentRecord.ties > 0 ? `-${team.currentRecord.ties}` : ""}`;
 
+  const hasCurrentChampionship = currentSeasonChampionships.length > 0;
+
   return (
     <section className="relative overflow-hidden" style={{ background: "var(--psp-navy)" }}>
+      {/* Championship Banner — only for current-season champions */}
+      {hasCurrentChampionship && (
+        <div
+          className="relative overflow-hidden"
+          style={{ background: "linear-gradient(90deg, #c48800 0%, var(--psp-gold) 20%, var(--psp-gold-light) 50%, var(--psp-gold) 80%, #c48800 100%)" }}
+        >
+          {/* Shimmer overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: "linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.3) 45%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.3) 55%, transparent 70%)",
+              animation: "championShimmer 3s ease-in-out infinite",
+            }}
+          />
+          <div className="relative max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-center gap-3">
+            <span className="text-lg" aria-hidden="true">&#127942;</span>
+            {currentSeasonChampionships.map((champ, i) => (
+              <span
+                key={i}
+                className="font-heading tracking-wide text-sm md:text-base uppercase"
+                style={{ color: "var(--psp-navy)", letterSpacing: "0.08em" }}
+              >
+                {champ.season} {champ.label}
+              </span>
+            ))}
+            <span className="text-lg" aria-hidden="true">&#127942;</span>
+          </div>
+        </div>
+      )}
+
       {/* Diagonal accent stripes in team colors */}
       <div
         className="absolute inset-0"
@@ -62,8 +101,10 @@ export default function TeamHeader({
         }}
       />
 
-      {/* Gold accent bar at top */}
-      <div className="h-1" style={{ background: "var(--psp-gold)" }} />
+      {/* Gold accent bar at top (skip if championship banner is showing) */}
+      {!hasCurrentChampionship && (
+        <div className="h-1" style={{ background: "var(--psp-gold)" }} />
+      )}
 
       <div className="relative max-w-7xl mx-auto px-4 pt-6 pb-10 md:pt-8 md:pb-12">
         {/* Breadcrumb */}
@@ -87,8 +128,11 @@ export default function TeamHeader({
               <div
                 className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center overflow-hidden border-2"
                 style={{
-                  borderColor: school.primary_color || "var(--psp-gold)",
-                  background: `${school.primary_color || sportMeta.color}15`,
+                  borderColor: hasCurrentChampionship ? "var(--psp-gold)" : (school.primary_color || "var(--psp-gold)"),
+                  background: hasCurrentChampionship
+                    ? "linear-gradient(135deg, rgba(240,165,0,0.15) 0%, rgba(240,165,0,0.05) 100%)"
+                    : `${school.primary_color || sportMeta.color}15`,
+                  boxShadow: hasCurrentChampionship ? "0 0 20px rgba(240,165,0,0.25)" : undefined,
                 }}
               >
                 {school.logo_url ? (
@@ -197,6 +241,16 @@ export default function TeamHeader({
           )}
         </div>
       </div>
+
+      {/* Shimmer keyframes for championship banner */}
+      {hasCurrentChampionship && (
+        <style>{`
+          @keyframes championShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+        `}</style>
+      )}
     </section>
   );
 }

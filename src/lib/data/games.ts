@@ -1024,3 +1024,147 @@ export const getHeadToHead = cache(
     );
   }
 );
+
+// ============================================================================
+// TEAM STAT LEADERS (from game_player_stats)
+// ============================================================================
+
+export interface TeamStatLeader {
+  playerName: string;
+  statValue: number;
+  statLabel: string;
+  gamesPlayed: number;
+}
+
+export interface TeamGameStatsResult {
+  totalRushYards: number;
+  totalPassYards: number;
+  totalRecYards: number;
+  totalPoints: number;
+  gamesWithStats: number;
+  rushLeader: TeamStatLeader | null;
+  passLeader: TeamStatLeader | null;
+  recLeader: TeamStatLeader | null;
+  scoringLeader: TeamStatLeader | null;
+}
+
+/**
+ * Get aggregated team stats and individual leaders from game_player_stats
+ * for a specific school and season.
+ */
+export const getTeamStatLeaders = cache(
+  async (schoolId: number, seasonId: number): Promise<TeamGameStatsResult> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // Fetch all game_player_stats for this school in this season
+            const { data: stats } = await supabase
+              .from("game_player_stats")
+              .select("player_name, rush_yards, rush_carries, pass_yards, pass_completions, rec_yards, rec_catches, points, game_id, games!inner(season_id)")
+              .eq("school_id", schoolId)
+              .eq("games.season_id", seasonId);
+
+            const rows = stats ?? [];
+
+            if (rows.length === 0) {
+              return {
+                totalRushYards: 0,
+                totalPassYards: 0,
+                totalRecYards: 0,
+                totalPoints: 0,
+                gamesWithStats: 0,
+                rushLeader: null,
+                passLeader: null,
+                recLeader: null,
+                scoringLeader: null,
+              };
+            }
+
+            // Count unique games
+            const uniqueGames = new Set(rows.map((r: any) => r.game_id));
+
+            // Aggregate team totals
+            let totalRush = 0, totalPass = 0, totalRec = 0, totalPts = 0;
+            const playerRush: Record<string, { yards: number; games: Set<number> }> = {};
+            const playerPass: Record<string, { yards: number; games: Set<number> }> = {};
+            const playerRec: Record<string, { yards: number; games: Set<number> }> = {};
+            const playerPts: Record<string, { pts: number; games: Set<number> }> = {};
+
+            for (const row of rows as any[]) {
+              const name = row.player_name || "Unknown";
+              const gameId = row.game_id;
+
+              if (row.rush_yards) {
+                totalRush += row.rush_yards;
+                if (!playerRush[name]) playerRush[name] = { yards: 0, games: new Set() };
+                playerRush[name].yards += row.rush_yards;
+                playerRush[name].games.add(gameId);
+              }
+              if (row.pass_yards) {
+                totalPass += row.pass_yards;
+                if (!playerPass[name]) playerPass[name] = { yards: 0, games: new Set() };
+                playerPass[name].yards += row.pass_yards;
+                playerPass[name].games.add(gameId);
+              }
+              if (row.rec_yards) {
+                totalRec += row.rec_yards;
+                if (!playerRec[name]) playerRec[name] = { yards: 0, games: new Set() };
+                playerRec[name].yards += row.rec_yards;
+                playerRec[name].games.add(gameId);
+              }
+              if (row.points) {
+                totalPts += row.points;
+                if (!playerPts[name]) playerPts[name] = { pts: 0, games: new Set() };
+                playerPts[name].pts += row.points;
+                playerPts[name].games.add(gameId);
+              }
+            }
+
+            // Find leaders
+            const rushLeaderEntry = Object.entries(playerRush).sort((a, b) => b[1].yards - a[1].yards)[0];
+            const passLeaderEntry = Object.entries(playerPass).sort((a, b) => b[1].yards - a[1].yards)[0];
+            const recLeaderEntry = Object.entries(playerRec).sort((a, b) => b[1].yards - a[1].yards)[0];
+            const ptsLeaderEntry = Object.entries(playerPts).sort((a, b) => b[1].pts - a[1].pts)[0];
+
+            return {
+              totalRushYards: totalRush,
+              totalPassYards: totalPass,
+              totalRecYards: totalRec,
+              totalPoints: totalPts,
+              gamesWithStats: uniqueGames.size,
+              rushLeader: rushLeaderEntry
+                ? { playerName: rushLeaderEntry[0], statValue: rushLeaderEntry[1].yards, statLabel: "Rush Yds", gamesPlayed: rushLeaderEntry[1].games.size }
+                : null,
+              passLeader: passLeaderEntry
+                ? { playerName: passLeaderEntry[0], statValue: passLeaderEntry[1].yards, statLabel: "Pass Yds", gamesPlayed: passLeaderEntry[1].games.size }
+                : null,
+              recLeader: recLeaderEntry
+                ? { playerName: recLeaderEntry[0], statValue: recLeaderEntry[1].yards, statLabel: "Rec Yds", gamesPlayed: recLeaderEntry[1].games.size }
+                : null,
+              scoringLeader: ptsLeaderEntry
+                ? { playerName: ptsLeaderEntry[0], statValue: ptsLeaderEntry[1].pts, statLabel: "Points", gamesPlayed: ptsLeaderEntry[1].games.size }
+                : null,
+            };
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      {
+        totalRushYards: 0,
+        totalPassYards: 0,
+        totalRecYards: 0,
+        totalPoints: 0,
+        gamesWithStats: 0,
+        rushLeader: null,
+        passLeader: null,
+        recLeader: null,
+        scoringLeader: null,
+      },
+      "DATA_TEAM_STAT_LEADERS",
+      { schoolId, seasonId }
+    );
+  }
+);

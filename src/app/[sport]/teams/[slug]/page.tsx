@@ -9,6 +9,7 @@ import {
   getGamesByTeamSeason,
   getTeamRosterBySeason,
   getArticlesForEntity,
+  getTeamStatLeaders,
 } from "@/lib/data";
 import TeamPageClient from "@/components/teams/TeamPageClient";
 import type { Metadata } from "next";
@@ -63,7 +64,7 @@ export default async function TeamDetailPage({ params }: PageProps) {
   const [teamSeasons, championshipsData, alumni] = await Promise.all([
     getSchoolTeamSeasons(school.id, sportId),
     getSchoolChampionships(school.id, sportId),
-    getTrackedAlumni({ sport: sportId }, 6),
+    getTrackedAlumni({ sport: sportId, schoolId: school.id }, 6),
   ]);
   // Type cast to match TeamPageClient's local Championship type
   const championships = championshipsData as unknown as any[];
@@ -71,9 +72,9 @@ export default async function TeamDetailPage({ params }: PageProps) {
   // Get the most recent team season
   const latestSeason = teamSeasons?.[0] || null;
 
-  // Fetch schedule, roster, and articles for the latest season
+  // Fetch schedule, roster, articles, and stat leaders for the latest season
   const latestSeasonId = latestSeason?.season_id;
-  const [games, roster, articles] = await Promise.all([
+  const [games, roster, articles, statLeaders] = await Promise.all([
     latestSeasonId
       ? getGamesByTeamSeason(school.id, sportId, latestSeasonId)
       : Promise.resolve([]),
@@ -81,6 +82,9 @@ export default async function TeamDetailPage({ params }: PageProps) {
       ? getTeamRosterBySeason(school.id, sportId, latestSeasonId)
       : Promise.resolve([]),
     getArticlesForEntity("school", school.id, 6),
+    latestSeasonId
+      ? getTeamStatLeaders(school.id, latestSeasonId)
+      : Promise.resolve(null),
   ]);
 
   // Get league and coach names, handling potential array returns from Supabase
@@ -127,6 +131,7 @@ export default async function TeamDetailPage({ params }: PageProps) {
       games={games as any[]}
       roster={roster as any[]}
       articles={articles as any[]}
+      statLeaders={statLeaders as any}
     />
   );
 }

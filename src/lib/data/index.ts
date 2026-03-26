@@ -142,6 +142,9 @@ export {
   type PlayerGameLog,
   type TeamGame,
   type HeadToHeadResult,
+  getTeamStatLeaders,
+  type TeamStatLeader,
+  type TeamGameStatsResult,
 } from "./games";
 
 // Season awareness helpers

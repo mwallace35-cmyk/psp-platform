@@ -220,7 +220,7 @@ export const getCoachCount = cache(async () => {
  * Cached to avoid redundant database queries within the same request
  * OPTIMIZED: Explicit column selection instead of SELECT *
  */
-export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?: string; featured?: boolean }, limit = 100) => {
+export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?: string; featured?: boolean; schoolId?: number }, limit = 100) => {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -228,13 +228,14 @@ export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?:
           const supabase = await createClient();
           let query = supabase
             .from("next_level_tracking")
-            .select("id, person_name, current_level, college, pro_team, pro_league, draft_info, status, sport_id, featured, schools:high_school_id(name, slug)")
+            .select("id, person_name, current_level, current_org, college, pro_team, pro_league, draft_info, status, sport_id, featured, high_school_id, schools:high_school_id(name, slug), players:player_id(graduation_year)")
             .order("featured", { ascending: false })
             .order("person_name")
             .limit(limit);
           if (filters?.level) query = query.eq("current_level", filters.level);
           if (filters?.sport) query = query.eq("sport_id", filters.sport);
           if (filters?.featured) query = query.eq("featured", true);
+          if (filters?.schoolId) query = query.eq("high_school_id", filters.schoolId);
           const { data } = await query;
           return data ?? [];
         },

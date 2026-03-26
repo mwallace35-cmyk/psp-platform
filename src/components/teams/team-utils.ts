@@ -117,6 +117,25 @@ export interface DBArticle {
   sport_id?: string;
 }
 
+export interface StatLeader {
+  playerName: string;
+  statValue: number;
+  statLabel: string;
+  gamesPlayed: number;
+}
+
+export interface StatLeadersData {
+  totalRushYards: number;
+  totalPassYards: number;
+  totalRecYards: number;
+  totalPoints: number;
+  gamesWithStats: number;
+  rushLeader: StatLeader | null;
+  passLeader: StatLeader | null;
+  recLeader: StatLeader | null;
+  scoringLeader: StatLeader | null;
+}
+
 export interface TeamPageClientProps {
   team: TeamDetail;
   school: School;
@@ -128,6 +147,7 @@ export interface TeamPageClientProps {
   games: DBGame[];
   roster: DBRosterEntry[];
   articles: DBArticle[];
+  statLeaders?: StatLeadersData | null;
 }
 
 export type TabType = "overview" | "stats" | "schedule" | "roster" | "news";

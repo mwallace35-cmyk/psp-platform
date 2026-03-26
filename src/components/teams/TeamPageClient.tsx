@@ -18,6 +18,7 @@ import type { TeamPageClientProps, TabType, DBGame } from "./team-utils";
 import {
   getErasWithSeasons,
   buildChampionshipMap,
+  formatChampionshipLabel,
   formatGameDate,
   gamesToSchedule,
   rosterToDisplay,
@@ -37,6 +38,7 @@ export default function TeamPageClient({
   games,
   roster,
   articles,
+  statLeaders,
 }: TeamPageClientProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
@@ -48,6 +50,17 @@ export default function TeamPageClient({
 
   // Championship lookup by season_id
   const champMap = useMemo(() => buildChampionshipMap(championships || []), [championships]);
+
+  // Current-season championship labels for the header ribbon
+  const CURRENT_SEASON = "2025-26";
+  const currentSeasonChampionships = useMemo(() => {
+    return (championships || [])
+      .filter((c) => (c.seasons as any)?.label === CURRENT_SEASON)
+      .map((c) => ({
+        season: CURRENT_SEASON,
+        label: formatChampionshipLabel(c),
+      }));
+  }, [championships]);
 
   const totalGames = team.currentRecord.wins + team.currentRecord.losses + team.currentRecord.ties;
   const winPct = totalGames > 0 ? ((team.currentRecord.wins / totalGames) * 100).toFixed(1) : "0.0";
@@ -82,7 +95,13 @@ export default function TeamPageClient({
   return (
     <>
       {/* Team Header Component */}
-      <TeamHeader team={team} school={school} sport={sport} sportMeta={sportMeta} />
+      <TeamHeader
+        team={team}
+        school={school}
+        sport={sport}
+        sportMeta={sportMeta}
+        currentSeasonChampionships={currentSeasonChampionships}
+      />
 
       {/* Right Now Section */}
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -166,7 +185,7 @@ export default function TeamPageClient({
             )}
 
             {/* Stats Tab */}
-            {activeTab === "stats" && <TeamStats team={team} />}
+            {activeTab === "stats" && <TeamStats team={team} statLeaders={statLeaders} />}
 
             {/* Schedule Tab */}
             {activeTab === "schedule" && (
@@ -202,22 +221,36 @@ export default function TeamPageClient({
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10, marginBottom: 20 }}>
                 {alumni && alumni.length > 0 ? (
-                  alumni.map((alum, i) => (
-                    <div key={i} style={{ background: "var(--psp-white)", border: "1px solid var(--g100)", borderRadius: 6, padding: "12px 14px", borderTop: `3px solid var(--psp-gold)` }}>
-                      <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>{alum.person_name || `Alumni ${i + 1}`}</div>
-                      <div style={{ fontSize: 11, color: "var(--g400)", marginTop: 2 }}>
-                        {alum.current_org || alum.destination_school || "TBA"} {alum.pro_league ? `(${alum.pro_league})` : alum.current_level ? `\u2014 ${alum.current_level}` : ""}
-                      </div>
-                      {alum.graduation_year && (
-                        <div style={{ fontSize: 10, color: "var(--psp-gold)", fontWeight: 600, marginTop: 4 }}>
-                          Class of {alum.graduation_year}
+                  alumni.map((alum: any, i: number) => {
+                    const gradYear = alum.graduation_year
+                      || (Array.isArray(alum.players) ? alum.players[0]?.graduation_year : alum.players?.graduation_year);
+                    const orgName = alum.current_org || alum.college || alum.destination_school || "TBA";
+                    return (
+                      <div
+                        key={alum.id || i}
+                        className="bg-white rounded-md border border-gray-200"
+                        style={{ padding: "12px 14px", borderTop: "3px solid var(--psp-gold)" }}
+                      >
+                        <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>
+                          {alum.person_name || `Alumni ${i + 1}`}
                         </div>
-                      )}
-                    </div>
-                  ))
+                        <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>
+                          {orgName} {alum.pro_league ? `(${alum.pro_league})` : alum.current_level ? `\u2014 ${alum.current_level}` : ""}
+                        </div>
+                        {gradYear && (
+                          <div style={{ fontSize: 10, color: "var(--psp-gold)", fontWeight: 600, marginTop: 4 }}>
+                            Class of {gradYear}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 ) : (
-                  <div style={{ background: "var(--psp-white)", border: "1px solid var(--g100)", borderRadius: 6, padding: "12px 14px", textAlign: "center", gridColumn: "1 / -1" }}>
-                    <div style={{ fontSize: 11, color: "var(--g400)" }}>No alumni data available</div>
+                  <div
+                    className="bg-white rounded-md border border-gray-200"
+                    style={{ padding: "12px 14px", textAlign: "center", gridColumn: "1 / -1" }}
+                  >
+                    <div style={{ fontSize: 11, color: "#6b7280" }}>No alumni data available for this school</div>
                   </div>
                 )}
               </div>
