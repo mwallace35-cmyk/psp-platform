@@ -83,6 +83,27 @@ const SPORT_COLORS: Record<string, string> = {
 
 const SPORT_ORDER = ['football', 'basketball', 'baseball', 'soccer', 'lacrosse', 'track-field', 'wrestling', 'other'];
 
+/* ─── Source pattern to strip from bio_note ─── */
+const SOURCE_PATTERN = /\s*(?:source:\s*\S+|via\s+\S+)\s*\.?\s*$/i;
+
+/** Strip source attribution and clean trailing junk from a bio string */
+function cleanBio(raw: string | null): string | null {
+  if (!raw) return null;
+  let cleaned = raw.replace(SOURCE_PATTERN, '').trim();
+  // Also strip standalone URLs at the end
+  cleaned = cleaned.replace(/\s*https?:\/\/\S+\s*$/i, '').trim();
+  return cleaned || null;
+}
+
+/** Truncate to maxLen chars at a word boundary, appending ellipsis */
+function truncateBio(text: string, maxLen = 120): string {
+  if (text.length <= maxLen) return text;
+  const truncated = text.slice(0, maxLen);
+  const lastSpace = truncated.lastIndexOf(' ');
+  const cutPoint = lastSpace > maxLen * 0.6 ? lastSpace : maxLen;
+  return truncated.slice(0, cutPoint).replace(/[,;:\-\s]+$/, '') + '...';
+}
+
 /* ─── Hero Carousel ─── */
 function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
   const [idx, setIdx] = useState(0);
@@ -132,7 +153,10 @@ function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
               </Link>
             )}
             {a.draft_info && <p className="text-xs text-gray-400 mt-1">{a.draft_info}</p>}
-            {a.bio_note && <p className="text-sm text-gray-300 mt-3 line-clamp-2 max-w-xl">{a.bio_note}</p>}
+            {(() => {
+              const bio = cleanBio(a.bio_note);
+              return bio ? <p className="text-sm text-gray-300 mt-3 max-w-xl">{truncateBio(bio, 160)}</p> : null;
+            })()}
           </div>
           <div className="hidden md:flex flex-col items-center gap-1 ml-6">
             <div className="w-20 h-20 rounded-full bg-navy-mid border-2 border-gold flex items-center justify-center text-3xl">
@@ -239,7 +263,10 @@ function CoachingCard({ a }: { a: AlumniRecord }) {
       </div>
 
       {/* Bio note */}
-      {a.bio_note && <p className="text-xs text-gray-400 mt-3 leading-relaxed">{a.bio_note}</p>}
+      {(() => {
+        const bio = cleanBio(a.bio_note);
+        return bio ? <p className="text-xs text-gray-400 mt-3 leading-relaxed">{truncateBio(bio, 120)}</p> : null;
+      })()}
 
       {/* HS link */}
       {a.schools && (
@@ -279,14 +306,16 @@ function CoachingCard({ a }: { a: AlumniRecord }) {
             @{a.social_twitter}
           </a>
         )}
-        {hasPlayerProfile && (
+        {hasPlayerProfile ? (
           <Link
             href={`/players/${a.slug}`}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition hover:brightness-110"
             style={{ backgroundColor: '#f0a500', color: '#0a1628' }}
           >
             View Full Profile
           </Link>
+        ) : (
+          <span className="text-[11px] text-gray-400 italic">Profile Coming Soon</span>
         )}
       </div>
 
@@ -353,7 +382,19 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
         )}
       </div>
 
-      {a.bio_note && <p className="text-xs text-gray-300 mt-2 line-clamp-2">{a.bio_note}</p>}
+      {/* Structured subtitle (league/sport context) */}
+      {a.schools?.name && a.sport_id && (
+        <p className="text-[11px] text-gray-400 mt-1.5 font-medium">
+          {a.schools.name}
+          {SPORT_LABELS[a.sport_id] ? ` · ${SPORT_LABELS[a.sport_id]}` : ''}
+        </p>
+      )}
+
+      {/* Bio note — cleaned and truncated */}
+      {(() => {
+        const bio = cleanBio(a.bio_note);
+        return bio ? <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{truncateBio(bio, 120)}</p> : null;
+      })()}
 
       {/* Footer: socials + player profile link */}
       <div className="flex items-center justify-between mt-3">
@@ -369,14 +410,16 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
             </a>
           )}
         </div>
-        {hasPlayerProfile && (
+        {hasPlayerProfile ? (
           <Link
             href={`/players/${a.slug}`}
-            className="text-xs font-bold px-3 py-1 rounded transition"
+            className="text-xs font-bold px-3 py-1 rounded transition hover:brightness-110"
             style={{ backgroundColor: '#f0a500', color: '#0a1628' }}
           >
             View Full Profile
           </Link>
+        ) : (
+          <span className="text-[11px] text-gray-400 italic">Profile Coming Soon</span>
         )}
       </div>
     </div>
@@ -639,8 +682,10 @@ export default function OurGuysClient({ alumni, counts }: Props) {
           <AlphabetBar letters={availableLetters} activeLetter={activeLetter} onSelect={setActiveLetter} />
 
           {/* Results count */}
-          <p className="text-xs text-gray-300 mb-4">
-            Showing {filtered.length} of {currentList.length}
+          <p className="text-xs text-gray-400 mb-4">
+            {hasActiveFilters
+              ? `Showing ${filtered.length} of ${currentList.length}`
+              : `${currentList.length} athletes`}
           </p>
 
           {/* Cards Grid */}

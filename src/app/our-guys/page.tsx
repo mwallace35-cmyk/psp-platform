@@ -39,26 +39,14 @@ const LEAGUE_STYLE: Record<string, { bg: string; text: string }> = {
 export default async function OurGuysPage() {
   const supabase = createStaticClient();
 
-  const [alumniRes, countsRes, pipelineRes, recentRes] = await Promise.all([
-    // Main alumni fetch
+  const [alumniRes, pipelineRes, recentRes] = await Promise.all([
+    // Main alumni fetch — all counts derived from this array
     supabase
       .from('next_level_tracking')
       .select('id, person_name, player_id, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, college, draft_info, bio_url, schools:high_school_id(name, slug), players:player_id(slug)')
       .order('featured', { ascending: false })
       .order('person_name')
       .limit(2500),
-
-    // Count queries
-    Promise.all([
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'pro').eq('status', 'active'),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'pro').neq('status', 'active'),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('current_level', 'college'),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('pro_league', 'NFL'),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('pro_league', 'NBA'),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).eq('pro_league', 'MLB'),
-      supabase.from('next_level_tracking').select('id', { count: 'exact', head: true }).in('current_level', ['coaching', 'coach', 'referee']),
-    ]),
 
     // School pipeline: active pros grouped by school (also used for league breakdown)
     supabase
@@ -85,20 +73,37 @@ export default async function OurGuysPage() {
     };
   }) as AlumniRecord[];
 
-  /* ─── Counts ─── */
-  const [total, activePro, formerPro, college, nfl, nba, mlb, coaching] = countsRes;
+  /* ─── Counts — derived from actual alumni array to avoid discrepancies ─── */
+  let derivedActivePro = 0;
+  let derivedFormerPro = 0;
+  let derivedCollege = 0;
+  let derivedCoaching = 0;
+  let derivedNfl = 0;
+  let derivedNba = 0;
+  let derivedMlb = 0;
+
+  for (const a of alumni) {
+    if (a.current_level === 'pro' && a.status === 'active') derivedActivePro++;
+    if (a.current_level === 'pro' && a.status !== 'active') derivedFormerPro++;
+    if (a.current_level === 'college') derivedCollege++;
+    if (a.current_level === 'coaching' || a.current_level === 'coach' || a.current_level === 'referee' ||
+        (a.current_role && typeof a.current_role === 'string' && a.current_role.toLowerCase().includes('coach'))) derivedCoaching++;
+    if (a.pro_league === 'NFL') derivedNfl++;
+    if (a.pro_league === 'NBA') derivedNba++;
+    if (a.pro_league === 'MLB') derivedMlb++;
+  }
 
   const counts = {
-    total: total.count ?? 0,
-    activePro: activePro.count ?? 0,
-    formerPro: formerPro.count ?? 0,
-    college: college.count ?? 0,
-    nfl: nfl.count ?? 0,
-    nba: nba.count ?? 0,
-    mlb: mlb.count ?? 0,
+    total: alumni.length,
+    activePro: derivedActivePro,
+    formerPro: derivedFormerPro,
+    college: derivedCollege,
+    nfl: derivedNfl,
+    nba: derivedNba,
+    mlb: derivedMlb,
   };
 
-  const coachingCount = coaching.count ?? 0;
+  const coachingCount = derivedCoaching;
 
   /* ─── League breakdown data (from pipeline = active pros only) ─── */
   const leagueCounts = new Map<string, number>();
@@ -161,14 +166,18 @@ export default async function OurGuysPage() {
           <h1 className="psp-h1-lg text-white mb-2">Our Guys</h1>
           <p className="text-gray-300 text-lg mb-5">Philly HS alumni making it at the next level</p>
 
-          {/* Stat pills */}
+          {/* Stat pills — counts derived from same data the client filters */}
           <div className="flex flex-wrap gap-3">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gold/15 backdrop-blur-sm border border-gold/20">
+              <span className="text-2xl font-bebas text-gold">{counts.total.toLocaleString()}</span>
+              <span className="text-sm text-gray-200 font-medium">Total Tracked</span>
+            </span>
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
               <span className="text-2xl font-bebas text-gold">{counts.activePro}</span>
               <span className="text-sm text-gray-300">Active Pros</span>
             </span>
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
-              <span className="text-2xl font-bebas text-gold">{counts.college}</span>
+              <span className="text-2xl font-bebas text-gold">{counts.college.toLocaleString()}</span>
               <span className="text-sm text-gray-300">College Athletes</span>
             </span>
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
