@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 interface HeroProps {
   playerCount: number;
@@ -10,67 +11,113 @@ interface HeroProps {
 
 export default function HeroMonument({ playerCount, gameCount, schoolCount }: HeroProps) {
   return (
-    <section className="relative" style={{ background: "var(--psp-navy)" }}>
-      {/* Neon gold top line */}
-      <div className="h-0.5 relative">
+    <section className="relative overflow-hidden" style={{ background: "var(--psp-navy)" }}>
+      {/* Gold top accent */}
+      <div className="h-1 relative z-10">
         <div className="h-full bg-gradient-to-r from-transparent via-[var(--psp-gold)] to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--psp-gold)] to-transparent blur-sm opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--psp-gold)] to-transparent blur-sm opacity-60" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-4 md:py-5">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          {/* Left — branding + tagline */}
-          <div className="flex items-center gap-4">
-            <div>
-              <h1 className="font-heading text-white" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", lineHeight: 1 }}>
-                PHILLY<span style={{ color: "var(--psp-gold)" }}>SPORTS</span>PACK
-              </h1>
-              <p className="text-[10px] font-bold tracking-[0.2em] uppercase mt-0.5" style={{ color: "var(--psp-gray-400)" }}>
-                {playerCount.toLocaleString()} players &bull; {gameCount.toLocaleString()} games &bull; {schoolCount.toLocaleString()} schools
-              </p>
-            </div>
+      {/* Banner image with overlay */}
+      <div className="relative" style={{ minHeight: "280px", maxHeight: "420px" }}>
+        <Image
+          src="/images/hero-banner.png"
+          alt="Philadelphia high school sports - basketball court meets football field under Friday night lights"
+          fill
+          priority
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+        {/* Dark gradient overlay for text readability */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(to right, rgba(10,22,40,0.85) 0%, rgba(10,22,40,0.5) 40%, rgba(10,22,40,0.3) 60%, rgba(10,22,40,0.5) 100%)",
+          }}
+        />
+        {/* Bottom fade to navy */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-24"
+          style={{
+            background: "linear-gradient(to top, var(--psp-navy), transparent)",
+          }}
+        />
+
+        {/* Content overlay */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-10 md:py-14 flex flex-col justify-center" style={{ minHeight: "280px" }}>
+          {/* Overline */}
+          <p
+            className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-2"
+            style={{ color: "var(--psp-gold)" }}
+          >
+            The Definitive Database
+          </p>
+
+          {/* Main title */}
+          <h1
+            className="font-heading text-white leading-none"
+            style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
+          >
+            PHILLY<span style={{ color: "var(--psp-gold)" }}>SPORTS</span>PACK
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-gray-300 text-sm md:text-base mt-2 max-w-lg">
+            Every stat, every champion, every player. Decades of Philadelphia high school sports history.
+          </p>
+
+          {/* Stats pills */}
+          <div className="flex flex-wrap gap-3 mt-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white backdrop-blur-sm">
+              <span style={{ color: "var(--psp-gold)" }}>{playerCount.toLocaleString()}</span> Players
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white backdrop-blur-sm">
+              <span style={{ color: "var(--psp-gold)" }}>{gameCount.toLocaleString()}</span> Games
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white backdrop-blur-sm">
+              <span style={{ color: "var(--psp-gold)" }}>{schoolCount.toLocaleString()}</span> Schools
+            </span>
           </div>
 
-          {/* Right — search + CTA */}
-          <div className="flex items-center gap-3">
-            <form action="/search" className="relative hidden sm:block">
-              <input
-                type="text"
-                name="q"
-                placeholder="Search players, schools..."
-                aria-label="Search"
-                className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 pl-9 text-xs text-gray-100 placeholder:text-gray-500 focus:outline-none focus:border-[var(--psp-gold)] transition w-56"
-              />
-              <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </form>
+          {/* CTA buttons */}
+          <div className="flex items-center gap-3 mt-5">
             <Link
               href="/football"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all hover:scale-[1.02] hover:shadow-lg"
               style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
             >
               Football
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
             <Link
               href="/basketball"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold border transition-all hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold border transition-all hover:scale-[1.02]"
               style={{ borderColor: "var(--psp-gold)", color: "var(--psp-gold)" }}
             >
               Basketball
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
+            </Link>
+            <Link
+              href="/search"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-300 transition-all hover:text-white"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Search
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Bottom amber line */}
-      <div className="h-px bg-gradient-to-r from-transparent via-[rgba(240,165,0,0.2)] to-transparent" />
+      {/* Bottom gold accent */}
+      <div className="h-0.5 relative z-10">
+        <div className="h-full bg-gradient-to-r from-transparent via-[var(--psp-gold)] to-transparent opacity-40" />
+      </div>
     </section>
   );
 }
