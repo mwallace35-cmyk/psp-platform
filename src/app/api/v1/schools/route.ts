@@ -82,7 +82,9 @@ async function getSchoolsHandler(
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const perPage = Math.min(250, Math.max(1, parseInt(searchParams.get("per_page") || "50")));
     const search = searchParams.get("search");
-    const orderBy = searchParams.get("order_by") || "name";
+    const ALLOWED_ORDER_BY = ["name", "championships", "enrollment"];
+    const rawOrderBy = searchParams.get("order_by") || "name";
+    const orderBy = ALLOWED_ORDER_BY.includes(rawOrderBy.toLowerCase()) ? rawOrderBy.toLowerCase() : "name";
 
     // Validate sport if provided
     if (sport && !VALID_SPORTS.includes(sport as typeof VALID_SPORTS[number])) {

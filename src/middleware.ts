@@ -175,8 +175,8 @@ export async function middleware(request: NextRequest) {
       httpOnly: true,
       maxAge: 60 * 60 * 24 * 30,
       path: "/",
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax' as const,
+      secure: true,
+      sameSite: 'strict' as const,
     });
     // Pass request ID through
     response.headers.set("x-request-id", requestId);
@@ -186,6 +186,7 @@ export async function middleware(request: NextRequest) {
   // Coming-soon gate DISABLED — site is now public (March 2026)
   // All visitors can access all routes. Preview cookie and IP allowlist
   // kept for potential future use but no longer gate access.
+
 
   // Public API rate limiting — apply BEFORE admin auth check
   // These limits are per IP + endpoint, sliding window

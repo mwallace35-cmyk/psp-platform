@@ -1,4 +1,5 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/database.types";
 
 /**
  * Creates a Supabase client for public, read-only data fetching.
@@ -25,7 +26,7 @@ export function createStaticClient() {
     );
   }
 
-  return createSupabaseClient(url || "https://placeholder.supabase.co", key || "placeholder", {
+  return createSupabaseClient<Database>(url || "https://placeholder.supabase.co", key || "placeholder", {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
