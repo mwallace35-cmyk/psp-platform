@@ -306,23 +306,85 @@ export default function TeamPageClient({
             />
 
             {/* Program History Timeline */}
-            <div style={{ marginTop: 20 }}>
-              <h2 className="psp-h3" style={{ marginBottom: 16, color: "var(--psp-navy)" }}>Program History</h2>
-              <div style={{ position: "relative", paddingLeft: 24, borderLeft: `2px solid var(--g200)`, marginBottom: 20 }}>
-                {(team.recentChampionships || []).map((year: string, i: number) => (
-                  <div key={i} style={{ marginBottom: 16, position: "relative" }}>
-                    <div style={{ position: "absolute", left: -31, top: 4, width: 16, height: 16, borderRadius: "50%", background: "var(--psp-gold)", border: "3px solid var(--psp-white)" }} />
-                    <div style={{ fontWeight: 700, fontSize: 14, color: "var(--psp-navy)" }}>{year} Championship</div>
-                    <div style={{ fontSize: 11, color: "var(--g400)" }}>League champions</div>
-                  </div>
-                ))}
-                <div style={{ position: "relative", marginBottom: 0 }}>
-                  <div style={{ position: "absolute", left: -31, top: 4, width: 16, height: 16, borderRadius: "50%", background: "var(--g300)", border: "3px solid var(--psp-white)" }} />
-                  <div style={{ fontWeight: 700, fontSize: 14, color: "var(--psp-navy)" }}>Founded {team.founded_year}</div>
-                  <div style={{ fontSize: 11, color: "var(--g400)" }}>{team.league}</div>
+            {championships && championships.length > 0 && (
+              <div className="rounded-lg overflow-hidden" style={{ background: "var(--psp-navy)" }}>
+                <div className="px-4 py-2.5 flex items-center justify-between" style={{ borderBottom: "2px solid var(--psp-gold)" }}>
+                  <h2 className="text-white font-bold text-sm uppercase tracking-wider font-heading" style={{ fontSize: "1.1rem" }}>
+                    Program History
+                  </h2>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">
+                    {championships.length} Title{championships.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+                <div className="relative pl-8 pr-4 py-4" style={{ borderLeft: "none" }}>
+                  {/* Timeline line */}
+                  <div className="absolute left-6 top-4 bottom-4 w-px" style={{ background: "rgba(240,165,0,0.3)" }} />
+
+                  {/* Championship entries — sorted by season year descending */}
+                  {[...championships]
+                    .sort((a, b) => (b.seasons?.year_start || 0) - (a.seasons?.year_start || 0))
+                    .map((c, i) => {
+                      const label = formatChampionshipLabel(c);
+                      const seasonLabel = c.seasons?.label || "";
+                      const isState = label.includes("State") || label.includes("PIAA");
+                      return (
+                        <div key={c.id || i} className="relative mb-5 last:mb-0">
+                          {/* Timeline dot */}
+                          <div
+                            className="absolute -left-[11px] top-1 w-4 h-4 rounded-full border-2"
+                            style={{
+                              background: isState ? "var(--psp-gold)" : "var(--psp-navy)",
+                              borderColor: isState ? "var(--psp-gold)" : "rgba(240,165,0,0.5)",
+                              boxShadow: isState ? "0 0 8px rgba(240,165,0,0.4)" : "none",
+                            }}
+                          />
+                          {/* Content */}
+                          <div className="ml-4">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-white text-sm font-heading" style={{ fontSize: "1rem" }}>
+                                {seasonLabel}
+                              </span>
+                              <span
+                                className="text-[10px] font-bold px-2 py-0.5 rounded"
+                                style={{
+                                  background: isState ? "rgba(240,165,0,0.2)" : "rgba(255,255,255,0.08)",
+                                  color: isState ? "var(--psp-gold)" : "var(--psp-gray-400)",
+                                }}
+                              >
+                                {label.replace(" Champion", "")}
+                              </span>
+                            </div>
+                            {c.score && (
+                              <div className="text-xs text-gray-500 mt-0.5">
+                                Score: {c.score}{c.opponent?.name ? ` vs ${c.opponent.name}` : ""}
+                              </div>
+                            )}
+                            {c.notes && !c.notes.includes("Champion") && (
+                              <div className="text-xs text-gray-600 mt-0.5">{c.notes}</div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                  {/* Founded entry */}
+                  {team.founded_year > 0 && (
+                    <div className="relative mt-6">
+                      <div
+                        className="absolute -left-[11px] top-1 w-4 h-4 rounded-full border-2"
+                        style={{ background: "var(--psp-navy)", borderColor: "rgba(255,255,255,0.15)" }}
+                      />
+                      <div className="ml-4">
+                        <span className="font-bold text-gray-400 text-sm font-heading" style={{ fontSize: "1rem" }}>
+                          Est. {team.founded_year}
+                        </span>
+                        <div className="text-xs text-gray-600">{team.league}</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Sidebar */}
