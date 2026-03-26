@@ -125,7 +125,21 @@ export const PercentileRadar = ({ slug, sport }: PercentileRadarProps) => {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {percentileEntries.map(([key, percentile]) => {
-          const labelText = key
+          // Use friendly labels for known stat keys to avoid issues with
+          // consecutive capitals (e.g. rushTDs -> "Rush T Ds")
+          const STAT_LABELS: Record<string, string> = {
+            rushYards: 'Rush Yards',
+            rushTDs: 'Rush TDs',
+            passYards: 'Pass Yards',
+            passTDs: 'Pass TDs',
+            recYards: 'Rec Yards',
+            recTDs: 'Rec TDs',
+            careerPoints: 'Career Points',
+            careerRebounds: 'Career Rebounds',
+            careerAssists: 'Career Assists',
+            bestPpg: 'Best PPG',
+          };
+          const labelText = STAT_LABELS[key] ?? key
             .replace(/([A-Z])/g, ' $1')
             .replace(/_/g, ' ')
             .replace(/^./, (str) => str.toUpperCase())

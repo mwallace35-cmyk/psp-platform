@@ -29,99 +29,47 @@ interface SpotPlaceholderProps {
 }
 
 export default function AdPlaceholder({ size, className = '', id, style }: SpotPlaceholderProps) {
-  const config = SPOT_SIZES[size];
-  const isFullWidth = config.width === 0;
-
-  return (
-    <div
-      id={id}
-      role="complementary"
-      aria-label={`Advertisement placeholder: ${config.label}`}
-      className={`psp-promo-spot ${className}`}
-      style={{
-        width: isFullWidth ? '100%' : `${config.width}px`,
-        maxWidth: '100%',
-        height: `${config.height}px`,
-        background: '#f5f5f5',
-        border: '1px solid #e5e5e5',
-        borderRadius: '4px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: '0 auto 12px',
-        position: 'relative',
-        overflow: 'hidden',
-        ...style,
-      }}
-    />
-
-  );
+  // Hide ad placeholders until real sponsors are integrated.
+  // Returning null prevents empty gray boxes from cluttering the UI.
+  return null;
 }
 
 /**
  * Sidebar stack — standard combination for right rail.
+ * Hidden until real sponsors are integrated.
  */
 export function SidebarAdStack({ count = 2 }: { count?: 1 | 2 | 3 }) {
-  return (
-    <div className="psp-rail-stack">
-      <AdPlaceholder size="sidebar-rect" id="psp-rail-top" />
-      {count >= 2 && <AdPlaceholder size="sidebar-tall" id="psp-rail-mid" />}
-      {count >= 3 && <AdPlaceholder size="sidebar-rect" id="psp-rail-btm" />}
-    </div>
-  );
+  return null;
 }
 
 /**
- * Leaderboard banner — responsive: 728�90 desktop, 320�50 mobile.
+ * Leaderboard banner — responsive: 728x90 desktop, 320x50 mobile.
+ * Hidden until real sponsors are integrated.
  */
 export function LeaderboardAd({ id = 'psp-banner' }: { id?: string }) {
-  return (
-    <div className="psp-banner-wrap" style={{ margin: '16px 0', textAlign: 'center' }}>
-      <div className="hide-mobile">
-        <AdPlaceholder size="leaderboard" id={`${id}-lg`} />
-      </div>
-      <div className="hide-desktop">
-        <AdPlaceholder size="mobile-banner" id={`${id}-sm`} />
-      </div>
-    </div>
-  );
+  return null;
 }
 
 /**
  * In-content spot — full-width between content sections.
+ * Hidden until real sponsors are integrated.
  */
 export function InContentAd({ id = 'psp-spot-mid' }: { id?: string }) {
-  return (
-    <div style={{ margin: '20px 0', padding: '0' }}>
-      <AdPlaceholder size="in-content" id={id} />
-    </div>
-  );
+  return null;
 }
 
 /**
  * In-feed spot — shorter, sits between cards.
+ * Hidden until real sponsors are integrated.
  */
 export function InFeedAd({ id = 'psp-spot-feed' }: { id?: string }) {
-  return (
-    <div style={{ margin: '12px 0', padding: '0' }}>
-      <AdPlaceholder size="in-feed" id={id} />
-    </div>
-  );
+  return null;
 }
 
 /**
- * Billboard — large format. 970�250 desktop, 320�250 mobile.
+ * Billboard — large format. 970x250 desktop, 320x250 mobile.
+ * Hidden until real sponsors are integrated.
  */
 export function BillboardAd({ id = 'psp-hero-spot' }: { id?: string }) {
-  return (
-    <div className="psp-hero-wrap" style={{ margin: '20px 0', textAlign: 'center' }}>
-      <div className="hide-mobile">
-        <AdPlaceholder size="billboard" id={`${id}-lg`} />
-      </div>
-      <div className="hide-desktop">
-        <AdPlaceholder size="mobile-rect" id={`${id}-sm`} />
-      </div>
-    </div>
-  );
+  return null;
 }

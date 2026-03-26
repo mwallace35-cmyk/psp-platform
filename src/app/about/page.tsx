@@ -41,7 +41,7 @@ async function getOverviewStats() {
     };
   } catch (error) {
     captureError(error, { function: "getOverviewStats", context: "data_fetching" });
-    return { schools: 1237, players: 21502, championships: 1665, years: 25 };
+    return { schools: 756, players: 57000, championships: 1727, years: 25 };
   }
 }
 
@@ -228,7 +228,7 @@ interface HotTake {
 // ============ MAIN PAGE COMPONENT ============
 
 export default async function HomePage() {
-  let stats = { schools: 1237, players: 21502, championships: 1665, years: 25 };
+  let stats = { schools: 756, players: 57000, championships: 1727, years: 25 };
   let sports: Array<{ id: string; name: string; slug: string; playerCount: number }> = [];
   let articles: Article[] = [];
   let featuredAlumni: FeaturedAlumni[] = [];

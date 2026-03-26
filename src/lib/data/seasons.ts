@@ -129,7 +129,17 @@ export const getSeasonPhaseForSport = cache(
 
             let phase: SeasonPhase;
             if (scoredGames > 0) {
-              phase = "in-season";
+              // Check if the last scored game was recent (within 45 days).
+              // If not, the season has ended even though there are scored games
+              // in the current season record (e.g. football ends in December).
+              const staleDays = 45;
+              const now = new Date();
+              const lastGame = lastGameDate ? new Date(lastGameDate) : null;
+              const daysSinceLastGame = lastGame
+                ? Math.floor((now.getTime() - lastGame.getTime()) / (1000 * 60 * 60 * 24))
+                : Infinity;
+
+              phase = daysSinceLastGame <= staleDays ? "in-season" : "offseason";
             } else if (totalGames > 0) {
               phase = "preseason";
             } else {

@@ -41,7 +41,7 @@ export default function CommentForm({ articleId, parentCommentId, onCommentAdded
       const { error: submitError } = await supabase.from('comments').insert({
         article_id: articleId,
         user_id: user.id,
-        parent_comment_id: parentCommentId || null,
+        parent_id: parentCommentId || null,
         body: body.trim(),
         status: 'pending', // Requires moderation
       });

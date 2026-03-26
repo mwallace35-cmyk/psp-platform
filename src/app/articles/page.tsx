@@ -203,19 +203,48 @@ export default async function ArticlesPage({
                   </Link>
                 )}
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Link
-                    key={page}
-                    href={buildUrl(page, selectedSport)}
-                    className={`w-10 h-10 flex items-center justify-center rounded-md text-sm font-medium transition ${
-                      page === currentPage
-                        ? 'bg-gold text-navy font-bold'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {page}
-                  </Link>
-                ))}
+                {(() => {
+                  // Build truncated page list: 1, 2, ..., current-1, current, current+1, ..., last-1, last
+                  const pages: (number | 'ellipsis-start' | 'ellipsis-end')[] = [];
+                  const delta = 1; // pages to show around current page
+
+                  for (let i = 1; i <= totalPages; i++) {
+                    if (
+                      i === 1 ||
+                      i === totalPages ||
+                      (i >= currentPage - delta && i <= currentPage + delta)
+                    ) {
+                      pages.push(i);
+                    } else if (i === 2 && currentPage - delta > 2) {
+                      pages.push('ellipsis-start');
+                    } else if (i === totalPages - 1 && currentPage + delta < totalPages - 1) {
+                      pages.push('ellipsis-end');
+                    }
+                  }
+
+                  return pages.map((page) =>
+                    typeof page === 'string' ? (
+                      <span
+                        key={page}
+                        className="w-10 h-10 flex items-center justify-center text-sm text-gray-400"
+                      >
+                        ...
+                      </span>
+                    ) : (
+                      <Link
+                        key={page}
+                        href={buildUrl(page, selectedSport)}
+                        className={`w-10 h-10 flex items-center justify-center rounded-md text-sm font-medium transition ${
+                          page === currentPage
+                            ? 'bg-gold text-navy font-bold'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {page}
+                      </Link>
+                    )
+                  );
+                })()}
 
                 {currentPage < totalPages && (
                   <Link

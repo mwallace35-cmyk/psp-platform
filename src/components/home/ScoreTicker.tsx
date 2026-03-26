@@ -48,7 +48,21 @@ export default function ScoreTicker() {
 
   const fetchScores = async () => {
     try {
-      const r = await fetch('/api/v1/live/scores', { cache: 'no-store' });
+      // Only fetch if an API key is available (live scores require premium auth).
+      // Without a key the endpoint returns 401 on every page load.
+      const apiKey = typeof window !== 'undefined'
+        ? (document.cookie.match(/psp_api_key=([^;]+)/)?.[1] ?? localStorage.getItem('psp_api_key'))
+        : null;
+
+      if (!apiKey) {
+        setLoading(false);
+        return;
+      }
+
+      const r = await fetch('/api/v1/live/scores', {
+        cache: 'no-store',
+        headers: { 'x-api-key': apiKey },
+      });
       if (!r.ok) return;
       const json = await r.json();
       const data: LiveGame[] = Array.isArray(json) ? json : (json.data ?? []);

@@ -57,10 +57,10 @@ export default function SupportPage() {
           <h1 className="psp-h1-lg text-gold mb-6">
             HELP PRESERVE HISTORY
           </h1>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-white mb-8 max-w-2xl mx-auto">
             PhillySportsPack is a passion project dedicated to preserving and celebrating 25 years of Philadelphia high school sports data.
           </p>
-          <p className="text-white/80 max-w-2xl mx-auto">
+          <p className="text-white max-w-2xl mx-auto">
             Founded by Ted Silary and built on the collective memory of thousands of coaches, athletes, and fans, PSP is a gift to the Philly sports community. Your support helps us keep this digital archive alive and continuously growing.
           </p>
         </div>

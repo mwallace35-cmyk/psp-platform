@@ -44,12 +44,11 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
   async function fetchComments() {
     setLoading(true);
     try {
+      // Query comments without joining user_profiles (no FK exists).
+      // Column is parent_id in the DB schema, not parent_comment_id.
       const { data, error } = await supabase
         .from('comments')
-        .select(`
-          id, body, parent_comment_id, user_id, status, created_at,
-          user_profiles:user_id(display_name, avatar_url, school_affiliation)
-        `)
+        .select('id, body, parent_id, user_id, status, created_at')
         .eq('article_id', articleId)
         .eq('status', 'approved')
         .order('created_at', { ascending: true });
@@ -63,7 +62,7 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
       for (const c of (data || [])) {
         const comment: Comment = {
           ...c,
-          user_profile: Array.isArray(c.user_profiles) ? c.user_profiles[0] : c.user_profiles,
+          parent_comment_id: (c as Record<string, unknown>).parent_id as number | null,
           replies: [],
         };
         commentMap.set(c.id, comment);

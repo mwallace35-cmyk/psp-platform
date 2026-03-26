@@ -82,6 +82,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
   const renderMarkdown = (content: string) => {
     const html = content
+      // Unescape escaped quotes (e.g. \" -> ")
+      .replace(/\\"/g, '"')
+      .replace(/\\'/g, "'")
       .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
       .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
       .replace(/^# (.*?)$/gm, '<h1>$1</h1>')
