@@ -728,30 +728,21 @@ export default function TeamPageClient({
 
             {/* Season History -- grouped by era with dropdown selector */}
             {teamSeasons && teamSeasons.length > 0 && (
-              <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
-                {/* Header with era dropdown */}
-                <div
-                  className="bg-[var(--psp-navy)] px-5 py-3 flex items-center justify-between"
-                  style={{ borderLeft: "4px solid var(--psp-gold)" }}
-                >
-                  <h2 className="psp-caption text-white">Season History</h2>
+              <div className="rounded-lg overflow-hidden" style={{ background: "#0a1628" }}>
+                {/* Header bar — ESPN style */}
+                <div className="flex items-center justify-between px-4 py-2.5" style={{ borderBottom: "2px solid var(--psp-gold)" }}>
+                  <h2 className="text-white font-bold text-sm uppercase tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem" }}>
+                    Season History
+                  </h2>
                   {availableEras.length > 1 && (
                     <select
                       value={selectedEra}
                       onChange={(e) => setSelectedEra(e.target.value)}
-                      className="text-xs font-semibold rounded px-3 py-1.5 border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--psp-gold)]"
-                      style={{
-                        background: "rgba(255,255,255,0.12)",
-                        color: "#fff",
-                        fontFamily: "var(--font-dm-sans), sans-serif",
-                      }}
+                      className="text-xs font-semibold rounded px-2 py-1 border-0 cursor-pointer focus:outline-none"
+                      style={{ background: "rgba(255,255,255,0.1)", color: "var(--psp-gold)", fontFamily: "var(--font-dm-sans), sans-serif" }}
                     >
                       {availableEras.map((era) => (
-                        <option
-                          key={era.key}
-                          value={era.key}
-                          style={{ color: "#0a1628", background: "#fff" }}
-                        >
+                        <option key={era.key} value={era.key} style={{ color: "#0a1628", background: "#fff" }}>
                           {era.label} ({era.range})
                         </option>
                       ))}
@@ -759,101 +750,102 @@ export default function TeamPageClient({
                   )}
                 </div>
 
-                {/* Era label bar */}
-                <div className="px-5 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-                  <span className="psp-micro font-bold uppercase tracking-wider" style={{ color: "var(--psp-navy)" }}>
-                    {currentEra.label}
-                  </span>
-                  <span className="psp-micro text-gray-400">
-                    {currentEra.range}
-                  </span>
+                {/* Column headers */}
+                <div className="grid grid-cols-[1fr_40px_40px_40px_55px_auto] gap-0 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500" style={{ background: "#0f1d32" }}>
+                  <span>Season</span>
+                  <span className="text-center">W</span>
+                  <span className="text-center">L</span>
+                  <span className="text-center">T</span>
+                  <span className="text-right">Win%</span>
+                  <span className="text-right pr-1">Titles</span>
                 </div>
 
-                {/* Season rows filtered by era */}
-                <div className="divide-y divide-gray-100">
+                {/* Season rows */}
+                <div>
                   {teamSeasons
                     .filter((ts) => {
                       const year = ts.seasons?.year_start;
-                      return (
-                        ts.seasons?.label &&
-                        year != null &&
-                        year >= currentEra.minYear &&
-                        year <= currentEra.maxYear
-                      );
+                      return ts.seasons?.label && year != null && year >= currentEra.minYear && year <= currentEra.maxYear;
                     })
                     .sort((a, b) => (b.seasons?.year_start || 0) - (a.seasons?.year_start || 0))
-                    .map((ts) => {
+                    .map((ts, idx) => {
                       const label = ts.seasons!.label;
                       const w = ts.wins ?? 0;
                       const l = ts.losses ?? 0;
                       const t = ts.ties ?? 0;
                       const total = w + l;
-                      const pct = total > 0 ? ((w / total) * 100).toFixed(0) : "\u2014";
+                      const pct = total > 0 ? Math.round((w / total) * 100) : 0;
                       const seasonChamps = champMap.get(ts.season_id) || [];
+                      const isChampYear = seasonChamps.length > 0;
+                      const isEven = idx % 2 === 0;
+
                       return (
                         <Link
                           key={ts.id}
                           href={`/${sport}/teams/${team.slug}/${label}`}
-                          className="block px-5 py-3 hover:bg-gray-50 transition-colors group"
+                          className="block transition-colors hover:brightness-125"
+                          style={{
+                            background: isChampYear
+                              ? "rgba(240,165,0,0.08)"
+                              : isEven ? "#0a1628" : "#0d1a2e",
+                            borderLeft: isChampYear ? "3px solid var(--psp-gold)" : "3px solid transparent",
+                          }}
                         >
-                          <div className="flex items-center justify-between">
-                            {/* Left: season year */}
-                            <span
-                              style={{ color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.03em" }}
-                            >
+                          <div className="grid grid-cols-[1fr_40px_40px_40px_55px_auto] gap-0 items-center px-4 py-2.5">
+                            {/* Season label */}
+                            <span className="font-bold text-white text-sm" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1rem", letterSpacing: "0.03em" }}>
                               {label}
                             </span>
-                            {/* Right: record + win% + arrow */}
-                            <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-                              <span
-                                className="font-bold text-sm tabular-nums"
-                                style={{ color: "var(--psp-navy)" }}
-                              >
-                                {w}-{l}{t > 0 ? `-${t}` : ""}
+                            {/* W */}
+                            <span className="text-center text-sm font-semibold tabular-nums" style={{ color: w > l ? "#22c55e" : "#94a3b8" }}>
+                              {w}
+                            </span>
+                            {/* L */}
+                            <span className="text-center text-sm font-semibold tabular-nums" style={{ color: l > w ? "#ef4444" : "#94a3b8" }}>
+                              {l}
+                            </span>
+                            {/* T */}
+                            <span className="text-center text-sm tabular-nums text-gray-600">
+                              {t || "\u2014"}
+                            </span>
+                            {/* Win% bar */}
+                            <div className="flex items-center justify-end gap-1.5">
+                              <div className="w-8 h-1.5 rounded-full overflow-hidden" style={{ background: "#1e293b" }}>
+                                <div
+                                  className="h-full rounded-full"
+                                  style={{
+                                    width: `${pct}%`,
+                                    background: pct >= 70 ? "var(--psp-gold)" : pct >= 50 ? "#22c55e" : "#ef4444",
+                                  }}
+                                />
+                              </div>
+                              <span className="text-xs tabular-nums font-medium w-7 text-right" style={{ color: pct >= 70 ? "var(--psp-gold)" : pct >= 50 ? "#22c55e" : "#94a3b8" }}>
+                                {pct}
                               </span>
-                              <span className="text-xs text-gray-400 w-10 text-right tabular-nums">
-                                {pct}%
-                              </span>
-                              <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">
-                                &rarr;
-                              </span>
+                            </div>
+                            {/* Championship */}
+                            <div className="flex justify-end">
+                              {isChampYear ? (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded text-right truncate max-w-[120px]" style={{ background: "rgba(240,165,0,0.2)", color: "var(--psp-gold)" }}>
+                                  {seasonChamps.map(c => formatChampionshipLabel(c).replace(" Champion", "")).join(", ")}
+                                </span>
+                              ) : (
+                                <span className="text-gray-700 text-xs">{"\u2014"}</span>
+                              )}
                             </div>
                           </div>
-                          {/* Championship badges on their own row */}
-                          {seasonChamps.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-1.5">
-                              {seasonChamps.map((c) => (
-                                <span
-                                  key={c.id}
-                                  className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full"
-                                  style={{
-                                    background: "var(--psp-gold)",
-                                    color: "var(--psp-navy)",
-                                  }}
-                                  title={formatChampionshipLabel(c)}
-                                >
-                                  <span role="img" aria-hidden="true">&#127942;</span>
-                                  {formatChampionshipLabel(c)}
-                                </span>
-                              ))}
-                            </div>
-                          )}
                         </Link>
                       );
                     })}
                 </div>
 
                 {/* Footer */}
-                <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-                  <Link
-                    href={`/${sport}/schools/${team.slug}`}
-                    className="text-xs font-semibold hover:underline"
-                    style={{ color: "var(--psp-navy)" }}
-                  >
-                    View full program profile &rarr;
+                <div className="flex items-center justify-between px-4 py-2.5" style={{ background: "#0f1d32", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                  <Link href={`/${sport}/schools/${team.slug}`} className="text-xs font-semibold hover:underline" style={{ color: "var(--psp-gold)" }}>
+                    Full Program Profile
                   </Link>
-                  <span className="psp-micro text-gray-400">
-                    {teamSeasons.filter((ts) => ts.seasons?.label).length} seasons
+                  <span className="text-[10px] text-gray-600 uppercase tracking-wider font-bold">
+                    {teamSeasons.filter((ts) => ts.seasons?.label).length} Seasons
                   </span>
                 </div>
               </div>
