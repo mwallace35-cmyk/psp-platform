@@ -142,7 +142,7 @@ export const getSchoolBySlug = cache(async (slug: string) => {
           const supabase = await createClient();
           const { data } = await supabase
             .from("schools")
-            .select("id, slug, name, short_name, city, state, league_id, mascot, closed_year, founded_year, website_url, colors, address, phone, principal, athletic_director, enrollment, piaa_class, school_type, leagues(name, short_name)")
+            .select("id, slug, name, short_name, city, state, league_id, mascot, closed_year, founded_year, website_url, colors, address, phone, principal, athletic_director, enrollment, piaa_class, school_type, logo_url, primary_color, secondary_color, leagues(name, short_name)")
             .eq("slug", slug)
             .is("deleted_at", null)
             .single();
