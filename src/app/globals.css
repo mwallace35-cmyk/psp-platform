@@ -24,6 +24,12 @@
   --psp-success: #22c55e;
   --psp-danger: #ef4444;
 
+  /* Tap Room — warm sports bar tones */
+  --taproom-dark: #1a0e08;
+  --taproom-walnut: #2a1a0f;
+  --taproom-amber: #d4920a;
+  --taproom-glow: rgba(240, 165, 0, 0.12);
+
   /* ESPN-style dark backgrounds (always dark, used in nav/widgets) */
   --espn-dark: #0a1628;
 
