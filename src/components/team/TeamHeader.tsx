@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SchoolLogo } from "@/components/ui";
+import { SchoolLogo, Breadcrumb } from "@/components/ui";
 
 interface TeamHeaderProps {
   team: {
@@ -43,7 +43,7 @@ export default function TeamHeader({
   const record = `${team.currentRecord.wins}-${team.currentRecord.losses}${team.currentRecord.ties > 0 ? `-${team.currentRecord.ties}` : ""}`;
 
   return (
-    <section className="relative overflow-hidden" style={{ background: "#0a1628" }}>
+    <section className="relative overflow-hidden" style={{ background: "var(--psp-navy)" }}>
       {/* Diagonal accent stripes in team colors */}
       <div
         className="absolute inset-0"
@@ -67,17 +67,16 @@ export default function TeamHeader({
 
       <div className="relative max-w-7xl mx-auto px-4 pt-6 pb-10 md:pt-8 md:pb-12">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs text-gray-500 mb-6 font-medium tracking-wide uppercase">
-          <Link href={`/${sport}`} className="hover:text-[var(--psp-gold)] transition-colors">
-            {sportMeta.name}
-          </Link>
-          <span className="text-gray-700">/</span>
-          <Link href={`/${sport}/teams`} className="hover:text-[var(--psp-gold)] transition-colors">
-            Teams
-          </Link>
-          <span className="text-gray-700">/</span>
-          <span className="text-gray-400">{team.name}</span>
-        </div>
+        <Breadcrumb
+          items={[
+            { label: sportMeta.name, href: `/${sport}` },
+            { label: "Teams", href: `/${sport}/teams` },
+            { label: team.name },
+          ]}
+          separator="/"
+          className="text-xs text-gray-500 mb-6 font-medium tracking-wide uppercase"
+          includeSchema={false}
+        />
 
         {/* Main hero content */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
@@ -101,8 +100,8 @@ export default function TeamHeader({
               {/* Championship count badge */}
               {team.championships > 0 && (
                 <div
-                  className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-black border-2 border-[#0a1628]"
-                  style={{ background: "var(--psp-gold)", color: "#0a1628" }}
+                  className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-black border-2 border-[var(--psp-navy)]"
+                  style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
                 >
                   {team.championships}
                 </div>
@@ -111,9 +110,8 @@ export default function TeamHeader({
 
             <div>
               <h1
-                className="text-white leading-[0.9] tracking-tight"
+                className="text-white leading-[0.9] tracking-tight font-heading"
                 style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
                   fontSize: "clamp(2rem, 5vw, 3.5rem)",
                 }}
               >
@@ -150,9 +148,8 @@ export default function TeamHeader({
                 Record
               </div>
               <div
-                className="leading-none"
+                className="leading-none font-heading"
                 style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
                   fontSize: "clamp(2.5rem, 6vw, 4rem)",
                   color: "var(--psp-gold)",
                 }}
@@ -167,9 +164,8 @@ export default function TeamHeader({
                 Win %
               </div>
               <div
-                className="leading-none text-white"
+                className="leading-none text-white font-heading"
                 style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
                   fontSize: "clamp(2.5rem, 6vw, 4rem)",
                 }}
               >
@@ -182,11 +178,11 @@ export default function TeamHeader({
         {/* Stat pills row */}
         <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/10">
           <StatPill label="PF" value={String(team.pointsFor)} color="var(--psp-gold)" />
-          <StatPill label="PA" value={String(team.pointsAgainst)} color="#94a3b8" />
+          <StatPill label="PA" value={String(team.pointsAgainst)} color="var(--psp-gray-400)" />
           <StatPill
             label="Diff"
             value={`${pointDiff > 0 ? "+" : ""}${pointDiff}`}
-            color={pointDiff > 0 ? "#22c55e" : "#ef4444"}
+            color={pointDiff > 0 ? "var(--psp-success)" : "var(--psp-danger)"}
           />
           {team.championships > 0 && (
             <StatPill label="Titles" value={String(team.championships)} color="var(--psp-gold)" />
@@ -209,7 +205,7 @@ function StatPill({ label, value, color }: { label: string; value: string; color
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">{label}</span>
-      <span className="text-sm font-bold" style={{ color, fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.1rem" }}>
+      <span className="text-sm font-bold font-heading" style={{ color, fontSize: "1.1rem" }}>
         {value}
       </span>
     </div>
