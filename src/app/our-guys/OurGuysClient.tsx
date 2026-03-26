@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import SchoolLogo from '@/components/ui/SchoolLogo';
+import TrajectoryBadge from '@/components/our-guys/TrajectoryBadge';
+import type { TrajectoryLabel } from '@/components/our-guys/TrajectoryBadge';
 
 export interface AlumniRecord {
   id: string;
@@ -22,6 +24,7 @@ export interface AlumniRecord {
   player_id?: number | null;
   slug?: string | null;
   bio_url?: string | null;
+  trajectory_label?: TrajectoryLabel | null;
   schools?: { name: string; slug: string } | null;
 }
 
@@ -336,14 +339,19 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
             </>
           )}
         </p>
-        {proPill && a.pro_league && (
-          <span
-            className={`inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${isFormer ? 'opacity-70' : ''}`}
-            style={{ backgroundColor: proPill.bg, color: proPill.text }}
-          >
-            {a.pro_league}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+          {proPill && a.pro_league && (
+            <span
+              className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${isFormer ? 'opacity-70' : ''}`}
+              style={{ backgroundColor: proPill.bg, color: proPill.text }}
+            >
+              {a.pro_league}
+            </span>
+          )}
+          {a.trajectory_label && a.trajectory_label !== 'below_projection' && (
+            <TrajectoryBadge label={a.trajectory_label} />
+          )}
+        </div>
         {a.current_role && a.current_role !== 'postgres' && (
           <p className="text-[11px] text-gray-400 mt-1">{a.current_role}</p>
         )}

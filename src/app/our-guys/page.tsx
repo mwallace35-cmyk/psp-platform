@@ -5,6 +5,7 @@ import PulseNav from '@/components/pulse/PulseNav';
 import OurGuysClient, { type AlumniRecord } from './OurGuysClient';
 import OurGuysEditorialTop from '@/components/our-guys/OurGuysEditorialTop';
 import AroundTheWeb from '@/components/our-guys/AroundTheWeb';
+import SchoolPipelineRanking from '@/components/our-guys/SchoolPipelineRanking';
 import type { FeaturedAthlete, DidYouKnowFact } from '@/components/our-guys/OurGuysEditorialTop';
 import type { WeekendRecap } from '@/components/our-guys/ThisWeekendCard';
 
@@ -47,7 +48,7 @@ export default async function OurGuysPage() {
     // Main alumni fetch — all counts derived from this array
     supabase
       .from('next_level_tracking')
-      .select('id, person_name, player_id, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, college, draft_info, bio_url, schools:high_school_id(name, slug), players:player_id(slug)')
+      .select('id, person_name, player_id, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, college, draft_info, bio_url, trajectory_label, schools:high_school_id(name, slug), players:player_id(slug)')
       .order('featured', { ascending: false })
       .order('person_name')
       .limit(2500),
@@ -148,22 +149,6 @@ export default async function OurGuysPage() {
     }
   }
 
-  /* ─── School pipeline ─── */
-  const schoolMap = new Map<string, { name: string; slug: string; count: number; sports: Set<string> }>();
-  for (const entry of (pipelineRes.data ?? []) as Record<string, unknown>[]) {
-    const school = Array.isArray(entry.schools) ? entry.schools[0] : entry.schools;
-    const s = school as { name?: string; slug?: string } | null;
-    if (!s?.name) continue;
-    if (!schoolMap.has(s.name)) schoolMap.set(s.name, { name: s.name, slug: s.slug ?? '', count: 0, sports: new Set() });
-    const rec = schoolMap.get(s.name)!;
-    rec.count++;
-    if (entry.sport_id) rec.sports.add(entry.sport_id as string);
-  }
-  const topSchools = Array.from(schoolMap.values())
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 8)
-    .map(s => ({ ...s, sports: Array.from(s.sports) }));
-
   /* ─── Recently added ─── */
   const recentlyAdded = ((recentRes.data ?? []) as Record<string, unknown>[]).map(r => {
     const school = Array.isArray(r.schools) ? r.schools[0] : r.schools;
@@ -235,60 +220,8 @@ export default async function OurGuysPage() {
       {/* ═══ Server-rendered hub sections ═══ */}
       <div className="max-w-7xl mx-auto px-4">
 
-        {/* ─── School Pipeline Section ─── */}
-        {topSchools.length > 0 && (
-          <section className="py-8">
-            <div className="rounded-2xl bg-gradient-to-br from-navy via-navy-mid to-[#0d1b30] p-6 md:p-8">
-              <h2 className="psp-h2 text-white mb-1">
-                Which Schools Produce the Most Pros?
-              </h2>
-              <p className="text-gray-300 text-sm mb-6">The Philly high schools sending the most athletes to the pros</p>
-
-              <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide">
-                {topSchools.map((school, i) => (
-                  <Link
-                    key={school.slug}
-                    href={`/schools/${school.slug}`}
-                    className={`flex-shrink-0 w-44 md:w-52 rounded-xl p-4 transition hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none ${
-                      i === 0
-                        ? 'bg-gradient-to-br from-gold/20 to-gold/5 border-2 border-gold/40'
-                        : 'bg-white/5 border border-white/10 hover:border-white/20'
-                    }`}
-                  >
-                    {/* Rank badge */}
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-3 ${
-                      i === 0 ? 'bg-gold text-navy' : 'bg-white/10 text-gray-300'
-                    }`}>
-                      #{i + 1}
-                    </div>
-
-                    <h3 className={`font-bold text-sm leading-tight mb-2 line-clamp-2 ${
-                      i === 0 ? 'text-gold' : 'text-white'
-                    }`}>
-                      {school.name}
-                    </h3>
-
-                    <div className="flex items-baseline gap-1 mb-2">
-                      <span className={`text-2xl font-bebas ${i === 0 ? 'text-gold' : 'text-white'}`}>
-                        {school.count}
-                      </span>
-                      <span className="text-xs text-gray-300">active pros</span>
-                    </div>
-
-                    {/* Sport breakdown dots */}
-                    <div className="flex gap-1.5 flex-wrap">
-                      {school.sports.map(sportId => (
-                        <span key={sportId} className="text-sm" title={sportId}>
-                          {SPORT_EMOJI[sportId] || ''}
-                        </span>
-                      ))}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        {/* ─── School Pipeline Rankings (graded table) ─── */}
+        <SchoolPipelineRanking />
 
         {/* ─── Recently Added Section ─── */}
         {recentlyAdded.length > 0 && (
