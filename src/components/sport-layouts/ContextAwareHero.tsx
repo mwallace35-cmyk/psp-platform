@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { getSchoolDisplayName } from '@/lib/utils/schoolDisplayName';
 
 interface School {
@@ -82,65 +83,77 @@ const ContextAwareHero: React.FC<ContextAwareHeroProps> = ({
     return (
       <>
         <style>{pulseKeyframes}</style>
-        <div
-          style={{
-            height: '320px',
-            borderRadius: '6px',
-            background: `linear-gradient(rgba(10,22,40,0.88), rgba(10,22,40,0.92))`,
-            padding: '32px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            position: 'relative',
-            overflow: 'hidden',
-            color: 'white',
-          }}
+        <Link
+          href={`/${sport}/games/${gameToday.id}`}
+          style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
         >
-          {/* Game Day Badge */}
           <div
             style={{
-              position: 'absolute',
-              top: '16px',
-              left: '16px',
-              backgroundColor: sportColor,
+              height: '320px',
+              borderRadius: '6px',
+              background: `linear-gradient(rgba(10,22,40,0.88), rgba(10,22,40,0.92))`,
+              padding: '32px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              position: 'relative',
+              overflow: 'hidden',
               color: 'white',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              letterSpacing: '0.5px',
-              animation: 'heroGameDayPulse 2s infinite',
+              cursor: 'pointer',
+              transition: 'box-shadow 0.2s ease',
             }}
           >
-            GAME DAY
-          </div>
-
-          {/* Matchup Section */}
-          <div style={{ textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '16px', opacity: 0.9 }}>
-              {metaName}
+            {/* Game Day Badge */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '16px',
+                left: '16px',
+                backgroundColor: sportColor,
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                letterSpacing: '0.5px',
+                animation: 'heroGameDayPulse 2s infinite',
+              }}
+            >
+              GAME DAY
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '16px' }}>
-              <div style={{ flex: 1, textAlign: 'right' }}>
-                <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>{awayTeam}</div>
-                {hasScore && <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{gameToday.away_score}</div>}
+            {/* Matchup Section */}
+            <div style={{ textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '16px', opacity: 0.9 }}>
+                {metaName}
               </div>
-              <div style={{ fontSize: '18px', opacity: 0.7 }}>vs</div>
-              <div style={{ flex: 1, textAlign: 'left' }}>
-                <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>{homeTeam}</div>
-                {hasScore && <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{gameToday.home_score}</div>}
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '16px' }}>
+                <div style={{ flex: 1, textAlign: 'right' }}>
+                  <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>{awayTeam}</div>
+                  {hasScore && <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{gameToday.away_score}</div>}
+                </div>
+                <div style={{ fontSize: '18px', opacity: 0.7 }}>vs</div>
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                  <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>{homeTeam}</div>
+                  {hasScore && <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{gameToday.home_score}</div>}
+                </div>
               </div>
+
+              {!hasScore && <div style={{ fontSize: '14px', opacity: 0.8 }}>TODAY</div>}
+              {hasScore && (
+                <div style={{ fontSize: '11px', opacity: 0.6, textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
+                  Tap for box score
+                </div>
+              )}
             </div>
 
-            {!hasScore && <div style={{ fontSize: '14px', opacity: 0.8 }}>TODAY</div>}
+            {/* Footer */}
+            <div style={{ fontSize: '12px', opacity: 0.7, textAlign: 'center' }}>
+              {sport} • Philadelphia
+            </div>
           </div>
-
-          {/* Footer */}
-          <div style={{ fontSize: '12px', opacity: 0.7, textAlign: 'center' }}>
-            {sport} • Philadelphia
-          </div>
-        </div>
+        </Link>
       </>
     );
   }

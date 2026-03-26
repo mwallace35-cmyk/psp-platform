@@ -78,6 +78,10 @@ interface Alumni {
   id: number;
   player_id: number;
   school_id: number;
+  person_name?: string;
+  current_org?: string;
+  current_level?: string;
+  pro_league?: string;
   destination_school?: string;
   destination_level?: string;
   graduation_year?: number;
@@ -221,6 +225,68 @@ function timeAgo(dateStr?: string): string {
   return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
 }
 
+// Era definitions for season history grouping
+interface Era {
+  key: string;
+  label: string;
+  range: string;
+  minYear: number;
+  maxYear: number;
+}
+
+const ERAS: Era[] = [
+  { key: "modern", label: "Modern Era", range: "2016-Present", minYear: 2016, maxYear: 9999 },
+  { key: "classification", label: "Classification Era", range: "2008-2015", minYear: 2008, maxYear: 2015 },
+  { key: "division", label: "Division Era", range: "1999-2007", minYear: 1999, maxYear: 2007 },
+  { key: "historic", label: "Historic Era", range: "Pre-1999", minYear: 0, maxYear: 1998 },
+];
+
+function getEraForYear(year: number): Era {
+  return ERAS.find((e) => year >= e.minYear && year <= e.maxYear) || ERAS[ERAS.length - 1];
+}
+
+function getErasWithSeasons(seasons: TeamSeason[]): Era[] {
+  const eraKeys = new Set<string>();
+  for (const ts of seasons) {
+    const year = ts.seasons?.year_start;
+    if (year != null) {
+      eraKeys.add(getEraForYear(year).key);
+    }
+  }
+  return ERAS.filter((e) => eraKeys.has(e.key));
+}
+
+// Build a lookup: season_id -> Championship[] for badge rendering
+function buildChampionshipMap(championships: Championship[]): Map<number, Championship[]> {
+  const map = new Map<number, Championship[]>();
+  for (const c of championships) {
+    const list = map.get(c.season_id) || [];
+    list.push(c);
+    map.set(c.season_id, list);
+  }
+  return map;
+}
+
+// Format championship badge text from DB data
+function formatChampionshipLabel(c: Championship): string {
+  const leagueName = c.leagues?.name;
+  const level = c.level;
+  if (level === "state" || level === "State") {
+    return leagueName ? `${leagueName} State Champion` : "State Champion";
+  }
+  if (level === "district" || level === "District") {
+    return leagueName ? `${leagueName} District Champion` : "District Champion";
+  }
+  // League / conference championship
+  if (leagueName) {
+    return `${leagueName} Champion`;
+  }
+  if (level) {
+    return `${level.charAt(0).toUpperCase() + level.slice(1)} Champion`;
+  }
+  return "Champion";
+}
+
 type TabType = "overview" | "stats" | "schedule" | "roster" | "news";
 
 export default function TeamPageClient({
@@ -236,6 +302,16 @@ export default function TeamPageClient({
   articles,
 }: TeamPageClientProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+
+  // Era selector for season history
+  const availableEras = getErasWithSeasons(teamSeasons || []);
+  const [selectedEra, setSelectedEra] = useState<string>(
+    availableEras.length > 0 ? availableEras[0].key : "modern"
+  );
+  const currentEra = ERAS.find((e) => e.key === selectedEra) || ERAS[0];
+
+  // Championship lookup by season_id
+  const champMap = buildChampionshipMap(championships || []);
 
   const totalGames = team.currentRecord.wins + team.currentRecord.losses;
   const winPct = totalGames > 0 ? ((team.currentRecord.wins / totalGames) * 100).toFixed(1) : "0.0";
@@ -548,13 +624,15 @@ export default function TeamPageClient({
                       padding: "12px 14px",
                       borderTop: `3px solid var(--psp-gold)`,
                     }}>
-                      <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>Alumni {i + 1}</div>
+                      <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>{alum.person_name || `Alumni ${i + 1}`}</div>
                       <div style={{ fontSize: 11, color: "var(--g400)", marginTop: 2 }}>
-                        {alum.destination_school || "TBA"} &mdash; {alum.destination_level || "TBA"}
+                        {alum.current_org || alum.destination_school || "TBA"} {alum.pro_league ? `(${alum.pro_league})` : alum.current_level ? `\u2014 ${alum.current_level}` : ""}
                       </div>
-                      <div style={{ fontSize: 10, color: "var(--psp-gold)", fontWeight: 600, marginTop: 4 }}>
-                        Class of {alum.graduation_year || "TBA"}
-                      </div>
+                      {alum.graduation_year && (
+                        <div style={{ fontSize: 10, color: "var(--psp-gold)", fontWeight: 600, marginTop: 4 }}>
+                          Class of {alum.graduation_year}
+                        </div>
+                      )}
                     </div>
                   ))
                 ) : (
@@ -620,17 +698,61 @@ export default function TeamPageClient({
               )
             )}
 
-            {/* Season History -- clickable links to each year */}
+            {/* Season History -- grouped by era with dropdown selector */}
             {teamSeasons && teamSeasons.length > 0 && (
               <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
-                <div className="bg-[var(--psp-navy)] px-5 py-3" style={{ borderLeft: `4px solid var(--psp-gold)` }}>
-                  <h2 className="psp-caption text-white">
-                    Season History
-                  </h2>
+                {/* Header with era dropdown */}
+                <div
+                  className="bg-[var(--psp-navy)] px-5 py-3 flex items-center justify-between"
+                  style={{ borderLeft: "4px solid var(--psp-gold)" }}
+                >
+                  <h2 className="psp-caption text-white">Season History</h2>
+                  {availableEras.length > 1 && (
+                    <select
+                      value={selectedEra}
+                      onChange={(e) => setSelectedEra(e.target.value)}
+                      className="text-xs font-semibold rounded px-3 py-1.5 border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--psp-gold)]"
+                      style={{
+                        background: "rgba(255,255,255,0.12)",
+                        color: "#fff",
+                        fontFamily: "var(--font-dm-sans), sans-serif",
+                      }}
+                    >
+                      {availableEras.map((era) => (
+                        <option
+                          key={era.key}
+                          value={era.key}
+                          style={{ color: "#0a1628", background: "#fff" }}
+                        >
+                          {era.label} ({era.range})
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
+
+                {/* Era label bar */}
+                <div className="px-5 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                  <span className="psp-micro font-bold uppercase tracking-wider" style={{ color: "var(--psp-navy)" }}>
+                    {currentEra.label}
+                  </span>
+                  <span className="psp-micro text-gray-400">
+                    {currentEra.range}
+                  </span>
+                </div>
+
+                {/* Season rows filtered by era */}
                 <div className="divide-y divide-gray-100">
                   {teamSeasons
-                    .filter((ts) => ts.seasons?.label)
+                    .filter((ts) => {
+                      const year = ts.seasons?.year_start;
+                      return (
+                        ts.seasons?.label &&
+                        year != null &&
+                        year >= currentEra.minYear &&
+                        year <= currentEra.maxYear
+                      );
+                    })
                     .sort((a, b) => (b.seasons?.year_start || 0) - (a.seasons?.year_start || 0))
                     .map((ts) => {
                       const label = ts.seasons!.label;
@@ -639,35 +761,59 @@ export default function TeamPageClient({
                       const t = ts.ties ?? 0;
                       const total = w + l;
                       const pct = total > 0 ? ((w / total) * 100).toFixed(0) : "\u2014";
-                      const isChampYear = championships.some(
-                        (c) => c.season_id === ts.season_id
-                      );
+                      const seasonChamps = champMap.get(ts.season_id) || [];
                       return (
                         <Link
                           key={ts.id}
                           href={`/${sport}/teams/${team.slug}/${label}`}
                           className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors group"
                         >
-                          <div className="flex items-center gap-3">
-                            {isChampYear && (
-                              <span className="text-base" role="img" aria-label="Championship season">&#127942;</span>
-                            )}
-                            <span className="font-semibold text-sm" style={{ color: "var(--psp-navy)" }}>
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span
+                              className="font-semibold text-sm flex-shrink-0"
+                              style={{ color: "var(--psp-navy)" }}
+                            >
                               {label}
                             </span>
+                            {/* Championship badges */}
+                            {seasonChamps.map((c) => (
+                              <span
+                                key={c.id}
+                                className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+                                style={{
+                                  background: "var(--psp-gold)",
+                                  color: "var(--psp-navy)",
+                                }}
+                                title={formatChampionshipLabel(c)}
+                              >
+                                <span role="img" aria-hidden="true">&#127942;</span>
+                                <span className="hidden sm:inline truncate max-w-[160px]">
+                                  {formatChampionshipLabel(c)}
+                                </span>
+                              </span>
+                            ))}
                           </div>
-                          <div className="flex items-center gap-4">
-                            <span className="psp-small" style={{ color: "var(--psp-navy)" }}>
+                          <div className="flex items-center gap-4 flex-shrink-0">
+                            <span
+                              className="psp-small"
+                              style={{ color: "var(--psp-navy)" }}
+                            >
                               {w}-{l}{t > 0 ? `-${t}` : ""}
                             </span>
-                            <span className="text-xs text-gray-300 w-10 text-right">{pct}%</span>
-                            <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">&rarr;</span>
+                            <span className="text-xs text-gray-300 w-10 text-right">
+                              {pct}%
+                            </span>
+                            <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">
+                              &rarr;
+                            </span>
                           </div>
                         </Link>
                       );
                     })}
                 </div>
-                <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
+
+                {/* Footer */}
+                <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                   <Link
                     href={`/${sport}/schools/${team.slug}`}
                     className="text-xs font-semibold hover:underline"
@@ -675,6 +821,9 @@ export default function TeamPageClient({
                   >
                     View full program profile &rarr;
                   </Link>
+                  <span className="psp-micro text-gray-400">
+                    {teamSeasons.filter((ts) => ts.seasons?.label).length} seasons
+                  </span>
                 </div>
               </div>
             )}

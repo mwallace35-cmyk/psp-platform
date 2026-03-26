@@ -352,17 +352,23 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         />
       </div>
 
-      {/* 2.5 QUICK ACCESS — Navigation cards for key sections */}
+      {/* 2.5 SCORES TICKER — Scrolling score strip right after news */}
+      <HubScoresStrip games={recentGames} sportColor={sportColorHex} sport={sport} />
+
+      {/* Playoff Preview (basketball only) */}
+      {sport === "basketball" && <PlayoffPreview />}
+
+      {/* 3. QUICK ACCESS — Navigation cards for key sections */}
       <div className="bg-[var(--psp-navy)]">
         <QuickNavigation sport={sport} sportColor={sportColorHex} />
       </div>
 
-      {/* 3-4-5. SCORES + RANKINGS + LEADERS — Compact dark theme */}
+      {/* 4. SCORES + RANKINGS + LEADERS — Compact dark theme */}
       <div className="bg-[var(--psp-navy)]">
         <DesignBibleSections sport={sport} compact darkTheme />
       </div>
 
-      {/* 6. STANDINGS — Compact league standings */}
+      {/* 5. STANDINGS — Compact league standings */}
       <div className="bg-[var(--psp-navy)]">
         <SportHubStandings
           standings={standings}
@@ -371,6 +377,27 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
           sportColorHex={sportColorHex}
         />
       </div>
+
+      {/* Compound Leaderboards + Record Watch */}
+      {(compoundCategories.length > 0 || recordWatchData.length > 0) && (
+        <div className="bg-[var(--psp-navy)]">
+          {/* Compound Leaderboards */}
+          {compoundCategories.length > 0 && (
+            <CompoundLeaderboards sport={sport} categories={compoundCategories} />
+          )}
+
+          {/* Record Watch Widget */}
+          {recordWatchData.length > 0 && (
+            <section className="py-6 px-4">
+              <div className="max-w-7xl mx-auto">
+                <div className="max-w-lg">
+                  <RecordWatch sport={sport} data={recordWatchData} />
+                </div>
+              </div>
+            </section>
+          )}
+        </div>
+      )}
 
       {/* City All-Star Game Card (football only) */}
       {sport === "football" && (
@@ -434,12 +461,6 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         </div>
       </div>
 
-      {/* Playoff Preview (basketball only, March 2026) */}
-      {sport === "basketball" && <PlayoffPreview />}
-
-      {/* Score Banner */}
-      <HubScoresStrip games={recentGames} sportColor={sportColorHex} sport={sport} />
-
       {/* Layout Switcher (Client Component) — Editorial/Dashboard toggle */}
       <SportLayoutSwitcher
         sport={sport}
@@ -454,27 +475,6 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         standings={standings}
         trackedAlumni={trackedAlumni}
       />
-
-      {/* Compound Leaderboards + Record Watch */}
-      {(compoundCategories.length > 0 || recordWatchData.length > 0) && (
-        <div className="bg-[var(--psp-navy)]">
-          {/* Compound Leaderboards */}
-          {compoundCategories.length > 0 && (
-            <CompoundLeaderboards sport={sport} categories={compoundCategories} />
-          )}
-
-          {/* Record Watch Widget */}
-          {recordWatchData.length > 0 && (
-            <section className="py-6 px-4">
-              <div className="max-w-7xl mx-auto">
-                <div className="max-w-lg">
-                  <RecordWatch sport={sport} data={recordWatchData} />
-                </div>
-              </div>
-            </section>
-          )}
-        </div>
-      )}
 
       {/* JSON-LD */}
       <script

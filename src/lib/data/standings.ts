@@ -135,14 +135,23 @@ export const getLeagueStandings = cache(
               const school = ts.schools as any;
               const leagueName = school?.leagues?.name || "Other";
               const schoolLeagueId = school?.league_id || 0;
-              const division = (ts as any).division || null;
+              const rawDivision = (ts as any).division || null;
               const season = (ts.seasons as any) || {};
               const seasonLabel = season.label || "Unknown";
+
+              // Basketball PCL is a single league (no Red/Blue divisions)
+              const isBballPCL = sportSlug === "basketball" && schoolLeagueId === 1;
+              const division = isBballPCL ? null : rawDivision;
 
               // Group by division within league if division exists
               const divisionSuffix = division ? `:${division}` : '';
               const key = `${schoolLeagueId}${divisionSuffix}:${seasonLabel}`;
-              const displayName = division ? `${leagueName} — ${division} Division` : leagueName;
+              // For basketball PPL, use "Conference" for named divisions (American, National, etc.)
+              // and "Division" for letter divisions (A, B, C...)
+              const divSuffix = (sportSlug === "basketball" && division && division.length > 1)
+                ? "Conference"
+                : "Division";
+              const displayName = division ? `${leagueName} — ${division} ${divSuffix}` : leagueName;
 
               if (!standingsMap[key]) {
                 standingsMap[key] = {

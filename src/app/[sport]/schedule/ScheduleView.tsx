@@ -501,6 +501,7 @@ export default function ScheduleView({
                           <th scope="col" className="px-4 py-2 text-left hidden sm:table-cell">
                             Time
                           </th>
+                          <th scope="col" className="px-4 py-2 text-center">Result</th>
                           <th scope="col" className="px-4 py-2 text-center">H/A</th>
                         </tr>
                       </thead>
@@ -514,6 +515,11 @@ export default function ScheduleView({
                           const typeInfo = g.game_type
                             ? GAME_TYPE_MAP[g.game_type]
                             : null;
+                          const hasGameScore = g.home_score !== null && g.away_score !== null;
+                          const teamScore = isHome ? g.home_score : g.away_score;
+                          const oppScore = isHome ? g.away_score : g.home_score;
+                          const won = hasGameScore && (teamScore ?? 0) > (oppScore ?? 0);
+                          const lost = hasGameScore && (teamScore ?? 0) < (oppScore ?? 0);
 
                           return (
                             <tr
@@ -551,6 +557,20 @@ export default function ScheduleView({
                               </td>
                               <td className="px-4 py-2 text-gray-400 hidden sm:table-cell whitespace-nowrap">
                                 {formatTime(g.game_time)}
+                              </td>
+                              <td className="px-4 py-2 text-center">
+                                {hasGameScore ? (
+                                  <Link
+                                    href={`/${sport}/games/${g.id}`}
+                                    className={`text-sm font-bold hover:text-blue-600 transition ${
+                                      won ? "text-emerald-600" : lost ? "text-red-500" : "text-navy"
+                                    }`}
+                                  >
+                                    {won ? "W" : lost ? "L" : "T"} {teamScore}&ndash;{oppScore}
+                                  </Link>
+                                ) : (
+                                  <span className="text-xs text-gray-300">&mdash;</span>
+                                )}
                               </td>
                               <td className="px-4 py-2 text-center">
                                 <span
@@ -623,82 +643,77 @@ function GameCard({
   const homeBold =
     highlightTeam && g.home_school?.slug === highlightTeam;
 
-  return (
-    <div className="bg-white rounded-lg border border-gray-200 hover:border-gold/50 transition group">
-      <div className="flex items-center gap-3 px-4 py-3">
-        {/* Date + time */}
-        <div className="w-24 flex-shrink-0 text-center">
-          <p className="text-xs font-medium text-gray-400">{dayStr}</p>
-          {timeStr && (
-            <p className="text-xs text-gray-300">{timeStr}</p>
-          )}
-        </div>
-
-        {/* Color bar */}
-        <div
-          className="w-1 h-10 rounded-full flex-shrink-0"
-          style={{ backgroundColor: homePrimary }}
-        />
-
-        {/* Matchup */}
-        <div className="flex-1 min-w-0">
-          <p className="text-sm text-navy">
-            {g.away_school ? (
-              <Link
-                href={`/${sport}/teams/${g.away_school.slug}/${seasonLabel}`}
-                className={`hover:text-blue-600 transition ${
-                  awayBold ? "font-bold" : "font-medium"
-                }`}
-              >
-                {getSchoolDisplayName(g.away_school)}
-              </Link>
-            ) : (
-              <span className="text-gray-300">TBD</span>
-            )}
-            <span className="text-gray-300 mx-2">@</span>
-            {g.home_school ? (
-              <Link
-                href={`/${sport}/teams/${g.home_school.slug}/${seasonLabel}`}
-                className={`hover:text-blue-600 transition ${
-                  homeBold ? "font-bold" : "font-medium"
-                }`}
-              >
-                {getSchoolDisplayName(g.home_school)}
-              </Link>
-            ) : (
-              <span className="text-gray-300">TBD</span>
-            )}
-          </p>
-          {typeInfo && (
-            <span
-              className={`inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full font-medium ${typeInfo.cls}`}
-            >
-              {typeInfo.label}
-            </span>
-          )}
-        </div>
-
-        {/* Score or Preview link */}
-        {hasScore ? (
-          <Link
-            href={`/${sport}/games/${g.id}`}
-            className="text-right flex-shrink-0 hover:text-blue-600 transition"
-          >
-            <p className="text-sm font-bold text-navy">
-              {g.away_score} – {g.home_score}
-            </p>
-          </Link>
-        ) : (
-          g.home_school?.slug && (
-            <Link
-              href={`/${sport}/teams/${g.home_school.slug}/${seasonLabel}`}
-              className="text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition flex-shrink-0"
-            >
-              Preview →
-            </Link>
-          )
+  const cardContent = (
+    <div className="flex items-center gap-3 px-4 py-3">
+      {/* Date + time */}
+      <div className="w-24 flex-shrink-0 text-center">
+        <p className="text-xs font-medium text-gray-400">{dayStr}</p>
+        {timeStr && (
+          <p className="text-xs text-gray-300">{timeStr}</p>
         )}
       </div>
+
+      {/* Color bar */}
+      <div
+        className="w-1 h-10 rounded-full flex-shrink-0"
+        style={{ backgroundColor: homePrimary }}
+      />
+
+      {/* Matchup */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm text-navy">
+          <span className={awayBold ? "font-bold" : "font-medium"}>
+            {g.away_school ? getSchoolDisplayName(g.away_school) : "TBD"}
+          </span>
+          <span className="text-gray-300 mx-2">@</span>
+          <span className={homeBold ? "font-bold" : "font-medium"}>
+            {g.home_school ? getSchoolDisplayName(g.home_school) : "TBD"}
+          </span>
+        </p>
+        {typeInfo && (
+          <span
+            className={`inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full font-medium ${typeInfo.cls}`}
+          >
+            {typeInfo.label}
+          </span>
+        )}
+      </div>
+
+      {/* Score or Preview hint */}
+      {hasScore ? (
+        <div className="text-right flex-shrink-0">
+          <p className="text-sm font-bold text-navy">
+            {g.away_score} &ndash; {g.home_score}
+          </p>
+        </div>
+      ) : (
+        g.home_school?.slug && (
+          <span className="text-xs text-blue-600 font-medium opacity-0 group-hover:opacity-100 transition flex-shrink-0">
+            Preview &rarr;
+          </span>
+        )
+      )}
+    </div>
+  );
+
+  // Completed games link to the game page; upcoming games link to home team preview
+  const cardHref = hasScore
+    ? `/${sport}/games/${g.id}`
+    : g.home_school?.slug
+      ? `/${sport}/teams/${g.home_school.slug}/${seasonLabel}`
+      : null;
+
+  return cardHref ? (
+    <Link
+      href={cardHref}
+      className="block bg-white rounded-lg border border-gray-200 hover:border-gold/50 transition group"
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
+      {cardContent}
+    </Link>
+  ) : (
+    <div className="bg-white rounded-lg border border-gray-200 hover:border-gold/50 transition group">
+      {cardContent}
     </div>
   );
 }

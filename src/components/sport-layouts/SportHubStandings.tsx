@@ -38,11 +38,23 @@ const LEAGUE_TAB_LABELS: Record<string, string> = {
   "Inter-Ac": "Inter-Ac",
 };
 
-// Canonical order for division sub-headers
-const DIVISION_ORDER: Record<string, string[]> = {
-  "Catholic League": ["Red", "Blue", "Independent"],
-  "Public League": ["A", "B", "C", "D", "E"],
+// Canonical order for division sub-headers — sport-specific
+const DIVISION_ORDER_BY_SPORT: Record<string, Record<string, string[]>> = {
+  football: {
+    "Catholic League": ["Red", "Blue", "Independent"],
+    "Public League": ["A", "B", "C", "D", "E"],
+  },
+  basketball: {
+    // PCL basketball is a single league (no Red/Blue divisions)
+    "Catholic League": [],
+    // PPL basketball uses geographic divisions
+    "Public League": ["American", "National", "Independence", "Liberty", "A", "B", "C", "D", "E"],
+  },
 };
+
+function getDivisionOrder(sport: string): Record<string, string[]> {
+  return DIVISION_ORDER_BY_SPORT[sport] || DIVISION_ORDER_BY_SPORT.football;
+}
 
 const MAX_OVERALL_TEAMS = 15;
 
@@ -61,6 +73,10 @@ export default function SportHubStandings({
   sportColorHex,
 }: SportHubStandingsProps) {
   const [activeTab, setActiveTab] = useState("Overall");
+  const DIVISION_ORDER = getDivisionOrder(sport);
+
+  // For basketball PCL, collapse divisions into single league
+  const isPCLSingleLeague = sport === "basketball";
 
   // Derive tabs and grouped data from standings
   const { tabs, grouped } = useMemo(() => {
@@ -106,7 +122,10 @@ export default function SportHubStandings({
 
       if (!groupMap[tabLabel]) groupMap[tabLabel] = {};
 
-      const divKey = team.division || "";
+      // For basketball PCL, collapse all divisions into one group
+      const divKey = (isPCLSingleLeague && tabLabel === "Catholic League")
+        ? ""
+        : (team.division || "");
       if (!groupMap[tabLabel][divKey]) groupMap[tabLabel][divKey] = [];
       groupMap[tabLabel][divKey].push(team);
     }
@@ -121,7 +140,7 @@ export default function SportHubStandings({
     }
 
     return { tabs: tabList, grouped: groupMap };
-  }, [standings]);
+  }, [standings, isPCLSingleLeague]);
 
   if (!standings || standings.length === 0) return null;
 
@@ -193,7 +212,7 @@ export default function SportHubStandings({
               activeTab === "Catholic League"
                 ? `${divKey.toUpperCase()} DIVISION`
                 : activeTab === "Public League"
-                ? `DIVISION ${divKey.toUpperCase()}`
+                ? (divKey.length === 1 ? `DIVISION ${divKey.toUpperCase()}` : `${divKey.toUpperCase()} CONFERENCE`)
                 : divKey.toUpperCase();
 
             return (

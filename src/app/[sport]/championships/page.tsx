@@ -44,31 +44,33 @@ function getTypeConfig(champType: string | undefined, level: string | undefined)
   const ct = (champType ?? "").trim();
   const lv = (level ?? "").trim();
 
-  // --- PIAA State Championships ---
-  if (ct === "PIAA State" || (lv === "state" && !ct)) {
+  /* ── PIAA State Championships ── */
+
+  // championship_type = "PIAA State", level = class ("6A", "AAA", etc.)
+  if (ct === "PIAA State" && /^[1-6]A$/.test(lv)) {
+    return { label: `PIAA ${lv} State Champion`, bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: classSort(lv) };
+  }
+  if (ct === "PIAA State" && /^A{1,4}$/.test(lv)) {
+    return { label: `PIAA ${lv} State Champion`, bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: classSort(lv) };
+  }
+  // championship_type = "PIAA State", level = "state" (no class)
+  if (ct === "PIAA State") {
     return { label: "PIAA State Champion", bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: 0 };
   }
-  // State with a class (e.g. championship_type = "6A", level = "state")
+  // championship_type = class ("6A"), level = "state"  (football pattern)
   if (lv === "state" && /^[1-6]A$/.test(ct)) {
     return { label: `PIAA ${ct} State Champion`, bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: classSort(ct) };
   }
-  // PIAA State with old letter classes
   if (lv === "state" && /^A{1,4}$/.test(ct)) {
     return { label: `PIAA ${ct} State Champion`, bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: classSort(ct) };
   }
-  // Level with class baked in (e.g. level = "6A")
-  if (/^[1-6]A$/.test(lv) && ct === "PIAA State") {
-    return { label: `PIAA ${lv} State Champion`, bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: classSort(lv) };
-  }
-  if (/^A{1,4}$/.test(lv) && ct === "PIAA State") {
-    return { label: `PIAA ${lv} State Champion`, bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: classSort(lv) };
-  }
-  // Catch-all for PIAA-level entries stored differently
-  if (/^[1-6]A$/.test(lv) || /^A{1,4}$/.test(lv)) {
-    return { label: `PIAA ${lv} State Champion`, bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: classSort(lv) };
+  // championship_type = null, level = "state" (older football records)
+  if (lv === "state" && !ct) {
+    return { label: "PIAA State Champion", bg: "var(--psp-gold)", text: "var(--psp-navy)", tier: 1, order: 0 };
   }
 
-  // --- PCL (Catholic League) ---
+  /* ── PCL (Catholic League) ── */
+
   if (ct === "PCL Red") {
     return { label: "PCL Red Division Champion", bg: "#d4a017", text: "var(--psp-navy)", tier: 2, order: 10 };
   }
@@ -79,39 +81,45 @@ function getTypeConfig(champType: string | undefined, level: string | undefined)
     return { label: "PCL Champion", bg: "#7c3aed", text: "white", tier: 2, order: 12 };
   }
 
-  // --- Public League ---
+  /* ── Public League ── */
+
   if (ct === "Public League" || ct === "public-league" || lv === "public-league") {
     return { label: "Public League Champion", bg: "#16a34a", text: "white", tier: 2, order: 20 };
   }
 
-  // --- Inter-Ac ---
+  /* ── Inter-Ac ── */
+  // Handles both level="inter-ac" (basketball) and level="league" (football)
   if (ct === "Inter-Ac" || ct === "inter-ac" || lv === "inter-ac") {
     return { label: "Inter-Ac Champion", bg: "#0891b2", text: "white", tier: 2, order: 25 };
   }
 
-  // --- City ---
+  /* ── District 12 ── */
+
+  if (ct === "District 12") {
+    const cls = /^[1-6]A$/.test(lv) ? `${lv} ` : lv === "City Title" ? "" : "";
+    return { label: `District 12 ${cls}Champion`, bg: "#3b82f6", text: "white", tier: 3, order: 39 };
+  }
+
+  /* ── City Championships (football: championship_type = class, level = "city") ── */
+
   if (lv === "city" || lv === "City Title" || ct === "city-title") {
-    // City with classification
     if (/^[1-6]A$/.test(ct)) {
       return { label: `City ${ct} Champion`, bg: "#3b82f6", text: "white", tier: 3, order: 30 + classSort(ct) };
     }
-    if (ct === "District 12") {
-      return { label: "District 12 Champion", bg: "#3b82f6", text: "white", tier: 3, order: 39 };
+    if (/^A{1,4}$/.test(ct)) {
+      return { label: `City ${ct} Champion`, bg: "#3b82f6", text: "white", tier: 3, order: 30 + classSort(ct) };
     }
     return { label: "City Champion", bg: "#3b82f6", text: "white", tier: 3, order: 40 };
   }
 
-  // --- District 12 fallback ---
-  if (ct === "District 12") {
-    return { label: "District 12 Champion", bg: "#3b82f6", text: "white", tier: 3, order: 39 };
-  }
+  /* ── Other League (catch-all for "league" level after specific leagues) ── */
 
-  // --- Other League ---
   if (ct === "Other League" || ct === "league" || lv === "league") {
     return { label: "League Champion", bg: "#6b7280", text: "white", tier: 2, order: 30 };
   }
 
-  // Fallback
+  /* ── Fallback ── */
+
   const fallbackLabel = ct || lv || "Champion";
   return { label: `${fallbackLabel} Champion`, bg: "#6b7280", text: "white", tier: 4, order: 99 };
 }
