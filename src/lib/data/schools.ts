@@ -200,7 +200,7 @@ export const getSchoolChampionships = cache(async (schoolId: number, sportId?: s
           const supabase = await createClient();
           let query = supabase
             .from("championships")
-            .select("id, sport_id, school_id, opponent_id, season_id, level, league_id, score, notes, seasons(year_start, year_end, label), leagues(name), opponent:schools!championships_opponent_id_fkey(name)")
+            .select("id, sport_id, school_id, opponent_id, season_id, level, league_id, score, notes, championship_type, seasons(year_start, year_end, label), leagues(name), opponent:schools!championships_opponent_id_fkey(name)")
             .eq("school_id", schoolId);
           if (sportId) query = query.eq("sport_id", sportId);
           const { data } = await query.order("created_at", { ascending: false });

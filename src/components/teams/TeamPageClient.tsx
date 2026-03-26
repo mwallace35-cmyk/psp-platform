@@ -64,6 +64,7 @@ interface Championship {
   school_id: number;
   season_id: number;
   sport_id: string;
+  championship_type?: string;
   level?: string;
   result?: string;
   score?: string;
@@ -269,21 +270,48 @@ function buildChampionshipMap(championships: Championship[]): Map<number, Champi
 
 // Format championship badge text from DB data
 function formatChampionshipLabel(c: Championship): string {
-  const leagueName = c.leagues?.name;
+  const ct = c.championship_type;
   const level = c.level;
-  if (level === "state" || level === "State") {
-    return leagueName ? `${leagueName} State Champion` : "State Champion";
+  const leagueName = c.leagues?.name;
+
+  // State championships: "PIAA 6A State Champion"
+  if (level === "state" || level === "State" || ct === "PIAA State") {
+    const cls = ct && !ct.includes("PIAA") && ct !== "state" ? ct : (level !== "state" && level !== "State" ? level : null);
+    return cls ? `PIAA ${cls} State Champion` : "State Champion";
   }
-  if (level === "district" || level === "District") {
-    return leagueName ? `${leagueName} District Champion` : "District Champion";
+
+  // District championships
+  if (ct === "District 12" || level === "district" || level === "District") {
+    return "District 12 Champion";
   }
-  // League / conference championship
-  if (leagueName) {
-    return `${leagueName} Champion`;
+
+  // PCL Red/Blue division
+  if (ct === "PCL Red") return "PCL Red Division Champion";
+  if (ct === "PCL Blue") return "PCL Blue Division Champion";
+
+  // PCL overall
+  if (ct === "PCL" || ct === "catholic-league") {
+    return "PCL Champion";
   }
-  if (level) {
-    return `${level.charAt(0).toUpperCase() + level.slice(1)} Champion`;
+
+  // Public League
+  if (ct === "Public League" || ct === "public-league") {
+    const cls = level && level !== "league" && level !== "public-league" ? ` ${level}` : "";
+    return `Public League${cls} Champion`;
   }
+
+  // Inter-Ac
+  if (ct === "Inter-Ac") return "Inter-Ac Champion";
+
+  // City championships
+  if (level === "city" || level === "City Title") {
+    return ct ? `City ${ct} Champion` : "City Champion";
+  }
+
+  // Fallback: use league name or championship type
+  if (leagueName) return `${leagueName} Champion`;
+  if (ct) return `${ct} Champion`;
+  if (level) return `${level.charAt(0).toUpperCase() + level.slice(1)} Champion`;
   return "Champion";
 }
 
