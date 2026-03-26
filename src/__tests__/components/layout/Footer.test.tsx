@@ -40,6 +40,6 @@ describe('Footer', () => {
   it('displays credits for data and development', () => {
     render(<Footer />);
     expect(screen.getByText(/Ted Silary/)).toBeInTheDocument();
-    expect(screen.getByText(/Mike Wallace/)).toBeInTheDocument();
+    expect(screen.getByText(/PSP Team/)).toBeInTheDocument();
   });
 });

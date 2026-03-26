@@ -331,8 +331,8 @@ export const getRecentGamesBySport = cache(
               .from("games")
               .select(
                 "id, home_score, away_score, game_date, game_type, playoff_round, " +
-                "home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id), " +
-                "away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id), " +
+                "home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id, logo_url), " +
+                "away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id, logo_url), " +
                 "seasons(label)"
               )
               .eq("sport_id", sportId)

@@ -3,6 +3,7 @@ import { validateSportParam, validateSportParamForMetadata } from '@/lib/validat
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Breadcrumb } from '@/components/ui';
+import SchoolLogo from '@/components/ui/SchoolLogo';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -18,14 +19,14 @@ const SPORT_LABELS: Record<string, string> = {
   wrestling: 'Wrestling',
 };
 
-const SPORT_COLORS: Record<string, string> = {
-  football: '#16a34a',
-  basketball: '#3b82f6',
-  baseball: '#dc2626',
-  soccer: '#059669',
-  lacrosse: '#0891b2',
-  'track-field': '#7c3aed',
-  wrestling: '#ca8a04',
+const LEAGUE_ABBREV: Record<string, string> = {
+  'Philadelphia Catholic League': 'PCL',
+  'Philadelphia Public League': 'PPL',
+  'Inter-Academic League': 'Inter-Ac',
+  'Suburban One League': 'SOL',
+  'Bicentennial Athletic League': 'BAL',
+  'Del Val League': 'DVL',
+  'Independent': 'IND',
 };
 
 type PageParams = { sport: string };
@@ -45,13 +46,12 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
   if (!sport) notFound();
 
   const sportLabel = SPORT_LABELS[sport] || sport;
-  const sportColor = SPORT_COLORS[sport] || '#6b7280';
   const supabase = createStaticClient();
 
-  // Get all schools from the directory view + find which ones have data for this sport
-  // Three sources of sport presence: games, team_seasons, and player_seasons
-  const [dirRes, gamesRes, tsRes] = await Promise.all([
+  // Fetch directory, logos, games, team_seasons, and current-season records in parallel
+  const [dirRes, logosRes, gamesRes, tsRes, currentRecordsRes] = await Promise.all([
     supabase.from('school_directory_mv').select('*').order('name'),
+    supabase.from('schools').select('id, logo_url').not('logo_url', 'is', null),
     supabase
       .from('games')
       .select('home_school_id, away_school_id')
@@ -61,7 +61,29 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
       .from('team_seasons')
       .select('school_id')
       .eq('sport_id', sport),
+    // Get current season records for this sport
+    supabase
+      .from('team_seasons')
+      .select('school_id, wins, losses, ties, seasons!inner(is_current)')
+      .eq('sport_id', sport)
+      .eq('seasons.is_current', true),
   ]);
+
+  // Build logo lookup
+  const logoMap = new Map<number, string>();
+  for (const row of logosRes.data || []) {
+    if (row.logo_url) logoMap.set(row.id, row.logo_url);
+  }
+
+  // Build current record lookup
+  const recordMap = new Map<number, string>();
+  for (const row of (currentRecordsRes.data || []) as any[]) {
+    const w = row.wins ?? 0;
+    const l = row.losses ?? 0;
+    const t = row.ties ?? 0;
+    const record = t > 0 ? `${w}-${l}-${t}` : `${w}-${l}`;
+    recordMap.set(row.school_id, record);
+  }
 
   // Build set of all school IDs that have this sport
   const sportSchoolIds = new Set<number>();
@@ -79,27 +101,25 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
     slug: string;
     city: string;
     league: string | null;
-    color: string | null;
+    leagueAbbrev: string | null;
+    logoUrl: string | null;
     closed_year: number | null;
-    seasonCount: number;
+    record: string | null;
   }>();
 
   for (const row of dirRes.data || []) {
     if (!sportSchoolIds.has(row.id)) continue;
-    // Only show schools that belong to a league (skip opponent stubs)
     if (!row.league_name) continue;
-    const colors = row.colors && typeof row.colors === 'object' && 'primary' in row.colors
-      ? (row.colors as { primary?: string }).primary || null
-      : null;
     schoolMap.set(row.id, {
       id: row.id,
       name: row.name,
       slug: row.slug,
       city: row.city || '',
       league: row.league_name || null,
-      color: colors,
+      leagueAbbrev: LEAGUE_ABBREV[row.league_name] || null,
+      logoUrl: logoMap.get(row.id) || null,
       closed_year: row.closed_year || null,
-      seasonCount: row.team_season_count || 1,
+      record: recordMap.get(row.id) || null,
     });
   }
 
@@ -136,89 +156,102 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
           ]}
         />
 
-        <h1
-          className="psp-h1 text-white mt-4 mb-2"
-        >
+        <h1 className="psp-h1 text-white mt-4 mb-2">
           {sportLabel} Schools
         </h1>
-        <p className="text-gray-300 text-sm mb-6">
+        <p className="text-gray-300 text-sm mb-8">
           {schools.length} active {sportLabel.toLowerCase()} programs{closedSchools.length > 0 ? ` + ${closedSchools.length} historical` : ''}
         </p>
 
-        {sortedLeagues.map(([league, leagueSchools]) => (
-          <div key={league} className="mb-8">
-            <h2
-              className="psp-h4 mb-3 pb-2 border-b"
-              style={{
-                color: sportColor,
-                borderColor: `${sportColor}40`,
-              }}
-            >
-              {league}
-              <span className="ml-2 text-xs font-normal text-gray-400">({leagueSchools.length})</span>
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-              {leagueSchools.map((school) => (
-                <Link
-                  key={school.id}
-                  href={`/${sport}/schools/${school.slug}`}
-                  className="group rounded-lg p-3 transition hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                  }}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <div
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: school.color || sportColor }}
+        {sortedLeagues.map(([league, leagueSchools]) => {
+          const abbrev = LEAGUE_ABBREV[league] || '';
+          return (
+            <div key={league} className="mb-10">
+              <div className="flex items-center gap-3 mb-4 pb-2 border-b border-gray-700/50">
+                <h2 className="psp-h3 text-white">
+                  {league}
+                </h2>
+                {abbrev && (
+                  <span
+                    className="text-xs font-bold px-2 py-0.5 rounded"
+                    style={{ backgroundColor: 'var(--psp-gold)', color: 'var(--psp-navy)' }}
+                  >
+                    {abbrev}
+                  </span>
+                )}
+                <span className="text-xs text-gray-500">({leagueSchools.length})</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {leagueSchools.map((school) => (
+                  <Link
+                    key={school.id}
+                    href={`/${sport}/teams/${school.slug}`}
+                    className="group flex items-center gap-3 rounded-lg p-3 bg-white/[0.04] border border-white/[0.08] transition-all duration-200 hover:bg-white/[0.08] hover:border-white/[0.16] hover:shadow-lg hover:shadow-black/20 focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
+                  >
+                    <SchoolLogo
+                      logoUrl={school.logoUrl}
+                      name={school.name}
+                      size="lg"
                     />
-                    <span className="text-white text-sm font-semibold truncate group-hover:text-[#f0a500] transition">
-                      {school.name}
-                    </span>
-                  </div>
-                  {school.city && (
-                    <p className="text-gray-400 text-xs ml-4">{school.city}, PA</p>
-                  )}
-                  {school.closed_year && (
-                    <p className="text-red-400 text-xs ml-4">Closed {school.closed_year}</p>
-                  )}
-                  <p className="text-gray-600 text-xs ml-4 mt-1">
-                    {school.seasonCount} season{school.seasonCount !== 1 ? 's' : ''}
-                  </p>
-                </Link>
-              ))}
+                    <div className="min-w-0 flex-1">
+                      <span className="text-white font-semibold text-sm block truncate group-hover:text-[var(--psp-gold)] transition-colors" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+                        {school.name}
+                      </span>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        {school.city && (
+                          <span className="text-gray-400 text-xs">{school.city}</span>
+                        )}
+                        {school.city && school.leagueAbbrev && (
+                          <span className="text-gray-600 text-xs">&#183;</span>
+                        )}
+                        {school.leagueAbbrev && (
+                          <span className="text-xs font-medium px-1.5 py-px rounded bg-white/[0.06] text-gray-300">
+                            {school.leagueAbbrev}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {school.record && (
+                      <span className="text-sm font-bold text-[var(--psp-gold)] tabular-nums shrink-0">
+                        {school.record}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* Historical / Closed Programs */}
         {closedSchools.length > 0 && (
           <div className="mb-8 mt-4">
-            <h2
-              className="text-lg font-bold mb-3 pb-2 border-b border-gray-700"
-              style={{ color: '#9ca3af' }}
-            >
-              Historical Programs
-              <span className="ml-2 text-xs font-normal text-gray-600">({closedSchools.length} closed)</span>
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+            <div className="flex items-center gap-3 mb-4 pb-2 border-b border-gray-700/40">
+              <h2 className="psp-h3 text-gray-400">
+                Historical Programs
+              </h2>
+              <span className="text-xs text-gray-600">({closedSchools.length} closed)</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {closedSchools.map((school) => (
                 <Link
                   key={school.id}
                   href={`/${sport}/schools/${school.slug}`}
-                  className="group rounded-lg p-2 transition opacity-75 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.02)',
-                    border: '1px solid rgba(255,255,255,0.05)',
-                  }}
+                  className="group flex items-center gap-3 rounded-lg p-2.5 opacity-60 hover:opacity-100 transition-all bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
                 >
-                  <span className="text-gray-300 text-xs font-medium truncate block group-hover:text-gray-300 transition">
-                    {school.name} <span className="text-gray-500">(Closed)</span>
-                  </span>
-                  <span className="text-gray-600 text-xs">
-                    Closed {school.closed_year}
-                  </span>
+                  <SchoolLogo
+                    logoUrl={school.logoUrl}
+                    name={school.name}
+                    size="md"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <span className="text-gray-300 text-xs font-medium truncate block">
+                      {school.name}
+                    </span>
+                    <span className="text-gray-600 text-xs">
+                      Closed {school.closed_year}
+                    </span>
+                  </div>
                 </Link>
               ))}
             </div>

@@ -55,7 +55,7 @@ export default function Footer() {
           <h5>About</h5>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li>Data compiled by <strong style={{ color: "var(--psp-gold)" }}>Ted Silary</strong></li>
-            <li>Built by Mike Wallace</li>
+            <li>Built by the PSP Team</li>
             <li><Link href="/admin">Admin</Link></li>
             <li style={{ marginTop: "0.5rem", fontSize: "0.85rem" }}>
               <Link href="/advertise" style={{ color: "var(--psp-gold)" }}>

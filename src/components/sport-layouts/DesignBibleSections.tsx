@@ -13,6 +13,7 @@ interface Props {
 
 interface Leader { name: string; slug: string; school: string; value: number; }
 interface Game {
+  id: number | null;
   home: string;
   away: string;
   homeScore: number;
@@ -127,7 +128,7 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
 
         // Recent scores -- include game_type and playoff_round
         const { data: gData } = await (supabase as any).from('games')
-          .select('home_score, away_score, game_date, home_school_id, away_school_id, sport_id, game_type, playoff_round')
+          .select('id, home_score, away_score, game_date, home_school_id, away_school_id, sport_id, game_type, playoff_round')
           .eq('sport_id', sport)
           .not('home_score', 'is', null)
           .not('away_score', 'is', null)
@@ -154,6 +155,7 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
             return true;
           }).slice(0, 5);
           setGames(diverseGames.map((g: any) => ({
+            id: g.id ?? null,
             home: sm.get(g.home_school_id) ?? 'TBD',
             away: sm.get(g.away_school_id) ?? 'TBD',
             homeScore: g.home_score, awayScore: g.away_score,
@@ -306,8 +308,8 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
         {games.length === 0 && <div style={cardStyle}>No recent scores available</div>}
         {games.slice(0, maxScores).map((g, i) => {
           const badge = getPlayoffBadge(g.gameType, g.playoffRound);
-          return (
-            <div key={i} style={cardStyle}>
+          const scoreContent = (
+            <>
               {badge && (
                 <div style={{
                   display: 'inline-block',
@@ -333,6 +335,15 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
                 <span style={{ fontWeight: g.awayScore > g.homeScore ? 700 : 400, color: g.awayScore > g.homeScore ? (darkTheme ? '#fff' : '#0a1628') : (darkTheme ? 'rgba(255,255,255,0.4)' : '#64748b') }}>{g.away}</span>
                 <span style={{ fontWeight: 700, color: '#f0a500' }}>{g.awayScore}</span>
               </div>
+            </>
+          );
+          return g.id ? (
+            <Link key={i} href={`/${sport}/games/${g.id}`} style={{ ...cardStyle, textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              {scoreContent}
+            </Link>
+          ) : (
+            <div key={i} style={cardStyle}>
+              {scoreContent}
             </div>
           );
         })}

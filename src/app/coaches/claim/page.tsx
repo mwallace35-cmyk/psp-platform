@@ -46,7 +46,7 @@ export default function CoachClaimPage() {
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
           <div>
             <label style={labelStyle}>Your Name *</label>
-            <input required style={inputStyle} value={form.coachName} onChange={e => set('coachName', e.target.value)} placeholder="Coach Mike Wallace" />
+            <input required style={inputStyle} value={form.coachName} onChange={e => set('coachName', e.target.value)} placeholder="Coach John Smith" />
           </div>
           <div>
             <label style={labelStyle}>Email *</label>

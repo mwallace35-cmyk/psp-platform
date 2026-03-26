@@ -62,6 +62,7 @@ export interface School {
   closed_year?: number;
   founded_year?: number;
   website_url?: string;
+  logo_url?: string | null;
   leagues?: { name: string; short_name?: string } | null;
 }
 

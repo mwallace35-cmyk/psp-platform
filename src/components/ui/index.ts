@@ -31,3 +31,4 @@ export { default as FollowButton } from "./FollowButton";
 export { default as SkeletonCard } from "./SkeletonCard";
 export { default as SkeletonTable } from "./SkeletonTable";
 export { default as SkeletonHero } from "./SkeletonHero";
+export { default as SchoolLogo } from "./SchoolLogo";

@@ -762,7 +762,7 @@ button:focus:not(:focus-visible) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 6px;
   font-size: 12px;
   color: rgba(255,255,255,.75);
   line-height: 1.6;
@@ -770,12 +770,15 @@ button:focus:not(:focus-visible) {
 
 .hsc-team.hsc-w { color: #fff; }
 
+.hsc-logo { flex-shrink: 0; }
+
 .hsc-name {
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px;
+  max-width: 120px;
+  flex: 1;
 }
 
 .hsc-score {

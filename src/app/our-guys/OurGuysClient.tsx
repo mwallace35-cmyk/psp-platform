@@ -282,9 +282,10 @@ function CoachingCard({ a }: { a: AlumniRecord }) {
         {hasPlayerProfile && (
           <Link
             href={`/players/${a.slug}`}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-navy hover:bg-gold transition"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition"
+            style={{ backgroundColor: '#f0a500', color: '#0a1628' }}
           >
-            📊 HS Stats
+            View Full Profile
           </Link>
         )}
       </div>
@@ -371,9 +372,10 @@ function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
         {hasPlayerProfile && (
           <Link
             href={`/players/${a.slug}`}
-            className="text-xs font-semibold text-navy bg-gray-100 px-2 py-1 rounded hover:bg-gold hover:text-navy transition opacity-0 group-hover:opacity-100"
+            className="text-xs font-bold px-3 py-1 rounded transition"
+            style={{ backgroundColor: '#f0a500', color: '#0a1628' }}
           >
-            HS Stats
+            View Full Profile
           </Link>
         )}
       </div>

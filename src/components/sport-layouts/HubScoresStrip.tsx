@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, useCallback } from "react";
 import { getSchoolShortDisplayName } from "@/lib/utils/schoolDisplayName";
+import SchoolLogo from "@/components/ui/SchoolLogo";
 
 export interface HubGame {
   id: number;
@@ -11,8 +12,8 @@ export interface HubGame {
   game_date: string | null;
   game_type: string | null;
   playoff_round: string | null;
-  home_school: { id: number; name: string; slug: string; league?: string; city?: string | null; league_id?: number | null } | null;
-  away_school: { id: number; name: string; slug: string; league?: string; city?: string | null; league_id?: number | null } | null;
+  home_school: { id: number; name: string; slug: string; league?: string; city?: string | null; league_id?: number | null; logo_url?: string | null } | null;
+  away_school: { id: number; name: string; slug: string; league?: string; city?: string | null; league_id?: number | null; logo_url?: string | null } | null;
   seasons: { label: string } | null;
 }
 
@@ -126,12 +127,24 @@ export default function HubScoresStrip({ games, sportColor, sport }: HubScoresSt
                 </div>
               )}
               <div className={`hsc-team${homeWon ? " hsc-w" : ""}`}>
+                <SchoolLogo
+                  logoUrl={game.home_school?.logo_url}
+                  name={homeName}
+                  size="sm"
+                  className="hsc-logo"
+                />
                 <span className="hsc-name" title={homeName}>{homeName}</span>
                 <span className="hsc-score" style={homeWon ? { color: sportColor } : undefined}>
                   {homeScore}
                 </span>
               </div>
               <div className={`hsc-team${awayWon ? " hsc-w" : ""}`}>
+                <SchoolLogo
+                  logoUrl={game.away_school?.logo_url}
+                  name={awayName}
+                  size="sm"
+                  className="hsc-logo"
+                />
                 <span className="hsc-name" title={awayName}>{awayName}</span>
                 <span className="hsc-score" style={awayWon ? { color: sportColor } : undefined}>
                   {awayScore}

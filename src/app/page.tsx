@@ -128,7 +128,7 @@ export default async function HomePage() {
                 Welcome to <span className="text-[var(--psp-gold)] font-bold">PhillySportsPack</span> — we&apos;re building the definitive Philly high school sports database. You&apos;re seeing an early look while we fine-tune the experience. Expect new features, more data, and a few rough edges.
               </p>
               <p className="text-gray-400 text-xs md:text-sm mt-1.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                Got feedback? Hit us up at <a href="mailto:mwallace35@gmail.com" className="text-[var(--psp-gold)] hover:underline">mwallace35@gmail.com</a> &mdash; we want to hear from you.
+                Got feedback? Hit us up at <a href="mailto:info@phillysportspack.com" className="text-[var(--psp-gold)] hover:underline">info@phillysportspack.com</a> &mdash; we want to hear from you.
               </p>
             </div>
           </div>

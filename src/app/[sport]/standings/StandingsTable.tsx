@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import SchoolLogo from "@/components/ui/SchoolLogo";
 import type { LeagueStandings, Standing } from "@/lib/data";
 
 // Extract the base league name (remove " — Division Name")
@@ -76,17 +77,24 @@ function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueN
                   {row.is_champion ? "🏆" : row.rank}
                 </td>
                 <td className="px-3 py-3">
-                  <Link
-                    href={`/${sport}/schools/${row.school.slug}`}
-                    className="font-semibold text-white hover:text-[var(--psp-gold)] transition-colors"
-                  >
-                    {row.school.name}
-                  </Link>
-                  {row.is_champion && (
-                    <span className="ml-2 inline-block rounded bg-[var(--psp-gold)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--psp-navy)]">
-                      CHAMP
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <SchoolLogo
+                      logoUrl={row.school.logo_url}
+                      name={row.school.name}
+                      size="sm"
+                    />
+                    <Link
+                      href={`/${sport}/schools/${row.school.slug}`}
+                      className="font-semibold text-white hover:text-[var(--psp-gold)] transition-colors"
+                    >
+                      {row.school.name}
+                    </Link>
+                    {row.is_champion && (
+                      <span className="ml-1 inline-block rounded bg-[var(--psp-gold)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--psp-navy)]">
+                        CHAMP
+                      </span>
+                    )}
+                  </div>
                 </td>
                 {hasLeagueRecord && (
                   <td className="px-3 py-3 text-center font-semibold text-[var(--psp-gold)]">
