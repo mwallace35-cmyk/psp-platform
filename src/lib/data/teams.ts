@@ -106,7 +106,7 @@ export const getChampionshipsBySport = cache(
               )
               .eq("sport_id", sportId)
               .order("created_at", { ascending: false })
-              .limit(500);
+              .limit(800);
             if (error) {
               console.error("Championships query error:", error);
               return [];

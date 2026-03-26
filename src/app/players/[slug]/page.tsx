@@ -8,6 +8,8 @@ import SharePlayerButton from '@/components/players/SharePlayerButton';
 import { PercentileRadar } from '@/components/players/PercentileRadar';
 import SimilarPlayers from '@/components/players/SimilarPlayers';
 import AwardsHonors from '@/components/players/AwardsHonors';
+import PlayerGameLog from '@/components/players/PlayerGameLog';
+import { getPlayerGameLog } from '@/lib/data/games';
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -36,6 +38,7 @@ async function getPlayerData(slug: string) {
     { data: basketballSeasons },
     { data: proTracking },
     { data: mentions },
+    gameLog,
   ] = await Promise.all([
     supabase.from('schools').select('id, name, slug').eq('id', player.primary_school_id).single(),
     supabase
@@ -55,6 +58,7 @@ async function getPlayerData(slug: string) {
       .eq('entity_type', 'player')
       .eq('entity_id', player.id)
       .limit(5),
+    getPlayerGameLog(player.id),
   ]);
 
   return {
@@ -64,6 +68,7 @@ async function getPlayerData(slug: string) {
     basketballSeasons: basketballSeasons ?? [],
     proTracking: proTracking ?? null,
     articles: (mentions ?? []).map((m: any) => m.articles).filter(Boolean),
+    gameLog: gameLog ?? [],
   };
 }
 
@@ -89,7 +94,7 @@ export default async function PlayerPage({ params }: PageProps) {
   const data = await getPlayerData(slug);
   if (!data) notFound();
 
-  const { player, school, footballSeasons, basketballSeasons, proTracking, articles } = data;
+  const { player, school, footballSeasons, basketballSeasons, proTracking, articles, gameLog } = data;
 
   const positions = Array.isArray(player.positions)
     ? player.positions
@@ -296,12 +301,10 @@ export default async function PlayerPage({ params }: PageProps) {
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
           <Link href={`/schools/${school.slug}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: navy, fontWeight: 600, textDecoration: 'none', padding: '0.75rem 1.5rem', border: `2px solid ${navy}`, borderRadius: '8px', fontSize: '0.95rem' }}>
 
-      {/* Percentile Radar */}
-
-      {/* Similar Players */}
-
-      {/* Awards & Honors */}
-
+      {/* Game Log */}
+      {gameLog.length > 0 && (
+        <PlayerGameLog gameLog={gameLog} playerSchoolId={player.primary_school_id ?? null} />
+      )}
 
       {/* Percentile Radar */}
       <PercentileRadar slug={slug} />

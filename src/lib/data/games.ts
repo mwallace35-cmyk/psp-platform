@@ -156,6 +156,8 @@ export interface PlayerGameLog {
   game_id: number;
   player_name: string;
   jersey_number: string | null;
+  sport_id: string;
+  school_id: number | null;
   rush_carries: number | null;
   rush_yards: number | null;
   pass_completions: number | null;
@@ -191,7 +193,7 @@ export const getPlayerGameLog = cache(
             const { data } = await supabase
               .from("game_player_stats")
               .select(
-                `id, game_id, player_name, jersey_number, sport_id,
+                `id, game_id, player_name, jersey_number, sport_id, school_id,
                  rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards,
                  points, stats_json, source_type,
                  games!inner(id, game_date, home_score, away_score, home_school_id, away_school_id,

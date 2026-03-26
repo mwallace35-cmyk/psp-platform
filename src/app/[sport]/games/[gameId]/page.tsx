@@ -491,16 +491,16 @@ function BasketballBoxScore({
                     )}
                   </td>
                   <td className="text-center px-2 py-2 text-gray-300">{s.jersey_number ?? ""}</td>
-                  <td className="text-center px-2 py-2">{getStat(s, "min") ?? "-"}</td>
-                  <td className="text-center px-2 py-2">{fmtShot(s, "fgm", "fga")}</td>
-                  <td className="text-center px-2 py-2">{fmtShot(s, "fg3m", "fg3a")}</td>
-                  <td className="text-center px-2 py-2">{fmtShot(s, "ftm", "fta")}</td>
-                  <td className="text-center px-2 py-2">{getStat(s, "reb") ?? getStat(s, "rebounds") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "min") ?? getStat(s, "minutes") ?? getStat(s, "MinutesPlayed") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{fmtShot(s, "fgm", "fga") !== "-" ? fmtShot(s, "fgm", "fga") : fmtShot(s, "fg_made", "fg_attempted")}</td>
+                  <td className="text-center px-2 py-2">{fmtShot(s, "tpm", "tpa") !== "-" ? fmtShot(s, "tpm", "tpa") : fmtShot(s, "fg3m", "fg3a") !== "-" ? fmtShot(s, "fg3m", "fg3a") : fmtShot(s, "three_made", "three_attempted")}</td>
+                  <td className="text-center px-2 py-2">{fmtShot(s, "ftm", "fta") !== "-" ? fmtShot(s, "ftm", "fta") : fmtShot(s, "ft_made", "ft_attempted")}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "reb") ?? getStat(s, "rebounds") ?? getStat(s, "total_rebounds") ?? "-"}</td>
                   <td className="text-center px-2 py-2">{getStat(s, "ast") ?? getStat(s, "assists") ?? "-"}</td>
                   <td className="text-center px-2 py-2">{getStat(s, "stl") ?? getStat(s, "steals") ?? "-"}</td>
                   <td className="text-center px-2 py-2">{getStat(s, "blk") ?? getStat(s, "blocks") ?? "-"}</td>
-                  <td className="text-center px-2 py-2">{getStat(s, "tov") ?? getStat(s, "turnovers") ?? "-"}</td>
-                  <td className="text-center px-2 py-2">{getStat(s, "pf") ?? getStat(s, "fouls") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "to") ?? getStat(s, "tov") ?? getStat(s, "turnovers") ?? "-"}</td>
+                  <td className="text-center px-2 py-2">{getStat(s, "pf") ?? getStat(s, "fouls") ?? getStat(s, "personal_fouls") ?? "-"}</td>
                   <td className="text-center px-2 py-2 font-semibold text-[var(--psp-gold)]">{s.points ?? 0}</td>
                 </tr>
               ))}
