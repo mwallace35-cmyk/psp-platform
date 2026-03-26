@@ -44,16 +44,20 @@ export default function TeamHeader({
 
   return (
     <section className="relative overflow-hidden" style={{ background: "#0a1628" }}>
-      {/* Diagonal accent stripe */}
+      {/* Diagonal accent stripes in team colors */}
       <div
-        className="absolute inset-0 opacity-[0.07]"
+        className="absolute inset-0"
         style={{
           backgroundImage: `repeating-linear-gradient(
             -45deg,
             transparent,
+            transparent 38px,
+            ${school.primary_color || sportMeta.color}12 38px,
+            ${school.primary_color || sportMeta.color}12 40px,
             transparent 40px,
-            ${school.primary_color || sportMeta.color} 40px,
-            ${school.primary_color || sportMeta.color} 42px
+            transparent 78px,
+            ${school.secondary_color || school.primary_color || sportMeta.color}10 78px,
+            ${school.secondary_color || school.primary_color || sportMeta.color}10 80px
           )`,
         }}
       />
