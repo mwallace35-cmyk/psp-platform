@@ -60,6 +60,7 @@ export interface Championship {
   level?: string;
   result?: string;
   score?: string;
+  notes?: string;
   opponent_id?: number;
   schools?: School;
   seasons?: { year_start: number; year_end: number; label: string };
