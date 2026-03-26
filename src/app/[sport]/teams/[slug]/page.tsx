@@ -6,6 +6,9 @@ import {
   getSchoolTeamSeasons,
   getSchoolChampionships,
   getTrackedAlumni,
+  getGamesByTeamSeason,
+  getTeamRosterBySeason,
+  getArticlesForEntity,
 } from "@/lib/data";
 import TeamPageClient from "@/components/teams/TeamPageClient";
 import type { Metadata } from "next";
@@ -68,6 +71,18 @@ export default async function TeamDetailPage({ params }: PageProps) {
   // Get the most recent team season
   const latestSeason = teamSeasons?.[0] || null;
 
+  // Fetch schedule, roster, and articles for the latest season
+  const latestSeasonId = latestSeason?.season_id;
+  const [games, roster, articles] = await Promise.all([
+    latestSeasonId
+      ? getGamesByTeamSeason(school.id, sportId, latestSeasonId)
+      : Promise.resolve([]),
+    latestSeasonId
+      ? getTeamRosterBySeason(school.id, sportId, latestSeasonId)
+      : Promise.resolve([]),
+    getArticlesForEntity("school", school.id, 6),
+  ]);
+
   // Get league and coach names, handling potential array returns from Supabase
   const leagueName = Array.isArray(school.leagues)
     ? school.leagues[0]?.name
@@ -109,6 +124,9 @@ export default async function TeamDetailPage({ params }: PageProps) {
       alumni={alumni as unknown as any[]}
       sport={sport}
       sportMeta={sportMeta}
+      games={games as any[]}
+      roster={roster as any[]}
+      articles={articles as any[]}
     />
   );
 }

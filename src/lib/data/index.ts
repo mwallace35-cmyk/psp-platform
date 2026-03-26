@@ -514,7 +514,10 @@ export {
   getPlayoffBrackets,
   getPlayoffBracketById,
   getPlayoffBracketTypes,
+  getAvailablePlayoffSeasons,
+  getPlayoffBracketsBySeason,
   type PlayoffBracket,
   type PlayoffBracketGame,
   type PlayoffBracketWithGames,
+  type PlayoffSeason,
 } from "./playoffs";

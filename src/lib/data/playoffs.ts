@@ -160,6 +160,106 @@ export const getPlayoffBracketById = cache(
   }
 );
 
+// ============================================================================
+// Season selector helpers
+// ============================================================================
+
+export interface PlayoffSeason {
+  seasonId: number;
+  label: string;
+}
+
+/**
+ * Get all seasons that have at least 1 playoff bracket for a sport.
+ * Returns sorted DESC (most recent first).
+ */
+export const getAvailablePlayoffSeasons = cache(
+  async (sportId: string): Promise<PlayoffSeason[]> => {
+    return withErrorHandling(
+      async () => {
+        const supabase = await createClient();
+
+        // Get distinct season_ids that have brackets for this sport
+        const { data: brackets, error: bracketsError } = await supabase
+          .from("playoff_brackets")
+          .select("season_id")
+          .eq("sport_id", sportId);
+
+        if (bracketsError || !brackets || brackets.length === 0) return [];
+
+        // Deduplicate season_ids
+        const seasonIds = [
+          ...new Set(brackets.map((b: { season_id: number }) => b.season_id)),
+        ];
+
+        // Fetch season labels
+        const { data: seasons, error: seasonsError } = await supabase
+          .from("seasons")
+          .select("id, label")
+          .in("id", seasonIds)
+          .order("id", { ascending: false });
+
+        if (seasonsError || !seasons) return [];
+
+        return seasons.map((s: { id: number; label: string }) => ({
+          seasonId: s.id,
+          label: s.label,
+        }));
+      },
+      [] as PlayoffSeason[],
+      "getAvailablePlayoffSeasons"
+    );
+  }
+);
+
+/**
+ * Get playoff brackets for a specific season + sport.
+ * Includes all bracket games for each bracket.
+ */
+export const getPlayoffBracketsBySeason = cache(
+  async (
+    sportId: string,
+    seasonId: number
+  ): Promise<PlayoffBracketWithGames[]> => {
+    return withErrorHandling(
+      async () => {
+        const supabase = await createClient();
+
+        // Get brackets for this sport + season
+        const { data: brackets, error: bracketsError } = await supabase
+          .from("playoff_brackets")
+          .select("*")
+          .eq("sport_id", sportId)
+          .eq("season_id", seasonId)
+          .order("name");
+
+        if (bracketsError || !brackets || brackets.length === 0) return [];
+
+        // Get all games for these brackets
+        const bracketIds = brackets.map((b: PlayoffBracket) => b.id);
+        const { data: allGames, error: gamesError } = await supabase
+          .from("playoff_bracket_games")
+          .select("*")
+          .in("bracket_id", bracketIds)
+          .order("round_number")
+          .order("game_number");
+
+        if (gamesError) return [];
+
+        const games = (allGames || []) as PlayoffBracketGame[];
+
+        // Attach games to their brackets
+        return brackets.map((bracket: PlayoffBracket) => ({
+          ...bracket,
+          games: games.filter((g) => g.bracket_id === bracket.id),
+        }));
+      },
+      [] as PlayoffBracketWithGames[],
+      "getPlayoffBracketsBySeason"
+    );
+  }
+);
+
 /**
  * Get bracket types available for a sport (used for tab/filter options).
  */

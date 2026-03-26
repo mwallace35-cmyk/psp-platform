@@ -2,7 +2,13 @@ import { Suspense } from "react";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { SPORT_META, getPlayoffBrackets, type PlayoffBracketWithGames } from "@/lib/data";
+import {
+  SPORT_META,
+  getAvailablePlayoffSeasons,
+  getPlayoffBracketsBySeason,
+  type PlayoffBracketWithGames,
+  type PlayoffSeason,
+} from "@/lib/data";
 import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
 import type { Metadata } from "next";
 import PlayoffsClient from "./PlayoffsClient";
@@ -23,17 +29,37 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
-async function PlayoffsLoader({ sport }: { sport: string }) {
+async function PlayoffsLoader({
+  sport,
+  seasonId,
+}: {
+  sport: string;
+  seasonId: number | null;
+}) {
   let brackets: PlayoffBracketWithGames[] = [];
+  let seasons: PlayoffSeason[] = [];
+  let selectedSeasonId: number | null = seasonId;
+
   try {
-    brackets = await getPlayoffBrackets(sport) ?? [];
+    seasons = await getAvailablePlayoffSeasons(sport);
+
+    // If no season specified (or invalid), default to most recent
+    if (!selectedSeasonId || !seasons.some((s) => s.seasonId === selectedSeasonId)) {
+      selectedSeasonId = seasons.length > 0 ? seasons[0].seasonId : null;
+    }
+
+    if (selectedSeasonId) {
+      brackets = (await getPlayoffBracketsBySeason(sport, selectedSeasonId)) ?? [];
+    }
   } catch (err) {
     console.error("[PSP] Playoffs data fetch error:", err);
     brackets = [];
   }
-  const sportColor = SPORT_COLORS_HEX[sport] || "#3b82f6";
 
-  if (brackets.length === 0) {
+  const sportColor = SPORT_COLORS_HEX[sport] || "#3b82f6";
+  const selectedSeason = seasons.find((s) => s.seasonId === selectedSeasonId) ?? null;
+
+  if (seasons.length === 0) {
     return (
       <div
         className="rounded-xl px-5 py-[60px] text-center"
@@ -57,12 +83,30 @@ async function PlayoffsLoader({ sport }: { sport: string }) {
     );
   }
 
-  return <PlayoffsClient brackets={brackets} sportColor={sportColor} />;
+  return (
+    <PlayoffsClient
+      brackets={brackets}
+      sportColor={sportColor}
+      seasons={seasons}
+      selectedSeasonId={selectedSeasonId}
+      selectedSeasonLabel={selectedSeason?.label ?? ""}
+      sport={sport}
+    />
+  );
 }
 
-export default async function PlayoffsPage({ params }: { params: Promise<PageParams> }) {
+export default async function PlayoffsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<PageParams>;
+  searchParams: Promise<{ season?: string }>;
+}) {
   const sport = await validateSportParam(params);
+  const { season } = await searchParams;
   const meta = SPORT_META[sport];
+
+  const seasonId = season ? parseInt(season, 10) : null;
 
   const breadcrumbs = [
     { label: meta.name, href: `/${sport}` },
@@ -97,7 +141,7 @@ export default async function PlayoffsPage({ params }: { params: Promise<PagePar
           </div>
         }
       >
-        <PlayoffsLoader sport={sport} />
+        <PlayoffsLoader sport={sport} seasonId={isNaN(seasonId as number) ? null : seasonId} />
       </Suspense>
     </main>
   );

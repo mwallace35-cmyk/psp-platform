@@ -89,6 +89,37 @@ interface SportMeta {
   emoji: string;
 }
 
+interface DBGame {
+  id: number;
+  game_date: string;
+  home_school_id: number;
+  away_school_id: number;
+  home_score: number | null;
+  away_score: number | null;
+  home_school?: { name: string; slug: string } | null;
+  away_school?: { name: string; slug: string } | null;
+  notes?: string;
+}
+
+interface DBRosterEntry {
+  id: number;
+  player_id: number;
+  jersey_number?: string;
+  position?: string;
+  class_year?: string;
+  players?: { id: number; name: string; slug: string } | null;
+}
+
+interface DBArticle {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  featured_image_url?: string;
+  published_at?: string;
+  sport_id?: string;
+}
+
 interface TeamPageClientProps {
   team: TeamDetail;
   school: School;
@@ -97,161 +128,98 @@ interface TeamPageClientProps {
   alumni: Alumni[];
   sport: string;
   sportMeta: SportMeta;
+  games: DBGame[];
+  roster: DBRosterEntry[];
+  articles: DBArticle[];
 }
 
-// Sample roster data for different sports
-const FOOTBALL_ROSTER = [
-  // Offense
-  { name: "James Martinez", position: "QB", class: "Sr" as const, height: '6\'2"', weight: "210", slug: "james-martinez" },
-  { name: "DeShawn Johnson", position: "RB", class: "Sr" as const, height: '5\'10"', weight: "195", slug: "deshawn-johnson" },
-  { name: "Marcus White", position: "WR", class: "Jr" as const, height: '6\'1"', weight: "185", slug: "marcus-white" },
-  { name: "Eric Torres", position: "WR", class: "Jr" as const, height: '6\'0"', weight: "180", slug: "eric-torres" },
-  { name: "Kevin Brown", position: "OL", class: "Sr" as const, height: '6\'3"', weight: "295", slug: "kevin-brown" },
-  { name: "David Lee", position: "OL", class: "Jr" as const, height: '6\'4"', weight: "305", slug: "david-lee" },
-  { name: "Joseph Adams", position: "OL", class: "So" as const, height: '6\'2"', weight: "280", slug: "joseph-adams" },
-  { name: "Alex Garcia", position: "TE", class: "So" as const, height: '6\'4"', weight: "235", slug: "alex-garcia" },
-  // Defense
-  { name: "Tyler Jackson", position: "DE", class: "Sr" as const, height: '6\'2"', weight: "245", slug: "tyler-jackson" },
-  { name: "Marcus Johnson", position: "DL", class: "Jr" as const, height: '6\'0"', weight: "265", slug: "marcus-johnson" },
-  { name: "Michael Davis", position: "LB", class: "Jr" as const, height: '6\'0"', weight: "225", slug: "michael-davis" },
-  { name: "Christopher Miller", position: "DB", class: "Sr" as const, height: '5\'11"', weight: "190", slug: "christopher-miller" },
-  { name: "Brandon Wilson", position: "DB", class: "Jr" as const, height: '5\'10"', weight: "185", slug: "brandon-wilson" },
-  { name: "Anthony Santos", position: "S", class: "So" as const, height: '5\'11"', weight: "195", slug: "anthony-santos" },
-  // Special Teams
-  { name: "Lucas Perez", position: "K", class: "Sr" as const, height: '5\'11"', weight: "185", slug: "lucas-perez" },
-  { name: "Nathan White", position: "P", class: "Jr" as const, height: '6\'1"', weight: "195", slug: "nathan-white" },
-];
+// Helper: format a game date string like "Sept 6"
+function formatGameDate(dateStr: string): string {
+  const d = new Date(dateStr + "T12:00:00");
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  return `${months[d.getMonth()]} ${d.getDate()}`;
+}
 
-const BASKETBALL_ROSTER = [
-  // Guards
-  { name: "Michael Johnson", position: "PG", class: "Sr" as const, height: '6\'2"', weight: "185", slug: "michael-johnson" },
-  { name: "David Chen", position: "SG", class: "Jr" as const, height: '6\'3"', weight: "195", slug: "david-chen" },
-  { name: "Tyler Rodriguez", position: "SG", class: "Sr" as const, height: '6\'1"', weight: "190", slug: "tyler-rodriguez" },
-  // Forwards
-  { name: "James Williams", position: "SF", class: "Jr" as const, height: '6\'6"', weight: "215", slug: "james-williams" },
-  { name: "Marcus Thompson", position: "PF", class: "So" as const, height: '6\'7"', weight: "235", slug: "marcus-thompson" },
-  { name: "Anthony Davis", position: "PF", class: "Sr" as const, height: '6\'8"', weight: "245", slug: "anthony-davis" },
-  // Centers
-  { name: "DeAndre Jordan", position: "C", class: "Sr" as const, height: '6\'11"', weight: "265", slug: "deandre-jordan" },
-  { name: "Jamal Murray", position: "C", class: "Jr" as const, height: '7\'0"', weight: "280", slug: "jamal-murray" },
-];
+// Helper: convert DB games to schedule format for TeamSchedule component
+function gamesToSchedule(games: DBGame[], schoolId: number) {
+  return games.map((g) => {
+    const isHome = g.home_school_id === schoolId;
+    const opponentSchool = isHome
+      ? (Array.isArray(g.away_school) ? g.away_school[0] : g.away_school)
+      : (Array.isArray(g.home_school) ? g.home_school[0] : g.home_school);
+    const opponentName = opponentSchool?.name || "Unknown";
+    const ourScore = isHome ? g.home_score : g.away_score;
+    const theirScore = isHome ? g.away_score : g.home_score;
+    const hasScore = ourScore !== null && theirScore !== null;
+    const result = hasScore
+      ? ourScore! > theirScore!
+        ? "W"
+        : ourScore! < theirScore!
+        ? "L"
+        : "T"
+      : null;
+    return {
+      date: formatGameDate(g.game_date),
+      opponent: opponentName,
+      homeAway: isHome ? ("H" as const) : ("A" as const),
+      result: (result || "--") as "W" | "L",
+      score: hasScore ? `${ourScore}-${theirScore}` : "TBD",
+      leagueGame: true,
+    };
+  });
+}
 
-const BASEBALL_ROSTER = [
-  // Pitchers
-  { name: "Clayton Kershaw", position: "SP", class: "Sr" as const, height: '6\'3"', weight: "215", slug: "clayton-kershaw" },
-  { name: "David Price", position: "SP", class: "Sr" as const, height: '6\'5"', weight: "225", slug: "david-price" },
-  { name: "Aroldis Chapman", position: "RP", class: "Jr" as const, height: '6\'4"', weight: "210", slug: "aroldis-chapman" },
-  // Catchers
-  { name: "Buster Posey", position: "C", class: "Sr" as const, height: '6\'1"', weight: "205", slug: "buster-posey" },
-  // Infielders
-  { name: "Mike Trout", position: "SS", class: "Jr" as const, height: '6\'2"', weight: "235", slug: "mike-trout" },
-  { name: "Jose Altuve", position: "2B", class: "Sr" as const, height: '5\'6"', weight: "165", slug: "jose-altuve" },
-  { name: "Adrian Beltre", position: "3B", class: "Sr" as const, height: '6\'1"', weight: "210", slug: "adrian-beltre" },
-  { name: "Joey Votto", position: "1B", class: "Sr" as const, height: '6\'3"', weight: "220", slug: "joey-votto" },
-  // Outfielders
-  { name: "Christian Yelich", position: "LF", class: "Jr" as const, height: '6\'3"', weight: "195", slug: "christian-yelich" },
-  { name: "Mookie Betts", position: "CF", class: "Jr" as const, height: '5\'9"', weight: "180", slug: "mookie-betts" },
-  { name: "Bryce Harper", position: "RF", class: "Sr" as const, height: '6\'3"', weight: "210", slug: "bryce-harper" },
-];
+// Helper: convert DB roster to display format for TeamRoster component
+function rosterToDisplay(roster: DBRosterEntry[]) {
+  return roster.map((r) => {
+    const player = Array.isArray(r.players) ? r.players[0] : r.players;
+    return {
+      name: player?.name || "Unknown",
+      position: r.position || "--",
+      class: (r.class_year || "--") as "Sr" | "Jr" | "So" | "Fr",
+      height: "--",
+      weight: "--",
+      slug: player?.slug || "",
+    };
+  });
+}
 
-// Helper function to get roster for sport
-const getSampleRoster = (sportId: string) => {
-  if (sportId === "basketball") return BASKETBALL_ROSTER;
-  if (sportId === "baseball") return BASEBALL_ROSTER;
-  return FOOTBALL_ROSTER; // Default to football
-};
-
-// Helper function to get position groups based on sport
-const getPositionGroups = (sportId: string): Record<string, string[]> => {
+// Helper: get position groups based on sport
+function getPositionGroups(sportId: string): Record<string, string[]> {
   if (sportId === "basketball") {
     return {
-      "Guards": ["PG", "SG"],
-      "Forwards": ["SF", "PF"],
-      "Centers": ["C"],
+      Guards: ["PG", "SG", "G"],
+      Forwards: ["SF", "PF", "F"],
+      Centers: ["C"],
     };
   }
   if (sportId === "baseball") {
     return {
-      "Pitchers": ["P", "SP", "RP"],
-      "Catchers": ["C"],
-      "Infielders": ["1B", "2B", "3B", "SS"],
-      "Outfielders": ["LF", "CF", "RF"],
+      Pitchers: ["P", "SP", "RP"],
+      Catchers: ["C"],
+      Infielders: ["1B", "2B", "3B", "SS", "INF"],
+      Outfielders: ["LF", "CF", "RF", "OF"],
     };
   }
-  // Football is default
   return {
-    "Offense": ["QB", "RB", "WR", "OL", "TE"],
-    "Defense": ["DL", "DE", "LB", "DB", "S"],
-    "Special Teams": ["K", "P"],
+    Offense: ["QB", "RB", "WR", "OL", "TE", "FB"],
+    Defense: ["DL", "DE", "DT", "LB", "DB", "CB", "S"],
+    "Special Teams": ["K", "P", "LS"],
   };
-};
+}
 
-// Helper function to group roster by positions
-const groupRosterByPosition = (roster: typeof FOOTBALL_ROSTER, positionGroups: Record<string, string[]>) => {
-  const grouped: Record<string, typeof FOOTBALL_ROSTER> = {};
-
-  Object.keys(positionGroups).forEach(group => {
-    grouped[group] = roster.filter(player =>
-      positionGroups[group].includes(player.position)
-    );
-  });
-
-  return grouped;
-};
-
-// Sample schedule data
-const SAMPLE_SCHEDULE = [
-  { date: "Sept 6", opponent: "Local Team A", homeAway: "H" as const, result: "W" as const, score: "35-14", leagueGame: true },
-  { date: "Sept 13", opponent: "Local Team B", homeAway: "A" as const, result: "W" as const, score: "28-21", leagueGame: true },
-  { date: "Sept 20", opponent: "Local Team C", homeAway: "H" as const, result: "W" as const, score: "42-10", leagueGame: true },
-  { date: "Sept 27", opponent: "Local Team D", homeAway: "A" as const, result: "L" as const, score: "17-20", leagueGame: true },
-  { date: "Oct 4", opponent: "Local Team E", homeAway: "H" as const, result: "W" as const, score: "31-24", leagueGame: true },
-  { date: "Oct 11", opponent: "Local Team F", homeAway: "H" as const, result: "W" as const, score: "38-7", leagueGame: false },
-  { date: "Oct 18", opponent: "Local Team G", homeAway: "A" as const, result: "W" as const, score: "28-14", leagueGame: true },
-  { date: "Oct 25", opponent: "Local Team H", homeAway: "H" as const, result: "L" as const, score: "21-24", leagueGame: true },
-  { date: "Nov 1", opponent: "Local Team I", homeAway: "A" as const, result: "W" as const, score: "35-17", leagueGame: true },
-  { date: "Nov 8", opponent: "Local Team J", homeAway: "H" as const, result: "W" as const, score: "42-28", leagueGame: false },
-];
-
-// Sample news articles
-const SAMPLE_NEWS = [
-  {
-    title: "Team Wins Big on Road",
-    image: "https://placehold.co/300x180/0a1628/f0a500?text=Game+Highlight",
-    snippet: "Strong second-half performance leads to convincing victory.",
-    date: "2 hours ago",
-  },
-  {
-    title: "Star Player Named to All-League Team",
-    image: "https://placehold.co/300x180/0a1628/f0a500?text=Player+Award",
-    snippet: "Senior captain earns prestigious recognition for outstanding season.",
-    date: "1 day ago",
-  },
-  {
-    title: "Championship Run Continues",
-    image: "https://placehold.co/300x180/0a1628/f0a500?text=Championship",
-    snippet: "With latest victory, team keeps playoff hopes alive.",
-    date: "3 days ago",
-  },
-  {
-    title: "Coach Discusses Season Goals",
-    image: "https://placehold.co/300x180/0a1628/f0a500?text=Coach+Interview",
-    snippet: "Leadership talks strategy and team development plans.",
-    date: "5 days ago",
-  },
-  {
-    title: "New Training Facility Opens",
-    image: "https://placehold.co/300x180/0a1628/f0a500?text=Facility",
-    snippet: "State-of-the-art equipment enhances team preparation.",
-    date: "1 week ago",
-  },
-  {
-    title: "Student-Athletes Balance School and Sports",
-    image: "https://placehold.co/300x180/0a1628/f0a500?text=Student+Life",
-    snippet: "Team members excel both on field and in classroom.",
-    date: "1 week ago",
-  },
-];
+// Helper: time ago display for articles
+function timeAgo(dateStr?: string): string {
+  if (!dateStr) return "";
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const hours = Math.floor(diff / 3600000);
+  if (hours < 1) return "Just now";
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
+  const weeks = Math.floor(days / 7);
+  return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+}
 
 type TabType = "overview" | "stats" | "schedule" | "roster" | "news";
 
@@ -263,16 +231,48 @@ export default function TeamPageClient({
   alumni,
   sport,
   sportMeta,
+  games,
+  roster,
+  articles,
 }: TeamPageClientProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
-  const winPct = ((team.currentRecord.wins / (team.currentRecord.wins + team.currentRecord.losses)) * 100).toFixed(1);
-  const pointDiff = team.pointsFor - team.pointsAgainst;
+  const totalGames = team.currentRecord.wins + team.currentRecord.losses;
+  const winPct = totalGames > 0 ? ((team.currentRecord.wins / totalGames) * 100).toFixed(1) : "0.0";
 
-  // Dynamic school colors for hero gradient
-  const heroGradient = school.primary_color
-    ? `linear-gradient(135deg, ${school.primary_color} 0%, ${school.secondary_color || school.primary_color} 100%)`
-    : `linear-gradient(135deg, var(--psp-navy) 0%, ${sportMeta.color}33 100%)`;
+  // Transform DB data for display
+  const schedule = gamesToSchedule(games || [], school.id);
+  const rosterDisplay = rosterToDisplay(roster || []);
+  const positionGroups = getPositionGroups(sport);
+
+  // Find last completed game and next upcoming game from schedule
+  const now = new Date();
+  const sortedGames = [...(games || [])].sort(
+    (a, b) => new Date(a.game_date).getTime() - new Date(b.game_date).getTime()
+  );
+  const lastCompletedGame = [...sortedGames]
+    .reverse()
+    .find((g) => g.home_score !== null && g.away_score !== null);
+  const nextUpcomingGame = sortedGames.find(
+    (g) => g.home_score === null || g.away_score === null
+  );
+
+  // Format "Right Now" data from real games
+  const getGameOpponent = (g: DBGame | undefined) => {
+    if (!g) return null;
+    const isHome = g.home_school_id === school.id;
+    const opp = isHome
+      ? (Array.isArray(g.away_school) ? g.away_school[0] : g.away_school)
+      : (Array.isArray(g.home_school) ? g.home_school[0] : g.home_school);
+    return {
+      name: opp?.name || "TBA",
+      homeAway: isHome ? "Home" : "Away",
+      date: formatGameDate(g.game_date),
+    };
+  };
+
+  const lastGameInfo = getGameOpponent(lastCompletedGame);
+  const nextGameInfo = getGameOpponent(nextUpcomingGame);
 
   // Tab styling
   const tabClasses = (tab: TabType) =>
@@ -310,17 +310,23 @@ export default function TeamPageClient({
           {/* Content */}
           <div className="p-4 md:p-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {/* This Week's Game */}
+              {/* Last Game */}
               <div>
                 <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">
-                  This Week's Game
+                  Last Game
                 </div>
-                <div className="text-sm font-semibold text-[var(--psp-navy)] mb-1">
-                  {SAMPLE_SCHEDULE.length > 0 ? SAMPLE_SCHEDULE[0].opponent : "TBA"}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {SAMPLE_SCHEDULE.length > 0 ? `${SAMPLE_SCHEDULE[0].homeAway === "H" ? "Home" : "Away"} • ${SAMPLE_SCHEDULE[0].date}` : "Season hasn't started yet"}
-                </div>
+                {lastGameInfo ? (
+                  <>
+                    <div className="text-sm font-semibold text-[var(--psp-navy)] mb-1">
+                      {lastGameInfo.name}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      {lastGameInfo.homeAway} &bull; {lastGameInfo.date}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-sm text-gray-400">No games played yet</div>
+                )}
               </div>
 
               {/* Current Record */}
@@ -349,12 +355,18 @@ export default function TeamPageClient({
                 <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">
                   Next Opponent
                 </div>
-                <div className="text-sm font-semibold text-[var(--psp-navy)] mb-1">
-                  {SAMPLE_SCHEDULE.length > 1 ? SAMPLE_SCHEDULE[1].opponent : SAMPLE_SCHEDULE[0]?.opponent || "TBA"}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {SAMPLE_SCHEDULE.length > 1 ? SAMPLE_SCHEDULE[1].date : (SAMPLE_SCHEDULE[0]?.date || "TBA")}
-                </div>
+                {nextGameInfo ? (
+                  <>
+                    <div className="text-sm font-semibold text-[var(--psp-navy)] mb-1">
+                      {nextGameInfo.name}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      {nextGameInfo.homeAway} &bull; {nextGameInfo.date}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-sm text-gray-400">No upcoming games</div>
+                )}
               </div>
             </div>
           </div>
@@ -395,7 +407,7 @@ export default function TeamPageClient({
                   <h2
                     className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}
                   >
-                    2024-25 Season Summary
+                    Season Summary
                   </h2>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="text-center">
@@ -432,34 +444,50 @@ export default function TeamPageClient({
                   >
                     Latest News
                   </h2>
-                  <div className="space-y-4">
-                    {SAMPLE_NEWS.slice(0, 3).map((article, idx) => (
-                      <div key={idx} className="flex gap-4 bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-md transition-shadow">
-                        <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
-                          <Image
-                            src={article.image}
-                            alt={article.title}
-                            width={96}
-                            height={96}
-                            sizes="96px"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3
-                            className="font-bold text-sm truncate"
-                            style={{ color: "var(--psp-navy)" }}
-                          >
-                            {article.title}
-                          </h3>
-                          <p className="text-xs text-gray-600 line-clamp-2 mt-1">
-                            {article.snippet}
-                          </p>
-                          <p className="text-xs text-gray-300 mt-2">{article.date}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  {articles && articles.length > 0 ? (
+                    <div className="space-y-4">
+                      {articles.slice(0, 3).map((article) => (
+                        <Link
+                          key={article.id}
+                          href={`/articles/${article.slug}`}
+                          className="flex gap-4 bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-md transition-shadow"
+                        >
+                          {article.featured_image_url && (
+                            <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                              <Image
+                                src={article.featured_image_url}
+                                alt={article.title}
+                                width={96}
+                                height={96}
+                                sizes="96px"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h3
+                              className="font-bold text-sm truncate"
+                              style={{ color: "var(--psp-navy)" }}
+                            >
+                              {article.title}
+                            </h3>
+                            {article.excerpt && (
+                              <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                {article.excerpt}
+                              </p>
+                            )}
+                            <p className="text-xs text-gray-300 mt-2">
+                              {timeAgo(article.published_at)}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6 text-center">
+                      <p className="text-sm text-gray-400">No articles yet for this team.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -471,26 +499,38 @@ export default function TeamPageClient({
 
             {/* Schedule Tab */}
             {activeTab === "schedule" && (
-              <TeamSchedule schedule={SAMPLE_SCHEDULE} />
+              schedule.length > 0 ? (
+                <TeamSchedule schedule={schedule} />
+              ) : (
+                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-8 text-center">
+                  <p className="text-sm text-gray-400">Schedule data not available for this season.</p>
+                </div>
+              )
             )}
 
             {/* Roster Tab */}
             {activeTab === "roster" && (
-              <TeamRoster
-                roster={getSampleRoster(sport)}
-                positionGroups={getPositionGroups(sport)}
-                sportMeta={sportMeta}
-              />
+              rosterDisplay.length > 0 ? (
+                <TeamRoster
+                  roster={rosterDisplay}
+                  positionGroups={positionGroups}
+                  sportMeta={sportMeta}
+                />
+              ) : (
+                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-8 text-center">
+                  <p className="text-sm text-gray-400">Roster data not available for this season.</p>
+                </div>
+              )
             )}
 
             {/* Alumni Pipeline */}
             <div style={{ marginTop: 20 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                 <h2 className="psp-h3" style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--psp-navy)" }}>
-                  🌍 Alumni Pipeline
+                  Alumni Pipeline
                 </h2>
                 <Link href="/philly-everywhere" style={{ color: "var(--psp-navy)", textDecoration: "none", fontWeight: 700, fontSize: "0.875rem" }}>
-                  Philly Everywhere →
+                  Philly Everywhere &rarr;
                 </Link>
               </div>
               <div style={{
@@ -510,7 +550,7 @@ export default function TeamPageClient({
                     }}>
                       <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>Alumni {i + 1}</div>
                       <div style={{ fontSize: 11, color: "var(--g400)", marginTop: 2 }}>
-                        {alum.destination_school || "TBA"} � {alum.destination_level || "TBA"}
+                        {alum.destination_school || "TBA"} &mdash; {alum.destination_level || "TBA"}
                       </div>
                       <div style={{ fontSize: 10, color: "var(--psp-gold)", fontWeight: 600, marginTop: 4 }}>
                         Class of {alum.graduation_year || "TBA"}
@@ -534,40 +574,53 @@ export default function TeamPageClient({
 
             {/* News Tab */}
             {activeTab === "news" && (
-              <div className="space-y-4">
-                {SAMPLE_NEWS.map((article, idx) => (
-                  <div
-                    key={idx}
-                    className="flex gap-4 bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-md transition-shadow"
-                  >
-                    <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
-                        src={article.image}
-                        alt={article.title}
-                        width={128}
-                        height={128}
-                        sizes="128px"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3
-                        className="font-bold text-base"
-                        style={{ color: "var(--psp-navy)" }}
-                      >
-                        {article.title}
-                      </h3>
-                      <p className="text-sm text-gray-600 mt-2">
-                        {article.snippet}
-                      </p>
-                      <p className="text-xs text-gray-300 mt-3">{article.date}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              articles && articles.length > 0 ? (
+                <div className="space-y-4">
+                  {articles.map((article) => (
+                    <Link
+                      key={article.id}
+                      href={`/articles/${article.slug}`}
+                      className="flex gap-4 bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-md transition-shadow"
+                    >
+                      {article.featured_image_url && (
+                        <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                          <Image
+                            src={article.featured_image_url}
+                            alt={article.title}
+                            width={128}
+                            height={128}
+                            sizes="128px"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3
+                          className="font-bold text-base"
+                          style={{ color: "var(--psp-navy)" }}
+                        >
+                          {article.title}
+                        </h3>
+                        {article.excerpt && (
+                          <p className="text-sm text-gray-600 mt-2">
+                            {article.excerpt}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-300 mt-3">
+                          {timeAgo(article.published_at)}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-8 text-center">
+                  <p className="text-sm text-gray-400">No articles yet for this team.</p>
+                </div>
+              )
             )}
 
-            {/* Season History — clickable links to each year */}
+            {/* Season History -- clickable links to each year */}
             {teamSeasons && teamSeasons.length > 0 && (
               <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
                 <div className="bg-[var(--psp-navy)] px-5 py-3" style={{ borderLeft: `4px solid var(--psp-gold)` }}>
@@ -585,7 +638,7 @@ export default function TeamPageClient({
                       const l = ts.losses ?? 0;
                       const t = ts.ties ?? 0;
                       const total = w + l;
-                      const pct = total > 0 ? ((w / total) * 100).toFixed(0) : "—";
+                      const pct = total > 0 ? ((w / total) * 100).toFixed(0) : "\u2014";
                       const isChampYear = championships.some(
                         (c) => c.season_id === ts.season_id
                       );
@@ -597,7 +650,7 @@ export default function TeamPageClient({
                         >
                           <div className="flex items-center gap-3">
                             {isChampYear && (
-                              <span className="text-base" role="img" aria-label="Championship season">🏆</span>
+                              <span className="text-base" role="img" aria-label="Championship season">&#127942;</span>
                             )}
                             <span className="font-semibold text-sm" style={{ color: "var(--psp-navy)" }}>
                               {label}
@@ -608,7 +661,7 @@ export default function TeamPageClient({
                               {w}-{l}{t > 0 ? `-${t}` : ""}
                             </span>
                             <span className="text-xs text-gray-300 w-10 text-right">{pct}%</span>
-                            <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">→</span>
+                            <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">&rarr;</span>
                           </div>
                         </Link>
                       );
@@ -620,7 +673,7 @@ export default function TeamPageClient({
                     className="text-xs font-semibold hover:underline"
                     style={{ color: "var(--psp-navy)" }}
                   >
-                    View full program profile →
+                    View full program profile &rarr;
                   </Link>
                 </div>
               </div>
@@ -740,7 +793,7 @@ export default function TeamPageClient({
                     className="text-3xl font-bold"
                     style={{ color: "var(--psp-gold)" }}
                   >
-                    🏆 {team.championships}
+                    &#127942; {team.championships}
                   </div>
                 </div>
                 {team.recentChampionships.length > 0 && (
@@ -784,7 +837,7 @@ export default function TeamPageClient({
                   className="block text-sm py-2 px-3 rounded hover:bg-gray-50 transition-colors"
                   style={{ color: "var(--psp-navy)" }}
                 >
-                  View all {team.league} teams →
+                  View all {team.league} teams &rarr;
                 </Link>
               </div>
             </div>
