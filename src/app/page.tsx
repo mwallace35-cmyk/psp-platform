@@ -9,6 +9,7 @@ import HomeScoresSection from '@/components/home/HomeScoresSection';
 import HomeArticlesSection from '@/components/home/HomeArticlesSection';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import DidYouKnow from '@/components/ui/DidYouKnow';
+import HeroMonument from '@/components/home/HeroMonument';
 
 export const revalidate = 300; // 5 min ISR — live content
 export const dynamic = 'force-dynamic';
@@ -85,33 +86,8 @@ export default async function HomePage() {
     <div className="min-h-screen bg-[var(--psp-navy)]">
       <OrganizationJsonLd />
 
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-[var(--psp-navy)] to-[var(--psp-navy-mid)] pt-10 pb-8 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="psp-h1-lg text-white">
-            PHILLY<span className="text-[var(--psp-gold)]">SPORTS</span>PACK
-          </h1>
-          <p className="text-gray-300 text-sm md:text-base mt-2 font-medium tracking-wide">
-            Scores &bull; Stats &bull; Rankings &bull; 7 Sports &bull; 1,300+ Schools
-          </p>
-
-          {/* Search Bar */}
-          <form action="/search" className="mt-5 max-w-xl mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                name="q"
-                placeholder="Search players, schools, teams..."
-                aria-label="Search players, schools, and teams"
-                className="w-full bg-[var(--psp-navy-mid)] border border-gray-600 rounded-full px-5 py-3 pl-12 text-sm text-gray-100 placeholder:text-gray-400 focus:outline-none focus:border-[var(--psp-gold)] focus:ring-1 focus:ring-[var(--psp-gold)] transition"
-              />
-              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-          </form>
-        </div>
-      </div>
+      {/* Hero — The Monument */}
+      <HeroMonument playerCount={57326} gameCount={44384} schoolCount={756} />
 
       {/* Beta Banner */}
       <div className="max-w-7xl mx-auto px-4 mt-4 mb-4">
