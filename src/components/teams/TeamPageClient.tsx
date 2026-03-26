@@ -766,47 +766,50 @@ export default function TeamPageClient({
                         <Link
                           key={ts.id}
                           href={`/${sport}/teams/${team.slug}/${label}`}
-                          className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors group"
+                          className="block px-5 py-3 hover:bg-gray-50 transition-colors group"
                         >
-                          <div className="flex items-center gap-3 min-w-0">
+                          <div className="flex items-center justify-between">
+                            {/* Left: season year */}
                             <span
-                              className="font-semibold text-sm flex-shrink-0"
-                              style={{ color: "var(--psp-navy)" }}
+                              style={{ color: "var(--psp-navy)", fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.15rem", letterSpacing: "0.03em" }}
                             >
                               {label}
                             </span>
-                            {/* Championship badges */}
-                            {seasonChamps.map((c) => (
+                            {/* Right: record + win% + arrow */}
+                            <div className="flex items-center gap-3 flex-shrink-0 ml-4">
                               <span
-                                key={c.id}
-                                className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
-                                style={{
-                                  background: "var(--psp-gold)",
-                                  color: "var(--psp-navy)",
-                                }}
-                                title={formatChampionshipLabel(c)}
+                                className="font-bold text-sm tabular-nums"
+                                style={{ color: "var(--psp-navy)" }}
                               >
-                                <span role="img" aria-hidden="true">&#127942;</span>
-                                <span className="hidden sm:inline truncate max-w-[160px]">
+                                {w}-{l}{t > 0 ? `-${t}` : ""}
+                              </span>
+                              <span className="text-xs text-gray-400 w-10 text-right tabular-nums">
+                                {pct}%
+                              </span>
+                              <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">
+                                &rarr;
+                              </span>
+                            </div>
+                          </div>
+                          {/* Championship badges on their own row */}
+                          {seasonChamps.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-1.5">
+                              {seasonChamps.map((c) => (
+                                <span
+                                  key={c.id}
+                                  className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full"
+                                  style={{
+                                    background: "var(--psp-gold)",
+                                    color: "var(--psp-navy)",
+                                  }}
+                                  title={formatChampionshipLabel(c)}
+                                >
+                                  <span role="img" aria-hidden="true">&#127942;</span>
                                   {formatChampionshipLabel(c)}
                                 </span>
-                              </span>
-                            ))}
-                          </div>
-                          <div className="flex items-center gap-4 flex-shrink-0">
-                            <span
-                              className="psp-small"
-                              style={{ color: "var(--psp-navy)" }}
-                            >
-                              {w}-{l}{t > 0 ? `-${t}` : ""}
-                            </span>
-                            <span className="text-xs text-gray-300 w-10 text-right">
-                              {pct}%
-                            </span>
-                            <span className="text-gray-300 group-hover:text-[var(--psp-gold)] transition-colors">
-                              &rarr;
-                            </span>
-                          </div>
+                              ))}
+                            </div>
+                          )}
                         </Link>
                       );
                     })}
