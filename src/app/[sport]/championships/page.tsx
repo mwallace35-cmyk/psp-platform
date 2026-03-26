@@ -33,7 +33,7 @@ interface TypeConfig {
   label: string;
   bg: string;
   text: string;
-  /** Sort tier: 1 = state, 2 = league, 3 = city/district */
+  /** Sort tier: 1 = state, 2 = city/district, 3 = league */
   tier: number;
   /** Sort within tier */
   order: number;
@@ -72,50 +72,50 @@ function getTypeConfig(champType: string | undefined, level: string | undefined)
   /* ── PCL (Catholic League) ── */
 
   if (ct === "PCL Red") {
-    return { label: "PCL Red Division Champion", bg: "#d4a017", text: "var(--psp-navy)", tier: 2, order: 10 };
+    return { label: "PCL Red Division Champion", bg: "#d4a017", text: "var(--psp-navy)", tier: 3, order: 10 };
   }
   if (ct === "PCL Blue") {
-    return { label: "PCL Blue Division Champion", bg: "#3b82f6", text: "white", tier: 2, order: 11 };
+    return { label: "PCL Blue Division Champion", bg: "#3b82f6", text: "white", tier: 3, order: 11 };
   }
   if (ct === "PCL" || ct === "catholic-league" || lv === "catholic-league") {
-    return { label: "PCL Champion", bg: "#7c3aed", text: "white", tier: 2, order: 12 };
+    return { label: "PCL Champion", bg: "#7c3aed", text: "white", tier: 3, order: 12 };
   }
 
   /* ── Public League ── */
 
   if (ct === "Public League" || ct === "public-league" || lv === "public-league") {
-    return { label: "Public League Champion", bg: "#16a34a", text: "white", tier: 2, order: 20 };
+    return { label: "Public League Champion", bg: "#16a34a", text: "white", tier: 3, order: 20 };
   }
 
   /* ── Inter-Ac ── */
   // Handles both level="inter-ac" (basketball) and level="league" (football)
   if (ct === "Inter-Ac" || ct === "inter-ac" || lv === "inter-ac") {
-    return { label: "Inter-Ac Champion", bg: "#0891b2", text: "white", tier: 2, order: 25 };
+    return { label: "Inter-Ac Champion", bg: "#0891b2", text: "white", tier: 3, order: 25 };
   }
 
   /* ── District 12 ── */
 
   if (ct === "District 12") {
     const cls = /^[1-6]A$/.test(lv) ? `${lv} ` : lv === "City Title" ? "" : "";
-    return { label: `District 12 ${cls}Champion`, bg: "#3b82f6", text: "white", tier: 3, order: 39 };
+    return { label: `District 12 ${cls}Champion`, bg: "#3b82f6", text: "white", tier: 2, order: 39 };
   }
 
   /* ── City Championships (football: championship_type = class, level = "city") ── */
 
   if (lv === "city" || lv === "City Title" || ct === "city-title") {
     if (/^[1-6]A$/.test(ct)) {
-      return { label: `City ${ct} Champion`, bg: "#3b82f6", text: "white", tier: 3, order: 30 + classSort(ct) };
+      return { label: `City ${ct} Champion`, bg: "#3b82f6", text: "white", tier: 2, order: 30 + classSort(ct) };
     }
     if (/^A{1,4}$/.test(ct)) {
-      return { label: `City ${ct} Champion`, bg: "#3b82f6", text: "white", tier: 3, order: 30 + classSort(ct) };
+      return { label: `City ${ct} Champion`, bg: "#3b82f6", text: "white", tier: 2, order: 30 + classSort(ct) };
     }
-    return { label: "City Champion", bg: "#3b82f6", text: "white", tier: 3, order: 40 };
+    return { label: "City Champion", bg: "#3b82f6", text: "white", tier: 2, order: 40 };
   }
 
   /* ── Other League (catch-all for "league" level after specific leagues) ── */
 
   if (ct === "Other League" || ct === "league" || lv === "league") {
-    return { label: "League Champion", bg: "#6b7280", text: "white", tier: 2, order: 30 };
+    return { label: "League Champion", bg: "#6b7280", text: "white", tier: 3, order: 30 };
   }
 
   /* ── Fallback ── */
@@ -135,9 +135,9 @@ function classSort(c: string): number {
 /* ------------------------------------------------------------------ */
 function tierLabel(tier: number): string {
   switch (tier) {
-    case 1: return "State Championships";
-    case 2: return "League Championships";
-    case 3: return "City Championships";
+    case 1: return "STATE CHAMPIONSHIPS";
+    case 2: return "CITY CHAMPIONSHIPS";
+    case 3: return "LEAGUE CHAMPIONSHIPS";
     default: return "Other";
   }
 }
@@ -160,7 +160,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
     const schoolName = c.schools?.name;
     const schoolSlug = c.schools?.slug;
     const cfg = getTypeConfig(c.championship_type, c.level);
-    const levelKey = cfg.tier === 1 ? "state" : cfg.tier === 2 ? "league" : "city";
+    const levelKey = cfg.tier === 1 ? "state" : cfg.tier === 2 ? "city" : "league";
     if (schoolName) {
       if (!dynastyAll[schoolName]) dynastyAll[schoolName] = { name: schoolName, slug: schoolSlug, count: 0 };
       dynastyAll[schoolName].count++;
@@ -235,14 +235,14 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             )}
             {tierCounts[2] && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
-                style={{ background: "#7c3aed", color: "white" }}>
-                {tierCounts[2]} League
+                style={{ background: "#3b82f6", color: "white" }}>
+                {tierCounts[2]} City
               </span>
             )}
             {tierCounts[3] && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
-                style={{ background: "#3b82f6", color: "white" }}>
-                {tierCounts[3]} City
+                style={{ background: "#7c3aed", color: "white" }}>
+                {tierCounts[3]} League
               </span>
             )}
             <span className="text-gray-300">
@@ -316,7 +316,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                         {tiers.length > 1 && (
                           <div className="px-5 py-1.5 text-[11px] font-bold uppercase tracking-widest"
                             style={{
-                              color: tier === 1 ? "var(--psp-gold)" : tier === 2 ? "#a78bfa" : "#60a5fa",
+                              color: tier === 1 ? "var(--psp-gold)" : tier === 2 ? "#60a5fa" : "#a78bfa",
                               background: "rgba(0,0,0,0.2)",
                               borderTop: tierIdx > 0 ? "1px solid rgba(255,255,255,0.06)" : "none",
                             }}>

@@ -255,27 +255,18 @@ export const getAvailableStandingsSeasons = cache(
           async () => {
             const supabase = await createClient();
 
-            // First get distinct season_ids that have team_seasons for this sport
-            const { data: tsData } = await supabase
-              .from("team_seasons")
-              .select("season_id")
-              .eq("sport_id", sportSlug);
-
-            if (!tsData || tsData.length === 0) return [];
-
-            // Get unique season IDs
-            const seasonIds = [...new Set(tsData.map(r => r.season_id))];
-
-            // Now fetch all those seasons' labels
-            const { data: seasons } = await supabase
+            // Query seasons that have team_seasons for this sport using inner join
+            // This avoids the 1000-row default limit issue from querying team_seasons directly
+            const { data: seasons } = await (supabase as any)
               .from("seasons")
-              .select("label, year_start")
-              .in("id", seasonIds)
-              .order("year_start", { ascending: false });
+              .select("label, year_start, team_seasons!inner(id)")
+              .eq("team_seasons.sport_id", sportSlug)
+              .order("year_start", { ascending: false })
+              .limit(200);
 
             if (!seasons || seasons.length === 0) return [];
 
-            return seasons.map(s => s.label);
+            return seasons.map((s: { label: string }) => s.label);
           },
           { maxRetries: 2, baseDelay: 500 }
         );
