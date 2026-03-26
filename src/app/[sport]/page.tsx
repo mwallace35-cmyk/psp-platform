@@ -16,6 +16,7 @@ import SportHubNews from "@/components/sport-layouts/SportHubNews";
 import SportHubStandings from "@/components/sport-layouts/SportHubStandings";
 import CompoundLeaderboards from "@/components/leaderboards/CompoundLeaderboards";
 import RecordWatch from "@/components/widgets/RecordWatch";
+import DidYouKnow from "@/components/ui/DidYouKnow";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
@@ -354,6 +355,15 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
 
       {/* 2.5 SCORES TICKER — Scrolling score strip right after news */}
       <HubScoresStrip games={recentGames} sportColor={sportColorHex} sport={sport} />
+
+      {/* Did You Know? — Sport-scoped trivia */}
+      <div className="bg-[var(--psp-navy)]">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="max-w-lg">
+            <DidYouKnow sport={sport} />
+          </div>
+        </div>
+      </div>
 
       {/* Playoff Preview (basketball only) */}
       {sport === "basketball" && <PlayoffPreview />}

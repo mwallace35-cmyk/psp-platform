@@ -4,7 +4,9 @@ import Link from 'next/link';
 import PulseNav from '@/components/pulse/PulseNav';
 import OurGuysClient, { type AlumniRecord } from './OurGuysClient';
 import OurGuysEditorialTop from '@/components/our-guys/OurGuysEditorialTop';
+import AroundTheWeb from '@/components/our-guys/AroundTheWeb';
 import type { FeaturedAthlete, DidYouKnowFact } from '@/components/our-guys/OurGuysEditorialTop';
+import type { WeekendRecap } from '@/components/our-guys/ThisWeekendCard';
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -41,7 +43,7 @@ const LEAGUE_STYLE: Record<string, { bg: string; text: string }> = {
 export default async function OurGuysPage() {
   const supabase = createStaticClient();
 
-  const [alumniRes, pipelineRes, recentRes, featuredRes, dykRes] = await Promise.all([
+  const [alumniRes, pipelineRes, recentRes, featuredRes, dykRes, weekendRes] = await Promise.all([
     // Main alumni fetch — all counts derived from this array
     supabase
       .from('next_level_tracking')
@@ -78,6 +80,13 @@ export default async function OurGuysPage() {
       .from('did_you_know')
       .select('id, fact_text, sport, category')
       .eq('approved', true),
+
+    // Weekend recaps — most recent week
+    supabase
+      .from('weekend_recaps')
+      .select('id, player_name, team, sport, stat_line, result, game_date, week_label')
+      .order('game_date', { ascending: false })
+      .limit(8),
   ]);
 
   /* ─── Process alumni ─── */
@@ -199,6 +208,18 @@ export default async function OurGuysPage() {
   // Shuffle so the initial fact is random each revalidation
   didYouKnowFacts.sort(() => Math.random() - 0.5);
 
+  /* ─── Weekend recaps ─── */
+  const weekendRecaps: WeekendRecap[] = ((weekendRes.data ?? []) as Record<string, unknown>[]).map(r => ({
+    id: r.id as number,
+    player_name: r.player_name as string,
+    team: r.team as string | null,
+    sport: r.sport as string,
+    stat_line: r.stat_line as string,
+    result: r.result as string | null,
+    game_date: r.game_date as string,
+    week_label: r.week_label as string | null,
+  }));
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ═══ Editorial Top — Hero + Featured + DYK ═══ */}
@@ -206,6 +227,7 @@ export default async function OurGuysPage() {
         counts={{ total: counts.total, activePro: counts.activePro, college: counts.college }}
         featuredAthletes={editorialFeatured}
         didYouKnowFacts={didYouKnowFacts}
+        weekendRecaps={weekendRecaps}
       />
 
       <PulseNav />
@@ -324,6 +346,9 @@ export default async function OurGuysPage() {
             </div>
           </section>
         )}
+
+        {/* ─── Around the Web ─── */}
+        <AroundTheWeb />
 
         {/* ─── Pro League Breakdown ─── */}
         {leagueBreakdown.length > 0 && (

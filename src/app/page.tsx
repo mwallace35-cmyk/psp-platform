@@ -8,6 +8,7 @@ import PotwHomepageWidget from '@/components/pulse/PotwHomepageWidget';
 import HomeScoresSection from '@/components/home/HomeScoresSection';
 import HomeArticlesSection from '@/components/home/HomeArticlesSection';
 import SkeletonCard from '@/components/ui/SkeletonCard';
+import DidYouKnow from '@/components/ui/DidYouKnow';
 
 export const revalidate = 300; // 5 min ISR — live content
 export const dynamic = 'force-dynamic';
@@ -237,6 +238,9 @@ export default async function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
+
+            {/* Did You Know? */}
+            <DidYouKnow />
           </div>
         </div>
       </div>

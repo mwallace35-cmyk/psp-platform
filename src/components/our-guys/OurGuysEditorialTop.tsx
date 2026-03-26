@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
+import ThisWeekendCard from './ThisWeekendCard';
+import type { WeekendRecap } from './ThisWeekendCard';
 
 /* ─── Types ─── */
 export interface FeaturedAthlete {
@@ -31,6 +33,7 @@ interface Props {
   counts: EditorialCounts;
   featuredAthletes: FeaturedAthlete[];
   didYouKnowFacts: DidYouKnowFact[];
+  weekendRecaps?: WeekendRecap[];
 }
 
 /* ─── League badge styling ─── */
@@ -57,7 +60,7 @@ const SPORT_ICON: Record<string, string> = {
   wrestling: '\uD83E\uDD3C',
 };
 
-export default function OurGuysEditorialTop({ counts, featuredAthletes, didYouKnowFacts }: Props) {
+export default function OurGuysEditorialTop({ counts, featuredAthletes, didYouKnowFacts, weekendRecaps = [] }: Props) {
   const [factIdx, setFactIdx] = useState(0);
 
   const shuffleFact = useCallback(() => {
@@ -128,27 +131,7 @@ export default function OurGuysEditorialTop({ counts, featuredAthletes, didYouKn
             ))}
 
             {/* This Weekend sidebar */}
-            <div className="rounded-2xl bg-white border border-gray-200 shadow-sm overflow-hidden">
-              <div className="bg-[#0a1628] px-5 py-3 flex items-center gap-2">
-                <span className="text-[#f0a500] text-lg">{'\uD83D\uDCC5'}</span>
-                <h3 className="psp-caption text-white tracking-wider text-xs">
-                  THIS WEEKEND
-                </h3>
-              </div>
-              <div className="p-5">
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="w-14 h-14 rounded-full bg-[#0a1628]/5 flex items-center justify-center mb-3">
-                    <span className="text-2xl">{'\uD83C\uDFC6'}</span>
-                  </div>
-                  <p className="text-sm font-semibold text-gray-700 mb-1">
-                    Game recaps coming soon
-                  </p>
-                  <p className="text-xs text-gray-400 max-w-[200px]">
-                    Pro performance tracking and weekend highlights will appear here
-                  </p>
-                </div>
-              </div>
-            </div>
+            <ThisWeekendCard recaps={weekendRecaps} />
           </div>
         </div>
       </section>
