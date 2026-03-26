@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import SchoolLogo from '@/components/ui/SchoolLogo';
 
 export interface AlumniRecord {
   id: string;
@@ -40,23 +41,23 @@ interface Props {
 type Tab = 'active-pros' | 'former-pros' | 'college' | 'coaching';
 
 const LEAGUE_BADGES: Record<string, { icon: string; bg: string }> = {
-  NFL: { icon: '🏈', bg: 'bg-green-700' },
-  NBA: { icon: '🏀', bg: 'bg-orange-600' },
-  MLB: { icon: '⚾', bg: 'bg-blue-700' },
-  WNBA: { icon: '🏀', bg: 'bg-purple-700' },
-  MLS: { icon: '⚽', bg: 'bg-purple-700' },
-  'NBA G League': { icon: '🏀', bg: 'bg-orange-500' },
-  UFL: { icon: '🏈', bg: 'bg-gray-600' },
+  NFL: { icon: '\u{1F3C8}', bg: 'bg-green-700' },
+  NBA: { icon: '\u{1F3C0}', bg: 'bg-orange-600' },
+  MLB: { icon: '\u26BE', bg: 'bg-blue-700' },
+  WNBA: { icon: '\u{1F3C0}', bg: 'bg-purple-700' },
+  MLS: { icon: '\u26BD', bg: 'bg-purple-700' },
+  'NBA G League': { icon: '\u{1F3C0}', bg: 'bg-orange-500' },
+  UFL: { icon: '\u{1F3C8}', bg: 'bg-gray-600' },
 };
 
 const SPORT_EMOJIS: Record<string, string> = {
-  football: '🏈',
-  basketball: '🏀',
-  baseball: '⚾',
-  soccer: '⚽',
-  lacrosse: '🥍',
-  'track-field': '🏃',
-  wrestling: '🤼',
+  football: '\u{1F3C8}',
+  basketball: '\u{1F3C0}',
+  baseball: '\u26BE',
+  soccer: '\u26BD',
+  lacrosse: '\u{1F94D}',
+  'track-field': '\u{1F3C3}',
+  wrestling: '\u{1F93C}',
 };
 
 const SPORT_LABELS: Record<string, string> = {
@@ -83,6 +84,17 @@ const SPORT_COLORS: Record<string, string> = {
 
 const SPORT_ORDER = ['football', 'basketball', 'baseball', 'soccer', 'lacrosse', 'track-field', 'wrestling', 'other'];
 
+/** Pro league pill colors */
+const PRO_PILL: Record<string, { bg: string; text: string }> = {
+  NFL:           { bg: '#16a34a', text: '#ffffff' },
+  NBA:           { bg: '#3b82f6', text: '#ffffff' },
+  MLB:           { bg: '#ea580c', text: '#ffffff' },
+  WNBA:          { bg: '#7c3aed', text: '#ffffff' },
+  MLS:           { bg: '#059669', text: '#ffffff' },
+  'NBA G League': { bg: '#f97316', text: '#ffffff' },
+  UFL:           { bg: '#6b7280', text: '#ffffff' },
+};
+
 /* ─── Source pattern to strip from bio_note ─── */
 const SOURCE_PATTERN = /\s*(?:source:\s*\S+|via\s+\S+)\s*\.?\s*$/i;
 
@@ -90,7 +102,6 @@ const SOURCE_PATTERN = /\s*(?:source:\s*\S+|via\s+\S+)\s*\.?\s*$/i;
 function cleanBio(raw: string | null): string | null {
   if (!raw) return null;
   let cleaned = raw.replace(SOURCE_PATTERN, '').trim();
-  // Also strip standalone URLs at the end
   cleaned = cleaned.replace(/\s*https?:\/\/\S+\s*$/i, '').trim();
   return cleaned || null;
 }
@@ -138,7 +149,7 @@ function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
               <span className="text-xs font-bold uppercase tracking-widest text-gold">Featured</span>
               {league && (
                 <span className={`px-2 py-0.5 rounded text-xs font-bold text-white ${league.bg}`}>
-                  {league.icon} {a.pro_league}
+                  <span aria-hidden="true">{league.icon}</span> {a.pro_league}
                 </span>
               )}
             </div>
@@ -160,13 +171,12 @@ function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
           </div>
           <div className="hidden md:flex flex-col items-center gap-1 ml-6">
             <div className="w-20 h-20 rounded-full bg-navy-mid border-2 border-gold flex items-center justify-center text-3xl">
-              {SPORT_EMOJIS[a.sport_id || ''] || '🏅'}
+              {SPORT_EMOJIS[a.sport_id || ''] || '\u{1F3C5}'}
             </div>
             {a.status === 'retired' && <span className="text-[10px] text-gray-400 uppercase tracking-wider">Legend</span>}
           </div>
         </div>
       </div>
-      {/* Dots */}
       {featured.length > 1 && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {featured.map((_, i) => (
@@ -178,35 +188,6 @@ function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-/* ─── Alphabet Bar ─── */
-function AlphabetBar({ letters, activeLetter, onSelect }: { letters: Set<string>; activeLetter: string | null; onSelect: (l: string | null) => void }) {
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  return (
-    <div className="flex flex-wrap gap-0.5 mb-4">
-      <button
-        onClick={() => onSelect(null)}
-        className={`w-7 h-7 text-xs font-bold rounded transition ${!activeLetter ? 'bg-gold text-navy' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
-      >
-        All
-      </button>
-      {alphabet.map(l => (
-        <button
-          key={l}
-          onClick={() => letters.has(l) ? onSelect(l === activeLetter ? null : l) : undefined}
-          disabled={!letters.has(l)}
-          className={`w-7 h-7 text-xs font-bold rounded transition ${
-            l === activeLetter ? 'bg-navy text-white' :
-            letters.has(l) ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' :
-            'bg-gray-50 text-gray-300 cursor-not-allowed'
-          }`}
-        >
-          {l}
-        </button>
-      ))}
     </div>
   );
 }
@@ -242,85 +223,67 @@ function TwitterEmbed({ handle }: { handle: string }) {
 /* ─── Coaching Card ─── */
 function CoachingCard({ a }: { a: AlumniRecord }) {
   const hasPlayerProfile = !!a.player_id && !!a.slug;
-  const initials = a.person_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  const sportColor = SPORT_COLORS[a.sport_id || 'other'] || SPORT_COLORS.other;
+  const sportLabel = a.sport_id ? SPORT_LABELS[a.sport_id] : null;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-lg hover:border-green-400 transition-all duration-200 group animate-fade-in-up">
-      {/* Header with avatar */}
-      <div className="flex items-start gap-4">
-        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center text-white font-bold text-lg shrink-0">
-          {initials}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-lg text-navy">{a.person_name}</h3>
-          {a.current_role && a.current_role !== 'postgres' && (
-            <p className="text-sm font-medium text-gray-700">{a.current_role}</p>
-          )}
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg group animate-fade-in-up">
+      <div className="h-[3px]" style={{ backgroundColor: sportColor }} />
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <h3 className="font-bold text-base font-heading truncate" style={{ color: 'var(--psp-navy, #0a1628)' }}>
+            {a.person_name}
+          </h3>
           {a.current_org && (
-            <p className="text-sm text-green-700 font-semibold">{a.current_org}</p>
+            <span className="text-xs text-gray-400 shrink-0 text-right max-w-[40%] truncate">{a.current_org}</span>
+          )}
+        </div>
+        <p className="text-[11px] text-gray-500 font-medium leading-tight flex items-center gap-1 flex-wrap">
+          {a.current_role && a.current_role !== 'postgres' && <span>{a.current_role}</span>}
+          {a.current_role && a.current_role !== 'postgres' && a.schools && (
+            <span className="text-gray-300" aria-hidden="true">&middot;</span>
+          )}
+          {a.schools && (
+            <Link href={`/schools/${a.schools.slug}`} className="inline-flex items-center gap-1 hover:text-blue-600 transition-colors">
+              <SchoolLogo name={a.schools.name} size="sm" />
+              <span>{a.schools.name}</span>
+            </Link>
+          )}
+          {sportLabel && (
+            <>
+              <span className="text-gray-300" aria-hidden="true">&middot;</span>
+              <span>{sportLabel}</span>
+            </>
+          )}
+        </p>
+        {a.college && <p className="text-[11px] text-gray-400 mt-1">College: {a.college}</p>}
+        {(() => {
+          const bio = cleanBio(a.bio_note);
+          return bio ? <p className="text-xs text-gray-500 mt-2 leading-relaxed">{truncateBio(bio, 120)}</p> : null;
+        })()}
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            {a.bio_url && (
+              <a href={a.bio_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 transition">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                Staff Bio
+              </a>
+            )}
+            {a.social_twitter && (
+              <a href={`https://twitter.com/${a.social_twitter}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-blue-500 transition">
+                @{a.social_twitter}
+              </a>
+            )}
+          </div>
+          {hasPlayerProfile ? (
+            <Link href={`/players/${a.slug}`} className="text-xs font-bold px-3 py-1.5 rounded-md transition hover:brightness-110" style={{ backgroundColor: 'var(--psp-gold, #f0a500)', color: 'var(--psp-navy, #0a1628)' }}>
+              View Full Profile
+            </Link>
+          ) : (
+            <span className="text-[11px] text-gray-400 italic">Profile Coming Soon</span>
           )}
         </div>
       </div>
-
-      {/* Bio note */}
-      {(() => {
-        const bio = cleanBio(a.bio_note);
-        return bio ? <p className="text-xs text-gray-400 mt-3 leading-relaxed">{truncateBio(bio, 120)}</p> : null;
-      })()}
-
-      {/* HS link */}
-      {a.schools && (
-        <div className="mt-2">
-          <Link href={`/schools/${a.schools.slug}`} className="text-xs text-blue-600 hover:text-blue-800">
-            🏫 {a.schools.name}
-          </Link>
-        </div>
-      )}
-
-      {/* College */}
-      {a.college && (
-        <p className="text-xs text-gray-300 mt-1">🎓 {a.college}</p>
-      )}
-
-      {/* Action buttons */}
-      <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-gray-100">
-        {a.bio_url && (
-          <a
-            href={a.bio_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-50 text-green-700 hover:bg-green-100 transition"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-            Staff Bio
-          </a>
-        )}
-        {a.social_twitter && (
-          <a
-            href={`https://twitter.com/${a.social_twitter}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
-          >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            @{a.social_twitter}
-          </a>
-        )}
-        {hasPlayerProfile ? (
-          <Link
-            href={`/players/${a.slug}`}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition hover:brightness-110"
-            style={{ backgroundColor: '#f0a500', color: '#0a1628' }}
-          >
-            View Full Profile
-          </Link>
-        ) : (
-          <span className="text-[11px] text-gray-400 italic">Profile Coming Soon</span>
-        )}
-      </div>
-
-      {/* Twitter embed */}
-      {a.social_twitter && <TwitterEmbed handle={a.social_twitter} />}
     </div>
   );
 }
@@ -329,98 +292,87 @@ function CoachingCard({ a }: { a: AlumniRecord }) {
 function AthleteCard({ a, activeTab }: { a: AlumniRecord; activeTab: Tab }) {
   if (activeTab === 'coaching') return <CoachingCard a={a} />;
 
-  const league = a.pro_league ? LEAGUE_BADGES[a.pro_league] : null;
-  const sportEmoji = SPORT_EMOJIS[a.sport_id || ''] || '';
   const isInactive = a.status !== 'active';
-  const sportColor = SPORT_COLORS[a.sport_id || 'other'] || '#6b7280';
+  const sportColor = SPORT_COLORS[a.sport_id || 'other'] || SPORT_COLORS.other;
+  const sportLabel = a.sport_id ? SPORT_LABELS[a.sport_id] : null;
   const hasPlayerProfile = !!a.player_id && !!a.slug;
+  const proPill = a.pro_league ? PRO_PILL[a.pro_league] : null;
+  const isFormer = activeTab === 'former-pros';
 
   return (
-    <div
-      className={`bg-white rounded-lg border p-4 hover:shadow-md transition-all duration-200 group animate-fade-in-up ${
-        activeTab === 'former-pros' ? 'opacity-80 hover:border-gray-400' :
-        activeTab === 'college' ? 'hover:border-blue-400' :
-        'hover:border-gold'
-      }`}
-      style={{ borderLeft: `3px solid ${sportColor}` }}
-    >
-      <div className="flex items-start justify-between mb-1">
-        <div className="flex items-center gap-2 min-w-0">
-          <h3 className={`font-bold text-base truncate ${activeTab === 'former-pros' ? 'text-gray-700' : 'text-navy'}`}>
-            {a.person_name}
-          </h3>
-          {isInactive && activeTab !== 'former-pros' && (
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-400 shrink-0">
-              {a.status === 'retired' ? 'Retired' : a.status === 'deceased' ? 'Deceased' : 'Inactive'}
+    <div className={`bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg group animate-fade-in-up ${isFormer ? 'opacity-85' : ''}`}>
+      <div className="h-[3px]" style={{ backgroundColor: sportColor }} />
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <div className="flex items-center gap-2 min-w-0">
+            <h3 className="font-bold text-base font-heading truncate" style={{ color: isFormer ? '#374151' : 'var(--psp-navy, #0a1628)' }}>
+              {a.person_name}
+            </h3>
+            {isInactive && !isFormer && (
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-400 shrink-0">
+                {a.status === 'retired' ? 'Retired' : a.status === 'deceased' ? 'Deceased' : 'Inactive'}
+              </span>
+            )}
+          </div>
+          {a.current_org && (
+            <span className={`text-xs shrink-0 text-right max-w-[40%] truncate ${isFormer ? 'text-gray-400' : 'text-gray-500'}`}>
+              {a.current_org}
             </span>
           )}
         </div>
-        {league && (
-          <span className={`px-2 py-0.5 rounded text-xs font-bold text-white shrink-0 ${league.bg} ${activeTab === 'former-pros' ? 'opacity-70' : ''}`}>
-            {league.icon} {a.pro_league}
+        <p className="text-[11px] text-gray-500 font-medium leading-tight flex items-center gap-1 flex-wrap">
+          {a.schools && (
+            <Link href={`/schools/${a.schools.slug}`} className="inline-flex items-center gap-1 hover:text-blue-600 transition-colors">
+              <SchoolLogo name={a.schools.name} size="sm" />
+              <span>{a.schools.name}</span>
+            </Link>
+          )}
+          {a.schools && sportLabel && <span className="text-gray-300" aria-hidden="true">&middot;</span>}
+          {sportLabel && <span>{sportLabel}</span>}
+          {a.college && activeTab !== 'college' && (
+            <>
+              <span className="text-gray-300" aria-hidden="true">&middot;</span>
+              <span className="text-gray-400">{a.college}</span>
+            </>
+          )}
+        </p>
+        {proPill && a.pro_league && (
+          <span
+            className={`inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${isFormer ? 'opacity-70' : ''}`}
+            style={{ backgroundColor: proPill.bg, color: proPill.text }}
+          >
+            {a.pro_league}
           </span>
         )}
-      </div>
-
-      {a.current_org && (
-        <p className={`text-sm font-medium ${activeTab === 'former-pros' ? 'text-gray-600' : 'text-gray-700'}`}>
-          {a.current_org}
-        </p>
-      )}
-      {a.current_role && a.current_role !== 'postgres' && (
-        <p className="text-xs text-gray-400">{a.current_role}</p>
-      )}
-
-      <div className="flex items-center gap-3 mt-2">
-        {a.schools && (
-          <Link href={`/schools/${a.schools.slug}`} className="text-xs text-blue-600 hover:text-blue-800">
-            {sportEmoji} {a.schools.name}
-          </Link>
+        {a.current_role && a.current_role !== 'postgres' && (
+          <p className="text-[11px] text-gray-400 mt-1">{a.current_role}</p>
         )}
-        {a.college && activeTab !== 'college' && (
-          <span className="text-xs text-gray-300">{a.college}</span>
-        )}
-      </div>
-
-      {/* Structured subtitle (league/sport context) */}
-      {a.schools?.name && a.sport_id && (
-        <p className="text-[11px] text-gray-400 mt-1.5 font-medium">
-          {a.schools.name}
-          {SPORT_LABELS[a.sport_id] ? ` · ${SPORT_LABELS[a.sport_id]}` : ''}
-        </p>
-      )}
-
-      {/* Bio note — cleaned and truncated */}
-      {(() => {
-        const bio = cleanBio(a.bio_note);
-        return bio ? <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{truncateBio(bio, 120)}</p> : null;
-      })()}
-
-      {/* Footer: socials + player profile link */}
-      <div className="flex items-center justify-between mt-3">
-        <div className="flex gap-3">
-          {a.social_twitter && activeTab !== 'former-pros' && (
-            <a href={`https://twitter.com/${a.social_twitter}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:text-blue-700">
-              @{a.social_twitter}
-            </a>
-          )}
-          {a.social_instagram && activeTab !== 'former-pros' && (
-            <a href={`https://instagram.com/${a.social_instagram}`} target="_blank" rel="noopener noreferrer" className="text-xs text-pink-500 hover:text-pink-700">
-              IG
-            </a>
+        {a.draft_info && <p className="text-[11px] text-gray-400 mt-0.5">{a.draft_info}</p>}
+        {(() => {
+          const bio = cleanBio(a.bio_note);
+          return bio ? <p className="text-xs text-gray-500 mt-2 leading-relaxed">{truncateBio(bio, 120)}</p> : null;
+        })()}
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            {a.social_twitter && !isFormer && (
+              <a href={`https://twitter.com/${a.social_twitter}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-blue-500 transition">
+                @{a.social_twitter}
+              </a>
+            )}
+            {a.social_instagram && !isFormer && (
+              <a href={`https://instagram.com/${a.social_instagram}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-pink-500 transition">
+                IG
+              </a>
+            )}
+          </div>
+          {hasPlayerProfile ? (
+            <Link href={`/players/${a.slug}`} className="text-xs font-bold px-3 py-1.5 rounded-md transition hover:brightness-110" style={{ backgroundColor: 'var(--psp-gold, #f0a500)', color: 'var(--psp-navy, #0a1628)' }}>
+              View Full Profile
+            </Link>
+          ) : (
+            <span className="text-[11px] text-gray-400 italic">Profile Coming Soon</span>
           )}
         </div>
-        {hasPlayerProfile ? (
-          <Link
-            href={`/players/${a.slug}`}
-            className="text-xs font-bold px-3 py-1 rounded transition hover:brightness-110"
-            style={{ backgroundColor: '#f0a500', color: '#0a1628' }}
-          >
-            View Full Profile
-          </Link>
-        ) : (
-          <span className="text-[11px] text-gray-400 italic">Profile Coming Soon</span>
-        )}
       </div>
     </div>
   );
@@ -435,6 +387,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
   const [leagueFilter, setLeagueFilter] = useState<string | null>(null);
   const [collegeFilter, setCollegeFilter] = useState<string | null>(null);
   const [schoolFilter, setSchoolFilter] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'name' | 'school' | 'sport' | 'grad'>('name');
   const searchRef = useRef<HTMLInputElement>(null);
 
   // Cmd+K to focus search
@@ -456,9 +409,10 @@ export default function OurGuysClient({ alumni, counts }: Props) {
     setLeagueFilter(null);
     setCollegeFilter(null);
     setSchoolFilter(null);
+    setSortBy('name');
   }, []);
 
-  // Featured heroes (only from active + retired pros)
+  // Featured heroes
   const featuredHeroes = useMemo(() => alumni.filter(a => a.featured), [alumni]);
 
   // Group alumni by tab
@@ -508,9 +462,9 @@ export default function OurGuysClient({ alumni, counts }: Props) {
     return Object.entries(schools).sort((a, b) => b[1].count - a[1].count).slice(0, 15);
   }, [currentList]);
 
-  // Apply all filters
+  // Apply all filters + sort
   const filtered = useMemo(() => {
-    return currentList.filter(a => {
+    const result = currentList.filter(a => {
       if (sportFilter !== 'all' && a.sport_id !== sportFilter) return false;
       if (searchTerm && !a.person_name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
       if (activeLetter && !a.person_name.toUpperCase().startsWith(activeLetter)) return false;
@@ -519,7 +473,16 @@ export default function OurGuysClient({ alumni, counts }: Props) {
       if (schoolFilter && a.schools?.name !== schoolFilter) return false;
       return true;
     });
-  }, [currentList, sportFilter, searchTerm, activeLetter, leagueFilter, collegeFilter, schoolFilter]);
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'school': return (a.schools?.name || 'ZZZ').localeCompare(b.schools?.name || 'ZZZ');
+        case 'sport': return (a.sport_id || 'zzz').localeCompare(b.sport_id || 'zzz');
+        case 'grad': return 0;
+        default: return a.person_name.localeCompare(b.person_name);
+      }
+    });
+    return result;
+  }, [currentList, sportFilter, searchTerm, activeLetter, leagueFilter, collegeFilter, schoolFilter, sortBy]);
 
   // Available letters
   const availableLetters = useMemo(() => {
@@ -550,7 +513,6 @@ export default function OurGuysClient({ alumni, counts }: Props) {
   }, [filtered]);
 
   const showGrouped = sportFilter === 'all' && !searchTerm && !activeLetter && !leagueFilter && !collegeFilter && !schoolFilter && groupedBySport.length > 1;
-
   const hasActiveFilters = sportFilter !== 'all' || searchTerm || activeLetter || leagueFilter || collegeFilter || schoolFilter;
 
   const tabs: { key: Tab; label: string; count: number }[] = [
@@ -560,61 +522,56 @@ export default function OurGuysClient({ alumni, counts }: Props) {
     { key: 'coaching', label: 'Coaching', count: coachingAlumni.length },
   ];
 
+  /* Shared dropdown style for Step 3 refinement row */
+  const selectCls = 'w-full sm:w-auto flex-1 min-w-0 appearance-none rounded-lg border border-gray-600 bg-[#0f2040] text-gray-200 text-xs px-3 py-2 pr-7 focus:outline-none focus:border-[#f0a500] focus:ring-1 focus:ring-[#f0a500] cursor-pointer';
+  const chevronSvg = (
+    <svg className="pointer-events-none absolute right-2 top-2.5 w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    </svg>
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       {/* Featured Hero Carousel */}
       <FeaturedHeroCarousel featured={featuredHeroes} />
 
-      {/* Search Bar */}
-      <div className="relative mb-4">
-        <input
-          ref={searchRef}
-          type="text"
-          placeholder="Search athletes by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-3 pl-10 rounded-xl border border-gray-200 text-sm bg-white shadow-sm focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold"
-        />
-        <svg className="absolute left-3 top-3.5 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <span className="absolute right-3 top-3 text-xs text-gray-300 hidden sm:inline">Cmd+K</span>
-        {searchTerm && (
-          <button onClick={() => setSearchTerm('')} className="absolute right-16 top-3 text-gray-300 hover:text-gray-600 text-sm">
-            Clear
-          </button>
-        )}
-      </div>
+      {/* ═══ Sticky Filter Bar ═══ */}
+      <div
+        className="sticky z-30 rounded-xl border border-gray-700 px-4 py-3 mb-6 space-y-3"
+        style={{ top: 64, backgroundColor: '#0a1628' }}
+      >
+        {/* Row 1: Category pills + Sport pills + Search */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          {/* Step 1 — Category pills */}
+          <div className="flex flex-wrap gap-1.5">
+            {tabs.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => { setActiveTab(tab.key); resetFilters(); }}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all ${
+                  activeTab === tab.key
+                    ? 'text-[#0a1628] shadow-md'
+                    : 'text-gray-400 hover:text-gray-200 bg-transparent border border-gray-600 hover:border-gray-400'
+                }`}
+                style={activeTab === tab.key ? { backgroundColor: '#f0a500' } : {}}
+              >
+                {tab.label}
+                <span className="ml-1 opacity-70">({tab.count})</span>
+              </button>
+            ))}
+          </div>
 
-      {/* Tabs */}
-      <div className="flex gap-0 border-b-2 border-gray-200 mb-4">
-        {tabs.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => { setActiveTab(tab.key); resetFilters(); }}
-            className={`flex-1 py-3 text-center text-sm font-bold font-bebas tracking-wider transition-colors ${
-              activeTab === tab.key
-                ? 'text-navy border-b-3 border-gold'
-                : 'text-gray-300 hover:text-gray-600'
-            }`}
-            style={activeTab === tab.key ? { borderBottomWidth: 3 } : {}}
-          >
-            {tab.label}
-            <span className="ml-1 text-xs font-normal">({tab.count})</span>
-          </button>
-        ))}
-      </div>
+          {/* Divider */}
+          <div className="hidden sm:block w-px h-6 bg-gray-600 shrink-0" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Main content */}
-        <div className="lg:col-span-3">
-          {/* Filter Pills Row */}
-          <div className="flex flex-wrap gap-2 mb-3">
-            {/* Sport filters */}
+          {/* Step 2 — Sport pills */}
+          <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => setSportFilter('all')}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                sportFilter === 'all' ? 'bg-navy text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition ${
+                sportFilter === 'all'
+                  ? 'bg-white/15 text-white'
+                  : 'text-gray-400 hover:text-gray-200'
               }`}
             >
               All Sports
@@ -623,177 +580,189 @@ export default function OurGuysClient({ alumni, counts }: Props) {
               <button
                 key={sport}
                 onClick={() => setSportFilter(sport === sportFilter ? 'all' : sport)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                  sportFilter === sport ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition ${
+                  sportFilter === sport ? 'text-white shadow-sm' : 'text-gray-400 hover:text-gray-200'
                 }`}
                 style={sportFilter === sport ? { backgroundColor: SPORT_COLORS[sport] } : {}}
               >
                 {SPORT_EMOJIS[sport]} {SPORT_LABELS[sport] || sport}
               </button>
             ))}
+          </div>
 
-            {/* League filter pills (pro tabs) */}
-            {(activeTab === 'active-pros' || activeTab === 'former-pros') && availableLeagues.length > 0 && (
-              <>
-                <span className="text-gray-300 self-center">|</span>
-                {availableLeagues.slice(0, 6).map(([league, count]) => (
-                  <button
-                    key={league}
-                    onClick={() => setLeagueFilter(league === leagueFilter ? null : league)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                      leagueFilter === league ? 'bg-navy text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {LEAGUE_BADGES[league]?.icon || '🏅'} {league} ({count})
-                  </button>
-                ))}
-              </>
+          {/* Search — pushed right on desktop */}
+          <div className="sm:ml-auto relative w-full sm:w-56 shrink-0">
+            <input
+              ref={searchRef}
+              type="text"
+              placeholder="Search by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-600 bg-[#0f2040] text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-[#f0a500] focus:ring-1 focus:ring-[#f0a500]"
+            />
+            <svg className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            {searchTerm && (
+              <button onClick={() => setSearchTerm('')} className="absolute right-2 top-2 text-gray-400 hover:text-gray-200 text-xs">
+                &times;
+              </button>
             )}
           </div>
-
-          {/* Active filter chips */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap gap-2 mb-3">
-              {collegeFilter && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">
-                  College: {collegeFilter}
-                  <button onClick={() => setCollegeFilter(null)} className="ml-1 hover:text-blue-900">&times;</button>
-                </span>
-              )}
-              {schoolFilter && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                  HS: {schoolFilter}
-                  <button onClick={() => setSchoolFilter(null)} className="ml-1 hover:text-green-900">&times;</button>
-                </span>
-              )}
-              {activeLetter && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-200 text-gray-700 text-xs font-medium">
-                  Letter: {activeLetter}
-                  <button onClick={() => setActiveLetter(null)} className="ml-1 hover:text-gray-900">&times;</button>
-                </span>
-              )}
-              <button onClick={resetFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
-                Clear all filters
-              </button>
-            </div>
-          )}
-
-          {/* Alphabet Bar */}
-          <AlphabetBar letters={availableLetters} activeLetter={activeLetter} onSelect={setActiveLetter} />
-
-          {/* Results count */}
-          <p className="text-xs text-gray-400 mb-4">
-            {hasActiveFilters
-              ? `Showing ${filtered.length} of ${currentList.length}`
-              : `${currentList.length} athletes`}
-          </p>
-
-          {/* Cards Grid */}
-          {filtered.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-4xl mb-4">🔍</p>
-              <p className="text-gray-600 font-medium">No athletes found</p>
-              <p className="text-gray-300 text-sm mt-1">Try adjusting your filters or search</p>
-              <button onClick={resetFilters} className="mt-4 text-sm text-blue-600 hover:text-blue-800 font-medium">
-                Reset all filters
-              </button>
-            </div>
-          ) : showGrouped ? (
-            <div className="space-y-8">
-              {groupedBySport.map(({ sport, athletes }) => (
-                <div key={sport}>
-                  <div className="flex items-center gap-3 mb-4 pb-2 border-b-2" style={{ borderColor: SPORT_COLORS[sport] || '#6b7280' }}>
-                    <span className="text-2xl">{SPORT_EMOJIS[sport] || ''}</span>
-                    <h2 className="psp-h3" style={{ color: SPORT_COLORS[sport] }}>
-                      {SPORT_LABELS[sport] || sport}
-                    </h2>
-                    <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: SPORT_COLORS[sport] }}>
-                      {athletes.length}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {athletes.map(a => <AthleteCard key={a.id} a={a} activeTab={activeTab} />)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filtered.map(a => <AthleteCard key={a.id} a={a} activeTab={activeTab} />)}
-            </div>
-          )}
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-5">
-          {/* Top Colleges */}
-          {availableColleges.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-300 mb-3">
-                {activeTab === 'college' ? 'Filter by College' : 'Top Colleges'}
-              </h3>
-              <div className="space-y-1.5">
-                {availableColleges.slice(0, 10).map(([col, count]) => (
-                  <button
-                    key={col}
-                    onClick={() => setCollegeFilter(col === collegeFilter ? null : col)}
-                    className={`w-full flex justify-between items-center text-sm px-2 py-1 rounded transition ${
-                      collegeFilter === col ? 'bg-blue-50 text-blue-700 font-medium' : 'text-navy hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="truncate">{col}</span>
-                    <span className="text-xs font-bold text-gray-300 shrink-0 ml-2">{count}</span>
-                  </button>
+        {/* Row 2: Step 3 — Refinement dropdowns + count */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          {/* League dropdown (pro tabs only) */}
+          {(activeTab === 'active-pros' || activeTab === 'former-pros') && availableLeagues.length > 0 && (
+            <div className="relative flex-1 min-w-0">
+              <select
+                value={leagueFilter || ''}
+                onChange={(e) => setLeagueFilter(e.target.value || null)}
+                className={selectCls}
+              >
+                <option value="">All Leagues</option>
+                {availableLeagues.map(([league, count]) => (
+                  <option key={league} value={league}>{league} ({count})</option>
                 ))}
-              </div>
+              </select>
+              {chevronSvg}
             </div>
           )}
 
-          {/* Top High Schools */}
+          {/* School dropdown */}
           {availableSchools.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-300 mb-3">
-                Filter by High School
-              </h3>
-              <div className="space-y-1.5">
-                {availableSchools.slice(0, 10).map(([school, data]) => (
-                  <button
-                    key={school}
-                    onClick={() => setSchoolFilter(school === schoolFilter ? null : school)}
-                    className={`w-full flex justify-between items-center text-sm px-2 py-1 rounded transition ${
-                      schoolFilter === school ? 'bg-green-50 text-green-700 font-medium' : 'text-navy hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="truncate">{school}</span>
-                    <span className="text-xs font-bold text-gray-300 shrink-0 ml-2">{data.count}</span>
-                  </button>
+            <div className="relative flex-1 min-w-0">
+              <select
+                value={schoolFilter || ''}
+                onChange={(e) => setSchoolFilter(e.target.value || null)}
+                className={selectCls}
+              >
+                <option value="">All High Schools</option>
+                {availableSchools.map(([school, data]) => (
+                  <option key={school} value={school}>{school} ({data.count})</option>
                 ))}
-              </div>
+              </select>
+              {chevronSvg}
             </div>
           )}
 
-          {/* Quick Links */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-gray-300 mb-3">
-              Explore
-            </h3>
-            <div className="space-y-2">
-              <Link href="/pros" className="block text-sm text-navy hover:text-blue-600">
-                Before They Were Famous
-              </Link>
-              <Link href="/football" className="block text-sm text-navy hover:text-blue-600">
-                Football Hub
-              </Link>
-              <Link href="/basketball" className="block text-sm text-navy hover:text-blue-600">
-                Basketball Hub
-              </Link>
-              <Link href="/search" className="block text-sm text-navy hover:text-blue-600">
-                Player Search
-              </Link>
-            </div>
+          {/* Alphabet dropdown */}
+          <div className="relative flex-1 min-w-0">
+            <select
+              value={activeLetter || ''}
+              onChange={(e) => setActiveLetter(e.target.value || null)}
+              className={selectCls}
+            >
+              <option value="">A-Z (All)</option>
+              {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(l => availableLetters.has(l)).map(l => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
+            {chevronSvg}
+          </div>
+
+          {/* Sort dropdown */}
+          <div className="relative flex-1 min-w-0">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className={selectCls}
+            >
+              <option value="name">Sort: Name A-Z</option>
+              <option value="school">Sort: School</option>
+              <option value="sport">Sort: Sport</option>
+            </select>
+            {chevronSvg}
+          </div>
+
+          {/* Results count + clear */}
+          <div className="flex items-center gap-3 sm:ml-auto shrink-0">
+            <span className="text-xs font-medium" style={{ color: '#f0a500' }}>
+              Showing {filtered.length} of {currentList.length}
+            </span>
+            {hasActiveFilters && (
+              <button
+                onClick={resetFilters}
+                className="text-[11px] text-gray-400 hover:text-white underline underline-offset-2"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         </div>
+
+        {/* Active filter chips */}
+        {hasActiveFilters && (
+          <div className="flex flex-wrap gap-1.5">
+            {leagueFilter && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 text-gray-200 text-[11px] font-medium">
+                {leagueFilter}
+                <button onClick={() => setLeagueFilter(null)} className="ml-0.5 hover:text-white">&times;</button>
+              </span>
+            )}
+            {collegeFilter && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-900/40 text-blue-300 text-[11px] font-medium">
+                {collegeFilter}
+                <button onClick={() => setCollegeFilter(null)} className="ml-0.5 hover:text-white">&times;</button>
+              </span>
+            )}
+            {schoolFilter && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-900/40 text-green-300 text-[11px] font-medium">
+                {schoolFilter}
+                <button onClick={() => setSchoolFilter(null)} className="ml-0.5 hover:text-white">&times;</button>
+              </span>
+            )}
+            {activeLetter && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 text-gray-200 text-[11px] font-medium">
+                Letter: {activeLetter}
+                <button onClick={() => setActiveLetter(null)} className="ml-0.5 hover:text-white">&times;</button>
+              </span>
+            )}
+            {searchTerm && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 text-gray-200 text-[11px] font-medium">
+                &ldquo;{searchTerm}&rdquo;
+                <button onClick={() => setSearchTerm('')} className="ml-0.5 hover:text-white">&times;</button>
+              </span>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* ═══ Cards Grid (full width, no sidebar) ═══ */}
+      {filtered.length === 0 ? (
+        <div className="text-center py-16">
+          <p className="text-4xl mb-4">{'\u{1F50D}'}</p>
+          <p className="text-gray-400 font-medium">No athletes found</p>
+          <p className="text-gray-300 text-sm mt-1">Try adjusting your filters or search</p>
+          <button onClick={resetFilters} className="mt-4 text-sm text-blue-600 hover:text-blue-800 font-medium">
+            Reset all filters
+          </button>
+        </div>
+      ) : showGrouped ? (
+        <div className="space-y-8">
+          {groupedBySport.map(({ sport, athletes }) => (
+            <div key={sport}>
+              <div className="flex items-center gap-2 mb-4 pb-2 border-b-2" style={{ borderColor: SPORT_COLORS[sport] || '#6b7280' }}>
+                <span className="text-lg">{SPORT_EMOJIS[sport] || ''}</span>
+                <h2 className="psp-h3" style={{ color: SPORT_COLORS[sport] }}>
+                  {SPORT_LABELS[sport] || sport}
+                </h2>
+                <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ backgroundColor: SPORT_COLORS[sport] }}>
+                  {athletes.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {athletes.map(a => <AthleteCard key={a.id} a={a} activeTab={activeTab} />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {filtered.map(a => <AthleteCard key={a.id} a={a} activeTab={activeTab} />)}
+        </div>
+      )}
     </div>
   );
 }

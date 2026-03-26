@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import PulseNav from '@/components/pulse/PulseNav';
 import OurGuysClient, { type AlumniRecord } from './OurGuysClient';
+import OurGuysEditorialTop from '@/components/our-guys/OurGuysEditorialTop';
+import type { FeaturedAthlete, DidYouKnowFact } from '@/components/our-guys/OurGuysEditorialTop';
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -39,7 +41,7 @@ const LEAGUE_STYLE: Record<string, { bg: string; text: string }> = {
 export default async function OurGuysPage() {
   const supabase = createStaticClient();
 
-  const [alumniRes, pipelineRes, recentRes] = await Promise.all([
+  const [alumniRes, pipelineRes, recentRes, featuredRes, dykRes] = await Promise.all([
     // Main alumni fetch — all counts derived from this array
     supabase
       .from('next_level_tracking')
@@ -61,6 +63,21 @@ export default async function OurGuysPage() {
       .select('id, person_name, current_level, current_org, pro_league, sport_id, status, created_at, schools:high_school_id(name, slug)')
       .order('created_at', { ascending: false })
       .limit(6),
+
+    // Featured pro athletes for editorial grid (NFL/NBA/MLB)
+    supabase
+      .from('next_level_tracking')
+      .select('id, person_name, current_org, pro_league, sport_id, college, current_role, schools:high_school_id(name)')
+      .eq('current_level', 'pro')
+      .in('pro_league', ['NFL', 'NBA', 'MLB'])
+      .order('person_name')
+      .limit(50),
+
+    // Did You Know facts
+    supabase
+      .from('did_you_know')
+      .select('id, fact_text, sport, category')
+      .eq('approved', true),
   ]);
 
   /* ─── Process alumni ─── */
@@ -154,39 +171,42 @@ export default async function OurGuysPage() {
     };
   });
 
+  /* ─── Featured athletes for editorial grid ─── */
+  const allFeaturedPros = ((featuredRes.data ?? []) as Record<string, unknown>[]).map(r => {
+    const school = Array.isArray(r.schools) ? r.schools[0] : r.schools;
+    return {
+      id: r.id as string,
+      person_name: r.person_name as string,
+      current_org: r.current_org as string | null,
+      pro_league: r.pro_league as string | null,
+      sport_id: r.sport_id as string | null,
+      college: r.college as string | null,
+      current_role: r.current_role as string | null,
+      school_name: (school as { name?: string } | null)?.name ?? null,
+    } satisfies FeaturedAthlete;
+  });
+  // Pick 2 random featured athletes (different each revalidation)
+  const shuffledPros = allFeaturedPros.sort(() => Math.random() - 0.5);
+  const editorialFeatured = shuffledPros.slice(0, 2);
+
+  /* ─── Did You Know facts ─── */
+  const didYouKnowFacts: DidYouKnowFact[] = ((dykRes.data ?? []) as Record<string, unknown>[]).map(r => ({
+    id: r.id as number,
+    fact_text: r.fact_text as string,
+    sport: r.sport as string | null,
+    category: r.category as string | null,
+  }));
+  // Shuffle so the initial fact is random each revalidation
+  didYouKnowFacts.sort(() => Math.random() - 0.5);
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ═══ Hero ═══ */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-navy via-navy-mid to-navy py-10 px-4">
-        {/* Decorative glows */}
-        <div className="absolute top-0 right-0 w-72 h-72 bg-gold/10 rounded-full blur-[140px]" />
-        <div className="absolute bottom-0 left-1/4 w-56 h-56 bg-blue-500/10 rounded-full blur-[120px]" />
-
-        <div className="relative max-w-7xl mx-auto">
-          <h1 className="psp-h1-lg text-white mb-2">Our Guys</h1>
-          <p className="text-gray-300 text-lg mb-5">Philly HS alumni making it at the next level</p>
-
-          {/* Stat pills — counts derived from same data the client filters */}
-          <div className="flex flex-wrap gap-3">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gold/15 backdrop-blur-sm border border-gold/20">
-              <span className="text-2xl font-bebas text-gold">{counts.total.toLocaleString()}</span>
-              <span className="text-sm text-gray-200 font-medium">Total Tracked</span>
-            </span>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
-              <span className="text-2xl font-bebas text-gold">{counts.activePro}</span>
-              <span className="text-sm text-gray-300">Active Pros</span>
-            </span>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
-              <span className="text-2xl font-bebas text-gold">{counts.college.toLocaleString()}</span>
-              <span className="text-sm text-gray-300">College Athletes</span>
-            </span>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
-              <span className="text-2xl font-bebas text-gold">{coachingCount}</span>
-              <span className="text-sm text-gray-300">Coaches</span>
-            </span>
-          </div>
-        </div>
-      </div>
+      {/* ═══ Editorial Top — Hero + Featured + DYK ═══ */}
+      <OurGuysEditorialTop
+        counts={{ total: counts.total, activePro: counts.activePro, college: counts.college }}
+        featuredAthletes={editorialFeatured}
+        didYouKnowFacts={didYouKnowFacts}
+      />
 
       <PulseNav />
 
