@@ -10,6 +10,8 @@ import {
   getTeamRosterBySeason,
   getArticlesForEntity,
   getTeamStatLeaders,
+  getTeamSeasonNotes,
+  getSchoolHasTedNotes,
 } from "@/lib/data";
 import TeamPageClient from "@/components/teams/TeamPageClient";
 import type { Metadata } from "next";
@@ -73,7 +75,7 @@ export default async function TeamDetailPage({ params }: PageProps) {
 
   // Fetch schedule, roster, articles, and stat leaders for the latest season
   const latestSeasonId = latestSeason?.season_id;
-  const [games, roster, articles, statLeaders] = await Promise.all([
+  const [games, roster, articles, statLeaders, tedNotesRaw, tedCoverage] = await Promise.all([
     latestSeasonId
       ? getGamesByTeamSeason(school.id, sportId, latestSeasonId)
       : Promise.resolve([]),
@@ -84,7 +86,19 @@ export default async function TeamDetailPage({ params }: PageProps) {
     latestSeasonId
       ? getTeamStatLeaders(school.id, latestSeasonId)
       : Promise.resolve(null),
+    latestSeasonId
+      ? getTeamSeasonNotes(school.id, latestSeasonId)
+      : Promise.resolve([]),
+    getSchoolHasTedNotes(school.id),
   ]);
+
+  // Transform notes for the NoteFromTed component
+  const tedNotes = tedNotesRaw.length > 0
+    ? {
+        notes: tedNotesRaw.map((n: any) => n.note_text),
+        sourceUrl: tedNotesRaw[0]?.source_url || null,
+      }
+    : null;
 
   // Get league and coach names, handling potential array returns from Supabase
   const leagueName = Array.isArray(school.leagues)
@@ -136,6 +150,8 @@ export default async function TeamDetailPage({ params }: PageProps) {
       roster={roster as any[]}
       articles={articles as any[]}
       statLeaders={statLeaders as any}
+      tedNotes={tedNotes}
+      tedCoverage={tedCoverage}
     />
   );
 }

@@ -43,6 +43,8 @@ export default function TeamPageClient({
   roster,
   articles,
   statLeaders,
+  tedNotes,
+  tedCoverage,
 }: TeamPageClientProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
@@ -190,7 +192,7 @@ export default function TeamPageClient({
 
             {/* Overview Tab */}
             {activeTab === "overview" && (
-              <TeamOverviewTab team={team} articles={articles} />
+              <TeamOverviewTab team={team} articles={articles} tedNotes={tedNotes} />
             )}
 
             {/* Stats Tab */}
@@ -395,7 +397,7 @@ export default function TeamPageClient({
           </div>
 
           {/* Sidebar */}
-          <TeamSidebar team={team} winPct={winPct} sport={sport} />
+          <TeamSidebar team={team} winPct={winPct} sport={sport} tedCoverage={tedCoverage} />
         </div>
       </div>
 

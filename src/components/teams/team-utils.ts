@@ -151,6 +151,8 @@ export interface TeamPageClientProps {
   roster: DBRosterEntry[];
   articles: DBArticle[];
   statLeaders?: StatLeadersData | null;
+  tedNotes?: { notes: string[]; sourceUrl?: string | null } | null;
+  tedCoverage?: { hasNotes: boolean; seasonRange?: string } | null;
 }
 
 export type TabType = "overview" | "stats" | "schedule" | "roster" | "news";

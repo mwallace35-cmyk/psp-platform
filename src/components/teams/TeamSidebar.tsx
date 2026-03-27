@@ -6,9 +6,10 @@ interface TeamSidebarProps {
   team: TeamDetail;
   winPct: string;
   sport: string;
+  tedCoverage?: { hasNotes: boolean; seasonRange?: string } | null;
 }
 
-export default function TeamSidebar({ team, winPct, sport }: TeamSidebarProps) {
+export default function TeamSidebar({ team, winPct, sport, tedCoverage }: TeamSidebarProps) {
   return (
     <div className="space-y-6">
       {/* Team Info Card */}
@@ -106,6 +107,45 @@ export default function TeamSidebar({ team, winPct, sport }: TeamSidebarProps) {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Ted Silary Data Badge */}
+      {tedCoverage?.hasNotes && (
+        <div
+          className="rounded-xl p-4"
+          style={{
+            background: 'var(--psp-navy-mid)',
+            borderLeft: '3px solid var(--psp-gold)',
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <div
+              className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+              style={{ background: 'var(--psp-gold)', color: 'var(--psp-navy)' }}
+            >
+              TS
+            </div>
+            <div>
+              <div className="text-xs font-bold" style={{ color: 'var(--psp-gold)' }}>
+                Covered by Ted Silary
+              </div>
+              {tedCoverage.seasonRange && (
+                <div className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  {tedCoverage.seasonRange}
+                </div>
+              )}
+              <a
+                href="http://www.tedsilary.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] hover:underline mt-1 inline-block"
+                style={{ color: 'var(--psp-gold-light)' }}
+              >
+                tedsilary.com
+              </a>
+            </div>
+          </div>
         </div>
       )}
 

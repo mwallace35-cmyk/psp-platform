@@ -203,6 +203,9 @@ export {
   type NextGame,
   type LeagueStandingsRow,
   type TeamArticle,
+  getTeamSeasonNotes,
+  getSchoolHasTedNotes,
+  type TeamSeasonNote,
 } from "./team-page";
 
 // Awards and All-City functions

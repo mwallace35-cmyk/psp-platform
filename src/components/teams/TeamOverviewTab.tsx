@@ -1,16 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
+import NoteFromTed from "@/components/ui/NoteFromTed";
 import type { TeamDetail, DBArticle } from "./team-utils";
 import { timeAgo } from "./team-utils";
 
 interface TeamOverviewTabProps {
   team: TeamDetail;
   articles: DBArticle[];
+  tedNotes?: { notes: string[]; sourceUrl?: string | null } | null;
 }
 
-export default function TeamOverviewTab({ team, articles }: TeamOverviewTabProps) {
+export default function TeamOverviewTab({ team, articles, tedNotes }: TeamOverviewTabProps) {
   return (
     <div className="space-y-6">
+      {/* Ted Silary Notes */}
+      {tedNotes && tedNotes.notes.length > 0 && (
+        <NoteFromTed notes={tedNotes.notes} sourceUrl={tedNotes.sourceUrl} />
+      )}
+
       {/* Season Summary Card */}
       <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-6">
         <h2

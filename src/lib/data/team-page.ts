@@ -297,6 +297,82 @@ export async function getTeamArticles(
 }
 
 /**
+ * Fetch Ted Silary notes for a school + season (or all seasons for a school)
+ */
+export interface TeamSeasonNote {
+  id: number;
+  school_id: number;
+  season_id: number;
+  note_text: string;
+  note_type?: string;
+  source_url?: string | null;
+  season_label?: string;
+}
+
+export async function getTeamSeasonNotes(
+  schoolId: number,
+  seasonId?: number
+): Promise<TeamSeasonNote[]> {
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("team_season_notes")
+    .select(`id, school_id, season_id, note_text, note_type, source_url, seasons(label)`)
+    .eq("school_id", schoolId)
+    .order("season_id", { ascending: false });
+
+  if (seasonId) {
+    query = query.eq("season_id", seasonId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Error fetching team season notes:", error);
+    return [];
+  }
+
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    school_id: row.school_id,
+    season_id: row.season_id,
+    note_text: row.note_text,
+    note_type: row.note_type,
+    source_url: row.source_url,
+    season_label: row.seasons?.label,
+  }));
+}
+
+/**
+ * Check if a school has any Ted Silary notes (for badge display)
+ */
+export async function getSchoolHasTedNotes(
+  schoolId: number
+): Promise<{ hasNotes: boolean; seasonRange?: string }> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("team_season_notes")
+    .select("season_id, seasons(label)")
+    .eq("school_id", schoolId)
+    .order("season_id", { ascending: true });
+
+  if (error || !data || data.length === 0) {
+    return { hasNotes: false };
+  }
+
+  const labels = data
+    .map((r: any) => r.seasons?.label)
+    .filter(Boolean) as string[];
+
+  const first = labels[0];
+  const last = labels[labels.length - 1];
+  const range = first === last ? first : `${first} - ${last}`;
+
+  return { hasNotes: true, seasonRange: range };
+}
+
+/**
  * Get related teams in the same league
  */
 export async function getRelatedTeams(
