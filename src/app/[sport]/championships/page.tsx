@@ -38,11 +38,24 @@ interface TypeConfig {
   order: number;
 }
 
+/** Memoization cache for getTypeConfig — avoids creating new objects for repeated inputs */
+const typeConfigCache = new Map<string, TypeConfig>();
+
 /** Build a human-readable badge label from the raw championship_type + level */
 function getTypeConfig(champType: string | undefined, level: string | undefined): TypeConfig {
   const ct = (champType ?? "").trim();
   const lv = (level ?? "").trim();
 
+  const cacheKey = `${ct}|${lv}`;
+  const cached = typeConfigCache.get(cacheKey);
+  if (cached) return cached;
+
+  const result = computeTypeConfig(ct, lv);
+  typeConfigCache.set(cacheKey, result);
+  return result;
+}
+
+function computeTypeConfig(ct: string, lv: string): TypeConfig {
   /* ── PIAA State Championships ── */
 
   // championship_type = "PIAA State", level = class ("6A", "AAA", etc.)

@@ -95,7 +95,7 @@ export default function BoxScoresView({
       {filteredGames.length > 0 && (
         <>
           <div className="space-y-4 mb-8">
-            {paginatedGames.map((game) => {
+            {paginatedGames.map((game, idx) => {
               const gameDate = game.game_date
                 ? new Date(game.game_date).toLocaleDateString("en-US", {
                     month: "short",
@@ -115,7 +115,7 @@ export default function BoxScoresView({
 
               return (
                 <div
-                  key={game.id}
+                  key={game.id ?? `game-${startIdx + idx}`}
                   className="p-4 rounded-lg border hover:shadow-md transition-shadow"
                   style={{ borderColor: "#e5e7eb" }}
                 >

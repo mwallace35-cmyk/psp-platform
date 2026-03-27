@@ -22,7 +22,9 @@ interface LeagueGroup {
   divisions: { name: string | null; standings: LeagueStandings }[];
 }
 
-function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueName, seasonLabel }: {
+import React from "react";
+
+const StandingsSection = React.memo(function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueName, seasonLabel }: {
   data: Standing[];
   sport: string;
   hasLeagueRecord: boolean;
@@ -116,7 +118,7 @@ function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueN
       </table>
     </div>
   );
-}
+});
 
 export default function StandingsTable({ standings, sport }: { standings: LeagueStandings[]; sport: string }) {
   // Group standings by base league, with divisions nested inside
@@ -146,7 +148,7 @@ export default function StandingsTable({ standings, sport }: { standings: League
   }, [standings]);
 
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const currentGroup = leagueGroups[selectedIdx];
+  const currentGroup = useMemo(() => leagueGroups[selectedIdx], [leagueGroups, selectedIdx]);
 
   if (!currentGroup) {
     return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import type { PlayerGameLog as PlayerGameLogEntry } from "@/lib/data/games";
 
@@ -106,7 +106,7 @@ function detectFootballColumns(games: PlayerGameLogEntry[]) {
 }
 
 // ─── Football Table ───────────────────────────────────────────────
-function FootballTable({
+const FootballTable = React.memo(function FootballTable({
   games,
   playerSchoolId,
 }: {
@@ -193,7 +193,7 @@ function FootballTable({
       </table>
     </div>
   );
-}
+});
 
 // ─── Normalize basketball stats across different source formats ───
 function normalizeBballStats(sj: Record<string, number>, entry: PlayerGameLogEntry) {
@@ -218,7 +218,7 @@ function normalizeBballStats(sj: Record<string, number>, entry: PlayerGameLogEnt
 }
 
 // ─── Basketball Table ─────────────────────────────────────────────
-function BasketballTable({
+const BasketballTable = React.memo(function BasketballTable({
   games,
   playerSchoolId,
 }: {
@@ -303,7 +303,7 @@ function BasketballTable({
       </table>
     </div>
   );
-}
+});
 
 // ─── Shared Styles ────────────────────────────────────────────────
 const thStyle: React.CSSProperties = {
@@ -322,9 +322,9 @@ const thStyleCenter: React.CSSProperties = {
 
 const tdStyle: React.CSSProperties = {
   padding: "0.5rem",
-  borderBottom: "1px solid #1e293b",
+  borderBottom: "1px solid var(--psp-gray-800, #1e293b)",
   whiteSpace: "nowrap",
-  color: "#e2e8f0",
+  color: "var(--psp-gray-200, #e2e8f0)",
 };
 
 const tdStyleCenter: React.CSSProperties = {
@@ -370,7 +370,7 @@ export default function PlayerGameLog({ gameLog, playerSchoolId }: PlayerGameLog
         background: "var(--psp-card-bg, #f8f9fc)",
         borderRadius: "12px",
         padding: "1.5rem",
-        border: "1px solid #e5e7eb",
+        border: "1px solid var(--psp-gray-200, #e5e7eb)",
         marginTop: "1.5rem",
       }}
     >

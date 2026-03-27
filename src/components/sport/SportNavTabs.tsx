@@ -69,10 +69,13 @@ export default function SportNavTabs({ sport }: SportNavProps) {
           className="flex gap-2 overflow-x-auto scrollbar-hide py-3 snap-x snap-proximity"
         >
           {tabs.map((tab) => {
+            // Segment-aware matching: ensure /football doesn't match /football-something
+            const matchesSegment = (prefix: string) =>
+              pathname === prefix || pathname.startsWith(prefix + '/');
             const isActive = tab.matchPrefix
-              ? pathname.startsWith(tab.matchPrefix)
+              ? matchesSegment(tab.matchPrefix)
               : pathname === tab.href ||
-                (tab.href !== `/${sport}` && pathname.startsWith(tab.href));
+                (tab.href !== `/${sport}` && matchesSegment(tab.href));
             return (
               <Link
                 key={tab.href}

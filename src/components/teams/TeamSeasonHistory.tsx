@@ -4,9 +4,23 @@ import Link from "next/link";
 import type { TeamSeason, Championship, Era } from "./team-utils";
 import { ERAS, formatChampionshipLabel } from "./team-utils";
 
+/** Compute background + left-border styles for a season row */
+function getSeasonRowStyle(isChampYear: boolean, isEven: boolean) {
+  return {
+    background: isChampYear
+      ? "rgba(240,165,0,0.08)"
+      : isEven ? "var(--psp-navy)" : "#0d1a2e",
+    borderLeft: isChampYear ? "3px solid var(--psp-gold)" : "3px solid transparent",
+  } as const;
+}
+
+/** Compute color for a win-pct value */
+function getPctColor(pct: number) {
+  return pct >= 70 ? "var(--psp-gold)" : pct >= 50 ? "var(--psp-success)" : "var(--psp-danger)";
+}
+
 interface TeamSeasonHistoryProps {
   teamSeasons: TeamSeason[];
-  championships: Championship[];
   champMap: Map<number, Championship[]>;
   availableEras: Era[];
   selectedEra: string;
@@ -85,12 +99,7 @@ export default function TeamSeasonHistory({
                 key={ts.id}
                 href={`/${sport}/teams/${teamSlug}/${label}`}
                 className="block transition-colors hover:brightness-125"
-                style={{
-                  background: isChampYear
-                    ? "rgba(240,165,0,0.08)"
-                    : isEven ? "var(--psp-navy)" : "#0d1a2e",
-                  borderLeft: isChampYear ? "3px solid var(--psp-gold)" : "3px solid transparent",
-                }}
+                style={getSeasonRowStyle(isChampYear, isEven)}
               >
                 <div className="grid grid-cols-[1fr_40px_40px_40px_55px_auto] gap-0 items-center px-4 py-2.5">
                   {/* Season label */}
@@ -116,7 +125,7 @@ export default function TeamSeasonHistory({
                         className="h-full rounded-full"
                         style={{
                           width: `${pct}%`,
-                          background: pct >= 70 ? "var(--psp-gold)" : pct >= 50 ? "var(--psp-success)" : "var(--psp-danger)",
+                          background: getPctColor(pct),
                         }}
                       />
                     </div>

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
@@ -83,6 +83,7 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
   const [activeCategory, setActiveCategory] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-rotate ranking categories every 5 seconds
   useEffect(() => {
@@ -93,12 +94,20 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
     return () => clearInterval(timer);
   }, [rankingCategories.length, isPaused]);
 
+  // Clean up resume timer on unmount
+  useEffect(() => {
+    return () => {
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    };
+  }, []);
+
   const handleCategoryClick = useCallback((index: number) => {
     setActiveCategory(index);
     setIsPaused(true);
+    // Clear any existing resume timer before setting a new one
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
     // Resume auto-rotation after 15 seconds of inactivity
-    const resume = setTimeout(() => setIsPaused(false), 15000);
-    return () => clearTimeout(resume);
+    resumeTimerRef.current = setTimeout(() => setIsPaused(false), 15000);
   }, []);
 
   useEffect(() => {

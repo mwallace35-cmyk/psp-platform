@@ -14,7 +14,7 @@ import TeamSeasonHistory from "./TeamSeasonHistory";
 import TeamSidebar from "./TeamSidebar";
 
 // Shared types & helpers
-import type { TeamPageClientProps, TabType, DBGame } from "./team-utils";
+import type { TeamPageClientProps, TabType, Alumni, DBGame } from "./team-utils";
 import {
   getErasWithSeasons,
   buildChampionshipMap,
@@ -26,6 +26,10 @@ import {
   getGameOpponent,
   timeAgo,
 } from "./team-utils";
+
+/** Module-level constants */
+const TAB_OPTIONS: TabType[] = ["overview", "stats", "schedule", "roster", "news"];
+const CURRENT_SEASON = "2025-26";
 
 export default function TeamPageClient({
   team,
@@ -52,7 +56,6 @@ export default function TeamPageClient({
   const champMap = useMemo(() => buildChampionshipMap(championships || []), [championships]);
 
   // Current-season championship labels for the header ribbon
-  const CURRENT_SEASON = "2025-26";
   const currentSeasonChampionships = useMemo(() => {
     return (championships || [])
       .filter((c) => (c.seasons as any)?.label === CURRENT_SEASON)
@@ -169,7 +172,7 @@ export default function TeamPageClient({
           <div className="lg:col-span-2 space-y-8">
             {/* Tab Navigation */}
             <div className="bg-white rounded-lg border-b border-[var(--psp-gray-200)] flex overflow-x-auto">
-              {(["overview", "stats", "schedule", "roster", "news"] as TabType[]).map((tab) => (
+              {TAB_OPTIONS.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -227,10 +230,9 @@ export default function TeamPageClient({
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10, marginBottom: 20 }}>
                 {alumni && alumni.length > 0 ? (
-                  alumni.map((alum: any, i: number) => {
-                    const gradYear = alum.graduation_year
-                      || (Array.isArray(alum.players) ? alum.players[0]?.graduation_year : alum.players?.graduation_year);
-                    const orgName = alum.current_org || alum.college || alum.destination_school || "TBA";
+                  alumni.map((alum: Alumni, i: number) => {
+                    const gradYear = alum.graduation_year;
+                    const orgName = alum.current_org || alum.destination_school || "TBA";
                     return (
                       <div
                         key={alum.id || i}
@@ -302,7 +304,6 @@ export default function TeamPageClient({
             {/* Season History */}
             <TeamSeasonHistory
               teamSeasons={teamSeasons}
-              championships={championships}
               champMap={champMap}
               availableEras={availableEras}
               selectedEra={selectedEra}

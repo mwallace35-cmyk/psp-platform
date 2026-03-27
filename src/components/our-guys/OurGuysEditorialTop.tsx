@@ -37,6 +37,8 @@ interface Props {
 }
 
 /* ─── League badge styling ─── */
+const DEFAULT_LEAGUE_ACCENT = { bg: 'rgba(148,163,184,0.2)', text: '#94a3b8', icon: '\uD83C\uDFC5', neon: 'none' } as const;
+
 const LEAGUE_ACCENT: Record<string, { bg: string; text: string; icon: string; neon: string }> = {
   NFL: { bg: 'rgba(22,163,74,0.25)', text: '#4ade80', icon: '\uD83C\uDFC8', neon: '0 0 12px rgba(74,222,128,0.3)' },
   NBA: { bg: 'rgba(249,115,22,0.25)', text: '#fb923c', icon: '\uD83C\uDFC0', neon: '0 0 12px rgba(251,146,60,0.3)' },
@@ -49,12 +51,14 @@ export default function OurGuysEditorialTop({ counts, featuredAthletes, didYouKn
 
   const shuffleFact = useCallback(() => {
     if (didYouKnowFacts.length <= 1) return;
-    let next: number;
-    do {
-      next = Math.floor(Math.random() * didYouKnowFacts.length);
-    } while (next === factIdx && didYouKnowFacts.length > 1);
-    setFactIdx(next);
-  }, [factIdx, didYouKnowFacts.length]);
+    setFactIdx((prev) => {
+      let next: number;
+      do {
+        next = Math.floor(Math.random() * didYouKnowFacts.length);
+      } while (next === prev && didYouKnowFacts.length > 1);
+      return next;
+    });
+  }, [didYouKnowFacts.length]);
 
   const currentFact = didYouKnowFacts[factIdx] ?? null;
 
@@ -214,7 +218,7 @@ function CounterPill({ value, label, primary = false }: { value: number; label: 
 /* ─── Featured Athlete Card — "TV Screen" style ─── */
 function FeaturedCard({ athlete }: { athlete: FeaturedAthlete }) {
   const league = athlete.pro_league ?? 'Pro';
-  const accent = LEAGUE_ACCENT[league] ?? { bg: 'rgba(148,163,184,0.2)', text: '#94a3b8', icon: '\uD83C\uDFC5', neon: 'none' };
+  const accent = LEAGUE_ACCENT[league] ?? DEFAULT_LEAGUE_ACCENT;
 
   const initials = athlete.person_name
     .split(' ')
