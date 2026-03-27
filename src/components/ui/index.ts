@@ -33,3 +33,4 @@ export { default as SkeletonTable } from "./SkeletonTable";
 export { default as SkeletonHero } from "./SkeletonHero";
 export { default as SchoolLogo } from "./SchoolLogo";
 export { default as DidYouKnow } from "./DidYouKnow";
+export { default as NoteFromTed } from "./NoteFromTed";
