@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createStaticClient } from "@/lib/supabase/static";
 
-export const revalidate = 300; // 5 min ISR
+export const dynamic = 'force-dynamic'; // Uses searchParams, can't be static
 
 /**
  * GET /api/did-you-know?sport=football&school_id=123
