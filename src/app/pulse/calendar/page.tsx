@@ -4,7 +4,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Game Schedule — The Pulse | PhillySportsPack.com',
   description: 'Full game schedule for Philadelphia high school sports. Football, basketball, baseball and more.',

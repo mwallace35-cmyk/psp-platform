@@ -7,7 +7,6 @@ import type { Metadata } from "next";
 import ScheduleView from "./ScheduleView";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 export async function generateMetadata({

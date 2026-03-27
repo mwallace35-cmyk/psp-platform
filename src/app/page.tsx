@@ -12,7 +12,6 @@ import DidYouKnow from '@/components/ui/DidYouKnow';
 import HeroMonument from '@/components/home/HeroMonument';
 
 export const revalidate = 300; // 5 min ISR — live content
-export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'PhillySportsPack.com — Philadelphia High School Sports Database',

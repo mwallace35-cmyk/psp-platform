@@ -7,7 +7,6 @@ import PulseNav from '@/components/pulse/PulseNav';
 import RankingsClient from './RankingsClient';
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Power Rankings — The Pulse | PhillySportsPack.com',
   description: 'Weekly power rankings for Philadelphia high school sports — football, basketball, baseball, and more.',

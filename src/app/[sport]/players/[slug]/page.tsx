@@ -36,7 +36,6 @@ const SimilarPlayers = nextDynamic(() => import("@/components/player/SimilarPlay
 });
 
 export const revalidate = 86400; // ISR: daily
-export const dynamic = "force-dynamic";export const dynamicParams = true; // Allow ISR for slugs not in generateStaticParams
 
 type PageParams = { sport: string; slug: string };
 

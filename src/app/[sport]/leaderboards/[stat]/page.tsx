@@ -22,7 +22,6 @@ import MethodologyNote from "@/components/ui/MethodologyNote";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string; stat: string };
 
 // export function generateStaticParams() {

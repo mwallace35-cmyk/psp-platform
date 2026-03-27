@@ -6,7 +6,6 @@ import { getRecordCount, getRecordStats, getRecordCategories, VALID_SPORTS } fro
 import RecordsExplorerView from "./RecordsExplorerView";
 
 export const revalidate = 3600; // 1 hour
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Records Explorer — PhillySportsPack",
   description:

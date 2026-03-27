@@ -14,7 +14,6 @@ import GreatestSeasonsView from "./GreatestSeasonsView";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // 1 hour ISR
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 // export function generateStaticParams() {

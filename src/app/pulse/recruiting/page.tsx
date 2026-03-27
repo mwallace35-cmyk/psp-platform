@@ -6,7 +6,6 @@ import { captureError } from "@/lib/error-tracking";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Recruiting | The Pulse | PhillySportsPack",
   description: "Track Philadelphia area high school recruiting — star ratings, commitments, offers, and links to 247Sports, Rivals, On3, MaxPreps, and Hudl.",

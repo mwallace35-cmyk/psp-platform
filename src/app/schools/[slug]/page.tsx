@@ -30,7 +30,6 @@ import {
 import { createStaticClient } from "@/lib/supabase/static";
 
 export const revalidate = 3600; // ISR: 1 hour
-export const dynamic = "force-dynamic";
 type PageParams = { slug: string };
 
 const SPORT_EMOJI: Record<string, string> = {

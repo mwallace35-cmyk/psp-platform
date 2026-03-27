@@ -6,7 +6,6 @@ import { SPORT_META, VALID_SPORTS } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
 
 export const revalidate = 1800;
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Articles',
   description: 'Read news and articles about Philadelphia high school sports.',

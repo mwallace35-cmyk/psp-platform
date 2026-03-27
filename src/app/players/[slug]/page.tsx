@@ -12,7 +12,6 @@ import PlayerGameLog from '@/components/players/PlayerGameLog';
 import { getPlayerGameLog } from '@/lib/data/games';
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/data/common";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 
 // ============================================================================
 // Types

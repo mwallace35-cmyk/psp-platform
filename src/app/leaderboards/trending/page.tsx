@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { TrendingPlayersWidget } from '@/components/stats/TrendingPlayersWidget';
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Trending Players | PhillySportsPack',
   description: "See who's hot right now across Philadelphia high school sports.",

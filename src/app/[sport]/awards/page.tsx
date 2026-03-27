@@ -11,7 +11,6 @@ import { buildAwardTiers } from "@/lib/awards/categorize";
 import type { Metadata } from "next";
 
 export const revalidate = 86400; // 24 hours
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {

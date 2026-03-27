@@ -18,7 +18,6 @@ import type { Metadata } from "next";
 import StandingsTable from "./StandingsTable";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {

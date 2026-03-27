@@ -10,7 +10,6 @@ import type { AllAmericanAward } from "@/components/recruiting/AllAmericansSpotl
 import RecruitingSubNav from "@/components/recruiting/RecruitingSubNav";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Philly Recruiting Central - PhillySportsPack",

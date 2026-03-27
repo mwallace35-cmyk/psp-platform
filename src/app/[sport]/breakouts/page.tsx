@@ -13,7 +13,6 @@ import {
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // 1 hour
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {

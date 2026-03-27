@@ -17,7 +17,6 @@ export const alt = "School Profile - PhillySportsPack.com";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const revalidate = 86400; // 24 hours
-export const dynamic = "force-dynamic";
 interface SchoolOGData {
   name: string;
   leagues?: { name: string } | null;

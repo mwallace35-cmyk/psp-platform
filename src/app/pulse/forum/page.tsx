@@ -6,7 +6,6 @@ import PulseNav from '@/components/pulse/PulseNav';
 import JoinCTA from '@/components/ui/JoinCTA';
 
 export const revalidate = 60;
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'Forum — The Pulse | PhillySportsPack.com',
   description: 'The Forum — debates, predictions, trashtalk, and discussions about Philadelphia high school sports.',

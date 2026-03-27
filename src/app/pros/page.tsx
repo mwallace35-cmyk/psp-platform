@@ -9,7 +9,6 @@ import ProPipeline from "@/components/pro-players/ProPipeline";
 import PSPPromo from "@/components/ads/PSPPromo";
 
 export const revalidate = 86400; // 24 hours
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Before They Were Famous — Pro Athletes from Philly High Schools — PhillySportsPack",
   description:

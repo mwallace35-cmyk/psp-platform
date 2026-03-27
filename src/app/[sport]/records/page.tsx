@@ -9,7 +9,6 @@ import RecordsView from "./RecordsView";
 import type { Metadata } from "next";
 
 export const revalidate = 86400;
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 // export function generateStaticParams() {

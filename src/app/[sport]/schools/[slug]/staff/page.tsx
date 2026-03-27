@@ -11,7 +11,6 @@ import { createStaticClient } from "@/lib/supabase/static";
 import type { Metadata } from "next";
 
 export const revalidate = 86400; // ISR: daily
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string; slug: string };
 
 interface Coach {

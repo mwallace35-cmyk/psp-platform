@@ -14,7 +14,6 @@ import PositionLeadersView from "./PositionLeadersView";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string; position: string };
 
 // export function generateStaticParams() {

@@ -4,7 +4,6 @@ import { createClient } from "@/lib/data/common";
 import RecruitFinderClient, { type RecruitRow } from "@/components/recruiting/RecruitFinderClient";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Recruit Finder | Philadelphia High School Sports",

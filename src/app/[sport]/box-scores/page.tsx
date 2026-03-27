@@ -9,7 +9,6 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import BoxScoresView from "./BoxScoresView";
 
 export const revalidate = 3600; // 1 hour
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string };
 
 // export function generateStaticParams() {

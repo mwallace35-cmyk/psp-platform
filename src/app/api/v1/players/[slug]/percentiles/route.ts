@@ -3,7 +3,6 @@ import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs';
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 interface RouteParams { params: Promise<{ slug: string }> }
 
 function percentile(value: number, allValues: number[]): number {

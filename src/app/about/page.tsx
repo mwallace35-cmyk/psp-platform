@@ -1,5 +1,4 @@
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 import { Metadata } from "next";
 import { createStaticClient } from "@/lib/supabase/static";
 import { captureError } from "@/lib/error-tracking";

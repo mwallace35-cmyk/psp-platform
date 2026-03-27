@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { createClient, withErrorHandling, withRetry } from '@/lib/data/common';
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: 'This Week in PSP History | PhillySportsPack',
   description: '141 seasons of Philadelphia high school sports history — championships, records, and legends.',

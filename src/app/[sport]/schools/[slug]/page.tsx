@@ -28,7 +28,6 @@ const CorrectionForm = nextDynamic(() => import("@/components/corrections/Correc
 });
 
 export const revalidate = 86400; // ISR: daily
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string; slug: string };
 
 /**

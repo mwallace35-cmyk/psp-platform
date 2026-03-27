@@ -7,7 +7,6 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 
 type PageParams = { sport: string };
 

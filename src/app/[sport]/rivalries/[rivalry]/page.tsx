@@ -15,7 +15,6 @@ import PSPPromo from '@/components/ads/PSPPromo';
 import type { Metadata } from 'next';
 
 export const revalidate = 86400; // ISR: daily
-export const dynamic = "force-dynamic";
 type PageParams = { sport: string; rivalry: string };
 
 export async function generateMetadata({

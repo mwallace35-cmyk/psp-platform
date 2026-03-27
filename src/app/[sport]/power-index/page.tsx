@@ -8,7 +8,6 @@ import SportIcon from "@/components/ui/SportIcon";
 import { getPowerIndexRankings, getTopMovers, PowerIndexEntry } from "@/lib/data/power-index";
 
 export const revalidate = 3600; // 1 hour
-export const dynamic = "force-dynamic";
 interface PageProps {
   params: Promise<{ sport: string }>;
 }

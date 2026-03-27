@@ -8,7 +8,6 @@ import { createStaticClient } from "@/lib/supabase/static";
 import AllStarArchive from "./AllStarArchive";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 
 interface GameData {
   year: number;

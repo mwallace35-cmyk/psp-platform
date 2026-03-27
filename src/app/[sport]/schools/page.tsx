@@ -7,7 +7,6 @@ import SchoolLogo from '@/components/ui/SchoolLogo';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600;
-export const dynamic = 'force-dynamic';
 
 const SPORT_LABELS: Record<string, string> = {
   football: 'Football',

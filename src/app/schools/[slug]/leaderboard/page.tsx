@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
 interface PageProps { params: Promise<{ slug: string }> }
 
 interface LeaderRow { slug: string; name: string; gradYear: number | null; value: number; }

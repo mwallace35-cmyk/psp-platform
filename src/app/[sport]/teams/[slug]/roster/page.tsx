@@ -40,7 +40,6 @@ export async function generateMetadata({
 export const revalidate = 3600; // 1 hour
 
 // Fully dynamic — too many sport+slug combos to pre-render
-export const dynamic = "force-dynamic";
 
 export default async function RosterPage({
   params,
