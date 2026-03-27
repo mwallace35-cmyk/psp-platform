@@ -19,12 +19,12 @@ export const metadata: Metadata = {
 interface EffRow {
   players?: { name?: string | null; slug?: string | null; schools?: { name?: string | null; slug?: string | null } | null } | null;
   rush_yards?: number | null;
-  rush_att?: number | null;
+  rush_carries?: number | null;
   pass_yards?: number | null;
   pass_att?: number | null;
   pass_comp?: number | null;
   rec_yards?: number | null;
-  rec_targets?: number | null;
+  receptions?: number | null;
   total_td?: number | null;
   interceptions?: number | null;
 }
@@ -35,21 +35,27 @@ const getYPCLeaders = cache(async () =>
       const supabase = await createClient();
       const { data } = await supabase
         .from('football_player_seasons')
-        .select('rush_yards, rush_att, players(name, slug, schools:schools!players_primary_school_id_fkey(name, slug))')
-        .not('rush_att', 'is', null).gt('rush_att', 0)
-        .order('rush_yards', { ascending: false }).limit(200);
-      return ((data ?? []) as EffRow[])
-        .filter(r => (r.rush_att ?? 0) >= 50)
+        .select('rush_yards, rush_carries, players(name, slug, schools:schools!players_primary_school_id_fkey(name, slug))')
+        .not('rush_carries', 'is', null).gt('rush_carries', 0)
+        .order('rush_yards', { ascending: false }).limit(500);
+      const allRows = ((data ?? []) as EffRow[])
+        .filter(r => (r.rush_carries ?? 0) >= 50)
         .map(r => ({
           name: r.players?.name ?? 'Unknown',
           slug: r.players?.slug ?? '',
           school: r.players?.schools?.name ?? '',
           rushYards: r.rush_yards ?? 0,
-          rushAtt: r.rush_att ?? 0,
-          ypc: ((r.rush_yards ?? 0) / Math.max(r.rush_att ?? 1, 1)).toFixed(2),
+          rushAtt: r.rush_carries ?? 0,
+          ypc: ((r.rush_yards ?? 0) / Math.max(r.rush_carries ?? 1, 1)).toFixed(2),
         }))
-        .sort((a, b) => parseFloat(b.ypc) - parseFloat(a.ypc))
-        .slice(0, 25);
+        .sort((a, b) => parseFloat(b.ypc) - parseFloat(a.ypc));
+      // Deduplicate: keep only the best season per player (by slug)
+      const seen = new Set<string>();
+      return allRows.filter(r => {
+        if (seen.has(r.slug)) return false;
+        seen.add(r.slug);
+        return true;
+      }).slice(0, 25);
     }, { maxRetries: 2, baseDelay: 500 }),
   [], 'EFF_YPC', {}
 ));
@@ -62,8 +68,8 @@ const getCompPctLeaders = cache(async () =>
         .from('football_player_seasons')
         .select('pass_yards, pass_att, pass_comp, total_td, interceptions, players(name, slug, schools:schools!players_primary_school_id_fkey(name, slug))')
         .not('pass_att', 'is', null).gt('pass_att', 0)
-        .order('pass_att', { ascending: false }).limit(200);
-      return ((data ?? []) as EffRow[])
+        .order('pass_att', { ascending: false }).limit(500);
+      const allRows = ((data ?? []) as EffRow[])
         .filter(r => (r.pass_att ?? 0) >= 50)
         .map(r => ({
           name: r.players?.name ?? 'Unknown',
@@ -77,8 +83,14 @@ const getCompPctLeaders = cache(async () =>
           compPct: (((r.pass_comp ?? 0) / Math.max(r.pass_att ?? 1, 1)) * 100).toFixed(1),
           tdInt: (r.interceptions ?? 0) > 0 ? ((r.total_td ?? 0) / (r.interceptions ?? 1)).toFixed(2) : String(r.total_td ?? 0),
         }))
-        .sort((a, b) => parseFloat(b.compPct) - parseFloat(a.compPct))
-        .slice(0, 25);
+        .sort((a, b) => parseFloat(b.compPct) - parseFloat(a.compPct));
+      // Deduplicate: keep only the best season per player
+      const seen = new Set<string>();
+      return allRows.filter(r => {
+        if (seen.has(r.slug)) return false;
+        seen.add(r.slug);
+        return true;
+      }).slice(0, 25);
     }, { maxRetries: 2, baseDelay: 500 }),
   [], 'EFF_COMP', {}
 ));
@@ -89,21 +101,27 @@ const getYPTLeaders = cache(async () =>
       const supabase = await createClient();
       const { data } = await supabase
         .from('football_player_seasons')
-        .select('rec_yards, rec_targets, players(name, slug, schools:schools!players_primary_school_id_fkey(name, slug))')
-        .not('rec_targets', 'is', null).gt('rec_targets', 0)
-        .order('rec_yards', { ascending: false }).limit(200);
-      return ((data ?? []) as EffRow[])
-        .filter(r => (r.rec_targets ?? 0) >= 20)
+        .select('rec_yards, receptions, players(name, slug, schools:schools!players_primary_school_id_fkey(name, slug))')
+        .not('receptions', 'is', null).gt('receptions', 0)
+        .order('rec_yards', { ascending: false }).limit(500);
+      const allRows = ((data ?? []) as EffRow[])
+        .filter(r => (r.receptions ?? 0) >= 20)
         .map(r => ({
           name: r.players?.name ?? 'Unknown',
           slug: r.players?.slug ?? '',
           school: r.players?.schools?.name ?? '',
           recYards: r.rec_yards ?? 0,
-          recTargets: r.rec_targets ?? 0,
-          ypt: ((r.rec_yards ?? 0) / Math.max(r.rec_targets ?? 1, 1)).toFixed(2),
+          recTargets: r.receptions ?? 0,
+          ypt: ((r.rec_yards ?? 0) / Math.max(r.receptions ?? 1, 1)).toFixed(2),
         }))
-        .sort((a, b) => parseFloat(b.ypt) - parseFloat(a.ypt))
-        .slice(0, 25);
+        .sort((a, b) => parseFloat(b.ypt) - parseFloat(a.ypt));
+      // Deduplicate: keep only the best season per player
+      const seen = new Set<string>();
+      return allRows.filter(r => {
+        if (seen.has(r.slug)) return false;
+        seen.add(r.slug);
+        return true;
+      }).slice(0, 25);
     }, { maxRetries: 2, baseDelay: 500 }),
   [], 'EFF_YPT', {}
 ));
@@ -161,9 +179,9 @@ export default async function FootballEfficiencyPage() {
         {/* QB Efficiency */}
         <section>
           <div className="bg-[#0f1e30] rounded-xl border border-[#1a2f4d] overflow-hidden">
-            <div className="bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-6 py-4">
-              <h2 className="text-xl font-bold text-white">QB Efficiency</h2>
-              <p className="text-white/70 text-sm">Min. 50 pass attempts</p>
+            <div className="bg-gradient-to-r from-[#f0a500] to-[#d4941a] px-6 py-4">
+              <h2 className="text-xl font-bold text-[#0a1628]">QB Efficiency</h2>
+              <p className="text-[#0a1628]/70 text-sm">Min. 50 pass attempts</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full" aria-label="Completion percentage leaders">
@@ -177,8 +195,8 @@ export default async function FootballEfficiencyPage() {
                       <td className="px-4 py-3 text-sm"><Link href={"/football/players/" + p.slug} className="text-white font-semibold hover:text-[#f0a500]">{p.name}</Link></td>
                       <td className="px-4 py-3 text-sm text-gray-300">{p.school}</td>
                       <td className="px-4 py-3 text-sm text-right text-gray-300">{p.passAtt}</td>
-                      <td className="px-4 py-3 text-sm text-right font-bold text-[#22c55e]">{p.compPct}%</td>
-                      <td className="px-4 py-3 text-sm text-right font-bold text-[#22c55e]">{p.tdInt}</td>
+                      <td className="px-4 py-3 text-sm text-right font-bold text-[#f0a500]">{p.compPct}%</td>
+                      <td className="px-4 py-3 text-sm text-right font-bold text-[#f0a500]">{p.tdInt}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -190,13 +208,13 @@ export default async function FootballEfficiencyPage() {
         {/* YPT */}
         <section>
           <div className="bg-[#0f1e30] rounded-xl border border-[#1a2f4d] overflow-hidden">
-            <div className="bg-gradient-to-r from-[#a855f7] to-[#7c3aed] px-6 py-4">
-              <h2 className="text-xl font-bold text-white">Yards Per Target</h2>
-              <p className="text-white/70 text-sm">Min. 20 targets</p>
+            <div className="bg-gradient-to-r from-[#f0a500] to-[#d4941a] px-6 py-4">
+              <h2 className="text-xl font-bold text-[#0a1628]">Yards Per Reception</h2>
+              <p className="text-[#0a1628]/70 text-sm">Min. 20 receptions</p>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full" aria-label="Yards per target leaders">
-                <TableHeader cols={['#', 'Player', 'School', 'Tgts', 'Yds', 'YPT']} />
+              <table className="w-full" aria-label="Yards per reception leaders">
+                <TableHeader cols={['#', 'Player', 'School', 'Rec', 'Yds', 'YPR']} />
                 <tbody className="divide-y divide-[#1a2f4d]">
                   {ypt.length === 0 ? (
                     <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">No data available</td></tr>
@@ -207,7 +225,7 @@ export default async function FootballEfficiencyPage() {
                       <td className="px-4 py-3 text-sm text-gray-300">{p.school}</td>
                       <td className="px-4 py-3 text-sm text-right text-gray-300">{p.recTargets}</td>
                       <td className="px-4 py-3 text-sm text-right text-gray-300">{p.recYards}</td>
-                      <td className="px-4 py-3 text-sm text-right font-bold text-[#a855f7]">{p.ypt}</td>
+                      <td className="px-4 py-3 text-sm text-right font-bold text-[#f0a500]">{p.ypt}</td>
                     </tr>
                   ))}
                 </tbody>

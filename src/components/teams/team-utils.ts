@@ -14,6 +14,8 @@ export interface TeamDetail {
   currentRecord: { wins: number; losses: number; ties: number };
   pointsFor: number;
   pointsAgainst: number;
+  leagueRecord?: { wins: number; losses: number };
+  leagueFinish?: string;
   championships: number;
   recentChampionships: string[];
 }

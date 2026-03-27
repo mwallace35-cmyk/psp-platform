@@ -34,12 +34,14 @@ export default function TeamSidebar({ team, winPct, sport }: TeamSidebarProps) {
               {team.city}, {team.state}
             </dd>
           </div>
-          <div className="flex justify-between">
-            <dt style={{ color: "var(--psp-gray-500)" }}>Head Coach</dt>
-            <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
-              {team.coach}
-            </dd>
-          </div>
+          {team.coach && (
+            <div className="flex justify-between">
+              <dt style={{ color: "var(--psp-gray-500)" }}>Head Coach</dt>
+              <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
+                {team.coach}
+              </dd>
+            </div>
+          )}
           <div className="flex justify-between">
             <dt style={{ color: "var(--psp-gray-500)" }}>Founded</dt>
             <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>

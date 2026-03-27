@@ -3,12 +3,12 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Players | Philadelphia High School Sports Stats',
-  description: 'Browse Philadelphia high school athletes. Stats, profiles, and college recruiting info.',
+  description: 'Browse Philadelphia high school athletes across football, basketball, baseball, and more. Career stats, player profiles, and college recruiting information.',
   alternates: { canonical: 'https://phillysportspack.com/players' },
   openGraph: {
     title: 'Players | PhillySportsPack.com',
     description: 'Philadelphia high school athletes \u2014 stats and profiles.',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+    images: [{ url: 'https://www.phillysportspack.com/opengraph-image', width: 1200, height: 630 }],
   },
 };
 

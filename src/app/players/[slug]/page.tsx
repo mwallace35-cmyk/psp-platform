@@ -83,7 +83,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: `${player.name} | PhillySportsPack`,
       description: `${player.name} — ${school?.name ?? 'Philadelphia'}, Class of ${player.graduation_year ?? 'N/A'}`,
-      images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+      images: [{ url: 'https://www.phillysportspack.com/opengraph-image', width: 1200, height: 630 }],
     },
   };
 }

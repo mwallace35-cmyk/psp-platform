@@ -54,11 +54,17 @@ export default function HeroMonument({ playerCount, gameCount, schoolCount }: He
           </p>
 
           {/* Main title */}
-          <h1
-            className="font-heading text-white leading-none"
-            style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
-          >
-            PHILLY<span style={{ color: "var(--psp-gold)" }}>SPORTS</span>PACK
+          <h1 className="psp-h1 text-white leading-none">
+            <span
+              className="font-heading block"
+              style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
+              aria-hidden="true"
+            >
+              PHILLY<span style={{ color: "var(--psp-gold)" }}>SPORTS</span>PACK
+            </span>
+            <span className="block text-sm md:text-base font-medium text-gray-300 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              Philadelphia High School Sports Database
+            </span>
           </h1>
 
           {/* Subtitle */}

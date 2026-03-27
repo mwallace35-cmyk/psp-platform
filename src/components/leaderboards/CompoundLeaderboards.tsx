@@ -120,24 +120,26 @@ export default function CompoundLeaderboards({
                                 {entry.player_slug ? (
                                   <Link
                                     href={`/${sport}/players/${entry.player_slug}`}
-                                    className="font-semibold text-sm text-white hover:text-[var(--psp-gold)] transition truncate block"
+                                    className="font-semibold text-sm text-white hover:text-[var(--psp-gold)] transition truncate"
+                                    style={{ display: "block" }}
                                   >
                                     {entry.player_name}
                                   </Link>
                                 ) : (
-                                  <span className="font-semibold text-sm text-white truncate block">
+                                  <span className="font-semibold text-sm text-white truncate" style={{ display: "block" }}>
                                     {entry.player_name}
                                   </span>
                                 )}
                                 {entry.school_slug ? (
                                   <Link
                                     href={`/${sport}/schools/${entry.school_slug}`}
-                                    className="text-xs text-gray-400 hover:text-gray-300 transition truncate block"
+                                    className="text-xs text-gray-400 hover:text-gray-300 transition truncate"
+                                    style={{ display: "block", marginTop: "2px" }}
                                   >
                                     {entry.school_name}
                                   </Link>
                                 ) : (
-                                  <span className="text-xs text-gray-400 truncate block">
+                                  <span className="text-xs text-gray-400 truncate" style={{ display: "block", marginTop: "2px" }}>
                                     {entry.school_name}
                                   </span>
                                 )}

@@ -84,7 +84,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {sport === "football" && (
             <>
               <Link
-                href="/football/all-city"
+                href="/football/awards"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-emerald-600/30 bg-emerald-600/[0.08] text-emerald-600"
               >
                 📋 All-City Archive (1932–2018)
@@ -99,7 +99,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           )}
           {sport === "basketball" && (
             <Link
-              href="/basketball/leaderboards/scoring"
+              href="/basketball/leaderboards"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-orange-600/30 bg-orange-600/[0.08] text-orange-600"
             >
               📊 Scoring Leaders

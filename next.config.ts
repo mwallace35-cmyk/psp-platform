@@ -128,7 +128,7 @@ let config: NextConfig = {
       },
       {
         source: "/yearly-awards/",
-        destination: "/football/leaderboards/scoring",
+        destination: "/football/leaderboards",
         permanent: true,
       },
       {

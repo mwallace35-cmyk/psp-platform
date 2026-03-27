@@ -25,6 +25,17 @@ interface GameRow {
   away_school: School | null;
 }
 
+/** Extract a human-readable opponent name from the notes field when school record is missing */
+function getOpponentFromNotes(notes: string | null): string | null {
+  if (!notes) return null;
+  // Common pattern: "Opponent: School Name (details)"
+  const oppMatch = notes.match(/^Opponent:\s*(.+?)(?:\s*\(.*\))?\s*$/i);
+  if (oppMatch) return oppMatch[1].trim();
+  // If the notes is just a short name (not a sentence), use it directly
+  if (notes.length < 60 && !notes.includes('.')) return notes.trim();
+  return null;
+}
+
 interface ScrimmageGroup {
   id: string;
   game_date: string;
@@ -541,8 +552,8 @@ export default function ScheduleView({
                                     {getSchoolDisplayName(opponent)}
                                   </Link>
                                 ) : (
-                                  <span className="text-gray-300">
-                                    TBD
+                                  <span className="text-gray-400 italic">
+                                    {getOpponentFromNotes(g.notes) || "Opponent"}
                                   </span>
                                 )}
                               </td>
@@ -663,11 +674,11 @@ function GameCard({
       <div className="flex-1 min-w-0">
         <p className="text-sm text-navy">
           <span className={awayBold ? "font-bold" : "font-medium"}>
-            {g.away_school ? getSchoolDisplayName(g.away_school) : "TBD"}
+            {g.away_school ? getSchoolDisplayName(g.away_school) : (getOpponentFromNotes(g.notes) || "Opponent")}
           </span>
           <span className="text-gray-300 mx-2">@</span>
           <span className={homeBold ? "font-bold" : "font-medium"}>
-            {g.home_school ? getSchoolDisplayName(g.home_school) : "TBD"}
+            {g.home_school ? getSchoolDisplayName(g.home_school) : (getOpponentFromNotes(g.notes) || "Opponent")}
           </span>
         </p>
         {typeInfo && (

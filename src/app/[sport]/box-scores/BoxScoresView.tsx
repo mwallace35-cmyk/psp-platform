@@ -160,8 +160,8 @@ export default function BoxScoresView({
                           {game.home_school.name}
                         </Link>
                       ) : (
-                        <span className="font-semibold" style={{ color: "var(--psp-navy)" }}>
-                          Home Team
+                        <span className="font-semibold text-gray-400 italic">
+                          Opponent
                         </span>
                       )}
                     </div>
@@ -171,7 +171,7 @@ export default function BoxScoresView({
                       <div className="text-2xl font-bold" style={{ color: "var(--psp-navy)" }}>
                         {game.home_score !== null && game.away_score !== null
                           ? `${game.home_score} – ${game.away_score}`
-                          : "TBD"}
+                          : "—"}
                       </div>
                     </div>
 
@@ -186,8 +186,8 @@ export default function BoxScoresView({
                           {game.away_school.name}
                         </Link>
                       ) : (
-                        <span className="font-semibold" style={{ color: "var(--psp-navy)" }}>
-                          Away Team
+                        <span className="font-semibold text-gray-400 italic">
+                          Opponent
                         </span>
                       )}
                     </div>
@@ -196,10 +196,11 @@ export default function BoxScoresView({
                     <div className="w-32 flex-shrink-0">
                       <Link
                         href={`/${sport}/games/${game.id}`}
-                        className="inline-block px-3 py-1 rounded-lg text-sm font-semibold text-white text-center"
-                        style={{ background: "var(--psp-blue)" }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-center"
+                        style={{ background: "var(--psp-blue)", color: "#ffffff" }}
                       >
-                        View Box Score
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Box Score
                       </Link>
                     </div>
                   </div>

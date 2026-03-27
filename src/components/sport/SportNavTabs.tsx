@@ -63,10 +63,12 @@ export default function SportNavTabs({ sport }: SportNavProps) {
     <nav
       className="bg-white border-b border-gray-200"
       aria-label={`${sportName} section navigation`}
-
     >
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3">
+        <div
+          className="flex gap-2 overflow-x-auto scrollbar-hide py-3"
+          style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x proximity' }}
+        >
           {tabs.map((tab) => {
             const isActive = tab.matchPrefix
               ? pathname.startsWith(tab.matchPrefix)
@@ -76,15 +78,18 @@ export default function SportNavTabs({ sport }: SportNavProps) {
               <Link
                 key={tab.href}
                 href={tab.href}
-                className={`px-4 py-1.5 text-sm font-semibold whitespace-nowrap rounded-full transition-all ${
+                className={`px-3 py-1.5 text-xs sm:text-sm font-semibold whitespace-nowrap rounded-full transition-all flex-shrink-0 ${
                   isActive
                     ? 'text-white shadow-sm'
                     : 'text-gray-600 hover:bg-gray-100'
                 }`}
-                style={isActive ? {
-                  backgroundColor: 'var(--psp-navy)',
-                } : {
-                  border: '1.5px solid #e2e8f0',
+                style={{
+                  scrollSnapAlign: 'start',
+                  ...(isActive ? {
+                    backgroundColor: 'var(--psp-navy)',
+                  } : {
+                    border: '1.5px solid #e2e8f0',
+                  }),
                 }}
               >
                 {tab.label}

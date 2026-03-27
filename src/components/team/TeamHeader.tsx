@@ -15,11 +15,14 @@ interface TeamHeaderProps {
     league: string;
     city: string;
     state: string;
+    coach?: string;
     currentRecord: { wins: number; losses: number; ties: number };
     championships: number;
     recentChampionships: string[];
     pointsFor: number;
     pointsAgainst: number;
+    leagueRecord?: { wins: number; losses: number };
+    leagueFinish?: string;
   };
   school: {
     primary_color?: string;

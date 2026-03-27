@@ -41,7 +41,14 @@ export async function generateMetadata({
   if (!sport) return {};
 
   const p = await params;
-  const position = p.position.toUpperCase();
+  let position = p.position.toUpperCase();
+  // Map friendly position aliases for metadata too
+  const metaAliases: Record<string, Record<string, string>> = {
+    basketball: { GUARD: "SG", "POINT-GUARD": "PG", "SHOOTING-GUARD": "SG", FORWARD: "SF", "SMALL-FORWARD": "SF", "POWER-FORWARD": "PF", CENTER: "C" },
+    football: { QUARTERBACK: "QB", "RUNNING-BACK": "RB", "WIDE-RECEIVER": "WR", "TIGHT-END": "TE", LINEBACKER: "LB" },
+  };
+  const alias = metaAliases[sport]?.[position];
+  if (alias) position = alias;
   const meta = SPORT_META[sport];
   const positionName = getPositionDisplayName(sport, position);
 
@@ -61,7 +68,29 @@ export default async function PositionLeadersPage({
 }) {
   const sport = await validateSportParam(params);
   const p = await params;
-  const position = p.position.toUpperCase();
+  let position = p.position.toUpperCase();
+
+  // Map friendly position aliases to canonical codes
+  const positionAliases: Record<string, Record<string, string>> = {
+    basketball: {
+      GUARD: "SG",
+      "POINT-GUARD": "PG",
+      "SHOOTING-GUARD": "SG",
+      FORWARD: "SF",
+      "SMALL-FORWARD": "SF",
+      "POWER-FORWARD": "PF",
+      CENTER: "C",
+    },
+    football: {
+      QUARTERBACK: "QB",
+      "RUNNING-BACK": "RB",
+      "WIDE-RECEIVER": "WR",
+      "TIGHT-END": "TE",
+      LINEBACKER: "LB",
+    },
+  };
+  const alias = positionAliases[sport]?.[position];
+  if (alias) position = alias;
 
   // Validate position
   const validPositions = getPositionsForSport(sport);

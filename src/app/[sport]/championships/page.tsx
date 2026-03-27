@@ -572,7 +572,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                 </Link>
                 {sport === "football" && (
                   <Link
-                    href="/football/all-city"
+                    href="/football/awards"
                     className="flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
                     style={{ color: "var(--psp-gold)" }}
                   >

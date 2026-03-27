@@ -11,7 +11,7 @@ import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 export const metadata: Metadata = {
   title: "Scores | PhillySportsPack",
   description:
-    "Recent scores from Philadelphia high school sports. Filter by season, sport, and school.",
+    "Recent scores and results from Philadelphia high school sports. Filter by season, sport, and school across football, basketball, baseball, and more.",
   alternates: { canonical: "https://phillysportspack.com/scores" },
   openGraph: {
     title: "Scores | PhillySportsPack",

@@ -47,13 +47,15 @@ function BreakoutCard({ alert }: { alert: BreakoutAlert }) {
           <div className="flex-1">
             <Link
               href={`/${alert.sport_id}/players/${alert.player_slug}`}
-              className="text-lg font-bold text-[var(--psp-gold)] hover:underline block"
+              className="text-lg font-bold text-[var(--psp-gold)] hover:underline"
+              style={{ display: "block" }}
             >
               {alert.player_name}
             </Link>
             <Link
               href={`/${alert.sport_id}/schools/${alert.school_slug}`}
               className="text-sm text-gray-300 hover:text-gray-300"
+              style={{ display: "block", marginTop: "2px" }}
             >
               {alert.school_name}
             </Link>

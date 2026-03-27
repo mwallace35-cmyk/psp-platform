@@ -170,7 +170,7 @@ export const getSchoolTeamSeasons = cache(async (schoolId: number, sportId: stri
           const supabase = await createClient();
           const { data } = await supabase
             .from("team_seasons")
-            .select("id, school_id, sport_id, season_id, coach_id, wins, losses, ties, playoff_result, notes, seasons(year_start, year_end, label), coaches(name, slug)")
+            .select("id, school_id, sport_id, season_id, coach_id, wins, losses, ties, points_for, points_against, league_finish, league_wins, league_losses, playoff_result, notes, seasons(year_start, year_end, label), coaches(name, slug)")
             .eq("school_id", schoolId)
             .eq("sport_id", sportId)
             .order("created_at", { ascending: false });

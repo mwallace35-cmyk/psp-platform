@@ -38,7 +38,20 @@ export interface RivalryGame {
 }
 
 /**
+ * Helper to unwrap Supabase join results (may be array or object)
+ */
+function unwrapSchool(raw: unknown): School | null {
+  if (!raw) return null;
+  const school = Array.isArray(raw) ? raw[0] : raw;
+  if (!school || typeof school !== "object") return null;
+  const s = school as Record<string, unknown>;
+  if (!s.id || !s.name) return null;
+  return school as School;
+}
+
+/**
  * Get top rivalries for a sport (school pairs with most games)
+ * Uses a database function to efficiently compute across all games
  */
 export const getTopRivalries = cache(
   async (sportSlug: string, limit = 10): Promise<RivalryRecord[]> => {
@@ -47,129 +60,37 @@ export const getTopRivalries = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
-            const { data: games, error } = await supabase
-              .from("games")
-              .select(
-                `id, sport_id, home_school_id, away_school_id, home_score, away_score, game_date,
-                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, state),
-                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, state),
-                 seasons(label)`
-              )
-              .eq("sport_id", sportSlug)
-              .not("home_school_id", "is", null)
-              .not("away_school_id", "is", null)
-              .limit(5000);
+
+            const { data, error } = await (supabase as any).rpc("get_top_rivalries", {
+              p_sport_id: sportSlug,
+              p_limit: limit,
+            });
 
             if (error) {
-              console.error("Top rivalries query error:", error);
+              console.error("Top rivalries RPC error:", error);
               return [];
             }
 
-            // Group games by school pair (normalized)
-            const pairMap: Record<
-              string,
-              {
-                pair: [number, number];
-                games: Game[];
-              }
-            > = {};
-
-            for (const game of games ?? []) {
-              if (!game.home_school_id || !game.away_school_id) continue;
-
-              // Normalize pair (smaller ID first)
-              const [id1, id2] =
-                game.home_school_id < game.away_school_id
-                  ? [game.home_school_id, game.away_school_id]
-                  : [game.away_school_id, game.home_school_id];
-              const key = `${id1}:${id2}`;
-
-              if (!pairMap[key]) {
-                pairMap[key] = {
-                  pair: [id1, id2],
-                  games: [],
-                };
-              }
-              pairMap[key].games.push(game as unknown as Game);
-            }
-
-            // Convert to rivalry records
-            const rivalries: RivalryRecord[] = Object.values(pairMap)
-              .map(({ pair, games: gameList }) => {
-                let school1 = null;
-                let school2 = null;
-                let school1_wins = 0;
-                let school2_wins = 0;
-                let ties = 0;
-                let latestDate: string | undefined;
-                let latestScore: string | undefined;
-
-                for (const game of gameList) {
-                  // Extract schools
-                  if (!school1 && game.home_school_id === pair[0]) {
-                    school1 = game.home_school as unknown as School;
-                  }
-                  if (!school2 && game.away_school_id === pair[1]) {
-                    school2 = game.away_school as unknown as School;
-                  }
-                  if (!school1 && game.away_school_id === pair[0]) {
-                    school1 = game.away_school as unknown as School;
-                  }
-                  if (!school2 && game.home_school_id === pair[1]) {
-                    school2 = game.home_school as unknown as School;
-                  }
-
-                  // Score tracking
-                  const homeIsSchool1 = game.home_school_id === pair[0];
-                  if (
-                    game.home_score != null &&
-                    game.away_score != null
-                  ) {
-                    if (homeIsSchool1) {
-                      if (game.home_score > game.away_score) {
-                        school1_wins++;
-                      } else if (game.home_score < game.away_score) {
-                        school2_wins++;
-                      } else {
-                        ties++;
-                      }
-                    } else {
-                      if (game.away_score > game.home_score) {
-                        school1_wins++;
-                      } else if (game.away_score < game.home_score) {
-                        school2_wins++;
-                      } else {
-                        ties++;
-                      }
-                    }
-
-                    // Latest game
-                    if (!latestDate || (game.game_date ?? "") > latestDate) {
-                      latestDate = game.game_date ?? undefined;
-                      latestScore = `${game.home_score}-${game.away_score}`;
-                    }
-                  }
-                }
-
-                return {
-                  school1_id: pair[0],
-                  school2_id: pair[1],
-                  school1: school1 || { id: pair[0], name: "", slug: "" },
-                  school2: school2 || { id: pair[1], name: "", slug: "" },
-                  school1_wins,
-                  school2_wins,
-                  ties,
-                  total_games: gameList.length,
-                  latest_game_date: latestDate,
-                  latest_game_score: latestScore,
-                };
-              })
-              .filter((r) => r.total_games >= 2); // Only rivalries with 2+ games
-
-            // Sort by total games descending
-            return rivalries
-              .sort((a, b) => b.total_games - a.total_games)
-              .slice(0, limit);
+            return ((data ?? []) as any[]).map((row: any) => ({
+              school1_id: row.school1_id,
+              school2_id: row.school2_id,
+              school1: {
+                id: row.school1_id,
+                name: row.school1_name || "",
+                slug: row.school1_slug || String(row.school1_id),
+              },
+              school2: {
+                id: row.school2_id,
+                name: row.school2_name || "",
+                slug: row.school2_slug || String(row.school2_id),
+              },
+              school1_wins: Number(row.school1_wins) || 0,
+              school2_wins: Number(row.school2_wins) || 0,
+              ties: Number(row.ties) || 0,
+              total_games: Number(row.total_games) || 0,
+              latest_game_date: row.latest_game_date || undefined,
+              latest_game_score: row.latest_game_score || undefined,
+            }));
           },
           { maxRetries: 2, baseDelay: 500 }
         );
@@ -223,13 +144,15 @@ export const getRivalryDetail = cache(
             let latestScore: string | undefined;
 
             for (const game of games) {
-              // Get schools
+              // Get schools — unwrap Supabase joins
+              const homeSchool = unwrapSchool(game.home_school);
+              const awaySchool = unwrapSchool(game.away_school);
               if (game.home_school_id === school1Id) {
-                school1 = game.home_school as unknown as School;
-                school2 = game.away_school as unknown as School;
+                if (homeSchool) school1 = homeSchool;
+                if (awaySchool) school2 = awaySchool;
               } else {
-                school1 = game.away_school as unknown as School;
-                school2 = game.home_school as unknown as School;
+                if (awaySchool) school1 = awaySchool;
+                if (homeSchool) school2 = homeSchool;
               }
 
               // Score tracking (school1 is normalized to first param)
@@ -322,8 +245,8 @@ export const getRivalryGames = cache(
             return ((games ?? []) as unknown as Game[]).map((game) => ({
               game_id: game.id,
               game_date: game.game_date,
-              home_school: game.home_school as unknown as School,
-              away_school: game.away_school as unknown as School,
+              home_school: unwrapSchool(game.home_school) || { id: game.home_school_id || 0, name: "", slug: "" },
+              away_school: unwrapSchool(game.away_school) || { id: game.away_school_id || 0, name: "", slug: "" },
               home_score: game.home_score ?? undefined,
               away_score: game.away_score ?? undefined,
               season_label: (game.seasons as any)?.label,

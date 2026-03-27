@@ -438,10 +438,11 @@ export const getGamesBySportWithBoxScores = cache(
           async () => {
             const supabase = await createClient();
 
-            // First, get game IDs that have box scores
+            // First, get game IDs that have box scores for this sport
             let statsQuery = supabase
               .from("game_player_stats")
               .select("game_id", { head: false })
+              .eq("sport_id", sportId)
               .limit(1000);
 
             const { data: statsData } = await statsQuery;

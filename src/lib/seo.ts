@@ -37,7 +37,7 @@ const SITE_URL = "https://phillysportspack.com";
 export function generatePageMetadata(params: SEOParams): Metadata {
   let title = SITE_NAME;
   let description =
-    "Philadelphia high school sports data — football, basketball, baseball, and more.";
+    "Philadelphia high school sports data covering football, basketball, baseball, soccer, lacrosse, track & field, and wrestling stats, records, and player profiles.";
   let url = SITE_URL;
   let ogImage = `${SITE_URL}/og-default.png`;
 
@@ -54,7 +54,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     case "sport-hub":
       if (sportName && params.sport) {
         title = `${sportName} | ${SITE_NAME}`;
-        description = `Philadelphia high school ${sportName.toLowerCase()} — stats, leaderboards, school records, and championships.`;
+        description = `Philadelphia high school ${sportName.toLowerCase()} stats, leaderboards, school records, championships, and player profiles across 400+ schools and decades of history.`;
         url = `${SITE_URL}/${params.sport}`;
         ogImage = `${SITE_URL}/og-${params.sport}.png`;
       }
@@ -63,7 +63,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     case "school-profile":
       if (params.schoolName && params.sport && sportName) {
         title = `${params.schoolName} ${sportName} | ${SITE_NAME}`;
-        description = `${params.schoolName} ${sportName} history, records, championships, and player profiles.`;
+        description = `${params.schoolName} ${sportName} history, records, championships, and player profiles. Explore career stats, season leaders, and alumni tracking.`;
         url = `${SITE_URL}/${params.sport}/schools/${params.slug}`;
         ogImage = `${SITE_URL}/og-schools/${params.slug}.png`;
       }
@@ -90,7 +90,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
       if (params.sport && sportName && params.slug) {
         const statName = params.slug.replace(/-/g, " ");
         title = `${statName} Leaders | ${sportName} | ${SITE_NAME}`;
-        description = `Top Philadelphia high school ${sportName.toLowerCase()} players by ${statName}.`;
+        description = `Top Philadelphia high school ${sportName.toLowerCase()} players ranked by ${statName}. Career and single-season leaderboards across 400+ schools.`;
         url = `${SITE_URL}/${params.sport}/leaderboards/${params.slug}`;
       }
       break;
@@ -98,7 +98,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     case "records":
       if (params.sport && sportName) {
         title = `Records | ${sportName} | ${SITE_NAME}`;
-        description = `Philadelphia high school ${sportName.toLowerCase()} records and achievements.`;
+        description = `Philadelphia high school ${sportName.toLowerCase()} records and achievements. All-time single-game, season, and career records across the city.`;
         url = `${SITE_URL}/${params.sport}/records`;
       }
       break;
@@ -106,7 +106,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     case "championships":
       if (params.sport && sportName) {
         title = `Championships | ${sportName} | ${SITE_NAME}`;
-        description = `Philadelphia high school ${sportName.toLowerCase()} championship history and title holders.`;
+        description = `Philadelphia high school ${sportName.toLowerCase()} championship history and title holders. District, city, and state championships spanning decades.`;
         url = `${SITE_URL}/${params.sport}/championships`;
       }
       break;
@@ -122,21 +122,21 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     case "compare":
       if (params.sport && sportName) {
         title = `Player Comparison | ${sportName} | ${SITE_NAME}`;
-        description = `Compare Philadelphia high school ${sportName.toLowerCase()} players side-by-side.`;
+        description = `Compare Philadelphia high school ${sportName.toLowerCase()} players side-by-side. Head-to-head stat breakdowns, career totals, and percentile rankings.`;
         url = `${SITE_URL}/compare?sport=${params.sport}`;
       }
       break;
 
     case "articles":
       title = `Articles | ${SITE_NAME}`;
-      description = "Read news and articles about Philadelphia high school sports.";
+      description = "Read the latest news, features, and analysis about Philadelphia high school sports. Coverage of football, basketball, baseball, and more.";
       url = `${SITE_URL}/articles`;
       break;
 
     case "article-detail":
       if (params.title) {
         title = `${params.title} | ${SITE_NAME}`;
-        description = params.description || "Read the latest Philadelphia high school sports news.";
+        description = params.description || "Read the latest Philadelphia high school sports news, features, game recaps, and recruiting updates on PhillySportsPack.";
         url = `${SITE_URL}/articles/${params.slug}`;
       }
       break;

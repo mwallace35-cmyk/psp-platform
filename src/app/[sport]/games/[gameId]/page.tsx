@@ -140,6 +140,11 @@ function FootballBoxScore({
       (s) => s.rec_catches != null && (s.rec_catches > 0 || (s.rec_yards != null && s.rec_yards !== 0))
     );
 
+    // Check if any player in each group has actual TD data
+    const hasRushTd = rushers.some(s => getTD(s, 'rush') != null);
+    const hasPassTd = passers.some(s => getTD(s, 'pass') != null);
+    const hasRecTd = receivers.some(s => getTD(s, 'rec') != null);
+
     return (
       <div className="mb-8">
         <h3 className="text-lg font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase">
@@ -159,7 +164,7 @@ function FootballBoxScore({
                   <th className="text-center px-3 py-2">#</th>
                   <th className="text-right px-3 py-2">Car</th>
                   <th className="text-right px-3 py-2">Yds</th>
-                  <th className="text-right px-3 py-2">TD</th>
+                  {hasRushTd && <th className="text-right px-3 py-2">TD</th>}
                 </tr>
               </thead>
               <tbody>
@@ -188,9 +193,11 @@ function FootballBoxScore({
                       <td className="text-right px-3 py-2 font-semibold">
                         {s.rush_yards ?? 0}
                       </td>
-                      <td className="text-right px-3 py-2" style={{ color: (rushTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
-                        {rushTd != null ? (isSeasonAvg ? rushTd.toFixed(1) : rushTd) : '—'}
-                      </td>
+                      {hasRushTd && (
+                        <td className="text-right px-3 py-2" style={{ color: (rushTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                          {rushTd != null ? (isSeasonAvg ? rushTd.toFixed(1) : rushTd) : '—'}
+                        </td>
+                      )}
                     </tr>
                   );
                   })}
@@ -213,7 +220,7 @@ function FootballBoxScore({
                   <th className="text-center px-3 py-2">#</th>
                   <th className="text-right px-3 py-2">Comp</th>
                   <th className="text-right px-3 py-2">Yds</th>
-                  <th className="text-right px-3 py-2">TD</th>
+                  {hasPassTd && <th className="text-right px-3 py-2">TD</th>}
                 </tr>
               </thead>
               <tbody>
@@ -242,9 +249,11 @@ function FootballBoxScore({
                       <td className="text-right px-3 py-2 font-semibold">
                         {s.pass_yards ?? 0}
                       </td>
-                      <td className="text-right px-3 py-2" style={{ color: (passTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
-                        {passTd != null ? (isSeasonAvg ? passTd.toFixed(1) : passTd) : '—'}
-                      </td>
+                      {hasPassTd && (
+                        <td className="text-right px-3 py-2" style={{ color: (passTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                          {passTd != null ? (isSeasonAvg ? passTd.toFixed(1) : passTd) : '—'}
+                        </td>
+                      )}
                     </tr>
                   );})}
               </tbody>
@@ -266,7 +275,7 @@ function FootballBoxScore({
                   <th className="text-center px-3 py-2">#</th>
                   <th className="text-right px-3 py-2">Rec</th>
                   <th className="text-right px-3 py-2">Yds</th>
-                  <th className="text-right px-3 py-2">TD</th>
+                  {hasRecTd && <th className="text-right px-3 py-2">TD</th>}
                 </tr>
               </thead>
               <tbody>
@@ -295,9 +304,11 @@ function FootballBoxScore({
                       <td className="text-right px-3 py-2 font-semibold">
                         {s.rec_yards ?? 0}
                       </td>
-                      <td className="text-right px-3 py-2" style={{ color: (recTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
-                        {recTd != null ? (isSeasonAvg ? recTd.toFixed(1) : recTd) : '—'}
-                      </td>
+                      {hasRecTd && (
+                        <td className="text-right px-3 py-2" style={{ color: (recTd ?? 0) > 0 ? 'var(--psp-gold)' : 'inherit' }}>
+                          {recTd != null ? (isSeasonAvg ? recTd.toFixed(1) : recTd) : '—'}
+                        </td>
+                      )}
                     </tr>
                   );})}
               </tbody>
@@ -797,7 +808,7 @@ export default async function GameDetailPage({
           </section>
         );
       })()}
-      {teamSeasonData && (teamSeasonData.home?.players.length || teamSeasonData.away?.players.length) ? (
+      {teamSeasonData && (teamSeasonData.home?.players.length || teamSeasonData.away?.players.length) && (
         <section>
           <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">
             Season Stats
@@ -895,7 +906,8 @@ export default async function GameDetailPage({
             Showing season-level stats, not game-specific box score &middot; Source: PhillySportsPack.com
           </p>
         </section>
-      ) : (
+      )}
+      {!(teamSeasonData && (teamSeasonData.home?.players.length || teamSeasonData.away?.players.length)) && boxScore.length === 0 && (
         <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-8 text-center">
           <p className="text-gray-300 font-semibold">No detailed statistics available for this game.</p>
           <p className="text-gray-400 text-sm mt-2 mb-4">

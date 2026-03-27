@@ -1,5 +1,5 @@
 "use client";
-// v2: championship_type labels — refactored into sub-components
+// v3: championship_type labels + league standing fix — refactored into sub-components
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -136,7 +136,13 @@ export default function TeamPageClient({
               {/* League Standing */}
               <div>
                 <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">League Standing</div>
-                <div className="psp-h3 text-[var(--psp-gold)]">TBA</div>
+                {team.leagueFinish ? (
+                  <div className="psp-h3 text-[var(--psp-gold)]">{team.leagueFinish}</div>
+                ) : team.leagueRecord && (team.leagueRecord.wins > 0 || team.leagueRecord.losses > 0) ? (
+                  <div className="psp-h3 text-[var(--psp-gold)]">{team.leagueRecord.wins}-{team.leagueRecord.losses}</div>
+                ) : (
+                  <div className="text-sm text-gray-400">N/A</div>
+                )}
                 <div className="text-xs text-gray-600 mt-1">in {team.league}</div>
               </div>
               {/* Next Opponent */}
@@ -410,7 +416,7 @@ export default function TeamPageClient({
               },
             },
             url: `https://phillysportspack.com/${sport}/teams/${team.slug}`,
-            coach: team.coach,
+            ...(team.coach ? { coach: team.coach } : {}),
           }),
         }}
       />

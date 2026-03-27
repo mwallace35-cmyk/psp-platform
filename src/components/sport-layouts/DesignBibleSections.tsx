@@ -156,8 +156,8 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
           }).slice(0, 5);
           setGames(diverseGames.map((g: any) => ({
             id: g.id ?? null,
-            home: sm.get(g.home_school_id) ?? 'TBD',
-            away: sm.get(g.away_school_id) ?? 'TBD',
+            home: sm.get(g.home_school_id) ?? 'Opponent',
+            away: sm.get(g.away_school_id) ?? 'Opponent',
             homeScore: g.home_score, awayScore: g.away_score,
             date: g.game_date,
             gameType: g.game_type ?? null,
@@ -233,7 +233,7 @@ export default function DesignBibleSections({ sport, compact = false, darkTheme 
       <div>
         <h2 className="psp-h3" style={headingStyle}>TOP PERFORMERS</h2>
         {leaders.items.map(({ label, suffix, leader }) => leader && (
-          <div key={label} style={cardStyle}><strong style={{ color: '#f0a500' }}>{label}:</strong> {leader.slug ? <Link href={`/${sport}/players/${leader.slug}`} className="hover:text-[var(--psp-gold)] transition-colors">{leader.name}</Link> : leader.name} <span style={{ color: darkTheme ? 'rgba(255,255,255,0.5)' : '#64748b' }}>({leader.value.toLocaleString()} {suffix})</span></div>
+          <div key={label} style={cardStyle}><strong style={{ color: '#f0a500' }}>{label}:</strong> {leader.slug ? <Link href={`/${sport}/players/${leader.slug}`} className="hover:text-[var(--psp-gold)] transition-colors">{leader.name}</Link> : leader.name}{leader.school ? <span style={{ color: darkTheme ? 'rgba(255,255,255,0.4)' : '#94a3b8', fontSize: '12px' }}> — {leader.school}</span> : null} <span style={{ color: darkTheme ? 'rgba(255,255,255,0.5)' : '#64748b' }}>({leader.value.toLocaleString()} {suffix})</span></div>
         ))}
         {rankingCategories.length > 0 && (
           <>

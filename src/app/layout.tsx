@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     // ✅ FIX: explicit OG image so shared links render a card, not a blank preview
     images: [
       {
-        url: "/opengraph-image",
+        url: "https://www.phillysportspack.com/opengraph-image",
         width: 1200,
         height: 630,
         alt: "PhillySportsPack.com — Philadelphia High School Sports Database",
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     description:
       "Complete Philadelphia high school sports database — stats, records, championships, and player profiles.",
     // ✅ FIX: explicit Twitter image
-    images: ["/opengraph-image"],
+    images: ["https://www.phillysportspack.com/opengraph-image"],
   },
   alternates: {
     canonical: "https://phillysportspack.com",

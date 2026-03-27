@@ -295,7 +295,7 @@ export default async function AwardsHubPage() {
               </div>
               <div className="p-4 space-y-2">
                 {[
-                  { href: "/football/all-city", label: "Football All-City Archive", emoji: "🏈" },
+                  { href: "/football/awards", label: "Football All-City Archive", emoji: "🏈" },
                   { href: "/football/championships", label: "Football Championships", emoji: "🏆" },
                   { href: "/basketball/championships", label: "Basketball Championships", emoji: "🏀" },
                   { href: "/baseball/awards", label: "Baseball Awards", emoji: "⚾" },

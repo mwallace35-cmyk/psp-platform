@@ -12,9 +12,19 @@ export interface HubGame {
   game_date: string | null;
   game_type: string | null;
   playoff_round: string | null;
+  notes?: string | null;
   home_school: { id: number; name: string; slug: string; league?: string; city?: string | null; league_id?: number | null; logo_url?: string | null } | null;
   away_school: { id: number; name: string; slug: string; league?: string; city?: string | null; league_id?: number | null; logo_url?: string | null } | null;
   seasons: { label: string } | null;
+}
+
+/** Extract opponent name from notes field when school is null */
+function getOpponentFromNotes(notes: string | null | undefined): string | null {
+  if (!notes) return null;
+  const oppMatch = notes.match(/^Opponent:\s*(.+?)(?:\s*\(.*\))?\s*$/i);
+  if (oppMatch) return oppMatch[1].trim();
+  if (notes.length < 60 && !notes.includes('.')) return notes.trim();
+  return null;
 }
 
 interface HubScoresStripProps {
@@ -88,8 +98,8 @@ export default function HubScoresStrip({ games, sportColor, sport }: HubScoresSt
         onScroll={checkScroll}
       >
         {games.map((game, index) => {
-          const homeName = game.home_school ? getSchoolShortDisplayName(game.home_school) : "TBD";
-          const awayName = game.away_school ? getSchoolShortDisplayName(game.away_school) : "TBD";
+          const homeName = game.home_school ? getSchoolShortDisplayName(game.home_school) : (getOpponentFromNotes(game.notes) || "Opponent");
+          const awayName = game.away_school ? getSchoolShortDisplayName(game.away_school) : (getOpponentFromNotes(game.notes) || "Opponent");
           const homeScore = game.home_score ?? 0;
           const awayScore = game.away_score ?? 0;
           const homeWon = homeScore > awayScore;

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Leaderboards | PhillySportsPack.com',
     description: 'Top statistical leaders across all Philadelphia high school sports.',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+    images: [{ url: 'https://www.phillysportspack.com/opengraph-image', width: 1200, height: 630 }],
   },
 };
 

@@ -3,12 +3,12 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Teams | Philadelphia High School Sports Stats',
-  description: 'Browse high school sports teams across Philadelphia. School rosters, season records, and standings.',
+  description: 'Browse high school sports teams across Philadelphia. School rosters, season records, standings, and historical data for football, basketball, baseball, and more.',
   alternates: { canonical: 'https://phillysportspack.com/teams' },
   openGraph: {
     title: 'Teams | PhillySportsPack.com',
     description: 'High school sports teams across Philadelphia.',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+    images: [{ url: 'https://www.phillysportspack.com/opengraph-image', width: 1200, height: 630 }],
   },
 };
 

@@ -103,14 +103,19 @@ export default async function TeamDetailPage({ params }: PageProps) {
     state: school.state || "PA",
     league: leagueName || "Independent",
     founded_year: school.founded_year || 0,
-    coach: coachName || "TBA",
+    coach: coachName || "",
     currentRecord: {
       wins: latestSeason?.wins || 0,
       losses: latestSeason?.losses || 0,
       ties: latestSeason?.ties || 0,
     },
-    pointsFor: latestSeason?.points_for || 0,
-    pointsAgainst: latestSeason?.points_against || 0,
+    pointsFor: (latestSeason as any)?.points_for || 0,
+    pointsAgainst: (latestSeason as any)?.points_against || 0,
+    leagueRecord: {
+      wins: (latestSeason as any)?.league_wins || 0,
+      losses: (latestSeason as any)?.league_losses || 0,
+    },
+    leagueFinish: (latestSeason as any)?.league_finish || "",
     championships: championships.length,
     recentChampionships: championships
       .slice(0, 3)

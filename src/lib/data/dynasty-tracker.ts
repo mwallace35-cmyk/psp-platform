@@ -76,6 +76,10 @@ export const getDynastyTrackerData = cache(
               const season = champ.seasons as any;
               if (!season?.year_start) continue;
 
+              // Skip championships where the school join returned null (RLS-filtered soft-deleted schools)
+              const school = champ.schools as any;
+              if (!school?.id || !school?.name) continue;
+
               const decade = Math.floor(season.year_start / 10) * 10;
               const decadeKey = `${decade}s`;
               const yearStart = decade;
@@ -89,7 +93,6 @@ export const getDynastyTrackerData = cache(
               }
 
               // Find or create school entry for this decade
-              const school = champ.schools as any;
               let schoolEntry = decadeMap[decadeKey].schools.find(
                 (s) => s.school_id === school.id
               );
@@ -165,6 +168,9 @@ export const getDynastyLeaders = cache(
             for (const champ of championships) {
               const school = champ.schools as any;
               const season = champ.seasons as any;
+
+              // Skip championships where the school join returned null (RLS-filtered soft-deleted schools)
+              if (!school?.id || !school?.name) continue;
 
               if (!schoolMap[school.id]) {
                 schoolMap[school.id] = {

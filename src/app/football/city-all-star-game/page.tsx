@@ -643,7 +643,7 @@ export default async function CityAllStarGamePage() {
               <p className="text-gray-500 text-sm">
                 For detailed game summaries by Ted Silary, visit{" "}
                 <a
-                  href="http://phillyallstarfb.com/game-summaries.html"
+                  href="https://phillyallstarfb.com/game-summaries.html"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] underline transition-colors"
@@ -769,7 +769,7 @@ export default async function CityAllStarGamePage() {
                   Contact: Doug Macauley
                 </p>
                 <a
-                  href="http://phillyallstarfb.com"
+                  href="https://phillyallstarfb.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[var(--psp-gold)] text-sm hover:text-[var(--psp-gold-light)] transition-colors underline"
