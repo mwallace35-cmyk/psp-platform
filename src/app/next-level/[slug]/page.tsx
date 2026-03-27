@@ -567,14 +567,8 @@ export default async function ProAthleteProfilePage({
                           background: "var(--g50)",
                           borderRadius: 4,
                           textDecoration: "none",
-                          transition: ".15s",
-                        }}
-                        onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLElement).style.background = "var(--g100)";
-                        }}
-                        onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLElement).style.background = "var(--g50)";
-                        }}
+                          }}
+                        className="hover:opacity-90 transition-opacity"
                       >
                         <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>
                           {article.title}

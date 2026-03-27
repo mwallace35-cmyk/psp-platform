@@ -754,14 +754,12 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               </div>
               <Link
                 href={`/${sport}/teams/${school.slug}/roster?season=${season}`}
-                className="px-4 py-2 rounded-lg font-medium text-sm"
+                className="px-4 py-2 rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
                 style={{
                   background: "var(--psp-gold)",
                   color: "var(--psp-navy)",
                   textDecoration: "none",
-                  transition: "all 0.2s ease",
                 }}
-                className="hover:opacity-90 transition-opacity"
               >
                 View Full Roster →
               </Link>

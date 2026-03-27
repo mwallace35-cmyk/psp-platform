@@ -253,22 +253,8 @@ export default async function PowerIndexPage({ params }: PageProps) {
                                 ? "#0f0f0f"
                                 : "#1a1a1a",
                             borderBottom: "1px solid #333",
-                            transition: "background 0.2s ease",
                           }}
-                          onMouseEnter={(e) => {
-                            (e.currentTarget as any).style.background =
-                              isTop3
-                                ? "rgba(240, 165, 0, 0.1)"
-                                : "rgba(255, 255, 255, 0.05)";
-                          }}
-                          onMouseLeave={(e) => {
-                            (e.currentTarget as any).style.background =
-                              isTop3
-                                ? "rgba(240, 165, 0, 0.05)"
-                                : idx % 2 === 0
-                                ? "#0f0f0f"
-                                : "#1a1a1a";
-                          }}
+                          className={`transition-colors ${isTop3 ? "hover:bg-[rgba(240,165,0,0.1)]" : "hover:bg-white/5"}`}
                         >
                           <td
                             style={{
@@ -360,16 +346,8 @@ export default async function PowerIndexPage({ params }: PageProps) {
                       background: "rgba(74, 222, 128, 0.1)",
                       border: "1px solid rgba(74, 222, 128, 0.2)",
                       textDecoration: "none",
-                      transition: "all 0.2s ease",
                     }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as any).style.background =
-                        "rgba(74, 222, 128, 0.2)";
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as any).style.background =
-                        "rgba(74, 222, 128, 0.1)";
-                    }}
+                    className="transition-colors hover:bg-[rgba(74,222,128,0.2)]"
                   >
                     <span style={{ color: "#ccc", fontSize: "0.85rem" }}>
                       {m.schools?.name}
@@ -425,16 +403,8 @@ export default async function PowerIndexPage({ params }: PageProps) {
                       background: "rgba(248, 113, 113, 0.1)",
                       border: "1px solid rgba(248, 113, 113, 0.2)",
                       textDecoration: "none",
-                      transition: "all 0.2s ease",
                     }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as any).style.background =
-                        "rgba(248, 113, 113, 0.2)";
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as any).style.background =
-                        "rgba(248, 113, 113, 0.1)";
-                    }}
+                    className="transition-colors hover:bg-[rgba(248,113,113,0.2)]"
                   >
                     <span style={{ color: "#ccc", fontSize: "0.85rem" }}>
                       {m.schools?.name}
