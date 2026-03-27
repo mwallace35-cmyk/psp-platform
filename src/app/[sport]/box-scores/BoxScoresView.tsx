@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { ScoresGame } from "@/lib/data/games";
 
@@ -8,7 +9,8 @@ interface BoxScoresViewProps {
   sport: string;
   sportName: string;
   initialGames: ScoresGame[];
-  seasons: { label: string }[];
+  seasons: { label: string; game_count: number }[];
+  currentSeason: string;
 }
 
 export default function BoxScoresView({
@@ -16,35 +18,35 @@ export default function BoxScoresView({
   sportName,
   initialGames,
   seasons,
+  currentSeason,
 }: BoxScoresViewProps) {
-  const [selectedSeason, setSelectedSeason] = useState<string>("");
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
 
   const gamesPerPage = 25;
 
-  // Client-side filtering by season + sort by date descending
-  const filteredGames = useMemo(() => {
-    let result = initialGames;
-    if (selectedSeason) {
-      result = result.filter((g) => g.seasons?.label === selectedSeason);
-    }
-    // Sort by date descending
-    return [...result].sort((a, b) => {
+  // Sort by date descending
+  const sortedGames = useMemo(() => {
+    return [...initialGames].sort((a, b) => {
       const dateA = a.game_date ? new Date(a.game_date).getTime() : 0;
       const dateB = b.game_date ? new Date(b.game_date).getTime() : 0;
       return dateB - dateA;
     });
-  }, [initialGames, selectedSeason]);
+  }, [initialGames]);
 
   // Client-side pagination
-  const totalPages = Math.ceil(filteredGames.length / gamesPerPage);
+  const totalPages = Math.ceil(sortedGames.length / gamesPerPage);
   const startIdx = (currentPage - 1) * gamesPerPage;
-  const paginatedGames = filteredGames.slice(startIdx, startIdx + gamesPerPage);
+  const paginatedGames = sortedGames.slice(startIdx, startIdx + gamesPerPage);
 
-  // Reset to page 1 when season filter changes
+  // Season change navigates via URL so the server fetches the right data
   const handleSeasonChange = (value: string) => {
-    setSelectedSeason(value);
     setCurrentPage(1);
+    if (value) {
+      router.push(`/${sport}/box-scores?season=${encodeURIComponent(value)}`);
+    } else {
+      router.push(`/${sport}/box-scores`);
+    }
   };
 
   return (
@@ -61,15 +63,14 @@ export default function BoxScoresView({
               Season
             </label>
             <select
-              value={selectedSeason}
+              value={currentSeason}
               onChange={(e) => handleSeasonChange(e.target.value)}
               className="w-full md:w-64 px-3 py-2 border rounded-lg text-sm"
               style={{ borderColor: "var(--psp-gold)" }}
             >
-              <option value="">All Seasons</option>
               {seasons.map((season) => (
                 <option key={season.label} value={season.label}>
-                  {season.label}
+                  {season.label} ({season.game_count} games)
                 </option>
               ))}
             </select>
@@ -80,19 +81,22 @@ export default function BoxScoresView({
       {/* Results Summary */}
       <div className="mb-6 flex items-center justify-between">
         <p className="text-gray-700">
-          Showing <strong>{paginatedGames.length}</strong> of <strong>{filteredGames.length}</strong> games
+          Showing <strong>{paginatedGames.length}</strong> of <strong>{sortedGames.length}</strong> games
+          {currentSeason && (
+            <span className="text-gray-500"> in {currentSeason}</span>
+          )}
         </p>
       </div>
 
       {/* Empty State */}
-      {filteredGames.length === 0 && (
+      {sortedGames.length === 0 && (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-400 text-lg">No box scores found for the selected filters.</p>
+          <p className="text-gray-400 text-lg">No box scores found for the selected season.</p>
         </div>
       )}
 
       {/* Games List */}
-      {filteredGames.length > 0 && (
+      {sortedGames.length > 0 && (
         <>
           <div className="space-y-4 mb-8">
             {paginatedGames.map((game, idx) => {

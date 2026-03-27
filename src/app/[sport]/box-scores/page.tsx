@@ -3,25 +3,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { SPORT_META } from "@/lib/data";
-import { getGamesBySportWithBoxScores } from "@/lib/data/games";
+import { getBoxScoreSeasons, getBoxScoreGamesBySeason } from "@/lib/data/games";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import BoxScoresView from "./BoxScoresView";
 
 export const revalidate = 3600; // 1 hour
 type PageParams = { sport: string };
-
-// export function generateStaticParams() {
-//   return [
-//     { sport: "football" },
-//     { sport: "basketball" },
-//     { sport: "baseball" },
-//     { sport: "track-field" },
-//     { sport: "lacrosse" },
-//     { sport: "wrestling" },
-//     { sport: "soccer" },
-//   ];
-// }
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const sport = await validateSportParamForMetadata(params);
@@ -37,26 +25,38 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
-export default async function BoxScoresPage({ params }: { params: Promise<PageParams> }) {
+export default async function BoxScoresPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<PageParams>;
+  searchParams: Promise<{ season?: string }>;
+}) {
   const sport = await validateSportParam(params);
   const meta = SPORT_META[sport];
+  const resolvedSearchParams = await searchParams;
 
-  // Fetch ALL games with box scores (up to 500) — client does filtering/pagination
-  const games = await getGamesBySportWithBoxScores(sport, undefined, 500);
+  // 1. Fetch all available seasons with box score data
+  const seasons = await getBoxScoreSeasons(sport);
 
-  // Extract distinct seasons for the filter dropdown
-  const seasonSet = new Map<string, { label: string }>();
-  for (const g of games) {
-    if (g.seasons?.label && !seasonSet.has(g.seasons.label)) {
-      seasonSet.set(g.seasons.label, { label: g.seasons.label });
-    }
-  }
-  // Sort seasons descending (e.g. "2024-25" > "2023-24")
-  const seasons = Array.from(seasonSet.values()).sort((a, b) =>
-    b.label.localeCompare(a.label)
-  );
+  // 2. Determine which season to show
+  const requestedSeason = resolvedSearchParams.season;
+  const currentSeason =
+    requestedSeason && seasons.some((s) => s.label === requestedSeason)
+      ? requestedSeason
+      : seasons.length > 0
+        ? seasons[0].label // default to most recent season
+        : null;
 
-  if (!games || games.length === 0) {
+  // 3. Fetch games for the selected season
+  const games = currentSeason
+    ? await getBoxScoreGamesBySeason(sport, currentSeason)
+    : [];
+
+  // Total game count across all seasons
+  const totalGames = seasons.reduce((sum, s) => sum + s.game_count, 0);
+
+  if (seasons.length === 0) {
     return (
       <>
         <BreadcrumbJsonLd
@@ -118,7 +118,7 @@ export default async function BoxScoresPage({ params }: { params: Promise<PagePa
               className="px-4 py-2 rounded-full text-white font-semibold"
               style={{ background: meta.color }}
             >
-              {games.length}+ Games
+              {totalGames.toLocaleString()} Games
             </span>
           </div>
           <p className="text-gray-300 mt-3">
@@ -133,6 +133,7 @@ export default async function BoxScoresPage({ params }: { params: Promise<PagePa
           sportName={meta.name}
           initialGames={games}
           seasons={seasons}
+          currentSeason={currentSeason ?? ""}
         />
       </main>
 

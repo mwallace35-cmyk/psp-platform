@@ -493,6 +493,172 @@ export const getGamesBySportWithBoxScores = cache(
   }
 );
 
+/**
+ * Get all seasons that have box score data for a sport.
+ * Returns season labels + game counts, sorted descending.
+ * Uses chunked .in() queries to handle large game ID sets.
+ */
+export const getBoxScoreSeasons = cache(
+  async (sportId: string): Promise<{ label: string; game_count: number }[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // Get all distinct game_ids with stats for this sport
+            // Paginate through game_player_stats to get ALL game_ids
+            const allGameIds = new Set<number>();
+            let offset = 0;
+            const pageSize = 1000;
+            while (true) {
+              const { data: statsPage } = await supabase
+                .from("game_player_stats")
+                .select("game_id")
+                .eq("sport_id", sportId)
+                .range(offset, offset + pageSize - 1);
+
+              if (!statsPage || statsPage.length === 0) break;
+              for (const r of statsPage) {
+                allGameIds.add((r as any).game_id);
+              }
+              if (statsPage.length < pageSize) break;
+              offset += pageSize;
+            }
+
+            if (allGameIds.size === 0) return [];
+
+            const gameIdArray = Array.from(allGameIds);
+
+            // Get season info for these games (chunk .in() calls to avoid URL length limits)
+            const chunkSize = 300;
+            const allGamesData: any[] = [];
+            for (let i = 0; i < gameIdArray.length; i += chunkSize) {
+              const chunk = gameIdArray.slice(i, i + chunkSize);
+              const { data: gamesData } = await supabase
+                .from("games")
+                .select("id, seasons(label)")
+                .eq("sport_id", sportId)
+                .in("id", chunk);
+              if (gamesData) allGamesData.push(...gamesData);
+            }
+
+            // Count games per season
+            const seasonCounts = new Map<string, number>();
+            for (const g of allGamesData) {
+              const label = (g as any).seasons?.label;
+              if (label) {
+                seasonCounts.set(label, (seasonCounts.get(label) ?? 0) + 1);
+              }
+            }
+
+            return Array.from(seasonCounts.entries())
+              .map(([label, game_count]) => ({ label, game_count }))
+              .sort((a, b) => b.label.localeCompare(a.label));
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_BOX_SCORE_SEASONS",
+      { sportId }
+    );
+  }
+);
+
+/**
+ * Get games with box scores for a specific season.
+ * No arbitrary limit -- fetches all games for that season.
+ */
+export const getBoxScoreGamesBySeason = cache(
+  async (sportId: string, seasonLabel: string): Promise<ScoresGame[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // Get season ID from label (seasons table has no sport_id — shared across sports)
+            const { data: seasonData } = await supabase
+              .from("seasons")
+              .select("id")
+              .eq("label", seasonLabel)
+              .single();
+
+            if (!seasonData) return [];
+
+            // Get all game IDs for this season
+            const { data: gamesInSeason } = await supabase
+              .from("games")
+              .select("id")
+              .eq("sport_id", sportId)
+              .eq("season_id", seasonData.id);
+
+            if (!gamesInSeason || gamesInSeason.length === 0) return [];
+
+            const seasonGameIds = gamesInSeason.map((g: any) => g.id as number);
+
+            // Check which of these games have box score data (chunked)
+            const gameIdsWithStats = new Set<number>();
+            const chunkSize = 300;
+            for (let i = 0; i < seasonGameIds.length; i += chunkSize) {
+              const chunk = seasonGameIds.slice(i, i + chunkSize);
+              const { data: statsData } = await supabase
+                .from("game_player_stats")
+                .select("game_id")
+                .eq("sport_id", sportId)
+                .in("game_id", chunk);
+              if (statsData) {
+                for (const r of statsData) {
+                  gameIdsWithStats.add((r as any).game_id);
+                }
+              }
+            }
+
+            if (gameIdsWithStats.size === 0) return [];
+
+            const gameIdArray = Array.from(gameIdsWithStats);
+
+            // Fetch full game details (chunked for large seasons)
+            const allGames: ScoresGame[] = [];
+            for (let i = 0; i < gameIdArray.length; i += chunkSize) {
+              const chunk = gameIdArray.slice(i, i + chunkSize);
+              const { data } = await supabase
+                .from("games")
+                .select(
+                  `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
+                   home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                   away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
+                   seasons(label)`
+                )
+                .eq("sport_id", sportId)
+                .in("id", chunk)
+                .order("game_date", { ascending: false });
+
+              if (data) {
+                allGames.push(...(data as unknown as ScoresGame[]));
+              }
+            }
+
+            // Re-sort since chunks may interleave
+            allGames.sort((a, b) => {
+              const dateA = a.game_date ? new Date(a.game_date).getTime() : 0;
+              const dateB = b.game_date ? new Date(b.game_date).getTime() : 0;
+              return dateB - dateA;
+            });
+
+            return allGames;
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_BOX_SCORE_GAMES_BY_SEASON",
+      { sportId, seasonLabel }
+    );
+  }
+);
+
 // ============================================================================
 // TEAM SEASON ROSTER/STATS (fallback for games without box scores)
 // ============================================================================
