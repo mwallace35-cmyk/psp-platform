@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { getGamesBySportWithBoxScores, type ScoresGame } from "@/lib/data/games";
+import type { ScoresGame } from "@/lib/data/games";
 
 interface BoxScoresViewProps {
   sport: string;
   sportName: string;
   initialGames: ScoresGame[];
-  seasons: { label: string; year_start: number; year_end: number }[];
+  seasons: { label: string }[];
 }
 
 export default function BoxScoresView({
@@ -18,46 +18,34 @@ export default function BoxScoresView({
   seasons,
 }: BoxScoresViewProps) {
   const [selectedSeason, setSelectedSeason] = useState<string>("");
-  const [games, setGames] = useState<ScoresGame[]>(initialGames);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const gamesPerPage = 25;
 
-  // Fetch games when season changes
-  useEffect(() => {
-    const fetchGames = async () => {
-      setLoading(true);
-      setCurrentPage(1);
+  // Client-side filtering by season + sort by date descending
+  const filteredGames = useMemo(() => {
+    let result = initialGames;
+    if (selectedSeason) {
+      result = result.filter((g) => g.seasons?.label === selectedSeason);
+    }
+    // Sort by date descending
+    return [...result].sort((a, b) => {
+      const dateA = a.game_date ? new Date(a.game_date).getTime() : 0;
+      const dateB = b.game_date ? new Date(b.game_date).getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [initialGames, selectedSeason]);
 
-      try {
-        const newGames = await getGamesBySportWithBoxScores(
-          sport,
-          selectedSeason || undefined,
-          100
-        );
-        setGames(newGames);
-      } catch (error) {
-        console.error("Failed to fetch games:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGames();
-  }, [sport, selectedSeason]);
-
-  // Get current page of games
+  // Client-side pagination
+  const totalPages = Math.ceil(filteredGames.length / gamesPerPage);
   const startIdx = (currentPage - 1) * gamesPerPage;
-  const paginatedGames = games.slice(startIdx, startIdx + gamesPerPage);
-  const totalPages = Math.ceil(games.length / gamesPerPage);
+  const paginatedGames = filteredGames.slice(startIdx, startIdx + gamesPerPage);
 
-  // Sort games by date descending
-  const sortedGames = [...games].sort((a, b) => {
-    const dateA = a.game_date ? new Date(a.game_date).getTime() : 0;
-    const dateB = b.game_date ? new Date(b.game_date).getTime() : 0;
-    return dateB - dateA;
-  });
+  // Reset to page 1 when season filter changes
+  const handleSeasonChange = (value: string) => {
+    setSelectedSeason(value);
+    setCurrentPage(1);
+  };
 
   return (
     <div>
@@ -74,7 +62,7 @@ export default function BoxScoresView({
             </label>
             <select
               value={selectedSeason}
-              onChange={(e) => setSelectedSeason(e.target.value)}
+              onChange={(e) => handleSeasonChange(e.target.value)}
               className="w-full md:w-64 px-3 py-2 border rounded-lg text-sm"
               style={{ borderColor: "var(--psp-gold)" }}
             >
@@ -92,34 +80,22 @@ export default function BoxScoresView({
       {/* Results Summary */}
       <div className="mb-6 flex items-center justify-between">
         <p className="text-gray-700">
-          Showing <strong>{paginatedGames.length}</strong> of <strong>{games.length}</strong> games
+          Showing <strong>{paginatedGames.length}</strong> of <strong>{filteredGames.length}</strong> games
         </p>
       </div>
 
-      {/* Loading State */}
-      {loading && (
-        <div className="text-center py-12">
-          <div className="inline-block">
-            <div
-              className="animate-spin rounded-full h-8 w-8 border-b-2"
-              style={{ borderColor: "var(--psp-gold)" }}
-            ></div>
-          </div>
-        </div>
-      )}
-
       {/* Empty State */}
-      {!loading && games.length === 0 && (
+      {filteredGames.length === 0 && (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <p className="text-gray-400 text-lg">No box scores found for the selected filters.</p>
         </div>
       )}
 
       {/* Games List */}
-      {!loading && games.length > 0 && (
+      {filteredGames.length > 0 && (
         <>
           <div className="space-y-4 mb-8">
-            {sortedGames.slice(startIdx, startIdx + gamesPerPage).map((game) => {
+            {paginatedGames.map((game) => {
               const gameDate = game.game_date
                 ? new Date(game.game_date).toLocaleDateString("en-US", {
                     month: "short",
@@ -170,8 +146,8 @@ export default function BoxScoresView({
                     <div className="w-24 text-center">
                       <div className="text-2xl font-bold" style={{ color: "var(--psp-navy)" }}>
                         {game.home_score !== null && game.away_score !== null
-                          ? `${game.home_score} – ${game.away_score}`
-                          : "—"}
+                          ? `${game.home_score} \u2013 ${game.away_score}`
+                          : "\u2014"}
                       </div>
                     </div>
 
@@ -221,7 +197,7 @@ export default function BoxScoresView({
             <div className="flex items-center justify-center gap-2 mt-8">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1 || loading}
+                disabled={currentPage === 1}
                 className="px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-50"
                 style={{
                   background: currentPage === 1 ? "#e5e7eb" : "var(--psp-navy)",
@@ -261,7 +237,7 @@ export default function BoxScoresView({
                     Math.min(totalPages, p + 1)
                   )
                 }
-                disabled={currentPage === totalPages || loading}
+                disabled={currentPage === totalPages}
                 className="px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-50"
                 style={{
                   background:

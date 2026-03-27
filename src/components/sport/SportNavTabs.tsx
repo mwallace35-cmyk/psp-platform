@@ -66,8 +66,7 @@ export default function SportNavTabs({ sport }: SportNavProps) {
     >
       <div className="max-w-7xl mx-auto px-4">
         <div
-          className="flex gap-2 overflow-x-auto scrollbar-hide py-3"
-          style={{ WebkitOverflowScrolling: 'touch', scrollSnapType: 'x proximity' }}
+          className="flex gap-2 overflow-x-auto scrollbar-hide py-3 snap-x snap-proximity"
         >
           {tabs.map((tab) => {
             const isActive = tab.matchPrefix

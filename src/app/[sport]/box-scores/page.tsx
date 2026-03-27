@@ -41,8 +41,20 @@ export default async function BoxScoresPage({ params }: { params: Promise<PagePa
   const sport = await validateSportParam(params);
   const meta = SPORT_META[sport];
 
-  // Fetch initial games with box scores
-  const games = await getGamesBySportWithBoxScores(sport, undefined, 50);
+  // Fetch ALL games with box scores (up to 500) — client does filtering/pagination
+  const games = await getGamesBySportWithBoxScores(sport, undefined, 500);
+
+  // Extract distinct seasons for the filter dropdown
+  const seasonSet = new Map<string, { label: string }>();
+  for (const g of games) {
+    if (g.seasons?.label && !seasonSet.has(g.seasons.label)) {
+      seasonSet.set(g.seasons.label, { label: g.seasons.label });
+    }
+  }
+  // Sort seasons descending (e.g. "2024-25" > "2023-24")
+  const seasons = Array.from(seasonSet.values()).sort((a, b) =>
+    b.label.localeCompare(a.label)
+  );
 
   if (!games || games.length === 0) {
     return (
@@ -120,7 +132,7 @@ export default async function BoxScoresPage({ params }: { params: Promise<PagePa
           sport={sport}
           sportName={meta.name}
           initialGames={games}
-          seasons={[]}
+          seasons={seasons}
         />
       </main>
 
