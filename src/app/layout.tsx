@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     template: "%s",
   },
   description:
-    "Complete Philadelphia high school sports database covering football, basketball, baseball, soccer, lacrosse, track & field, wrestling. Stats, records, championships, and player profiles across 400+ schools and 10,000+ athletes.",
+    "The complete Philadelphia high school sports database. Football, basketball, baseball, soccer, lacrosse, track and wrestling stats, records, and player profiles.",
   icons: {
     icon: "/favicon.svg",
     apple: "/apple-touch-icon.svg",

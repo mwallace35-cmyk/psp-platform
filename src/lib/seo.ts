@@ -72,7 +72,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     case "player-career":
       if (params.playerName && params.sport && sportName) {
         title = `${params.playerName} | ${sportName} | ${SITE_NAME}`;
-        description = `${params.playerName} career statistics and profile for Philadelphia high school ${sportName.toLowerCase()}.`;
+        description = `${params.playerName} full career stats, game logs, awards, and scouting profile for Philadelphia high school ${sportName.toLowerCase()}. Compare with peers and track milestones.`;
         url = `${SITE_URL}/${params.sport}/players/${params.slug}`;
         ogImage = `${SITE_URL}/og-players/${params.slug}.png`;
       }
@@ -90,7 +90,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
       if (params.sport && sportName && params.slug) {
         const statName = params.slug.replace(/-/g, " ");
         title = `${statName} Leaders | ${sportName} | ${SITE_NAME}`;
-        description = `Top Philadelphia high school ${sportName.toLowerCase()} players ranked by ${statName}. Career and single-season leaderboards across 400+ schools.`;
+        description = `Top Philadelphia high school ${sportName.toLowerCase()} players ranked by ${statName}. Career and single-season leaderboards spanning 400+ schools and decades of history.`;
         url = `${SITE_URL}/${params.sport}/leaderboards/${params.slug}`;
       }
       break;
@@ -98,7 +98,7 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     case "records":
       if (params.sport && sportName) {
         title = `Records | ${sportName} | ${SITE_NAME}`;
-        description = `Philadelphia high school ${sportName.toLowerCase()} records and achievements. All-time single-game, season, and career records across the city.`;
+        description = `Philadelphia high school ${sportName.toLowerCase()} records and all-time achievements. Single-game, season, and career records across 400+ schools spanning decades.`;
         url = `${SITE_URL}/${params.sport}/records`;
       }
       break;
@@ -144,14 +144,14 @@ export function generatePageMetadata(params: SEOParams): Metadata {
     case "potw":
       title = `Player of the Week | ${SITE_NAME}`;
       description =
-        "Vote for Philadelphia high school Player of the Week. See current nominees and past winners.";
+        "Vote for the Philadelphia high school sports Player of the Week. See current nominees, cast your vote, and browse past winners across football, basketball, and more.";
       url = `${SITE_URL}/potw`;
       break;
 
     case "events":
       title = `The Pulse | ${SITE_NAME}`;
       description =
-        "The Pulse — upcoming Philadelphia high school sports events, camps, and showcases.";
+        "The Pulse — your guide to upcoming Philadelphia high school sports events, showcases, camps, combines, and tryouts. Never miss a moment in Philly HS athletics.";
       url = `${SITE_URL}/pulse`;
       break;
   }
