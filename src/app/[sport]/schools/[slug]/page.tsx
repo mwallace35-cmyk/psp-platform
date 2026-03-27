@@ -520,13 +520,32 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                 <ul className="space-y-3">
                   {notablePlayers.map((player: NotablePlayer) => (
                     <li key={player.id} className="text-sm">
-                      <Link
-                        href={`/${sport}/players/${player.slug}`}
-                        className="font-medium hover:underline"
-                        style={{ color: "var(--psp-blue, #3b82f6)" }}
-                      >
-                        {player.name}
-                      </Link>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Link
+                          href={`/${sport}/players/${player.slug}`}
+                          className="font-medium hover:underline"
+                          style={{ color: "var(--psp-blue, #3b82f6)" }}
+                        >
+                          {player.name}
+                        </Link>
+                        {player.pro_league && ["nfl", "nba", "mlb"].includes(player.pro_league.toLowerCase()) && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide text-white"
+                            style={{ backgroundColor: player.pro_league.toLowerCase() === "nfl" ? "#16a34a" : player.pro_league.toLowerCase() === "nba" ? "#3b82f6" : "#ea580c" }}>
+                            {player.pro_league.toUpperCase()}
+                          </span>
+                        )}
+                        {(player.record_count ?? 0) > 0 && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
+                            style={{ backgroundColor: "var(--psp-gold, #f0a500)", color: "var(--psp-navy, #0a1628)" }}>
+                            Record Holder
+                          </span>
+                        )}
+                        {!player.pro_league && (player.award_count ?? 0) > 0 && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-gray-200 text-gray-700">
+                            All-League
+                          </span>
+                        )}
+                      </div>
                       <div className="text-xs" style={{ color: "var(--psp-gray-500)" }}>
                         {(player.positions || player.graduation_year) && (
                           <span>

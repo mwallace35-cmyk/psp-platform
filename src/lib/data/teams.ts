@@ -165,12 +165,21 @@ export const getTeamSeason = cache(
       return withRetry(
         async () => {
           const supabase = await createClient();
+          // First resolve the season label to an ID so we can filter team_seasons directly.
+          // Using .filter("seasons.label", ...) only filters the embedded join, not the parent rows,
+          // which causes .single() to fail when a school has multiple team_seasons.
+          const { data: seasonRow } = await supabase
+            .from("seasons")
+            .select("id")
+            .eq("label", seasonLabel)
+            .single();
+          if (!seasonRow) return null;
           const { data } = await supabase
             .from("team_seasons")
             .select("id, school_id, sport_id, season_id, coach_id, wins, losses, ties, playoff_result, notes, seasons(year_start, year_end, label), schools(name, slug), coaches(id, name, slug)")
             .eq("school_id", schoolId)
             .eq("sport_id", sportId)
-            .filter("seasons.label", "eq", seasonLabel)
+            .eq("season_id", seasonRow.id)
             .single();
           return data;
         },
@@ -330,9 +339,9 @@ export const getRecentGamesBySport = cache(
             const { data } = await supabase
               .from("games")
               .select(
-                "id, home_score, away_score, game_date, game_type, playoff_round, " +
-                "home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id, logo_url), " +
-                "away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id, logo_url), " +
+                "id, home_score, away_score, game_date, game_type, playoff_round, notes, " +
+                "home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id, logo_url, piaa_class), " +
+                "away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id, logo_url, piaa_class), " +
                 "seasons(label)"
               )
               .eq("sport_id", sportId)

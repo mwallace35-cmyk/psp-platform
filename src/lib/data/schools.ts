@@ -233,6 +233,8 @@ export interface NotablePlayer {
   pro_team?: string | null;
   pro_league?: string | null;
   season_count?: number;
+  record_count?: number;
+  award_count?: number;
 }
 
 export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: string, limit = 10) => {
@@ -318,7 +320,7 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
             };
           }
 
-          const playerMap = new Map<number, NotablePlayer & { hasNextLevel: boolean; seasonCount: number }>();
+          const playerMap = new Map<number, NotablePlayer & { hasNextLevel: boolean; seasonCount: number; recordCount: number; awardCount: number }>();
 
           (data as unknown as StatTableRecord[]).forEach((row) => {
             const p = row.players;
@@ -336,26 +338,84 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
                 pro_team: nextLevel?.pro_team ?? null,
                 pro_league: nextLevel?.pro_league ?? null,
                 seasonCount: 0,
+                recordCount: 0,
+                awardCount: 0,
                 hasNextLevel: !!(nextLevel?.pro_team || nextLevel?.college),
               });
             }
             playerMap.get(p.id)!.seasonCount++;
           });
 
-          // Sort by: has pro team, then has college, then season count, then name
+          // Fetch record counts for these players at this school
+          const playerIds = Array.from(playerMap.keys());
+          if (playerIds.length > 0) {
+            const { data: recordRows } = await supabase
+              .from("records")
+              .select("player_id")
+              .eq("school_id", schoolId)
+              .in("player_id", playerIds);
+
+            if (recordRows) {
+              const recordCounts = new Map<number, number>();
+              recordRows.forEach((r: { player_id: number }) => {
+                recordCounts.set(r.player_id, (recordCounts.get(r.player_id) ?? 0) + 1);
+              });
+              recordCounts.forEach((count, pid) => {
+                const entry = playerMap.get(pid);
+                if (entry) entry.recordCount = count;
+              });
+            }
+
+            // Fetch award counts for these players
+            const { data: awardRows } = await supabase
+              .from("awards")
+              .select("player_id")
+              .in("player_id", playerIds);
+
+            if (awardRows) {
+              const awardCounts = new Map<number, number>();
+              awardRows.forEach((r: { player_id: number }) => {
+                awardCounts.set(r.player_id, (awardCounts.get(r.player_id) ?? 0) + 1);
+              });
+              awardCounts.forEach((count, pid) => {
+                const entry = playerMap.get(pid);
+                if (entry) entry.awardCount = count;
+              });
+            }
+          }
+
+          // Sort priority:
+          // 1. Pro athletes (NFL/NBA/MLB)
+          // 2. Record holders (most records first)
+          // 3. Most awards
+          // 4. College athletes
+          // 5. Most seasons (proxy for best stats)
+          // 6. Alphabetical tiebreaker
           const sorted = Array.from(playerMap.values())
             .sort((a, b) => {
-              // Pro athletes first
-              if (!!b.pro_team !== !!a.pro_team) return !!b.pro_team ? 1 : -1;
-              // Then college
-              if (!!b.college !== !!a.college) return !!b.college ? 1 : -1;
-              // Then by season count
+              // 1. Pro athletes first
+              const aPro = a.pro_team ? 0 : 1;
+              const bPro = b.pro_team ? 0 : 1;
+              if (aPro !== bPro) return aPro - bPro;
+              // 2. Record holders next
+              if (b.recordCount !== a.recordCount) return b.recordCount - a.recordCount;
+              // 3. Most awards
+              if (b.awardCount !== a.awardCount) return b.awardCount - a.awardCount;
+              // 4. College athletes
+              const aCollege = a.college ? 0 : 1;
+              const bCollege = b.college ? 0 : 1;
+              if (aCollege !== bCollege) return aCollege - bCollege;
+              // 5. Most seasons
               if (b.seasonCount !== a.seasonCount) return b.seasonCount - a.seasonCount;
-              // Finally by name
+              // 6. Alphabetical
               return a.name.localeCompare(b.name);
             })
             .slice(0, limit)
-            .map(({ hasNextLevel, seasonCount, ...player }) => player);
+            .map(({ hasNextLevel, seasonCount, recordCount, awardCount, ...player }) => ({
+              ...player,
+              record_count: recordCount,
+              award_count: awardCount,
+            }));
 
           return sorted;
         },

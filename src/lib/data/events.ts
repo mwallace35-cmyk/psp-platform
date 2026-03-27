@@ -219,6 +219,7 @@ export const getCoachCount = cache(async () => {
  * Get tracked alumni ("Our Guys" - next level tracking)
  * Cached to avoid redundant database queries within the same request
  * OPTIMIZED: Explicit column selection instead of SELECT *
+ * SORT: Most prominent first — pros, then college, then alphabetical
  */
 export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?: string; featured?: boolean; schoolId?: number }, limit = 100) => {
   return withErrorHandling(
@@ -226,18 +227,80 @@ export const getTrackedAlumni = cache(async (filters?: { level?: string; sport?:
       return withRetry(
         async () => {
           const supabase = await createClient();
+          // When filtering by school, fetch more than needed so we can sort by prominence then trim
+          const fetchLimit = filters?.schoolId ? Math.max(limit * 5, 50) : limit;
           let query = supabase
             .from("next_level_tracking")
-            .select("id, person_name, current_level, current_org, college, pro_team, pro_league, draft_info, status, sport_id, featured, high_school_id, schools:high_school_id(name, slug), players:player_id(graduation_year)")
+            .select("id, person_name, current_level, current_org, college, pro_team, pro_league, draft_info, status, sport_id, featured, high_school_id, player_id, schools:high_school_id(name, slug), players:player_id(graduation_year)")
             .order("featured", { ascending: false })
             .order("person_name")
-            .limit(limit);
+            .limit(fetchLimit);
           if (filters?.level) query = query.eq("current_level", filters.level);
           if (filters?.sport) query = query.eq("sport_id", filters.sport);
           if (filters?.featured) query = query.eq("featured", true);
           if (filters?.schoolId) query = query.eq("high_school_id", filters.schoolId);
           const { data } = await query;
-          return data ?? [];
+          if (!data || data.length === 0) return [];
+
+          // When filtering by school, sort by prominence: pros first, then college, then alphabetical
+          if (filters?.schoolId) {
+            // Fetch award counts for these players to factor into prominence
+            const playerIds = data
+              .map((d: Record<string, unknown>) => d.player_id as number | null)
+              .filter((id): id is number => id != null);
+
+            let awardCounts = new Map<number, number>();
+            if (playerIds.length > 0) {
+              const { data: awards } = await supabase
+                .from("awards")
+                .select("player_id")
+                .in("player_id", playerIds);
+              if (awards) {
+                for (const a of awards) {
+                  const pid = (a as Record<string, unknown>).player_id as number;
+                  awardCounts.set(pid, (awardCounts.get(pid) || 0) + 1);
+                }
+              }
+            }
+
+            // Prominence scoring: lower = more prominent
+            const PRO_LEVELS = new Set(["professional", "nfl", "nba", "mlb", "mls", "mlr"]);
+            const COLLEGE_LEVELS = new Set(["college", "d1", "d2", "d3", "naia", "juco"]);
+
+            interface AlumniRecord {
+              player_id?: number | null;
+              current_level?: string | null;
+              pro_team?: string | null;
+              pro_league?: string | null;
+              college?: string | null;
+              person_name?: string | null;
+              featured?: boolean | null;
+              [key: string]: unknown;
+            }
+
+            const sorted = (data as AlumniRecord[]).sort((a, b) => {
+              // Featured always first
+              if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
+              // Pro athletes next
+              const aIsPro = PRO_LEVELS.has((a.current_level || "").toLowerCase()) || !!a.pro_team || !!a.pro_league;
+              const bIsPro = PRO_LEVELS.has((b.current_level || "").toLowerCase()) || !!b.pro_team || !!b.pro_league;
+              if (aIsPro !== bIsPro) return aIsPro ? -1 : 1;
+              // Then by award count
+              const aAwards = awardCounts.get(a.player_id ?? 0) || 0;
+              const bAwards = awardCounts.get(b.player_id ?? 0) || 0;
+              if (aAwards !== bAwards) return bAwards - aAwards;
+              // Then college athletes
+              const aIsCollege = COLLEGE_LEVELS.has((a.current_level || "").toLowerCase()) || !!a.college;
+              const bIsCollege = COLLEGE_LEVELS.has((b.current_level || "").toLowerCase()) || !!b.college;
+              if (aIsCollege !== bIsCollege) return aIsCollege ? -1 : 1;
+              // Alphabetical tiebreaker
+              return (a.person_name || "").localeCompare(b.person_name || "");
+            });
+
+            return sorted.slice(0, limit);
+          }
+
+          return data;
         },
         { maxRetries: 2, baseDelay: 500 }
       );
