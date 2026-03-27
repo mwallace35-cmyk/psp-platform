@@ -458,6 +458,24 @@ export default function PlayerGameLog({ gameLog, playerSchoolId }: PlayerGameLog
                 </span>
               </button>
 
+              {/* Reconstructed data disclaimer */}
+              {isExpanded && group.games.some((g: any) => g.source_file === 'tedsilary-2015-reconstructed') && (
+                <div style={{
+                  margin: "0.5rem 0.25rem",
+                  padding: "0.5rem 0.75rem",
+                  background: "rgba(240, 165, 0, 0.08)",
+                  borderLeft: "3px solid var(--psp-gold, #f0a500)",
+                  borderRadius: "0 4px 4px 0",
+                  fontSize: "0.7rem",
+                  color: "var(--psp-gray-400, #94a3b8)",
+                  lineHeight: 1.4,
+                }}>
+                  <span style={{ color: "var(--psp-gold, #f0a500)", fontWeight: 600 }}>Note:</span>{" "}
+                  Stats for 2015-16 games were reconstructed from Ted Silary{"'"}s weekly cumulative leaders.
+                  Individual game breakdowns may be approximate.
+                </div>
+              )}
+
               {/* Table content */}
               {isExpanded && (
                 <div style={{ padding: "0 0.25rem 0.5rem" }}>

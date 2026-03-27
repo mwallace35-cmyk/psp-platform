@@ -94,7 +94,7 @@ export const getGameBoxScore = cache(
               .select(
                 `id, game_id, player_id, school_id, sport_id, player_name, jersey_number,
                  rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards,
-                 points, stats_json, source_type,
+                 points, stats_json, source_type, source_file,
                  players:player_id(id, name, slug),
                  schools:school_id(id, name, slug)`
               )
@@ -170,7 +170,7 @@ export const getPlayerGameLog = cache(
               .select(
                 `id, game_id, player_name, jersey_number, sport_id, school_id,
                  rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards,
-                 points, stats_json, source_type,
+                 points, stats_json, source_type, source_file,
                  games!inner(id, game_date, home_score, away_score, home_school_id, away_school_id,
                    home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
                    away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
