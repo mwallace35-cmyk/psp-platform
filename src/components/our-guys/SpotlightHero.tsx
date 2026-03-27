@@ -1,5 +1,3 @@
-"use client";
-
 interface SpotlightAlumni {
   id: number;
   person_name: string;

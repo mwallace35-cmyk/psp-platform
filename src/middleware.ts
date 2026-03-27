@@ -268,6 +268,59 @@ export async function middleware(request: NextRequest) {
     return nextResponse;
   }
 
+  // Login brute force protection — 5 attempts per IP per minute
+  if (pathname === "/login") {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+               request.headers.get("x-real-ip") ||
+               "unknown";
+    const rateLimitKey = `${ip}:/login`;
+    const { allowed, remaining, resetAt } = checkRateLimit(rateLimitKey, 5, 60 * 1000); // 5/min
+
+    if (!allowed) {
+      const response = new NextResponse("Too many login attempts. Please try again later.", { status: 429 });
+      response.headers.set("Retry-After", "60");
+      response.headers.set("X-RateLimit-Limit", "5");
+      response.headers.set("X-RateLimit-Remaining", "0");
+      response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
+      response.headers.set("x-request-id", requestId);
+      return response;
+    }
+
+    // Continue to admin auth gate below with rate limit headers added after
+    const sessionResponse = await updateSession(request);
+    sessionResponse.headers.set("X-RateLimit-Limit", "5");
+    sessionResponse.headers.set("X-RateLimit-Remaining", String(remaining));
+    sessionResponse.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
+    sessionResponse.headers.set("x-request-id", requestId);
+    return sessionResponse;
+  }
+
+  // Auth API rate limiting — 10 attempts per IP per minute
+  if (pathname.startsWith("/api/auth/")) {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+               request.headers.get("x-real-ip") ||
+               "unknown";
+    const rateLimitKey = `${ip}:/api/auth`;
+    const { allowed, remaining, resetAt } = checkRateLimit(rateLimitKey, 10, 60 * 1000); // 10/min
+
+    if (!allowed) {
+      const response = new NextResponse("Too many requests", { status: 429 });
+      response.headers.set("Retry-After", "60");
+      response.headers.set("X-RateLimit-Limit", "10");
+      response.headers.set("X-RateLimit-Remaining", "0");
+      response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
+      response.headers.set("x-request-id", requestId);
+      return response;
+    }
+
+    const nextResponse = NextResponse.next();
+    nextResponse.headers.set("X-RateLimit-Limit", "10");
+    nextResponse.headers.set("X-RateLimit-Remaining", String(remaining));
+    nextResponse.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
+    nextResponse.headers.set("x-request-id", requestId);
+    return nextResponse;
+  }
+
   // Admin auth gate
   if (pathname.startsWith("/admin") || pathname === "/login") {
     const sessionResponse = await updateSession(request);

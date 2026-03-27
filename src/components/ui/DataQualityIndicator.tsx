@@ -1,5 +1,3 @@
-'use client';
-
 interface DataQualityIndicatorProps {
   totalRecords: number;
   sport: string;

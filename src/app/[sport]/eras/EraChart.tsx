@@ -1,5 +1,3 @@
-"use client";
-
 import { EraStatistic, EraStatType } from "@/lib/data";
 
 interface EraChartProps {

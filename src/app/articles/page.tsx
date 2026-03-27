@@ -6,29 +6,83 @@ import { SPORT_META, VALID_SPORTS } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
 
 export const revalidate = 1800;
-export const metadata: Metadata = {
-  title: 'Articles',
-  description: 'Read the latest news, features, and analysis about Philadelphia high school sports. Coverage of football, basketball, baseball, and more.',
-  metadataBase: new URL('https://phillysportspack.com'),
-  alternates: { canonical: 'https://phillysportspack.com/articles' },
-  openGraph: {
-    title: 'Articles | PhillySportsPack.com',
-    description: 'Read the latest news, features, and analysis about Philadelphia high school sports. Coverage of football, basketball, baseball, and more.',
-    url: 'https://phillysportspack.com/articles',
-    siteName: 'PhillySportsPack.com',
-    images: [{ url: 'https://phillysportspack.com/og-default.png', width: 1200, height: 630, alt: 'PhillySportsPack.com' }],
-    type: 'website',
-  },
-  twitter: { card: 'summary_large_image', title: 'Articles | PhillySportsPack.com', description: 'Read the latest news, features, and analysis about Philadelphia high school sports. Coverage of football, basketball, baseball, and more.', images: ['https://phillysportspack.com/og-default.png'] },
-
-  robots: { index: true, follow: true },
-};
 
 const ARTICLES_PER_PAGE = 12;
+const BASE_URL = 'https://phillysportspack.com';
 
 interface SearchParams {
   page?: string;
   sport?: string;
+}
+
+function buildArticlesUrl(page: number, sport: string): string {
+  const p = new URLSearchParams();
+  if (page > 1) p.set('page', page.toString());
+  if (sport !== 'all') p.set('sport', sport);
+  const qs = p.toString();
+  return `${BASE_URL}/articles${qs ? `?${qs}` : ''}`;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const currentPage = Math.max(1, parseInt(params.page || '1'));
+  const selectedSport = params.sport || 'all';
+
+  const supabase = createStaticClient();
+  let countQuery = supabase
+    .from('articles')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'published')
+    .is('deleted_at', null);
+  if (selectedSport !== 'all') {
+    countQuery = countQuery.eq('sport_id', selectedSport);
+  }
+  const { count } = await countQuery;
+  const totalPages = Math.ceil((count || 0) / ARTICLES_PER_PAGE);
+
+  const canonical = buildArticlesUrl(currentPage, selectedSport);
+  const prev = currentPage > 1 ? buildArticlesUrl(currentPage - 1, selectedSport) : undefined;
+  const next = currentPage < totalPages ? buildArticlesUrl(currentPage + 1, selectedSport) : undefined;
+
+  const pageLabel = currentPage > 1 ? ` - Page ${currentPage}` : '';
+  const title = `Articles${pageLabel}`;
+  const description = 'Read the latest news, features, and analysis about Philadelphia high school sports. Coverage of football, basketball, baseball, and more.';
+
+  return {
+    title,
+    description,
+    metadataBase: new URL(BASE_URL),
+    alternates: {
+      canonical,
+      types: {
+        ...(prev ? { 'prev': prev } : {}),
+        ...(next ? { 'next': next } : {}),
+      },
+    },
+    openGraph: {
+      title: `${title} | PhillySportsPack.com`,
+      description,
+      url: canonical,
+      siteName: 'PhillySportsPack.com',
+      images: [{ url: `${BASE_URL}/og-default.png`, width: 1200, height: 630, alt: 'PhillySportsPack.com' }],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | PhillySportsPack.com`,
+      description,
+      images: [`${BASE_URL}/og-default.png`],
+    },
+    robots: { index: true, follow: true },
+    other: {
+      ...(prev ? { 'link-prev': prev } : {}),
+      ...(next ? { 'link-next': next } : {}),
+    },
+  };
 }
 
 export default async function ArticlesPage({

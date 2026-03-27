@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
 

@@ -1,5 +1,3 @@
-"use client";
-
 interface Game {
   date: string;
   opponent: string;

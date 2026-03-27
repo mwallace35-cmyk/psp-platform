@@ -8,17 +8,78 @@ import ScoresFilters from "@/components/scores/ScoresFilters";
 import { createStaticClient } from "@/lib/supabase/static";
 import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 
-export const metadata: Metadata = {
-  title: "Scores | PhillySportsPack",
-  description:
-    "Recent scores and results from Philadelphia high school sports. Filter by season, sport, and school across football, basketball, baseball, and more.",
-  alternates: { canonical: "https://phillysportspack.com/scores" },
-  openGraph: {
-    title: "Scores | PhillySportsPack",
-    description: "Recent scores from Philadelphia high school sports.",
-    url: "https://phillysportspack.com/scores",
-  },
-};
+const SCORES_PAGE_SIZE = 100;
+const SCORES_BASE_URL = "https://phillysportspack.com";
+
+function buildScoresUrl(page: number, sport: string, season: string, school: string): string {
+  const p = new URLSearchParams();
+  if (sport !== "all") p.set("sport", sport);
+  if (season !== "all") p.set("season", season);
+  if (school) p.set("school", school);
+  if (page > 1) p.set("page", String(page));
+  const qs = p.toString();
+  return `${SCORES_BASE_URL}/scores${qs ? `?${qs}` : ""}`;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ sport?: string; season?: string; school?: string; page?: string }>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10) || 1);
+  const selectedSport = params.sport || "all";
+  const selectedSeason = params.season || "all";
+  const selectedSchool = params.school || "";
+
+  // Only compute pagination for non-round-view (standard pagination)
+  const useRoundView = selectedSeason !== "all" && selectedSport !== "all";
+  let totalPages = 1;
+
+  if (!useRoundView) {
+    const supabase = createStaticClient();
+    let countQuery = supabase
+      .from("games")
+      .select("id", { count: "exact", head: true })
+      .not("home_score", "is", null)
+      .not("away_score", "is", null)
+      .not("game_date", "is", null)
+      .not("home_school_id", "is", null)
+      .not("away_school_id", "is", null);
+    if (selectedSport !== "all") countQuery = countQuery.eq("sport_id", selectedSport);
+    const { count } = await countQuery;
+    totalPages = Math.ceil((count || 0) / SCORES_PAGE_SIZE);
+  }
+
+  const canonical = buildScoresUrl(currentPage, selectedSport, selectedSeason, selectedSchool);
+  const prev = currentPage > 1 ? buildScoresUrl(currentPage - 1, selectedSport, selectedSeason, selectedSchool) : undefined;
+  const next = currentPage < totalPages ? buildScoresUrl(currentPage + 1, selectedSport, selectedSeason, selectedSchool) : undefined;
+
+  const pageLabel = currentPage > 1 ? ` - Page ${currentPage}` : "";
+  const title = `Scores${pageLabel} | PhillySportsPack`;
+  const description = "Recent scores and results from Philadelphia high school sports. Filter by season, sport, and school across football, basketball, baseball, and more.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+      types: {
+        ...(prev ? { prev } : {}),
+        ...(next ? { next } : {}),
+      },
+    },
+    openGraph: {
+      title,
+      description: "Recent scores from Philadelphia high school sports.",
+      url: canonical,
+    },
+    other: {
+      ...(prev ? { "link-prev": prev } : {}),
+      ...(next ? { "link-next": next } : {}),
+    },
+  };
+}
 
 export const revalidate = 1800; // 30 minutes
 interface ScoresPageProps {

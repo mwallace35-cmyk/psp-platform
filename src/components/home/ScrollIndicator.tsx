@@ -1,5 +1,3 @@
-'use client';
-
 import styles from '@/app/homepage.module.css';
 
 export default function ScrollIndicator() {

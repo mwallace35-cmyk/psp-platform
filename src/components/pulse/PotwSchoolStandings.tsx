@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { SPORT_META } from '@/lib/sports';
 import type { SportId } from '@/lib/sports';

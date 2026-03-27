@@ -1,5 +1,3 @@
-'use client';
-
 import Link from "next/link";
 import PSPPromo from "@/components/ads/PSPPromo";
 import type { TeamDetail } from "./team-utils";

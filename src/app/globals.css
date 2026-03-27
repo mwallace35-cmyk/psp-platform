@@ -166,41 +166,10 @@
 
 /* ===== DARK MODE OVERRIDES ===== */
 [data-theme="dark"] {
-  /* Table backgrounds and borders */
-  .st-tbl {
-    background: var(--psp-gray-100);
-  }
-
-  .st-tbl th {
-    background: var(--psp-gray-200);
-    color: var(--psp-gray-600);
-    border-bottom-color: var(--psp-gray-300);
-  }
-
-  .st-tbl td {
-    border-bottom-color: var(--psp-gray-200);
-    color: var(--psp-gray-600);
-  }
-
-  .st-tbl tr:hover td {
-    background: var(--psp-gray-200);
-  }
-
-  .st-tbl .team-link {
-    color: var(--psp-blue);
-  }
-
-  .st-tbl .team-link:hover {
-    color: var(--psp-gold);
-  }
-
   /* Card backgrounds */
   .rank-table,
-  .standings-card,
   .ldr-card,
-  .dynasty-block,
   .story,
-  .a-card,
   .admin-card,
   .sidebar .widget {
     background: var(--psp-gray-100);
@@ -284,10 +253,6 @@
     color: var(--psp-gray-400);
   }
 
-  .a-card .a-team {
-    color: var(--psp-gray-400);
-  }
-
   .ldr-head {
     background: var(--psp-gray-200);
     color: var(--psp-gray-600);
@@ -304,12 +269,6 @@
   .ldr-foot {
     border-top-color: var(--psp-gray-200);
     color: var(--psp-blue);
-  }
-
-  /* Standings cards */
-  .standings-card .st-head {
-    background: var(--psp-gray-200);
-    color: var(--psp-gray-600);
   }
 
   /* Headlines */
@@ -340,38 +299,6 @@
   .badge-info {
     background: rgba(96, 165, 250, 0.2);
     color: #60a5fa;
-  }
-
-  /* Score strip dark mode */
-  .scorestrip {
-    background: var(--psp-gray-100);
-    border-bottom-color: var(--psp-gray-200);
-    transition: background-color 0.3s ease;
-  }
-
-  .ss-game {
-    border-right-color: var(--psp-gray-200);
-  }
-
-  .ss-game:hover {
-    background: var(--psp-gray-200);
-  }
-
-  .ss-scroll::before {
-    background: linear-gradient(90deg, var(--psp-gray-100) 0%, rgba(30, 41, 59, 0) 100%);
-  }
-
-  .ss-scroll::after {
-    background: linear-gradient(270deg, var(--psp-gray-100) 0%, rgba(30, 41, 59, 0) 100%);
-  }
-
-  /* Hero card dark mode */
-  .hero-card {
-    background: var(--psp-navy);
-  }
-
-  .hero-card .hero-img {
-    background-color: var(--psp-gray-200);
   }
 
   /* Skeleton dark mode colors */
@@ -550,14 +477,9 @@ button:focus:not(:focus-visible) {
   }
 }
 
-/* ===== ESPN TOP BAR ===== */
-.topbar { background: var(--psp-navy); height: 40px; display: flex; align-items: center; padding: 0 16px; }
-.topbar-inner { max-width: 1200px; margin: auto; width: 100%; display: flex; align-items: center; gap: 16px; }
+/* ===== ESPN TOP BAR (used by Header.tsx) ===== */
 .logo-mark { font-weight: 900; font-size: 18px; color: #fff; letter-spacing: -0.02em; }
 .logo-mark span { color: var(--psp-gold); }
-.topbar-links { display: flex; gap: 12px; margin-left: auto; }
-.topbar-links a { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .3px; cursor: pointer; }
-.topbar-links a:hover { color: #fff; text-decoration: none; }
 
 /* ===== MAIN NAV ===== */
 .mainnav { background: var(--espn-dark); border-bottom: 1px solid #333; }
@@ -579,164 +501,7 @@ button:focus:not(:focus-visible) {
 .nav-search { background: #222; border: 1px solid #444; border-radius: 4px; padding: 5px 10px; font-size: 12px; color: #fff; width: 180px; outline: none; }
 .nav-search::placeholder { color: #666; }
 
-/* ===== SCORE STRIP ===== */
-.scorestrip {
-  background: #000;
-  border-bottom: 1px solid #222;
-  overflow: hidden;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.ss-label {
-  background: var(--psp-gold);
-  color: #000;
-  font-weight: 800;
-  font-size: 10px;
-  padding: 0 12px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  flex-shrink: 0;
-  z-index: 2;
-}
-
-.ss-scroll {
-  display: flex;
-  gap: 0;
-  overflow-x: auto;
-  flex: 1;
-  height: 100%;
-  scrollbar-width: none;
-  scroll-behavior: smooth;
-  position: relative;
-}
-
-.ss-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-/* Gradient fade indicators for scroll hints */
-.ss-scroll::before {
-  content: '';
-  position: sticky;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 100%;
-  background: linear-gradient(90deg, #000 0%, rgba(0,0,0,0) 100%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.ss-scroll::after {
-  content: '';
-  position: sticky;
-  right: 0;
-  top: 0;
-  width: 20px;
-  height: 100%;
-  background: linear-gradient(270deg, #000 0%, rgba(0,0,0,0) 100%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.ss-game {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 6px 16px;
-  border-right: 1px solid #222;
-  min-width: 160px;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: .1s;
-}
-
-.ss-game:hover {
-  background: #151515;
-}
-
-.ss-game:focus-visible {
-  outline: 2px solid var(--psp-gold);
-  outline-offset: -2px;
-}
-
-.ss-team {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 11px;
-  color: #aaa;
-  gap: 8px;
-}
-
-.ss-team .name {
-  font-weight: 600;
-}
-
-.ss-team .score {
-  font-weight: 800;
-  color: #fff;
-  font-size: 12px;
-}
-
-.ss-team.winner .name {
-  color: #fff;
-}
-
-.ss-status {
-  font-size: 9px;
-  color: var(--psp-gold);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-  margin-top: 2px;
-}
-
-/* Score strip arrow navigation buttons */
-.ss-nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  border: none;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s, background 0.2s;
-  z-index: 10;
-  border-radius: 0;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 0;
-}
-
-.ss-nav-btn:hover {
-  background: rgba(0, 0, 0, 0.9);
-  opacity: 1;
-}
-
-.scorestrip:hover .ss-nav-btn {
-  opacity: 0.7;
-}
-
-.ss-nav-left {
-  left: 110px;
-}
-
-.ss-nav-right {
-  right: 0;
-}
+/* Removed unused: score strip, alumni strip, hero card, sport pill bar, sponsor spot */
 
 /* ===== HUB SCORES STRIP (sport hub pages) ===== */
 .hub-scores-strip {
@@ -842,13 +607,6 @@ button:focus:not(:focus-visible) {
 .sec-head h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; color: var(--espn-dark); font-family: 'Bebas Neue', 'DM Sans', system-ui, sans-serif; }
 .sec-head .more { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--link); text-transform: uppercase; cursor: pointer; }
 
-/* ===== HERO CARD ===== */
-.hero-card { background: var(--psp-navy); border-radius: 6px; overflow: hidden; margin-bottom: 16px; position: relative; }
-.hero-card .hero-img { height: 240px; display: flex; align-items: flex-end; padding: 20px; background-size: cover; background-position: center; }
-.hero-card h1,
-.hero-card h2 { font-size: 26px; font-weight: 800; color: #fff; line-height: 1.15; max-width: 500px; font-family: 'Bebas Neue', 'DM Sans', system-ui, sans-serif; }
-.hero-card .hero-sub { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 4px; }
-.hero-card .hero-tag { position: absolute; top: 12px; left: 12px; background: var(--psp-gold); color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 3px; text-transform: uppercase; letter-spacing: .5px; }
 
 /* ===== HEADLINES ===== */
 .headline-list { margin-bottom: 16px; }
@@ -887,15 +645,6 @@ button:focus:not(:focus-visible) {
 .story h4 { font-size: 13px; font-weight: 700; line-height: 1.3; margin-bottom: 2px; font-family: 'Bebas Neue', 'DM Sans', system-ui, sans-serif; }
 .story p { font-size: 11px; color: var(--g400); line-height: 1.3; }
 
-/* ===== ALUMNI STRIP ===== */
-.alumni-strip { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 16px; padding-bottom: 4px; }
-.alumni-strip::-webkit-scrollbar { height: 3px; }
-.alumni-strip::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-.a-card { min-width: 130px; background: var(--psp-white); border: 1px solid var(--g100); border-radius: 6px; padding: 10px; text-align: center; flex-shrink: 0; }
-.a-card .a-emoji { font-size: 24px; margin-bottom: 2px; }
-.a-card .a-name { font-weight: 700; font-size: 11px; color: var(--text); }
-.a-card .a-team { font-size: 10px; color: var(--g400); }
-.a-card .a-hs { font-size: 9px; color: var(--psp-gold); font-weight: 700; margin-top: 2px; }
 
 /* ===== SPORT PAGE HEADER ===== */
 .sport-hdr { background: var(--psp-navy); padding: 0 16px; border-bottom: 3px solid var(--psp-gold); }
@@ -935,44 +684,7 @@ button:focus:not(:focus-visible) {
 .rt-info .rsub { font-size: 11px; color: var(--g400); }
 .rt-rec { font-weight: 800; font-size: 14px; color: var(--psp-navy); }
 
-/* ===== DYNASTY BARS ===== */
-.dynasty-block { background: var(--psp-white); border: 1px solid var(--g100); border-radius: 4px; padding: 14px; margin-bottom: 16px; }
-.dynasty-block h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; color: var(--g600); font-family: 'Bebas Neue', 'DM Sans', system-ui, sans-serif; }
-.dbar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
-.dbar-row .dname { width: 120px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; }
-.dbar-row .bar { flex: 1; height: 18px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
-.dbar-row .bar .fill { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 10px; font-weight: 800; color: #fff; }
-
-/* ===== STANDINGS ===== */
-.standings-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 16px; }
-@media(max-width:700px) { .standings-grid { grid-template-columns: 1fr; } }
-.standings-card { background: #fff; border: 1px solid var(--g100); border-radius: 4px; overflow: hidden; }
-.standings-card .st-head { padding: 8px 12px; font-size: 11px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .3px; }
-.st-tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
-.st-tbl th { padding: 5px 10px; text-align: left; font-size: 10px; font-weight: 700; color: var(--g400); text-transform: uppercase; border-bottom: 1px solid var(--g100); min-height: 44px; display: flex; align-items: center; }
-.st-tbl th:focus-visible { outline: 2px solid var(--psp-blue); outline-offset: -2px; }
-.st-tbl td { padding: 6px 10px; border-bottom: 1px solid #f5f5f5; }
-.st-tbl tr:last-child td { border: none; }
-.st-tbl tr:hover td { background: #fafafa; }
-.st-tbl .team-link { font-weight: 700; color: var(--link); cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; }
-.st-tbl .team-link:hover { color: var(--psp-gold); text-decoration: underline; }
-.st-tbl .team-link:focus-visible { outline: 2px solid var(--psp-blue); outline-offset: 2px; }
-.st-tbl .rec { font-weight: 700; text-align: center; }
-.st-tbl .pct { color: var(--g400); text-align: center; font-size: 11px; }
-
-/* ===== EVENTS ===== */
-.evt-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--g100); }
-.evt-item:last-child { border: none; }
-.evt-date { text-align: center; min-width: 42px; }
-.evt-date .m { font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--psp-gold); letter-spacing: .3px; }
-.evt-date .d { font-size: 22px; font-weight: 800; color: var(--psp-navy); line-height: 1; }
-.evt-info h4 { font-size: 13px; font-weight: 700; margin-bottom: 1px; font-family: 'Bebas Neue', 'DM Sans', system-ui, sans-serif; }
-.evt-info p { font-size: 11px; color: var(--g400); }
-
-/* ===== DB STATUS ===== */
-.db-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: .3px; }
-.db-tag .dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: blink 2s ease infinite; }
-@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+/* Removed unused: dynasty bars, standings, events, db-tag */
 
 /* Animation keyframes for UI feedback */
 @keyframes fadeIn {
@@ -1018,8 +730,6 @@ button:focus:not(:focus-visible) {
   .footer-bottom { font-size: 12px; }
 }
 
-/* ===== SPONSOR SPOTS ===== */
-.psp-promo-spot { background: #e8e8e8; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; font-weight: 600; margin-bottom: 12px; border-radius: 4px; }
 
 /* ===== RESPONSIVE HELPERS ===== */
 .hide-mobile { display: block; }
@@ -1075,50 +785,14 @@ button:focus:not(:focus-visible) {
     display: none;
   }
 
-  /* Topbar secondary links - hide on mobile */
-  .topbar-links {
-    display: none !important;
-  }
-
-  /* Topbar on mobile - show only logo */
-  .topbar-inner {
-    gap: 8px;
-  }
-
   /* Logo on mobile */
   .logo-mark {
     font-size: 14px;
-  }
-
-  /* Ensure score strip is horizontally scrollable without overflow */
-  .scorestrip {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .ss-scroll {
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Hide score strip fade gradients on small screens for more space */
-  .ss-scroll::before,
-  .ss-scroll::after {
-    width: 10px;
   }
 }
 
 /* Extra small phones - further adjustments */
 @media (max-width: 480px) {
-  .topbar {
-    height: 36px;
-    padding: 0 8px;
-  }
-
-  .topbar-inner {
-    gap: 6px;
-  }
-
   .logo-mark {
     font-size: 12px;
   }
@@ -1142,45 +816,6 @@ button:focus:not(:focus-visible) {
 .mobile-nav-panel a:active { background: rgba(240, 165, 0, 0.1); }
 .mobile-nav-panel a:focus-visible { outline: 2px solid var(--psp-gold); outline-offset: -2px; }
 
-/* ===== MOBILE SPORT PILL BAR ===== */
-.sport-pill-bar {
-  background: var(--espn-dark);
-  border-bottom: 1px solid #222;
-  overflow: hidden;
-}
-.sport-pill-scroll {
-  display: flex;
-  gap: 6px;
-  padding: 8px 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-.sport-pill-scroll::-webkit-scrollbar { display: none; }
-.sport-pill {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #cbd5e1;
-  background: #1a1a2e;
-  border-radius: 20px;
-  white-space: nowrap;
-  text-decoration: none;
-  border: 1px solid #333;
-  transition: all 0.15s;
-  min-height: 32px;
-}
-.sport-pill:hover { background: #222; color: #fff; text-decoration: none; }
-.sport-pill.active {
-  background: var(--psp-gold);
-  color: var(--psp-navy);
-  border-color: var(--psp-gold);
-  font-weight: 700;
-}
-.sport-pill .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
 /* ===== TOUCH TARGET SIZING (WCAG 2.1 Level AAA - 44x44px minimum) ===== */
 @media (hover: none) and (pointer: coarse) {
@@ -1382,44 +1017,6 @@ select:focus-visible {
     font-size: 13px;
   }
 
-  /* Score strip optimizations */
-  .scorestrip {
-    height: 48px;
-  }
-
-  .ss-label {
-    font-size: 9px;
-    padding: 0 8px;
-  }
-
-  .ss-game {
-    padding: 4px 12px;
-    min-width: 140px;
-  }
-
-  .ss-team {
-    font-size: 10px;
-  }
-
-  .ss-team .score {
-    font-size: 11px;
-  }
-
-  .ss-status {
-    font-size: 8px;
-  }
-
-  /* Score strip navigation buttons - smaller on mobile */
-  .ss-nav-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
-  }
-
-  .ss-nav-left {
-    left: 85px;
-  }
-
   /* Main navigation */
   .mainnav-inner {
     height: 40px;
@@ -1449,15 +1046,13 @@ select:focus-visible {
 
   /* Grid layouts - single column */
   .stories,
-  .ldr-grid,
-  .standings-grid {
+  .ldr-grid {
     grid-template-columns: 1fr;
   }
 
   /* Card and widget spacing */
   .admin-card,
-  .rank-table,
-  .dynasty-block {
+  .rank-table {
     padding: 1rem;
     margin-bottom: 12px;
   }
@@ -1550,28 +1145,6 @@ select:focus-visible {
     padding: 10px 10px;
   }
 
-  /* Alumni strip */
-  .alumni-strip {
-    gap: 6px;
-  }
-
-  .a-card {
-    min-width: 110px;
-    padding: 8px;
-  }
-
-  .a-card .a-emoji {
-    font-size: 20px;
-  }
-
-  .a-card .a-name {
-    font-size: 10px;
-  }
-
-  .a-card .a-team {
-    font-size: 9px;
-  }
-
   /* Leaderboard cards */
   .ldr-head {
     padding: 6px 10px;
@@ -1588,32 +1161,8 @@ select:focus-visible {
     font-size: 10px;
   }
 
-  /* Standings table */
-  .st-tbl {
-    font-size: 11px;
-  }
-
-  .st-tbl th {
-    padding: 4px 8px;
-    font-size: 9px;
-  }
-
-  .st-tbl td {
-    padding: 4px 8px;
-  }
-
-  /* Topbar */
-  .topbar {
-    height: 36px;
-    padding: 0 8px;
-  }
-
   .logo-mark {
     font-size: 16px;
-  }
-
-  .topbar-links a {
-    font-size: 10px;
   }
 }
 
@@ -1658,43 +1207,6 @@ select:focus-visible {
     font-size: 12px;
   }
 
-  /* Score strip tablet optimization */
-  .scorestrip {
-    height: 50px;
-  }
-
-  .ss-label {
-    font-size: 10px;
-    padding: 0 10px;
-  }
-
-  .ss-game {
-    padding: 5px 14px;
-    min-width: 150px;
-  }
-
-  .ss-team {
-    font-size: 11px;
-  }
-
-  .ss-team .score {
-    font-size: 12px;
-  }
-
-  .ss-status {
-    font-size: 9px;
-  }
-
-  .ss-nav-btn {
-    width: 34px;
-    height: 34px;
-    font-size: 15px;
-  }
-
-  .ss-nav-left {
-    left: 100px;
-  }
-
   /* Sport page header */
   .sport-hdr-inner {
     height: 52px;
@@ -1731,14 +1243,9 @@ select:focus-visible {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .standings-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   /* Card and widget spacing */
   .admin-card,
-  .rank-table,
-  .dynasty-block {
+  .rank-table {
     padding: 1.125rem;
     margin-bottom: 14px;
   }
@@ -1788,42 +1295,6 @@ select:focus-visible {
     font-size: 11px;
   }
 
-  /* Standings table */
-  .st-tbl {
-    font-size: 12px;
-  }
-
-  .st-tbl th {
-    padding: 6px 9px;
-    font-size: 10px;
-  }
-
-  .st-tbl td {
-    padding: 5px 9px;
-  }
-
-  /* Alumni strip */
-  .alumni-strip {
-    gap: 7px;
-  }
-
-  .a-card {
-    min-width: 120px;
-    padding: 9px;
-  }
-
-  .a-card .a-emoji {
-    font-size: 22px;
-  }
-
-  .a-card .a-name {
-    font-size: 11px;
-  }
-
-  .a-card .a-team {
-    font-size: 10px;
-  }
-
   /* Filter bar */
   .filter-bar {
     padding: 0.875rem;
@@ -1862,18 +1333,9 @@ select:focus-visible {
     font-size: 0.875rem;
   }
 
-  /* Topbar and main nav */
-  .topbar {
-    height: 38px;
-    padding: 0 10px;
-  }
-
+  /* Main nav */
   .logo-mark {
     font-size: 17px;
-  }
-
-  .topbar-links a {
-    font-size: 11px;
   }
 
   .mainnav-inner {
@@ -1929,37 +1391,16 @@ nav a:hover {
   color: var(--psp-gold);
 }
 
-/* Scroll-triggered fade-in animation */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Scroll-triggered fade-in animation (reuses fadeInUp from above) */
 .animate-on-scroll {
   animation: fadeInUp 0.6s ease forwards;
   animation-timeline: view();
   animation-range: entry 0% cover 30%;
 }
 
-/* Sport pulse animation for live game indicators */
-@keyframes sportPulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
+/* Sport pulse animation reuses skeleton-pulse keyframes */
 .sport-pulse {
-  animation: sportPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Link underline transitions - smooth reveal on hover */

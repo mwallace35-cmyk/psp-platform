@@ -1,4 +1,3 @@
-"use client";
 // v2: Real stats from game_player_stats
 
 interface StatLeader {

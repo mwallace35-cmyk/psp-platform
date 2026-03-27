@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { getEraForYear, getEraForSeasonLabel } from '@/lib/stats/era-adjustment';
 
