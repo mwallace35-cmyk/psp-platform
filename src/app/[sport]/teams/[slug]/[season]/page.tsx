@@ -761,12 +761,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                   textDecoration: "none",
                   transition: "all 0.2s ease",
                 }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.opacity = "0.9";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.opacity = "1";
-                }}
+                className="hover:opacity-90 transition-opacity"
               >
                 View Full Roster →
               </Link>
