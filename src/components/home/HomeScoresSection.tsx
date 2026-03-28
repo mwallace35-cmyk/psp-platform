@@ -127,7 +127,7 @@ export default async function HomeScoresSection() {
               <Link
                 key={game.id as string}
                 href={`/${game.sport_id}/games/${game.id}`}
-                className="flex flex-col bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-2.5 hover:border-[var(--psp-gold)]/30 transition group"
+                className="flex flex-col bg-[var(--psp-navy-mid)] rounded-lg border border-white/10 px-4 py-2.5 hover:border-[var(--psp-gold)]/30 transition group"
               >
                 {contextLabel && (
                   <span
@@ -158,7 +158,7 @@ export default async function HomeScoresSection() {
           })}
         </div>
       ) : (
-        <div className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-6 text-center">
+        <div className="bg-[var(--psp-navy-mid)] rounded-lg border border-white/10 px-4 py-6 text-center">
           <p className="text-sm text-gray-300">No recent games to show right now.</p>
           <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] mt-2 inline-block transition">
             Browse all scores &rarr;

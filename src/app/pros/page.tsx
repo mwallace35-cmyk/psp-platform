@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
-import { getProPlayers, getProPipeline } from "@/lib/data/pro-players";
+import { getProPlayers, getProPipeline, getProCount } from "@/lib/data/pro-players";
 import ProPlayerCard from "@/components/pro-players/ProPlayerCard";
 import ProPipeline from "@/components/pro-players/ProPipeline";
 import PSPPromo from "@/components/ads/PSPPromo";
@@ -55,10 +55,10 @@ export default async function ProsPage({
     notFound();
   }
 
-  const proPlayers = await getProPlayers(
-    sport === "all" ? undefined : sport,
-    500
-  );
+  const [proPlayers, proCount] = await Promise.all([
+    getProPlayers(sport === "all" ? undefined : sport, 500),
+    getProCount(),
+  ]);
 
   if (proPlayers.length === 0) {
     return notFound();
@@ -87,8 +87,8 @@ export default async function ProsPage({
               Before They Were Famous
             </h1>
             <p className="text-lg text-gray-300 max-w-2xl">
-              Where Philly's pro athletes started. From Hall of Famers to active
-              stars, explore the high school roots of 230+ professional athletes
+              Where Philly&apos;s pro athletes started. From Hall of Famers to active
+              stars, explore the high school roots of {proCount}+ professional athletes
               from NFL, NBA, MLB, and beyond.
             </p>
           </div>
@@ -100,7 +100,7 @@ export default async function ProsPage({
                 Pro Athletes
               </p>
               <p className="text-3xl font-bold text-gold">
-                {proPlayers.length}+
+                {proCount}+
               </p>
             </div>
             <div className="bg-navy-light rounded-lg p-4 border border-gold">

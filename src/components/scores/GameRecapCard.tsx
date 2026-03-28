@@ -53,7 +53,7 @@ export default function GameRecapCard({
           {[{name:awayName,score:awayScore},{name:homeName,score:homeScore}].map(team=>(
             <div key={team.name} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.3rem' }}>
               <span style={{ fontWeight:winner===team.name?700:400, color:winner===team.name?'var(--psp-navy,#1a2744)':'var(--psp-muted,#6b7280)', fontSize:'0.95rem' }}>{team.name}</span>
-              <span style={{ fontWeight:800, fontSize:'1.25rem', color:winner===team.name?'var(--psp-navy,#1a2744)':'var(--psp-muted,#6b7280)' }}>{team.score}</span>
+              <span style={{ fontWeight:800, fontSize:'1.25rem', color:winner===team.name?'var(--psp-navy,#1a2744)':'var(--psp-muted,#6b7280)', fontVariantNumeric:'tabular-nums' }}>{team.score}</span>
             </div>
           ))}
         </div>

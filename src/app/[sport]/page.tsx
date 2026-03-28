@@ -424,9 +424,8 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
                   </span>
                   <div className="min-w-0">
                     <h3
-                      className="text-[var(--psp-gold)] font-bold tracking-wide mb-1"
+                      className="font-heading text-[var(--psp-gold)] tracking-wide mb-1"
                       style={{
-                        fontFamily: "var(--font-bebas)",
                         fontSize: "1.15rem",
                         letterSpacing: "0.06em",
                       }}

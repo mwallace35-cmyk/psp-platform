@@ -207,7 +207,7 @@ function SortableTable({
                   if (!leadStat) return null;
                   return (
                     <div className="text-right flex-shrink-0">
-                      <div className="text-xl font-extrabold" style={{ color: 'var(--psp-gold, #f0a500)' }}>
+                      <div className="text-xl font-extrabold tabular-nums" style={{ color: 'var(--psp-gold, #f0a500)' }}>
                         {leadStat.render ? leadStat.render(row[leadStat.key], row) : row[leadStat.key]}
                       </div>
                       <div className="text-[10px] font-medium uppercase tracking-wide text-gray-400">
@@ -234,7 +234,7 @@ function SortableTable({
                   .map((col) => (
                     <div key={col.key} className="flex justify-between items-center text-gray-600">
                       <span className="font-medium text-xs uppercase tracking-wide">{col.label}</span>
-                      <span className="text-right font-semibold" style={{ color: 'var(--psp-navy, #0a1628)' }}>
+                      <span className="text-right font-semibold tabular-nums" style={{ color: 'var(--psp-navy, #0a1628)' }}>
                         {col.render ? col.render(row[col.key], row) : row[col.key]}
                       </span>
                     </div>
@@ -312,7 +312,7 @@ function SortableTable({
                 key={idx}
                 role={onRowClick ? 'button' : undefined}
                 tabIndex={onRowClick ? 0 : undefined}
-                className={`${bgColor} border-b border-gray-100 hover:bg-gray-100 transition-colors duration-200 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400 ${
+                className={`${bgColor} border-b border-gray-100 hover:bg-[rgba(240,165,0,0.07)] transition-colors duration-200 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400 ${
                   onRowClick ? 'cursor-pointer' : ''
                 }`}
                 onClick={() => onRowClick?.(row)}
@@ -327,7 +327,7 @@ function SortableTable({
                   .map((col) => (
                     <td
                       key={col.key}
-                      className="px-4 py-3"
+                      className={`px-4 py-3${col.align === 'right' ? ' tabular-nums' : ''}`}
                       style={{
                         textAlign: col.align || 'left',
                       }}

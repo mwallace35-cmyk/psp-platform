@@ -51,12 +51,12 @@ export default function GreatestSeasonsView({
             onClick={() => setSelectedCategory(cat)}
             className={`px-4 py-2 rounded-full font-medium transition-colors ${
               selectedCategory === cat
-                ? "bg-yellow-500 text-black"
-                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                ? "text-[var(--psp-navy)]"
+                : "border border-gray-300 text-gray-700 hover:border-gray-400"
             }`}
             style={
               selectedCategory === cat
-                ? { backgroundColor: sportColor, color: "white" }
+                ? { backgroundColor: "var(--psp-gold)" }
                 : {}
             }
           >
@@ -68,7 +68,7 @@ export default function GreatestSeasonsView({
       {/* Seasons by Category */}
       {Object.entries(grouped).map(([category, categorySeasons]) => (
         <div key={category} className="space-y-4">
-          <h2 className="psp-h2 text-gray-900">{category}</h2>
+          <h2 className="font-heading text-2xl tracking-wide text-gray-900">{category}</h2>
 
           <div className="overflow-x-auto rounded-lg border border-gray-200">
             <table className="w-full text-sm" aria-label="Greatest seasons">

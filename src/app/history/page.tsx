@@ -57,8 +57,22 @@ const SPORT_EMOJI: Record<string, string> = {
   lacrosse: '🥍', wrestling: '🤼', 'track-and-field': '🏃',
 };
 
+function getWeekRange(): string {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((day + 6) % 7));
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const fmt = (d: Date) =>
+    d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  const year = sunday.getFullYear();
+  return `${fmt(monday)}\u2013${fmt(sunday)}, ${year}`;
+}
+
 export default async function HistoryPage() {
   const [champions, articles] = await Promise.all([getChampions(), getArticles()]);
+  const weekRange = getWeekRange();
 
   const bySport: Record<string, ChampRow[]> = {};
   for (const c of champions) {
@@ -72,6 +86,7 @@ export default async function HistoryPage() {
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-[#f0a500] text-sm font-semibold uppercase tracking-widest mb-3">Archive</p>
           <h1 className="psp-h1 text-white mb-4">This Week in PSP History</h1>
+          <p className="text-white/70 text-base font-medium mb-2">{weekRange}</p>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">141 seasons. 55,000+ players. 1,700+ championships. The moments that made Philadelphia high school sports legendary.</p>
         </div>
       </div>

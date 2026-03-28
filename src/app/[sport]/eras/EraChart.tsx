@@ -41,8 +41,8 @@ export default function EraChart({ eras, statType }: EraChartProps) {
                 <div
                   className={`h-full transition-all ${
                     isPeak
-                      ? "bg-gradient-to-r from-[var(--psp-gold)] to-[var(--psp-blue)]"
-                      : "bg-gradient-to-r from-gray-700 to-gray-600"
+                      ? "bg-gradient-to-r from-[var(--psp-gold)] to-[#f5c542]"
+                      : "bg-[#60a5fa]"
                   }`}
                   style={{ width: `${percentage}%` }}
                   title={`${era.avg_value.toFixed(1)} ${statType.unit || ""}`}
@@ -56,11 +56,11 @@ export default function EraChart({ eras, statType }: EraChartProps) {
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-xs text-gray-300 border-t border-gray-700 pt-4">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-gradient-to-r from-[var(--psp-gold)] to-[var(--psp-blue)]" />
+          <div className="w-4 h-4 bg-gradient-to-r from-[var(--psp-gold)] to-[#f5c542]" />
           <span>Peak Era</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-gradient-to-r from-gray-700 to-gray-600" />
+          <div className="w-4 h-4 bg-[#60a5fa]" />
           <span>Other Eras</span>
         </div>
       </div>

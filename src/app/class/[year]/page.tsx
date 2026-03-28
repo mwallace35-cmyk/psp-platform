@@ -235,13 +235,16 @@ export default async function ClassYearPage({
 
   const sections = await getClassYearData(year);
 
+  const currentYear = new Date().getFullYear();
+  const isGraduated = year <= currentYear;
+
   return (
-    <div style={{ minHeight: "100vh", background: "var(--psp-navy, #0a1628)", padding: "2rem 1rem" }}>
+    <div style={{ minHeight: "100vh", background: "var(--psp-navy, #0a1628)", padding: "1.25rem 1rem" }}>
       <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
         {/* Breadcrumb */}
         <nav
           aria-label="Breadcrumb"
-          style={{ marginBottom: "1rem", fontSize: "0.85rem", color: "rgba(255,255,255,0.75)" }}
+          style={{ marginBottom: "0.75rem", fontSize: "0.85rem", color: "rgba(255,255,255,0.75)" }}
         >
           <Link href="/" style={{ color: "var(--psp-gold)", textDecoration: "none" }}>
             Home
@@ -255,23 +258,23 @@ export default async function ClassYearPage({
         </nav>
 
         {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
+        <div style={{ marginBottom: "1.25rem" }}>
           <h1
             className="psp-h1-lg text-white"
             style={{
-              marginBottom: "0.5rem",
+              marginBottom: "0.35rem",
             }}
           >
             CLASS OF {year}
           </h1>
           <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "1rem", maxWidth: "600px", margin: 0 }}>
-            Top performers from the graduating class of {year} across all sports.
-            Stats from the current season.
+            Top performers from the {isGraduated ? "graduated" : "graduating"} class of {year} across all sports.
+            {isGraduated ? " Senior season stats." : " Stats from the current season."}
           </p>
         </div>
 
         {/* Class Year Navigation */}
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
           {VALID_YEARS.map((y) => (
             <Link
               key={y}

@@ -46,7 +46,7 @@ export default async function HomeArticlesSection() {
             <Link
               key={article.id as number}
               href={`/articles/${article.slug}`}
-              className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/30 hover:bg-[var(--psp-navy-mid)]/80 transition group"
+              className="bg-[var(--psp-navy-mid)] rounded-lg border border-white/10 p-4 hover:border-[var(--psp-gold)]/30 hover:bg-[var(--psp-navy-mid)]/80 transition group"
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />

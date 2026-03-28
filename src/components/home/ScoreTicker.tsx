@@ -33,10 +33,10 @@ function TickerItem({ game }: { game: LiveGame }) {
     <Link href={`/${game.sport}/games/${game.id}`} style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem', padding:'0.35rem 1.25rem', textDecoration:'none', borderRight:'1px solid rgba(255,255,255,0.08)' }}>
       <span style={{ color:'rgba(255,255,255,0.45)', fontSize:'0.75rem', fontWeight:700, letterSpacing:1 }}>{sportAbbr}</span>
       <span style={{ color: game.status==='final'&&!homeWinning ? '#fff' : 'rgba(255,255,255,0.7)', fontSize:'0.8rem', fontWeight: game.status==='final'&&!homeWinning ? 700 : 400 }}>{abbreviateName(game.away_team.name)}</span>
-      <span style={{ color:'var(--psp-gold,#c8a84b)', fontSize:'0.85rem', fontWeight:800 }}>{game.away_team.score}</span>
+      <span style={{ color:'var(--psp-gold,#c8a84b)', fontSize:'0.85rem', fontWeight:800, fontVariantNumeric:'tabular-nums' }}>{game.away_team.score}</span>
       <span style={{ color:'rgba(255,255,255,0.25)', fontSize:'0.75rem' }}>@</span>
       <span style={{ color: game.status==='final'&&homeWinning ? '#fff' : 'rgba(255,255,255,0.7)', fontSize:'0.8rem', fontWeight: game.status==='final'&&homeWinning ? 700 : 400 }}>{abbreviateName(game.home_team.name)}</span>
-      <span style={{ color:'var(--psp-gold,#c8a84b)', fontSize:'0.85rem', fontWeight:800 }}>{game.home_team.score}</span>
+      <span style={{ color:'var(--psp-gold,#c8a84b)', fontSize:'0.85rem', fontWeight:800, fontVariantNumeric:'tabular-nums' }}>{game.home_team.score}</span>
       <span style={{ color:statusColor, fontSize:'0.75rem', fontWeight:700, letterSpacing:0.5 }}>{isLive ? (game.time ?? 'LIVE') : 'FINAL'}</span>
     </Link>
   );

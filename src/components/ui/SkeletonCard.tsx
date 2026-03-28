@@ -5,7 +5,7 @@
 export default function SkeletonCard({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse rounded-xl bg-[var(--psp-navy-mid)] border border-gray-700/50 p-6 ${className}`}
+      className={`animate-pulse rounded-xl bg-[var(--psp-navy-mid)] border border-white/10 p-6 ${className}`}
       role="status"
       aria-busy="true"
       aria-label="Loading card"

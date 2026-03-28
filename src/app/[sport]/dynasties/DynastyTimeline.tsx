@@ -46,10 +46,10 @@ export default function DynastyTimeline({
           onClick={() => setSelectedDecade(null)}
           className={`px-4 py-2 rounded-full font-medium transition-colors ${
             !selectedDecade
-              ? "text-black"
-              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              ? "text-[var(--psp-navy)]"
+              : "border border-gray-300 text-gray-700 hover:border-gray-400"
           }`}
-          style={!selectedDecade ? { backgroundColor: sportColor, color: "white" } : {}}
+          style={!selectedDecade ? { backgroundColor: "var(--psp-gold)" } : {}}
         >
           All Decades
         </button>
@@ -59,12 +59,12 @@ export default function DynastyTimeline({
             onClick={() => setSelectedDecade(decade)}
             className={`px-4 py-2 rounded-full font-medium transition-colors ${
               selectedDecade === decade
-                ? "text-black"
-                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                ? "text-[var(--psp-navy)]"
+                : "border border-gray-300 text-gray-700 hover:border-gray-400"
             }`}
             style={
               selectedDecade === decade
-                ? { backgroundColor: sportColor, color: "white" }
+                ? { backgroundColor: "var(--psp-gold)" }
                 : {}
             }
           >
@@ -77,7 +77,7 @@ export default function DynastyTimeline({
       <div className="space-y-8">
         {filteredData.map((decadeItem) => (
           <div key={decadeItem.decade} className="space-y-4">
-            <h2 className="psp-h2 text-gray-900">
+            <h2 className="font-heading text-2xl tracking-wide text-gray-900">
               {decadeItem.decade}
             </h2>
 

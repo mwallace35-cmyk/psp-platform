@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 interface SportNavProps {
   sport: string;
@@ -54,6 +55,26 @@ export default function SportNavTabs({ sport }: SportNavProps) {
   const pathname = usePathname();
   const tabs = SPORT_TAB_CONFIG[sport] || [];
   const sportName = SPORT_DISPLAY_NAMES[sport] || sport;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 2);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener('scroll', checkScroll, { passive: true });
+    window.addEventListener('resize', checkScroll);
+    return () => {
+      el.removeEventListener('scroll', checkScroll);
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, [checkScroll]);
 
   if (tabs.length === 0) {
     return null;
@@ -64,8 +85,9 @@ export default function SportNavTabs({ sport }: SportNavProps) {
       className="bg-white border-b border-gray-200"
       aria-label={`${sportName} section navigation`}
     >
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 relative">
         <div
+          ref={scrollRef}
           className="flex gap-2 overflow-x-auto scrollbar-hide py-3 snap-x snap-proximity"
         >
           {tabs.map((tab) => {
@@ -99,6 +121,16 @@ export default function SportNavTabs({ sport }: SportNavProps) {
             );
           })}
         </div>
+        {/* Right-edge fade hint when more pills exist off-screen */}
+        {canScrollRight && (
+          <div
+            className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to right, transparent, white)',
+            }}
+            aria-hidden="true"
+          />
+        )}
       </div>
     </nav>
   );

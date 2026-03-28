@@ -221,6 +221,30 @@ export const getProPipeline = cache(
 );
 
 /**
+ * Get the actual count of pro-level athletes from next_level_tracking
+ */
+export const getProCount = cache(async (): Promise<number> => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { count } = await supabase
+            .from("next_level_tracking")
+            .select("id", { count: "exact", head: true })
+            .in("current_level", ["NFL", "NBA", "MLB", "WNBA", "MLS"]);
+          return count ?? 0;
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    0,
+    "DATA_PRO_COUNT",
+    {}
+  );
+});
+
+/**
  * Get a single pro player's detail with full stats
  */
 export const getProPlayerDetail = cache(

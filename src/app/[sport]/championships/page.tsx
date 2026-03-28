@@ -235,30 +235,30 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
       <section className="py-10 border-b-4 border-[var(--psp-gold)]" style={{ background: '#0a1628', color: '#fff' }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{ label: meta.name, href: `/${sport}` }, { label: "Championships" }]} />
-          <h1 className="psp-h1 text-white mb-3" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+          <h1 className="psp-h1 text-white mb-3">
             <span aria-hidden="true">{meta.emoji}</span> {meta.name} Championships
           </h1>
-          <div className="flex flex-wrap gap-3 text-sm">
+          <div className="flex flex-wrap gap-3 text-sm items-center">
             {tierCounts[1] && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
                 style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
-                {tierCounts[1]} State
+                {tierCounts[1]} State Titles
               </span>
             )}
             {tierCounts[2] && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
                 style={{ background: "#3b82f6", color: "white" }}>
-                {tierCounts[2]} City
+                {tierCounts[2]} City Titles
               </span>
             )}
             {tierCounts[3] && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
                 style={{ background: "#7c3aed", color: "white" }}>
-                {tierCounts[3]} League
+                {tierCounts[3]} League Titles
               </span>
             )}
-            <span className="text-gray-300">
-              {displayYears.length} seasons
+            <span className="text-gray-400 text-xs">
+              across {displayYears.length} seasons
             </span>
           </div>
         </div>
@@ -312,7 +312,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                   {/* Year header */}
                   <div className="px-5 py-3 flex items-center justify-between"
                     style={{ background: "#0a1628", borderBottom: "2px solid var(--psp-gold)" }}>
-                    <h2 className="text-white text-xl tracking-wide" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                    <h2 className="font-heading text-white text-xl tracking-wide">
                       {yearData.label}
                     </h2>
                     <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ background: "rgba(240,165,0,0.15)", color: "var(--psp-gold)" }}>
@@ -422,7 +422,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             {unknownGroup && unknownGroup.champs.length > 0 && (
               <div className="rounded-xl overflow-hidden border" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
                 <div className="px-5 py-3" style={{ background: "#0a1628", borderBottom: "2px solid var(--psp-gray-500)" }}>
-                  <h2 className="text-white text-xl tracking-wide" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                  <h2 className="font-heading text-white text-xl tracking-wide">
                     Undated Championships
                   </h2>
                 </div>
@@ -493,7 +493,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             {/* State dynasty (most prestigious) */}
             {stateDynasties.length > 0 && (
               <div className="rounded-xl border p-5" style={{ borderColor: "rgba(240,165,0,0.2)", background: "#0f2040" }}>
-                <h2 className="text-white text-lg tracking-wide mb-1" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+                <h2 className="font-heading text-white text-lg tracking-wide mb-1">
                   State Title Leaders
                 </h2>
                 <p className="text-xs mb-4" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
@@ -525,7 +525,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
 
             {/* All-time dynasty */}
             <div className="rounded-xl border p-5" style={{ borderColor: "rgba(255,255,255,0.1)", background: "#0f2040" }}>
-              <h2 className="text-white text-lg tracking-wide mb-1" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+              <h2 className="font-heading text-white text-lg tracking-wide mb-1">
                 All-Time Title Leaders
               </h2>
               <p className="text-xs mb-4" style={{ color: "var(--psp-gray-400, #9ca3af)" }}>
