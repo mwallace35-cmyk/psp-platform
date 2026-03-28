@@ -413,6 +413,44 @@ function FootballBoxScore({
         />
       )}
 
+      {/* DEFENSIVE INTERCEPTIONS */}
+      {(() => {
+        const allDefInt = stats.filter((s) => {
+          const sj = s.stats_json as Record<string, unknown> | null;
+          return sj && (Number(sj.def_interceptions) > 0 || Number(sj.interceptions) > 0);
+        });
+        if (allDefInt.length === 0) return null;
+        const getDefInt = (teamId: number | null) =>
+          allDefInt.filter((s) => s.school_id === teamId)
+            .sort((a, b) => {
+              const aInt = Number((a.stats_json as any)?.def_interceptions ?? (a.stats_json as any)?.interceptions ?? 0);
+              const bInt = Number((b.stats_json as any)?.def_interceptions ?? (b.stats_json as any)?.interceptions ?? 0);
+              return bInt - aInt;
+            });
+        return (
+          <StatSection
+            title="Interceptions"
+            getPlayers={getDefInt}
+            headers={
+              <>
+                <th className="text-left px-4 py-2 w-[60%]">Player</th>
+                <th className="text-right px-3 py-2">INT</th>
+              </>
+            }
+            renderRow={(s) => {
+              const sj = s.stats_json as Record<string, unknown> | null;
+              const ints = Number(sj?.def_interceptions ?? sj?.interceptions ?? 0);
+              return (
+                <>
+                  <td className="px-4 py-2"><PlayerName s={s} /></td>
+                  <td className="text-right px-3 py-2 font-semibold text-[var(--psp-gold)]">{ints}</td>
+                </>
+              );
+            }}
+          />
+        );
+      })()}
+
       {/* Note when only one team has data */}
       {onlyOneTeam && (
         <p className="text-gray-500 text-xs italic text-center mt-2">
