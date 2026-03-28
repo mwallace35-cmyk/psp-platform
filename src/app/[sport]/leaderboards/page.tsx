@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
-import { SPORT_META, getFootballLeaders, getBasketballLeaders } from "@/lib/data";
+import { SPORT_META, getFootballLeaders, getBasketballLeaders, getLeaderboardSeasons } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import LeaderboardFilters from "@/components/leaderboards/LeaderboardFilters";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
 
@@ -48,10 +49,25 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   };
 }
 
-export default async function LeaderboardsIndex({ params }: { params: Promise<PageParams> }) {
+export default async function LeaderboardsIndex({ params, searchParams }: { params: Promise<PageParams>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const sport = await validateSportParam(params);
   const meta = SPORT_META[sport];
   const categories = STAT_CATEGORIES[sport] || [];
+
+  // Parse season param
+  const sp = await searchParams;
+  const seasonParam = typeof sp?.season === "string" ? sp.season : undefined;
+  const seasonId: number | "all" | undefined = seasonParam === "all"
+    ? "all"
+    : seasonParam ? parseInt(seasonParam, 10) || undefined : undefined;
+
+  // Fetch available seasons
+  const availableSeasons = await getLeaderboardSeasons(sport);
+  const selectedSeasonLabel = seasonId === "all"
+    ? "All Seasons"
+    : typeof seasonId === "number"
+      ? availableSeasons.find(s => s.id === seasonId)?.label ?? "Season"
+      : "Current Season";
 
   // Fetch top 5 for each category in parallel
   const leaderData: Record<string, { name: string; school: string; slug: string; value: number | string }[]> = {};
@@ -61,9 +77,9 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
       try {
         let leaders: any[] = [];
         if (sport === "football") {
-          leaders = await getFootballLeaders(cat.statKey, 5);
+          leaders = await getFootballLeaders(cat.statKey, 5, seasonId);
         } else if (sport === "basketball") {
-          leaders = await getBasketballLeaders(cat.statKey, 5);
+          leaders = await getBasketballLeaders(cat.statKey, 5, seasonId);
         }
         leaderData[cat.slug] = leaders.slice(0, 5).map((r: any) => ({
           name: r.players?.name || r.player_name || "Unknown",
@@ -101,7 +117,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
               </h1>
             </div>
             <p className="text-gray-300 mt-2">
-              Current season statistical leaders for Philadelphia high school {meta.name.toLowerCase()}.
+              {selectedSeasonLabel === "Current Season" ? "Current season" : selectedSeasonLabel} statistical leaders for Philadelphia high school {meta.name.toLowerCase()}.
             </p>
           </div>
         </div>
@@ -109,7 +125,12 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
         {/* Content */}
         <div className="max-w-7xl mx-auto px-4 py-8">
 
-          {/* ===== SECTION 1: Current Season Leaders ===== */}
+          {/* Season Filter */}
+          <div className="mb-6">
+            <LeaderboardFilters sport={sport} sportColor={meta.color} seasons={availableSeasons} />
+          </div>
+
+          {/* ===== SECTION 1: Season Leaders ===== */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-8 rounded-full" style={{ background: meta.color }} />
@@ -117,7 +138,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                 Season Leaders
               </h2>
               <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[var(--psp-gold)]/15 text-[var(--psp-gold)] border border-[var(--psp-gold)]/30">
-                Current Season
+                {selectedSeasonLabel}
               </span>
             </div>
 
@@ -135,7 +156,7 @@ export default async function LeaderboardsIndex({ params }: { params: Promise<Pa
                         </h3>
                       </div>
                       <Link
-                        href={`/${sport}/leaderboards/${cat.slug}`}
+                        href={`/${sport}/leaderboards/${cat.slug}${seasonParam ? `?season=${seasonParam}` : ""}`}
                         className="text-xs font-semibold px-3 py-1 rounded-full transition-colors"
                         style={{ color: 'var(--psp-gold)', border: '1px solid var(--psp-gold)' }}
                       >

@@ -1083,25 +1083,31 @@ export const getLeaderboardSeasons = cache(async (sport: string): Promise<Leader
           const supabase = await createClient();
           const table = sport === "basketball" ? "basketball_player_seasons" : "football_player_seasons";
 
-          // Get distinct season_ids that have data
-          const { data: seasonRows } = await supabase
-            .from(table)
-            .select("season_id")
-            .not("season_id", "is", null)
-            .limit(500);
-
-          if (!seasonRows || seasonRows.length === 0) return [];
-
-          const uniqueIds = [...new Set(seasonRows.map((r: { season_id: number }) => r.season_id))];
-
-          // Fetch season details
-          const { data: seasons } = await supabase
+          // 1. Get candidate seasons (2001+ = first year with meaningful data)
+          const { data: candidateSeasons } = await supabase
             .from("seasons")
             .select("id, label, year_start, is_current")
-            .in("id", uniqueIds)
+            .gte("year_start", 2001)
             .order("year_start", { ascending: false });
 
-          return (seasons ?? []) as LeaderboardSeason[];
+          if (!candidateSeasons || candidateSeasons.length === 0) return [];
+
+          // 2. Check each season has real data (100+ rows) via parallel HEAD counts
+          const MIN_ROWS = 100;
+          const checks = await Promise.all(
+            candidateSeasons.map(async (s: { id: number }) => {
+              const { count } = await supabase
+                .from(table)
+                .select("id", { count: "exact", head: true })
+                .eq("season_id", s.id);
+              return { id: s.id, count: count ?? 0 };
+            })
+          );
+
+          const validIds = new Set(checks.filter(c => c.count >= MIN_ROWS).map(c => c.id));
+
+          // 3. Only return seasons with sufficient data (hides 1-off sparse years)
+          return candidateSeasons.filter((s: { id: number }) => validIds.has(s.id)) as LeaderboardSeason[];
         },
         { maxRetries: 2, baseDelay: 300 }
       );
