@@ -7,8 +7,8 @@ import {
   getTopPipelineSchools,
 } from "@/lib/data/pipeline";
 import { SkeletonCard } from "@/components/ui/Skeleton";
-import StatBlock from "@/components/ui/StatBlock";
 import Link from "next/link";
+import PipelineClient from "@/components/pipeline/PipelineClient";
 
 export const metadata: Metadata = {
   title: "College Pipeline — PhillySportsPack",
@@ -26,6 +26,14 @@ async function PipelineContent() {
     getTopPipelineSchools(10),
   ]);
 
+  // Serialize college data for client component (strip players array to reduce payload)
+  const collegesForClient = collegePipeline.map((c) => ({
+    id: c.id,
+    name: c.name,
+    count: c.count,
+    sports: c.sports,
+  }));
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       {/* Hero Section */}
@@ -37,57 +45,14 @@ async function PipelineContent() {
           College Pipeline
         </h1>
         <p className="text-xl text-gray-400 mb-8">
-          Where Philly's best athletes play next — An interactive look at our college placements.
+          Where Philly{"'"}s best athletes play next — An interactive look at our college placements.
         </p>
-
-        {/* Stats removed per design spec — data appears in context below */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Main Content */}
         <div className="lg:col-span-3">
-          {/* Colleges Section */}
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2
-              className="psp-h2 mb-6"
-              style={{ color: "var(--psp-navy)" }}
-            >
-              Colleges ({collegePipeline.length})
-            </h2>
-
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {collegePipeline.slice(0, 20).map((college, idx) => (
-                <div
-                  key={college.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
-                >
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900">{college.name}</p>
-                    <p className="text-sm text-gray-400">
-                      {Object.entries(college.sports)
-                        .map(([sport, count]) => `${count} ${sport}`)
-                        .join(", ")}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p
-                      className="text-xl font-bold"
-                      style={{ color: "var(--psp-gold)" }}
-                    >
-                      {college.count}
-                    </p>
-                    <p className="text-xs text-gray-400">athletes</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {collegePipeline.length > 20 && (
-              <p className="text-sm text-gray-400 mt-4 text-center">
-                ... and {collegePipeline.length - 20} more colleges
-              </p>
-            )}
-          </div>
+          <PipelineClient colleges={collegesForClient} />
         </div>
 
         {/* Sidebar */}
@@ -101,7 +66,7 @@ async function PipelineContent() {
               Top College Producers
             </h3>
             <div className="space-y-3">
-              {topSchools.map((school, idx) => (
+              {topSchools.map((school) => (
                 <Link key={school.id} href={`/football/schools/${school.slug}`}>
                   <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 transition cursor-pointer">
                     <div>

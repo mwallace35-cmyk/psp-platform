@@ -641,7 +641,7 @@ export default async function GameDetailPage({
           className="px-6 py-2 text-sm font-semibold uppercase tracking-wider flex items-center justify-between"
           style={{ backgroundColor: meta?.color ?? "#0a1628", color: "#fff" }}
         >
-          <span>{meta?.emoji} {meta?.name ?? sport} &middot; {season?.label ?? ""}</span>
+          <span style={{ color: 'var(--psp-gold)' }}>{meta?.emoji} {meta?.name ?? sport} &middot; {season?.label ?? ""}</span>
           {game.game_type && (
             <span className="text-xs font-normal opacity-90">{formatGameType(game.game_type)}</span>
           )}
@@ -761,8 +761,8 @@ export default async function GameDetailPage({
         const hasRealStats = realBoxScore.length > 0;
 
         return hasRealStats ? (
-          <section>
-            <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">Box Score</h2>
+          <section className="mt-6">
+            <h2 className="text-2xl font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase tracking-wide">BOX SCORE</h2>
             <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-6">
               {sport === "football" ? (
                 <FootballBoxScore
@@ -791,8 +791,8 @@ export default async function GameDetailPage({
             </div>
           </section>
         ) : (
-          <section>
-            <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">Box Score</h2>
+          <section className="mt-6">
+            <h2 className="text-2xl font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase tracking-wide">BOX SCORE</h2>
             <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-8 text-center">
               <p className="text-3xl mb-3" aria-hidden="true">📊</p>
               <p className="text-gray-300 text-base font-medium mb-1">No box score available for this game</p>
@@ -809,8 +809,8 @@ export default async function GameDetailPage({
         );
       })()}
       {teamSeasonData && (teamSeasonData.home?.players.length || teamSeasonData.away?.players.length) && (
-        <section>
-          <h2 className="text-2xl font-bold text-white mb-1 font-heading uppercase">
+        <section className="mt-6">
+          <h2 className="text-2xl font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase tracking-wide">
             Season Stats
           </h2>
           <p className="text-gray-400 text-sm mb-4">

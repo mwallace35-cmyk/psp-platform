@@ -72,16 +72,19 @@ export default function PSPPromo({ size, variant = 0 }: PSPPromoProps) {
           ${styles.container}
           ${styles.minHeight}
           flex flex-col items-center justify-center gap-4
-          bg-gradient-to-br from-navy via-navy to-blue-900
-          border border-blue-800
-          hover:border-gold hover:shadow-lg transition-all duration-300
+          border-2
+          hover:shadow-lg hover:border-[var(--psp-gold-light,#f5c542)] transition-all duration-300
           group
         `}
+        style={{
+          background: 'var(--psp-navy, #0a1628)',
+          borderColor: 'var(--psp-gold, #f0a500)',
+        }}
       >
-        <div className={`${styles.textSize} font-semibold text-white leading-tight`}>
+        <div className={`${styles.textSize} font-semibold leading-tight`} style={{ color: '#ffffff' }}>
           {promo.text}
         </div>
-        <div className="text-2xl font-bold text-gold group-hover:text-yellow-300 transition-colors" aria-hidden="true">
+        <div className="text-2xl font-bold transition-colors" style={{ color: 'var(--psp-gold, #f0a500)' }} aria-hidden="true">
           {promo.cta}
         </div>
       </Link>

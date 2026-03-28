@@ -182,31 +182,59 @@ function SortableTable({
                 }
               }}
             >
-              {/* Rank + Primary Value */}
-              <div className="flex items-baseline gap-3 mb-3">
+              {/* Rank + Primary Value + Lead Stat */}
+              <div className="flex items-center gap-3 mb-2">
                 {rankCol && rankCol.key !== primaryColumn?.key && (
                   <div className="text-sm font-semibold text-gray-400 min-w-8">
-                    {row[rankCol.key]}
+                    {rankCol.render ? rankCol.render(row[rankCol.key], row) : row[rankCol.key]}
                   </div>
                 )}
-                {primaryColumn && (
-                  <div className="text-lg font-bold text-navy">
-                    {primaryColumn.render
-                      ? primaryColumn.render(row[primaryColumn.key], row)
-                      : row[primaryColumn.key]}
-                  </div>
-                )}
+                <div className="flex-1 min-w-0">
+                  {primaryColumn && (
+                    <div className="text-base font-bold truncate" style={{ color: 'var(--psp-navy, #0a1628)' }}>
+                      {primaryColumn.render
+                        ? primaryColumn.render(row[primaryColumn.key], row)
+                        : row[primaryColumn.key]}
+                    </div>
+                  )}
+                </div>
+                {/* Lead stat value — the most prominent element */}
+                {(() => {
+                  const statCols = columns.filter(
+                    (c) => c.key !== rankCol?.key && c.key !== primaryColumn?.key && c.align === 'right'
+                  );
+                  const leadStat = statCols[0];
+                  if (!leadStat) return null;
+                  return (
+                    <div className="text-right flex-shrink-0">
+                      <div className="text-xl font-extrabold" style={{ color: 'var(--psp-gold, #f0a500)' }}>
+                        {leadStat.render ? leadStat.render(row[leadStat.key], row) : row[leadStat.key]}
+                      </div>
+                      <div className="text-[10px] font-medium uppercase tracking-wide text-gray-400">
+                        {leadStat.label}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
-              {/* Top 2 stat columns as compact key-value pairs */}
+              {/* Secondary info: school, season, extra stats */}
               <div className="space-y-1 text-sm">
                 {columns
-                  .filter((c) => c.key !== rankCol.key && c.key !== primaryColumn?.key)
-                  .slice(0, 2)
+                  .filter((c) => {
+                    if (c.key === rankCol?.key || c.key === primaryColumn?.key) return false;
+                    // Skip lead stat (already shown above)
+                    const statCols = columns.filter(
+                      (sc) => sc.key !== rankCol?.key && sc.key !== primaryColumn?.key && sc.align === 'right'
+                    );
+                    if (statCols[0] && c.key === statCols[0].key) return false;
+                    return true;
+                  })
+                  .slice(0, 3)
                   .map((col) => (
                     <div key={col.key} className="flex justify-between items-center text-gray-600">
                       <span className="font-medium text-xs uppercase tracking-wide">{col.label}</span>
-                      <span className="text-right font-semibold text-navy">
+                      <span className="text-right font-semibold" style={{ color: 'var(--psp-navy, #0a1628)' }}>
                         {col.render ? col.render(row[col.key], row) : row[col.key]}
                       </span>
                     </div>

@@ -673,13 +673,31 @@ function GameCard({
       {/* Matchup */}
       <div className="flex-1 min-w-0">
         <p className="text-sm text-navy">
-          <span className={awayBold ? "font-bold" : "font-medium"}>
-            {g.away_school ? getSchoolDisplayName(g.away_school) : (getOpponentFromNotes(g.notes) || "Opponent")}
-          </span>
-          <span className="text-gray-300 mx-2">@</span>
-          <span className={homeBold ? "font-bold" : "font-medium"}>
-            {g.home_school ? getSchoolDisplayName(g.home_school) : (getOpponentFromNotes(g.notes) || "Opponent")}
-          </span>
+          {g.away_school ? (
+            <span className={awayBold ? "font-bold" : "font-medium"}>
+              {getSchoolDisplayName(g.away_school)}
+            </span>
+          ) : (
+            <span className="italic text-gray-400 font-normal">
+              {getOpponentFromNotes(g.notes) || "TBD"}
+            </span>
+          )}
+          {hasScore ? (
+            <span className="text-gray-500 mx-1 font-semibold">{g.away_score}</span>
+          ) : null}
+          <span className="text-gray-300 mx-1.5">@</span>
+          {g.home_school ? (
+            <span className={homeBold ? "font-bold" : "font-medium"}>
+              {getSchoolDisplayName(g.home_school)}
+            </span>
+          ) : (
+            <span className="italic text-gray-400 font-normal">
+              {getOpponentFromNotes(g.notes) || "TBD"}
+            </span>
+          )}
+          {hasScore ? (
+            <span className="text-gray-500 mx-1 font-semibold">{g.home_score}</span>
+          ) : null}
         </p>
         {typeInfo && (
           <span
@@ -693,7 +711,7 @@ function GameCard({
       {/* Score or Preview hint */}
       {hasScore ? (
         <div className="text-right flex-shrink-0">
-          <p className="text-sm font-bold text-navy">
+          <p className="text-sm font-bold text-navy tabular-nums">
             {g.away_score} &ndash; {g.home_score}
           </p>
         </div>

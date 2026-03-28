@@ -1,7 +1,11 @@
+'use client';
+
 /**
  * SchoolLogo — shows a school's logo image or falls back to initials on a colored circle.
  * Reusable across standings, score strips, school cards, etc.
  */
+
+import { useState } from 'react';
 
 interface SchoolLogoProps {
   logoUrl?: string | null;
@@ -32,24 +36,7 @@ function getInitials(name: string): string {
   return (words[0][0] + words[1][0]).toUpperCase();
 }
 
-export default function SchoolLogo({ logoUrl, name, size = 'md', className = '' }: SchoolLogoProps) {
-  const px = SIZE_MAP[size];
-  const fontSize = FONT_SIZE_MAP[size];
-
-  if (logoUrl) {
-    return (
-      <img
-        src={logoUrl}
-        alt={`${name} logo`}
-        width={px}
-        height={px}
-        loading="lazy"
-        className={`rounded-md object-contain shrink-0 ${className}`}
-        style={{ width: px, height: px }}
-      />
-    );
-  }
-
+function InitialsCircle({ name, px, fontSize, className }: { name: string; px: number; fontSize: string; className: string }) {
   return (
     <div
       className={`rounded-full shrink-0 flex items-center justify-center font-bold select-none ${className}`}
@@ -66,5 +53,28 @@ export default function SchoolLogo({ logoUrl, name, size = 'md', className = '' 
     >
       {getInitials(name)}
     </div>
+  );
+}
+
+export default function SchoolLogo({ logoUrl, name, size = 'md', className = '' }: SchoolLogoProps) {
+  const [imgError, setImgError] = useState(false);
+  const px = SIZE_MAP[size];
+  const fontSize = FONT_SIZE_MAP[size];
+
+  if (!logoUrl || imgError) {
+    return <InitialsCircle name={name} px={px} fontSize={fontSize} className={className} />;
+  }
+
+  return (
+    <img
+      src={logoUrl}
+      alt={`${name} logo`}
+      width={px}
+      height={px}
+      loading="lazy"
+      className={`rounded-md object-contain shrink-0 ${className}`}
+      style={{ width: px, height: px }}
+      onError={() => setImgError(true)}
+    />
   );
 }

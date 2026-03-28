@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import CompareSearchForm from '@/components/compare/CompareSearchForm';
 
 export const revalidate = 3600;
 interface PageProps {
@@ -143,15 +144,17 @@ export default async function ComparePage({ searchParams }: PageProps) {
 
   if (!slugA || !slugB) {
     return (
-      <div style={{ maxWidth:640, margin:'4rem auto', padding:'0 1rem', textAlign:'center' }}>
-        <h1 className="psp-h1" style={{ color:navy, margin:'0 0 0.5rem' }}>Compare Players</h1>
-        <p style={{ color:muted, marginBottom:'2rem' }}>
-          Add two player slugs to the URL to compare them head-to-head.<br />
-          <code style={{ background:'var(--psp-gray-100, #f3f4f6)', padding:'2px 6px', borderRadius:4, fontSize:'0.85rem' }}>/players/compare?a=player-one&amp;b=player-two</code>
-        </p>
-        <Link href='/players' style={{ display:'inline-block', background:navy, color:'#fff', padding:'0.7rem 1.5rem', borderRadius:8, fontWeight:700, textDecoration:'none' }}>
-          {"Browse Players \u2192"}
-        </Link>
+      <div style={{ maxWidth:720, margin:'4rem auto', padding:'0 1rem' }}>
+        <div style={{ textAlign:'center', marginBottom:'2rem' }}>
+          <h1 className="psp-h1" style={{ color:navy, margin:'0 0 0.5rem' }}>Compare Players</h1>
+          <p style={{ color:muted }}>Search for two players to compare their career stats head-to-head.</p>
+        </div>
+        <CompareSearchForm />
+        <div style={{ textAlign:'center', marginTop:'1.5rem' }}>
+          <Link href='/players' style={{ color:gold, fontWeight:700, fontSize:'0.85rem', textDecoration:'none' }}>
+            Browse All Players
+          </Link>
+        </div>
       </div>
     );
   }

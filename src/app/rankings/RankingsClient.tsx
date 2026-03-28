@@ -203,7 +203,7 @@ export default function RankingsClient({ rankings, activeSport, sportMeta }: Pro
                         ? 'text-white shadow-md scale-105'
                         : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400 hover:shadow-sm'
                     }`}
-                    style={isSelected ? { backgroundColor: sportColor } : {}}
+                    style={isSelected ? { backgroundColor: 'var(--psp-gold, #f0a500)', color: 'var(--psp-navy, #0a1628)' } : {}}
                   >
                     <div className="flex flex-col items-center gap-0.5">
                       <span className="font-bold">{week}</span>

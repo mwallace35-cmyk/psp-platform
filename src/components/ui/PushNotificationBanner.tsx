@@ -14,7 +14,7 @@ export default function PushNotificationBanner({ topics = ['game_results', 'recr
 
   useEffect(() => {
     if (!('Notification' in window)) return;
-    if (localStorage.getItem('psp_notif_dismissed')) return;
+    if (localStorage.getItem('newsletter_dismissed') || localStorage.getItem('psp_notif_dismissed')) return;
     const cur = Notification.permission as Permission;
     setPermission(cur);
     if (cur === 'default') {
@@ -26,6 +26,7 @@ export default function PushNotificationBanner({ topics = ['game_results', 'recr
 
   const handleDismiss = () => {
     setVisible(false);
+    localStorage.setItem('newsletter_dismissed', 'true');
     localStorage.setItem('psp_notif_dismissed', '1');
     onDismiss?.();
   };
