@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getFilteredRecords, getRecordCount, type RecordFilter, type RecordWithDetails } from "@/lib/data/records";
+import { formatCategoryLabel } from "@/lib/utils/format-category";
 import { SortableTable } from "@/components/ui";
 import styles from "@/app/homepage.module.css";
 
@@ -93,8 +94,8 @@ export default function RecordsExplorerView({
   // Transform records for table
   const tableData = records.map((record, idx) => ({
     rank: ((currentPage - 1) * recordsPerPage + idx + 1).toString(),
-    category: record.category,
-    record_value: `${record.record_number || record.record_value || "N/A"}`,
+    category: formatCategoryLabel(record.category),
+    record_value: record.record_value || (record.record_number != null ? record.record_number.toLocaleString() : "N/A"),
     holder: record.player_name ? (
       <Link
         href={`/${record.sport_id || "football"}/players/${record.player_slug}`}
@@ -141,7 +142,7 @@ export default function RecordsExplorerView({
               <option value="">All Categories</option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
-                  {cat}
+                  {formatCategoryLabel(cat)}
                 </option>
               ))}
             </select>

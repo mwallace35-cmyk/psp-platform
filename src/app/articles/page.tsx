@@ -110,7 +110,11 @@ export default async function ArticlesPage({
     query = query.eq('sport_id', selectedSport);
   }
 
-  const { data: articles, count } = await query;
+  const { data: articles, count, error: articlesError } = await query;
+
+  if (articlesError) {
+    console.error('[PSP] Articles page query failed:', articlesError.message);
+  }
 
   const totalPages = Math.ceil((count || 0) / ARTICLES_PER_PAGE);
 
@@ -181,9 +185,20 @@ export default async function ArticlesPage({
       <div className="max-w-7xl mx-auto px-4 py-8">
         {!articles || articles.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-4xl mb-4">📰</div>
-            <p className="text-gray-400 text-lg mb-2">No articles found.</p>
-            {selectedSport !== 'all' && (
+            <div className="text-4xl mb-4">{articlesError ? '\u26A0\uFE0F' : '\uD83D\uDCF0'}</div>
+            {articlesError ? (
+              <>
+                <p className="text-gray-400 text-lg mb-2">
+                  Articles could not be loaded right now.
+                </p>
+                <p className="text-gray-500 text-sm mb-4">
+                  Please try again in a few moments.
+                </p>
+              </>
+            ) : (
+              <p className="text-gray-400 text-lg mb-2">No articles found.</p>
+            )}
+            {selectedSport !== 'all' && !articlesError && (
               <Link href="/articles" className="text-gold hover:text-gold/80 text-sm font-medium">
                 View all articles &rarr;
               </Link>

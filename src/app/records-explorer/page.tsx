@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { getRecordCount, getRecordStats, getRecordCategories, VALID_SPORTS } from "@/lib/data";
+import { formatCategoryLabel } from "@/lib/utils/format-category";
 import RecordsExplorerView from "./RecordsExplorerView";
 
 export const revalidate = 3600; // 1 hour
@@ -63,7 +64,7 @@ export default async function RecordsExplorerPage() {
             <div className="p-4 rounded-lg border" style={{ borderColor: "var(--psp-gold)" }}>
               <p className="text-sm text-gray-600 mb-1">Most Common Category</p>
               <p className="text-xl font-bold" style={{ color: "var(--psp-navy)" }}>
-                {recordStats.most_common_category}
+                {formatCategoryLabel(recordStats.most_common_category)}
               </p>
             </div>
 

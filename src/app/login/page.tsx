@@ -100,7 +100,7 @@ function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="filter-input w-full min-h-[44px]"
-          placeholder="mike@phillysportspack.com"
+          placeholder="you@email.com"
           required
           aria-required="true"
           aria-invalid={error ? 'true' : 'false'}
@@ -156,8 +156,8 @@ export default function LoginPage() {
       style={{ background: "var(--psp-navy)" }}
     >
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="psp-h1 text-white">PSP Admin</h1>
+        <div className="text-center mb-4">
+          <h1 className="psp-h1 text-white">Sign In</h1>
           <p style={{ color: "var(--psp-gold)" }}>PhillySportsPack.com</p>
         </div>
 

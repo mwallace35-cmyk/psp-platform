@@ -514,7 +514,7 @@ export default function CityAllStarClient({
               className="psp-h2"
               style={{ color: "#fff", marginBottom: "1rem" }}
             >
-              Coming Soon
+              Inductee Data Being Compiled
             </h2>
             <p
               style={{
@@ -522,12 +522,44 @@ export default function CityAllStarClient({
                 fontSize: "1rem",
                 color: "#94a3b8",
                 lineHeight: 1.7,
+                marginBottom: "1.5rem",
               }}
             >
-              We&rsquo;re building the City All Star Chapter inductee database.
-              Check back soon for the complete roster of athlete inductees from
-              1992 to present.
+              City All Star Chapter inductee data is being compiled. Check back
+              soon for the complete roster of athlete inductees from 1992 to
+              present.
             </p>
+            <Link
+              href="/hof"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.375rem",
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "0.95rem",
+                fontWeight: 700,
+                color: "var(--psp-gold)",
+                textDecoration: "none",
+                padding: "0.625rem 1.25rem",
+                borderRadius: "var(--radius-md, 8px)",
+                border: "1px solid rgba(240, 165, 0, 0.3)",
+                transition: "background 0.2s ease",
+              }}
+            >
+              Browse All Halls of Fame
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </Link>
           </div>
         )}
       </section>

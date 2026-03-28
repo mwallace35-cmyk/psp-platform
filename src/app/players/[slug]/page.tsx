@@ -296,10 +296,6 @@ export default async function PlayerPage({ params }: PageProps) {
         )}
       </div>
 
-      {school && (
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <Link href={`/schools/${school.slug}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: navy, fontWeight: 600, textDecoration: 'none', padding: '0.75rem 1.5rem', border: `2px solid ${navy}`, borderRadius: '8px', fontSize: '0.95rem' }}>
-
       {/* Game Log */}
       {gameLog.length > 0 && (
         <PlayerGameLog gameLog={gameLog} playerSchoolId={player.primary_school_id ?? null} />
@@ -314,7 +310,10 @@ export default async function PlayerPage({ params }: PageProps) {
       {/* Awards & Honors */}
       <AwardsHonors playerId={player.id} />
 
-            ← All {school.name} Athletes
+      {school && (
+        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <Link href={`/schools/${school.slug}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: navy, fontWeight: 600, textDecoration: 'none', padding: '0.75rem 1.5rem', border: `2px solid ${navy}`, borderRadius: '8px', fontSize: '0.95rem' }}>
+            &larr; All {school.name} Athletes
           </Link>
         </div>
       )}

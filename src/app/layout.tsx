@@ -13,6 +13,7 @@ import OnboardingWrapper from "@/components/onboarding/OnboardingWrapper";
 import { Toaster } from "sonner";
 import "./globals.css";
 import "./type-scale.css";
+import "./mobile-nav-spacer.css";
 
 const bebasNeue = Bebas_Neue({
   weight: "400",
@@ -151,7 +152,7 @@ gtag('config', '${gaId}');
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <Header />
           <ScoreTicker />
-          <main id="main-content" style={{ flex: 1, paddingBottom: "80px" }} className="md:pb-0">
+          <main id="main-content" style={{ flex: 1 }}>
             {children}
           </main>
           <Footer />

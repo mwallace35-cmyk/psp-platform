@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+// notFound no longer used — empty state UI shown instead
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
@@ -121,12 +121,10 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
 
   const topRivalries = await getTopRivalries(sport, 12);
 
-  if (!topRivalries || topRivalries.length === 0) {
-    notFound();
-  }
+  const hasRivalries = topRivalries && topRivalries.length > 0;
 
   // Get recent games for top rivalry
-  const topRivalry = topRivalries[0];
+  const topRivalry = hasRivalries ? topRivalries[0] : null;
   const recentGames = topRivalry ? await getRivalryGames(topRivalry.school1_id, topRivalry.school2_id, sport, 5) : [];
 
   const jsonLdItems = [
@@ -160,6 +158,15 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 py-8">
+        {!hasRivalries ? (
+          <div className="rounded-lg border border-gray-700 bg-[var(--psp-navy-mid)] p-12 text-center">
+            <div className="text-4xl mb-4">&#x1F3C8;</div>
+            <h2 className="text-xl font-bold text-white mb-2">Coming Soon</h2>
+            <p className="text-gray-300">
+              Rivalry data is being compiled for {meta.name.toLowerCase()}. Check back soon.
+            </p>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Featured Rivalry */}
           {topRivalry && (
@@ -231,6 +238,7 @@ export default async function RivalriesPage({ params }: { params: Promise<PagePa
             </div>
           </div>
         </div>
+        )}
         </div>
       </div>
     </>

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { createStaticClient } from '@/lib/supabase/static';
 import { captureError } from '@/lib/error-tracking';
 import { Breadcrumb } from '@/components/ui';
@@ -45,6 +46,7 @@ const CORE_LEAGUES = [
 export default async function SchoolsPage() {
   let schools: SchoolData[] = [];
   let risingPrograms: { id: number; slug: string; name: string; league: string; recentTitles: number }[] = [];
+  let fetchFailed = false;
 
   try {
     const supabase = createStaticClient();
@@ -58,7 +60,8 @@ export default async function SchoolsPage() {
 
     if (error) {
       captureError(error, { function: 'schools_page', context: 'schools_fetch' });
-      console.warn('[PSP] Schools directory fetch failed:', error.message);
+      console.error('[PSP] Schools directory fetch failed:', error.message);
+      fetchFailed = true;
     } else if (data && Array.isArray(data)) {
       schools = data.map((row: any) => {
         const colors = row.colors && typeof row.colors === 'object' && 'primary' in row.colors
@@ -114,6 +117,7 @@ export default async function SchoolsPage() {
     }
   } catch (error) {
     captureError(error, { function: 'SchoolsPage', context: 'schools_directory' });
+    fetchFailed = true;
   }
 
   const leagues = CORE_LEAGUES;
@@ -150,18 +154,43 @@ export default async function SchoolsPage() {
       player_count: s.player_count,
     }));
 
+  if (fetchFailed && schools.length === 0) {
+    return (
+      <>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
+          <Breadcrumb items={[{ label: 'Schools' }]} />
+        </div>
+        <div style={{ maxWidth: 720, margin: '0 auto', padding: '4rem 1rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{'\u26A0\uFE0F'}</div>
+          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.5rem', color: 'var(--psp-navy)', marginBottom: '0.75rem' }}>
+            Unable to load school directory
+          </h2>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '1rem', color: '#64748b', lineHeight: 1.6 }}>
+            The school directory could not be loaded right now. Please try refreshing the page.
+          </p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
         <Breadcrumb items={[{ label: 'Schools' }]} />
       </div>
-      <SchoolsDirectory
-        schools={schools}
-        leagues={leagues}
-        risingPrograms={risingPrograms}
-        aggregateStats={aggregateStats}
-        topSchools={topSchools}
-      />
+      <Suspense fallback={
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '4rem 1rem', textAlign: 'center' }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", color: '#94a3b8' }}>Loading school directory...</p>
+        </div>
+      }>
+        <SchoolsDirectory
+          schools={schools}
+          leagues={leagues}
+          risingPrograms={risingPrograms}
+          aggregateStats={aggregateStats}
+          topSchools={topSchools}
+        />
+      </Suspense>
     </>
   );
 }

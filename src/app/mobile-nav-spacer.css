@@ -1,0 +1,10 @@
+/* Mobile bottom nav spacer — 80px matches MobileBottomNav fixed height.
+   On md+ the nav is display:none so no padding needed. */
+#main-content {
+  padding-bottom: 80px;
+}
+@media (min-width: 768px) {
+  #main-content {
+    padding-bottom: 0;
+  }
+}
