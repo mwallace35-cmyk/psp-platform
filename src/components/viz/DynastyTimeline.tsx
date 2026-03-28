@@ -100,24 +100,30 @@ function DynastyTimeline({ schoolName, seasons, sport }: DynastyTimelineProps) {
     return eraGroups;
   }, [seasons]);
 
-  const timelineWidth = 100;
+  const svgWidth = Math.max(500, seasons.length * 16);
+  const timelineWidth = svgWidth;
   const segmentWidth = timelineWidth / seasons.length;
+
+  // Determine year range for subtitle
+  const yearRange = seasons.length > 0
+    ? `${seasons[0].year}–${seasons[seasons.length - 1].year}`
+    : '';
 
   return (
     <div className="w-full bg-white rounded-lg border border-gray-200 p-4">
       <div className="mb-4">
         <h3 className="text-lg font-bold text-navy">{schoolName} Dynasty Timeline</h3>
-        <p className="text-sm text-gray-400">Win percentage by season (2000–Present)</p>
+        <p className="text-sm text-gray-400">Win percentage by season ({yearRange})</p>
       </div>
 
       {/* Main timeline SVG */}
       <div className="overflow-x-auto mb-6 pb-2">
         <svg
-          width={Math.max(400, seasons.length * 12)}
-          height="140"
-          viewBox={`0 0 ${Math.max(400, seasons.length * 12)} 140`}
+          width="100%"
+          height="160"
+          viewBox={`0 0 ${svgWidth} 160`}
           className="font-sans"
-          preserveAspectRatio="xMinYMid meet"
+          preserveAspectRatio="xMidYMid meet"
           role="img"
           aria-label="Dynasty timeline showing school's win-loss record by season"
         >
@@ -218,16 +224,17 @@ function DynastyTimeline({ schoolName, seasons, sport }: DynastyTimelineProps) {
           {/* X-axis */}
           <line x1="0" y1="100" x2={timelineWidth} y2="100" stroke="#d1d5db" strokeWidth="1" />
 
-          {/* Year labels (show every 5 years) */}
+          {/* Year labels — adaptive spacing based on season count */}
           {seasons.map((season, idx) => {
-            if (idx % 5 !== 0) return null;
+            const step = seasons.length > 30 ? 10 : seasons.length > 15 ? 5 : 3;
+            if (idx % step !== 0 && idx !== seasons.length - 1) return null;
             const x = idx * segmentWidth + segmentWidth / 2;
             return (
               <text
                 key={`label-${season.year}`}
                 x={x}
-                y="115"
-                fontSize="10"
+                y="120"
+                fontSize="11"
                 textAnchor="middle"
                 fill="#6b7280"
               >
@@ -260,37 +267,41 @@ function DynastyTimeline({ schoolName, seasons, sport }: DynastyTimelineProps) {
         </div>
       </div>
 
-      {/* Era summary table */}
-      <div className="border-t border-gray-200 pt-4">
-        <h4 className="font-semibold text-gray-900 mb-3 text-sm">Coaching Eras</h4>
-        <div className="space-y-2">
-          {eras.map((era, idx) => {
-            const totalWins = era.seasons.reduce((sum, s) => sum + s.wins, 0);
-            const totalLosses = era.seasons.reduce((sum, s) => sum + s.losses, 0);
-            const eraWinPct = getWinPercentage(totalWins, totalLosses);
+      {/* Era summary table — only show if at least one coach is known */}
+      {eras.some((era) => era.coach && era.coach !== 'Unknown Coach') && (
+        <div className="border-t border-gray-200 pt-4">
+          <h4 className="font-semibold text-gray-900 mb-3 text-sm">Coaching Eras</h4>
+          <div className="space-y-2">
+            {eras
+              .filter((era) => era.coach && era.coach !== 'Unknown Coach')
+              .map((era, idx) => {
+                const totalWins = era.seasons.reduce((sum, s) => sum + s.wins, 0);
+                const totalLosses = era.seasons.reduce((sum, s) => sum + s.losses, 0);
+                const eraWinPct = getWinPercentage(totalWins, totalLosses);
 
-            return (
-              <div
-                key={`era-summary-${idx}`}
-                className="flex justify-between items-center p-2 bg-gray-50 rounded text-sm"
-              >
-                <div>
-                  <p className="font-semibold text-gray-900">{era.coach || 'Unknown Coach'}</p>
-                  <p className="text-xs text-gray-400">
-                    {era.startYear}–{era.endYear} ({era.seasons.length} seasons)
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-navy">
-                    {totalWins}-{totalLosses}
-                  </p>
-                  <p className="text-xs text-gray-400">{Math.round(eraWinPct * 100)}%</p>
-                </div>
-              </div>
-            );
-          })}
+                return (
+                  <div
+                    key={`era-summary-${idx}`}
+                    className="flex justify-between items-center p-2 bg-gray-50 rounded text-sm"
+                  >
+                    <div>
+                      <p className="font-semibold text-gray-900">{era.coach}</p>
+                      <p className="text-xs text-gray-400">
+                        {era.startYear}–{era.endYear} ({era.seasons.length} seasons)
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-navy">
+                        {totalWins}-{totalLosses}
+                      </p>
+                      <p className="text-xs text-gray-400">{Math.round(eraWinPct * 100)}%</p>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

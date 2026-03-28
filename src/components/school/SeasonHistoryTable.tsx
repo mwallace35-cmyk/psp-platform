@@ -43,6 +43,10 @@ export default function SeasonHistoryTable({
   const hasMore = sorted.length > INITIAL_COUNT;
   const visible = expanded ? sorted : sorted.slice(0, INITIAL_COUNT);
 
+  // Hide columns that are entirely empty across all seasons
+  const hasAnyPlayoff = teamSeasons.some((ts) => ts.playoff_result);
+  const hasAnyCoach = teamSeasons.some((ts) => ts.coaches);
+
   return (
     <div>
       <div className="overflow-x-auto">
@@ -55,8 +59,8 @@ export default function SeasonHistoryTable({
               <th className="text-center">T</th>
               <th className="text-center">PF</th>
               <th className="text-center">PA</th>
-              <th>Playoff</th>
-              <th>Coach</th>
+              {hasAnyPlayoff && <th>Playoff</th>}
+              {hasAnyCoach && <th>Coach</th>}
             </tr>
           </thead>
           <tbody>
@@ -91,20 +95,24 @@ export default function SeasonHistoryTable({
                   <td className="text-center">{ts.ties ?? "—"}</td>
                   <td className="text-center">{ts.points_for ?? "—"}</td>
                   <td className="text-center">{ts.points_against ?? "—"}</td>
-                  <td className="text-xs">{ts.playoff_result || "—"}</td>
-                  <td className="text-xs">
-                    {ts.coaches ? (
-                      <Link
-                        href={`/${sport}/coaches/${ts.coaches.slug}`}
-                        className="hover:underline"
-                        style={{ color: "var(--psp-gold)" }}
-                      >
-                        {ts.coaches.name}
-                      </Link>
-                    ) : (
-                      "—"
-                    )}
-                  </td>
+                  {hasAnyPlayoff && (
+                    <td className="text-xs">{ts.playoff_result || "—"}</td>
+                  )}
+                  {hasAnyCoach && (
+                    <td className="text-xs">
+                      {ts.coaches ? (
+                        <Link
+                          href={`/${sport}/coaches/${ts.coaches.slug}`}
+                          className="hover:underline"
+                          style={{ color: "var(--psp-gold)" }}
+                        >
+                          {ts.coaches.name}
+                        </Link>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                  )}
                 </tr>
               );
             })}

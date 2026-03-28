@@ -13,6 +13,7 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import TrophyCase from "@/components/school/TrophyCase";
 import SeasonHistoryTable from "@/components/school/SeasonHistoryTable";
+import OffenseDefenseSummary from "@/components/school/OffenseDefenseSummary";
 import WinLossTrendChart from "@/components/charts/WinLossTrendChartLazy";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
@@ -298,6 +299,20 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                 unit="%"
                 height={250}
               />
+            )}
+
+            {/* Offense vs Defense Summary */}
+            {teamSeasons.length > 0 && (
+              <div>
+                <h2 className="psp-h2 text-[var(--psp-navy)] mb-4">
+                  Offense vs Defense
+                </h2>
+                <OffenseDefenseSummary
+                  teamSeasons={teamSeasons}
+                  sportColor={meta.color}
+                  sport={sport}
+                />
+              </div>
             )}
 
             {/* Championships — Trophy Case */}

@@ -196,22 +196,23 @@ function TrendChart({
       </div>
 
       {/* X-axis labels */}
-      <div className="mt-3 flex justify-between text-xs text-gray-400">
+      <div className="mt-3 relative text-xs text-gray-400" style={{ height: '1.5em' }}>
         {points.map((p, i) => {
           // Show every nth label to avoid crowding
-          const showLabel = data.length <= 6 || i % Math.ceil(data.length / 6) === 0 || i === data.length - 1;
+          const step = Math.ceil(data.length / 6);
+          const showLabel = data.length <= 6 || i % step === 0 || i === data.length - 1;
+          if (!showLabel) return null;
           return (
-            <div
+            <span
               key={`label-${i}`}
+              className="absolute whitespace-nowrap"
               style={{
-                position: 'relative',
-                left: `${p.x - padding}%`,
+                left: `${p.x}%`,
                 transform: 'translateX(-50%)',
-                visibility: showLabel ? 'visible' : 'hidden',
               }}
             >
               {p.label}
-            </div>
+            </span>
           );
         })}
       </div>
