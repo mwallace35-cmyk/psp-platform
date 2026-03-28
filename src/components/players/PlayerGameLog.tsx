@@ -98,7 +98,7 @@ function detectFootballColumns(games: PlayerGameLogEntry[]) {
     if (g.rec_catches != null && g.rec_catches > 0) hasRec = true;
     if (g.rec_yards != null && g.rec_yards > 0) hasRec = true;
     if (g.points != null && g.points > 0) hasPts = true;
-    if (sj.interceptions != null && sj.interceptions > 0) hasInt = true;
+    if ((sj.def_interceptions != null && sj.def_interceptions > 0) || (sj.interceptions != null && sj.interceptions > 0)) hasInt = true;
     if (sj.pass_tds != null || sj.pass_td != null) hasPassTd = true;
     if (sj.rush_td != null || sj.rush_tds != null) hasRushTd = true;
   }
@@ -179,7 +179,7 @@ const FootballTable = React.memo(function FootballTable({
                 {cols.hasPass && <td style={tdStyleCenter}>{compAtt}</td>}
                 {cols.hasPassYds && <td style={tdStyleCenter}>{stat(entry.pass_yards ?? sj.pass_yards)}</td>}
                 {cols.hasPassTd && <td style={tdStyleCenter}>{stat(sj.pass_tds ?? sj.pass_td)}</td>}
-                {cols.hasInt && <td style={tdStyleCenter}>{stat(sj.interceptions)}</td>}
+                {cols.hasInt && <td style={tdStyleCenter}>{stat(sj.def_interceptions ?? sj.interceptions)}</td>}
                 {cols.hasRush && <td style={tdStyleCenter}>{stat(entry.rush_carries)}</td>}
                 {cols.hasRush && <td style={tdStyleCenter}>{stat(entry.rush_yards)}</td>}
                 {cols.hasRushTd && <td style={tdStyleCenter}>{stat(sj.rush_td ?? sj.rush_tds)}</td>}

@@ -258,7 +258,7 @@ function FootballBoxScore({
   const hasRushTd = allRushers.some((s) => getTD(s, "rush") != null);
   const hasPassTd = allPassers.some((s) => getTD(s, "pass") != null);
   const hasPassAttempts = allPassers.some((s) => getJson(s, "pass_attempts") != null);
-  const hasINT = allPassers.some((s) => getJson(s, "interceptions") != null);
+  const hasINT = allPassers.some((s) => getJson(s, "pass_int") != null || getJson(s, "pass_interceptions") != null);
   const hasRecTd = allReceivers.some((s) => getTD(s, "rec") != null);
 
   return (
@@ -340,7 +340,7 @@ function FootballBoxScore({
         renderRow={(s) => {
           const att = getJson(s, "pass_attempts");
           const td = getTD(s, "pass");
-          const int = getJson(s, "interceptions");
+          const int = getJson(s, "pass_int") ?? getJson(s, "pass_interceptions");
           return (
             <>
               <td className="px-4 py-2"><PlayerName s={s} /></td>
