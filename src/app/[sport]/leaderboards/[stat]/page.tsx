@@ -85,6 +85,21 @@ const FOOTBALL_STATS: StatConfig[] = [
     careerCols: ["career_total_td", "career_points", "seasons_played"],
     hasCareerData: true,
   },
+  {
+    key: "defense", label: "Defense",
+    cols: ["tackles", "sacks", "interceptions", "forced_fumbles", "fumble_recoveries"],
+    hasData: true,
+  },
+  {
+    key: "interceptions", label: "Interceptions",
+    cols: ["interceptions", "tackles", "fumble_recoveries"],
+    hasData: true,
+  },
+  {
+    key: "returns", label: "Returns",
+    cols: ["kick_ret_yards", "punt_ret_yards"],
+    hasData: true,
+  },
 ];
 
 const BASKETBALL_STATS: StatConfig[] = [
@@ -100,8 +115,13 @@ const BASKETBALL_STATS: StatConfig[] = [
     careerCols: ["career_ppg", "career_points", "career_games", "seasons_played"],
     hasData: true, hasCareerData: true,
   },
-  { key: "rebounds", label: "Rebounds", cols: ["rebounds", "rpg", "games_played"], hasData: false },
-  { key: "assists", label: "Assists", cols: ["assists", "apg", "games_played"], hasData: false },
+  { key: "rebounds", label: "Rebounds", cols: ["rebounds", "rpg", "games_played"], hasData: true },
+  { key: "assists", label: "Assists", cols: ["assists", "apg", "games_played"], hasData: true },
+  { key: "steals", label: "Steals", cols: ["steals", "spg", "games_played"], hasData: true },
+  { key: "blocks", label: "Blocks", cols: ["blocks", "bpg", "games_played"], hasData: true },
+  { key: "shooting", label: "Shooting", cols: ["fg_pct", "fgm", "fga", "games_played"], hasData: true },
+  { key: "three-point", label: "3-Point", cols: ["three_pct", "three_pm", "three_pa", "games_played"], hasData: true },
+  { key: "free-throws", label: "Free Throws", cols: ["ft_pct", "ftm", "fta", "games_played"], hasData: true },
 ];
 
 const BASEBALL_STATS: StatConfig[] = [
@@ -169,11 +189,24 @@ interface TableRow {
 }
 
 const COL_LABELS: Record<string, string> = {
+  // Football — Offense
   rush_yards: "Rush Yds", rush_carries: "Carries", rush_td: "Rush TD", rush_ypc: "YPC",
   pass_yards: "Pass Yds", pass_comp: "Comp", pass_att: "Att", pass_td: "Pass TD", pass_int: "INT",
   rec_yards: "Rec Yds", receptions: "Rec", rec_td: "Rec TD",
   total_td: "Total TD", points: "Points",
-  ppg: "PPG", games_played: "GP", rebounds: "REB", rpg: "RPG", assists: "AST", apg: "APG",
+  // Football — Defense
+  tackles: "Tackles", sacks: "Sacks", interceptions: "INT",
+  forced_fumbles: "FF", fumble_recoveries: "FR",
+  // Football — Returns
+  kick_ret_yards: "KR Yds", punt_ret_yards: "PR Yds",
+  // Basketball — Core
+  ppg: "PPG", games_played: "GP",
+  rebounds: "REB", rpg: "RPG", assists: "AST", apg: "APG",
+  steals: "STL", spg: "SPG", blocks: "BLK", bpg: "BPG",
+  // Basketball — Shooting
+  fg_pct: "FG%", fgm: "FGM", fga: "FGA",
+  three_pct: "3PT%", three_pm: "3PM", three_pa: "3PA",
+  ft_pct: "FT%", ftm: "FTM", fta: "FTA",
   // Baseball
   avg: "AVG", hits: "H", home_runs: "HR", rbi: "RBI", at_bats: "AB",
   era: "ERA", wins: "W", strikeouts: "K", saves: "SV", innings_pitched: "IP",

@@ -130,8 +130,10 @@ export function FootballStatsTable({ data, sport }: { data: SchoolStatProduction
     { key: "total_yards", label: "Total Yds", align: "right", sortable: true, render: (v) => {
       return <span className="font-semibold">{formatNum(v)}</span>;
     }},
-    { key: "total_td", label: "Total TD", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
-    { key: "total_points", label: "Points", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+    { key: "total_td", label: "Total TD", align: "right", sortable: true, render: (v) => formatNum(v) },
+    { key: "total_tackles", label: "Tackles", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+    { key: "total_sacks", label: "Sacks", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+    { key: "total_interceptions", label: "INT", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
   ];
 
   const tableData = data.map((row, idx) => ({
@@ -161,10 +163,14 @@ export function BasketballStatsTable({ data, sport }: { data: SchoolStatProducti
     },
     { key: "total_players", label: "Players", align: "right", sortable: true, render: (v) => formatNum(v) },
     {
-      key: "total_points", label: "Total Points", align: "right", sortable: true,
+      key: "total_points", label: "Points", align: "right", sortable: true,
       render: (v) => <span className="font-semibold">{formatNum(v)}</span>,
     },
-    { key: "total_games", label: "Games", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+    { key: "total_rebounds", label: "REB", align: "right", sortable: true, render: (v) => formatNum(v) },
+    { key: "total_assists", label: "AST", align: "right", sortable: true, render: (v) => formatNum(v) },
+    { key: "total_steals", label: "STL", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+    { key: "total_blocks", label: "BLK", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+    { key: "total_games", label: "GP", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
   ];
 
   const tableData = data.map((row, idx) => ({

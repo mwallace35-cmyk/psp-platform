@@ -1343,6 +1343,9 @@ const STAT_TABLE_MAP: Record<string, { table: string; columns: Record<string, st
       passing: "pass_yards",
       receiving: "rec_yards",
       scoring: "total_td",
+      defense: "tackles",
+      interceptions: "interceptions",
+      returns: "kick_ret_yards",
     },
   },
   basketball: {
@@ -1352,6 +1355,11 @@ const STAT_TABLE_MAP: Record<string, { table: string; columns: Record<string, st
       ppg: "ppg",
       rebounds: "rebounds",
       assists: "assists",
+      steals: "steals",
+      blocks: "blocks",
+      shooting: "fg_pct",
+      "three-point": "three_pct",
+      "free-throws": "ft_pct",
     },
   },
 };

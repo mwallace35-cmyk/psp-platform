@@ -664,17 +664,31 @@ export async function getDiscontinuedSchools(sportId: string): Promise<Discontin
 /**
  * Get leaderboard entries (cross-sport abstraction)
  */
-export type StatCategory = "rushing" | "passing" | "receiving" | "scoring" | "points" | "ppg" | "rebounds" | "assists" | "batting_avg" | "home_runs" | "era";
+export type StatCategory =
+  | "rushing" | "passing" | "receiving" | "scoring" | "defense" | "interceptions" | "returns"
+  | "points" | "ppg" | "rebounds" | "assists" | "steals" | "blocks" | "shooting" | "three-point" | "free-throws"
+  | "batting_avg" | "home_runs" | "era";
 
 const STAT_TABLE_MAP: Record<string, { table: string; column: string; sport: string }> = {
+  // Football
   rushing: { table: "football_player_seasons", column: "rush_yards", sport: "football" },
   passing: { table: "football_player_seasons", column: "pass_yards", sport: "football" },
   receiving: { table: "football_player_seasons", column: "rec_yards", sport: "football" },
   scoring: { table: "football_player_seasons", column: "total_td", sport: "football" },
+  defense: { table: "football_player_seasons", column: "tackles", sport: "football" },
+  interceptions: { table: "football_player_seasons", column: "interceptions", sport: "football" },
+  returns: { table: "football_player_seasons", column: "kick_ret_yards", sport: "football" },
+  // Basketball
   points: { table: "basketball_player_seasons", column: "points", sport: "basketball" },
   ppg: { table: "basketball_player_seasons", column: "ppg", sport: "basketball" },
   rebounds: { table: "basketball_player_seasons", column: "rebounds", sport: "basketball" },
   assists: { table: "basketball_player_seasons", column: "assists", sport: "basketball" },
+  steals: { table: "basketball_player_seasons", column: "steals", sport: "basketball" },
+  blocks: { table: "basketball_player_seasons", column: "blocks", sport: "basketball" },
+  shooting: { table: "basketball_player_seasons", column: "fg_pct", sport: "basketball" },
+  "three-point": { table: "basketball_player_seasons", column: "three_pct", sport: "basketball" },
+  "free-throws": { table: "basketball_player_seasons", column: "ft_pct", sport: "basketball" },
+  // Baseball
   batting_avg: { table: "baseball_player_seasons", column: "batting_avg", sport: "baseball" },
   home_runs: { table: "baseball_player_seasons", column: "home_runs", sport: "baseball" },
   era: { table: "baseball_player_seasons", column: "era", sport: "baseball" },
@@ -902,6 +916,9 @@ export const getFootballLeaders = cache(async (stat: string, limit = 50) => {
           if (stat === "passing") orderCol = "pass_yards";
           else if (stat === "receiving") orderCol = "rec_yards";
           else if (stat === "scoring" || stat === "touchdowns") orderCol = "total_td";
+          else if (stat === "defense") orderCol = "tackles";
+          else if (stat === "interceptions") orderCol = "interceptions";
+          else if (stat === "returns") orderCol = "kick_ret_yards";
 
           // Get current season to filter leaders to this year only
           const { data: currentSeason } = await supabase
@@ -980,6 +997,11 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
           if (stat === "ppg") orderCol = "ppg";
           else if (stat === "rebounds") orderCol = "rebounds";
           else if (stat === "assists") orderCol = "assists";
+          else if (stat === "steals") orderCol = "steals";
+          else if (stat === "blocks") orderCol = "blocks";
+          else if (stat === "shooting") orderCol = "fg_pct";
+          else if (stat === "three-point") orderCol = "three_pct";
+          else if (stat === "free-throws") orderCol = "ft_pct";
 
           // Get current season to filter leaders to this year only
           const { data: currentSeason } = await supabase
@@ -995,6 +1017,15 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
             .gt(orderCol, 0)
             .not("games_played", "is", null)
             .neq("season_id", 264);
+
+          // Minimum attempt thresholds for percentage stats to avoid 1/1 = 100%
+          if (stat === "shooting") {
+            bbQuery = bbQuery.not("fga", "is", null).gte("fga", 50);
+          } else if (stat === "three-point") {
+            bbQuery = bbQuery.not("three_pa", "is", null).gte("three_pa", 20);
+          } else if (stat === "free-throws") {
+            bbQuery = bbQuery.not("fta", "is", null).gte("fta", 25);
+          }
 
           if (currentSeason?.id) {
             bbQuery = bbQuery.eq("season_id", currentSeason.id);
@@ -1223,39 +1254,48 @@ export async function getSchoolStatProduction(sport: string, orderBy: string = "
       const supabase = await createClient();
 
       if (sport === "football") {
-        // Use football_career_leaders view for aggregation
+        // Aggregate directly from season table for reliability
         const { data, error } = await supabase
-          .from("football_career_leaders")
-          .select("school_id, school_name, school_slug, career_rush_yards, career_pass_yards, career_rec_yards, career_total_td, career_points, career_total_yards");
+          .from("football_player_seasons")
+          .select("school_id, rush_yards, pass_yards, rec_yards, total_td, points, tackles, sacks, interceptions, schools!inner(name, slug)");
 
-        if (error) { console.warn("[PSP] fb career leaders query failed:", error.message); return []; }
+        if (error) { console.warn("[PSP] fb stat production query failed:", error.message); return []; }
 
-        // Aggregate by school
         const schools = new Map<number, SchoolStatProductionRow>();
         for (const row of (data ?? []) as any[]) {
           const sid = row.school_id as number;
+          const school = Array.isArray(row.schools) ? row.schools[0] : row.schools;
           const existing = schools.get(sid);
+          const rushY = row.rush_yards || 0;
+          const passY = row.pass_yards || 0;
+          const recY = row.rec_yards || 0;
           if (existing) {
             existing.total_players = (existing.total_players || 0) + 1;
-            existing.total_rush_yards = ((existing.total_rush_yards as number) || 0) + (row.career_rush_yards || 0);
-            existing.total_pass_yards = ((existing.total_pass_yards as number) || 0) + (row.career_pass_yards || 0);
-            existing.total_rec_yards = ((existing.total_rec_yards as number) || 0) + (row.career_rec_yards || 0);
-            existing.total_td = ((existing.total_td as number) || 0) + (row.career_total_td || 0);
-            existing.total_points = ((existing.total_points as number) || 0) + (row.career_points || 0);
-            existing.total_yards = ((existing.total_yards as number) || 0) + (row.career_total_yards || 0);
+            existing.total_rush_yards = ((existing.total_rush_yards as number) || 0) + rushY;
+            existing.total_pass_yards = ((existing.total_pass_yards as number) || 0) + passY;
+            existing.total_rec_yards = ((existing.total_rec_yards as number) || 0) + recY;
+            existing.total_td = ((existing.total_td as number) || 0) + (row.total_td || 0);
+            existing.total_points = ((existing.total_points as number) || 0) + (row.points || 0);
+            existing.total_yards = ((existing.total_yards as number) || 0) + rushY + recY;
+            existing.total_tackles = ((existing.total_tackles as number) || 0) + (row.tackles || 0);
+            existing.total_sacks = ((existing.total_sacks as number) || 0) + (row.sacks || 0);
+            existing.total_interceptions = ((existing.total_interceptions as number) || 0) + (row.interceptions || 0);
           } else {
             schools.set(sid, {
               school_id: sid,
-              school_name: row.school_name,
-              school_slug: row.school_slug,
+              school_name: school?.name || "Unknown",
+              school_slug: school?.slug || "",
               league_name: null,
               total_players: 1,
-              total_rush_yards: row.career_rush_yards || 0,
-              total_pass_yards: row.career_pass_yards || 0,
-              total_rec_yards: row.career_rec_yards || 0,
-              total_td: row.career_total_td || 0,
-              total_points: row.career_points || 0,
-              total_yards: row.career_total_yards || 0,
+              total_rush_yards: rushY,
+              total_pass_yards: passY,
+              total_rec_yards: recY,
+              total_td: row.total_td || 0,
+              total_points: row.points || 0,
+              total_yards: rushY + recY,
+              total_tackles: row.tackles || 0,
+              total_sacks: row.sacks || 0,
+              total_interceptions: row.interceptions || 0,
             });
           }
         }
@@ -1267,6 +1307,9 @@ export async function getSchoolStatProduction(sport: string, orderBy: string = "
           total_td: "total_td",
           total_points: "total_points",
           total_players: "total_players",
+          total_tackles: "total_tackles",
+          total_sacks: "total_sacks",
+          total_interceptions: "total_interceptions",
         };
         const sortKey = validOrders[orderBy] || "total_yards";
 
@@ -1275,35 +1318,58 @@ export async function getSchoolStatProduction(sport: string, orderBy: string = "
           .slice(0, cappedLimit);
 
       } else if (sport === "basketball") {
+        // Aggregate directly from season table with full stats
         const { data, error } = await supabase
-          .from("basketball_career_leaders")
-          .select("school_id, school_name, school_slug, career_points, career_games, career_ppg");
+          .from("basketball_player_seasons")
+          .select("school_id, points, rebounds, assists, steals, blocks, games_played, schools!inner(name, slug)")
+          .not("games_played", "is", null)
+          .neq("season_id", 264);
 
-        if (error) { console.warn("[PSP] bb career leaders query failed:", error.message); return []; }
+        if (error) { console.warn("[PSP] bb stat production query failed:", error.message); return []; }
 
         const schools = new Map<number, SchoolStatProductionRow>();
         for (const row of (data ?? []) as any[]) {
           const sid = row.school_id as number;
+          const school = Array.isArray(row.schools) ? row.schools[0] : row.schools;
           const existing = schools.get(sid);
           if (existing) {
             existing.total_players = (existing.total_players || 0) + 1;
-            existing.total_points = ((existing.total_points as number) || 0) + (row.career_points || 0);
-            existing.total_games = ((existing.total_games as number) || 0) + (row.career_games || 0);
+            existing.total_points = ((existing.total_points as number) || 0) + (row.points || 0);
+            existing.total_rebounds = ((existing.total_rebounds as number) || 0) + (row.rebounds || 0);
+            existing.total_assists = ((existing.total_assists as number) || 0) + (row.assists || 0);
+            existing.total_steals = ((existing.total_steals as number) || 0) + (row.steals || 0);
+            existing.total_blocks = ((existing.total_blocks as number) || 0) + (row.blocks || 0);
+            existing.total_games = ((existing.total_games as number) || 0) + (row.games_played || 0);
           } else {
             schools.set(sid, {
               school_id: sid,
-              school_name: row.school_name,
-              school_slug: row.school_slug,
+              school_name: school?.name || "Unknown",
+              school_slug: school?.slug || "",
               league_name: null,
               total_players: 1,
-              total_points: row.career_points || 0,
-              total_games: row.career_games || 0,
+              total_points: row.points || 0,
+              total_rebounds: row.rebounds || 0,
+              total_assists: row.assists || 0,
+              total_steals: row.steals || 0,
+              total_blocks: row.blocks || 0,
+              total_games: row.games_played || 0,
             });
           }
         }
 
+        const validOrders: Record<string, string> = {
+          total_points: "total_points",
+          total_rebounds: "total_rebounds",
+          total_assists: "total_assists",
+          total_steals: "total_steals",
+          total_blocks: "total_blocks",
+          total_players: "total_players",
+          total_games: "total_games",
+        };
+        const sortKey = validOrders[orderBy] || "total_points";
+
         return Array.from(schools.values())
-          .sort((a, b) => ((b.total_points as number) || 0) - ((a.total_points as number) || 0))
+          .sort((a, b) => ((b[sortKey] as number) || 0) - ((a[sortKey] as number) || 0))
           .slice(0, cappedLimit);
       }
 

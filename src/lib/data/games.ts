@@ -110,11 +110,54 @@ export const getGameBoxScore = cache(
             const stats = (data as unknown as GamePlayerStat[]) ?? [];
 
             // Supabase returns joined data as nested objects — unwrap arrays if needed
-            return stats.map(stat => {
+            const unwrapped = stats.map(stat => {
               const players = Array.isArray(stat.players) ? stat.players[0] : stat.players;
               const schools = Array.isArray(stat.schools) ? stat.schools[0] : stat.schools;
               return { ...stat, players: players ?? null, schools: schools ?? null };
             });
+
+            // Deduplicate: when multiple source_types exist for the same player+school+game,
+            // keep the row with the most data (prefer jersey_number, richer stats_json, higher points)
+            const deduped = new Map<string, GamePlayerStat>();
+            for (const row of unwrapped) {
+              const key = `${row.player_name}::${row.school_id}`;
+              const existing = deduped.get(key);
+              if (!existing) {
+                deduped.set(key, row);
+                continue;
+              }
+              // Score each row: prefer jersey_number, non-empty stats_json, linked player_id
+              const score = (r: GamePlayerStat) => {
+                let s = 0;
+                if (r.jersey_number) s += 2;
+                if (r.player_id) s += 2;
+                const json = r.stats_json as Record<string, unknown> | null;
+                if (json && Object.keys(json).length > 0) s += 3;
+                if ((r.points ?? 0) > 0) s += 1;
+                return s;
+              };
+              if (score(row) > score(existing)) {
+                // Merge jersey_number from the other row if this one lacks it
+                if (!row.jersey_number && existing.jersey_number) {
+                  row.jersey_number = existing.jersey_number;
+                }
+                if (!row.player_id && existing.player_id) {
+                  row.player_id = existing.player_id;
+                  row.players = existing.players;
+                }
+                deduped.set(key, row);
+              } else {
+                // Merge missing fields into existing winner
+                if (!existing.jersey_number && row.jersey_number) {
+                  existing.jersey_number = row.jersey_number;
+                }
+                if (!existing.player_id && row.player_id) {
+                  existing.player_id = row.player_id;
+                  existing.players = row.players;
+                }
+              }
+            }
+            return Array.from(deduped.values());
           },
           { maxRetries: 2, baseDelay: 500 }
         );
