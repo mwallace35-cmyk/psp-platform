@@ -11,6 +11,8 @@ import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
+import TrophyCase from "@/components/school/TrophyCase";
+import SeasonHistoryTable from "@/components/school/SeasonHistoryTable";
 import WinLossTrendChart from "@/components/charts/WinLossTrendChartLazy";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
@@ -298,9 +300,9 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               />
             )}
 
-                        {/* Championships */}
+            {/* Championships — Trophy Case */}
             {championships.length > 0 && (
-              <div>
+              <div id="championships">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="psp-h2 text-[var(--psp-navy)]">
                     Championships ({championships.length})
@@ -317,27 +319,7 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                     All {meta.name} Championships →
                   </Link>
                 </div>
-                <div className="space-y-2">
-                  {championships.map((c: Championship) => (
-                    <div key={c.id} className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3">
-                      <span className="text-xl">🏆</span>
-                      <div>
-                        <span className="font-medium text-sm" style={{ color: "var(--psp-navy)" }}>
-                          {c.seasons?.label}
-                        </span>
-                        <span className="text-xs ml-2" style={{ color: "var(--psp-gray-500)" }}>
-                          {c.level}{c.leagues?.name ? ` — ${c.leagues.name}` : ""}
-                        </span>
-                        {c.score && (
-                          <span className="text-xs ml-2" style={{ color: "var(--psp-gray-400)" }}>
-                            ({c.score})
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {/* Awards link */}
+                <TrophyCase championships={championships} sportColor={meta.color} />
                 <div className="mt-4">
                   <Link
                     href={`/${sport}/awards`}
@@ -383,58 +365,17 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                 <h2 className="psp-h2 text-[var(--psp-navy)] mb-4">
                   Season-by-Season Results
                 </h2>
-                <div className="overflow-x-auto">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Season</th>
-                        <th className="text-center">W</th>
-                        <th className="text-center">L</th>
-                        <th className="text-center">T</th>
-                        <th className="text-center">PF</th>
-                        <th className="text-center">PA</th>
-                        <th>Playoff</th>
-                        <th>Coach</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {teamSeasons.map((ts: TeamSeason) => {
-                        const hasChampionship = championships.some(c => c.seasons?.label === ts.seasons?.label);
-                        return (
-                        <tr key={ts.id} style={{ fontWeight: hasChampionship ? "600" : "normal" }}>
-                          <td className="font-medium">
-                            {ts.seasons?.label ? (
-                              <>
-                                {hasChampionship && <span className="mr-1.5" aria-label="Championship">🏆</span>}
-                                <Link
-                                  href={`/${sport}/teams/${slug}/${ts.seasons.label}`}
-                                  className="hover:underline"
-                                  style={{ color: "var(--psp-blue, #3b82f6)" }}
-                                >
-                                  {ts.seasons.label}
-                                </Link>
-                              </>
-                            ) : "—"}
-                          </td>
-                          <td className="text-center">{ts.wins ?? "—"}</td>
-                          <td className="text-center">{ts.losses ?? "—"}</td>
-                          <td className="text-center">{ts.ties ?? "—"}</td>
-                          <td className="text-center">{ts.points_for ?? "—"}</td>
-                          <td className="text-center">{ts.points_against ?? "—"}</td>
-                          <td className="text-xs">{ts.playoff_result || "—"}</td>
-                          <td className="text-xs">
-                            {ts.coaches ? (
-                              <Link href={`/${sport}/coaches/${ts.coaches.slug}`} className="hover:underline" style={{ color: "var(--psp-gold)" }}>
-                                {ts.coaches.name}
-                              </Link>
-                            ) : "—"}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    </tbody>
-                  </table>
-                </div>
+                <SeasonHistoryTable
+                  teamSeasons={[...teamSeasons].sort((a, b) => {
+                    const aY = parseInt(a.seasons?.label?.substring(0, 4) || "0");
+                    const bY = parseInt(b.seasons?.label?.substring(0, 4) || "0");
+                    return bY - aY;
+                  })}
+                  championships={championships}
+                  sport={sport}
+                  slug={slug}
+                  sportColor={meta.color}
+                />
               </div>
             )}
           </div>

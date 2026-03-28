@@ -299,9 +299,8 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
             `
             )
             .eq("school_id", schoolId)
-            .limit(25)
-            .is("players.deleted_at", null)
-            .order("players(name)", { ascending: true });
+            .limit(200)
+            .is("players.deleted_at", null);
 
           if (!data) return [];
 
