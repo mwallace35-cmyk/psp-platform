@@ -1083,17 +1083,17 @@ export const getLeaderboardSeasons = cache(async (sport: string): Promise<Leader
           const supabase = await createClient();
           const table = sport === "basketball" ? "basketball_player_seasons" : "football_player_seasons";
 
-          // 1. Get candidate seasons (2001+ = first year with meaningful data)
+          // 1. Get candidate seasons (2000+ covers all years with real archive data)
           const { data: candidateSeasons } = await supabase
             .from("seasons")
             .select("id, label, year_start, is_current")
-            .gte("year_start", 2001)
+            .gte("year_start", 2000)
             .order("year_start", { ascending: false });
 
           if (!candidateSeasons || candidateSeasons.length === 0) return [];
 
-          // 2. Check each season has real data (100+ rows) via parallel HEAD counts
-          const MIN_ROWS = 100;
+          // 2. Check each season has real data via parallel HEAD counts
+          const MIN_ROWS = 10;
           const checks = await Promise.all(
             candidateSeasons.map(async (s: { id: number }) => {
               const { count } = await supabase
@@ -1106,7 +1106,7 @@ export const getLeaderboardSeasons = cache(async (sport: string): Promise<Leader
 
           const validIds = new Set(checks.filter(c => c.count >= MIN_ROWS).map(c => c.id));
 
-          // 3. Only return seasons with sufficient data (hides 1-off sparse years)
+          // 3. Return seasons with real data (hides truly sparse 1-off years pre-2000)
           return candidateSeasons.filter((s: { id: number }) => validIds.has(s.id)) as LeaderboardSeason[];
         },
         { maxRetries: 2, baseDelay: 300 }
