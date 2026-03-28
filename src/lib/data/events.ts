@@ -903,7 +903,7 @@ export interface FootballLeaderRowData extends Record<string, unknown> {
  * Get football leaders by stat (rushing, passing, receiving, scoring)
  * Cached to avoid redundant database queries within the same request
  */
-export const getFootballLeaders = cache(async (stat: string, limit = 50) => {
+export const getFootballLeaders = cache(async (stat: string, limit = 50, seasonId?: number | "all") => {
   // Cap limit to prevent abuse: maximum 100 results
   const cappedLimit = Math.min(Math.max(1, limit), 100);
 
@@ -920,21 +920,27 @@ export const getFootballLeaders = cache(async (stat: string, limit = 50) => {
           else if (stat === "interceptions") orderCol = "interceptions";
           else if (stat === "returns") orderCol = "kick_ret_yards";
 
-          // Get current season to filter leaders to this year only
-          const { data: currentSeason } = await supabase
-            .from("seasons")
-            .select("id")
-            .eq("is_current", true)
-            .single();
-
           let query = supabase
             .from("football_player_seasons")
             .select("*, players(name, slug, pro_team, graduation_year, positions, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
             .gt(orderCol, 0);
 
-          if (currentSeason?.id) {
-            query = query.eq("season_id", currentSeason.id);
+          // Season filtering: "all" = all-time single-season, number = specific season, undefined = current
+          if (seasonId === "all") {
+            // No season filter — show all-time single-season leaders
+          } else if (typeof seasonId === "number") {
+            query = query.eq("season_id", seasonId);
+          } else {
+            // Default: current season
+            const { data: currentSeason } = await supabase
+              .from("seasons")
+              .select("id")
+              .eq("is_current", true)
+              .single();
+            if (currentSeason?.id) {
+              query = query.eq("season_id", currentSeason.id);
+            }
           }
 
           const { data } = await query
@@ -952,7 +958,7 @@ export const getFootballLeaders = cache(async (stat: string, limit = 50) => {
     },
     [],
     "DATA_FOOTBALL_LEADERS",
-    { stat, limit }
+    { stat, limit, seasonId }
   );
 });
 
@@ -984,7 +990,7 @@ export interface BasketballLeaderRowData extends Record<string, unknown> {
  * Get basketball leaders by stat (points, ppg, rebounds, assists)
  * Cached to avoid redundant database queries within the same request
  */
-export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
+export const getBasketballLeaders = cache(async (stat: string, limit = 50, seasonId?: number | "all") => {
   // Cap limit to prevent abuse: maximum 100 results
   const cappedLimit = Math.min(Math.max(1, limit), 100);
 
@@ -1003,13 +1009,6 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
           else if (stat === "three-point") orderCol = "three_pct";
           else if (stat === "free-throws") orderCol = "ft_pct";
 
-          // Get current season to filter leaders to this year only
-          const { data: currentSeason } = await supabase
-            .from("seasons")
-            .select("id")
-            .eq("is_current", true)
-            .single();
-
           let bbQuery = supabase
             .from("basketball_player_seasons")
             .select("*, players(name, slug, pro_team, graduation_year, positions, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
@@ -1027,8 +1026,21 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
             bbQuery = bbQuery.not("fta", "is", null).gte("fta", 25);
           }
 
-          if (currentSeason?.id) {
-            bbQuery = bbQuery.eq("season_id", currentSeason.id);
+          // Season filtering: "all" = all-time single-season, number = specific season, undefined = current
+          if (seasonId === "all") {
+            // No season filter — show all-time single-season leaders
+          } else if (typeof seasonId === "number") {
+            bbQuery = bbQuery.eq("season_id", seasonId);
+          } else {
+            // Default: current season
+            const { data: currentSeason } = await supabase
+              .from("seasons")
+              .select("id")
+              .eq("is_current", true)
+              .single();
+            if (currentSeason?.id) {
+              bbQuery = bbQuery.eq("season_id", currentSeason.id);
+            }
           }
 
           const { data } = await bbQuery
@@ -1046,7 +1058,57 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50) => {
     },
     [],
     "DATA_BASKETBALL_LEADERS",
-    { stat, limit }
+    { stat, limit, seasonId }
+  );
+});
+
+// ─── Leaderboard Season Picker ────────────────────────────────────
+
+export interface LeaderboardSeason {
+  id: number;
+  label: string;
+  year_start: number;
+  is_current: boolean;
+}
+
+/**
+ * Get available seasons that have stat data for a given sport.
+ * Returns seasons sorted newest-first so the dropdown is intuitive.
+ */
+export const getLeaderboardSeasons = cache(async (sport: string): Promise<LeaderboardSeason[]> => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const table = sport === "basketball" ? "basketball_player_seasons" : "football_player_seasons";
+
+          // Get distinct season_ids that have data
+          const { data: seasonRows } = await supabase
+            .from(table)
+            .select("season_id")
+            .not("season_id", "is", null)
+            .limit(500);
+
+          if (!seasonRows || seasonRows.length === 0) return [];
+
+          const uniqueIds = [...new Set(seasonRows.map((r: { season_id: number }) => r.season_id))];
+
+          // Fetch season details
+          const { data: seasons } = await supabase
+            .from("seasons")
+            .select("id, label, year_start, is_current")
+            .in("id", uniqueIds)
+            .order("year_start", { ascending: false });
+
+          return (seasons ?? []) as LeaderboardSeason[];
+        },
+        { maxRetries: 2, baseDelay: 300 }
+      );
+    },
+    [],
+    "DATA_LEADERBOARD_SEASONS",
+    { sport }
   );
 });
 

@@ -126,6 +126,8 @@ export {
   type CareerLeaderRow,
   getTeamSeasonRankings,
   type TeamSeasonRankingRow,
+  getLeaderboardSeasons,
+  type LeaderboardSeason,
 } from "./events";
 
 // Game detail and box score functions

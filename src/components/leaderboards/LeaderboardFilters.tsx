@@ -30,19 +30,27 @@ const SPORT_POSITIONS: Record<string, { value: string; label: string }[]> = {
   ],
 };
 
+interface SeasonOption {
+  id: number;
+  label: string;
+  is_current: boolean;
+}
+
 interface LeaderboardFiltersProps {
   sport: string;
   sportColor: string;
+  seasons?: SeasonOption[];
 }
 
-export default function LeaderboardFilters({ sport, sportColor }: LeaderboardFiltersProps) {
+export default function LeaderboardFilters({ sport, sportColor, seasons = [] }: LeaderboardFiltersProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
   const currentClass = searchParams.get("class") || "";
   const currentPosition = searchParams.get("position") || "";
-  const hasActiveFilters = !!(currentClass || currentPosition);
+  const currentSeason = searchParams.get("season") || "";
+  const hasActiveFilters = !!(currentClass || currentPosition || currentSeason);
 
   const positions = SPORT_POSITIONS[sport] || [];
 
@@ -64,6 +72,7 @@ export default function LeaderboardFilters({ sport, sportColor }: LeaderboardFil
     const params = new URLSearchParams(searchParams.toString());
     params.delete("class");
     params.delete("position");
+    params.delete("season");
     const qs = params.toString();
     router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }, [searchParams, router, pathname]);
@@ -88,6 +97,32 @@ export default function LeaderboardFilters({ sport, sportColor }: LeaderboardFil
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+      {/* Season dropdown */}
+      {seasons.length > 0 && (
+        <>
+          <span
+            className="font-bebas text-xs tracking-wider uppercase"
+            style={{ color: "#64748b" }}
+          >
+            Season
+          </span>
+          <select
+            value={currentSeason}
+            onChange={(e) => updateParams("season", e.target.value)}
+            style={selectStyle(!!currentSeason)}
+          >
+            <option value="">Current Season</option>
+            <option value="all">All Seasons</option>
+            {seasons.map((s) => (
+              <option key={s.id} value={String(s.id)}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+          <span style={{ width: 1, height: 20, background: "#334155", flexShrink: 0 }} />
+        </>
+      )}
+
       {/* Class Year label + dropdown */}
       <span
         className="font-bebas text-xs tracking-wider uppercase"

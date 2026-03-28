@@ -9,6 +9,7 @@ import {
   getFootballCareerLeaders,
   getBasketballCareerLeaders,
   getStatTotalCount,
+  getLeaderboardSeasons,
 } from "@/lib/data";
 import type { CareerLeaderRow } from "@/lib/data/events";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -241,6 +242,10 @@ export default async function LeaderboardPage({
   // Read filter params
   const filterClass = typeof sp?.class === "string" ? parseInt(sp.class, 10) : undefined;
   const filterPosition = typeof sp?.position === "string" ? sp.position : undefined;
+  const seasonParam = typeof sp?.season === "string" ? sp.season : undefined;
+  const seasonId: number | "all" | undefined = seasonParam === "all"
+    ? "all"
+    : seasonParam ? parseInt(seasonParam, 10) || undefined : undefined;
 
   const meta = SPORT_META[sport];
 
@@ -290,9 +295,9 @@ export default async function LeaderboardPage({
     // Season mode
     let leaders: RawLeader[] = [];
     if (sport === "football") {
-      leaders = await getFootballLeaders(statConfig.key, 100);
+      leaders = await getFootballLeaders(statConfig.key, 100, seasonId);
     } else if (sport === "basketball") {
-      leaders = await getBasketballLeaders(statConfig.key, 100);
+      leaders = await getBasketballLeaders(statConfig.key, 100, seasonId);
     }
 
     // Apply class year filter (graduation_year from players join)
@@ -325,8 +330,11 @@ export default async function LeaderboardPage({
     }));
   }
 
-  // Fetch total count of players with this stat > 0 for percentile context
-  const statTotalCount = await getStatTotalCount(sport, stat);
+  // Fetch total count + available seasons in parallel
+  const [statTotalCount, availableSeasons] = await Promise.all([
+    getStatTotalCount(sport, stat),
+    getLeaderboardSeasons(sport),
+  ]);
 
   const tableData = isCareer ? careerTableData : seasonTableData;
   const activeCols = isCareer ? (statConfig.careerCols || []) : statConfig.cols;
@@ -353,9 +361,16 @@ export default async function LeaderboardPage({
   }));
 
   const modeLabel = isCareer ? "All-Time Career" : "Single Season";
+  const selectedSeasonLabel = seasonId === "all"
+    ? "All-Time"
+    : typeof seasonId === "number"
+      ? availableSeasons.find(s => s.id === seasonId)?.label ?? "Unknown"
+      : null;
   const subtitle = isCareer
     ? "All-time career statistical leaders across multiple seasons"
-    : "Season-by-season statistical leaders";
+    : selectedSeasonLabel
+      ? `${selectedSeasonLabel === "All-Time" ? "All-time single-season" : selectedSeasonLabel} statistical leaders`
+      : "Current season statistical leaders";
 
   return (
     <main id="main-content">
@@ -420,7 +435,11 @@ export default async function LeaderboardPage({
           <div className="flex flex-wrap items-center gap-2 mb-8">
             {allStats.map((s) => {
               const isActive = s.key === stat;
-              const href = `/${sport}/leaderboards/${s.key}${isCareer ? "?mode=career" : ""}`;
+              const tabParams = new URLSearchParams();
+              if (isCareer) tabParams.set("mode", "career");
+              if (seasonParam) tabParams.set("season", seasonParam);
+              const tabQs = tabParams.toString();
+              const href = `/${sport}/leaderboards/${s.key}${tabQs ? `?${tabQs}` : ""}`;
               const showComingSoon = isCareer ? !s.hasCareerData : s.hasData === false;
               return (
                 <div key={s.key} className="relative">
@@ -454,23 +473,10 @@ export default async function LeaderboardPage({
           </div>
         )}
 
-        {/* Advanced Filters — collapsible */}
-        <details className="mb-6 group">
-          <summary className="inline-flex items-center gap-2 cursor-pointer text-sm font-semibold px-4 py-2 rounded-lg transition-colors hover:bg-white/5" style={{ color: (filterClass || filterPosition) ? meta.color : "#94a3b8", border: (filterClass || filterPosition) ? `1px solid ${meta.color}40` : "1px solid #334155" }}>
-            <svg className="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            Filters
-            {(filterClass || filterPosition) && (
-              <span className="ml-1 px-1.5 py-0.5 text-[10px] rounded-full font-bold" style={{ background: `${meta.color}25`, color: meta.color }}>
-                {[filterClass && `Class ${filterClass}`, filterPosition].filter(Boolean).join(", ")}
-              </span>
-            )}
-          </summary>
-          <div className="mt-3 pl-1">
-            <Suspense fallback={null}>
-              <LeaderboardFilters sport={sport} sportColor={meta.color} />
-            </Suspense>
-          </div>
-        </details>
+        {/* Filters — season always visible, class/position in collapsible */}
+        <Suspense fallback={null}>
+          <LeaderboardFilters sport={sport} sportColor={meta.color} seasons={availableSeasons} />
+        </Suspense>
 
         <PSPPromo size="banner" variant={1} />
 
