@@ -1380,3 +1380,145 @@ export async function getSchoolStatProduction(sport: string, orderBy: string = "
     { sport, orderBy, limit }
   );
 }
+
+/**
+ * Team season rankings computed from games table.
+ * Aggregates W-L, PPG, Opp PPG, margin for each school in a season.
+ */
+export interface TeamSeasonRankingRow {
+  school_id: number;
+  school_name: string;
+  school_slug: string;
+  logo_url: string | null;
+  wins: number;
+  losses: number;
+  win_pct: number;
+  ppg: number;
+  opp_ppg: number;
+  margin: number;
+  total_pf: number;
+  total_pa: number;
+  games: number;
+}
+
+export async function getTeamSeasonRankings(
+  sport: string,
+  orderBy: string = "win_pct",
+  limit = 50,
+  seasonId?: number,
+): Promise<TeamSeasonRankingRow[]> {
+  const cappedLimit = Math.min(Math.max(1, limit), 100);
+
+  return withErrorHandling(
+    async () => {
+      const supabase = await createClient();
+
+      // Get season to filter
+      let targetSeasonId = seasonId;
+      if (!targetSeasonId) {
+        const { data: currentSeason } = await supabase
+          .from("seasons")
+          .select("id")
+          .eq("is_current", true)
+          .single();
+        targetSeasonId = currentSeason?.id;
+      }
+
+      // Fetch all games for this sport + season with scores
+      let query = supabase
+        .from("games")
+        .select("home_school_id, away_school_id, home_score, away_score")
+        .eq("sport_id", sport)
+        .not("home_score", "is", null)
+        .not("away_score", "is", null)
+        .gt("home_score", 0);
+
+      if (targetSeasonId) {
+        query = query.eq("season_id", targetSeasonId);
+      }
+
+      const { data: games, error } = await query;
+      if (error) { console.warn("[PSP] team rankings query failed:", error.message); return []; }
+
+      // Aggregate by school
+      const teams = new Map<number, { pf: number; pa: number; w: number; l: number; games: number }>();
+      for (const g of (games ?? []) as any[]) {
+        const hid = g.home_school_id as number;
+        const aid = g.away_school_id as number;
+        const hs = g.home_score as number;
+        const as_ = g.away_score as number;
+
+        // Home team
+        const home = teams.get(hid) || { pf: 0, pa: 0, w: 0, l: 0, games: 0 };
+        home.pf += hs;
+        home.pa += as_;
+        home.games += 1;
+        if (hs > as_) home.w += 1;
+        else if (as_ > hs) home.l += 1;
+        teams.set(hid, home);
+
+        // Away team
+        const away = teams.get(aid) || { pf: 0, pa: 0, w: 0, l: 0, games: 0 };
+        away.pf += as_;
+        away.pa += hs;
+        away.games += 1;
+        if (as_ > hs) away.w += 1;
+        else if (hs > as_) away.l += 1;
+        teams.set(aid, away);
+      }
+
+      // Fetch school names for all team IDs
+      const schoolIds = Array.from(teams.keys());
+      if (schoolIds.length === 0) return [];
+
+      const { data: schoolRows } = await supabase
+        .from("schools")
+        .select("id, name, slug, logo_url")
+        .in("id", schoolIds);
+
+      const schoolMap = new Map<number, { name: string; slug: string; logo_url: string | null }>();
+      for (const s of (schoolRows ?? []) as any[]) {
+        schoolMap.set(s.id, { name: s.name, slug: s.slug, logo_url: s.logo_url });
+      }
+
+      // Build result rows
+      const rows: TeamSeasonRankingRow[] = [];
+      for (const [sid, t] of teams) {
+        if (t.games < 3) continue; // Min games threshold
+        const school = schoolMap.get(sid);
+        if (!school) continue;
+        rows.push({
+          school_id: sid,
+          school_name: school.name,
+          school_slug: school.slug,
+          logo_url: school.logo_url,
+          wins: t.w,
+          losses: t.l,
+          win_pct: t.games > 0 ? t.w / t.games : 0,
+          ppg: t.games > 0 ? Math.round((t.pf / t.games) * 10) / 10 : 0,
+          opp_ppg: t.games > 0 ? Math.round((t.pa / t.games) * 10) / 10 : 0,
+          margin: t.games > 0 ? Math.round(((t.pf - t.pa) / t.games) * 10) / 10 : 0,
+          total_pf: t.pf,
+          total_pa: t.pa,
+          games: t.games,
+        });
+      }
+
+      // Sort
+      const sortFns: Record<string, (a: TeamSeasonRankingRow, b: TeamSeasonRankingRow) => number> = {
+        win_pct: (a, b) => b.win_pct - a.win_pct || b.wins - a.wins,
+        ppg: (a, b) => b.ppg - a.ppg,
+        opp_ppg: (a, b) => a.opp_ppg - b.opp_ppg, // Lower is better
+        margin: (a, b) => b.margin - a.margin,
+        wins: (a, b) => b.wins - a.wins,
+        total_pf: (a, b) => b.total_pf - a.total_pf,
+      };
+      const sortFn = sortFns[orderBy] || sortFns.win_pct;
+
+      return rows.sort(sortFn).slice(0, cappedLimit);
+    },
+    [],
+    "DATA_TEAM_SEASON_RANKINGS",
+    { sport, orderBy, limit, seasonId }
+  );
+}

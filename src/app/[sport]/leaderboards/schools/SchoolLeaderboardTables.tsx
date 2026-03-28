@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import SortableTable, { SortableColumn } from "@/components/ui/SortableTable";
-import type { SchoolWinsRow, SchoolChampionshipRow, SchoolStatProductionRow } from "@/lib/data";
+import type { SchoolWinsRow, SchoolChampionshipRow, SchoolStatProductionRow, TeamSeasonRankingRow } from "@/lib/data";
 
 function formatNum(n: unknown): string {
   if (n == null) return "\u2014";
@@ -187,6 +187,73 @@ export function BasketballStatsTable({ data, sport }: { data: SchoolStatProducti
       mobileCardMode={true}
       emptyMessage="No stat production data available"
       ariaLabel="School stat production leaderboard"
+    />
+  );
+}
+
+// ─── Team Season Rankings ─────────────────────────────────
+export function TeamRankingsTable({ data, sport }: { data: TeamSeasonRankingRow[]; sport: string }) {
+  const columns: SortableColumn[] = [
+    { key: "rank", label: "#", align: "center", sortable: false },
+    {
+      key: "school_name", label: "School", sortable: true, primary: true,
+      render: (value, row) => (
+        <div className="flex items-center gap-2">
+          {row?.logo_url && (
+            <img src={row.logo_url as string} alt={`${String(value)} logo`} className="w-6 h-6 rounded" loading="lazy" />
+          )}
+          <SchoolLink name={String(value)} slug={row?.school_slug as string} sport={sport} />
+        </div>
+      ),
+    },
+    {
+      key: "record", label: "Record", align: "center", sortable: false,
+      render: (_v, row) => (
+        <span className="font-semibold text-sm">{row?.wins as number}-{row?.losses as number}</span>
+      ),
+    },
+    {
+      key: "win_pct", label: "Win%", align: "right", sortable: true,
+      render: (v) => {
+        const pct = Number(v);
+        return <span className={pct >= 0.7 ? "font-bold" : ""}>{(pct * 100).toFixed(1)}%</span>;
+      },
+    },
+    {
+      key: "ppg", label: "PPG", align: "right", sortable: true,
+      render: (v) => <span className="font-medium">{Number(v).toFixed(1)}</span>,
+    },
+    {
+      key: "opp_ppg", label: "Opp PPG", align: "right", sortable: true,
+      render: (v) => <span>{Number(v).toFixed(1)}</span>,
+    },
+    {
+      key: "margin", label: "+/-", align: "right", sortable: true,
+      render: (v) => {
+        const m = Number(v);
+        const color = m > 0 ? "#16a34a" : m < 0 ? "#dc2626" : undefined;
+        return <span style={{ color, fontWeight: 600 }}>{m > 0 ? "+" : ""}{m.toFixed(1)}</span>;
+      },
+    },
+    { key: "games", label: "GP", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+    { key: "total_pf", label: "PF", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+    { key: "total_pa", label: "PA", align: "right", sortable: true, hideOnMobile: true, render: (v) => formatNum(v) },
+  ];
+
+  const tableData = data.map((row, idx) => ({
+    id: String(row.school_id),
+    rank: idx + 1,
+    ...row,
+  }));
+
+  return (
+    <SortableTable
+      columns={columns}
+      data={tableData}
+      highlightTop3={true}
+      mobileCardMode={true}
+      emptyMessage="No team ranking data available"
+      ariaLabel="Team season rankings"
     />
   );
 }

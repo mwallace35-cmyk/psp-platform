@@ -124,6 +124,8 @@ export {
   type SchoolChampionshipRow,
   type SchoolStatProductionRow,
   type CareerLeaderRow,
+  getTeamSeasonRankings,
+  type TeamSeasonRankingRow,
 } from "./events";
 
 // Game detail and box score functions
