@@ -3,7 +3,7 @@ import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
-import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
+import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, getPlayerJerseyNumber, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
 import { Breadcrumb, SocialProfileBar, ClaimProfileButton } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
@@ -113,7 +113,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     .filter((id): id is number => id != null);
 
   // Parallelize remaining fetches
-  const [awards, gameLog, teamGames, crossSportPlayers, recruitingProfile] = await Promise.all([
+  const [awards, gameLog, teamGames, crossSportPlayers, recruitingProfile, jerseyNumber] = await Promise.all([
     getPlayerAwards(player.id),
     (sport === "football" || sport === "basketball") ? getPlayerGameLog(player.id, sport) : Promise.resolve([]),
     (sport === "football" || sport === "basketball") && player.primary_school_id && seasonIds.length > 0
@@ -135,7 +135,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         return null;
       }
     })(),
-  ]) as [Award[], PlayerGameLog[], TeamGame[], any[], any];
+    getPlayerJerseyNumber(player.id),
+  ]) as [Award[], PlayerGameLog[], TeamGame[], any[], any, string | null];
 
   // Football career totals
   const footballTotals = sport === "football" && stats.length > 0 ? (() => {
@@ -281,12 +282,12 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
   /* ===== Build tab list ===== */
   const tabList: { id: string; label: string }[] = [
-    { id: "overview", label: "Overview" },
     { id: "stats", label: "Stats" },
   ];
   if (mergedGames.length > 0 && (sport === "football" || sport === "basketball")) {
     tabList.push({ id: "game-log", label: "Game Log" });
   }
+  tabList.push({ id: "overview", label: "Overview" });
   if ((awards as Award[]).length > 0) {
     tabList.push({ id: "awards", label: "Awards" });
   }
@@ -344,11 +345,17 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           <div className="flex items-start gap-5 mt-4">
             {/* Avatar */}
             <div
-              className="psp-h2 w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{ background: `${meta.color}25`, color: "var(--psp-gold)", border: `2px solid ${meta.color}40` }}
+              className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center flex-shrink-0"
+              style={{
+                background: jerseyNumber ? meta.color : `${meta.color}25`,
+                color: jerseyNumber ? 'white' : 'var(--psp-gold)',
+                border: `2px solid ${meta.color}40`
+              }}
               aria-hidden="true"
             >
-              {schoolInitials}
+              <span className="font-display text-3xl md:text-4xl font-bold leading-none">
+                {jerseyNumber || schoolInitials}
+              </span>
             </div>
 
             <div className="flex-1 min-w-0">
@@ -474,6 +481,70 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           />
         </div>
       )}
+
+      {/* ============ STATS SECTION ============ */}
+      <section id="stats" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
+        <h2
+          className="psp-h2 mb-6"
+          style={{ color: "var(--psp-navy)" }}
+        >
+          Season-by-Season Stats
+        </h2>
+        {stats.length > 0 && (sport === "football" || sport === "basketball" || sport === "baseball") ? (
+          <PlayerStatTable
+            sport={sport as "football" | "basketball" | "baseball"}
+            stats={stats}
+            sportColor={meta.color}
+            playerName={player.name}
+          />
+        ) : (
+          <p className="text-gray-400 text-sm">No season statistics available.</p>
+        )}
+
+        {/* More from school link */}
+        {player.schools && (
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <h2 className="psp-h3 mb-2" style={{ color: "var(--psp-navy)" }}>
+              More from {player.schools?.name}
+            </h2>
+            <p className="text-sm text-gray-400 mb-3">Explore other players from this school</p>
+            <Link href={`/${sport}/schools/${player.schools?.slug}`} className="inline-block px-5 py-2.5 rounded-lg font-medium text-sm" style={{ background: "var(--psp-navy)", color: "white" }}>
+              View {player.schools?.name} roster
+            </Link>
+          </div>
+        )}
+      </section>
+
+      {/* ============ GAME LOG SECTION ============ */}
+      {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
+        <section id="game-log" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
+          <h2
+            className="psp-h2 text-[var(--psp-navy)] mb-6"
+          >
+            Game Log
+          </h2>
+          {mergedGames.some(g => g.sourceType === 'season_average') && (
+            <div className="mb-4 px-4 py-3 rounded-lg text-sm" style={{ background: "rgba(240, 165, 0, 0.08)", border: "1px solid rgba(240, 165, 0, 0.2)", color: "#92400e" }}>
+              Some game stats are estimated from season averages and may not reflect actual per-game performance.
+            </div>
+          )}
+          <GameLogAccordion
+            games={mergedGames}
+            awards={(awards as Award[]).map(a => ({
+              id: a.id,
+              award_name: a.award_name,
+              award_type: a.award_type,
+              category: a.category,
+              seasonLabel: a.seasons?.label,
+            }))}
+            sport={sport}
+            playerSchoolId={player.primary_school_id ?? null}
+            playerName={player.name}
+          />
+        </section>
+      )}
+
+      <PSPPromo size="banner" variant={2} />
 
       {/* ============ OVERVIEW SECTION ============ */}
       <section id="overview" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
@@ -735,70 +806,6 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           </div>
         </div>
       </section>
-
-      <PSPPromo size="banner" variant={2} />
-
-      {/* ============ STATS SECTION ============ */}
-      <section id="stats" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
-        <h2
-          className="psp-h2 mb-6"
-          style={{ color: "var(--psp-navy)" }}
-        >
-          Season-by-Season Stats
-        </h2>
-        {stats.length > 0 && (sport === "football" || sport === "basketball" || sport === "baseball") ? (
-          <PlayerStatTable
-            sport={sport as "football" | "basketball" | "baseball"}
-            stats={stats}
-            sportColor={meta.color}
-            playerName={player.name}
-          />
-        ) : (
-          <p className="text-gray-400 text-sm">No season statistics available.</p>
-        )}
-
-        {/* More from school link */}
-        {player.schools && (
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <h2 className="psp-h3 mb-2" style={{ color: "var(--psp-navy)" }}>
-              More from {player.schools?.name}
-            </h2>
-            <p className="text-sm text-gray-400 mb-3">Explore other players from this school</p>
-            <Link href={`/${sport}/schools/${player.schools?.slug}`} className="inline-block px-5 py-2.5 rounded-lg font-medium text-sm" style={{ background: "var(--psp-navy)", color: "white" }}>
-              View {player.schools?.name} roster
-            </Link>
-          </div>
-        )}
-      </section>
-
-      {/* ============ GAME LOG SECTION ============ */}
-      {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
-        <section id="game-log" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
-          <h2
-            className="psp-h2 text-[var(--psp-navy)] mb-6"
-          >
-            Game Log
-          </h2>
-          {mergedGames.some(g => g.sourceType === 'season_average') && (
-            <div className="mb-4 px-4 py-3 rounded-lg text-sm" style={{ background: "rgba(240, 165, 0, 0.08)", border: "1px solid rgba(240, 165, 0, 0.2)", color: "#92400e" }}>
-              Some game stats are estimated from season averages and may not reflect actual per-game performance.
-            </div>
-          )}
-          <GameLogAccordion
-            games={mergedGames}
-            awards={(awards as Award[]).map(a => ({
-              id: a.id,
-              award_name: a.award_name,
-              award_type: a.award_type,
-              category: a.category,
-              seasonLabel: a.seasons?.label,
-            }))}
-            sport={sport}
-            playerSchoolId={player.primary_school_id ?? null}
-            playerName={player.name}
-          />
-        </section>
-      )}
 
       {/* ============ AWARDS SECTION ============ */}
       {(awards as Award[]).length > 0 && (

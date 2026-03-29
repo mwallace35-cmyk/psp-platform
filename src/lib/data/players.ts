@@ -193,6 +193,22 @@ export async function getPlayerStats(playerId: number, sportId: string) {
 }
 
 /**
+ * Get the most recent jersey number for a player from the rosters table
+ */
+export async function getPlayerJerseyNumber(playerId: number): Promise<string | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("rosters")
+    .select("jersey_number")
+    .eq("player_id", playerId)
+    .not("jersey_number", "is", null)
+    .order("season_id", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data?.jersey_number ?? null;
+}
+
+/**
  * Get cross-sport player entries (same player in different sports)
  */
 export async function getCrossSportPlayers(playerName: string, schoolId: number) {

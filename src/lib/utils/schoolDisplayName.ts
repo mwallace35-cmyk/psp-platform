@@ -34,6 +34,7 @@ const AMBIGUOUS_NAMES = new Set([
   'Catholic',
   'Christian',
   'Charter',
+  'Germantown',
 ]);
 
 /** Check if a school name is ambiguous (exact match or starts with an ambiguous word) */

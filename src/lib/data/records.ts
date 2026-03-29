@@ -92,9 +92,9 @@ export async function getFilteredRecords(
         query = query.ilike("category", `%${filters.category}%`);
       }
 
-      // Apply scope filter
+      // Apply scope filter — include NULL scopes so untagged records still appear
       if (filters.scope) {
-        query = query.eq("scope", filters.scope);
+        query = query.or(`scope.eq.${filters.scope},scope.is.null`);
       }
 
       // Apply school filter
@@ -297,7 +297,7 @@ export async function getRecordCount(filters: RecordFilter = {}): Promise<number
       }
 
       if (filters.scope) {
-        query = query.eq("scope", filters.scope);
+        query = query.or(`scope.eq.${filters.scope},scope.is.null`);
       }
 
       if (filters.schoolId) {

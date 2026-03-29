@@ -1009,13 +1009,23 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50, seaso
           else if (stat === "three-point") orderCol = "three_pct";
           else if (stat === "free-throws") orderCol = "ft_pct";
 
+          // Filter out excluded seasons dynamically instead of hard-coding season_id 264
+          // TODO: Add exclude_from_leaders boolean column to seasons table via migration
+          const { data: excludedSeasons } = await supabase
+            .from("seasons")
+            .select("id")
+            .eq("exclude_from_leaders", true);
+          const excludedSeasonIds = (excludedSeasons ?? []).map((s: any) => s.id);
+
           let bbQuery = supabase
             .from("basketball_player_seasons")
             .select("*, players(name, slug, pro_team, graduation_year, positions, schools:schools!players_primary_school_id_fkey(name, slug)), seasons(label, year_start)")
             .not(orderCol, "is", null)
             .gt(orderCol, 0)
-            .not("games_played", "is", null)
-            .neq("season_id", 264);
+            .not("games_played", "is", null);
+          if (excludedSeasonIds.length > 0) {
+            bbQuery = bbQuery.not("season_id", "in", `(${excludedSeasonIds.join(",")})`);
+          }
 
           // Minimum attempt thresholds for percentage stats to avoid 1/1 = 100%
           if (stat === "shooting") {
@@ -1386,12 +1396,23 @@ export async function getSchoolStatProduction(sport: string, orderBy: string = "
           .slice(0, cappedLimit);
 
       } else if (sport === "basketball") {
+        // Filter out excluded seasons dynamically instead of hard-coding season_id 264
+        // TODO: Add exclude_from_leaders boolean column to seasons table via migration
+        const { data: bbExcludedSeasons } = await supabase
+          .from("seasons")
+          .select("id")
+          .eq("exclude_from_leaders", true);
+        const bbExcludedIds = (bbExcludedSeasons ?? []).map((s: any) => s.id);
+
         // Aggregate directly from season table with full stats
-        const { data, error } = await supabase
+        let bbProdQuery = supabase
           .from("basketball_player_seasons")
           .select("school_id, points, rebounds, assists, steals, blocks, games_played, schools!inner(name, slug)")
-          .not("games_played", "is", null)
-          .neq("season_id", 264);
+          .not("games_played", "is", null);
+        if (bbExcludedIds.length > 0) {
+          bbProdQuery = bbProdQuery.not("season_id", "in", `(${bbExcludedIds.join(",")})`);
+        }
+        const { data, error } = await bbProdQuery;
 
         if (error) { console.warn("[PSP] bb stat production query failed:", error.message); return []; }
 

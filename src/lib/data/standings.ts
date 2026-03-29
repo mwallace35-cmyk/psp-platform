@@ -51,6 +51,41 @@ export const getLeagueStandings = cache(
           async () => {
             const supabase = await createClient();
 
+            // Resolve season_id first
+            let resolvedSeasonId: number | null = null;
+            if (seasonLabel) {
+              const { data: seasonData } = await supabase
+                .from("seasons")
+                .select("id")
+                .eq("label", seasonLabel)
+                .single();
+              resolvedSeasonId = seasonData?.id ?? null;
+            }
+            if (!resolvedSeasonId) {
+              const { data: currentSeason } = await supabase
+                .from("seasons")
+                .select("id")
+                .eq("is_current", true)
+                .single();
+              resolvedSeasonId = currentSeason?.id ?? null;
+            }
+            if (!resolvedSeasonId) return [];
+
+            // Fetch league_seasons for year-correct league membership
+            const { data: leagueSeasonRows } = await supabase
+              .from("league_seasons")
+              .select("school_id, league_id, division, leagues:league_id(id, name)")
+              .eq("season_id", resolvedSeasonId);
+            const leagueSeasonMap = new Map<number, { league_id: number; division: string | null; league_name: string }>();
+            for (const ls of (leagueSeasonRows ?? []) as any[]) {
+              const league = Array.isArray(ls.leagues) ? ls.leagues[0] : ls.leagues;
+              leagueSeasonMap.set(ls.school_id, {
+                league_id: ls.league_id,
+                division: ls.division,
+                league_name: league?.name || "Other"
+              });
+            }
+
             // Build query
             let query = supabase.from("team_seasons").select(
               `id, school_id, division, wins, losses, ties, league_wins, league_losses, league_finish, points_for, points_against,
@@ -59,43 +94,19 @@ export const getLeagueStandings = cache(
             );
 
             query = query.eq("sport_id", sportSlug);
-
-            // Always filter by season — never return all seasons
-            if (seasonLabel) {
-              const seasonClient = await createClient();
-              const { data: seasonData } = await seasonClient
-                .from("seasons")
-                .select("id")
-                .eq("label", seasonLabel)
-                .single();
-              if (seasonData?.id) {
-                query = query.eq("season_id", seasonData.id);
-              } else {
-                // Fallback: use current season
-                const { data: currentSeason } = await seasonClient
-                  .from("seasons")
-                  .select("id")
-                  .eq("is_current", true)
-                  .single();
-                if (currentSeason?.id) {
-                  query = query.eq("season_id", currentSeason.id);
-                }
-              }
-            } else {
-              // No season specified — use current season
-              const seasonClient = await createClient();
-              const { data: currentSeason } = await seasonClient
-                .from("seasons")
-                .select("id")
-                .eq("is_current", true)
-                .single();
-              if (currentSeason?.id) {
-                query = query.eq("season_id", currentSeason.id);
-              }
-            }
+            query = query.eq("season_id", resolvedSeasonId);
 
             if (leagueId) {
-              query = query.filter("schools.league_id", "eq", leagueId);
+              // Use league_seasons for year-correct filtering when available
+              const schoolIdsInLeague = Array.from(leagueSeasonMap.entries())
+                .filter(([, v]) => v.league_id === leagueId)
+                .map(([schoolId]) => schoolId);
+              if (schoolIdsInLeague.length > 0) {
+                query = query.in("school_id", schoolIdsInLeague);
+              } else {
+                // Fallback to static league_id
+                query = query.filter("schools.league_id", "eq", leagueId);
+              }
             }
 
             const { data, error } = await query.limit(500);
@@ -133,9 +144,12 @@ export const getLeagueStandings = cache(
 
             for (const ts of data ?? []) {
               const school = ts.schools as any;
-              const leagueName = school?.leagues?.name || "Other";
-              const schoolLeagueId = school?.league_id || 0;
-              const rawDivision = (ts as any).division || null;
+              const schoolId = (ts as any).school_id as number;
+              // Use year-correct league from league_seasons, fall back to school's current league
+              const yearLeague = leagueSeasonMap.get(schoolId);
+              const leagueName = yearLeague?.league_name ?? school?.leagues?.name ?? "Other";
+              const schoolLeagueId = yearLeague?.league_id ?? school?.league_id ?? 0;
+              const rawDivision = yearLeague?.division ?? (ts as any).division ?? null;
               const season = (ts.seasons as any) || {};
               const seasonLabel = season.label || "Unknown";
 

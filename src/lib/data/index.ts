@@ -41,6 +41,7 @@ export {
   getBaseballPlayerStats,
   getPlayerAwards,
   getPlayerStats,
+  getPlayerJerseyNumber,
   getCrossSportPlayers,
 } from "./players";
 
