@@ -37,11 +37,11 @@ export interface AlsoActiveData {
 export async function RecapBoard() {
   const supabase = await createClient();
 
-  // Get the most recent recap date
+  // Get the most recent game date via game_scores_cache join
   const { data: latestPerf } = await (supabase as any)
     .from("nlt_game_performances")
-    .select("created_at, game_id")
-    .order("created_at", { ascending: false })
+    .select("game_id, game_scores_cache!inner!game_id(game_date)")
+    .order("game_scores_cache(game_date)", { ascending: false })
     .limit(1);
 
   if (!latestPerf || latestPerf.length === 0) {
@@ -73,24 +73,25 @@ export async function RecapBoard() {
     );
   }
 
-  // Get the date from the latest performance
-  const latestDate = new Date(latestPerf[0].created_at).toISOString().slice(0, 10);
+  // Get the game date from the joined result
+  const latestGameDate = latestPerf[0].game_scores_cache?.game_date;
+  if (!latestGameDate) return null;
 
   // Check if data is older than 7 days (off-season)
   const daysSinceLastGame = Math.floor(
-    (Date.now() - new Date(latestPerf[0].created_at).getTime()) / (1000 * 60 * 60 * 24)
+    (Date.now() - new Date(latestGameDate + "T12:00:00").getTime()) / (1000 * 60 * 60 * 24)
   );
   const isOffSeason = daysSinceLastGame > 7;
 
-  // Fetch all performances for that date, joined with game info
+  // Fetch all performances for that game date via inner join
   const { data: performances } = await (supabase as any)
     .from("nlt_game_performances")
     .select(`
       id, nlt_id, game_id, player_name, team_name, sport, stats,
-      recap_tier, performance_score, high_school, high_school_id
+      recap_tier, performance_score, high_school, high_school_id,
+      game_scores_cache!inner!game_id(game_date)
     `)
-    .gte("created_at", latestDate)
-    .lt("created_at", latestDate + "T23:59:59")
+    .eq("game_scores_cache.game_date", latestGameDate)
     .order("performance_score", { ascending: false });
 
   if (!performances || performances.length === 0) return null;
@@ -168,7 +169,7 @@ export async function RecapBoard() {
   };
 
   // Format date for display
-  const displayDate = new Date(latestDate + "T12:00:00").toLocaleDateString("en-US", {
+  const displayDate = new Date(latestGameDate + "T12:00:00").toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
