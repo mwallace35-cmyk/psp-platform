@@ -438,6 +438,23 @@ export async function matchPhillyPlayers(
 
       if (matchedPlayer) {
         const perfScore = computePerformanceScore(matchedPlayer.stats, sport);
+        console.log(
+          `[matchPhillyPlayers] MATCHED: "${nltEntry.person_name}" (NLT ${nltEntry.id}) → ESPN "${matchedPlayer.name}" (${matchedPlayer.id}) on ${matchedPlayer.teamName} | score=${perfScore.toFixed(1)}`
+        );
+
+        // Store ESPN player ID for future instant lookups
+        if (!nltEntry.espn_player_id && matchedPlayer.id) {
+          try {
+            const supabase = await createClient();
+            await (supabase as any)
+              .from("next_level_tracking")
+              .update({ espn_player_id: matchedPlayer.id })
+              .eq("id", nltEntry.id);
+          } catch {
+            // Non-critical — continue even if update fails
+          }
+        }
+
         matches.push({
           nltId: nltEntry.id,
           playerName: nltEntry.person_name,
@@ -451,6 +468,10 @@ export async function matchPhillyPlayers(
         });
       }
     }
+
+    console.log(
+      `[matchPhillyPlayers] ${matches.length} matches from ${boxScore.players.length} ESPN players vs ${nltEntries.length} NLT entries`
+    );
 
     return matches;
   } catch (err) {

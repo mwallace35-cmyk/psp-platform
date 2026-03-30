@@ -360,7 +360,8 @@ export async function getActiveNLTEntries(): Promise<NLTEntry[]> {
       .from("next_level_tracking")
       .select(
         "id, person_name, current_org, espn_player_id, current_level, pro_league, high_school_id, social_twitter, social_instagram, schools:high_school_id(name)"
-      );
+      )
+      .limit(5000);
 
     if (error) {
       console.error("[player-matcher] Error fetching NLT entries:", error);
@@ -398,7 +399,8 @@ export async function getTeamMappings(): Promise<TeamMapping[]> {
       .from("team_mapping")
       .select(
         "id, psp_org_name, espn_team_id, espn_display_name, league, sport, logo_url"
-      );
+      )
+      .limit(1000);
 
     if (error) {
       console.error("[player-matcher] Error fetching team mappings:", error);
