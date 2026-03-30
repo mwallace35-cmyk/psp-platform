@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // ISR: 1 hour
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import {

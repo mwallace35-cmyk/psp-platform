@@ -100,7 +100,18 @@ export default function MobileBottomNav() {
       {/* Sport Picker Sheet */}
       {isSportPickerOpen && (
         <div
-          className={styles.mobileMenuOverlay}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 50,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+          }}
           onClick={() => setIsSportPickerOpen(false)}
           role="dialog"
           aria-label="Choose a sport"
@@ -138,7 +149,18 @@ export default function MobileBottomNav() {
       {/* Menu Overlay */}
       {isMenuOpen && (
         <div
-          className={styles.mobileMenuOverlay}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 50,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+          }}
           onClick={() => setIsMenuOpen(false)}
           role="dialog"
           aria-label="Menu"

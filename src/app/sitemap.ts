@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // ISR: 1 hour
 import type { MetadataRoute } from "next";
 import { createStaticClient } from "@/lib/supabase/static";
 import { VALID_SPORTS } from "@/lib/data";
