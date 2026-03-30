@@ -27,7 +27,22 @@ export async function ScoreTicker() {
     .limit(100);
 
   if (!games || games.length === 0) {
-    return null; // Don't render ticker if no games
+    return (
+      <section className="ticker-section w-full" aria-label="Game Score Ticker" style={{
+        background: "var(--bar-ticker, #050d1a)",
+        padding: "12px 16px",
+        textAlign: "center",
+      }}>
+        <p style={{
+          fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
+          fontSize: "13px",
+          color: "var(--bar-text-muted, #6b7280)",
+          margin: 0,
+        }}>
+          No recent scores. Games will appear here once the season is underway.
+        </p>
+      </section>
+    );
   }
 
   // Check if data is stale (older than 24 hours)

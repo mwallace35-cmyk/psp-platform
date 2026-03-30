@@ -27,7 +27,30 @@ export async function CoachCorner() {
     .order("created_at", { ascending: false })
     .limit(10);
 
-  if (!coachPerfs || coachPerfs.length === 0) return null;
+  if (!coachPerfs || coachPerfs.length === 0) {
+    return (
+      <section style={{ padding: "24px 16px" }}>
+        <h3 style={{
+          fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+          fontSize: "clamp(18px, 4vw, 24px)",
+          color: "#f5f0e8",
+          marginBottom: "12px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}>
+          COACH CORNER
+        </h3>
+        <p style={{
+          fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
+          fontSize: "14px",
+          color: "var(--bar-text-muted, #9ca3af)",
+        }}>
+          No recent coaching stats. Coach recaps appear here during the season.
+        </p>
+      </section>
+    );
+  }
 
   // Get coach stat focus for these NLT IDs
   const nltIds = coachPerfs.map((p: any) => p.nlt_id);

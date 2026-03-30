@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@/lib/data/common";
+import { logCronRun } from "@/lib/cron-logger";
 import {
   assignRecapTiers,
   generateSpotlightNarrative,
@@ -164,6 +165,7 @@ export async function GET(request: NextRequest) {
     ? dateOverride
     : getRecapDate();
   console.log(`[generate-recaps] Starting recap generation for ${recapDate}`);
+  const startTime = Date.now();
 
   // Token / cost tracking
   let totalInputTokens = 0;
@@ -215,6 +217,7 @@ export async function GET(request: NextRequest) {
 
     if (!rawPerformances || rawPerformances.length === 0) {
       console.log(`[generate-recaps] No performances found for ${recapDate}`);
+      await logCronRun({ cronName: "generate-recaps", runDate: recapDate, status: "success", durationMs: Date.now() - startTime });
       return NextResponse.json({
         ok: true,
         date: recapDate,
@@ -464,10 +467,36 @@ export async function GET(request: NextRequest) {
       `[generate-recaps] ${tiered.spotlight.length} spotlight, ${tiered.boxScore.length} box score, ${tiered.alsoActive.length} also active, ${narrativesGenerated} narratives`
     );
 
+    await logCronRun({
+      cronName: "generate-recaps",
+      runDate: recapDate,
+      status: errors.length > 0 ? "partial" : "success",
+      narrativesGenerated,
+      dykGenerated,
+      inputTokens: totalInputTokens,
+      outputTokens: totalOutputTokens,
+      costCents: Math.round(estimatedCost * 100 * 100) / 100,
+      errors: errors as Array<{ [key: string]: string }>,
+      durationMs: Date.now() - startTime,
+      metadata: {
+        performancesCount: performances.length,
+        spotlight: tiered.spotlight.length,
+        boxScore: tiered.boxScore.length,
+        alsoActive: tiered.alsoActive.length,
+      },
+    });
+
     return NextResponse.json(summary);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[generate-recaps] Fatal error for ${recapDate}:`, message);
+    await logCronRun({
+      cronName: "generate-recaps",
+      runDate: recapDate,
+      status: "error",
+      errors: [{ fatal: message }],
+      durationMs: Date.now() - startTime,
+    });
     return NextResponse.json(
       { error: "Internal error", date: recapDate, detail: message },
       { status: 500 }

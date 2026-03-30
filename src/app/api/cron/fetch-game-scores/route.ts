@@ -14,6 +14,7 @@ import {
   getTeamMappings,
 } from "@/lib/data/player-matcher";
 import { createClient } from "@/lib/data/common";
+import { logCronRun } from "@/lib/cron-logger";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -80,6 +81,7 @@ export async function GET(request: NextRequest) {
   }
 
   console.log(`[cron/fetch-game-scores] Starting ${league} for ${dateStr}`);
+  const startTime = Date.now();
 
   try {
     // ── 4. Fetch scoreboard from ESPN ──────────────────────────────────
@@ -87,6 +89,7 @@ export async function GET(request: NextRequest) {
 
     if (games.length === 0) {
       console.log(`[cron/fetch-game-scores] No ${league} games on ${dateStr}`);
+      await logCronRun({ cronName: "fetch-game-scores", league, runDate: dateStr, status: "success", durationMs: Date.now() - startTime });
       return NextResponse.json({
         ok: true,
         league,
@@ -195,6 +198,18 @@ export async function GET(request: NextRequest) {
       `[fetch-game-scores] ${league}: ${games.length} games, ${phillyGames.length} with Philly connections, ${matchedPlayers} players matched`
     );
 
+    await logCronRun({
+      cronName: "fetch-game-scores",
+      league,
+      runDate: dateStr,
+      status: errors.length > 0 ? "partial" : "success",
+      gamesFetched: games.length,
+      phillyGames: phillyGames.length,
+      playersMatched: matchedPlayers,
+      errors: errors as Array<{ [key: string]: string }>,
+      durationMs: Date.now() - startTime,
+    });
+
     return NextResponse.json({
       ok: true,
       league,
@@ -211,6 +226,14 @@ export async function GET(request: NextRequest) {
       `[cron/fetch-game-scores] Fatal error for ${league} ${dateStr}:`,
       message
     );
+    await logCronRun({
+      cronName: "fetch-game-scores",
+      league,
+      runDate: dateStr,
+      status: "error",
+      errors: [{ fatal: message }],
+      durationMs: Date.now() - startTime,
+    });
     return NextResponse.json(
       { error: "Internal error", league, date: dateStr, detail: message },
       { status: 500 }
