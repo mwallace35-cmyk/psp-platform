@@ -193,7 +193,7 @@ export async function GET(request: NextRequest) {
         performance_score,
         high_school,
         high_school_id,
-        game_scores_cache!game_id (
+        game_scores_cache!inner!game_id (
           home_team_name,
           away_team_name,
           home_score,
@@ -203,8 +203,7 @@ export async function GET(request: NextRequest) {
         )
       `
       )
-      .gte("created_at", `${recapDate}T00:00:00`)
-      .lt("created_at", `${recapDate}T23:59:59`);
+      .eq("game_scores_cache.game_date", recapDate);
 
     if (perfError) {
       console.error("[generate-recaps] Query error:", perfError.message);
