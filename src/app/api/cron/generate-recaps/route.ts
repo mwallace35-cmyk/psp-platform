@@ -60,7 +60,8 @@ async function generateNarrative(
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[generate-recaps] Anthropic API error:", msg);
-    return { text: fallback, inputTokens: 0, outputTokens: 0 };
+    // Surface error in fallback text temporarily for debugging
+    return { text: `[AI_ERROR: ${msg}] ${fallback}`, inputTokens: 0, outputTokens: 0 };
   }
 }
 
