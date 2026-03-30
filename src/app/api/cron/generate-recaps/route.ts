@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
         `
         id,
         nlt_id,
-        game_cache_id,
+        game_id,
         player_name,
         team_name,
         sport,
@@ -189,11 +189,13 @@ export async function GET(request: NextRequest) {
         performance_score,
         high_school,
         high_school_id,
-        game_scores_cache!inner (
-          opponent_name,
-          team_score,
-          opponent_score,
-          game_date
+        game_scores_cache!game_id (
+          home_team_name,
+          away_team_name,
+          home_score,
+          away_score,
+          game_date,
+          league
         )
       `
       )
@@ -226,7 +228,7 @@ export async function GET(request: NextRequest) {
     const performances: GamePerformance[] = rawPerformances.map((r: any) => ({
       id: r.id,
       nltId: r.nlt_id,
-      gameId: r.game_cache_id,
+      gameId: r.game_id,
       playerName: r.player_name,
       teamName: r.team_name,
       sport: r.sport,
@@ -251,17 +253,29 @@ export async function GET(request: NextRequest) {
       const raw = rawPerformances.find((r: any) => r.id === perf.id);
       const gameInfo = raw?.game_scores_cache;
 
-      // Build SpotlightPlayer
-      const teamScore = gameInfo?.team_score ?? 0;
-      const oppScore = gameInfo?.opponent_score ?? 0;
+      // Derive opponent and scores from home/away structure
+      // The player's team name tells us which side they're on
+      const isHome =
+        perf.teamName.toLowerCase() ===
+        (gameInfo?.home_team_name ?? "").toLowerCase();
+      const teamScore = isHome
+        ? gameInfo?.home_score ?? 0
+        : gameInfo?.away_score ?? 0;
+      const oppScore = isHome
+        ? gameInfo?.away_score ?? 0
+        : gameInfo?.home_score ?? 0;
+      const opponent = isHome
+        ? gameInfo?.away_team_name ?? "Unknown"
+        : gameInfo?.home_team_name ?? "Unknown";
       const won = teamScore > oppScore;
       const resultStr = won
         ? `W ${teamScore}-${oppScore}`
         : `L ${teamScore}-${oppScore}`;
+      const league = gameInfo?.league ?? perf.sport;
 
       const spotlightPlayer: SpotlightPlayer = {
         ...perf,
-        opponent: gameInfo?.opponent_name ?? "Unknown",
+        opponent,
         gameResult: resultStr,
         schoolName: perf.highSchool || "a Philly school",
       };
@@ -288,19 +302,25 @@ export async function GET(request: NextRequest) {
           .from("ai_recaps")
           .insert({
             performance_id: perf.id,
+            game_date: recapDate,
+            league,
+            recap_type: "spotlight",
+            narrative: narrativeResult.text,
+            model_used: MODEL,
+            prompt_tokens: narrativeResult.inputTokens,
+            completion_tokens: narrativeResult.outputTokens,
+            cost_cents:
+              (narrativeResult.inputTokens * 3) / 1_000_000 * 100 +
+              (narrativeResult.outputTokens * 15) / 1_000_000 * 100,
+            // Extra context columns
             player_name: perf.playerName,
             team_name: perf.teamName,
             sport: perf.sport,
-            recap_date: recapDate,
-            narrative: narrativeResult.text,
             stat_line: statLine,
             game_result: resultStr,
             opponent: spotlightPlayer.opponent,
             high_school: spotlightPlayer.schoolName,
             tier: 1,
-            input_tokens: narrativeResult.inputTokens,
-            output_tokens: narrativeResult.outputTokens,
-            model: MODEL,
             is_fallback: narrativeResult.inputTokens === 0,
           });
 
@@ -350,14 +370,18 @@ export async function GET(request: NextRequest) {
             const { error: dykInsertError } = await (supabase as any)
               .from("did_you_know")
               .insert({
+                fact_text: dykResult.text,
+                sport: perf.sport,
+                school_id: perf.highSchoolId,
+                category: "reactive",
+                category_type: "reactive",
+                approved: true,
+                expires_at: expiresAt.toISOString(),
+                // Extra context columns
                 player_name: perf.playerName,
                 high_school: spotlightPlayer.schoolName,
                 high_school_id: perf.highSchoolId,
-                fact_text: dykResult.text,
-                category_type: "reactive",
-                sport: perf.sport,
                 source_date: recapDate,
-                expires_at: expiresAt.toISOString(),
                 input_tokens: dykResult.inputTokens,
                 output_tokens: dykResult.outputTokens,
                 model: MODEL,

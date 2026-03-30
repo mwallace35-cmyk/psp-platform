@@ -180,7 +180,31 @@ export function generateReactiveDYK(
 }
 
 /**
+ * Finds the first matching stat from a list of possible key names.
+ * ESPN uses inconsistent naming across sports and endpoints (e.g. PTS vs points).
+ */
+function findStat(stats: Record<string, number>, keys: string[]): number {
+  for (const key of keys) {
+    if (key in stats) return stats[key];
+    const lower = key.toLowerCase();
+    for (const [k, v] of Object.entries(stats)) {
+      if (k.toLowerCase() === lower) return v;
+    }
+  }
+  return 0;
+}
+
+/** Check if any of the given stat keys exist in the object. */
+function hasStat(stats: Record<string, number>, keys: string[]): boolean {
+  return findStat(stats, keys) !== 0 || keys.some((k) => {
+    const lower = k.toLowerCase();
+    return Object.keys(stats).some((sk) => sk.toLowerCase() === lower);
+  });
+}
+
+/**
  * Format a raw stat JSON object into a human-readable one-liner.
+ * Handles both ESPN uppercase keys (PTS, REB, AST) and lowercase variants.
  */
 export function formatStatLine(
   stats: Record<string, number>,
@@ -194,28 +218,38 @@ export function formatStatLine(
     case "cfb": {
       const parts: string[] = [];
       // Rushing
-      if (stats.rush_carries || stats.rush_yards) {
+      const rushCar = findStat(stats, ["rush_carries", "CAR", "rushingAttempts", "carries"]);
+      const rushYds = findStat(stats, ["rush_yards", "YDS", "rushingYards", "rushYards"]);
+      const rushTd = findStat(stats, ["rush_td", "TD", "rushingTouchdowns"]);
+      if (rushCar || rushYds) {
         parts.push(
-          `${stats.rush_carries ?? 0} car, ${stats.rush_yards ?? 0} yds${stats.rush_td ? `, ${stats.rush_td} TD` : ""}`
+          `${rushCar} car, ${rushYds} yds${rushTd ? `, ${rushTd} TD` : ""}`
         );
       }
       // Passing
-      if (stats.pass_completions || stats.pass_yards) {
-        const comp = stats.pass_completions ?? 0;
-        const att = stats.pass_attempts ?? 0;
+      const passComp = findStat(stats, ["pass_completions", "C/ATT", "completions"]);
+      const passAtt = findStat(stats, ["pass_attempts", "passingAttempts"]);
+      const passYds = findStat(stats, ["pass_yards", "passingYards", "passYards"]);
+      const passTd = findStat(stats, ["pass_td", "passingTouchdowns"]);
+      const ints = findStat(stats, ["interceptions", "INT", "int_thrown"]);
+      if (passComp || passYds) {
         parts.push(
-          `${comp}/${att}, ${stats.pass_yards ?? 0} pass yds${stats.pass_td ? `, ${stats.pass_td} TD` : ""}${stats.interceptions ? `, ${stats.interceptions} INT` : ""}`
+          `${passComp}/${passAtt}, ${passYds} pass yds${passTd ? `, ${passTd} TD` : ""}${ints ? `, ${ints} INT` : ""}`
         );
       }
       // Receiving
-      if (stats.rec_catches || stats.rec_yards) {
+      const recCat = findStat(stats, ["rec_catches", "REC", "receptions"]);
+      const recYds = findStat(stats, ["rec_yards", "receivingYards", "recYards"]);
+      const recTd = findStat(stats, ["rec_td", "receivingTouchdowns"]);
+      if (recCat || recYds) {
         parts.push(
-          `${stats.rec_catches ?? 0} rec, ${stats.rec_yards ?? 0} yds${stats.rec_td ? `, ${stats.rec_td} TD` : ""}`
+          `${recCat} rec, ${recYds} yds${recTd ? `, ${recTd} TD` : ""}`
         );
       }
       // Scoring only (kicker, return TD, etc.)
-      if (parts.length === 0 && stats.points) {
-        parts.push(`${stats.points} pts`);
+      if (parts.length === 0) {
+        const pts = findStat(stats, ["points", "PTS"]);
+        if (pts) parts.push(`${pts} pts`);
       }
       return parts.join(" | ") || "Active";
     }
@@ -224,34 +258,42 @@ export function formatStatLine(
     case "nba":
     case "cbb": {
       const parts: string[] = [];
-      if (stats.points != null) parts.push(`${stats.points} pts`);
-      if (stats.rebounds != null) parts.push(`${stats.rebounds} reb`);
-      if (stats.assists != null) parts.push(`${stats.assists} ast`);
-      if (stats.steals != null && stats.steals > 0)
-        parts.push(`${stats.steals} stl`);
-      if (stats.blocks != null && stats.blocks > 0)
-        parts.push(`${stats.blocks} blk`);
+      const pts = findStat(stats, ["PTS", "points", "pts"]);
+      const reb = findStat(stats, ["REB", "rebounds", "reb", "totalRebounds"]);
+      const ast = findStat(stats, ["AST", "assists", "ast"]);
+      const stl = findStat(stats, ["STL", "steals", "stl"]);
+      const blk = findStat(stats, ["BLK", "blocks", "blk"]);
+      if (pts || hasStat(stats, ["PTS", "points", "pts"])) parts.push(`${pts} pts`);
+      if (reb || hasStat(stats, ["REB", "rebounds", "reb"])) parts.push(`${reb} reb`);
+      if (ast || hasStat(stats, ["AST", "assists", "ast"])) parts.push(`${ast} ast`);
+      if (stl > 0) parts.push(`${stl} stl`);
+      if (blk > 0) parts.push(`${blk} blk`);
       return parts.join(", ") || "Active";
     }
 
     case "baseball":
     case "mlb": {
       const parts: string[] = [];
-      if (stats.hits != null && stats.at_bats != null) {
-        parts.push(`${stats.hits}-${stats.at_bats}`);
+      const hits = findStat(stats, ["hits", "H"]);
+      const ab = findStat(stats, ["at_bats", "AB"]);
+      if (hits || ab) {
+        parts.push(`${hits}-${ab}`);
       }
-      if (stats.rbi != null && stats.rbi > 0)
-        parts.push(`${stats.rbi} RBI`);
-      if (stats.home_runs != null && stats.home_runs > 0)
-        parts.push(`${stats.home_runs} HR`);
-      if (stats.runs != null && stats.runs > 0)
-        parts.push(`${stats.runs} R`);
-      if (stats.stolen_bases != null && stats.stolen_bases > 0)
-        parts.push(`${stats.stolen_bases} SB`);
+      const rbi = findStat(stats, ["rbi", "RBI"]);
+      if (rbi > 0) parts.push(`${rbi} RBI`);
+      const hr = findStat(stats, ["home_runs", "HR", "homeRuns"]);
+      if (hr > 0) parts.push(`${hr} HR`);
+      const runs = findStat(stats, ["runs", "R"]);
+      if (runs > 0) parts.push(`${runs} R`);
+      const sb = findStat(stats, ["stolen_bases", "SB", "stolenBases"]);
+      if (sb > 0) parts.push(`${sb} SB`);
       // Pitching
-      if (stats.innings_pitched != null) {
+      const ip = findStat(stats, ["innings_pitched", "IP", "inningsPitched"]);
+      if (ip) {
+        const k = findStat(stats, ["strikeouts", "K", "SO"]);
+        const er = findStat(stats, ["earned_runs", "ER", "earnedRuns"]);
         parts.push(
-          `${stats.innings_pitched} IP, ${stats.strikeouts ?? 0} K${stats.earned_runs != null ? `, ${stats.earned_runs} ER` : ""}`
+          `${ip} IP, ${k} K${er ? `, ${er} ER` : ""}`
         );
       }
       return parts.join(", ") || "Active";

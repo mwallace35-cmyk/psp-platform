@@ -782,6 +782,7 @@ export async function cachePerformances(
       performance_score: m.performanceScore,
       recap_tier: m.recapTier,
       high_school: m.highSchool || null,
+      high_school_id: m.highSchoolId || null,
     }));
 
     const { error } = await (supabase as any)
