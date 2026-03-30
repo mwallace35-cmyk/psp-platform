@@ -1,24 +1,26 @@
 import { createStaticClient } from '@/lib/supabase/static';
+import { createClient } from '@/lib/data/common';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import PulseNav from '@/components/pulse/PulseNav';
-import OurGuysClient, { type AlumniRecord } from './OurGuysClient';
-import OurGuysEditorialTop from '@/components/our-guys/OurGuysEditorialTop';
-import AroundTheWeb from '@/components/our-guys/AroundTheWeb';
+import { Suspense } from 'react';
+import { ScoreTicker } from '@/components/our-guys/ScoreTicker';
+import { RecapBoard } from '@/components/our-guys/RecapBoard';
+import { CoachCorner } from '@/components/our-guys/CoachCorner';
+import { NewsRail } from '@/components/our-guys/NewsRail';
+import { ReactiveDidYouKnow } from '@/components/our-guys/ReactiveDidYouKnow';
 import SchoolPipelineRanking from '@/components/our-guys/SchoolPipelineRanking';
-import type { FeaturedAthlete, DidYouKnowFact } from '@/components/our-guys/OurGuysEditorialTop';
-import type { WeekendRecap } from '@/components/our-guys/ThisWeekendCard';
+import './bar-theme.css';
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
-  title: 'Our Guys — The Pulse | PhillySportsPack.com',
-  description: 'Track Philadelphia high school alumni playing in the NFL, NBA, MLB, college, and coaching at the next level.',
+  title: 'Our Guys — The Philly Sports Bar | PhillySportsPack.com',
+  description: 'Track Philadelphia high school alumni playing in the NFL, NBA, MLB, college, and coaching at the next level. Live scores, AI recaps, and the full directory.',
   metadataBase: new URL('https://phillysportspack.com'),
   alternates: { canonical: 'https://phillysportspack.com/our-guys' },
   robots: { index: true, follow: true },
 };
 
-/* ─── Sport emoji helper ─── */
+/* Sport emoji helper */
 const SPORT_EMOJI: Record<string, string> = {
   football: '\uD83C\uDFC8',
   basketball: '\uD83C\uDFC0',
@@ -29,109 +31,58 @@ const SPORT_EMOJI: Record<string, string> = {
   wrestling: '\uD83E\uDD3C',
 };
 
-/* ─── League pill colors ─── */
-const LEAGUE_STYLE: Record<string, { bg: string; text: string }> = {
-  NFL:           { bg: 'bg-green-700',  text: 'text-white' },
-  NBA:           { bg: 'bg-orange-600', text: 'text-white' },
-  MLB:           { bg: 'bg-blue-700',   text: 'text-white' },
-  WNBA:          { bg: 'bg-purple-700', text: 'text-white' },
-  MLS:           { bg: 'bg-emerald-700',text: 'text-white' },
-  'NBA G League':{ bg: 'bg-orange-500', text: 'text-white' },
-  UFL:           { bg: 'bg-gray-600',   text: 'text-white' },
+/* League pill colors — dark theme */
+const LEAGUE_STYLE: Record<string, string> = {
+  NFL:           'border-green-500/30 text-green-400',
+  NBA:           'border-orange-500/30 text-orange-400',
+  MLB:           'border-blue-500/30 text-blue-400',
+  WNBA:          'border-purple-500/30 text-purple-400',
+  MLS:           'border-emerald-500/30 text-emerald-400',
+  'NBA G League':'border-orange-400/30 text-orange-300',
+  UFL:           'border-gray-500/30 text-gray-300',
 };
 
 export default async function OurGuysPage() {
   const supabase = createStaticClient();
 
-  const [alumniRes, pipelineRes, recentRes, featuredRes, dykRes, weekendRes] = await Promise.all([
-    // Main alumni fetch — all counts derived from this array
+  const [alumniRes, pipelineRes, recentRes] = await Promise.all([
     supabase
       .from('next_level_tracking')
-      .select('id, person_name, player_id, current_level, current_org, current_role, pro_league, sport_id, status, featured, bio_note, social_twitter, social_instagram, college, draft_info, bio_url, trajectory_label, schools:high_school_id(name, slug), players:player_id(slug)')
+      .select('id, person_name, player_id, current_level, current_org, current_role, pro_league, sport_id, status, featured, social_twitter, social_instagram, college, schools:high_school_id(name, slug), players:player_id(slug)')
       .order('featured', { ascending: false })
       .order('person_name')
       .limit(2500),
 
-    // School pipeline: active pros grouped by school (also used for league breakdown)
+    // Active pros for counts + league breakdown
     supabase
       .from('next_level_tracking')
       .select('high_school_id, schools:high_school_id(name, slug), current_level, sport_id, pro_league')
       .eq('current_level', 'pro')
       .eq('status', 'active'),
 
-    // Recently added
-    supabase
-      .from('next_level_tracking')
-      .select('id, person_name, current_level, current_org, pro_league, sport_id, status, created_at, schools:high_school_id(name, slug)')
-      .order('created_at', { ascending: false })
-      .limit(6),
-
-    // Featured pro athletes for editorial grid (NFL/NBA/MLB)
-    supabase
-      .from('next_level_tracking')
-      .select('id, person_name, current_org, pro_league, sport_id, college, current_role, schools:high_school_id(name)')
-      .eq('current_level', 'pro')
-      .in('pro_league', ['NFL', 'NBA', 'MLB'])
-      .order('person_name')
-      .limit(50),
-
-    // Did You Know facts
-    supabase
-      .from('did_you_know')
-      .select('id, fact_text, sport, category')
-      .eq('approved', true),
-
-    // Weekend recaps — most recent week
-    supabase
-      .from('weekend_recaps')
-      .select('id, player_name, team, sport, stat_line, result, game_date, week_label')
-      .order('game_date', { ascending: false })
-      .limit(8),
+    // Featured/trending — players with recent recaps
+    (async () => {
+      const db = await createClient();
+      const { data } = await (db as any)
+        .from('nlt_game_performances')
+        .select('nlt_id, player_name, team_name, sport, stats, performance_score, high_school, recap_tier')
+        .order('created_at', { ascending: false })
+        .limit(12);
+      return data || [];
+    })(),
   ]);
 
-  /* ─── Process alumni ─── */
-  const alumni = (alumniRes.data ?? []).map((a: Record<string, unknown>) => {
-    const playerJoin = Array.isArray(a.players) ? a.players[0] : a.players;
-    return {
-      ...a,
-      schools: Array.isArray(a.schools) ? a.schools[0] : a.schools,
-      slug: (playerJoin as Record<string, unknown> | null)?.slug as string | null ?? null,
-    };
-  }) as AlumniRecord[];
+  /* ─── Derive alumni counts ─── */
+  const alumni = alumniRes.data ?? [];
+  let activePro = 0;
+  let college = 0;
 
-  /* ─── Counts — derived from actual alumni array to avoid discrepancies ─── */
-  let derivedActivePro = 0;
-  let derivedFormerPro = 0;
-  let derivedCollege = 0;
-  let derivedCoaching = 0;
-  let derivedNfl = 0;
-  let derivedNba = 0;
-  let derivedMlb = 0;
-
-  for (const a of alumni) {
-    if (a.current_level === 'pro' && a.status === 'active') derivedActivePro++;
-    if (a.current_level === 'pro' && a.status !== 'active') derivedFormerPro++;
-    if (a.current_level === 'college') derivedCollege++;
-    if (a.current_level === 'coaching' || a.current_level === 'coach' || a.current_level === 'referee' ||
-        (a.current_role && typeof a.current_role === 'string' && a.current_role.toLowerCase().includes('coach'))) derivedCoaching++;
-    if (a.pro_league === 'NFL') derivedNfl++;
-    if (a.pro_league === 'NBA') derivedNba++;
-    if (a.pro_league === 'MLB') derivedMlb++;
+  for (const a of alumni as Record<string, unknown>[]) {
+    if (a.current_level === 'pro' && a.status === 'active') activePro++;
+    if (a.current_level === 'college') college++;
   }
 
-  const counts = {
-    total: alumni.length,
-    activePro: derivedActivePro,
-    formerPro: derivedFormerPro,
-    college: derivedCollege,
-    nfl: derivedNfl,
-    nba: derivedNba,
-    mlb: derivedMlb,
-  };
-
-  const coachingCount = derivedCoaching;
-
-  /* ─── League breakdown data (from pipeline = active pros only) ─── */
+  /* ─── League breakdown ─── */
   const leagueCounts = new Map<string, number>();
   for (const entry of (pipelineRes.data ?? []) as Record<string, unknown>[]) {
     const league = entry.pro_league as string | null;
@@ -141,175 +92,262 @@ export default async function OurGuysPage() {
   const leagueBreakdown = leagueOrder
     .filter(l => (leagueCounts.get(l) || 0) > 0)
     .map(l => ({ league: l, count: leagueCounts.get(l) || 0 }));
-  // Include any leagues not in the predefined order
   for (const [league, count] of leagueCounts) {
     if (!leagueOrder.includes(league) && count > 0) {
       leagueBreakdown.push({ league, count });
     }
   }
 
-  /* ─── Recently added ─── */
-  const recentlyAdded = ((recentRes.data ?? []) as Record<string, unknown>[]).map(r => {
-    const school = Array.isArray(r.schools) ? r.schools[0] : r.schools;
-    return {
-      id: r.id as string,
-      person_name: r.person_name as string,
-      current_level: r.current_level as string,
-      current_org: r.current_org as string | null,
-      pro_league: r.pro_league as string | null,
-      sport_id: r.sport_id as string | null,
-      status: r.status as string | null,
-      created_at: r.created_at as string | null,
-      school: school as { name: string; slug: string } | null,
-    };
-  });
+  /* ─── Directory preview: trending players from recent recaps ─── */
+  const trendingNltIds = new Set<number>();
+  const directoryPreview: Array<{ name: string; team: string; school: string | null; sport: string; statLine: string }> = [];
 
-  /* ─── Featured athletes for editorial grid ─── */
-  const allFeaturedPros = ((featuredRes.data ?? []) as Record<string, unknown>[]).map(r => {
-    const school = Array.isArray(r.schools) ? r.schools[0] : r.schools;
-    return {
-      id: r.id as string,
-      person_name: r.person_name as string,
-      current_org: r.current_org as string | null,
-      pro_league: r.pro_league as string | null,
-      sport_id: r.sport_id as string | null,
-      college: r.college as string | null,
-      current_role: r.current_role as string | null,
-      school_name: (school as { name?: string } | null)?.name ?? null,
-    } satisfies FeaturedAthlete;
-  });
-  // Pick 2 random featured athletes (different each revalidation)
-  const shuffledPros = allFeaturedPros.sort(() => Math.random() - 0.5);
-  const editorialFeatured = shuffledPros.slice(0, 2);
+  for (const perf of recentRes as any[]) {
+    if (trendingNltIds.has(perf.nlt_id)) continue;
+    trendingNltIds.add(perf.nlt_id);
 
-  /* ─── Did You Know facts ─── */
-  const didYouKnowFacts: DidYouKnowFact[] = ((dykRes.data ?? []) as Record<string, unknown>[]).map(r => ({
-    id: r.id as number,
-    fact_text: r.fact_text as string,
-    sport: r.sport as string | null,
-    category: r.category as string | null,
-  }));
-  // Shuffle so the initial fact is random each revalidation
-  didYouKnowFacts.sort(() => Math.random() - 0.5);
+    const stats = perf.stats || {};
+    const parts: string[] = [];
+    if (stats.rush_yds) parts.push(`${stats.rush_yds} rush yds`);
+    if (stats.pass_yds) parts.push(`${stats.pass_yds} pass yds`);
+    if (stats.rec_yds) parts.push(`${stats.rec_yds} rec yds`);
+    if (stats.total_td) parts.push(`${stats.total_td} TD`);
+    if (stats.pts) parts.push(`${stats.pts} pts`);
+    if (stats.reb) parts.push(`${stats.reb} reb`);
+    if (stats.ast) parts.push(`${stats.ast} ast`);
+    if (stats.hits) parts.push(`${stats.hits} H`);
+    if (stats.rbi) parts.push(`${stats.rbi} RBI`);
+    if (stats.hr) parts.push(`${stats.hr} HR`);
 
-  /* ─── Weekend recaps ─── */
-  const weekendRecaps: WeekendRecap[] = ((weekendRes.data ?? []) as Record<string, unknown>[]).map(r => ({
-    id: r.id as number,
-    player_name: r.player_name as string,
-    team: r.team as string | null,
-    sport: r.sport as string,
-    stat_line: r.stat_line as string,
-    result: r.result as string | null,
-    game_date: r.game_date as string,
-    week_label: r.week_label as string | null,
-  }));
+    directoryPreview.push({
+      name: perf.player_name,
+      team: perf.team_name,
+      school: perf.high_school,
+      sport: perf.sport,
+      statLine: parts.slice(0, 3).join(', '),
+    });
+
+    if (directoryPreview.length >= 8) break;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* ═══ Editorial Top — Hero + Featured + DYK ═══ */}
-      <OurGuysEditorialTop
-        counts={{ total: counts.total, activePro: counts.activePro, college: counts.college }}
-        featuredAthletes={editorialFeatured}
-        didYouKnowFacts={didYouKnowFacts}
-        weekendRecaps={weekendRecaps}
-      />
+    <div className="bar-page">
+      {/* ═══ Hero — "OUR GUYS" ═══ */}
+      <header className="bar-hero">
+        <p style={{
+          fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
+          fontSize: '12px',
+          fontWeight: 600,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          color: 'var(--bar-text-muted)',
+          marginBottom: '4px',
+        }}>
+          PHILLY SPORTS PACK
+        </p>
+        <h1 className="bar-hero__title">OUR GUYS</h1>
+        <p className="bar-hero__subtitle">
+          {activePro} Active Pros &middot; {college.toLocaleString()} in College &middot; {alumni.length.toLocaleString()} Total Tracked
+        </p>
+      </header>
 
-      <PulseNav />
+      {/* ═══ Score Ticker ═══ */}
+      <Suspense fallback={
+        <div style={{ background: 'var(--bar-ticker)', height: 48 }} />
+      }>
+        <ScoreTicker />
+      </Suspense>
 
-      {/* ═══ Server-rendered hub sections ═══ */}
-      <div className="max-w-7xl mx-auto px-4">
+      {/* ═══ Main content ═══ */}
+      <div className="bar-layout">
+        <div className="bar-columns" style={{ paddingTop: '24px', paddingBottom: '48px' }}>
 
-        {/* ─── School Pipeline Rankings (graded table) ─── */}
-        <SchoolPipelineRanking />
+          {/* ═══ LEFT: Main column ═══ */}
+          <div className="bar-main">
 
-        {/* ─── Recently Added Section ─── */}
-        {recentlyAdded.length > 0 && (
-          <section className="py-4 pb-8">
-            <h2 className="psp-h2 text-navy mb-1">
-              Latest Additions to Our Guys
-            </h2>
-            <p className="text-gray-400 text-sm mb-5">Newly tracked athletes and coaches</p>
+            {/* Recap Board — "Last Night at the Bar" */}
+            <Suspense fallback={null}>
+              <RecapBoard />
+            </Suspense>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {recentlyAdded.map(person => {
-                const levelLabel = person.current_level === 'pro'
-                  ? (person.pro_league || 'Pro')
-                  : person.current_level === 'college'
-                  ? 'College'
-                  : person.current_level === 'coaching'
-                  ? 'Coach'
-                  : person.current_level;
-                const emoji = SPORT_EMOJI[person.sport_id || ''] || '';
+            <div className="bar-divider" />
 
-                return (
-                  <div
-                    key={person.id}
-                    className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 p-3.5 hover:border-gold/50 hover:shadow-sm transition"
-                  >
-                    {/* Sport circle */}
-                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-lg shrink-0">
-                      {emoji || '\uD83C\uDFC5'}
-                    </div>
+            {/* Coach Corner */}
+            <Suspense fallback={null}>
+              <CoachCorner />
+            </Suspense>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-navy truncate">{person.person_name}</span>
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-navy/5 text-navy/60 shrink-0">
-                          {levelLabel}
+            <div className="bar-divider" />
+
+            {/* News Rail — PSP Stories + Around the Web */}
+            <Suspense fallback={null}>
+              <NewsRail />
+            </Suspense>
+
+            <div className="bar-divider" />
+
+            {/* School Pipeline */}
+            <section style={{ padding: '24px 16px' }}>
+              <h3 className="bar-section-header">
+                SCHOOL PIPELINE
+              </h3>
+              <div className="bar-card" style={{ padding: '16px' }}>
+                <SchoolPipelineRanking />
+              </div>
+            </section>
+
+            <div className="bar-divider" />
+
+            {/* Directory Preview — trending players */}
+            <section style={{ padding: '24px 16px' }}>
+              <h3 className="bar-section-header bar-section-header--gold">
+                OUR GUYS
+              </h3>
+
+              {directoryPreview.length > 0 ? (
+                <div className="bar-directory-preview">
+                  {directoryPreview.map((player, i) => (
+                    <div key={i} className="bar-directory-card">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                        <div style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: '50%',
+                          background: 'var(--bar-surface-elevated)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '16px',
+                          flexShrink: 0,
+                        }}>
+                          {SPORT_EMOJI[player.sport] || '\uD83C\uDFC5'}
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{
+                            fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
+                            fontWeight: 700,
+                            fontSize: '14px',
+                            color: 'var(--bar-text)',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}>
+                            {player.name}
+                          </div>
+                          <div style={{
+                            fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
+                            fontSize: '12px',
+                            color: 'var(--bar-text-muted)',
+                          }}>
+                            {player.team}
+                          </div>
+                        </div>
+                      </div>
+                      {player.school && (
+                        <span className="bar-school-badge" style={{ marginBottom: '6px' }}>
+                          {player.school}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
-                        {person.school && (
-                          <Link href={`/schools/${person.school.slug}`} className="hover:text-blue-600 truncate">
-                            {person.school.name}
-                          </Link>
-                        )}
-                        {person.current_org && (
-                          <>
-                            {person.school && <span className="text-gray-300">|</span>}
-                            <span className="truncate">{person.current_org}</span>
-                          </>
-                        )}
-                      </div>
+                      )}
+                      {player.statLine && (
+                        <div style={{
+                          fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          color: 'var(--bar-text-muted)',
+                          marginTop: '4px',
+                        }}>
+                          {player.statLine}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
+                  ))}
+                </div>
+              ) : (
+                <p style={{
+                  fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",
+                  fontSize: '14px',
+                  color: 'var(--bar-text-muted)',
+                }}>
+                  {alumni.length.toLocaleString()} Philly alumni tracked across college and pro sports.
+                </p>
+              )}
 
-        {/* ─── Around the Web ─── */}
-        <AroundTheWeb />
+              <Link href="/our-guys/directory" className="bar-see-all" style={{ marginTop: '16px' }}>
+                See All {alumni.length.toLocaleString()} Alumni &rarr;
+              </Link>
+            </section>
+          </div>
 
-        {/* ─── Pro League Breakdown ─── */}
-        {leagueBreakdown.length > 0 && (
-          <section className="py-4 pb-8">
-            <h2 className="psp-h2 text-navy mb-1">
-              Pro League Breakdown
-            </h2>
-            <p className="text-gray-400 text-sm mb-5">Active Philly pros by league</p>
+          {/* ═══ RIGHT: Sidebar ("The Board") — desktop only ═══ */}
+          <aside className="bar-sidebar" style={{ display: 'none' }}>
+            {/* Reactive DYK */}
+            <Suspense fallback={null}>
+              <ReactiveDidYouKnow />
+            </Suspense>
 
-            <div className="flex flex-wrap gap-2.5">
-              {leagueBreakdown.map(({ league, count }) => {
-                const style = LEAGUE_STYLE[league] || { bg: 'bg-gray-500', text: 'text-white' };
-                return (
-                  <span
-                    key={league}
-                    className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm ${style.bg} ${style.text} shadow-sm`}
-                  >
-                    {league}
-                    <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs font-bold">{count}</span>
-                  </span>
-                );
-              })}
-            </div>
-          </section>
-        )}
+            <div style={{ height: '20px' }} />
+
+            {/* Pro League Breakdown */}
+            {leagueBreakdown.length > 0 && (
+              <div className="bar-card" style={{ padding: '16px' }}>
+                <h3 className="bar-section-header" style={{ fontSize: '16px', marginBottom: '12px' }}>
+                  PRO BREAKDOWN
+                </h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {leagueBreakdown.map(({ league, count }) => {
+                    const cls = LEAGUE_STYLE[league] || 'border-gray-500/30 text-gray-300';
+                    return (
+                      <span key={league} className={`bar-league-pill ${cls}`}>
+                        {league}
+                        <span className="bar-league-count">{count}</span>
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </aside>
+        </div>
       </div>
 
-      {/* ═══ The Directory ═══ */}
-      <OurGuysClient alumni={alumni} counts={counts} />
+      {/* Desktop sidebar visibility */}
+      <style>{`
+        @media (min-width: 1024px) {
+          .bar-sidebar { display: block !important; }
+        }
+      `}</style>
+
+      {/* Mobile-only sections (shown below main content on small screens) */}
+      <div className="bar-layout" style={{ paddingBottom: '48px' }}>
+        <div className="lg:hidden">
+          {/* DYK on mobile */}
+          <div style={{ padding: '0 16px 24px' }}>
+            <Suspense fallback={null}>
+              <ReactiveDidYouKnow />
+            </Suspense>
+          </div>
+
+          {/* League breakdown on mobile */}
+          {leagueBreakdown.length > 0 && (
+            <section style={{ padding: '0 16px 24px' }}>
+              <h3 className="bar-section-header" style={{ fontSize: '18px', marginBottom: '12px' }}>
+                PRO BREAKDOWN
+              </h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {leagueBreakdown.map(({ league, count }) => {
+                  const cls = LEAGUE_STYLE[league] || 'border-gray-500/30 text-gray-300';
+                  return (
+                    <span key={league} className={`bar-league-pill ${cls}`}>
+                      {league}
+                      <span className="bar-league-count">{count}</span>
+                    </span>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

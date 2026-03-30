@@ -5,7 +5,9 @@
       "name": "psp-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 3000
+      "cwd": "/Users/admin/tedsilary.com/phillysportspack/psp-platform/next-app",
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }

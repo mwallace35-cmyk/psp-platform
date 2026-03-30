@@ -520,6 +520,53 @@ export {
   type StatMilestone,
 } from "./milestones";
 
+// ESPN data provider (Our Guys score ticker + recaps)
+export {
+  fetchScoreboard,
+  fetchBoxScore,
+  matchPhillyPlayers,
+  mapTeamStats,
+  computePerformanceScore,
+  cacheScoreboard,
+  cacheBoxScore,
+  cachePerformances,
+  type LeagueId,
+  type GameScore,
+  type BoxScoreDetail,
+  type ESPNPlayer,
+  type PerformanceMatch,
+  type CoachFocus,
+  type TeamStatResult,
+} from "./espn-provider";
+
+// Player matcher (Fuse.js NLT-to-ESPN matching)
+export {
+  normalizePlayerName,
+  buildNLTIndex,
+  matchPlayerToNLT,
+  matchBatchPlayers,
+  getActiveNLTEntries,
+  getTeamMappings,
+  type NLTEntry,
+  type TeamMapping,
+  type ESPNPlayerRef,
+  type MatchResult,
+  type BatchMatchResult,
+} from "./player-matcher";
+
+// Recap engine (tier assignment + AI prompt generation)
+export {
+  assignRecapTiers,
+  generateSpotlightNarrative,
+  generateReactiveDYK,
+  formatStatLine,
+  getRecapDate,
+  type GamePerformance,
+  type SpotlightPlayer,
+  type HSCareerStats,
+  type TieredRecap,
+} from "../recap-engine";
+
 // Playoff bracket functions
 export {
   getPlayoffBrackets,

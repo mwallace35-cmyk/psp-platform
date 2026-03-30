@@ -1,10 +1,13 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { SPORT_META, getSchoolTeamStats, getDiscontinuedSchools } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
+import SchoolLogo from "@/components/ui/SchoolLogo";
+import { createStaticClient } from "@/lib/supabase/static";
+import TeamsViewToggle from "./TeamsViewToggle";
+import type { TeamCardData, DiscontinuedSchoolData } from "./TeamsViewToggle";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: hourly
@@ -15,73 +18,202 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   if (!sport) return {};
   const meta = SPORT_META[sport];
   return {
-    title: `${meta.name} Teams — PhillySportsPack`,
-    description: `All Philadelphia area ${meta.name.toLowerCase()} teams — records, championships, and season-by-season results.`,
+    title: `${meta.name} Teams - PhillySportsPack`,
+    description: `All Philadelphia area ${meta.name.toLowerCase()} teams - records, championships, and season-by-season results.`,
     alternates: {
       canonical: `https://phillysportspack.com/${sport}/teams`,
     },
   };
 }
 
-// export function generateStaticParams() {
-//   return [
-//     { sport: "football" },
-//     { sport: "basketball" },
-//     { sport: "baseball" },
-//     { sport: "track-field" },
-//     { sport: "lacrosse" },
-//     { sport: "wrestling" },
-//     { sport: "soccer" },
-//   ];
-// }
+/* ── League / Division Config ──────────────────────────────────────── */
 
 const LEAGUE_COLORS: Record<string, string> = {
-  "Catholic League": "#dc2626",
-  "Public League": "#16a34a",
-  "Inter-Ac League": "#2563eb",
-  "Central League": "#7c3aed",
-  "Del Val League": "#ea580c",
-  "Ches-Mont League": "#0891b2",
-  "Suburban One": "#4f46e5",
-  "Independent": "#6b7280",
+  "Philadelphia Catholic League": "#dc2626",
+  "Philadelphia Public League": "#16a34a",
+  "Inter-Academic League": "#2563eb",
 };
+
+const DIVISION_ORDER: Record<string, string[]> = {
+  "Philadelphia Catholic League": ["Red", "Blue"],
+  "Philadelphia Public League": ["American", "Independence", "National", "Liberty"],
+  "Inter-Academic League": [], // no divisions
+};
+
+const CORE_LEAGUES = [
+  "Philadelphia Catholic League",
+  "Philadelphia Public League",
+  "Inter-Academic League",
+];
+
+/* ── Page ──────────────────────────────────────────────────────────── */
 
 export default async function TeamsPage({ params }: { params: Promise<PageParams> }) {
   const sport = await validateSportParam(params);
-
   const meta = SPORT_META[sport];
-  const [teamsResult, discontinuedSchools] = await Promise.all([
+  const supabase = createStaticClient();
+
+  // Parallel data fetches
+  const [teamsResult, discontinuedSchools, sportRow, latestSeason] = await Promise.all([
     getSchoolTeamStats(sport),
     getDiscontinuedSchools(sport),
+    supabase.from("sports").select("id").eq("slug", sport).single(),
+    supabase.from("seasons").select("id, label").order("label", { ascending: false }).limit(1),
   ]);
+
   const teams = teamsResult.data;
 
-  // Separate active and closed schools
-  const activeTeams = teams.filter((t) => !t.closedYear);
-  const closedTeams = teams.filter((t) => t.closedYear);
+  // Get school IDs for supplemental query
+  const schoolIds = teams.map((t) => t.school.id);
 
-  // Only show the three core Philly leagues
-  const CORE_LEAGUES = ["Philadelphia Catholic League", "Philadelphia Public League", "Inter-Academic League"];
+  // Supplemental queries: school details + state champs
+  const sportId = sportRow.data?.id ?? null;
+  const latestSeasonId = latestSeason.data?.[0]?.id ?? null;
+  const latestSeasonLabel = latestSeason.data?.[0]?.label ?? null;
 
-  // Group active teams by league (core leagues only)
-  const leagueGroups: Record<string, typeof teams> = {};
-  for (const team of activeTeams) {
-    const league = team.league || "Independent";
-    if (!CORE_LEAGUES.includes(league)) continue;
-    if (!leagueGroups[league]) leagueGroups[league] = [];
-    leagueGroups[league].push(team);
+  const [schoolDetailsRes, stateChampsRes] = await Promise.all([
+    schoolIds.length > 0
+      ? supabase
+          .from("schools")
+          .select("id, logo_url, colors, mascot, division")
+          .in("id", schoolIds)
+      : Promise.resolve({ data: [] as any[] }),
+    sportId && latestSeasonId
+      ? supabase
+          .from("championships")
+          .select("school_id, championship_type, notes")
+          .eq("sport_id", sportId)
+          .eq("season_id", latestSeasonId)
+          .or("level.ilike.%state%,level.ilike.%piaa%")
+      : Promise.resolve({ data: [] as any[] }),
+  ]);
+
+  // Build lookup maps
+  const detailMap = new Map<number, { logoUrl: string | null; colors: any; mascot: string | null; division: string | null }>();
+  for (const row of schoolDetailsRes.data ?? []) {
+    detailMap.set(row.id, {
+      logoUrl: row.logo_url || null,
+      colors: row.colors,
+      mascot: row.mascot || null,
+      division: row.division || null,
+    });
   }
 
-  // Sort leagues: Catholic, Public, Inter-Ac
-  const leagueOrder = CORE_LEAGUES;
-  const sortedLeagues = Object.entries(leagueGroups)
-    .sort((a, b) => leagueOrder.indexOf(a[0]) - leagueOrder.indexOf(b[0]));
+  const stateChampIds: number[] = [];
+  const stateChampMap: Record<number, string> = {};
+  for (const row of stateChampsRes.data ?? []) {
+    if (row.school_id) {
+      stateChampIds.push(row.school_id);
+      stateChampMap[row.school_id] = row.championship_type || "";
+    }
+  }
 
-  // Sort closed schools by closed year (most recent first), then name
-  const sortedClosedTeams = [...closedTeams].sort((a, b) => {
-    if (b.closedYear !== a.closedYear) return (b.closedYear || 0) - (a.closedYear || 0);
-    return (a.school?.name || "").localeCompare(b.school?.name || "");
+  // Also get details for discontinued schools
+  const discIds = discontinuedSchools.map((s) => s.id);
+  const discDetailsRes = discIds.length > 0
+    ? await supabase.from("schools").select("id, logo_url, colors, mascot").in("id", discIds)
+    : { data: [] as any[] };
+
+  const discDetailMap = new Map<number, { logoUrl: string | null; colors: any; mascot: string | null }>();
+  for (const row of discDetailsRes.data ?? []) {
+    discDetailMap.set(row.id, {
+      logoUrl: row.logo_url || null,
+      colors: row.colors,
+      mascot: row.mascot || null,
+    });
+  }
+
+  // Helper to extract primary color
+  function getPrimaryColor(colors: any): string | null {
+    if (colors && typeof colors === "object") {
+      return (colors as Record<string, string>).primary || null;
+    }
+    return null;
+  }
+
+  // Enrich teams with supplemental data
+  function enrichTeam(team: typeof teams[0]): TeamCardData {
+    const detail = detailMap.get(team.school.id);
+    return {
+      ...team,
+      logoUrl: detail?.logoUrl || null,
+      primaryColor: getPrimaryColor(detail?.colors),
+      mascot: detail?.mascot || null,
+      division: detail?.division || null,
+    };
+  }
+
+  // Separate active and closed
+  const activeTeams = teams.filter((t) => !t.closedYear).map(enrichTeam);
+  const closedTeams = teams
+    .filter((t) => t.closedYear)
+    .map(enrichTeam)
+    .sort((a, b) => {
+      if (b.closedYear !== a.closedYear) return (b.closedYear || 0) - (a.closedYear || 0);
+      return a.school.name.localeCompare(b.school.name);
+    });
+
+  // Enrich discontinued schools
+  const enrichedDiscontinued: DiscontinuedSchoolData[] = discontinuedSchools.map((s) => {
+    const detail = discDetailMap.get(s.id);
+    return {
+      ...s,
+      logoUrl: detail?.logoUrl || null,
+      primaryColor: getPrimaryColor(detail?.colors),
+      mascot: detail?.mascot || null,
+    };
   });
+
+  // Group active teams by league -> division
+  const leagueSections: { league: string; divisionGroups: { division: string; teams: TeamCardData[] }[] }[] = [];
+
+  for (const league of CORE_LEAGUES) {
+    const leagueTeams = activeTeams.filter((t) => t.league === league);
+    if (leagueTeams.length === 0) continue;
+
+    const divisions = DIVISION_ORDER[league] || [];
+    const divisionGroups: { division: string; teams: TeamCardData[] }[] = [];
+
+    if (divisions.length > 0) {
+      // Group by division
+      for (const div of divisions) {
+        const divTeams = leagueTeams.filter((t) => {
+          const d = t.division?.toLowerCase() || "";
+          return d.includes(div.toLowerCase());
+        });
+        if (divTeams.length > 0) {
+          divisionGroups.push({
+            division: `${div} Division`,
+            teams: divTeams.sort((a, b) => a.school.name.localeCompare(b.school.name)),
+          });
+        }
+      }
+
+      // Remaining teams without a recognized division
+      const assignedIds = new Set(divisionGroups.flatMap((g) => g.teams.map((t) => t.school.id)));
+      const otherTeams = leagueTeams.filter((t) => !assignedIds.has(t.school.id));
+      if (otherTeams.length > 0) {
+        divisionGroups.push({
+          division: `Other ${league.replace("Philadelphia ", "").replace("Inter-Academic ", "Inter-Ac ")} Programs`,
+          teams: otherTeams.sort((a, b) => a.school.name.localeCompare(b.school.name)),
+        });
+      }
+    } else {
+      // No divisions (e.g. Inter-Ac)
+      divisionGroups.push({
+        division: "",
+        teams: leagueTeams.sort((a, b) => a.school.name.localeCompare(b.school.name)),
+      });
+    }
+
+    leagueSections.push({ league, divisionGroups });
+  }
+
+  // Counts
+  const totalActive = leagueSections.reduce((s, l) => s + l.divisionGroups.reduce((s2, g) => s2 + g.teams.length, 0), 0);
+
+  // State champs for sidebar
+  const stateChampTeams = activeTeams.filter((t) => stateChampIds.includes(t.school.id));
 
   return (
     <main id="main-content">
@@ -111,15 +243,13 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
               {meta.emoji}
             </div>
             <div>
-              <h1
-                className="psp-h1 text-white"
-              >
+              <h1 className="psp-h1 text-white">
                 {meta.name} Teams
               </h1>
               <p className="text-sm text-gray-300 mt-1">
-                {sortedLeagues.reduce((sum, [, t]) => sum + t.length, 0)} teams across {sortedLeagues.length} leagues
-                {closedTeams.length > 0 && ` � ${closedTeams.length} closed programs`}
-                {discontinuedSchools.length > 0 && ` � ${discontinuedSchools.length} discontinued`}
+                {totalActive} active teams across {leagueSections.length} leagues
+                {closedTeams.length > 0 && ` \u00B7 ${closedTeams.length} closed programs`}
+                {enrichedDiscontinued.length > 0 && ` \u00B7 ${enrichedDiscontinued.length} discontinued`}
               </p>
             </div>
           </div>
@@ -131,263 +261,8 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main content */}
-          <div className="lg:col-span-3 space-y-8">
-            {sortedLeagues.map(([league, leagueTeams]) => (
-              <div key={league}>
-                <h2
-                  className="psp-h2 mb-4 pb-2 border-b-2"
-                  style={{
-                    color: "var(--psp-navy)",
-                    borderColor: LEAGUE_COLORS[league] || "var(--psp-gold)",
-                  }}
-                >
-                  {league}
-                  <span className="text-sm font-normal ml-2" style={{ color: "var(--psp-gray-400)" }}>
-                    ({leagueTeams.length} teams)
-                  </span>
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {leagueTeams.map((team) => {
-                    const school = team.school;
-                    if (!school) return null;
-                    const total = team.totalWins + team.totalLosses + team.totalTies;
-                    const winPct = total > 0 ? ((team.totalWins / total) * 100).toFixed(0) : "0";
-
-                    return (
-                      <Link
-                        key={school.id}
-                        href={`/${sport}/schools/${school.slug}`}
-                        className="group block bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-lg hover:border-[var(--psp-gold)] transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none"
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h3
-                              className="psp-h3 group-hover:text-[var(--psp-gold)] transition-colors"
-                              style={{ color: "var(--psp-navy)" }}
-                            >
-                              {school.name}
-                            </h3>
-                            <p className="text-xs text-gray-400 mt-1">
-                              {school.city}, {school.state}
-                            </p>
-                          </div>
-                          <span style={{ opacity: 0.6, fontSize: "1.5rem" }}>{meta.emoji}</span>
-                        </div>
-
-                        <div
-                          className="text-xs font-bold px-2 py-1 rounded inline-block mb-3"
-                          style={{
-                            background: `${LEAGUE_COLORS[league] || "var(--psp-gold)"}15`,
-                            color: LEAGUE_COLORS[league] || "var(--psp-gold)",
-                          }}
-                        >
-                          {league}
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div className="bg-gray-50 rounded p-2">
-                            <div className="text-gray-400">All-Time</div>
-                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-navy)" }}>
-                              {team.totalWins}-{team.totalLosses}
-                              {team.totalTies > 0 ? `-${team.totalTies}` : ""}
-                            </div>
-                          </div>
-                          <div className="bg-gray-50 rounded p-2">
-                            <div className="text-gray-400">Win %</div>
-                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-navy)" }}>
-                              {winPct}%
-                            </div>
-                          </div>
-                          <div className="bg-gray-50 rounded p-2">
-                            <div className="text-gray-400">Titles</div>
-                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gold)" }}>
-                              {team.championships > 0 ? `🏆 ${team.championships}` : "—"}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="text-xs text-gray-300 mt-2">
-                          {team.seasonCount} seasons on record
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-
-            {/* Closed Schools */}
-            {sortedClosedTeams.length > 0 && (
-              <div>
-                <h2
-                  className="text-2xl font-bold mb-2 pb-2 border-b-2"
-                  style={{
-                    color: "var(--psp-gray-400)",
-                    borderColor: "#9ca3af",
-                  }}
-                >
-                  Closed Programs
-                  <span className="text-sm font-normal ml-2" style={{ color: "var(--psp-gray-400)" }}>
-                    ({sortedClosedTeams.length})
-                  </span>
-                </h2>
-                <p className="text-xs text-gray-300 mb-4">
-                  Schools no longer competing. Records preserved for historical reference.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {sortedClosedTeams.map((team) => {
-                    const school = team.school;
-                    if (!school) return null;
-                    const total = team.totalWins + team.totalLosses + team.totalTies;
-                    const winPct = total > 0 ? ((team.totalWins / total) * 100).toFixed(0) : "0";
-
-                    return (
-                      <Link
-                        key={school.id}
-                        href={`/${sport}/schools/${school.slug}`}
-                        className="group block rounded-lg border p-4 hover:shadow-lg transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none"
-                        style={{
-                          background: "var(--psp-gray-50, #f9fafb)",
-                          borderColor: "var(--psp-gray-200, #e5e7eb)",
-                          opacity: 0.85,
-                        }}
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h3
-                              className="psp-h3 group-hover:text-[var(--psp-gold)] transition-colors"
-                              style={{ color: "var(--psp-gray-500, #6b7280)" }}
-                            >
-                              {school.name}
-                            </h3>
-                            <p className="text-xs text-gray-300 mt-1">
-                              {school.city}, {school.state}
-                              {team.closedYear && (
-                                <span className="ml-2 text-red-400 font-semibold">
-                                  Closed {team.closedYear}
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                          <span style={{ opacity: 0.3, fontSize: "1.5rem" }}>{meta.emoji}</span>
-                        </div>
-
-                        {team.league && team.league !== "Independent" && (
-                          <div
-                            className="text-xs font-bold px-2 py-1 rounded inline-block mb-3"
-                            style={{
-                              background: `${LEAGUE_COLORS[team.league] || "var(--psp-gold)"}10`,
-                              color: LEAGUE_COLORS[team.league] || "#9ca3af",
-                              opacity: 0.7,
-                            }}
-                          >
-                            {team.league}
-                          </div>
-                        )}
-
-                        <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
-                            <div className="text-gray-300">All-Time</div>
-                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gray-500, #6b7280)" }}>
-                              {team.totalWins}-{team.totalLosses}
-                              {team.totalTies > 0 ? `-${team.totalTies}` : ""}
-                            </div>
-                          </div>
-                          <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
-                            <div className="text-gray-300">Win %</div>
-                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gray-500, #6b7280)" }}>
-                              {winPct}%
-                            </div>
-                          </div>
-                          <div className="rounded p-2" style={{ background: "var(--psp-gray-100, #f3f4f6)" }}>
-                            <div className="text-gray-300">Titles</div>
-                            <div className="font-bold text-sm mt-1" style={{ color: "var(--psp-gold)" }}>
-                              {team.championships > 0 ? `🏆 ${team.championships}` : "—"}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="text-xs text-gray-300 mt-2">
-                          {team.seasonCount} seasons on record
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Discontinued Programs — schools that dropped this sport */}
-            {discontinuedSchools.length > 0 && (
-              <div>
-                <h2
-                  className="text-2xl font-bold mb-2 pb-2 border-b-2"
-                  style={{
-                    color: "var(--psp-gray-400)",
-                    borderColor: "#d97706",
-                  }}
-                >
-                  No Longer Active
-                  <span className="text-sm font-normal ml-2" style={{ color: "var(--psp-gray-400)" }}>
-                    ({discontinuedSchools.length})
-                  </span>
-                </h2>
-                <p className="text-xs text-gray-300 mb-4">
-                  Schools that still exist but no longer field a {meta.name.toLowerCase()} team. Historical records preserved.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {discontinuedSchools.map((school) => (
-                    <Link
-                      key={school.id}
-                      href={`/${sport}/schools/${school.slug}`}
-                      className="group block rounded-lg border p-4 hover:shadow-lg transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:outline-none"
-                      style={{
-                        background: "var(--psp-gray-50, #f9fafb)",
-                        borderColor: "var(--psp-gray-200, #e5e7eb)",
-                        opacity: 0.85,
-                      }}
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3
-                            className="text-lg font-bold group-hover:text-[var(--psp-gold)] transition-colors font-bebas"
-                            style={{ color: "var(--psp-gray-500, #6b7280)" }}
-                          >
-                            {school.name}
-                          </h3>
-                          <p className="text-xs text-gray-300 mt-1">
-                            {school.city}, {school.state}
-                            <span className="ml-2 text-amber-500 font-semibold">
-                              Program Discontinued
-                            </span>
-                          </p>
-                        </div>
-                        <span style={{ opacity: 0.3, fontSize: "1.5rem" }}>{meta.emoji}</span>
-                      </div>
-
-                      {school.league && (
-                        <div
-                          className="text-xs font-bold px-2 py-1 rounded inline-block mb-3"
-                          style={{
-                            background: `${LEAGUE_COLORS[school.league] || "var(--psp-gold)"}10`,
-                            color: LEAGUE_COLORS[school.league] || "#9ca3af",
-                            opacity: 0.7,
-                          }}
-                        >
-                          {school.league}
-                        </div>
-                      )}
-
-                      <div className="text-xs text-gray-300 mt-1">
-                        View historical records →
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {teams.length === 0 && (
+          <div className="lg:col-span-3">
+            {teams.length === 0 ? (
               <div className="text-center py-16">
                 <div className="text-4xl mb-4">{meta.emoji}</div>
                 <h2 className="text-lg font-bold mb-2" style={{ color: "var(--psp-navy)" }}>
@@ -397,6 +272,17 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                   Team data for {meta.name.toLowerCase()} is being compiled.
                 </p>
               </div>
+            ) : (
+              <TeamsViewToggle
+                sport={sport}
+                leagueSections={leagueSections}
+                closedTeams={closedTeams}
+                discontinuedSchools={enrichedDiscontinued}
+                stateChampIds={stateChampIds}
+                stateChampMap={stateChampMap}
+                latestSeasonLabel={latestSeasonLabel}
+                leagueColors={LEAGUE_COLORS}
+              />
             )}
           </div>
 
@@ -408,20 +294,52 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
                 League Breakdown
               </h2>
               <div className="space-y-2">
-                {sortedLeagues.map(([league, leagueTeams]) => (
-                  <div
-                    key={league}
-                    className="flex justify-between items-center p-2 rounded"
-                    style={{ borderLeft: `3px solid ${LEAGUE_COLORS[league] || "var(--psp-gold)"}` }}
-                  >
-                    <span className="text-sm" style={{ color: "var(--psp-navy)" }}>{league}</span>
-                    <span className="text-sm font-bold" style={{ color: LEAGUE_COLORS[league] || "var(--psp-gold)" }}>
-                      {leagueTeams.length}
-                    </span>
-                  </div>
-                ))}
+                {leagueSections.map(({ league, divisionGroups }) => {
+                  const count = divisionGroups.reduce((s, g) => s + g.teams.length, 0);
+                  return (
+                    <div
+                      key={league}
+                      className="flex justify-between items-center p-2 rounded"
+                      style={{ borderLeft: `3px solid ${LEAGUE_COLORS[league] || "var(--psp-gold)"}` }}
+                    >
+                      <span className="text-sm" style={{ color: "var(--psp-navy)" }}>{league}</span>
+                      <span className="text-sm font-bold" style={{ color: LEAGUE_COLORS[league] || "var(--psp-gold)" }}>
+                        {count}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
+
+            {/* State Champions */}
+            {stateChampTeams.length > 0 && latestSeasonLabel && (
+              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
+                <h2 className="font-bold text-sm uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
+                  {latestSeasonLabel} State Champions
+                </h2>
+                <div className="space-y-3">
+                  {stateChampTeams.map((team) => (
+                    <Link
+                      key={team.school.id}
+                      href={`/${sport}/schools/${team.school.slug}`}
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
+                    >
+                      <SchoolLogo logoUrl={team.logoUrl} name={team.school.name} size="md" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold group-hover:text-[var(--psp-gold)] transition-colors truncate" style={{ color: "var(--psp-navy)" }}>
+                          {team.school.name}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {stateChampMap[team.school.id] ? `Class ${stateChampMap[team.school.id]}` : "State Champion"}
+                        </div>
+                      </div>
+                      <span className="text-lg shrink-0">&#127942;</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <PSPPromo size="sidebar" variant={2} />
 
@@ -432,16 +350,16 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
               </h2>
               <div className="space-y-2">
                 <Link href={`/${sport}/leaderboards/${sport === "football" ? "rushing" : "scoring"}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  📊 Leaderboards
+                  Leaderboards
                 </Link>
                 <Link href={`/${sport}/championships`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  🏆 Championships
+                  Championships
                 </Link>
                 <Link href={`/${sport}/records`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  📋 Records
+                  Records
                 </Link>
                 <Link href={`/${sport}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  ← Back to {meta.name}
+                  &larr; Back to {meta.name}
                 </Link>
               </div>
             </div>

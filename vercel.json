@@ -1,1 +1,12 @@
-{ "regions": ["iad1"], "crons": [ { "path": "/api/cron/fetch-tweets", "schedule": "*/30 * * * *" } ] }
+{
+  "regions": ["iad1"],
+  "crons": [
+    { "path": "/api/cron/fetch-tweets", "schedule": "*/30 * * * *" },
+    { "path": "/api/cron/fetch-game-scores?league=nfl", "schedule": "0 4 * * 1" },
+    { "path": "/api/cron/fetch-game-scores?league=cfb", "schedule": "0 4 * * 0" },
+    { "path": "/api/cron/fetch-game-scores?league=nba", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/fetch-game-scores?league=cbb", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/fetch-game-scores?league=mlb", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/generate-recaps", "schedule": "30 6 * * *" }
+  ]
+}
