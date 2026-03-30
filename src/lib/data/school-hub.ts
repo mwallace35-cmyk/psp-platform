@@ -95,7 +95,7 @@ export const getSchoolHubData = cache(async (slug: string) => {
               id, slug, name, short_name, city, state, league_id, mascot,
               closed_year, founded_year, website_url, address, phone,
               principal, athletic_director, enrollment, piaa_class,
-              school_type, colors,
+              school_type, colors, logo_url,
               leagues(name, short_name)
             `
             )

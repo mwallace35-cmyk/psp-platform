@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { SchoolLogo } from '@/components/ui';
 
 interface SchoolData {
   id: number;
@@ -12,6 +13,7 @@ interface SchoolData {
   league: string | null;
   colors: string | null;
   secondary_color: string | null;
+  logo_url: string | null;
   championships_count: number;
   total_wins: number;
   total_losses: number;
@@ -695,25 +697,32 @@ function SchoolCard({ school, rank }: { school: SchoolData; rank?: number }) {
             </div>
           )}
 
-          <h3 className="psp-small" style={{
-            margin: 0,
-            lineHeight: 1.2,
-            paddingLeft: rank !== undefined && rank <= 20 ? 28 : 0,
-            paddingRight: isClosed ? 70 : 0,
-            textShadow: '0 1px 2px rgba(0,0,0,.3)',
-          }}>
-            {school.name}
-          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {school.logo_url && (
+              <SchoolLogo logoUrl={school.logo_url} name={school.name} size="sm" />
+            )}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h3 className="psp-small" style={{
+                margin: 0,
+                lineHeight: 1.2,
+                paddingLeft: !school.logo_url && rank !== undefined && rank <= 20 ? 28 : 0,
+                paddingRight: isClosed ? 70 : 0,
+                textShadow: '0 1px 2px rgba(0,0,0,.3)',
+              }}>
+                {school.name}
+              </h3>
 
-          <div style={{
-            fontSize: 10,
-            opacity: 0.85,
-            marginTop: 3,
-            fontWeight: 500,
-            textShadow: '0 1px 1px rgba(0,0,0,.2)',
-            paddingLeft: rank !== undefined && rank <= 20 ? 28 : 0,
-          }}>
-            {school.city}{school.city && school.state ? ', ' : ''}{school.state}
+              <div style={{
+                fontSize: 10,
+                opacity: 0.85,
+                marginTop: 3,
+                fontWeight: 500,
+                textShadow: '0 1px 1px rgba(0,0,0,.2)',
+                paddingLeft: !school.logo_url && rank !== undefined && rank <= 20 ? 28 : 0,
+              }}>
+                {school.city}{school.city && school.state ? ', ' : ''}{school.state}
+              </div>
+            </div>
           </div>
 
           {isClosed && (

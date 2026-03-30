@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SPORT_META, getCurrentSeasonLabel } from "@/lib/sports";
-import { Breadcrumb, AchievementBadge, Badge } from "@/components/ui";
+import { Breadcrumb, AchievementBadge, Badge, SchoolLogo } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
@@ -218,17 +218,21 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
           />
 
           <div className="flex items-start gap-5 mt-5">
-            {/* School color swatch */}
+            {/* School logo or color swatch */}
             <div className="flex flex-col items-center gap-1 flex-shrink-0">
-              <div
-                className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-3xl md:text-4xl border-4"
-                style={{
-                  background: primaryColor || "rgba(240, 165, 0, 0.1)",
-                  borderColor: secondaryColor || primaryColor || "var(--psp-gold)",
-                }}
-              >
-                🏫
-              </div>
+              {school.logo_url ? (
+                <SchoolLogo logoUrl={school.logo_url} name={school.name} size="lg" />
+              ) : (
+                <div
+                  className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-3xl md:text-4xl border-4"
+                  style={{
+                    background: primaryColor || "rgba(240, 165, 0, 0.1)",
+                    borderColor: secondaryColor || primaryColor || "var(--psp-gold)",
+                  }}
+                >
+                  🏫
+                </div>
+              )}
               {primaryColor && (
                 <div className="flex gap-1 mt-1">
                   <div className="w-4 h-4 rounded-full border border-white/30" style={{ background: primaryColor }} title="Primary" />

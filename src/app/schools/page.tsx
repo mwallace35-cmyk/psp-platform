@@ -23,6 +23,7 @@ interface SchoolData {
   league: string | null;
   colors: string | null;
   secondary_color: string | null;
+  logo_url: string | null;
   championships_count: number;
   total_wins: number;
   total_losses: number;
@@ -52,11 +53,26 @@ export default async function SchoolsPage() {
     const supabase = createStaticClient();
 
     // Single fast query against the pre-aggregated materialized view
-    const { data, error } = await supabase
-      .from('school_directory_mv')
-      .select('*')
-      .in('league_name', CORE_LEAGUES)
-      .order('name', { ascending: true });
+    const [mvResult, logoResult] = await Promise.all([
+      supabase
+        .from('school_directory_mv')
+        .select('*')
+        .in('league_name', CORE_LEAGUES)
+        .order('name', { ascending: true }),
+      supabase
+        .from('schools')
+        .select('id, logo_url')
+        .not('logo_url', 'is', null)
+        .is('deleted_at', null),
+    ]);
+
+    const { data, error } = mvResult;
+    const logoMap = new Map<number, string>();
+    if (logoResult.data) {
+      for (const row of logoResult.data) {
+        if (row.logo_url) logoMap.set(row.id, row.logo_url);
+      }
+    }
 
     if (error) {
       captureError(error, { function: 'schools_page', context: 'schools_fetch' });
@@ -88,6 +104,7 @@ export default async function SchoolsPage() {
           league: row.league_name,
           colors,
           secondary_color: secondaryColor,
+          logo_url: logoMap.get(row.id) || null,
           championships_count: row.championships_count,
           total_wins: row.total_wins,
           total_losses: row.total_losses,
