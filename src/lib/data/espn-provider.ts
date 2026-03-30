@@ -93,7 +93,7 @@ export interface PerformanceMatch {
   sport: string;
   stats: Record<string, number>;
   performanceScore: number;
-  recapTier: "elite" | "solid" | "notable" | "mentioned";
+  recapTier: number; // 1=Spotlight, 2=BoxScore, 3=AlsoActive
   highSchool?: string | null;
   highSchoolId?: number | null;
 }
@@ -446,7 +446,7 @@ export async function matchPhillyPlayers(
           stats: matchedPlayer.stats,
           performanceScore: perfScore,
           recapTier: assignTier(perfScore, sport),
-          highSchool: nltEntry.high_school,
+          highSchool: nltEntry.high_school_name,
           highSchoolId: nltEntry.high_school_id,
         });
       }
@@ -635,38 +635,32 @@ function findStat(stats: Record<string, number>, keys: string[]): number {
 
 /**
  * Assigns a recap tier based on performance score and sport.
+ * Returns: 1=Spotlight, 2=BoxScore, 3=AlsoActive
  * Thresholds are calibrated per sport.
  */
-function assignTier(
-  score: number,
-  sport: string
-): PerformanceMatch["recapTier"] {
+function assignTier(score: number, sport: string): number {
   if (sport === "football") {
-    if (score >= 30) return "elite";
-    if (score >= 15) return "solid";
-    if (score >= 5) return "notable";
-    return "mentioned";
+    if (score >= 30) return 1;
+    if (score >= 5) return 2;
+    return 3;
   }
 
   if (sport === "basketball") {
-    if (score >= 35) return "elite";
-    if (score >= 20) return "solid";
-    if (score >= 10) return "notable";
-    return "mentioned";
+    if (score >= 35) return 1;
+    if (score >= 10) return 2;
+    return 3;
   }
 
   if (sport === "baseball") {
-    if (score >= 15) return "elite";
-    if (score >= 8) return "solid";
-    if (score >= 4) return "notable";
-    return "mentioned";
+    if (score >= 15) return 1;
+    if (score >= 4) return 2;
+    return 3;
   }
 
   // Default thresholds
-  if (score >= 25) return "elite";
-  if (score >= 12) return "solid";
-  if (score >= 5) return "notable";
-  return "mentioned";
+  if (score >= 25) return 1;
+  if (score >= 5) return 2;
+  return 3;
 }
 
 // ============================================================================

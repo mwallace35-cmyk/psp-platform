@@ -12,8 +12,8 @@ export interface NLTEntry {
   espn_player_id: string | null;
   current_level: string;
   pro_league: string | null;
-  high_school: string | null;
   high_school_id: number | null;
+  high_school_name: string | null; // joined from schools table
   social_twitter: string | null;
   social_instagram: string | null;
 }
@@ -356,19 +356,30 @@ export function matchBatchPlayers(
 export async function getActiveNLTEntries(): Promise<NLTEntry[]> {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("next_level_tracking")
       .select(
-        "id, person_name, current_org, espn_player_id, current_level, pro_league, high_school, high_school_id, social_twitter, social_instagram"
-      )
-      .is("deleted_at", null);
+        "id, person_name, current_org, espn_player_id, current_level, pro_league, high_school_id, social_twitter, social_instagram, schools:high_school_id(name)"
+      );
 
     if (error) {
       console.error("[player-matcher] Error fetching NLT entries:", error);
       return [];
     }
 
-    return (data as unknown as NLTEntry[]) || [];
+    // Map joined school name to flat structure
+    return ((data as any[]) || []).map((row: any) => ({
+      id: row.id,
+      person_name: row.person_name,
+      current_org: row.current_org,
+      espn_player_id: row.espn_player_id,
+      current_level: row.current_level,
+      pro_league: row.pro_league,
+      high_school_id: row.high_school_id,
+      high_school_name: row.schools?.name ?? null,
+      social_twitter: row.social_twitter,
+      social_instagram: row.social_instagram,
+    })) as NLTEntry[];
   } catch (error) {
     console.error("[player-matcher] Error in getActiveNLTEntries:", error);
     return [];

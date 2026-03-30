@@ -94,10 +94,7 @@ export async function GET(request: NextRequest) {
       `[cron/fetch-game-scores] Found ${games.length} ${league} games`
     );
 
-    // ── 5. Cache the scoreboard ────────────────────────────────────────
-    await cacheScoreboard(games);
-
-    // ── 6. Load NLT entries + team mappings for player matching ────────
+    // ── 5. Load NLT entries + team mappings for player matching ────────
     const [nltEntries, teamMappings] = await Promise.all([
       getActiveNLTEntries(),
       getTeamMappings(),
@@ -108,7 +105,35 @@ export async function GET(request: NextRequest) {
         `${teamMappings.length} team mappings`
     );
 
-    // ── 7. Process games with a Philly connection ──────────────────────
+    // ── 6. Flag games with Philly connections ─────────────────────────
+    // Build a set of ESPN team IDs that have at least one Philly player/coach
+    const leagueMappings = teamMappings.filter((m) => m.league === league);
+    const espnTeamIds = new Set(leagueMappings.map((m) => m.espn_team_id));
+
+    // Also build a set of org names that have NLT entries
+    const nltOrgNames = new Set(
+      nltEntries
+        .map((e) => e.current_org?.toLowerCase())
+        .filter(Boolean) as string[]
+    );
+
+    // A game has a Philly connection if any team in the game has NLT players
+    for (const game of games) {
+      const homeMapping = leagueMappings.find((m) => m.espn_team_id === game.homeTeam.id);
+      const awayMapping = leagueMappings.find((m) => m.espn_team_id === game.awayTeam.id);
+
+      const homeHasPhilly = homeMapping && nltOrgNames.has(homeMapping.psp_org_name.toLowerCase());
+      const awayHasPhilly = awayMapping && nltOrgNames.has(awayMapping.psp_org_name.toLowerCase());
+
+      if (homeHasPhilly || awayHasPhilly) {
+        game.hasPhillyConnection = true;
+      }
+    }
+
+    // ── 7. Cache the scoreboard (with Philly flags set) ───────────────
+    await cacheScoreboard(games);
+
+    // ── 8. Process games with a Philly connection ──────────────────────
     const phillyGames = games.filter((g) => g.hasPhillyConnection);
     let matchedPlayers = 0;
     let processedGames = 0;
@@ -157,7 +182,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // ── 8. Revalidate the /our-guys page so it picks up new data ──────
+    // ── 9. Revalidate the /our-guys page so it picks up new data ──────
     revalidatePath("/our-guys");
 
     console.log(
