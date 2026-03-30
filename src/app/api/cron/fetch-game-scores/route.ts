@@ -67,11 +67,17 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // ── 3. Calculate yesterday's date (YYYYMMDD) ────────────────────────
-  // Games are fetched the morning after they're played.
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const dateStr = yesterday.toISOString().slice(0, 10).replace(/-/g, "");
+  // ── 3. Calculate date (YYYYMMDD) ─────────────────────────────────────
+  // Default: yesterday. Override with ?date=YYYYMMDD for testing.
+  const dateOverride = request.nextUrl.searchParams.get("date");
+  let dateStr: string;
+  if (dateOverride && /^\d{8}$/.test(dateOverride)) {
+    dateStr = dateOverride;
+  } else {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    dateStr = yesterday.toISOString().slice(0, 10).replace(/-/g, "");
+  }
 
   console.log(`[cron/fetch-game-scores] Starting ${league} for ${dateStr}`);
 

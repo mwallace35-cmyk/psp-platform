@@ -361,6 +361,7 @@ export async function getActiveNLTEntries(): Promise<NLTEntry[]> {
       .select(
         "id, person_name, current_org, espn_player_id, current_level, pro_league, high_school_id, social_twitter, social_instagram, schools:high_school_id(name)"
       )
+      .eq("status", "active")
       .limit(5000);
 
     if (error) {
