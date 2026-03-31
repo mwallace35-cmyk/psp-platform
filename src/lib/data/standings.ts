@@ -153,9 +153,8 @@ export const getLeagueStandings = cache(
               const season = (ts.seasons as any) || {};
               const seasonLabel = season.label || "Unknown";
 
-              // Basketball PCL is a single league (no Red/Blue divisions)
-              const isBballPCL = sportSlug === "basketball" && schoolLeagueId === 1;
-              const division = isBballPCL ? null : rawDivision;
+              // Use division from league_seasons data (year-correct)
+              const division = rawDivision;
 
               // Group by division within league if division exists
               const divisionSuffix = division ? `:${division}` : '';
