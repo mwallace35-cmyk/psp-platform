@@ -149,11 +149,12 @@ export const getLeagueStandings = cache(
               const yearLeague = leagueSeasonMap.get(schoolId);
               const leagueName = yearLeague?.league_name ?? school?.leagues?.name ?? "Other";
               const schoolLeagueId = yearLeague?.league_id ?? school?.league_id ?? 0;
-              const rawDivision = yearLeague?.division ?? (ts as any).division ?? null;
+              // Prefer team_seasons.division (sport-specific) over league_seasons.division (league-wide)
+              // This ensures basketball shows A/B/C divisions while football shows its own
+              const rawDivision = (ts as any).division ?? yearLeague?.division ?? null;
               const season = (ts.seasons as any) || {};
               const seasonLabel = season.label || "Unknown";
 
-              // Use division from league_seasons data (year-correct)
               const division = rawDivision;
 
               // Group by division within league if division exists
