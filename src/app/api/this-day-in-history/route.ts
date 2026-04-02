@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createStaticClient } from "@/lib/supabase/static";
 
 /**
- * GET /api/this-day-in-history?month=3&day=15
+ * GET /api/this-day-in-history?month=4&day=2
  *
- * Returns historical events for the given month/day across all years in the database.
+ * Returns notable games on this month/day across all years.
+ * Uses server-side date filtering via Supabase RPC or raw filter.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -21,96 +22,82 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createStaticClient();
 
-    // Query for games on this month/day across all years
-    // We'll use a SQL-based approach since PostgREST doesn't support month/day extraction
-    const { data: games, error: gamesError } = await supabase
+    // Pad month/day for date matching
+    const mm = String(month).padStart(2, "0");
+    const dd = String(day).padStart(2, "0");
+
+    // Fetch games on this month-day using date pattern matching
+    // game_date is stored as DATE, format YYYY-MM-DD
+    const { data: games, error } = await (supabase as any)
       .from("games")
       .select(
         `id, game_date, home_score, away_score, sport_id,
-         home_school:schools!games_home_school_id_fkey(name),
-         away_school:schools!games_away_school_id_fkey(name),
-         seasons(label, year_start)`
+         home_school:schools!games_home_school_id_fkey(name, slug),
+         away_school:schools!games_away_school_id_fkey(name, slug)`
       )
-      .not("game_date", "is", null)
-      .limit(100);
+      .like("game_date", `%-${mm}-${dd}`)
+      .not("home_score", "is", null)
+      .not("away_score", "is", null)
+      .order("game_date", { ascending: false })
+      .limit(200);
 
-    // Query for championships on this month/day
-    const { data: champs, error: champsError } = await supabase
-      .from("championships")
-      .select(
-        `id, championship_type, level,
-         schools(name),
-         seasons(label, year_start)`
-      )
-      .limit(50);
-
-    // Query for awards on this month/day
-    const { data: awards, error: awardsError } = await supabase
-      .from("awards")
-      .select(
-        `id, award_name, award_type,
-         players(name),
-         schools(name),
-         seasons(label, year_start)`
-      )
-      .limit(50);
-
-    const events: Array<{
-      year: number;
-      description: string;
-      type: "game" | "championship" | "award";
-      link?: string;
-      score?: string;
-    }> = [];
-
-    // Process games
-    if (!gamesError && games) {
-      for (const game of (games as any[]) || []) {
-        if (!game.game_date) continue;
-
-        const gameDate = new Date(game.game_date);
-        if (gameDate.getMonth() + 1 === month && gameDate.getDate() === day) {
-          const homeTeam = game.home_school?.name || "Team";
-          const awayTeam = game.away_school?.name || "Team";
-          const year = gameDate.getFullYear();
-
-          events.push({
-            year,
-            description: `${awayTeam} vs ${homeTeam}`,
-            type: "game",
-            score:
-              game.home_score !== null && game.away_score !== null
-                ? `${awayTeam} ${game.away_score}, ${homeTeam} ${game.home_score}`
-                : undefined,
-          });
-        }
-      }
+    if (error) {
+      console.error("[On This Day] DB error:", error);
+      return NextResponse.json({ events: [], total: 0 });
     }
 
-    // Process championships (simplified - would need date field)
-    if (!champsError && champs) {
-      // For now, championships don't have a specific date, so we skip this
-      // In a real implementation, you'd store championship_date in the DB
-    }
+    // Build events from games — prioritize close games and high scores
+    const events = (games || []).map((game: any) => {
+      const homeSchool = Array.isArray(game.home_school) ? game.home_school[0] : game.home_school;
+      const awaySchool = Array.isArray(game.away_school) ? game.away_school[0] : game.away_school;
+      const year = new Date(game.game_date).getFullYear();
+      const margin = Math.abs((game.home_score || 0) - (game.away_score || 0));
+      const totalPoints = (game.home_score || 0) + (game.away_score || 0);
+      const isUpset = margin <= 3;
 
-    // Process awards (simplified)
-    if (!awardsError && awards) {
-      // Awards also need a date field to make this work
-    }
+      return {
+        year,
+        gameId: game.id,
+        sport: game.sport_id,
+        homeTeam: homeSchool?.name || "Home",
+        homeSlug: homeSchool?.slug || "",
+        awayTeam: awaySchool?.name || "Away",
+        awaySlug: awaySchool?.slug || "",
+        homeScore: game.home_score,
+        awayScore: game.away_score,
+        margin,
+        totalPoints,
+        isUpset,
+        link: `/${game.sport_id}/games/${game.id}`,
+      };
+    });
 
-    // Sort by year descending
-    events.sort((a, b) => b.year - a.year);
+    // Score: prioritize close games, high-scoring games, variety of years
+    const scored = events.map((e: any) => ({
+      ...e,
+      _score: (e.isUpset ? 50 : 0) + Math.min(e.totalPoints, 100) + (e.year < 2010 ? 20 : 0),
+    }));
+    scored.sort((a: any, b: any) => b._score - a._score);
 
-    // Return top 3 events
+    // Deduplicate by year — show at most 1 game per year for variety
+    const seenYears = new Set<number>();
+    const deduped = scored.filter((e: any) => {
+      if (seenYears.has(e.year)) return false;
+      seenYears.add(e.year);
+      return true;
+    });
+
+    // Return top 5
+    const top = deduped.slice(0, 5).map(({ _score, ...rest }: any) => rest);
+
     return NextResponse.json({
-      events: events.slice(0, 3),
+      events: top,
       total: events.length,
+      month,
+      day,
     });
   } catch (error) {
-    console.error("[This Day in History] Error:", error);
-    return NextResponse.json(
-      { error: "Internal server error", events: [] },
-      { status: 500 }
-    );
+    console.error("[On This Day] Error:", error);
+    return NextResponse.json({ error: "Internal server error", events: [] }, { status: 500 });
   }
 }

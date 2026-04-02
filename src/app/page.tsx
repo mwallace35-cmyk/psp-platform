@@ -9,6 +9,7 @@ import HomeScoresSection from '@/components/home/HomeScoresSection';
 import HomeArticlesSection from '@/components/home/HomeArticlesSection';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import HeroMonument from '@/components/home/HeroMonument';
+import ThisDayInHistory from '@/components/home/ThisDayInHistory';
 
 export const revalidate = 300; // 5 min ISR — live content
 
@@ -160,6 +161,9 @@ export default async function HomePage() {
                 </div>
               </section>
             )}
+
+            {/* On This Day */}
+            <ThisDayInHistory />
 
             {/* Pick'em Promo — only if active games exist */}
             {activePickemCount > 0 && (

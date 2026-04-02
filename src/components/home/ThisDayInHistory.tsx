@@ -3,117 +3,166 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-interface HistoryEvent {
+const SPORT_EMOJI: Record<string, string> = {
+  football: "\u{1F3C8}",
+  basketball: "\u{1F3C0}",
+  baseball: "\u26BE",
+  "track-field": "\u{1F3C3}",
+  lacrosse: "\u{1F94D}",
+  wrestling: "\u{1F93C}",
+  soccer: "\u26BD",
+};
+
+interface OTDEvent {
   year: number;
-  description: string;
-  type: "game" | "championship" | "award";
-  link?: string;
-  score?: string;
+  gameId: number;
+  sport: string;
+  homeTeam: string;
+  homeSlug: string;
+  awayTeam: string;
+  awaySlug: string;
+  homeScore: number;
+  awayScore: number;
+  margin: number;
+  isUpset: boolean;
+  link: string;
 }
 
 export default function ThisDayInHistory() {
-  const [events, setEvents] = useState<HistoryEvent[]>([]);
+  const [events, setEvents] = useState<OTDEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dateLabel, setDateLabel] = useState("");
 
   useEffect(() => {
-    const loadEvents = async () => {
-      try {
-        // Get today's month and day
-        const now = new Date();
-        const month = now.getMonth() + 1;
-        const day = now.getDate();
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    setDateLabel(
+      now.toLocaleDateString("en-US", { month: "long", day: "numeric" })
+    );
 
-        // Fetch events for this day from the API
-        const response = await fetch(
-          `/api/this-day-in-history?month=${month}&day=${day}`
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setEvents(data.events || []);
-        }
-      } catch (error) {
-        console.error("Failed to load history events:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadEvents();
+    fetch(`/api/this-day-in-history?month=${month}&day=${day}`)
+      .then((r) => (r.ok ? r.json() : { events: [] }))
+      .then((data) => setEvents(data.events || []))
+      .catch(() => setEvents([]))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse" role="status" aria-busy="true" aria-label="Loading today in history">
-        <div className="h-6 bg-gray-300 rounded mb-4 w-1/3"></div>
+      <div
+        className="rounded-xl p-5 animate-pulse"
+        style={{ backgroundColor: "var(--psp-navy-mid, #0f2040)" }}
+      >
+        <div className="h-5 bg-white/10 rounded w-2/3 mb-4" />
         <div className="space-y-3">
-          <div className="h-4 bg-gray-200 rounded"></div>
-          <div className="h-4 bg-gray-200 rounded"></div>
+          <div className="h-12 bg-white/5 rounded-lg" />
+          <div className="h-12 bg-white/5 rounded-lg" />
         </div>
       </div>
     );
   }
 
-  if (events.length === 0) {
-    return (
-      <div className="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-500">
-        <h3 className="font-bold text-lg mb-2">This Day in Philly Sports</h3>
-        <p className="text-gray-600 text-sm">
-          No memorable events found for today. Check back tomorrow!
-        </p>
-      </div>
-    );
-  }
+  if (events.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-2xl" aria-hidden="true">📅</span>
-        <h3
-          className="font-bold text-lg"
-          style={{ color: "var(--psp-navy)" }}
-        >
-          This Day in Philly Sports History
-        </h3>
+    <div
+      className="rounded-xl overflow-hidden"
+      style={{ backgroundColor: "var(--psp-navy-mid, #0f2040)" }}
+    >
+      {/* Header */}
+      <div
+        className="px-5 py-3 flex items-center gap-2"
+        style={{
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          background: "linear-gradient(90deg, rgba(240,165,0,0.1) 0%, transparent 100%)",
+        }}
+      >
+        <span className="text-lg">&#x1F4C5;</span>
+        <div>
+          <h3
+            className="text-sm font-bold uppercase tracking-wider"
+            style={{ color: "var(--psp-gold, #f0a500)", fontFamily: "var(--font-bebas)" }}
+          >
+            On This Day
+          </h3>
+          <p className="text-xs text-gray-400">{dateLabel}</p>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {events.map((event, idx) => (
-          <div key={idx} className="pb-4 border-b last:border-b-0">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p
-                  className="text-sm font-bold"
-                  style={{ color: "var(--psp-gold)" }}
+      {/* Events */}
+      <div className="divide-y divide-white/5">
+        {events.map((event) => {
+          const emoji = SPORT_EMOJI[event.sport] || "";
+          const homeWon = event.homeScore > event.awayScore;
+
+          return (
+            <Link
+              key={event.gameId}
+              href={event.link}
+              className="flex items-center gap-3 px-5 py-3 hover:bg-white/5 transition-colors group"
+            >
+              {/* Year badge */}
+              <div
+                className="text-center flex-shrink-0 w-12"
+              >
+                <div
+                  className="text-lg font-bold leading-none"
+                  style={{ color: "var(--psp-gold)", fontFamily: "var(--font-bebas)" }}
                 >
                   {event.year}
-                </p>
-                <p className="text-gray-900 font-semibold text-sm mb-1">
-                  {event.description}
-                </p>
-                {event.score && (
-                  <p className="text-xs text-gray-400">Score: {event.score}</p>
-                )}
+                </div>
+                <div className="text-[10px] text-gray-500">{emoji}</div>
               </div>
-              <span className="ml-2 px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded font-semibold">
-                {event.type === "game"
-                  ? "Game"
-                  : event.type === "championship"
-                    ? "Championship"
-                    : "Award"}
-              </span>
-            </div>
 
-            {event.link && (
-              <Link
-                href={event.link}
-                className="text-blue-600 hover:underline text-xs mt-2 inline-block"
-              >
-                Read More →
-              </Link>
-            )}
-          </div>
-        ))}
+              {/* Matchup */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 text-sm">
+                  <span
+                    className={`truncate ${!homeWon ? "font-bold text-white" : "text-gray-400"}`}
+                  >
+                    {event.awayTeam}
+                  </span>
+                  <span
+                    className={`tabular-nums text-xs font-bold ${!homeWon ? "text-white" : "text-gray-500"}`}
+                  >
+                    {event.awayScore}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-sm">
+                  <span
+                    className={`truncate ${homeWon ? "font-bold text-white" : "text-gray-400"}`}
+                  >
+                    {event.homeTeam}
+                  </span>
+                  <span
+                    className={`tabular-nums text-xs font-bold ${homeWon ? "text-white" : "text-gray-500"}`}
+                  >
+                    {event.homeScore}
+                  </span>
+                </div>
+              </div>
+
+              {/* Close game badge */}
+              {event.isUpset && (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0"
+                  style={{
+                    backgroundColor: "rgba(240,165,0,0.15)",
+                    color: "var(--psp-gold)",
+                  }}
+                >
+                  CLOSE
+                </span>
+              )}
+
+              {/* Arrow */}
+              <span className="text-gray-600 group-hover:text-gray-400 transition-colors text-xs flex-shrink-0">
+                &#x203A;
+              </span>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
