@@ -22,6 +22,10 @@ import { Suspense } from "react";
 // Sport-specific views
 import FootballScheduleView from "./views/FootballScheduleView";
 import BasketballScheduleView from "./views/BasketballScheduleView";
+import BaseballScheduleView from "./views/BaseballScheduleView";
+import SeasonScheduleView from "./views/SeasonScheduleView";
+import WrestlingScheduleView from "./views/WrestlingScheduleView";
+import TrackFieldScheduleView from "./views/TrackFieldScheduleView";
 
 export const revalidate = 3600;
 
@@ -232,8 +236,15 @@ export default async function SchedulePage({
         <FootballScheduleView {...viewProps} />
       ) : sport === "basketball" ? (
         <BasketballScheduleView {...viewProps} />
+      ) : sport === "baseball" ? (
+        <BaseballScheduleView {...viewProps} />
+      ) : sport === "soccer" || sport === "lacrosse" ? (
+        <SeasonScheduleView {...viewProps} />
+      ) : sport === "wrestling" ? (
+        <WrestlingScheduleView {...viewProps} />
+      ) : sport === "track-field" ? (
+        <TrackFieldScheduleView {...viewProps} />
       ) : (
-        // Fallback: use the old ScheduleView for non-football sports until Phase 5
         <FallbackScheduleView {...viewProps} />
       )}
     </div>
