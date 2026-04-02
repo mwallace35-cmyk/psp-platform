@@ -6,6 +6,7 @@ import {
   School,
   Game,
 } from "./common";
+import type { RivalryData } from "@/components/school/RivalryRecord";
 
 /**
  * Rivalry record between two schools
@@ -266,6 +267,57 @@ export const getRivalryGames = cache(
       [],
       "DATA_RIVALRY_GAMES",
       { school1Id, school2Id, sportSlug, limit }
+    );
+  }
+);
+
+/**
+ * Get rivalry records for a specific school (top 10 most-played opponents)
+ * Uses the get_school_rivalries Postgres function
+ */
+export const getSchoolRivalries = cache(
+  async (schoolId: number, sportId: string): Promise<RivalryData[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+            const { data, error } = await (supabase as any).rpc(
+              "get_school_rivalries",
+              {
+                p_school_id: schoolId,
+                p_sport_id: sportId,
+              }
+            );
+
+            if (error) {
+              console.error("School rivalries RPC error:", error);
+              return [];
+            }
+
+            return ((data ?? []) as any[]).map((row: any) => ({
+              opponentName: row.opponent_name || "",
+              opponentSlug: row.opponent_slug || "",
+              wins: Number(row.wins) || 0,
+              losses: Number(row.losses) || 0,
+              ties: Number(row.ties) || 0,
+              totalGames: Number(row.total_games) || 0,
+              lastResult: row.last_meeting_date
+                ? {
+                    date: row.last_meeting_date,
+                    homeScore: row.last_home_score || 0,
+                    awayScore: row.last_away_score || 0,
+                    isHome: row.last_is_home || false,
+                  }
+                : undefined,
+            }));
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_SCHOOL_RIVALRIES",
+      { schoolId, sportId }
     );
   }
 );
