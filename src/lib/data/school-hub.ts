@@ -6,6 +6,7 @@ import {
   School,
   type Season,
 } from "./common";
+import { getCurrentSeasonLabel } from "@/lib/sports";
 
 /**
  * School hub data with ALL relations (league, colors, contact info, etc.)
@@ -704,5 +705,588 @@ export const getSchoolsByLeague = cache(async () => {
     },
     [],
     "DATA_SCHOOLS_BY_LEAGUE"
+  );
+});
+
+// ─── Function 1: Current Seasons ─────────────────────────────────────────────
+
+export interface CurrentSeasonInfo {
+  sport_id: string;
+  sport_name: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  playoff_result: string | null;
+  season_label: string;
+  next_game?: {
+    game_date: string;
+    opponent_name: string;
+    opponent_slug: string;
+    is_home: boolean;
+  };
+}
+
+/**
+ * Get current season records for a school across all sports
+ */
+export const getSchoolCurrentSeasons = cache(async (schoolId: number) => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const currentLabel = getCurrentSeasonLabel();
+
+          // Get team seasons for the current label
+          const { data: teamSeasons } = await supabase
+            .from("team_seasons")
+            .select(
+              `
+              id, sport_id, wins, losses, ties, playoff_result,
+              seasons(label),
+              sports(name)
+            `
+            )
+            .eq("school_id", schoolId)
+            .eq("seasons.label", currentLabel);
+
+          if (!teamSeasons || teamSeasons.length === 0) return [];
+
+          // Filter in JS to only rows where the joined season label matches
+          const current = (teamSeasons as any[]).filter(
+            (ts) => ts.seasons?.label === currentLabel
+          );
+          if (current.length === 0) return [];
+
+          // Get upcoming games (no score yet, date >= today) for this school
+          const today = new Date().toISOString().split("T")[0];
+          const { data: upcomingGames } = await supabase
+            .from("games")
+            .select(
+              `
+              id, sport_id, game_date,
+              home_school_id, away_school_id,
+              home_school:school_names!home_school_id(name, slug),
+              away_school:school_names!away_school_id(name, slug)
+            `
+            )
+            .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+            .is("home_score", null)
+            .gte("game_date", today)
+            .order("game_date", { ascending: true })
+            .limit(10);
+
+          // Build a map: sport_id -> earliest upcoming game
+          const nextGameBySport = new Map<string, any>();
+          (upcomingGames ?? []).forEach((g: any) => {
+            if (!nextGameBySport.has(g.sport_id)) {
+              const isHome = g.home_school_id === schoolId;
+              const opponent = isHome ? g.away_school : g.home_school;
+              nextGameBySport.set(g.sport_id, {
+                game_date: g.game_date,
+                opponent_name: opponent?.name ?? "Unknown",
+                opponent_slug: opponent?.slug ?? "",
+                is_home: isHome,
+              });
+            }
+          });
+
+          return current.map((ts: any) => ({
+            sport_id: ts.sport_id,
+            sport_name: ts.sports?.name ?? ts.sport_id,
+            wins: ts.wins ?? 0,
+            losses: ts.losses ?? 0,
+            ties: ts.ties ?? 0,
+            playoff_result: ts.playoff_result ?? null,
+            season_label: ts.seasons?.label ?? currentLabel,
+            next_game: nextGameBySport.get(ts.sport_id),
+          })) as CurrentSeasonInfo[];
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_SCHOOL_CURRENT_SEASONS",
+    { schoolId }
+  );
+});
+
+// ─── Function 2: Roster ───────────────────────────────────────────────────────
+
+export interface SchoolRosterPlayer {
+  player_id: number;
+  player_slug: string | null;
+  player_name: string;
+  positions: string[];
+  graduation_year: number | null;
+  height: string | null;
+  weight: number | null;
+  games_played: number | null;
+  primary_stat_value: number | null;
+  primary_stat_label: string;
+}
+
+/**
+ * Get roster for a school/sport/season with primary stat
+ */
+export const getSchoolRoster = cache(
+  async (schoolId: number, sportId: string, seasonLabel: string) => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // Look up season_id from label
+            const { data: seasonRow } = await supabase
+              .from("seasons")
+              .select("id")
+              .eq("label", seasonLabel)
+              .single();
+
+            if (!seasonRow) return [];
+            const seasonId = seasonRow.id;
+
+            let rows: any[] = [];
+
+            if (sportId === "football") {
+              const { data } = await (supabase as any)
+                .from("football_player_seasons")
+                .select(
+                  `
+                  player_id, games_played, total_yards,
+                  player:players!inner(id, slug, name, positions, graduation_year, height, weight)
+                `
+                )
+                .eq("school_id", schoolId)
+                .eq("season_id", seasonId);
+              rows = data ?? [];
+              return rows
+                .sort((a, b) => {
+                  const posA = a.player?.positions?.[0] ?? "Z";
+                  const posB = b.player?.positions?.[0] ?? "Z";
+                  if (posA !== posB) return posA.localeCompare(posB);
+                  return (a.player?.name ?? "").localeCompare(b.player?.name ?? "");
+                })
+                .map((r: any) => ({
+                  player_id: r.player_id,
+                  player_slug: r.player?.slug ?? null,
+                  player_name: r.player?.name ?? "Unknown",
+                  positions: r.player?.positions ?? [],
+                  graduation_year: r.player?.graduation_year ?? null,
+                  height: r.player?.height ?? null,
+                  weight: r.player?.weight ?? null,
+                  games_played: r.games_played ?? null,
+                  primary_stat_value: r.total_yards ?? null,
+                  primary_stat_label: "Total Yards",
+                })) as SchoolRosterPlayer[];
+            } else if (sportId === "basketball") {
+              const { data } = await (supabase as any)
+                .from("basketball_player_seasons")
+                .select(
+                  `
+                  player_id, games_played, points,
+                  player:players!inner(id, slug, name, positions, graduation_year, height, weight)
+                `
+                )
+                .eq("school_id", schoolId)
+                .eq("season_id", seasonId);
+              rows = data ?? [];
+              return rows
+                .sort((a, b) => {
+                  const posA = a.player?.positions?.[0] ?? "Z";
+                  const posB = b.player?.positions?.[0] ?? "Z";
+                  if (posA !== posB) return posA.localeCompare(posB);
+                  return (a.player?.name ?? "").localeCompare(b.player?.name ?? "");
+                })
+                .map((r: any) => ({
+                  player_id: r.player_id,
+                  player_slug: r.player?.slug ?? null,
+                  player_name: r.player?.name ?? "Unknown",
+                  positions: r.player?.positions ?? [],
+                  graduation_year: r.player?.graduation_year ?? null,
+                  height: r.player?.height ?? null,
+                  weight: r.player?.weight ?? null,
+                  games_played: r.games_played ?? null,
+                  primary_stat_value: r.points ?? null,
+                  primary_stat_label: "Points",
+                })) as SchoolRosterPlayer[];
+            } else if (sportId === "baseball") {
+              const { data } = await (supabase as any)
+                .from("baseball_player_seasons")
+                .select(
+                  `
+                  player_id, games_played, hits,
+                  player:players!inner(id, slug, name, positions, graduation_year, height, weight)
+                `
+                )
+                .eq("school_id", schoolId)
+                .eq("season_id", seasonId);
+              rows = data ?? [];
+              return rows
+                .sort((a, b) => {
+                  const posA = a.player?.positions?.[0] ?? "Z";
+                  const posB = b.player?.positions?.[0] ?? "Z";
+                  if (posA !== posB) return posA.localeCompare(posB);
+                  return (a.player?.name ?? "").localeCompare(b.player?.name ?? "");
+                })
+                .map((r: any) => ({
+                  player_id: r.player_id,
+                  player_slug: r.player?.slug ?? null,
+                  player_name: r.player?.name ?? "Unknown",
+                  positions: r.player?.positions ?? [],
+                  graduation_year: r.player?.graduation_year ?? null,
+                  height: r.player?.height ?? null,
+                  weight: r.player?.weight ?? null,
+                  games_played: r.games_played ?? null,
+                  primary_stat_value: r.hits ?? null,
+                  primary_stat_label: "Hits",
+                })) as SchoolRosterPlayer[];
+            }
+
+            return [] as SchoolRosterPlayer[];
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_SCHOOL_ROSTER",
+      { schoolId, sportId, seasonLabel }
+    );
+  }
+);
+
+// ─── Function 3: Stat Leaders ─────────────────────────────────────────────────
+
+export interface StatLeaderEntry {
+  player_name: string;
+  player_slug: string | null;
+  value: number;
+  games_played: number | null;
+}
+
+export interface StatLeaderCategory {
+  category: string;
+  leaders: StatLeaderEntry[];
+}
+
+/**
+ * Get top stat leaders per category for a school/sport/season
+ */
+export const getSchoolStatLeaders = cache(
+  async (schoolId: number, sportId: string, seasonLabel: string) => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // Look up season_id
+            const { data: seasonRow } = await supabase
+              .from("seasons")
+              .select("id")
+              .eq("label", seasonLabel)
+              .single();
+
+            if (!seasonRow) return [];
+            const seasonId = seasonRow.id;
+
+            type StatDef = { column: string; label: string };
+
+            const statsBySport: Record<string, StatDef[]> = {
+              football: [
+                { column: "rush_yards", label: "Rush Yards" },
+                { column: "pass_yards", label: "Pass Yards" },
+                { column: "rec_yards", label: "Rec Yards" },
+                { column: "total_td", label: "Total TDs" },
+                { column: "tackles", label: "Tackles" },
+              ],
+              basketball: [
+                { column: "points", label: "Points" },
+                { column: "rebounds", label: "Rebounds" },
+                { column: "assists", label: "Assists" },
+                { column: "steals", label: "Steals" },
+              ],
+              baseball: [
+                { column: "hits", label: "Hits" },
+                { column: "home_runs", label: "Home Runs" },
+                { column: "rbi", label: "RBI" },
+                { column: "batting_avg", label: "Batting Avg" },
+              ],
+            };
+
+            const tableBySport: Record<string, string> = {
+              football: "football_player_seasons",
+              basketball: "basketball_player_seasons",
+              baseball: "baseball_player_seasons",
+            };
+
+            const statDefs = statsBySport[sportId];
+            const tableName = tableBySport[sportId];
+            if (!statDefs || !tableName) return [];
+
+            const results = await Promise.allSettled(
+              statDefs.map(async ({ column, label }) => {
+                const { data } = await (supabase as any)
+                  .from(tableName)
+                  .select(
+                    `player_id, games_played, ${column}, player:players!inner(name, slug)`
+                  )
+                  .eq("school_id", schoolId)
+                  .eq("season_id", seasonId)
+                  .not(column, "is", null)
+                  .order(column, { ascending: false })
+                  .limit(5);
+
+                if (!data || data.length === 0) return null;
+
+                return {
+                  category: label,
+                  leaders: (data as any[]).map((r) => ({
+                    player_name: r.player?.name ?? "Unknown",
+                    player_slug: r.player?.slug ?? null,
+                    value: r[column] ?? 0,
+                    games_played: r.games_played ?? null,
+                  })),
+                } as StatLeaderCategory;
+              })
+            );
+
+            return results
+              .filter(
+                (r): r is PromiseFulfilledResult<StatLeaderCategory> =>
+                  r.status === "fulfilled" && r.value !== null
+              )
+              .map((r) => r.value) as StatLeaderCategory[];
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_SCHOOL_STAT_LEADERS",
+      { schoolId, sportId, seasonLabel }
+    );
+  }
+);
+
+// ─── Function 4: Games With Box Scores ───────────────────────────────────────
+
+export interface BoxScorePlayerStat {
+  player_name: string;
+  player_slug: string | null;
+  rush_yards?: number | null;
+  rush_td?: number | null;
+  pass_yards?: number | null;
+  pass_td?: number | null;
+  rec_yards?: number | null;
+  rec_td?: number | null;
+  total_td?: number | null;
+  points?: number | null;
+  bb_points?: number | null;
+  rebounds?: number | null;
+  assists?: number | null;
+  steals?: number | null;
+}
+
+export interface GameWithBoxScore {
+  game_id: number;
+  game_date: string | null;
+  sport_id: string;
+  home_school_id: number;
+  away_school_id: number;
+  home_school_name: string;
+  away_school_name: string;
+  home_school_slug: string;
+  away_school_slug: string;
+  home_score: number | null;
+  away_score: number | null;
+  season_label: string;
+  player_stats: BoxScorePlayerStat[];
+}
+
+/**
+ * Get games with attached box score stats for a school/sport/season
+ */
+export const getSchoolGamesWithStats = cache(
+  async (schoolId: number, sportId: string, seasonLabel: string) => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            const supabase = await createClient();
+
+            // Look up season_id
+            const { data: seasonRow } = await supabase
+              .from("seasons")
+              .select("id")
+              .eq("label", seasonLabel)
+              .single();
+
+            if (!seasonRow) return [];
+            const seasonId = seasonRow.id;
+
+            // Get games for this school/sport/season using school_names view
+            const { data: gamesData } = await supabase
+              .from("games")
+              .select(
+                `
+                id, game_date, sport_id, home_school_id, away_school_id,
+                home_score, away_score,
+                home_school:school_names!home_school_id(name, slug),
+                away_school:school_names!away_school_id(name, slug),
+                seasons(label)
+              `
+              )
+              .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
+              .eq("sport_id", sportId)
+              .eq("season_id", seasonId)
+              .order("game_date", { ascending: true });
+
+            if (!gamesData || gamesData.length === 0) return [];
+
+            const gameIds = (gamesData as any[]).map((g) => g.id);
+
+            // Fetch box score stats
+            const statsTable =
+              sportId === "football"
+                ? "football_game_stats"
+                : sportId === "basketball"
+                  ? "basketball_game_stats"
+                  : null;
+
+            const statsByGame = new Map<number, BoxScorePlayerStat[]>();
+
+            if (statsTable) {
+              const { data: statsData } = await (supabase as any)
+                .from(statsTable)
+                .select(
+                  sportId === "football"
+                    ? `game_id, rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td, total_td, player:players!inner(name, slug)`
+                    : `game_id, points, rebounds, assists, steals, player:players!inner(name, slug)`
+                )
+                .in("game_id", gameIds);
+
+              (statsData ?? []).forEach((s: any) => {
+                const entry: BoxScorePlayerStat = {
+                  player_name: s.player?.name ?? "Unknown",
+                  player_slug: s.player?.slug ?? null,
+                  ...(sportId === "football"
+                    ? {
+                        rush_yards: s.rush_yards ?? null,
+                        rush_td: s.rush_td ?? null,
+                        pass_yards: s.pass_yards ?? null,
+                        pass_td: s.pass_td ?? null,
+                        rec_yards: s.rec_yards ?? null,
+                        rec_td: s.rec_td ?? null,
+                        total_td: s.total_td ?? null,
+                      }
+                    : {
+                        bb_points: s.points ?? null,
+                        rebounds: s.rebounds ?? null,
+                        assists: s.assists ?? null,
+                        steals: s.steals ?? null,
+                      }),
+                };
+                if (!statsByGame.has(s.game_id)) {
+                  statsByGame.set(s.game_id, []);
+                }
+                statsByGame.get(s.game_id)!.push(entry);
+              });
+            }
+
+            return (gamesData as any[]).map((g) => ({
+              game_id: g.id,
+              game_date: g.game_date ?? null,
+              sport_id: g.sport_id,
+              home_school_id: g.home_school_id,
+              away_school_id: g.away_school_id,
+              home_school_name: g.home_school?.name ?? "Unknown",
+              away_school_name: g.away_school?.name ?? "Unknown",
+              home_school_slug: g.home_school?.slug ?? "",
+              away_school_slug: g.away_school?.slug ?? "",
+              home_score: g.home_score ?? null,
+              away_score: g.away_score ?? null,
+              season_label: g.seasons?.label ?? seasonLabel,
+              player_stats: statsByGame.get(g.id) ?? [],
+            })) as GameWithBoxScore[];
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_SCHOOL_GAMES_WITH_STATS",
+      { schoolId, sportId, seasonLabel }
+    );
+  }
+);
+
+// ─── Function 5: School Records ───────────────────────────────────────────────
+
+export interface SchoolRecord {
+  id: number;
+  category: string;
+  subcategory: string | null;
+  scope: string | null;
+  record_value: string | null;
+  record_number: number | null;
+  holder_name: string | null;
+  year_set: number | null;
+  description: string | null;
+  player_name: string | null;
+  player_slug: string | null;
+  sport_name: string | null;
+  season_label: string | null;
+}
+
+/**
+ * Get all records for a school, joined with player/sport/season details
+ */
+export const getSchoolRecords = cache(async (schoolId: number) => {
+  return withErrorHandling(
+    async () => {
+      return withRetry(
+        async () => {
+          const supabase = await createClient();
+          const { data } = await supabase
+            .from("records")
+            .select(
+              `
+              id, category, subcategory, scope, record_value,
+              record_number, holder_name, year_set, description,
+              sport_id,
+              players(name, slug),
+              sports(name),
+              seasons(label)
+            `
+            )
+            .eq("school_id", schoolId)
+            .order("sport_id", { ascending: true })
+            .order("category", { ascending: true })
+            .order("record_number", { ascending: false });
+
+          if (!data) return [];
+
+          return (data as any[]).map((r) => ({
+            id: r.id,
+            category: r.category,
+            subcategory: r.subcategory ?? null,
+            scope: r.scope ?? null,
+            record_value: r.record_value ?? null,
+            record_number: r.record_number ?? null,
+            holder_name: r.holder_name ?? null,
+            year_set: r.year_set ?? null,
+            description: r.description ?? null,
+            player_name: r.players?.name ?? null,
+            player_slug: r.players?.slug ?? null,
+            sport_name: r.sports?.name ?? null,
+            season_label: r.seasons?.label ?? null,
+          })) as SchoolRecord[];
+        },
+        { maxRetries: 2, baseDelay: 500 }
+      );
+    },
+    [],
+    "DATA_SCHOOL_RECORDS",
+    { schoolId }
   );
 });
