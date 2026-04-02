@@ -1,358 +1,250 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { getUpcomingGames } from "@/lib/data/games";
 import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
 import { SPORT_META, VALID_SPORTS } from "@/lib/sports";
-import Breadcrumb from "@/components/ui/Breadcrumb";
-import SportIcon from "@/components/ui/SportIcon";
+import { Breadcrumb } from "@/components/ui";
+import { getMasterScheduleGames } from "@/lib/data/schedule";
+import MasterScheduleView from "./MasterScheduleView";
 
 export const metadata: Metadata = {
   title: "Schedule | PhillySportsPack",
-  description: "Upcoming games and schedule for Philadelphia high school sports. Football, basketball, baseball, and more.",
+  description:
+    "This week in Philadelphia high school sports. Scores and schedules across football, basketball, baseball, and more.",
   alternates: { canonical: "https://phillysportspack.com/scores/schedule" },
-  openGraph: {
-    title: "Schedule | PhillySportsPack",
-    description: "Upcoming games and schedule for Philadelphia high school sports.",
-    url: "https://phillysportspack.com/scores/schedule",
-  },
 };
 
-export const revalidate = 1800; // 30 minutes
-interface SchedulePageProps {
-  searchParams: Promise<{ sport?: string }>;
+export const revalidate = 1800;
+
+interface PageProps {
+  searchParams: Promise<{ sport?: string; week?: string }>;
 }
 
-export default async function SchedulePage({
-  searchParams,
-}: SchedulePageProps) {
+/**
+ * Get the Monday-Sunday range for a given date.
+ */
+function getWeekRange(dateStr?: string): { start: string; end: string; mondayDate: Date } {
+  const d = dateStr ? new Date(dateStr + "T12:00:00") : new Date();
+  const day = d.getDay();
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - ((day + 6) % 7));
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return {
+    start: monday.toISOString().slice(0, 10),
+    end: sunday.toISOString().slice(0, 10),
+    mondayDate: monday,
+  };
+}
+
+export default async function MasterSchedulePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const selectedSport = params.sport || "all";
 
-  // Fetch upcoming games
-  const allGames = selectedSport === "all"
-    ? await getUpcomingGames(undefined, 100)
-    : await getUpcomingGames(selectedSport, 100);
+  // Determine which week to show
+  const { start, end, mondayDate } = getWeekRange(params.week);
 
-  // Group by week
-  const groupedByWeek = new Map<string, typeof allGames>();
-  allGames.forEach((game) => {
-    if (!game.game_date) return;
-
-    const gameDate = new Date(game.game_date);
-    const weekStart = new Date(gameDate);
-    weekStart.setDate(gameDate.getDate() - gameDate.getDay());
-    const weekKey = weekStart.toISOString().split("T")[0];
-
-    if (!groupedByWeek.has(weekKey)) {
-      groupedByWeek.set(weekKey, []);
-    }
-    groupedByWeek.get(weekKey)!.push(game);
-  });
-
-  const sortedWeeks = Array.from(groupedByWeek.keys()).sort((a, b) =>
-    new Date(a).getTime() - new Date(b).getTime()
+  // Fetch games for this week
+  let games = await getMasterScheduleGames(
+    start,
+    end,
+    selectedSport === "all" ? undefined : selectedSport
   );
 
+  // If no games this week and no explicit week param, try finding the most recent week with games
+  let displayWeekStart = start;
+  let displayWeekEnd = end;
+  let showingRecent = false;
+
+  if (games.length === 0 && !params.week) {
+    // Search backwards up to 12 weeks to find games
+    for (let i = 1; i <= 12; i++) {
+      const prevMonday = new Date(mondayDate);
+      prevMonday.setDate(prevMonday.getDate() - 7 * i);
+      const prevSunday = new Date(prevMonday);
+      prevSunday.setDate(prevMonday.getDate() + 6);
+      const prevStart = prevMonday.toISOString().slice(0, 10);
+      const prevEnd = prevSunday.toISOString().slice(0, 10);
+
+      const prevGames = await getMasterScheduleGames(
+        prevStart,
+        prevEnd,
+        selectedSport === "all" ? undefined : selectedSport
+      );
+      if (prevGames.length > 0) {
+        games = prevGames;
+        displayWeekStart = prevStart;
+        displayWeekEnd = prevEnd;
+        showingRecent = true;
+        break;
+      }
+    }
+  }
+
+  // Compute prev/next week dates for navigation
+  const displayMonday = new Date(displayWeekStart + "T12:00:00");
+  const prevMonday = new Date(displayMonday);
+  prevMonday.setDate(prevMonday.getDate() - 7);
+  const nextMonday = new Date(displayMonday);
+  nextMonday.setDate(nextMonday.getDate() + 7);
+
+  const prevWeekParam = prevMonday.toISOString().slice(0, 10);
+  const nextWeekParam = nextMonday.toISOString().slice(0, 10);
+  const thisWeekParam = getWeekRange().start;
+  const isCurrentWeek = displayWeekStart === thisWeekParam;
+
+  // Week label
+  const weekLabel = `${new Date(displayWeekStart + "T12:00:00").toLocaleDateString(
+    "en-US",
+    { month: "short", day: "numeric" }
+  )} - ${new Date(displayWeekEnd + "T12:00:00").toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })}`;
+
+  // Sport breakdown
+  const sportCounts = new Map<string, number>();
+  for (const g of games) {
+    const sid = (g.sport_id as string) || "unknown";
+    sportCounts.set(sid, (sportCounts.get(sid) || 0) + 1);
+  }
+
   return (
-    <main id="main-content" className="flex-1">
-      <Breadcrumb
-        items={[
-          { label: "Scores", href: "/scores" },
-          { label: "Schedule", href: "/scores/schedule" },
-        ]}
-      />
+    <main className="min-h-screen bg-gray-50">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
+        <Breadcrumb
+          items={[
+            { label: "Scores", href: "/scores" },
+            { label: "Schedule" },
+          ]}
+        />
+      </div>
 
-      {/* Hero Section */}
-      <div
-        className="hero-section"
-        style={{
-          background: "linear-gradient(135deg, var(--psp-navy) 0%, #1a3a52 100%)",
-          padding: "2rem 1rem",
-          marginBottom: "2rem",
-          textAlign: "center",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "2.5rem",
-            fontFamily: "var(--font-bebas)",
-            marginBottom: "0.5rem",
-          }}
-        >
-          Schedule
-        </h1>
-        <p style={{ fontSize: "1.1rem", color: "#ccc", marginBottom: "1.5rem" }}>
-          Upcoming games from Philadelphia high school sports
-        </p>
+      {/* Hero */}
+      <div className="bg-[var(--psp-navy)] border-b-4 border-[var(--psp-gold)] py-10 px-4">
+        <div className="max-w-5xl mx-auto text-center">
+          <h1 className="font-bebas text-4xl sm:text-5xl text-white tracking-wider mb-2">
+            This Week in Philly Sports
+          </h1>
+          <p className="text-gray-400 text-base mb-6">
+            Scores and schedules across Philadelphia high school sports
+          </p>
 
-        {/* Sport Filter Pills */}
-        <div
-          style={{
-            display: "flex",
-            gap: "0.5rem",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          <Link
-            href="/scores/schedule"
-            className={`pill ${selectedSport === "all" ? "active" : ""}`}
-            style={{
-              padding: "0.5rem 1rem",
-              borderRadius: "20px",
-              border: "1px solid var(--psp-gold)",
-              background:
-                selectedSport === "all"
-                  ? "var(--psp-gold)"
-                  : "transparent",
-              color:
-                selectedSport === "all"
-                  ? "var(--psp-navy)"
-                  : "var(--psp-gold)",
-              fontWeight: 600,
-              fontSize: "0.9rem",
-              textDecoration: "none",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-          >
-            All Sports
-          </Link>
-          {VALID_SPORTS.map((sport) => (
+          {/* Week navigation */}
+          <div className="flex items-center justify-center gap-3 mb-6">
             <Link
-              key={sport}
-              href={`/scores/schedule?sport=${sport}`}
-              className={`pill ${selectedSport === sport ? "active" : ""}`}
-              style={{
-                padding: "0.5rem 1rem",
-                borderRadius: "20px",
-                border: `1px solid ${
-                  SPORT_COLORS_HEX[sport] || "var(--psp-gold)"
-                }`,
-                background:
-                  selectedSport === sport
-                    ? SPORT_COLORS_HEX[sport] || "var(--psp-gold)"
-                    : "transparent",
-                color:
-                  selectedSport === sport
-                    ? "white"
-                    : SPORT_COLORS_HEX[sport] || "var(--psp-gold)",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                textDecoration: "none",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
+              href={`/scores/schedule?week=${prevWeekParam}${selectedSport !== "all" ? `&sport=${selectedSport}` : ""}`}
+              className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
+              aria-label="Previous week"
             >
-              {SPORT_META[sport]?.name || sport}
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
             </Link>
-          ))}
+
+            <div className="text-center">
+              <p className="text-white font-bebas text-xl tracking-wider">
+                {weekLabel}
+              </p>
+              {showingRecent && (
+                <p className="text-[var(--psp-gold)] text-[10px] font-medium mt-0.5">
+                  Showing most recent week with games
+                </p>
+              )}
+            </div>
+
+            <Link
+              href={`/scores/schedule?week=${nextWeekParam}${selectedSport !== "all" ? `&sport=${selectedSport}` : ""}`}
+              className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
+              aria-label="Next week"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+
+            {!isCurrentWeek && (
+              <Link
+                href={`/scores/schedule${selectedSport !== "all" ? `?sport=${selectedSport}` : ""}`}
+                className="ml-2 text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] font-medium transition"
+              >
+                This Week
+              </Link>
+            )}
+          </div>
+
+          {/* Sport filter pills */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            <Link
+              href={`/scores/schedule${params.week ? `?week=${params.week}` : ""}`}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${
+                selectedSport === "all"
+                  ? "bg-[var(--psp-gold)] text-[var(--psp-navy)]"
+                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+              }`}
+            >
+              All Sports
+            </Link>
+            {VALID_SPORTS.map((sportSlug) => {
+              const meta = SPORT_META[sportSlug];
+              const color = SPORT_COLORS_HEX[sportSlug] || "#f0a500";
+              const count = sportCounts.get(sportSlug) || 0;
+              const isActive = selectedSport === sportSlug;
+
+              return (
+                <Link
+                  key={sportSlug}
+                  href={`/scores/schedule?sport=${sportSlug}${params.week ? `&week=${params.week}` : ""}`}
+                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition inline-flex items-center gap-1.5 ${
+                    isActive
+                      ? "text-white"
+                      : "bg-white/10 text-gray-300 hover:bg-white/20"
+                  }`}
+                  style={isActive ? { backgroundColor: color } : undefined}
+                >
+                  <span>{meta?.emoji}</span>
+                  <span>{meta?.name || sportSlug}</span>
+                  {count > 0 && (
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                        isActive ? "bg-white/20" : "bg-white/10"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Schedule List */}
-      <div className="container" style={{ maxWidth: "900px", margin: "0 auto" }}>
-        {sortedWeeks.length === 0 ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "3rem 1rem",
-              color: "#999",
-            }}
-          >
-            <p style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
-              No upcoming games found.
+      {/* Content */}
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        {games.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <span className="text-4xl block mb-4">📅</span>
+            <h3 className="font-bebas text-xl text-[var(--psp-navy)] tracking-wider mb-2">
+              No games this week
+            </h3>
+            <p className="text-gray-500 text-sm mb-4">
+              {selectedSport !== "all"
+                ? `No ${SPORT_META[selectedSport as keyof typeof SPORT_META]?.name || selectedSport} games scheduled for this week.`
+                : "No games scheduled across any sport for this week."}
             </p>
             <Link
               href="/scores"
-              style={{
-                color: "var(--psp-gold)",
-                textDecoration: "none",
-                fontWeight: 600,
-              }}
+              className="text-[var(--psp-blue)] text-sm font-medium hover:underline"
             >
-              ← View recent scores
+              View recent scores
             </Link>
           </div>
         ) : (
-          sortedWeeks.map((weekKey) => {
-            const games = groupedByWeek.get(weekKey) || [];
-            const weekStart = new Date(weekKey);
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekStart.getDate() + 6);
-
-            const weekLabel = `Week of ${new Intl.DateTimeFormat("en-US", {
-              month: "short",
-              day: "numeric",
-            }).format(weekStart)} - ${new Intl.DateTimeFormat("en-US", {
-              month: "short",
-              day: "numeric",
-            }).format(weekEnd)}`;
-
-            // Sort games by date within the week
-            const sortedGames = [...games].sort(
-              (a, b) =>
-                new Date(a.game_date || "").getTime() -
-                new Date(b.game_date || "").getTime()
-            );
-
-            return (
-              <div key={weekKey} style={{ marginBottom: "2rem" }}>
-                <h2
-                  style={{
-                    fontSize: "1.3rem",
-                    fontFamily: "var(--font-bebas)",
-                    color: "var(--psp-gold)",
-                    marginBottom: "1rem",
-                    paddingBottom: "0.5rem",
-                    borderBottom: "2px solid #333",
-                  }}
-                >
-                  {weekLabel}
-                </h2>
-
-                <div style={{ display: "grid", gap: "1rem" }}>
-                  {sortedGames.map((game, idx) => {
-                    const gameDate = new Date(game.game_date || "");
-                    const dayLabel = new Intl.DateTimeFormat("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                    }).format(gameDate);
-
-                    const timeLabel = game.game_date
-                      ? gameDate.toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        })
-                      : "TBA";
-
-                    return (
-                      <div
-                        key={game.id}
-                        className="animate-fade-in-up"
-                        style={{
-                          animationDelay: `${idx * 30}ms`,
-                          background:
-                            "linear-gradient(135deg, #1a1a1a 0%, #222 100%)",
-                          border: "1px solid #333",
-                          borderRadius: "8px",
-                          padding: "1rem",
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          gap: "1rem",
-                        }}
-                      >
-                        {/* Sport & Date */}
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "flex-start",
-                            gap: "0.5rem",
-                            minWidth: "120px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "0.5rem",
-                            }}
-                          >
-                            <SportIcon sport={game.sport_id} size="sm" />
-                            <span
-                              style={{
-                                fontSize: "0.75rem",
-                                color: "#999",
-                                fontWeight: 600,
-                                textTransform: "uppercase",
-                              }}
-                            >
-                              {SPORT_META[game.sport_id as keyof typeof SPORT_META]?.name || game.sport_id}
-                            </span>
-                          </div>
-                          <div style={{ fontSize: "0.9rem", color: "#ccc" }}>
-                            <div>{dayLabel}</div>
-                            <div style={{ color: "#999", fontSize: "0.8rem" }}>
-                              {timeLabel}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Game Matchup */}
-                        <div
-                          style={{
-                            flex: 1,
-                            display: "grid",
-                            gridTemplateColumns: "1fr auto 1fr",
-                            alignItems: "center",
-                            gap: "1rem",
-                            textAlign: "center",
-                          }}
-                        >
-                          {/* Away School */}
-                          <Link
-                            href={
-                              game.away_school
-                                ? `/${game.sport_id}/schools/${game.away_school.slug}`
-                                : "#"
-                            }
-                            style={{
-                              textDecoration: "none",
-                              color: "#ccc",
-                              fontSize: "0.95rem",
-                              fontWeight: 500,
-                            }}
-                          >
-                            {game.away_school?.name || "TBD"}
-                          </Link>
-
-                          {/* VS Badge */}
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              width: "50px",
-                              height: "30px",
-                              background: "rgba(240, 165, 0, 0.1)",
-                              borderRadius: "4px",
-                              fontSize: "0.8rem",
-                              fontWeight: 600,
-                              color: "var(--psp-gold)",
-                            }}
-                          >
-                            vs
-                          </div>
-
-                          {/* Home School */}
-                          <Link
-                            href={
-                              game.home_school
-                                ? `/${game.sport_id}/schools/${game.home_school.slug}`
-                                : "#"
-                            }
-                            style={{
-                              textDecoration: "none",
-                              color: "#ccc",
-                              fontSize: "0.95rem",
-                              fontWeight: 500,
-                            }}
-                          >
-                            {game.home_school?.name || "TBD"}
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })
+          <MasterScheduleView
+            games={JSON.parse(JSON.stringify(games))}
+            selectedSport={selectedSport}
+          />
         )}
       </div>
     </main>
