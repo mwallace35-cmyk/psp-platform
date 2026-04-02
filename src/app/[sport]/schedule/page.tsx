@@ -1,225 +1,290 @@
 import { createStaticClient } from "@/lib/supabase/static";
 import { SPORT_META } from "@/lib/data";
 import { getCurrentSeasonLabel } from "@/lib/sports";
-import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
+import {
+  validateSportParam,
+  validateSportParamForMetadata,
+} from "@/lib/validateSport";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import ScheduleView from "./ScheduleView";
+import {
+  getScheduleGames,
+  getScheduleSeasons,
+  getLeagueSchoolMap,
+  buildTeamList,
+  type ScheduleGame,
+  type ScheduleSeason,
+  type ScheduleTeam,
+  type LeagueSchoolEntry,
+} from "@/lib/data/schedule";
+import { Suspense } from "react";
+
+// Sport-specific views
+import FootballScheduleView from "./views/FootballScheduleView";
+// Future: import BasketballScheduleView, etc.
 
 export const revalidate = 3600;
+
 type PageParams = { sport: string };
+type SearchParams = { season?: string; view?: string };
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<PageParams>;
+  searchParams: Promise<SearchParams>;
 }): Promise<Metadata> {
   const sport = await validateSportParamForMetadata(params);
   if (!sport) return {};
   const meta = SPORT_META[sport];
-  const seasonLabel = getCurrentSeasonLabel();
+  const sp = await searchParams;
+  const seasonLabel = sp.season || getCurrentSeasonLabel();
   return {
-    title: `${seasonLabel} ${meta.name} Schedule & Results — PhillySportsPack`,
-    description: `Complete ${seasonLabel} Philadelphia high school ${meta.name.toLowerCase()} schedule & results. View week-by-week or filter by team.`,
+    title: `${seasonLabel} ${meta.name} Schedule & Results - PhillySportsPack`,
+    description: `Complete ${seasonLabel} Philadelphia high school ${meta.name.toLowerCase()} schedule & results. Filter by league, division, team, or week.`,
     alternates: {
       canonical: `https://phillysportspack.com/${sport}/schedule`,
     },
   };
 }
 
-interface GameRow {
-  id: number;
-  game_date: string;
-  game_time: string | null;
-  game_type: string | null;
-  home_score: number | null;
-  away_score: number | null;
-  notes: string | null;
-  home_school: {
-    id: number;
-    name: string;
-    slug: string;
-    colors: Record<string, string> | null;
-    city?: string | null;
-    league_id?: number | null;
-  } | null;
-  away_school: {
-    id: number;
-    name: string;
-    slug: string;
-    colors: Record<string, string> | null;
-    city?: string | null;
-    league_id?: number | null;
-  } | null;
-}
-
-interface TeamInfo {
-  id: number;
-  name: string;
-  slug: string;
-  colors: Record<string, string> | null;
-  gameCount: number;
-}
-
-export default async function SchedulePage({
-  params,
-}: {
-  params: Promise<PageParams>;
-}) {
-  const sport = await validateSportParam(params);
-
-  const meta = SPORT_META[sport];
+// ============================================================================
+// Resolve season: try exact match, then fallback to most recent
+// ============================================================================
+async function resolveSeasonId(
+  seasonLabel: string
+): Promise<{ id: number; label: string } | null> {
   const supabase = createStaticClient();
-  const seasonLabel = getCurrentSeasonLabel();
 
-  // Get current/upcoming season — try exact match first, then fall back to most recent
-  let seasonData: { id: number; label: string } | null = null;
-  const { data: exactSeason } = await supabase
+  const { data: exact } = await supabase
     .from("seasons")
     .select("id, label")
     .eq("label", seasonLabel)
     .single();
 
-  if (exactSeason) {
-    seasonData = exactSeason;
-  } else {
-    // Fallback: get the most recent season by label descending
-    const { data: latestSeason } = await supabase
-      .from("seasons")
-      .select("id, label")
-      .order("label", { ascending: false })
-      .limit(1)
-      .single();
-    seasonData = latestSeason;
-  }
+  if (exact) return exact;
 
-  if (!seasonData) notFound();
-
-  // Fetch all games for this season + sport
-  const sportRow = await supabase
-    .from("sports")
-    .select("id")
-    .eq("slug", sport)
+  // Fallback: most recent season
+  const { data: latest } = await supabase
+    .from("seasons")
+    .select("id, label")
+    .order("label", { ascending: false })
+    .limit(1)
     .single();
 
-  const sportId = sportRow.data?.id;
+  return latest;
+}
 
-  const { data: rawGames } = await supabase
-    .from("games")
-    .select(
-      "id, game_date, game_time, game_type, home_score, away_score, notes, home_school:home_school_id(id, name, slug, colors, city, league_id), away_school:away_school_id(id, name, slug, colors, city, league_id)"
-    )
-    .eq("season_id", seasonData.id)
-    .eq("sport_id", sportId)
-    .order("game_date", { ascending: true })
-    .order("game_time", { ascending: true })
-    .limit(500);
+// ============================================================================
+// Page component
+// ============================================================================
+export default async function SchedulePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<PageParams>;
+  searchParams: Promise<SearchParams>;
+}) {
+  const sport = await validateSportParam(params);
+  const meta = SPORT_META[sport];
+  const sp = await searchParams;
 
-  const games: GameRow[] = (rawGames ?? []).map((g: Record<string, unknown>) => ({
-    ...g,
-    home_school: Array.isArray(g.home_school) ? g.home_school[0] : g.home_school,
-    away_school: Array.isArray(g.away_school) ? g.away_school[0] : g.away_school,
-  })) as GameRow[];
+  // Resolve which season to show
+  const requestedSeason = sp.season || getCurrentSeasonLabel();
+  const season = await resolveSeasonId(requestedSeason);
+  if (!season) notFound();
 
-  // Build team list from games
-  const teamMap = new Map<number, TeamInfo>();
-  for (const g of games) {
-    for (const school of [g.home_school, g.away_school]) {
-      if (!school) continue;
-      const existing = teamMap.get(school.id);
-      if (existing) {
-        existing.gameCount++;
-      } else {
-        teamMap.set(school.id, {
-          id: school.id,
-          name: school.name,
-          slug: school.slug,
-          colors: school.colors,
-          gameCount: 1,
-        });
-      }
-    }
-  }
+  // Parallel data fetches
+  const [games, seasons, leagueMap] = await Promise.all([
+    getScheduleGames(sport, season.label),
+    getScheduleSeasons(sport),
+    getLeagueSchoolMap(season.id),
+  ]);
 
-  // Sort teams: most games first (core teams), then alphabetical
-  const teams = [...teamMap.values()].sort((a, b) => {
-    if (b.gameCount !== a.gameCount) return b.gameCount - a.gameCount;
-    return a.name.localeCompare(b.name);
-  });
+  // Build team list from games + league data
+  const teams = buildTeamList(games, leagueMap);
 
-  // Stats
+  // Determine the most recent season with data (for off-season handling)
+  const lastSeasonWithData = seasons.length > 0 ? seasons[0].label : null;
+
+  // If current season has no games, auto-redirect suggestion
+  const isOffSeason =
+    games.length === 0 &&
+    lastSeasonWithData &&
+    lastSeasonWithData !== season.label;
+
+  // Season stats
   const totalGames = games.length;
+  const coreTeams = teams.filter((t) => t.gameCount >= 5).length;
   const leagueGames = games.filter(
-    (g) => !g.game_type || g.game_type === "league" || g.game_type === "regular"
+    (g) =>
+      !g.game_type ||
+      g.game_type === "league" ||
+      g.game_type === "regular"
   ).length;
-  const nonLeague = games.filter((g) => g.game_type === "non-league").length;
-  const scrimmages = games.filter((g) => g.game_type === "scrimmage").length;
-  const totalTeams = teams.filter((t) => t.gameCount >= 5).length;
+  const playoffGames = games.filter(
+    (g) => g.game_type === "playoff" || g.game_type === "championship"
+  ).length;
+
+  // Serialize for client components (Map → array)
+  const leagueMapSerialized = [...leagueMap.entries()].map(([k, v]) => ({
+    schoolId: k,
+    ...v,
+  }));
+
+  // Check if Game Day mode is requested
+  const isGameDay = sp.view === "gameday";
+
+  // Determine sport-specific view
+  const viewProps = {
+    games: JSON.parse(JSON.stringify(games)) as ScheduleGame[],
+    teams: JSON.parse(JSON.stringify(teams)) as ScheduleTeam[],
+    seasons: JSON.parse(JSON.stringify(seasons)) as ScheduleSeason[],
+    leagueMap: leagueMapSerialized,
+    sport,
+    seasonLabel: season.label,
+    lastSeasonWithData,
+    isGameDay,
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-[#0a1628] border-b-4 border-[var(--psp-gold)] py-10 px-4">
+      <div className="bg-[var(--psp-navy)] border-b-4 border-[var(--psp-gold)] py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <nav className="text-xs text-gray-300 mb-3">
-            <a href="/" className="hover:text-gold transition">
+          {/* Breadcrumb */}
+          <nav className="text-xs text-gray-400 mb-3" aria-label="Breadcrumb">
+            <a href="/" className="hover:text-[var(--psp-gold)] transition">
               Home
             </a>
-            <span className="mx-1">›</span>
-            <a href={`/${sport}`} className="hover:text-gold transition">
+            <span className="mx-1.5">&rsaquo;</span>
+            <a
+              href={`/${sport}`}
+              className="hover:text-[var(--psp-gold)] transition"
+            >
               {meta.name}
             </a>
-            <span className="mx-1">›</span>
+            <span className="mx-1.5">&rsaquo;</span>
             <span className="text-gray-300">Schedule</span>
           </nav>
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-3xl">{meta.emoji}</span>
-            <h1 className="psp-h1 text-white">
-              {seasonLabel} {meta.name} Schedule & Results
-            </h1>
+
+          {/* Title + Season selector */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">{meta.emoji}</span>
+              <h1 className="psp-h1 text-white">
+                {season.label} {meta.name} Schedule & Results
+              </h1>
+            </div>
+
+            {/* Season selector */}
+            {seasons.length > 1 && (
+              <Suspense fallback={null}>
+                <SeasonSelectorWrapper
+                  seasons={seasons}
+                  currentSeason={season.label}
+                  gameCount={totalGames}
+                />
+              </Suspense>
+            )}
           </div>
-          <p className="text-gray-300 text-lg">
+
+          <p className="text-gray-300 text-base">
             Full schedule for Philadelphia area high school{" "}
             {meta.name.toLowerCase()}
           </p>
+
+          {/* Stats strip */}
           <div className="flex flex-wrap gap-6 mt-4 text-sm">
             <div>
-              <span className="text-gold font-bold text-xl">{totalGames}</span>{" "}
+              <span className="text-[var(--psp-gold)] font-bold text-xl">
+                {totalGames}
+              </span>{" "}
               <span className="text-gray-300">Games</span>
             </div>
             <div>
-              <span className="text-gold font-bold text-xl">{totalTeams}</span>{" "}
+              <span className="text-[var(--psp-gold)] font-bold text-xl">
+                {coreTeams}
+              </span>{" "}
               <span className="text-gray-300">Teams</span>
             </div>
             <div>
-              <span className="text-gold font-bold text-xl">
+              <span className="text-[var(--psp-gold)] font-bold text-xl">
                 {leagueGames}
               </span>{" "}
               <span className="text-gray-300">League</span>
             </div>
-            <div>
-              <span className="text-gold font-bold text-xl">{nonLeague}</span>{" "}
-              <span className="text-gray-300">Non-League</span>
-            </div>
-            {scrimmages > 0 && (
+            {playoffGames > 0 && (
               <div>
-                <span className="text-gold font-bold text-xl">
-                  {scrimmages}
+                <span className="text-[var(--psp-gold)] font-bold text-xl">
+                  {playoffGames}
                 </span>{" "}
-                <span className="text-gray-300">Scrimmages</span>
+                <span className="text-gray-300">Playoff</span>
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Client-side interactive schedule */}
-      <ScheduleView
-        games={JSON.parse(JSON.stringify(games))}
-        teams={JSON.parse(JSON.stringify(teams))}
-        sport={sport}
-        seasonLabel={seasonLabel}
-      />
+      {/* Sport-specific view */}
+      {sport === "football" ? (
+        <FootballScheduleView {...viewProps} />
+      ) : (
+        // Fallback: use the old ScheduleView for non-football sports until Phase 3-5
+        <FallbackScheduleView {...viewProps} />
+      )}
     </div>
+  );
+}
+
+// ============================================================================
+// Season selector wrapper (client component boundary)
+// ============================================================================
+import { ScheduleSeasonSelector } from "@/components/schedule";
+
+function SeasonSelectorWrapper({
+  seasons,
+  currentSeason,
+  gameCount,
+}: {
+  seasons: ScheduleSeason[];
+  currentSeason: string;
+  gameCount: number;
+}) {
+  return (
+    <ScheduleSeasonSelector
+      seasons={seasons}
+      currentSeason={currentSeason}
+      gameCount={gameCount}
+    />
+  );
+}
+
+// ============================================================================
+// Temporary fallback for non-football sports
+// ============================================================================
+import ScheduleView from "../schedule/ScheduleView";
+
+function FallbackScheduleView({
+  games,
+  teams,
+  sport,
+  seasonLabel,
+}: {
+  games: ScheduleGame[];
+  teams: ScheduleTeam[];
+  sport: string;
+  seasonLabel: string;
+  [key: string]: unknown;
+}) {
+  // Adapt to old ScheduleView interface
+  return (
+    <ScheduleView
+      games={games}
+      teams={teams}
+      sport={sport}
+      seasonLabel={seasonLabel}
+    />
   );
 }
