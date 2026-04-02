@@ -239,6 +239,7 @@ export default async function RosterPage({
 
                 {/* Position Roster */}
                 <table
+                  aria-label="Team roster"
                   style={{
                     width: "100%",
                     borderCollapse: "collapse",

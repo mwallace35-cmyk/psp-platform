@@ -1355,3 +1355,65 @@ export const getTeamStatLeaders = cache(
     );
   }
 );
+
+/**
+ * Get prev/next games for navigation on game detail page.
+ * Finds adjacent games by date for the home school in the same sport + season.
+ */
+export const getAdjacentGames = cache(
+  async (gameId: number, sportId: string, seasonId: number | null, homeSchoolId: number | null): Promise<{ prev: { id: number; game_date: string; opponent: string } | null; next: { id: number; game_date: string; opponent: string } | null }> => {
+    if (!seasonId || !homeSchoolId) return { prev: null, next: null };
+    return withErrorHandling(
+      async () => {
+        const supabase = await createClient();
+
+        // Get the current game's date
+        const { data: current } = await supabase
+          .from("games")
+          .select("game_date")
+          .eq("id", gameId)
+          .single();
+        if (!current?.game_date) return { prev: null, next: null };
+
+        // Previous game (earlier date, same school + sport + season)
+        const { data: prevData } = await supabase
+          .from("games")
+          .select("id, game_date, away_school:schools!games_away_school_id_fkey(name), home_school:schools!games_home_school_id_fkey(name), home_school_id, away_school_id")
+          .eq("sport_id", sportId)
+          .eq("season_id", seasonId)
+          .or(`home_school_id.eq.${homeSchoolId},away_school_id.eq.${homeSchoolId}`)
+          .lt("game_date", current.game_date)
+          .order("game_date", { ascending: false })
+          .limit(1);
+
+        // Next game (later date, same school + sport + season)
+        const { data: nextData } = await supabase
+          .from("games")
+          .select("id, game_date, away_school:schools!games_away_school_id_fkey(name), home_school:schools!games_home_school_id_fkey(name), home_school_id, away_school_id")
+          .eq("sport_id", sportId)
+          .eq("season_id", seasonId)
+          .or(`home_school_id.eq.${homeSchoolId},away_school_id.eq.${homeSchoolId}`)
+          .gt("game_date", current.game_date)
+          .order("game_date", { ascending: true })
+          .limit(1);
+
+        const formatNav = (g: any) => {
+          if (!g) return null;
+          const isHome = g.home_school_id === homeSchoolId;
+          const opp = isHome
+            ? (Array.isArray(g.away_school) ? g.away_school[0]?.name : g.away_school?.name) ?? "Opponent"
+            : (Array.isArray(g.home_school) ? g.home_school[0]?.name : g.home_school?.name) ?? "Opponent";
+          return { id: g.id, game_date: g.game_date, opponent: opp };
+        };
+
+        return {
+          prev: prevData?.[0] ? formatNav(prevData[0]) : null,
+          next: nextData?.[0] ? formatNav(nextData[0]) : null,
+        };
+      },
+      { prev: null, next: null },
+      "DATA_ADJACENT_GAMES",
+      { gameId, sportId, seasonId, homeSchoolId }
+    );
+  }
+);

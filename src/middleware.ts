@@ -153,6 +153,38 @@ function constantTimeCompare(a: string, b: string): boolean {
   return result === 0;
 }
 
+/** Rate-limit helpers to eliminate copy-paste blocks */
+function getClientIp(request: NextRequest): string {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+         request.headers.get("x-real-ip") ||
+         "unknown";
+}
+
+function applyRateLimit(request: NextRequest, endpoint: string, maxReq: number, _requestId: string) {
+  const ip = getClientIp(request);
+  const { allowed, remaining, resetAt } = checkRateLimit(`${ip}:${endpoint}`, maxReq, 60 * 1000);
+  return { blocked: !allowed, remaining, resetAt };
+}
+
+function rateLimitDeny(message: string, limit: number, resetAt: number, requestId: string): NextResponse {
+  const response = new NextResponse(message, { status: 429 });
+  response.headers.set("Retry-After", "60");
+  response.headers.set("X-RateLimit-Limit", String(limit));
+  response.headers.set("X-RateLimit-Remaining", "0");
+  response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
+  response.headers.set("x-request-id", requestId);
+  return response;
+}
+
+function rateLimitAllow(limit: number, remaining: number, resetAt: number, requestId: string): NextResponse {
+  const response = NextResponse.next();
+  response.headers.set("X-RateLimit-Limit", String(limit));
+  response.headers.set("X-RateLimit-Remaining", String(remaining));
+  response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
+  response.headers.set("x-request-id", requestId);
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
@@ -188,137 +220,36 @@ export async function middleware(request: NextRequest) {
   // kept for potential future use but no longer gate access.
 
 
-  // Public API rate limiting — apply BEFORE admin auth check
-  // These limits are per IP + endpoint, sliding window
-  if (pathname.startsWith("/api/v1/")) {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") ||
-               "unknown";
-    const rateLimitKey = `${ip}:/api/v1`;
-    const { allowed, remaining, resetAt } = checkRateLimit(rateLimitKey, 60, 60 * 1000); // 60/min
+  // Rate limit rules: prefix → { max requests per minute, deny message }
+  const RATE_LIMITS: [string, number, string][] = [
+    ["/api/v1/",   60, "Too many requests"],
+    ["/api/ai/",    5, "Too many requests"],
+    ["/api/email/",10, "Too many requests"],
+    ["/api/auth/", 10, "Too many requests"],
+  ];
 
-    if (!allowed) {
-      const response = new NextResponse("Too many requests", { status: 429 });
-      response.headers.set("Retry-After", "60");
-      response.headers.set("X-RateLimit-Limit", "60");
-      response.headers.set("X-RateLimit-Remaining", "0");
-      response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-      response.headers.set("x-request-id", requestId);
-      return response;
+  for (const [prefix, maxReq, denyMsg] of RATE_LIMITS) {
+    if (pathname.startsWith(prefix)) {
+      const rlResult = applyRateLimit(request, prefix, maxReq, requestId);
+      if (rlResult) return rlResult.blocked
+        ? rateLimitDeny(denyMsg, maxReq, rlResult.resetAt, requestId)
+        : rateLimitAllow(maxReq, rlResult.remaining, rlResult.resetAt, requestId);
     }
-
-    // Create response to add rate limit headers
-    const nextResponse = NextResponse.next();
-    nextResponse.headers.set("X-RateLimit-Limit", "60");
-    nextResponse.headers.set("X-RateLimit-Remaining", String(remaining));
-    nextResponse.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-    nextResponse.headers.set("x-request-id", requestId);
-    return nextResponse;
-  }
-
-  if (pathname.startsWith("/api/ai/")) {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") ||
-               "unknown";
-    const rateLimitKey = `${ip}:/api/ai`;
-    const { allowed, remaining, resetAt } = checkRateLimit(rateLimitKey, 5, 60 * 1000); // 5/min
-
-    if (!allowed) {
-      const response = new NextResponse("Too many requests", { status: 429 });
-      response.headers.set("Retry-After", "60");
-      response.headers.set("X-RateLimit-Limit", "5");
-      response.headers.set("X-RateLimit-Remaining", "0");
-      response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-      response.headers.set("x-request-id", requestId);
-      return response;
-    }
-
-    // Create response to add rate limit headers
-    const nextResponse = NextResponse.next();
-    nextResponse.headers.set("X-RateLimit-Limit", "5");
-    nextResponse.headers.set("X-RateLimit-Remaining", String(remaining));
-    nextResponse.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-    nextResponse.headers.set("x-request-id", requestId);
-    return nextResponse;
-  }
-
-  if (pathname.startsWith("/api/email/")) {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") ||
-               "unknown";
-    const rateLimitKey = `${ip}:/api/email`;
-    const { allowed, remaining, resetAt } = checkRateLimit(rateLimitKey, 10, 60 * 1000); // 10/min
-
-    if (!allowed) {
-      const response = new NextResponse("Too many requests", { status: 429 });
-      response.headers.set("Retry-After", "60");
-      response.headers.set("X-RateLimit-Limit", "10");
-      response.headers.set("X-RateLimit-Remaining", "0");
-      response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-      response.headers.set("x-request-id", requestId);
-      return response;
-    }
-
-    // Create response to add rate limit headers
-    const nextResponse = NextResponse.next();
-    nextResponse.headers.set("X-RateLimit-Limit", "10");
-    nextResponse.headers.set("X-RateLimit-Remaining", String(remaining));
-    nextResponse.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-    nextResponse.headers.set("x-request-id", requestId);
-    return nextResponse;
   }
 
   // Login brute force protection — 5 attempts per IP per minute
   if (pathname === "/login") {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") ||
-               "unknown";
-    const rateLimitKey = `${ip}:/login`;
-    const { allowed, remaining, resetAt } = checkRateLimit(rateLimitKey, 5, 60 * 1000); // 5/min
+    const rl = applyRateLimit(request, "/login", 5, requestId);
+    if (rl?.blocked) return rateLimitDeny("Too many login attempts. Please try again later.", 5, rl.resetAt, requestId);
 
-    if (!allowed) {
-      const response = new NextResponse("Too many login attempts. Please try again later.", { status: 429 });
-      response.headers.set("Retry-After", "60");
-      response.headers.set("X-RateLimit-Limit", "5");
-      response.headers.set("X-RateLimit-Remaining", "0");
-      response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-      response.headers.set("x-request-id", requestId);
-      return response;
-    }
-
-    // Continue to admin auth gate below with rate limit headers added after
     const sessionResponse = await updateSession(request);
-    sessionResponse.headers.set("X-RateLimit-Limit", "5");
-    sessionResponse.headers.set("X-RateLimit-Remaining", String(remaining));
-    sessionResponse.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
+    if (rl) {
+      sessionResponse.headers.set("X-RateLimit-Limit", "5");
+      sessionResponse.headers.set("X-RateLimit-Remaining", String(rl.remaining));
+      sessionResponse.headers.set("X-RateLimit-Reset", String(Math.ceil(rl.resetAt / 1000)));
+    }
     sessionResponse.headers.set("x-request-id", requestId);
     return sessionResponse;
-  }
-
-  // Auth API rate limiting — 10 attempts per IP per minute
-  if (pathname.startsWith("/api/auth/")) {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") ||
-               "unknown";
-    const rateLimitKey = `${ip}:/api/auth`;
-    const { allowed, remaining, resetAt } = checkRateLimit(rateLimitKey, 10, 60 * 1000); // 10/min
-
-    if (!allowed) {
-      const response = new NextResponse("Too many requests", { status: 429 });
-      response.headers.set("Retry-After", "60");
-      response.headers.set("X-RateLimit-Limit", "10");
-      response.headers.set("X-RateLimit-Remaining", "0");
-      response.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-      response.headers.set("x-request-id", requestId);
-      return response;
-    }
-
-    const nextResponse = NextResponse.next();
-    nextResponse.headers.set("X-RateLimit-Limit", "10");
-    nextResponse.headers.set("X-RateLimit-Remaining", String(remaining));
-    nextResponse.headers.set("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
-    nextResponse.headers.set("x-request-id", requestId);
-    return nextResponse;
   }
 
   // Admin auth gate

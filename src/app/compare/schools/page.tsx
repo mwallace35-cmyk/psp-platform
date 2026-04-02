@@ -186,7 +186,7 @@ function SchoolCompareContent() {
         <SkeletonCard showImage={false} />
       ) : comparisonData.length > 0 ? (
         <div className="bg-white rounded-lg shadow-lg overflow-x-auto">
-          <table className="w-full">
+          <table aria-label="School comparison" className="w-full">
             <thead className="bg-gray-100 border-b">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">

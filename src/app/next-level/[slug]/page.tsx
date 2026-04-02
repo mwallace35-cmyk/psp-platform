@@ -359,7 +359,7 @@ export default async function ProAthleteProfilePage({
                           overflowX: "auto",
                         }}
                       >
-                        <table style={{ width: "100%", fontSize: 12 }}>
+                        <table aria-label="College career statistics" style={{ width: "100%", fontSize: 12 }}>
                           <thead>
                             <tr style={{ borderBottom: "2px solid var(--g100)" }}>
                               <th style={{ padding: "8px 4px", textAlign: "left", fontWeight: 700 }}>
@@ -460,7 +460,7 @@ export default async function ProAthleteProfilePage({
                         </div>
                       )}
                       <div style={{ overflowX: "auto" }}>
-                        <table style={{ width: "100%", fontSize: 12 }}>
+                        <table aria-label="College career statistics" style={{ width: "100%", fontSize: 12 }}>
                           <thead>
                             <tr style={{ borderBottom: "2px solid var(--g100)" }}>
                               <th style={{ padding: "8px 4px", textAlign: "left", fontWeight: 700 }}>

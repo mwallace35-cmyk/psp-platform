@@ -335,7 +335,7 @@ export default async function CityAllStarGamePage() {
             </p>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
+              <table aria-label="2025 season schedule" className="w-full text-left">
                 <thead>
                   <tr className="border-b border-[var(--psp-gold)]/30">
                     <th className="px-4 py-3 text-[var(--psp-gold)] text-xs font-bold tracking-widest uppercase">
@@ -587,7 +587,7 @@ export default async function CityAllStarGamePage() {
         {dbGames.length > 0 ? (
           <div className="max-w-3xl mx-auto mb-8">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table aria-label="Historical game results" className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-[var(--psp-gold)]/30">
                     <th className="px-3 py-2 text-[var(--psp-gold)] text-xs font-bold tracking-widest uppercase">

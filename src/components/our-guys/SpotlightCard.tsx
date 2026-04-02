@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { SpotlightData } from "./RecapBoard";
 
 // Format stat line based on sport
@@ -38,10 +37,8 @@ interface SpotlightCardProps {
 
 export function SpotlightCard({ player }: SpotlightCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+    <div
+      className="psp-fade-in-up"
       style={{
         background: "#111827",
         borderRadius: "12px",
@@ -172,6 +169,6 @@ export function SpotlightCard({ player }: SpotlightCardProps) {
           </a>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

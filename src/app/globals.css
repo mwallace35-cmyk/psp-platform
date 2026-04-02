@@ -969,6 +969,59 @@ button:disabled {
 .data-table-row-clickable:hover td { background: var(--psp-gray-100); }
 .data-table-row-clickable:focus-visible td { background: var(--psp-blue); color: white; }
 
+/* Sticky first column for horizontal-scroll tables */
+.psp-sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: inherit;
+}
+thead .psp-sticky-col { z-index: 3; }
+.psp-sticky-col::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -6px;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(to right, rgba(0,0,0,0.08), transparent);
+  pointer-events: none;
+}
+
+/* Right-edge scroll fade indicator */
+.psp-scroll-fade {
+  position: relative;
+}
+.psp-scroll-fade::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 32px;
+  background: linear-gradient(to right, transparent, var(--psp-navy, #0a1628));
+  pointer-events: none;
+  z-index: 4;
+  border-radius: 0 0.5rem 0.5rem 0;
+  opacity: 0.6;
+}
+
+/* CSS animations replacing framer-motion */
+@keyframes psp-fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.psp-fade-in-up {
+  animation: psp-fade-in-up 0.5s ease-out both;
+}
+@keyframes psp-expand-in {
+  from { max-height: 0; opacity: 0; }
+  to { max-height: 500px; opacity: 1; }
+}
+.psp-expand-in {
+  animation: psp-expand-in 0.3s ease-out both;
+}
+
 /* Filter bar */
 .filter-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; padding: 1rem; background: white; border: 1px solid var(--psp-gray-200); border-radius: 0.75rem; }
 .filter-select { padding: 0.375rem 2rem 0.375rem 0.75rem; border: 1px solid var(--psp-gray-300); border-radius: 0.375rem; font-size: 0.875rem; background: white; color: var(--psp-gray-700); cursor: pointer; min-height: 44px; }

@@ -171,7 +171,6 @@ function SortableTable({
           return (
             <div
               key={idx}
-              role={onRowClick ? 'button' : undefined}
               tabIndex={onRowClick ? 0 : undefined}
               className={`border ${borderColor} rounded-lg p-4 ${bgColor} ${onRowClick ? 'cursor-pointer hover:shadow-md focus:outline-2 focus:outline-offset-2 focus:outline-blue-400' : ''} transition`}
               onClick={() => onRowClick?.(row)}
@@ -258,17 +257,17 @@ function SortableTable({
       >
         {sortAnnouncement}
       </div>
+      <div className="psp-scroll-fade">
       <div className="overflow-x-auto border border-gray-200 rounded-lg">
         <table className="w-full text-sm" aria-label={ariaLabel}>
         {ariaLabel && <caption className="sr-only">{ariaLabel}</caption>}
         <thead className="sticky top-0 z-10 bg-[var(--psp-navy)] text-white" style={{ color: 'white' }}>
           <tr>
             {visibleColumns
-              .map((col) => (
+              .map((col, colIdx) => (
                 <th
                   key={col.key}
                   scope="col"
-                  role={col.sortable !== false ? 'button' : undefined}
                   tabIndex={col.sortable !== false ? 0 : undefined}
                   onClick={() => handleSort(col.key)}
                   onKeyDown={(e) => col.sortable !== false && handleHeaderKeyDown(e, col.key)}
@@ -276,7 +275,7 @@ function SortableTable({
                   aria-label={getHeaderAriaLabel(col)}
                   className={`px-3 py-3 text-left font-bold text-xs uppercase tracking-wider border-b border-gray-600 whitespace-nowrap transition text-white ${
                     col.sortable !== false ? 'cursor-pointer hover:bg-gray-800 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400' : ''
-                  }`}
+                  }${colIdx === 0 ? ' psp-sticky-col' : ''}`}
                   style={{
                     textAlign: col.align || 'left',
                   }}
@@ -310,7 +309,6 @@ function SortableTable({
             return (
               <tr
                 key={idx}
-                role={onRowClick ? 'button' : undefined}
                 tabIndex={onRowClick ? 0 : undefined}
                 className={`${bgColor} border-b border-gray-100 hover:bg-[rgba(240,165,0,0.07)] transition-colors duration-200 focus:outline-2 focus:outline-offset-[-2px] focus:outline-blue-400 ${
                   onRowClick ? 'cursor-pointer' : ''
@@ -324,10 +322,10 @@ function SortableTable({
                 }}
               >
                 {visibleColumns
-                  .map((col) => (
+                  .map((col, colIdx) => (
                     <td
                       key={col.key}
-                      className={`px-4 py-3${col.align === 'right' ? ' tabular-nums' : ''}`}
+                      className={`px-4 py-3${col.align === 'right' ? ' tabular-nums' : ''}${colIdx === 0 ? ' psp-sticky-col' : ''}`}
                       style={{
                         textAlign: col.align || 'left',
                       }}
@@ -340,6 +338,7 @@ function SortableTable({
           })}
         </tbody>
       </table>
+      </div>
       </div>
     </>
   );

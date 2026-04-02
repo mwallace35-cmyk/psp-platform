@@ -638,7 +638,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 </h2>
                 <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
                   <div className="overflow-x-auto">
-                    <table className="data-table">
+                    <table aria-label="Season history" className="data-table">
                       <thead>
                         <tr>
                           <th>Sport</th>
@@ -711,7 +711,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 </div>
                 <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
                   <div className="overflow-x-auto">
-                    <table className="data-table">
+                    <table aria-label="Awards and honors" className="data-table">
                       <thead>
                         <tr>
                           <th>Player</th>
@@ -779,7 +779,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                 )}
                 <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] overflow-hidden">
                   <div className="overflow-x-auto">
-                    <table className="data-table">
+                    <table aria-label="Next level alumni" className="data-table">
                       <thead>
                         <tr>
                           <th>Name</th>

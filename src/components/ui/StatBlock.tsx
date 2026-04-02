@@ -26,7 +26,7 @@ function StatBlock({
       {icon && <div className={size === "lg" ? "text-4xl mb-2" : "text-2xl mb-1"}>{icon}</div>}
       <div
         className={`psp-h3 ${valueSize[size]} tabular-nums`}
-        style={{ color: "var(--psp-navy)" }}
+        style={{ color: "var(--psp-gray-100, #f1f5f9)" }}
       >
         {typeof value === "number" ? value.toLocaleString() : value}
       </div>

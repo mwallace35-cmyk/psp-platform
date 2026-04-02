@@ -263,7 +263,7 @@ function GameCard({ game }: { game: GameData }) {
                         {squad === "non_public" ? "Non-Public" : "Public"} ({players.length} players)
                       </h5>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-xs">
+                        <table aria-label="All-star game roster" className="w-full text-xs">
                           <thead>
                             <tr className="text-gray-300 border-b border-white/10">
                               <th className="text-left px-1 py-1">#</th>
@@ -399,7 +399,7 @@ function RecordsSection({ records }: { records: IndividualRecords }) {
               {section.title}
             </h3>
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
+              <table aria-label="All-star game records" className="w-full text-left">
                 <tbody>
                   {section.rows.map((row) => (
                     <RecordRow key={row.field} label={row.label} record={(data as any)[row.field]} />
@@ -568,7 +568,7 @@ function RostersTab({ games }: { games: GameData[] }) {
                     {squad === "non_public" ? "🟣 Non-Public" : "🔵 Public"} — {players.length} Players
                   </h5>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table aria-label="All-star game roster" className="w-full text-sm">
                       <thead>
                         <tr className="text-gray-300 border-b border-white/20 text-xs uppercase tracking-wide">
                           <th className="text-left px-2 py-2">#</th>

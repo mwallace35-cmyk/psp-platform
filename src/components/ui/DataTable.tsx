@@ -38,55 +38,55 @@ export default function DataTable<T extends Record<string, unknown>>({
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="data-table" aria-label={ariaLabel}>
-        {ariaLabel && <caption className="sr-only">{ariaLabel}</caption>}
-        <thead>
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                scope="col"
-                className={col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : ""}
-              >
-                {col.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, i) => {
-            const rowId = (row.id as string | number) ?? i;
-            const firstColumnValue = row[columns[0].key]?.toString() ?? "Row";
-            const secondColumnValue = columns.length > 1 ? row[columns[1].key]?.toString() ?? "" : "";
-            const ariaLabelText = secondColumnValue ? `${firstColumnValue} - ${secondColumnValue}` : firstColumnValue;
-
-            return (
-            <tr
-              key={rowId}
-              onClick={() => onRowClick?.(row)}
-              onKeyDown={(e) => handleRowKeyDown(row, e)}
-              tabIndex={onRowClick ? 0 : -1}
-              role={onRowClick ? "button" : undefined}
-              className={onRowClick ? "cursor-pointer data-table-row-clickable" : ""}
-              aria-label={onRowClick ? `View details for ${ariaLabelText}` : undefined}
-              style={onRowClick ? { outline: "none" } : undefined}
-            >
-              {columns.map((col) => (
-                <td
+    <div className="psp-scroll-fade">
+      <div className="overflow-x-auto">
+        <table className="data-table" aria-label={ariaLabel}>
+          {ariaLabel && <caption className="sr-only">{ariaLabel}</caption>}
+          <thead>
+            <tr>
+              {columns.map((col, colIdx) => (
+                <th
                   key={col.key}
-                  className={col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : ""}
+                  scope="col"
+                  className={`${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : ""}${colIdx === 0 ? " psp-sticky-col" : ""}`}
                 >
-                  {col.render
-                    ? col.render(row[col.key], row)
-                    : (row[col.key]?.toString() ?? "—")}
-                </td>
+                  {col.label}
+                </th>
               ))}
             </tr>
-          );
-          })}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((row, i) => {
+              const rowId = (row.id as string | number) ?? i;
+              const firstColumnValue = row[columns[0].key]?.toString() ?? "Row";
+              const secondColumnValue = columns.length > 1 ? row[columns[1].key]?.toString() ?? "" : "";
+              const ariaLabelText = secondColumnValue ? `${firstColumnValue} - ${secondColumnValue}` : firstColumnValue;
+
+              return (
+              <tr
+                key={rowId}
+                onClick={() => onRowClick?.(row)}
+                onKeyDown={(e) => handleRowKeyDown(row, e)}
+                tabIndex={onRowClick ? 0 : undefined}
+                className={onRowClick ? "cursor-pointer data-table-row-clickable" : ""}
+                aria-label={onRowClick ? `View details for ${ariaLabelText}` : undefined}
+              >
+                {columns.map((col, colIdx) => (
+                  <td
+                    key={col.key}
+                    className={`${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : ""}${colIdx === 0 ? " psp-sticky-col" : ""}`}
+                  >
+                    {col.render
+                      ? col.render(row[col.key], row)
+                      : (row[col.key]?.toString() ?? "—")}
+                  </td>
+                ))}
+              </tr>
+            );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

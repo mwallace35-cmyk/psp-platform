@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ThemeToggle from "../ui/ThemeToggle";
 
 // Lazy load SearchTypeahead since it's a heavy client component
 const SearchTypeahead = dynamic(() => import("../search/SearchTypeahead"), {
@@ -21,16 +20,7 @@ const SearchTypeahead = dynamic(() => import("../search/SearchTypeahead"), {
   ssr: false,
 });
 
-// Mobile menu still uses ALL_SPORTS for the full sport listing
-const ALL_SPORTS = [
-  { href: "/football", label: "Football", color: "var(--fb)" },
-  { href: "/basketball", label: "Basketball", color: "var(--bb)" },
-  { href: "/baseball", label: "Baseball", color: "var(--base)" },
-  { href: "/track-field", label: "Track & Field", color: "var(--track)" },
-  { href: "/lacrosse", label: "Lacrosse", color: "var(--lac)" },
-  { href: "/wrestling", label: "Wrestling", color: "var(--wrest)" },
-  { href: "/soccer", label: "Soccer", color: "var(--soccer)" },
-];
+// ALL_SPORTS moved to MobileBottomNav (sole mobile menu)
 
 // Desktop: per-sport dropdown sub-items
 const SPORT_SUB_ITEMS = [
@@ -40,6 +30,8 @@ const SPORT_SUB_ITEMS = [
   { suffix: "/championships", label: "Championships" },
   { suffix: "/playoffs", label: "Playoffs" },
   { suffix: "/records", label: "Records" },
+  { suffix: "/rivalries", label: "Rivalries" },
+  { suffix: "/position-leaders", label: "Position Leaders" },
 ];
 
 // Desktop: "More Sports" dropdown — everything except Football & Basketball
@@ -51,45 +43,31 @@ const MORE_SPORTS = [
   { href: "/baseball", label: "Baseball", color: "var(--base)" },
 ];
 
-// Desktop: "More" dropdown (Pulse + More combined)
-const MORE_ITEMS = [
-  { href: "/schools", label: "Schools" },
-  { href: "/rankings", label: "Rankings" },
-  { href: "/our-guys", label: "Our Guys" },
+// Desktop: "Tools" dropdown (was "More" — Schools/Rankings/Our Guys promoted to top-level)
+const TOOLS_ITEMS = [
   { href: "/recruiting", label: "Recruiting" },
-  { href: "/compare", label: "Compare" },
+  { href: "/recruit-finder", label: "Recruit Finder" },
+  { href: "/compare", label: "Compare Players" },
   { href: "/coaches", label: "Coaches" },
   { href: "/pickem", label: "Pick'em" },
-  { href: "/hof", label: "\uD83C\uDFC6 Hall of Fame" },
-];
-
-// Explore section for mobile menu
-const EXPLORE_ITEMS = [
-  { href: "/recruiting", label: "Recruiting" },
-  { href: "/our-guys", label: "Our Guys" },
-  { href: "/rankings", label: "Power Rankings" },
-  { href: "/potw", label: "Player of the Week" },
+  { href: "/challenge", label: "Stats Challenge" },
   { href: "/hof", label: "Hall of Fame" },
 ];
 
+// Account items for desktop dropdown only
 const ACCOUNT_ITEMS = [
   { href: "/my-schools", label: "My Schools" },
   { href: "/signup", label: "Sign Up / Log In" },
 ];
 
 export default function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const hamburgerRef = useRef<HTMLButtonElement>(null);
   const announcementRef = useRef<HTMLDivElement>(null);
   const desktopNavRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   const isActive = useCallback((href: string) => pathname === href || pathname.startsWith(href + "/"), [pathname]);
-
-  const handleMobileToggle = useCallback(() => setMobileOpen(prev => !prev), []);
   const handleDropdownToggle = useCallback((name: string) => {
     setOpenDropdown(prev => prev === name ? null : name);
   }, []);
@@ -177,7 +155,6 @@ export default function Header() {
   // Close dropdowns on route change
   useEffect(() => {
     setOpenDropdown(null);
-    setMobileOpen(false);
   }, [pathname]);
 
   // Close dropdown on click outside
@@ -200,50 +177,6 @@ export default function Header() {
       setAnnouncement("Menu closed");
     }
   }, [openDropdown]);
-
-  // Focus trap for mobile menu with focus return
-  useEffect(() => {
-    if (!mobileOpen) {
-      // Return focus to hamburger button when menu closes
-      hamburgerRef.current?.focus();
-      return;
-    }
-
-    const panel = mobileMenuRef.current;
-    if (!panel) return;
-
-    const focusableElements = panel.querySelectorAll<HTMLElement>(
-      'a[href], button, [tabindex]:not([tabindex="-1"])'
-    );
-    const firstEl = focusableElements[0];
-    const lastEl = focusableElements[focusableElements.length - 1];
-
-    firstEl?.focus();
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMobileOpen(false);
-        // Focus will return via the effect cleanup
-        return;
-      }
-      if (e.key !== "Tab") return;
-
-      if (e.shiftKey) {
-        if (document.activeElement === firstEl) {
-          e.preventDefault();
-          lastEl?.focus();
-        }
-      } else {
-        if (document.activeElement === lastEl) {
-          e.preventDefault();
-          firstEl?.focus();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [mobileOpen]);
 
   return (
     <header className="sticky top-0 z-50">
@@ -414,31 +347,41 @@ export default function Header() {
               Schools
             </Link>
 
-            {/* More Dropdown */}
+            {/* Rankings — promoted to top-level */}
+            <Link href="/rankings" className={`nav-link ${isActive("/rankings") ? "active" : ""}`} aria-current={isActive("/rankings") ? "page" : undefined}>
+              Rankings
+            </Link>
+
+            {/* Our Guys — promoted to top-level */}
+            <Link href="/our-guys" className={`nav-link ${isActive("/our-guys") ? "active" : ""}`} aria-current={isActive("/our-guys") ? "page" : undefined}>
+              Our Guys
+            </Link>
+
+            {/* Tools Dropdown (was "More") */}
             <div
               className="nav-dd"
-              onMouseEnter={() => setOpenDropdown("more")}
-              onMouseLeave={() => setOpenDropdown(prev => prev === "more" ? null : prev)}
+              onMouseEnter={() => setOpenDropdown("tools")}
+              onMouseLeave={() => setOpenDropdown(prev => prev === "tools" ? null : prev)}
             >
               <button
                 className="nav-link"
                 style={{ background: "none", border: "none", cursor: "pointer" }}
                 aria-haspopup="menu"
-                aria-expanded={openDropdown === "more"}
-                aria-label="More menu"
-                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "more")}
-                onClick={() => handleDropdownToggle("more")}
+                aria-expanded={openDropdown === "tools"}
+                aria-label="Tools menu"
+                onKeyDown={(e) => handleDropdownTriggerKeyDown(e, "tools")}
+                onClick={() => handleDropdownToggle("tools")}
               >
-                More &#9662;
+                Tools &#9662;
               </button>
               <div
                 className="dd-menu"
                 role="menu"
-                aria-label="More menu"
-                style={{ display: openDropdown === "more" ? "block" : undefined }}
+                aria-label="Tools menu"
+                style={{ display: openDropdown === "tools" ? "block" : undefined }}
                 onKeyDown={handleMenuKeyDown}
               >
-                {MORE_ITEMS.map((item) => (
+                {TOOLS_ITEMS.map((item) => (
                   <Link key={item.href} href={item.href} role="menuitem" aria-current={isActive(item.href) ? "page" : undefined}>
                     {item.label}
                   </Link>
@@ -491,102 +434,22 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Mobile Hamburger */}
-          <button
-            ref={hamburgerRef}
-            onClick={handleMobileToggle}
+          {/* Mobile Search Icon (hamburger removed — bottom nav is sole mobile menu) */}
+          <Link
+            href="/search"
             className="md:hidden"
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 20 }}
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-menu"
-            min-height="44px"
-            min-width="44px"
+            style={{ color: "#fff", padding: 8 }}
+            aria-label="Search"
           >
-            &#9776;
-          </button>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </Link>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
-      {mobileOpen && (
-        <>
-          <div
-            className="mobile-nav-overlay open"
-            onClick={handleMobileToggle}
-          />
-          <div className="mobile-nav-panel" id="mobile-menu" role="navigation" aria-label="Mobile navigation" aria-modal="true" ref={mobileMenuRef}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <span style={{ color: "var(--psp-gold)", fontWeight: 800, fontSize: 16 }}>Menu</span>
-              <button
-                onClick={handleMobileToggle}
-                style={{ background: "none", border: "none", color: "#fff", fontSize: 20, cursor: "pointer" }}
-                aria-label="Close navigation menu"
-              >
-                &#10005;
-              </button>
-            </div>
-
-            {/* Sports Section */}
-            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Sports</div>
-              {ALL_SPORTS.map((sport) => (
-                <Link key={sport.href} href={sport.href} onClick={handleMobileToggle}>
-                  <span className="nav-dot" style={{ background: sport.color }} />
-                  {sport.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* Quick Links Section */}
-            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Quick Links</div>
-              <Link href="/awards" onClick={handleMobileToggle}><span role="img" aria-label="trophy">🏆</span> Awards &amp; Honors</Link>
-              <Link href="/schools" onClick={handleMobileToggle}>Schools</Link>
-              <Link href="/scores" onClick={handleMobileToggle}>Scores</Link>
-              <Link href="/articles" onClick={handleMobileToggle}>News</Link>
-            </div>
-
-            {/* Explore Section */}
-            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Explore</div>
-              {EXPLORE_ITEMS.map((item) => (
-                <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* Tools Section */}
-            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Tools</div>
-              <Link href="/compare" onClick={handleMobileToggle}>Compare Players</Link>
-              <Link href="/recruit-finder" onClick={handleMobileToggle}>Recruit Finder</Link>
-              <Link href="/coaches" onClick={handleMobileToggle}>Coaches</Link>
-              <Link href="/pickem" onClick={handleMobileToggle}>Pick&apos;em</Link>
-            </div>
-
-            {/* Account Section */}
-            <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Account</div>
-              {ACCOUNT_ITEMS.map((item) => (
-                <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* Settings Section */}
-            <div style={{ padding: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Settings</div>
-              <div style={{ padding: "8px 0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span>Dark Mode</span>
-                <ThemeToggle />
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      {/* Mobile menu removed — MobileBottomNav is the sole mobile navigation */}
     </header>
   );
 }

@@ -161,6 +161,7 @@ export default async function PowerIndexPage({ params }: PageProps) {
                 }}
               >
                 <table
+                  aria-label="Power index rankings"
                   style={{
                     width: "100%",
                     borderCollapse: "collapse",

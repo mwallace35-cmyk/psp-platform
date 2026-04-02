@@ -102,14 +102,14 @@ function WinLossBar({
         {showLabel && (
           <div
             className="text-xs font-semibold whitespace-nowrap"
-            style={{ color: 'var(--psp-navy, #0a1628)' }}
+            style={{ color: 'var(--psp-gray-100, #f1f5f9)' }}
           >
             {winLossRecord}
           </div>
         )}
       </div>
       {/* Win percentage and W/L legend */}
-      <div className="flex items-center justify-between text-xs" style={{ color: 'var(--psp-navy, #0a1628)' }}>
+      <div className="flex items-center justify-between text-xs" style={{ color: 'var(--psp-gray-100, #f1f5f9)' }}>
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1">
             <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, backgroundColor: 'var(--psp-success, #22c55e)' }} />

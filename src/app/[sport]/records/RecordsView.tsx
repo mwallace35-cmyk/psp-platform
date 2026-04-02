@@ -529,7 +529,7 @@ export default function RecordsView({
             </h3>
             {leaderboardRecords.length > 0 ? (
               <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse" }}>
+                <table aria-label="Season and career records leaderboard" style={{ width: "100%", fontSize: 13, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "2px solid var(--psp-navy, #0a1628)" }}>
                       <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 600, color: "#6b7280", fontSize: 11 }}>
@@ -937,7 +937,7 @@ function SchoolRecordsTab({
 
             {/* Record table */}
             <div style={{ padding: "8px 0" }}>
-              <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
+              <table aria-label="School record book" style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #f3f4f6" }}>
                     <th style={{ padding: "6px 12px", textAlign: "left", fontSize: 10, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase" }}>

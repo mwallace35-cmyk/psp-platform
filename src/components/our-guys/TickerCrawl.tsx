@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { GameDetail } from "./GameDetail";
 import type { TickerGame } from "./ScoreTicker";
 
@@ -171,25 +170,17 @@ export function TickerCrawl({ games, leagues }: TickerCrawlProps) {
       </div>
 
       {/* Expanded game detail (Philly connection) */}
-      <AnimatePresence>
-        {expandedGame && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            style={{ overflow: "hidden" }}
-          >
-            <GameDetail
-              game={expandedGame}
-              onClose={() => {
-                setExpandedGame(null);
-                setIsPaused(false);
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {expandedGame && (
+        <div className="psp-expand-in" style={{ overflow: "hidden" }}>
+          <GameDetail
+            game={expandedGame}
+            onClose={() => {
+              setExpandedGame(null);
+              setIsPaused(false);
+            }}
+          />
+        </div>
+      )}
 
       {/* CSS for the ticker animation */}
       <style jsx global>{`

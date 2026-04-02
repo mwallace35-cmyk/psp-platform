@@ -6,6 +6,7 @@ import {
   getGameById,
   getGameBoxScore,
   getTeamSeasonStats,
+  getAdjacentGames,
   type GamePlayerStat,
   type TeamSeasonStats,
 } from "@/lib/data";
@@ -751,10 +752,13 @@ export default async function GameDetailPage({
 
   if (!game || game.sport_id !== sport) notFound();
 
-  // Fetch team season stats as fallback when no box score exists
-  const teamSeasonData = boxScore.length === 0
-    ? await getTeamSeasonStats(sport, game.season_id, game.home_school_id, game.away_school_id)
-    : null;
+  // Fetch team season stats as fallback when no box score exists, plus adjacent games for nav
+  const [teamSeasonData, adjacentGames] = await Promise.all([
+    boxScore.length === 0
+      ? getTeamSeasonStats(sport, game.season_id, game.home_school_id, game.away_school_id)
+      : Promise.resolve(null),
+    getAdjacentGames(gameId, sport, game.season_id, game.home_school_id),
+  ]);
 
   const meta = SPORT_META[sport];
   const home = game.home_school;
@@ -1116,6 +1120,36 @@ export default async function GameDetailPage({
 
       {/* Game Film Section */}
       <GameFilmSection gameId={gameId} sportSlug={sport} />
+
+      {/* Prev/Next Game Navigation */}
+      {(adjacentGames.prev || adjacentGames.next) && (
+        <nav className="flex items-center justify-between mt-8 pt-6 border-t border-gray-700" aria-label="Game navigation">
+          {adjacentGames.prev ? (
+            <Link
+              href={`/${sport}/games/${adjacentGames.prev.id}`}
+              className="flex items-center gap-2 text-sm text-gray-300 hover:text-[var(--psp-gold)] transition group"
+            >
+              <svg className="w-4 h-4 text-gray-500 group-hover:text-[var(--psp-gold)] transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+              <div>
+                <div className="text-xs text-gray-500">Previous Game</div>
+                <div className="font-medium">vs {adjacentGames.prev.opponent}</div>
+              </div>
+            </Link>
+          ) : <div />}
+          {adjacentGames.next ? (
+            <Link
+              href={`/${sport}/games/${adjacentGames.next.id}`}
+              className="flex items-center gap-2 text-sm text-gray-300 hover:text-[var(--psp-gold)] transition group text-right"
+            >
+              <div>
+                <div className="text-xs text-gray-500">Next Game</div>
+                <div className="font-medium">vs {adjacentGames.next.opponent}</div>
+              </div>
+              <svg className="w-4 h-4 text-gray-500 group-hover:text-[var(--psp-gold)] transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+          ) : <div />}
+        </nav>
+      )}
     </main>
   );
 }

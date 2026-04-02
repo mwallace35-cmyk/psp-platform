@@ -59,7 +59,7 @@ function EmptyState({
       )}
 
       {/* Title */}
-      <h3 className="text-xl font-bold mb-2 text-navy">
+      <h3 className="text-xl font-bold mb-2 text-gray-100">
         {title}
       </h3>
 

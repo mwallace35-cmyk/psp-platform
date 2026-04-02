@@ -148,6 +148,7 @@ export {
   type TeamGame,
   type HeadToHeadResult,
   getTeamStatLeaders,
+  getAdjacentGames,
   type TeamStatLeader,
   type TeamGameStatsResult,
 } from "./games";

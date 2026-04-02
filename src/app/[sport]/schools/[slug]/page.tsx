@@ -193,12 +193,19 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
                   <span className="text-red-400">Closed {school.closed_year}</span>
                 )}
               </div>
-              <div className="mt-4">
+              <div className="mt-4 flex flex-wrap items-center gap-3">
                 <ShareButtons
                   url={`/${sport}/schools/${slug}`}
                   title={`${school.name} ${meta.name} — PhillySportsPack`}
                   description={`Check out ${school.name}'s ${meta.name.toLowerCase()} statistics and records on PhillySportsPack.com`}
                 />
+                <Link
+                  href={`/schools/${slug}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
+                  style={{ background: "rgba(255,255,255,0.1)", color: "var(--psp-gold)", border: "1px solid rgba(240,165,0,0.3)" }}
+                >
+                  All Sports Hub
+                </Link>
               </div>
             </div>
           </div>

@@ -21,9 +21,14 @@ let config: NextConfig = {
   // Impact: Saves ~10-15% bundle size by removing unused code
   experimental: {
     optimizePackageImports: [
-      "@supabase/supabase-js", // Database client
-      "@supabase/ssr",          // Server-side auth
-      "zod",                    // Schema validation
+      "@supabase/supabase-js",
+      "@supabase/ssr",
+      "zod",
+      "lucide-react",
+      "@nivo/bar",
+      "@nivo/core",
+      "@nivo/heatmap",
+      "@nivo/line",
     ],
   },
 
@@ -41,29 +46,10 @@ let config: NextConfig = {
   },
 
   // Caching headers for static assets
+  // Security headers are set in middleware.ts (single source of truth)
+  // Only cache headers remain here (they apply to static assets)
   async headers() {
     return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
-          },
-          {
-            key: "X-XSS-Protection",
-            value: "1; mode=block",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin",
-          },
-        ],
-      },
       // Cache static assets for 1 year (immutable)
       {
         source: "/(_next/static|public)/:path*",
@@ -213,8 +199,43 @@ let config: NextConfig = {
         permanent: true,
       },
       {
+        source: "/next-level",
+        destination: "/our-guys",
+        permanent: true,
+      },
+      {
         source: "/next-level/",
-        destination: "/next-level",
+        destination: "/our-guys",
+        permanent: true,
+      },
+      {
+        source: "/philly-everywhere/",
+        destination: "/our-guys",
+        permanent: true,
+      },
+      {
+        source: "/pros/",
+        destination: "/our-guys",
+        permanent: true,
+      },
+      {
+        source: "/standings/",
+        destination: "/football/standings",
+        permanent: true,
+      },
+      {
+        source: "/teams/",
+        destination: "/schools",
+        permanent: true,
+      },
+      {
+        source: "/stats/",
+        destination: "/football/leaderboards",
+        permanent: true,
+      },
+      {
+        source: "/players/compare/",
+        destination: "/compare",
         permanent: true,
       },
     ];

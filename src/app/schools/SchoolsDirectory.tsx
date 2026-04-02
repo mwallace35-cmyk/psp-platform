@@ -516,7 +516,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
               border: '1px solid var(--g100)',
               borderRadius: 10,
             }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <table aria-label="Schools directory" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: 'var(--psp-navy)', color: '#fff' }}>
                     <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'left' }}>#</th>

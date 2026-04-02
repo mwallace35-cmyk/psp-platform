@@ -243,10 +243,11 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
           options={LEAGUES}
         />
         <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-          <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          <label htmlFor="rf-min-stat" style={{ fontSize: "0.75rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
             Min Stat
           </label>
           <input
+            id="rf-min-stat"
             type="text"
             inputMode="decimal"
             value={minStat}
@@ -291,7 +292,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
 
       {/* Results Table */}
       <div style={{ overflowX: "auto", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+        <table aria-label="Recruit search results" style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
           <thead>
             <tr style={{ background: "rgba(255,255,255,0.05)" }}>
               <SortTh label="Player" sortKey="playerName" current={sortKey} dir={sortDir} onClick={handleSort} />
@@ -400,12 +401,14 @@ function FilterSelect({
   onChange: (val: string) => void;
   options: { value: string; label: string }[];
 }) {
+  const id = `rf-${label.toLowerCase().replace(/\s+/g, '-')}`;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-      <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+      <label htmlFor={id} style={{ fontSize: "0.75rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
         {label}
       </label>
       <select
+        id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         style={{

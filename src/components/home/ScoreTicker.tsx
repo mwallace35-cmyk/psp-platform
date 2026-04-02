@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 interface LiveGame {
@@ -30,7 +30,7 @@ function TickerItem({ game }: { game: LiveGame }) {
   const homeWinning = game.home_team.score >= game.away_team.score;
   const statusColor = isLive ? '#22c55e' : 'rgba(255,255,255,0.45)';
   return (
-    <Link href={`/${game.sport}/games/${game.id}`} style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem', padding:'0.35rem 1.25rem', textDecoration:'none', borderRight:'1px solid rgba(255,255,255,0.08)' }}>
+    <Link href={`/${game.sport}/games/${game.id}`} aria-label={`${game.away_team.name} ${game.away_team.score} at ${game.home_team.name} ${game.home_team.score}, ${isLive ? 'live' : 'final'}`} style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem', padding:'0.35rem 1.25rem', textDecoration:'none', borderRight:'1px solid rgba(255,255,255,0.08)' }}>
       <span style={{ color:'rgba(255,255,255,0.45)', fontSize:'0.75rem', fontWeight:700, letterSpacing:1 }}>{sportAbbr}</span>
       <span style={{ color: game.status==='final'&&!homeWinning ? '#fff' : 'rgba(255,255,255,0.7)', fontSize:'0.8rem', fontWeight: game.status==='final'&&!homeWinning ? 700 : 400 }}>{abbreviateName(game.away_team.name)}</span>
       <span style={{ color:'var(--psp-gold,#c8a84b)', fontSize:'0.85rem', fontWeight:800, fontVariantNumeric:'tabular-nums' }}>{game.away_team.score}</span>
@@ -45,6 +45,7 @@ function TickerItem({ game }: { game: LiveGame }) {
 export default function ScoreTicker() {
   const [games, setGames] = useState<LiveGame[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
 
   const fetchScores = async () => {
     try {
@@ -93,10 +94,17 @@ export default function ScoreTicker() {
           <span style={{ color:'#fff', fontSize:'0.75rem', fontWeight:800, letterSpacing:1.5, textTransform:'uppercase' as const }}>{hasLive ? 'Live' : 'Scores'}</span>
         </div>
         <div style={{ overflow:'hidden', flex:1 }}>
-          <div style={{ display:'flex', animation:`tickerScroll ${duration}s linear infinite`, whiteSpace:'nowrap', alignItems:'center' }}>
+          <div style={{ display:'flex', animation:`tickerScroll ${duration}s linear infinite`, animationPlayState: isPaused ? 'paused' : 'running', whiteSpace:'nowrap', alignItems:'center' }}>
             {[...games, ...games].map((g, i) => <TickerItem key={`${g.id}-${i}`} game={g} />)}
           </div>
         </div>
+        <button
+          onClick={() => setIsPaused(p => !p)}
+          aria-label={isPaused ? 'Resume score ticker' : 'Pause score ticker'}
+          style={{ display:'flex', alignItems:'center', padding:'0.3rem 0.5rem', color:'rgba(255,255,255,0.5)', fontSize:'0.85rem', background:'transparent', border:'none', borderLeft:'1px solid rgba(255,255,255,0.1)', cursor:'pointer', flexShrink:0 }}
+        >
+          {isPaused ? '\u25B6' : '\u23F8'}
+        </button>
         <Link href="/scores/live" style={{ display:'flex', alignItems:'center', padding:'0.3rem 0.75rem', color:'var(--psp-gold,#c8a84b)', fontSize:'0.75rem', fontWeight:700, textDecoration:'none', flexShrink:0, borderLeft:'1px solid rgba(255,255,255,0.1)', letterSpacing:0.5 }}>All →</Link>
       </div>
       <style>{`

@@ -117,7 +117,7 @@ const FootballTable = React.memo(function FootballTable({
 
   return (
     <div className="overflow-x-auto">
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
+      <table aria-label="Player game log" style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
         <thead>
           <tr
             style={{
@@ -227,7 +227,7 @@ const BasketballTable = React.memo(function BasketballTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
+      <table aria-label="Player game log" style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
         <thead>
           <tr
             style={{
