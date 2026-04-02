@@ -32,6 +32,7 @@ export interface StatDefinition {
   scope: "career" | "season";
   minGames?: number; // minimum games for rate stats
   minValue?: number; // minimum value (e.g., 30 AB for batting avg)
+  minValueColumn?: string; // column to filter by minValue (e.g., "fga" for FG%)
   orderDir: "desc" | "asc"; // desc for most, asc for lowest ERA
   isRate?: boolean; // if true, value is already a rate (ppg, era, etc.)
   format?: (val: number) => string; // custom formatter
@@ -425,6 +426,7 @@ const BB_STAT_DEFS: Record<string, StatDefinition> = {
     unit: "%",
     scope: "season",
     minValue: 50,
+    minValueColumn: "fga",
     orderDir: "desc",
     isRate: true,
     format: (v) => `${(v || 0).toFixed(1)}%`,
@@ -436,6 +438,7 @@ const BB_STAT_DEFS: Record<string, StatDefinition> = {
     unit: "%",
     scope: "season",
     minValue: 30,
+    minValueColumn: "fta",
     orderDir: "desc",
     isRate: true,
     format: (v) => `${(v || 0).toFixed(1)}%`,
@@ -487,6 +490,7 @@ const BASE_STAT_DEFS: Record<string, StatDefinition> = {
     unit: "avg",
     scope: "season",
     minValue: 30,
+    minValueColumn: "at_bats",
     orderDir: "desc",
     isRate: true,
     format: (v) => `${(v || 0).toFixed(3)}`,
@@ -571,6 +575,7 @@ const BASE_STAT_DEFS: Record<string, StatDefinition> = {
     unit: "ERA",
     scope: "season",
     minValue: 20,
+    minValueColumn: "innings_pitched",
     orderDir: "asc",
     isRate: true,
     format: (v) => `${(v || 0).toFixed(2)}`,
@@ -671,6 +676,8 @@ async function fetchSeasonLeaders(
     p_order_dir: def.orderDir,
     p_limit: limit,
     p_min_games: def.minGames || 0,
+    p_min_value_column: def.minValueColumn || null,
+    p_min_value: def.minValue || 0,
   });
 
   if (error || !rows) {

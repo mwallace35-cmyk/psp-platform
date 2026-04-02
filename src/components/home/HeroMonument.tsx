@@ -1,13 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
+import HeroSearch from "./HeroSearch";
 
-interface HeroProps {
-  playerCount: number;
-  gameCount: number;
-  schoolCount: number;
-}
-
-export default function HeroMonument({ playerCount, gameCount, schoolCount }: HeroProps) {
+export default function HeroMonument() {
   return (
     <section className="relative overflow-hidden" style={{ background: "var(--psp-navy)" }}>
       {/* Gold top accent */}
@@ -17,7 +12,7 @@ export default function HeroMonument({ playerCount, gameCount, schoolCount }: He
       </div>
 
       {/* Banner image with overlay */}
-      <div className="relative" style={{ minHeight: "280px", maxHeight: "420px" }}>
+      <div className="relative" style={{ minHeight: "320px", maxHeight: "480px" }}>
         <Image
           src="/images/hero-banner.png"
           alt="Philadelphia high school sports - basketball court meets football field under Friday night lights"
@@ -26,94 +21,70 @@ export default function HeroMonument({ playerCount, gameCount, schoolCount }: He
           className="object-cover object-center"
           sizes="100vw"
         />
-        {/* Dark gradient overlay for text readability */}
+        {/* Dark overlay for readability */}
         <div
           className="absolute inset-0"
           style={{
-            background: "linear-gradient(to right, rgba(10,22,40,0.85) 0%, rgba(10,22,40,0.5) 40%, rgba(10,22,40,0.3) 60%, rgba(10,22,40,0.5) 100%)",
-          }}
-        />
-        {/* Bottom fade to navy */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-24"
-          style={{
-            background: "linear-gradient(to top, var(--psp-navy), transparent)",
+            background: "linear-gradient(to bottom, rgba(10,22,40,0.75) 0%, rgba(10,22,40,0.85) 50%, rgba(10,22,40,0.95) 100%)",
           }}
         />
 
         {/* Content overlay */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-10 md:py-14 flex flex-col justify-center" style={{ minHeight: "280px" }}>
+        <div className="relative z-10 max-w-3xl mx-auto px-4 py-12 md:py-16 flex flex-col items-center text-center" style={{ minHeight: "320px", justifyContent: "center" }}>
           {/* Overline */}
           <p
-            className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-2"
+            className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-3"
             style={{ color: "var(--psp-gold)" }}
           >
             The Definitive Database
           </p>
 
           {/* Main title */}
-          <h1 className="psp-h1 text-white leading-none">
+          <h1 className="psp-h1 text-white leading-none mb-2">
             <span
               className="font-heading block"
-              style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
-              aria-hidden="true"
+              style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
             >
-              PHILLY<span style={{ color: "var(--psp-gold)" }}>SPORTS</span>PACK
-            </span>
-            <span className="block text-sm md:text-base font-medium text-gray-300 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              Philadelphia High School Sports Database
+              Philadelphia High School Sports
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-gray-300 text-sm md:text-base mt-2 max-w-lg">
-            Every stat, every champion, every player. Decades of Philadelphia high school sports history.
+          <p className="text-gray-300 text-sm md:text-base mb-6 max-w-lg">
+            Every stat, every champion, every player. Find your school, check the leaderboards, explore the history.
           </p>
 
-          {/* Stats pills */}
-          <div className="flex flex-wrap gap-3 mt-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white backdrop-blur-sm">
-              <span style={{ color: "var(--psp-gold)" }}>{playerCount.toLocaleString()}</span> Players
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white backdrop-blur-sm">
-              <span style={{ color: "var(--psp-gold)" }}>{gameCount.toLocaleString()}</span> Games
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white backdrop-blur-sm">
-              <span style={{ color: "var(--psp-gold)" }}>{schoolCount.toLocaleString()}</span> Schools
-            </span>
+          {/* Search bar — the main CTA */}
+          <div className="w-full max-w-xl mb-6">
+            <HeroSearch />
           </div>
 
-          {/* CTA buttons */}
-          <div className="flex items-center gap-3 mt-5">
+          {/* Quick action buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             <Link
-              href="/football"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all hover:scale-[1.02] hover:shadow-lg"
+              href="/schools"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all hover:scale-[1.02] hover:shadow-lg"
               style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
             >
-              Football
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-              </svg>
+              Find Your School
             </Link>
             <Link
-              href="/basketball"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold border transition-all hover:scale-[1.02]"
-              style={{ borderColor: "var(--psp-gold)", color: "var(--psp-gold)" }}
+              href="/football/leaderboards"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-white/20 text-white hover:border-white/40 transition"
             >
-              Basketball
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-              </svg>
+              Leaderboards
             </Link>
             <Link
-              href="/search"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-300 transition-all hover:text-white"
-              aria-label="Search players, schools, and stats"
+              href="/hof"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-white/20 text-white hover:border-white/40 transition"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              Search
+              Hall of Fame
+            </Link>
+            <Link
+              href="/scores"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-white/20 text-white hover:border-white/40 transition"
+            >
+              Scores
             </Link>
           </div>
         </div>

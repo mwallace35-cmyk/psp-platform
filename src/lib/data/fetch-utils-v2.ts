@@ -233,7 +233,10 @@ export function withCache<T>(
   revalidate: number | boolean = CACHE_CONFIG.LONG
 ) {
   // Use Next.js unstable_cache for server-side caching with tags
-  const cached = unstable_cache(fn, tags as [string, ...string[]]);
+  const cached = unstable_cache(fn, tags as [string, ...string[]], {
+    revalidate: typeof revalidate === 'number' ? revalidate : undefined,
+    tags: tags as [string, ...string[]],
+  });
 
   return cached;
 }

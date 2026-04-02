@@ -23,7 +23,6 @@ let config: NextConfig = {
     optimizePackageImports: [
       "@supabase/supabase-js", // Database client
       "@supabase/ssr",          // Server-side auth
-      "drizzle-orm",            // ORM utilities
       "zod",                    // Schema validation
     ],
   },
@@ -133,7 +132,7 @@ let config: NextConfig = {
       },
       {
         source: "/camps-showcases/",
-        destination: "/pulse",
+        destination: "/",
         permanent: true,
       },
       // /[sport]/all-city → /[sport]/awards redirects (route rename)
@@ -142,15 +141,60 @@ let config: NextConfig = {
         destination: "/:sport/awards",
         permanent: true,
       },
-      // /events → /pulse redirects (route rename)
+      // Deleted routes → appropriate landing pages
+      {
+        source: "/pulse",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/pulse/:path*",
+        destination: "/",
+        permanent: true,
+      },
       {
         source: "/events",
-        destination: "/pulse",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/events/:path*",
-        destination: "/pulse/:path*",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/about",
+        destination: "/hof",
+        permanent: true,
+      },
+      {
+        source: "/recruiting/portal",
+        destination: "/recruit-finder",
+        permanent: true,
+      },
+      {
+        source: "/recruiting/central",
+        destination: "/recruiting",
+        permanent: true,
+      },
+      {
+        source: "/coming-soon",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/community",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/alumni",
+        destination: "/our-guys/directory",
+        permanent: true,
+      },
+      {
+        source: "/pipeline",
+        destination: "/recruiting",
         permanent: true,
       },
       {

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SPORT_META } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
-import PulseNav from '@/components/pulse/PulseNav';
+import { Breadcrumb } from '@/components/ui';
 import RankingsClient from './RankingsClient';
 
 export const revalidate = 3600;
@@ -60,7 +60,9 @@ export default async function RankingsPage({
         </div>
       </div>
 
-      <PulseNav />
+      <div className="max-w-7xl mx-auto px-4">
+        <Breadcrumb items={[{ label: 'Rankings' }]} />
+      </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Sport Tabs */}

@@ -183,7 +183,7 @@ function TeamCard({
         <StateChampBanner type={champType} label={latestSeasonLabel} />
       )}
 
-      <div className="p-4">
+      <div className="p-4 overflow-hidden">
         {/* Top row: logo + name + mascot */}
         <div className="flex items-center gap-3 mb-3">
           <SchoolLogo logoUrl={logoUrl} name={school.name} size="lg" />

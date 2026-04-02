@@ -576,7 +576,7 @@ async function RecruitingContent() {
                 return (
                   <Link
                     key={sport}
-                    href={`/sports/${sport}/pipeline`}
+                    href={`/${sport}/leaderboards`}
                     className="group inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm transition-all hover:scale-105 focus-visible:scale-105 focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
                     style={{
                       backgroundColor: "rgba(255,255,255,0.03)",

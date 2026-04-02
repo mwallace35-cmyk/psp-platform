@@ -3,7 +3,9 @@ import nextDynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { SPORT_META, getSchoolBySlug, getSchoolTeamSeasons, getSchoolChampionships, getSchoolNotablePlayers, getCurrentSeasonData, type School, type TeamSeason, type Championship, type NotablePlayer } from "@/lib/data";
+import SchoolLogo from "@/components/ui/SchoolLogo";
 import CurrentSeasonBlock from "@/components/school/CurrentSeasonBlock";
+import SchoolSeasonDropdown from "@/components/school/SchoolSeasonDropdown";
 import { Breadcrumb, TrendChart } from "@/components/ui";
 import WinLossBar from "@/components/ui/WinLossBar";
 import BookmarkButton from "@/components/ui/BookmarkButton";
@@ -162,12 +164,12 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
           ]} />
 
           <div className="flex items-start gap-6">
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0"
-              style={{ background: `${meta.color}20` }}
-            >
-              {meta.emoji}
-            </div>
+            <SchoolLogo
+              logoUrl={school.logo_url}
+              name={school.name}
+              size="xl"
+              className="rounded-2xl"
+            />
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1
@@ -230,6 +232,23 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               <div className="text-xs text-gray-300 mt-1">Win Percentage</div>
             </div>
           </div>
+
+          {/* Season Jump Dropdown */}
+          {teamSeasons.length > 0 && (
+            <div className="mt-6">
+              <SchoolSeasonDropdown
+                seasons={teamSeasons
+                  .filter((ts) => ts.seasons?.label)
+                  .map((ts) => ({
+                    label: ts.seasons!.label!,
+                    yearStart: ts.seasons!.year_start ?? parseInt(ts.seasons!.label!.substring(0, 4)),
+                  }))}
+                sport={sport}
+                schoolSlug={slug}
+                sportColor={meta.color}
+              />
+            </div>
+          )}
         </div>
       </section>
 

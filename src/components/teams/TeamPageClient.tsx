@@ -14,16 +14,14 @@ import TeamSeasonHistory from "./TeamSeasonHistory";
 import TeamSidebar from "./TeamSidebar";
 
 // Shared types & helpers
-import type { TeamPageClientProps, TabType, Alumni, DBGame } from "./team-utils";
+import type { TeamPageClientProps, TabType, Alumni } from "./team-utils";
 import {
   getErasWithSeasons,
   buildChampionshipMap,
   formatChampionshipLabel,
-  formatGameDate,
   gamesToSchedule,
   rosterToDisplay,
   getPositionGroups,
-  getGameOpponent,
   timeAgo,
 } from "./team-utils";
 
@@ -67,241 +65,174 @@ export default function TeamPageClient({
       }));
   }, [championships]);
 
-  const totalGames = team.currentRecord.wins + team.currentRecord.losses + team.currentRecord.ties;
-  const winPct = totalGames > 0 ? ((team.currentRecord.wins / totalGames) * 100).toFixed(1) : "0.0";
-
   // Transform DB data for display
   const schedule = gamesToSchedule(games || [], school.id);
   const rosterDisplay = rosterToDisplay(roster || []);
   const positionGroups = getPositionGroups(sport);
 
-  // Find last completed game and next upcoming game
-  const sortedGames = [...(games || [])].sort(
-    (a, b) => new Date(a.game_date).getTime() - new Date(b.game_date).getTime()
-  );
-  const lastCompletedGame = [...sortedGames]
-    .reverse()
-    .find((g) => g.home_score !== null && g.away_score !== null);
-  const nextUpcomingGame = sortedGames.find(
-    (g) => g.home_score === null || g.away_score === null
-  );
-
-  const lastGameInfo = getGameOpponent(lastCompletedGame, school.id);
-  const nextGameInfo = getGameOpponent(nextUpcomingGame, school.id);
-
-  // Tab styling
+  // Tab styling — dark variant for hero-welded tabs
   const tabClasses = (tab: TabType) =>
-    `px-4 py-2 text-sm font-bold border-b-2 transition-colors ${
+    `px-4 py-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
       activeTab === tab
-        ? `border-[var(--psp-gold)] text-[var(--psp-navy)]`
-        : "border-transparent text-gray-400 hover:text-gray-700"
+        ? "border-[var(--psp-gold)] text-[var(--psp-gold)]"
+        : "border-transparent text-gray-500 hover:text-gray-300"
     }`;
+
+  // Tab bar rendered inside the hero
+  const tabBarElement = (
+    <div className="flex overflow-x-auto -mb-px">
+      {TAB_OPTIONS.map((tab) => (
+        <button
+          key={tab}
+          onClick={() => setActiveTab(tab)}
+          className={tabClasses(tab)}
+        >
+          {tab === "overview" && "Overview"}
+          {tab === "stats" && "Stats"}
+          {tab === "schedule" && "Schedule"}
+          {tab === "roster" && "Roster"}
+          {tab === "news" && "News"}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <>
-      {/* Team Header Component */}
+      {/* Team Header Component — tabs welded to hero bottom */}
       <TeamHeader
         team={team}
         school={school}
         sport={sport}
         sportMeta={sportMeta}
         currentSeasonChampionships={currentSeasonChampionships}
+        seasons={(teamSeasons || [])
+          .filter((ts: any) => ts.seasons?.label)
+          .map((ts: any) => ({
+            label: ts.seasons.label as string,
+            year_start: ts.seasons.year_start ?? parseInt(ts.seasons.label.substring(0, 4), 10),
+          }))}
+        currentSeasonLabel={(teamSeasons || [])[0]?.seasons?.label}
+        tabBar={tabBarElement}
       />
 
-      {/* Right Now Section */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="bg-gray-50 rounded-lg overflow-hidden border border-gray-300">
-          <div
-            className="bg-[var(--psp-navy)] px-5 py-3"
-            style={{ borderLeft: `4px solid ${school.primary_color || sportMeta.color}` }}
-          >
-            <h3 className="psp-caption text-white">Right Now</h3>
-          </div>
-          <div className="p-4 md:p-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {/* Last Game */}
-              <div>
-                <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Last Game</div>
-                {lastGameInfo ? (
-                  <>
-                    <div className="text-sm font-semibold text-[var(--psp-navy)] mb-1">{lastGameInfo.name}</div>
-                    <div className="text-xs text-gray-600">{lastGameInfo.homeAway} &bull; {lastGameInfo.date}</div>
-                  </>
-                ) : (
-                  <div className="text-sm text-gray-400">No games played yet</div>
-                )}
-              </div>
-              {/* Current Record */}
-              <div>
-                <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Season Record</div>
-                <div className="psp-h3" style={{ color: school.primary_color || sportMeta.color }}>
-                  {team.currentRecord.wins}-{team.currentRecord.losses}{team.currentRecord.ties > 0 ? `-${team.currentRecord.ties}` : ""}
-                </div>
-              </div>
-              {/* League Standing */}
-              <div>
-                <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">League Standing</div>
-                {team.leagueFinish ? (
-                  <div className="psp-h3 text-[var(--psp-gold)]">{team.leagueFinish}</div>
-                ) : team.leagueRecord && (team.leagueRecord.wins > 0 || team.leagueRecord.losses > 0) ? (
-                  <div className="psp-h3 text-[var(--psp-gold)]">{team.leagueRecord.wins}-{team.leagueRecord.losses}</div>
-                ) : (
-                  <div className="text-sm text-gray-400">N/A</div>
-                )}
-                <div className="text-xs text-gray-600 mt-1">in {team.league}</div>
-              </div>
-              {/* Next Opponent */}
-              <div>
-                <div className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Next Opponent</div>
-                {nextGameInfo ? (
-                  <>
-                    <div className="text-sm font-semibold text-[var(--psp-navy)] mb-1">{nextGameInfo.name}</div>
-                    <div className="text-xs text-gray-600">{nextGameInfo.homeAway} &bull; {nextGameInfo.date}</div>
-                  </>
-                ) : (
-                  <div className="text-sm text-gray-400">No upcoming games</div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Main Content — light background */}
+      <div className="bg-gray-50" style={{ minHeight: "60vh" }}>
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Overview Tab */}
+              {activeTab === "overview" && (
+                <>
+                  <TeamOverviewTab team={team} articles={articles} tedNotes={tedNotes} />
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Tab Navigation */}
-            <div className="bg-white rounded-lg border-b border-[var(--psp-gray-200)] flex overflow-x-auto">
-              {TAB_OPTIONS.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={tabClasses(tab)}
-                  style={{ borderBottomColor: activeTab === tab ? "var(--psp-gold)" : "transparent" }}
-                >
-                  {tab === "overview" && "Overview"}
-                  {tab === "stats" && "Stats"}
-                  {tab === "schedule" && "Schedule"}
-                  {tab === "roster" && "Roster"}
-                  {tab === "news" && "News"}
-                </button>
-              ))}
-            </div>
-
-            {/* Overview Tab */}
-            {activeTab === "overview" && (
-              <TeamOverviewTab team={team} articles={articles} tedNotes={tedNotes} />
-            )}
-
-            {/* Stats Tab */}
-            {activeTab === "stats" && <TeamStats team={team} statLeaders={statLeaders} />}
-
-            {/* Schedule Tab */}
-            {activeTab === "schedule" && (
-              schedule.length > 0 ? (
-                <TeamSchedule schedule={schedule} />
-              ) : (
-                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-8 text-center">
-                  <p className="text-sm text-gray-400">Schedule data not available for this season.</p>
-                </div>
-              )
-            )}
-
-            {/* Roster Tab */}
-            {activeTab === "roster" && (
-              rosterDisplay.length > 0 ? (
-                <TeamRoster roster={rosterDisplay} positionGroups={positionGroups} sportMeta={sportMeta} />
-              ) : (
-                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-8 text-center">
-                  <p className="text-sm text-gray-400">Roster data not available for this season.</p>
-                </div>
-              )
-            )}
-
-            {/* Alumni Pipeline */}
-            <div style={{ marginTop: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h2 className="psp-h3" style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--psp-navy)" }}>
-                  Alumni Pipeline
-                </h2>
-                <Link href="/philly-everywhere" style={{ color: "var(--psp-navy)", textDecoration: "none", fontWeight: 700, fontSize: "0.875rem" }}>
-                  Philly Everywhere &rarr;
-                </Link>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10, marginBottom: 20 }}>
-                {alumni && alumni.length > 0 ? (
-                  alumni.map((alum: Alumni, i: number) => {
-                    const gradYear = alum.graduation_year;
-                    const orgName = alum.current_org || alum.destination_school || "TBA";
-                    return (
-                      <div
-                        key={alum.id || i}
-                        className="bg-white rounded-md border border-gray-200"
-                        style={{ padding: "12px 14px", borderTop: "3px solid var(--psp-gold)" }}
-                      >
-                        <div style={{ fontWeight: 700, fontSize: 13, color: "var(--psp-navy)" }}>
-                          {alum.person_name || `Alumni ${i + 1}`}
-                        </div>
-                        <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>
-                          {orgName} {alum.pro_league ? `(${alum.pro_league})` : alum.current_level ? `\u2014 ${alum.current_level}` : ""}
-                        </div>
-                        {gradYear && (
-                          <div style={{ fontSize: 10, color: "var(--psp-gold)", fontWeight: 600, marginTop: 4 }}>
-                            Class of {gradYear}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div
-                    className="bg-white rounded-md border border-gray-200"
-                    style={{ padding: "12px 14px", textAlign: "center", gridColumn: "1 / -1" }}
-                  >
-                    <div style={{ fontSize: 11, color: "#6b7280" }}>No alumni data available for this school</div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* News Tab */}
-            {activeTab === "news" && (
-              articles && articles.length > 0 ? (
-                <div className="space-y-4">
-                  {articles.map((article) => (
-                    <Link
-                      key={article.id}
-                      href={`/articles/${article.slug}`}
-                      className="flex gap-4 bg-white rounded-lg border border-[var(--psp-gray-200)] p-4 hover:shadow-md transition-shadow"
-                    >
-                      {article.featured_image_url && (
-                        <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                          <Image
-                            src={article.featured_image_url}
-                            alt={article.title}
-                            width={128}
-                            height={128}
-                            sizes="128px"
-                            className="w-full h-full object-cover"
-                          />
+                  {/* Alumni Pipeline — inside Overview */}
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="psp-h3 flex items-center gap-1.5" style={{ color: "var(--psp-navy)" }}>
+                        Alumni Pipeline
+                      </h2>
+                      <Link href="/philly-everywhere" className="text-sm font-bold hover:underline" style={{ color: "var(--psp-navy)" }}>
+                        Philly Everywhere &rarr;
+                      </Link>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {alumni && alumni.length > 0 ? (
+                        alumni.map((alum: Alumni, i: number) => {
+                          const gradYear = alum.graduation_year;
+                          const orgName = alum.current_org || alum.destination_school || "TBA";
+                          return (
+                            <div
+                              key={alum.id || i}
+                              className="bg-white rounded-lg border border-gray-200 p-3"
+                              style={{ borderTop: "3px solid var(--psp-gold)" }}
+                            >
+                              <div className="font-bold text-[13px]" style={{ color: "var(--psp-navy)" }}>
+                                {alum.person_name || `Alumni ${i + 1}`}
+                              </div>
+                              <div className="text-[11px] text-gray-500 mt-0.5">
+                                {orgName} {alum.pro_league ? `(${alum.pro_league})` : alum.current_level ? `— ${alum.current_level}` : ""}
+                              </div>
+                              {gradYear && (
+                                <div className="text-[10px] font-semibold mt-1" style={{ color: "var(--psp-gold)" }}>
+                                  Class of {gradYear}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="bg-white rounded-lg border border-gray-200 p-3 text-center col-span-full">
+                          <div className="text-[11px] text-gray-500">No alumni data available for this school</div>
                         </div>
                       )}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-base" style={{ color: "var(--psp-navy)" }}>{article.title}</h3>
-                        {article.excerpt && <p className="text-sm text-gray-600 mt-2">{article.excerpt}</p>}
-                        <p className="text-xs text-gray-300 mt-3">{timeAgo(article.published_at)}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-8 text-center">
-                  <p className="text-sm text-gray-400">No articles yet for this team.</p>
-                </div>
-              )
-            )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Stats Tab */}
+              {activeTab === "stats" && <TeamStats team={team} statLeaders={statLeaders} />}
+
+              {/* Schedule Tab */}
+              {activeTab === "schedule" && (
+                schedule.length > 0 ? (
+                  <TeamSchedule schedule={schedule} />
+                ) : (
+                  <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                    <p className="text-sm text-gray-400">Schedule data not available for this season.</p>
+                  </div>
+                )
+              )}
+
+              {/* Roster Tab */}
+              {activeTab === "roster" && (
+                rosterDisplay.length > 0 ? (
+                  <TeamRoster roster={rosterDisplay} positionGroups={positionGroups} sportMeta={sportMeta} />
+                ) : (
+                  <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                    <p className="text-sm text-gray-400">Roster data not available for this season.</p>
+                  </div>
+                )
+              )}
+
+              {/* News Tab */}
+              {activeTab === "news" && (
+                articles && articles.length > 0 ? (
+                  <div className="space-y-4">
+                    {articles.map((article) => (
+                      <Link
+                        key={article.id}
+                        href={`/articles/${article.slug}`}
+                        className="flex gap-4 bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
+                      >
+                        {article.featured_image_url && (
+                          <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                            <Image
+                              src={article.featured_image_url}
+                              alt={article.title}
+                              width={128}
+                              height={128}
+                              sizes="128px"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-base" style={{ color: "var(--psp-navy)" }}>{article.title}</h3>
+                          {article.excerpt && <p className="text-sm text-gray-600 mt-2">{article.excerpt}</p>}
+                          <p className="text-xs text-gray-300 mt-3">{timeAgo(article.published_at)}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                    <p className="text-sm text-gray-400">No articles yet for this team.</p>
+                  </div>
+                )
+              )}
 
             {/* Season History */}
             <TeamSeasonHistory
@@ -397,7 +328,8 @@ export default function TeamPageClient({
           </div>
 
           {/* Sidebar */}
-          <TeamSidebar team={team} winPct={winPct} sport={sport} tedCoverage={tedCoverage} />
+          <TeamSidebar team={team} sport={sport} tedCoverage={tedCoverage} />
+        </div>
         </div>
       </div>
 

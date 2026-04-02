@@ -21,13 +21,13 @@ const SITE_LINKS = [
   { label: "Hall of Fame", href: "/hof", emoji: "\uD83C\uDFC6" },
   { label: "Our Guys — Pros & College", href: "/our-guys", emoji: "\u2B50" },
   { label: "Articles & News", href: "/articles", emoji: "\uD83D\uDCF0" },
-  { label: "Player of the Week", href: "/pulse/player-of-the-week", emoji: "\uD83D\uDD25" },
+  { label: "Player of the Week", href: "/potw", emoji: "\uD83D\uDD25" },
 ];
 
 const PARTNER_LINKS = [
   { label: "Advertise with PSP", href: "/advertise" },
   { label: "Support PSP", href: "/support" },
-  { label: "Our Story", href: "/about" },
+  { label: "Hall of Fame", href: "/hof" },
   { label: "Contact Us", href: "mailto:info@phillysportspack.com" },
 ];
 

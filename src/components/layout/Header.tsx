@@ -57,21 +57,19 @@ const MORE_ITEMS = [
   { href: "/rankings", label: "Rankings" },
   { href: "/our-guys", label: "Our Guys" },
   { href: "/recruiting", label: "Recruiting" },
-  { href: "/recruit-finder", label: "Recruit Finder" },
   { href: "/compare", label: "Compare" },
-  { href: "/pipeline", label: "Pipeline" },
   { href: "/coaches", label: "Coaches" },
   { href: "/pickem", label: "Pick'em" },
   { href: "/hof", label: "\uD83C\uDFC6 Hall of Fame" },
 ];
 
-// Mobile menu still uses PULSE_ITEMS
-const PULSE_ITEMS = [
-  { href: "/", label: "The Pulse Hub" },
-  { href: "/recruiting", label: "Recruiting Central" },
+// Explore section for mobile menu
+const EXPLORE_ITEMS = [
+  { href: "/recruiting", label: "Recruiting" },
   { href: "/our-guys", label: "Our Guys" },
   { href: "/rankings", label: "Power Rankings" },
   { href: "/potw", label: "Player of the Week" },
+  { href: "/hof", label: "Hall of Fame" },
 ];
 
 const ACCOUNT_ITEMS = [
@@ -549,24 +547,23 @@ export default function Header() {
               <Link href="/articles" onClick={handleMobileToggle}>News</Link>
             </div>
 
-            {/* The Pulse Section */}
+            {/* Explore Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>The Pulse</div>
-              {PULSE_ITEMS.map((item) => (
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Explore</div>
+              {EXPLORE_ITEMS.map((item) => (
                 <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
                   {item.label}
                 </Link>
               ))}
             </div>
 
-            {/* More Section */}
+            {/* Tools Section */}
             <div style={{ borderBottom: "1px solid #333", margin: "12px 0" }}>
-              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>More</div>
-              {MORE_ITEMS.map((item) => (
-                <Link key={item.href} href={item.href} onClick={handleMobileToggle}>
-                  {item.label}
-                </Link>
-              ))}
+              <div style={{ color: "var(--psp-gray-400)", fontSize: "0.8rem", fontWeight: "700", padding: "8px 0", textTransform: "uppercase" }}>Tools</div>
+              <Link href="/compare" onClick={handleMobileToggle}>Compare Players</Link>
+              <Link href="/recruit-finder" onClick={handleMobileToggle}>Recruit Finder</Link>
+              <Link href="/coaches" onClick={handleMobileToggle}>Coaches</Link>
+              <Link href="/pickem" onClick={handleMobileToggle}>Pick&apos;em</Link>
             </div>
 
             {/* Account Section */}

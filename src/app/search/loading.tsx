@@ -1,50 +1,22 @@
-export default function SearchSkeleton() {
+export default function SearchLoading() {
   return (
-    <div className="min-h-screen bg-white" role="status" aria-busy="true" aria-label="Loading search results">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#0a1628] to-[#0f2040] text-white py-8 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="h-8 w-48 bg-gray-400 rounded animate-pulse mb-4"></div>
-          {/* Search Bar Skeleton */}
-          <div className="relative">
-            <div className="h-12 w-full bg-gray-400 rounded-lg animate-pulse"></div>
-          </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-gradient-to-br from-[var(--psp-navy)] to-[#0f2040] py-10 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="h-10 w-32 bg-white/10 rounded animate-pulse mb-4" />
+          <div className="h-12 w-full bg-white/10 rounded-lg animate-pulse" />
         </div>
       </div>
-
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="space-y-8">
-          {/* Result Groups */}
-          {[...Array(3)].map((_, groupIdx) => (
-            <div key={groupIdx}>
-              {/* Group Title */}
-              <div className="h-6 w-40 bg-gray-300 rounded animate-pulse mb-4"></div>
-
-              {/* Result Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
-                  >
-                    <div className="h-5 w-48 bg-gray-300 rounded animate-pulse mb-2"></div>
-                    <div className="h-4 w-32 bg-gray-300 rounded animate-pulse mb-3"></div>
-                    <div className="flex gap-2">
-                      <div className="h-6 w-20 bg-gray-300 rounded-full animate-pulse"></div>
-                      <div className="h-6 w-24 bg-gray-300 rounded-full animate-pulse"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+      <div className="max-w-4xl mx-auto px-4 py-8 space-y-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="bg-white rounded-lg border border-gray-200 p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse" />
+            <div className="flex-1">
+              <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-1" />
+              <div className="h-3 w-24 bg-gray-100 rounded animate-pulse" />
             </div>
-          ))}
-
-          {/* Empty State Skeleton */}
-          <div className="text-center py-12">
-            <div className="h-6 w-64 bg-gray-300 rounded animate-pulse mx-auto mb-4"></div>
-            <div className="h-4 w-80 bg-gray-300 rounded animate-pulse mx-auto"></div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );

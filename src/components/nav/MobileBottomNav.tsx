@@ -64,14 +64,14 @@ export default function MobileBottomNav() {
           <span className={styles.mobileNavLabel}>Sports</span>
         </button>
 
-        {/* Vote (POTW) */}
+        {/* Search */}
         <Link
-          href="/potw"
-          className={`${styles.mobileNavItem} ${isActive('/potw') ? styles.mobileNavItemActive : ''}`}
-          title="Vote"
+          href="/search"
+          className={`${styles.mobileNavItem} ${isActive('/search') ? styles.mobileNavItemActive : ''}`}
+          title="Search"
         >
-          <span className={styles.mobileNavIcon}>{'\u{1F3C6}'}</span>
-          <span className={styles.mobileNavLabel}>Vote</span>
+          <span className={styles.mobileNavIcon}>{'\u{1F50D}'}</span>
+          <span className={styles.mobileNavLabel}>Search</span>
         </Link>
 
         {/* My Schools */}
@@ -191,8 +191,8 @@ export default function MobileBottomNav() {
               <Link href="/leaderboards" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
                 <span>{'\u{1F3C5}'}</span><span>Leaderboards</span>
               </Link>
-              <Link href="/pulse" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
-                <span>{'\u26A1'}</span><span>The Pulse</span>
+              <Link href="/rankings" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
+                <span>{'\u26A1'}</span><span>Rankings</span>
               </Link>
               <Link href="/search" className={styles.mobileMenuItem} onClick={() => setIsMenuOpen(false)}>
                 <span>{'\u{1F50D}'}</span><span>Search</span>

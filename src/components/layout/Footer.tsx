@@ -24,13 +24,14 @@ export default function Footer() {
             <li><Link href="/soccer">Soccer</Link></li>
           </ul>
         </nav>
-        <nav style={{ flex: "1 1 140px" }} aria-label="The Pulse navigation">
-          <h5>The Pulse</h5>
+        <nav style={{ flex: "1 1 140px" }} aria-label="Explore navigation">
+          <h5>Explore</h5>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            <li><Link href="/">Home</Link></li>
-            <li><Link href="/potw">Player of the Week</Link></li>
+            <li><Link href="/schools">Schools</Link></li>
+            <li><Link href="/recruiting">Recruiting</Link></li>
             <li><Link href="/rankings">Power Rankings</Link></li>
             <li><Link href="/our-guys">Our Guys</Link></li>
+            <li><Link href="/hof">Hall of Fame</Link></li>
           </ul>
         </nav>
         <nav style={{ flex: "1 1 140px" }} aria-label="Tools navigation">
@@ -47,7 +48,7 @@ export default function Footer() {
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li><Link href="/support">Support</Link></li>
             <li><Link href="/advertise">Advertise</Link></li>
-            <li><Link href="/about">Our Story</Link></li>
+            <li><Link href="/hof">Hall of Fame</Link></li>
             <li><Link href="/feed">RSS Feed</Link></li>
           </ul>
         </nav>

@@ -6,6 +6,7 @@ import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
+import SchoolSportTabs from "@/components/school/SchoolSportTabs";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import type { Metadata } from "next";
@@ -364,6 +365,19 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
           {/* ── Main Content ── */}
           <div className="lg:col-span-3 space-y-8">
 
+            {/* ── Sport Tab Navigation ── */}
+            <SchoolSportTabs
+              sports={sportsStats.map((s) => ({
+                sport_id: s.sport_id,
+                sport_name: s.sport_name,
+                sport_emoji: s.sport_emoji,
+                wins: s.wins,
+                losses: s.losses,
+                ties: s.ties,
+              }))}
+              slug={slug}
+            />
+
             {/* ── Sports Programs ── */}
             {sportsStats.length > 0 && (
               <section>
@@ -631,8 +645,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                           <th>Season</th>
                           <th className="text-center">W</th>
                           <th className="text-center">L</th>
-                          <th className="text-center">T</th>
-                          <th>Playoff</th>
+                          <th className="hidden sm:table-cell text-center">T</th>
+                          <th className="hidden sm:table-cell">Playoff</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -663,8 +677,8 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                               </td>
                               <td className="text-center font-medium">{hasRecord ? season.wins : "—"}</td>
                               <td className="text-center font-medium">{hasRecord ? season.losses : "—"}</td>
-                              <td className="text-center text-sm">{hasRecord ? (season.ties || "—") : "—"}</td>
-                              <td className="text-xs">{season.playoff_result || (hasRecord ? `${seasonWinPct}%` : "—")}</td>
+                              <td className="hidden sm:table-cell text-center text-sm">{hasRecord ? (season.ties || "—") : "—"}</td>
+                              <td className="hidden sm:table-cell text-xs">{season.playoff_result || (hasRecord ? `${seasonWinPct}%` : "—")}</td>
                             </tr>
                           );
                         })}
@@ -702,7 +716,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                         <tr>
                           <th>Player</th>
                           <th>Award</th>
-                          <th>Sport</th>
+                          <th className="hidden sm:table-cell">Sport</th>
                           <th className="text-center">Year</th>
                         </tr>
                       </thead>
@@ -728,7 +742,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                                 <span className="text-xs text-gray-300 ml-1">({award.tier})</span>
                               )}
                             </td>
-                            <td className="text-sm">
+                            <td className="hidden sm:table-cell text-sm">
                               <span className="mr-1">{SPORT_EMOJI[award.sport_id] || ""}</span>
                               {SPORT_META[award.sport_id as keyof typeof SPORT_META]?.name || award.sport_id}
                             </td>
@@ -771,7 +785,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                           <th>Name</th>
                           <th>Level</th>
                           <th>College / Organization</th>
-                          <th>Sport</th>
+                          <th className="hidden sm:table-cell">Sport</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -811,7 +825,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                                 </div>
                               )}
                             </td>
-                            <td className="text-sm capitalize">
+                            <td className="hidden sm:table-cell text-sm capitalize">
                               {athlete.sport_id?.replace("-", " ") || "—"}
                             </td>
                           </tr>

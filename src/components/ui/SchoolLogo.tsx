@@ -10,7 +10,7 @@ import { useState } from 'react';
 interface SchoolLogoProps {
   logoUrl?: string | null;
   name: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
 }
 
@@ -18,12 +18,14 @@ const SIZE_MAP = {
   sm: 24,
   md: 32,
   lg: 48,
+  xl: 80,
 } as const;
 
 const FONT_SIZE_MAP = {
   sm: '10px',
   md: '12px',
   lg: '16px',
+  xl: '28px',
 } as const;
 
 function getInitials(name: string): string {

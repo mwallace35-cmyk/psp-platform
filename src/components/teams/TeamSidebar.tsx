@@ -4,12 +4,11 @@ import type { TeamDetail } from "./team-utils";
 
 interface TeamSidebarProps {
   team: TeamDetail;
-  winPct: string;
   sport: string;
   tedCoverage?: { hasNotes: boolean; seasonRange?: string } | null;
 }
 
-export default function TeamSidebar({ team, winPct, sport, tedCoverage }: TeamSidebarProps) {
+export default function TeamSidebar({ team, sport, tedCoverage }: TeamSidebarProps) {
   return (
     <div className="space-y-6">
       {/* Team Info Card */}
@@ -50,65 +49,7 @@ export default function TeamSidebar({ team, winPct, sport, tedCoverage }: TeamSi
         </dl>
       </div>
 
-      {/* Season Record Card */}
-      <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-        <h3
-          className="font-bold text-sm uppercase tracking-wider mb-4"
-          style={{ color: "var(--psp-gray-400)" }}
-        >
-          Season Record
-        </h3>
-        <div className="text-center">
-          <div
-            className="psp-h1 mb-2"
-            style={{ color: "var(--psp-navy)" }}
-          >
-            {team.currentRecord.wins}-{team.currentRecord.losses}
-          </div>
-          <div className="text-sm text-gray-400">{winPct}% Win Rate</div>
-        </div>
-      </div>
-
-      {/* Championships Card */}
-      {team.championships > 0 && (
-        <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] p-6">
-          <h3
-            className="font-bold text-sm uppercase tracking-wider mb-4"
-            style={{ color: "var(--psp-gray-400)" }}
-          >
-            Championships
-          </h3>
-          <div className="text-center mb-4">
-            <div
-              className="text-3xl font-bold"
-              style={{ color: "var(--psp-gold)" }}
-            >
-              &#127942; {team.championships}
-            </div>
-          </div>
-          {team.recentChampionships.length > 0 && (
-            <div>
-              <h4 className="text-xs font-bold text-gray-600 mb-2">
-                Recent Titles
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {team.recentChampionships.map((year: string) => (
-                  <span
-                    key={year}
-                    className="text-xs font-bold px-3 py-1 rounded-full"
-                    style={{
-                      background: "var(--psp-gold)",
-                      color: "var(--psp-navy)",
-                    }}
-                  >
-                    {year}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      {/* Season Record + Championships shown in hero stat pills — no duplicate cards */}
 
       {/* Ted Silary Data Badge */}
       {tedCoverage?.hasNotes && (

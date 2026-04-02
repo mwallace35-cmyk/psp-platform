@@ -74,19 +74,19 @@ export function FootballGameTable({
             <th scope="col" className="text-center px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Score
             </th>
-            <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="hidden sm:table-cell text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Rush Yds
             </th>
-            <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="hidden sm:table-cell text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Pass Yds
             </th>
-            <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
+            <th scope="col" className="hidden sm:table-cell text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               Rec Yds
             </th>
             <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               PTS
             </th>
-            <th scope="col" className="text-center px-3 py-2" />
+            <th scope="col" className="hidden sm:table-cell text-center px-3 py-2" />
           </tr>
         </thead>
         <tbody>
@@ -129,15 +129,20 @@ export function FootballGameTable({
                 </td>
                 {game.hasBoxScore ? (
                   <>
-                    <td className="text-right px-3 py-3">{game.rushYards ?? '—'}</td>
-                    <td className="text-right px-3 py-3">{game.passYards ?? '—'}</td>
-                    <td className="text-right px-3 py-3">{game.recYards ?? '—'}</td>
+                    <td className="hidden sm:table-cell text-right px-3 py-3">{game.rushYards ?? '—'}</td>
+                    <td className="hidden sm:table-cell text-right px-3 py-3">{game.passYards ?? '—'}</td>
+                    <td className="hidden sm:table-cell text-right px-3 py-3">{game.recYards ?? '—'}</td>
                     <td className="text-right px-3 py-3 font-bold">{game.points ?? '—'}</td>
                   </>
                 ) : (
-                  <td colSpan={4} className="text-center text-xs text-gray-300 italic px-3 py-3">no individual stats</td>
+                  <>
+                    <td className="hidden sm:table-cell" />
+                    <td className="hidden sm:table-cell" />
+                    <td className="hidden sm:table-cell" />
+                    <td className="text-center text-xs text-gray-300 italic px-3 py-3">—</td>
+                  </>
                 )}
-                <td className="text-center px-3 py-3">
+                <td className="hidden sm:table-cell text-center px-3 py-3">
                   {game.hasBoxScore ? (
                     <Link
                       href={`/${sport}/games/${game.gameId}`}
@@ -192,7 +197,7 @@ export function BasketballGameTable({
             <th scope="col" className="text-right px-3 py-2 font-bebas tracking-wider" style={{ color: 'var(--psp-navy)' }}>
               PTS
             </th>
-            <th scope="col" className="text-center px-3 py-2" />
+            <th scope="col" className="hidden sm:table-cell text-center px-3 py-2" />
           </tr>
         </thead>
         <tbody>
@@ -234,7 +239,7 @@ export function BasketballGameTable({
                 <td className="text-right px-3 py-3 font-bold">
                   {game.hasBoxScore ? (game.bbPoints ?? '—') : <span className="text-gray-300 font-normal italic text-xs">—</span>}
                 </td>
-                <td className="text-center px-3 py-3">
+                <td className="hidden sm:table-cell text-center px-3 py-3">
                   {game.hasBoxScore ? (
                     <Link
                       href={`/${sport}/games/${game.gameId}`}

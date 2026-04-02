@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SchoolLogo, Breadcrumb } from "@/components/ui";
 
 interface ChampionshipBadge {
@@ -36,6 +37,10 @@ interface TeamHeaderProps {
     emoji: string;
   };
   currentSeasonChampionships?: ChampionshipBadge[];
+  seasons?: { label: string; year_start: number }[];
+  currentSeasonLabel?: string;
+  /** Tab navigation rendered at bottom of hero */
+  tabBar?: React.ReactNode;
 }
 
 export default function TeamHeader({
@@ -44,7 +49,11 @@ export default function TeamHeader({
   sport,
   sportMeta,
   currentSeasonChampionships = [],
+  seasons = [],
+  currentSeasonLabel,
+  tabBar,
 }: TeamHeaderProps) {
+  const router = useRouter();
   const totalGames = team.currentRecord.wins + team.currentRecord.losses + team.currentRecord.ties;
   const winPct = totalGames > 0 ? ((team.currentRecord.wins / totalGames) * 100).toFixed(1) : "0.0";
   const pointDiff = team.pointsFor - team.pointsAgainst;
@@ -222,6 +231,13 @@ export default function TeamHeader({
 
         {/* Stat pills row */}
         <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/10">
+          {(team.leagueFinish || (team.leagueRecord && (team.leagueRecord.wins > 0 || team.leagueRecord.losses > 0))) && (
+            <StatPill
+              label={team.league.length > 20 ? "League" : team.league}
+              value={team.leagueFinish || `${team.leagueRecord?.wins}-${team.leagueRecord?.losses}`}
+              color="var(--psp-gold)"
+            />
+          )}
           <StatPill label="PF" value={String(team.pointsFor)} color="var(--psp-gold)" />
           <StatPill label="PA" value={String(team.pointsAgainst)} color="var(--psp-gray-400)" />
           <StatPill
@@ -240,8 +256,39 @@ export default function TeamHeader({
               ))}
             </div>
           )}
+          {/* Season selector inline with pills */}
+          {seasons.length > 1 && (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Season</span>
+              <select
+                className="bg-transparent text-sm font-bold font-heading cursor-pointer border-none outline-none"
+                style={{ color: "var(--psp-gold)", fontSize: "1.1rem" }}
+                value={currentSeasonLabel || ""}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    router.push(`/${sport}/teams/${team.slug}/${e.target.value}`);
+                  }
+                }}
+              >
+                {[...seasons].sort((a, b) => b.year_start - a.year_start).map((s) => (
+                  <option key={s.label} value={s.label} style={{ background: "#0a1628", color: "white" }}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Tab bar welded to hero bottom */}
+      {tabBar && (
+        <div className="border-t border-white/10" style={{ background: "var(--psp-navy-mid)" }}>
+          <div className="max-w-7xl mx-auto px-4">
+            {tabBar}
+          </div>
+        </div>
+      )}
 
       {/* Shimmer keyframes for championship banner */}
       {hasCurrentChampionship && (

@@ -56,11 +56,11 @@ export default function SeasonHistoryTable({
               <th>Season</th>
               <th className="text-center">W</th>
               <th className="text-center">L</th>
-              <th className="text-center">T</th>
-              <th className="text-center">PF</th>
-              <th className="text-center">PA</th>
-              {hasAnyPlayoff && <th>Playoff</th>}
-              {hasAnyCoach && <th>Coach</th>}
+              <th className="hidden sm:table-cell text-center">T</th>
+              <th className="hidden sm:table-cell text-center">PF</th>
+              <th className="hidden sm:table-cell text-center">PA</th>
+              {hasAnyPlayoff && <th className="hidden md:table-cell">Playoff</th>}
+              {hasAnyCoach && <th className="hidden md:table-cell">Coach</th>}
             </tr>
           </thead>
           <tbody>
@@ -92,14 +92,14 @@ export default function SeasonHistoryTable({
                   </td>
                   <td className="text-center">{ts.wins ?? "—"}</td>
                   <td className="text-center">{ts.losses ?? "—"}</td>
-                  <td className="text-center">{ts.ties ?? "—"}</td>
-                  <td className="text-center">{ts.points_for ?? "—"}</td>
-                  <td className="text-center">{ts.points_against ?? "—"}</td>
+                  <td className="hidden sm:table-cell text-center">{ts.ties ?? "—"}</td>
+                  <td className="hidden sm:table-cell text-center">{ts.points_for ?? "—"}</td>
+                  <td className="hidden sm:table-cell text-center">{ts.points_against ?? "—"}</td>
                   {hasAnyPlayoff && (
-                    <td className="text-xs">{ts.playoff_result || "—"}</td>
+                    <td className="hidden md:table-cell text-xs">{ts.playoff_result || "—"}</td>
                   )}
                   {hasAnyCoach && (
-                    <td className="text-xs">
+                    <td className="hidden md:table-cell text-xs">
                       {ts.coaches ? (
                         <Link
                           href={`/${sport}/coaches/${ts.coaches.slug}`}

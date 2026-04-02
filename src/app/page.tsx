@@ -8,7 +8,6 @@ import PotwHomepageWidget from '@/components/pulse/PotwHomepageWidget';
 import HomeScoresSection from '@/components/home/HomeScoresSection';
 import HomeArticlesSection from '@/components/home/HomeArticlesSection';
 import SkeletonCard from '@/components/ui/SkeletonCard';
-import DidYouKnow from '@/components/ui/DidYouKnow';
 import HeroMonument from '@/components/home/HeroMonument';
 
 export const revalidate = 300; // 5 min ISR — live content
@@ -85,31 +84,8 @@ export default async function HomePage() {
     <div className="min-h-screen bg-[var(--psp-navy)]">
       <OrganizationJsonLd />
 
-      {/* Hero — The Monument */}
-      <HeroMonument playerCount={57326} gameCount={44384} schoolCount={756} />
-
-      {/* Beta Banner */}
-      <div className="max-w-7xl mx-auto px-4 mt-4 mb-4">
-        <div className="relative overflow-hidden rounded-xl border border-[var(--psp-gold)]/30 bg-gradient-to-r from-[var(--psp-navy-mid)] to-[#0f2040] p-5 md:p-6">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--psp-gold)]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--psp-gold)]/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-          <div className="relative flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-5">
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="inline-flex items-center gap-1.5 bg-[var(--psp-gold)] text-[var(--psp-navy)] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '0.85rem', letterSpacing: '0.1em' }}>
-                Beta
-              </span>
-            </div>
-            <div className="flex-1">
-              <p className="text-white text-sm md:text-base font-medium" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                Welcome to <span className="text-[var(--psp-gold)] font-bold">PhillySportsPack</span> — we&apos;re building the definitive Philly high school sports database. You&apos;re seeing an early look while we fine-tune the experience. Expect new features, more data, and a few rough edges.
-              </p>
-              <p className="text-gray-400 text-xs md:text-sm mt-1.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                Got feedback? Hit us up at <a href="mailto:info@phillysportspack.com" className="text-[var(--psp-gold)] hover:underline">info@phillysportspack.com</a> &mdash; we want to hear from you.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Hero — Search-First */}
+      <HeroMonument />
 
       {/* Sport Navigation */}
       <div className="max-w-7xl mx-auto px-4 -mt-2 mb-6">
@@ -214,8 +190,17 @@ export default async function HomePage() {
               </svg>
             </Link>
 
-            {/* Did You Know? */}
-            <DidYouKnow />
+            {/* Hall of Fame Link */}
+            <Link href="/hof" className="group flex items-center gap-3 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none">
+              <div className="text-2xl group-hover:scale-110 group-focus-visible:scale-110 transition-transform" role="img" aria-label="trophy">🏆</div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Hall of Fame</h2>
+                <p className="text-xs text-gray-300 mt-0.5">Philly&apos;s greatest athletes</p>
+              </div>
+              <svg className="w-4 h-4 text-gray-400 group-hover:text-[var(--psp-gold)] transition shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
         </div>
       </div>

@@ -23,14 +23,48 @@ export const metadata: Metadata = {
 async function getRecruitFinderData(): Promise<RecruitRow[]> {
   const supabase = await createClient();
 
-  // Get current season id
+  // Get current season id — fall back to most recent season with actual data
   const { data: currentSeason } = await supabase
     .from("seasons")
     .select("id")
     .eq("is_current", true)
     .single();
 
-  const seasonId = currentSeason?.id;
+  let seasonId = currentSeason?.id;
+
+  // If no current season or it has no player data, find most recent season with stats
+  if (seasonId) {
+    const { count } = await supabase
+      .from("football_player_seasons")
+      .select("id", { count: "exact", head: true })
+      .eq("season_id", seasonId);
+    if (!count || count === 0) {
+      seasonId = null; // force fallback
+    }
+  }
+
+  if (!seasonId) {
+    // Find most recent season that has football player stats
+    const { data: recentSeasons } = await supabase
+      .from("seasons")
+      .select("id")
+      .order("id", { ascending: false })
+      .limit(5);
+
+    if (recentSeasons) {
+      for (const s of recentSeasons) {
+        const { count } = await supabase
+          .from("football_player_seasons")
+          .select("id", { count: "exact", head: true })
+          .eq("season_id", s.id);
+        if (count && count > 0) {
+          seasonId = s.id;
+          break;
+        }
+      }
+    }
+  }
+
   if (!seasonId) return [];
 
   // Fetch all three sports in parallel
