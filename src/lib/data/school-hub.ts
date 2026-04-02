@@ -617,8 +617,8 @@ export const getSchoolRecentGames = cache(async (schoolId: number, limit = 15) =
               `
               id, sport_id, game_date, home_score, away_score,
               home_school_id, away_school_id,
-              home_school:schools!games_home_school_id_fkey(name, slug),
-              away_school:schools!games_away_school_id_fkey(name, slug),
+              home_school:school_names!home_school_id(id, name, slug),
+              away_school:school_names!away_school_id(id, name, slug),
               seasons(label)
             `
             )
@@ -630,20 +630,27 @@ export const getSchoolRecentGames = cache(async (schoolId: number, limit = 15) =
 
           if (!data) return [];
 
-          return (data as any[]).map((g) => ({
-            id: g.id,
-            sport_id: g.sport_id,
-            game_date: g.game_date,
-            season_label: g.seasons?.label ?? "",
-            home_school_id: g.home_school_id,
-            home_school_name: g.home_school?.name ?? "TBD",
-            home_school_slug: g.home_school?.slug ?? "",
-            away_school_id: g.away_school_id,
-            away_school_name: g.away_school?.name ?? "TBD",
-            away_school_slug: g.away_school?.slug ?? "",
-            home_score: g.home_score,
-            away_score: g.away_score,
-          })) as SchoolGame[];
+          return (data as any[])
+            .filter((g) => {
+              // Filter out games where opponent name is missing
+              const hasHome = g.home_school?.name;
+              const hasAway = g.away_school?.name;
+              return hasHome && hasAway;
+            })
+            .map((g) => ({
+              id: g.id,
+              sport_id: g.sport_id,
+              game_date: g.game_date,
+              season_label: g.seasons?.label ?? "",
+              home_school_id: g.home_school_id,
+              home_school_name: g.home_school?.name ?? "Unknown",
+              home_school_slug: g.home_school?.slug ?? "",
+              away_school_id: g.away_school_id,
+              away_school_name: g.away_school?.name ?? "Unknown",
+              away_school_slug: g.away_school?.slug ?? "",
+              home_score: g.home_score,
+              away_score: g.away_score,
+            })) as SchoolGame[];
         },
         { maxRetries: 2, baseDelay: 500 }
       );

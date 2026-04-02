@@ -234,14 +234,6 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                   🏫
                 </div>
               )}
-              {primaryColor && (
-                <div className="flex gap-1 mt-1">
-                  <div className="w-4 h-4 rounded-full border border-white/30" style={{ background: primaryColor }} title="Primary" />
-                  {secondaryColor && (
-                    <div className="w-4 h-4 rounded-full border border-white/30" style={{ background: secondaryColor }} title="Secondary" />
-                  )}
-                </div>
-              )}
             </div>
 
             <div className="flex-1 min-w-0">
@@ -269,9 +261,9 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                   </span>
                 )}
                 {school.piaa_class && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-200">
+                  <Badge variant="outline" className="text-xs bg-amber-500/20 text-amber-200 border-amber-400/30">
                     Class {school.piaa_class}
-                  </span>
+                  </Badge>
                 )}
                 {school.closed_year && (
                   <Badge variant="error" className="bg-red-500/20 text-red-200">
@@ -795,7 +787,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                             className={`${athlete.pro_league ? "bg-amber-50" : ""} animate-fade-in-up`}
                             style={{ animationDelay: `${idx * 30}ms` }}
                           >
-                            <td className="font-medium">{athlete.person_name}</td>
+                            <td className="font-medium">{athlete.person_name.includes(',') ? `${athlete.person_name.split(',').slice(1).join(',').trim()} ${athlete.person_name.split(',')[0].trim()}` : athlete.person_name}</td>
                             <td>
                               <AchievementBadge
                                 type={athlete.pro_league ? "pro" : "college"}
