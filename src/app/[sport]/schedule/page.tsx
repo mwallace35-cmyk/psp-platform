@@ -21,7 +21,7 @@ import { Suspense } from "react";
 
 // Sport-specific views
 import FootballScheduleView from "./views/FootballScheduleView";
-// Future: import BasketballScheduleView, etc.
+import BasketballScheduleView from "./views/BasketballScheduleView";
 
 export const revalidate = 3600;
 
@@ -230,8 +230,10 @@ export default async function SchedulePage({
       {/* Sport-specific view */}
       {sport === "football" ? (
         <FootballScheduleView {...viewProps} />
+      ) : sport === "basketball" ? (
+        <BasketballScheduleView {...viewProps} />
       ) : (
-        // Fallback: use the old ScheduleView for non-football sports until Phase 3-5
+        // Fallback: use the old ScheduleView for non-football sports until Phase 5
         <FallbackScheduleView {...viewProps} />
       )}
     </div>
