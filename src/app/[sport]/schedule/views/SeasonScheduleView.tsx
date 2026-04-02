@@ -370,6 +370,7 @@ function WeeklyView({
                           seasonLabel={seasonLabel}
                           highlightTeam={highlightTeam}
                           compact
+                          showDate={false}
                           showGameType={false}
                         />
                       ))}

@@ -43,7 +43,7 @@ export default function TrackFieldScheduleView({
     return (
       <EmptyState
         sport={sport}
-        sportName="Track &amp; Field"
+        sportName="Track & Field"
         sportEmoji="\u{1F3C3}"
         seasonLabel={seasonLabel}
         lastSeasonLabel={lastSeasonWithData ?? undefined}
