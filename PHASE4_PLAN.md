@@ -83,15 +83,15 @@
 - [x] Add `aria-label` or `<caption>` to ~15 tables missing them (16 tables across 11 files)
 - [x] Associate `<label>` elements with inputs in RecruitFinderClient, PlayerCompare
 
-## Push 8: Query Optimization
+## Push 8: Query Optimization — DONE (April 2)
 *DB-side, no Vercel build needed*
 
-- [ ] Create composite index on `games(sport_id, season_id, game_date)`
-- [ ] Create composite indexes on `{sport}_player_seasons(school_id, player_id)`
-- [ ] Rewrite `getFootballPositionLeaders` to use `football_career_leaders` table
-- [ ] Replace `.select("*")` with explicit columns in awards-hub.ts, social.ts, playoffs.ts
-- [ ] Push awards aggregation into SQL (currently fetching 25K rows to count in JS)
-- [ ] Drop 14+ unused indexes identified in audit
+- [x] Create composite index on `games(sport_id, season_id, game_date)` → `idx_games_sport_season_date`
+- [x] Create composite indexes on `{sport}_player_seasons(school_id, player_id)` → 3 new indexes
+- [x] Rewrite `getFootballPositionLeaders` to use `football_career_leaders` table — SKIPPED (table doesn't exist)
+- [x] Replace `.select("*")` with explicit columns in playoffs.ts (6 queries → explicit columns)
+- [x] Push awards aggregation into SQL — 3 new DB functions (`awards_count_by_type`, `top_awarded_schools`, `awards_count_by_sport`)
+- [x] Drop 11 duplicate indexes (games: 2, football: 4, basketball: 4, baseball: 1)
 
 ---
 

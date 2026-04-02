@@ -53,54 +53,27 @@ export const getAwardsSummary = cache(async () => {
         async () => {
           const supabase = await createClient();
 
-          // Get total count efficiently
-          const { count: total, error: countErr } = await supabase
-            .from("awards")
-            .select("id", { count: "exact", head: true });
-
-          if (countErr) {
-            console.error("[getAwardsSummary] count error:", countErr);
-          }
-
-          // Get distinct award types with counts using a lighter query
-          const { data: typeData, error: typeErr } = await supabase
-            .from("awards")
-            .select("award_type")
-            .limit(25000);
-
-          if (typeErr) {
-            console.error("[getAwardsSummary] type error:", typeErr);
-          }
+          // Use SQL aggregation instead of fetching 25K rows
+          const [countResult, typeResult, yearMinResult, yearMaxResult] = await Promise.all([
+            supabase.from("awards").select("id", { count: "exact", head: true }),
+            supabase.rpc("awards_count_by_type"),
+            supabase.from("awards").select("seasons(year_start)").not("season_id", "is", null).order("season_id", { ascending: true }).limit(1),
+            supabase.from("awards").select("seasons(year_start)").not("season_id", "is", null).order("season_id", { ascending: false }).limit(1),
+          ]);
 
           const byType: Record<string, number> = {};
-          for (const row of (typeData || []) as { award_type: string }[]) {
-            const t = row.award_type || "other";
-            byType[t] = (byType[t] || 0) + 1;
+          for (const row of (typeResult.data || []) as { award_type: string; cnt: number }[]) {
+            byType[row.award_type] = Number(row.cnt);
           }
 
-          // Get year range from seasons join — just grab a sample
-          const { data: yearData } = await supabase
-            .from("awards")
-            .select("seasons(year_start)")
-            .not("season_id", "is", null)
-            .order("season_id", { ascending: true })
-            .limit(1);
-
-          const { data: yearDataMax } = await supabase
-            .from("awards")
-            .select("seasons(year_start)")
-            .not("season_id", "is", null)
-            .order("season_id", { ascending: false })
-            .limit(1);
-
-          const minYear = (yearData?.[0] as any)?.seasons?.year_start || 1932;
-          const maxYear = (yearDataMax?.[0] as any)?.seasons?.year_start || 2025;
+          const minYear = (yearMinResult.data?.[0] as any)?.seasons?.year_start || 1932;
+          const maxYear = (yearMaxResult.data?.[0] as any)?.seasons?.year_start || 2025;
 
           return {
-            total: total || 0,
+            total: countResult.count || 0,
             byType,
-            byYear: {},  // Skip per-year breakdown for performance
-            topSchools: [], // Fetched separately by getTopAwardedSchools
+            byYear: {},
+            topSchools: [],
             yearRange: { min: minYear, max: maxYear },
           } as AwardsSummary;
         },
@@ -179,49 +152,20 @@ export const getTopAwardedSchools = cache(async (limit = 15) => {
         async () => {
           const supabase = await createClient();
 
-          // Use a lighter query — just get school_id from the join
-          const { data, error } = await supabase
-            .from("awards")
-            .select(
-              `
-              id,
-              players(
-                schools(id, name, slug)
-              )
-            `
-            )
-            .not("player_id", "is", null)
-            .limit(25000);
+          // Use SQL aggregation instead of fetching 25K rows
+          const { data, error } = await supabase.rpc("top_awarded_schools", { lim: limit });
 
           if (error) {
             console.error("[getTopAwardedSchools] Supabase error:", error);
           }
 
-          interface AwardRecord {
-            players?: { schools?: { id: number; name: string; slug: string } };
-          }
-
-          const awards = (data || []) as unknown as AwardRecord[];
-          const schoolCounts: Record<number, { name: string; slug: string; count: number }> = {};
-
-          for (const award of awards) {
-            const school = award.players?.schools;
-            if (school?.id) {
-              if (!schoolCounts[school.id]) {
-                schoolCounts[school.id] = {
-                  name: school.name,
-                  slug: school.slug,
-                  count: 0,
-                };
-              }
-              schoolCounts[school.id].count++;
-            }
-          }
-
-          return Object.entries(schoolCounts)
-            .map(([id, school]) => ({ id: parseInt(id), ...school }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, limit);
+          return ((data || []) as { school_id: number; school_name: string; school_slug: string; cnt: number }[])
+            .map((row) => ({
+              id: row.school_id,
+              name: row.school_name,
+              slug: row.school_slug,
+              count: Number(row.cnt),
+            }));
         },
         { maxRetries: 2 }
       );
@@ -442,17 +386,14 @@ export const getAwardsCountBySport = cache(async () => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data, error } = await supabase
-            .from("awards")
-            .select("id, sport_id")
-            .limit(30000);
+          // Use SQL aggregation instead of fetching 30K rows
+          const { data, error } = await supabase.rpc("awards_count_by_sport");
 
           if (error) console.error("[getAwardsCountBySport] error:", error);
 
           const bySport: Record<string, number> = {};
-          for (const row of (data || []) as { id: number; sport_id: string }[]) {
-            const sport = row.sport_id || "unknown";
-            bySport[sport] = (bySport[sport] || 0) + 1;
+          for (const row of (data || []) as { sport: string; cnt: number }[]) {
+            bySport[row.sport] = Number(row.cnt);
           }
           return bySport;
         },

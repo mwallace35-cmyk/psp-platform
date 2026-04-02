@@ -93,7 +93,7 @@ export const getPlayoffBrackets = cache(
         // Get brackets for this sport + season
         const { data: brackets, error: bracketsError } = await supabase
           .from("playoff_brackets")
-          .select("*")
+          .select("id, sport_id, season_id, name, bracket_type, classification, created_at")
           .eq("sport_id", sportId)
           .eq("season_id", seasonId)
           .order("name");
@@ -104,7 +104,7 @@ export const getPlayoffBrackets = cache(
         const bracketIds = brackets.map((b: PlayoffBracket) => b.id);
         const { data: allGames, error: gamesError } = await supabase
           .from("playoff_bracket_games")
-          .select("*")
+          .select("id, bracket_id, round_name, round_number, game_number, team1_school_id, team1_name, team1_score, team1_seed, team2_school_id, team2_name, team2_score, team2_seed, winner_school_id, game_date, game_id, next_game_id")
           .in("bracket_id", bracketIds)
           .order("round_number")
           .order("game_number");
@@ -136,7 +136,7 @@ export const getPlayoffBracketById = cache(
 
         const { data: bracket, error: bracketError } = await supabase
           .from("playoff_brackets")
-          .select("*")
+          .select("id, sport_id, season_id, name, bracket_type, classification, created_at")
           .eq("id", bracketId)
           .single();
 
@@ -144,7 +144,7 @@ export const getPlayoffBracketById = cache(
 
         const { data: games } = await supabase
           .from("playoff_bracket_games")
-          .select("*")
+          .select("id, bracket_id, round_name, round_number, game_number, team1_school_id, team1_name, team1_score, team1_seed, team2_school_id, team2_name, team2_score, team2_seed, winner_school_id, game_date, game_id, next_game_id")
           .eq("bracket_id", bracketId)
           .order("round_number")
           .order("game_number");
@@ -228,7 +228,7 @@ export const getPlayoffBracketsBySeason = cache(
         // Get brackets for this sport + season
         const { data: brackets, error: bracketsError } = await supabase
           .from("playoff_brackets")
-          .select("*")
+          .select("id, sport_id, season_id, name, bracket_type, classification, created_at")
           .eq("sport_id", sportId)
           .eq("season_id", seasonId)
           .order("name");
@@ -239,7 +239,7 @@ export const getPlayoffBracketsBySeason = cache(
         const bracketIds = brackets.map((b: PlayoffBracket) => b.id);
         const { data: allGames, error: gamesError } = await supabase
           .from("playoff_bracket_games")
-          .select("*")
+          .select("id, bracket_id, round_name, round_number, game_number, team1_school_id, team1_name, team1_score, team1_seed, team2_school_id, team2_name, team2_score, team2_seed, winner_school_id, game_date, game_id, next_game_id")
           .in("bracket_id", bracketIds)
           .order("round_number")
           .order("game_number");
