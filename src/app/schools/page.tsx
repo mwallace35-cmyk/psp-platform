@@ -42,6 +42,7 @@ const CORE_LEAGUES = [
   'Philadelphia Catholic League',
   'Philadelphia Public League',
   'Inter-Academic League',
+  'Independent',
 ];
 
 export default async function SchoolsPage() {
@@ -57,7 +58,6 @@ export default async function SchoolsPage() {
       supabase
         .from('school_directory_mv')
         .select('*')
-        .in('league_name', CORE_LEAGUES)
         .order('name', { ascending: true }),
       supabase
         .from('schools')
@@ -101,7 +101,7 @@ export default async function SchoolsPage() {
           name: row.name,
           city: row.city || '',
           state: row.state || 'PA',
-          league: row.league_name,
+          league: row.league_name || 'Other',
           colors,
           secondary_color: secondaryColor,
           logo_url: logoMap.get(row.id) || null,
@@ -137,7 +137,7 @@ export default async function SchoolsPage() {
     fetchFailed = true;
   }
 
-  const leagues = CORE_LEAGUES;
+  const leagues = [...CORE_LEAGUES, 'Other'];
 
   // Aggregate stats for the hero section
   const schoolsWithData = schools.filter(s => s.has_data);

@@ -111,8 +111,8 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
       const supabase = createClient();
 
       const { error: voteError } = await supabase.from('potw_votes').insert({
-        potw_nominee_id: parseInt(nomineeId),
-        ip_hash: fingerprint,
+        nominee_id: parseInt(nomineeId),
+        voter_fingerprint: fingerprint,
         week_label: weekLabel,
       });
 
@@ -125,7 +125,7 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
         throw voteError;
       }
 
-      await supabase.rpc('increment_potw_votes', { nominee_id: parseInt(nomineeId) });
+      await supabase.rpc('increment_potw_votes', { p_nominee_id: parseInt(nomineeId) });
 
       setVotedId(nomineeId);
       localStorage.setItem(`potw-voted-${weekLabel}`, nomineeId);

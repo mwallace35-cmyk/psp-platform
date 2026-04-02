@@ -61,8 +61,8 @@ export default function PotwVoteButton({ nomineeId, playerName = "Player" }: Pot
 
       // Try to insert vote (will fail on UNIQUE constraint if already voted)
       const { error: voteError } = await supabase.from('potw_votes').insert({
-        potw_nominee_id: parseInt(nomineeId),
-        ip_hash: fingerprint,
+        nominee_id: parseInt(nomineeId),
+        voter_fingerprint: fingerprint,
         week_label: weekLabel,
       });
 
@@ -79,7 +79,7 @@ export default function PotwVoteButton({ nomineeId, playerName = "Player" }: Pot
 
       // Increment vote count on nominee
       const { error: updateError } = await supabase.rpc('increment_potw_votes', {
-        nominee_id: parseInt(nomineeId),
+        p_nominee_id: parseInt(nomineeId),
       });
 
       if (updateError) {

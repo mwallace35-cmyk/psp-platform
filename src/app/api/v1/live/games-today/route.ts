@@ -8,7 +8,9 @@ export async function GET(request: NextRequest) {
 
     const games = await getTodaysGames(sport || undefined);
 
-    return NextResponse.json(games);
+    return NextResponse.json(games, {
+      headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" },
+    });
   } catch (error) {
     console.error("Error fetching today's games:", error);
     return NextResponse.json(

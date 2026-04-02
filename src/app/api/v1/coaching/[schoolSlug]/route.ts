@@ -56,6 +56,8 @@ export async function GET(
       },
       staff: staff || [],
       total: staff?.length || 0,
+    }, {
+      headers: { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" },
     });
   } catch (error) {
     console.error("Error fetching coaching staff:", error);

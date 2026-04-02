@@ -104,7 +104,7 @@ async function getRecruitingData() {
     (supabase as any)
       .from("next_level_tracking")
       .select(
-        "high_school_id, current_level, sport_id, college, schools:high_school_id(name, slug)"
+        "high_school_id, current_level, sport_id, college, schools:high_school_id(name, slug, leagues(name))"
       )
       .in("current_level", ["college", "pro"])
       .limit(3000),
@@ -188,6 +188,7 @@ async function getRecruitingData() {
     {
       name: string;
       slug: string;
+      leagueName: string;
       total: number;
       college: number;
       pro: number;
@@ -203,9 +204,11 @@ async function getRecruitingData() {
     if (!school?.name) continue;
 
     if (!schoolMap.has(hsId)) {
+      const leagueObj = Array.isArray(school.leagues) ? school.leagues[0] : school.leagues;
       schoolMap.set(hsId, {
         name: school.name,
         slug: school.slug || "",
+        leagueName: leagueObj?.name || "",
         total: 0,
         college: 0,
         pro: 0,
@@ -223,7 +226,7 @@ async function getRecruitingData() {
 
   const pipelineRankings = Array.from(schoolMap.values())
     .sort((a, b) => b.total - a.total)
-    .slice(0, 10);
+    .slice(0, 20);
 
   /* --- Process destinations --- */
   const destMap = new Map<
@@ -422,7 +425,47 @@ async function RecruitingContent() {
 
         {/* Pipeline Rankings — Horizontal Scroll */}
         <section id="pipeline" className="mb-8 pb-8 scroll-mt-16 border-b border-gray-800">
-          <SectionHeader title="Top Recruiting Pipelines" />
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 className="psp-h2" style={{ color: "rgba(255,255,255,0.9)" }}>
+              Top Recruiting Pipelines
+            </h2>
+            <select
+              id="pipeline-league-filter"
+              className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium"
+              style={{ color: "var(--psp-navy)" }}
+              defaultValue=""
+            >
+              <option value="">All Leagues</option>
+              <option value="Philadelphia Catholic League">Catholic League</option>
+              <option value="Philadelphia Public League">Public League</option>
+              <option value="Inter-Academic League">Inter-Ac</option>
+              <option value="Independent">Independent</option>
+              <option value="__other__">Other</option>
+            </select>
+          </div>
+          <script dangerouslySetInnerHTML={{ __html: `
+            (function() {
+              var KNOWN = ['Philadelphia Catholic League','Philadelphia Public League','Inter-Academic League','Independent'];
+              var sel = document.getElementById('pipeline-league-filter');
+              if (!sel) return;
+              sel.addEventListener('change', function() {
+                var val = this.value;
+                var cards = document.querySelectorAll('[data-pipeline-league]');
+                cards.forEach(function(card) {
+                  var league = card.getAttribute('data-pipeline-league') || '';
+                  var show = false;
+                  if (!val) {
+                    show = true;
+                  } else if (val === '__other__') {
+                    show = !league || KNOWN.indexOf(league) === -1;
+                  } else {
+                    show = league === val;
+                  }
+                  card.style.display = show ? '' : 'none';
+                });
+              });
+            })();
+          ` }} />
           {data.pipelineRankings.length === 0 ? (
             <EmptyState message="No pipeline data available." />
           ) : (
@@ -432,6 +475,7 @@ async function RecruitingContent() {
                 return (
                   <div
                     key={school.slug || index}
+                    data-pipeline-league={school.leagueName || ""}
                     className="w-[170px] flex-shrink-0 rounded-xl overflow-hidden transition-shadow hover:shadow-lg"
                     style={{
                       backgroundColor: isTop ? "rgba(240,165,0,0.08)" : "rgba(255,255,255,0.03)",

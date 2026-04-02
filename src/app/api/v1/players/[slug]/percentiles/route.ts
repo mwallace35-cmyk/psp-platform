@@ -90,6 +90,8 @@ export async function GET(_req: Request, { params }: RouteParams) {
         recTDs: percentile(myTotal.rec_td, allPlayers.map(p => p.rec_td)),
       },
       careerTotals: myTotal,
+    }, {
+      headers: { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" },
     });
   }
 
@@ -131,6 +133,8 @@ export async function GET(_req: Request, { params }: RouteParams) {
         bestPpg: percentile(myTotal.bestPpg, allPlayers.map(p => p.bestPpg)),
       },
       careerTotals: myTotal,
+    }, {
+      headers: { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" },
     });
   }
 

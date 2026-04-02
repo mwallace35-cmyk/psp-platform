@@ -46,9 +46,9 @@ export default async function HomePage() {
     // POTW nominees — current week
     supabase
       .from('potw_nominees')
-      .select('id, player_name, school_name, sport_id, stat_line, votes, is_winner')
+      .select('id, player_name, school_name, sport_id, stat_line, vote_count, is_winner')
       .eq('is_winner', false)
-      .order('votes', { ascending: false })
+      .order('vote_count', { ascending: false })
       .limit(6),
 
     // Active Pick'em games (game_date >= today)
@@ -68,7 +68,7 @@ export default async function HomePage() {
     school_name: (n.school_name as string) || '',
     sport_id: (n.sport_id as string) || '',
     stat_line: (n.stat_line as string) || null,
-    votes: (n.votes as number) || 0,
+    votes: (n.vote_count as number) || 0,
     is_winner: (n.is_winner as boolean) || false,
   }));
   const activePickemCount = pickemCountRes.count ?? 0;

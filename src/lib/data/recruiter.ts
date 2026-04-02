@@ -158,7 +158,7 @@ export async function getRecruiterProfile(
 }
 
 /**
- * Get most viewed profiles this week
+ * Get most notable players — ranked by award count as a proxy for visibility
  */
 export async function getTopViewedPlayers(limit = 10) {
   return withErrorHandling(
@@ -167,15 +167,32 @@ export async function getTopViewedPlayers(limit = 10) {
         async () => {
           const supabase = await createClient();
 
-          // This would typically come from a view_log or analytics table
-          // For now, return empty - should be implemented with view tracking
+          // Use award count as a popularity proxy (no view tracking yet)
+          const { data: awardRows } = await supabase
+            .from("awards")
+            .select("player_id")
+            .not("player_id", "is", null)
+            .gte("season_id", 80) // roughly 2020+
+            .limit(5000);
+
+          const counts: Record<number, number> = {};
+          for (const r of (awardRows ?? []) as { player_id: number }[]) {
+            counts[r.player_id] = (counts[r.player_id] || 0) + 1;
+          }
+          const topIds = Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, limit)
+            .map(([id]) => parseInt(id));
+
+          if (topIds.length === 0) return [];
+
           const { data: players } = await supabase
             .from("players")
             .select(
               "id, name, slug, height, weight, positions, graduation_year, schools:schools!players_primary_school_id_fkey(name, slug)"
             )
-            .is("deleted_at", null)
-            .limit(limit);
+            .in("id", topIds)
+            .is("deleted_at", null);
 
           return ((players ?? []) as any[]).map((p) => ({
             id: p.id,
@@ -199,7 +216,7 @@ export async function getTopViewedPlayers(limit = 10) {
 }
 
 /**
- * Get recent commitments
+ * Get recent college commitments from next_level_tracking
  */
 export async function getRecentCommits(limit = 10) {
   return withErrorHandling(
@@ -208,9 +225,23 @@ export async function getRecentCommits(limit = 10) {
         async () => {
           const supabase = await createClient();
 
-          // This would typically come from a recruiting_updates table
-          // For now, return sample data - should be implemented with commitment tracking
-          return [];
+          const { data } = await supabase
+            .from("next_level_tracking")
+            .select("id, person_name, college, sport_id, created_at, schools:high_school_id(name, slug)")
+            .eq("current_level", "college")
+            .not("college", "is", null)
+            .order("created_at", { ascending: false })
+            .limit(limit);
+
+          return ((data ?? []) as any[]).map((r) => ({
+            id: r.id,
+            player_name: r.person_name,
+            college: r.college,
+            sport_id: r.sport_id,
+            school_name: Array.isArray(r.schools) ? r.schools[0]?.name : r.schools?.name,
+            school_slug: Array.isArray(r.schools) ? r.schools[0]?.slug : r.schools?.slug,
+            committed_at: r.created_at,
+          }));
         },
         { maxRetries: 2, baseDelay: 500 }
       );

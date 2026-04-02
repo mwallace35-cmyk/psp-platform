@@ -184,7 +184,7 @@ export default async function PotwPage() {
                       </div>
                       <div className="flex justify-between items-center text-xs text-gray-400 mt-2">
                         <span>Week {winner.week}, {winner.year}</span>
-                        <span>{winner.vote_count} votes</span>
+                        <span>{winner.votes} votes</span>
                       </div>
                     </div>
                   );

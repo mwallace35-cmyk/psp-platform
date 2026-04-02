@@ -143,6 +143,26 @@ function classSort(c: string): number {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Derive league name for a championship (for filter matching)        */
+/* ------------------------------------------------------------------ */
+function getChampLeague(c: Championship): string {
+  // Use direct leagues join if available
+  if (c.leagues?.name) return c.leagues.name;
+  const ct = (c.championship_type ?? "").trim().toLowerCase();
+  const lv = (c.level ?? "").trim().toLowerCase();
+  if (ct === "pcl" || ct === "pcl red" || ct === "pcl blue" || ct === "catholic-league" || lv === "catholic-league") {
+    return "Philadelphia Catholic League";
+  }
+  if (ct === "public league" || ct === "public-league" || lv === "public-league") {
+    return "Philadelphia Public League";
+  }
+  if (ct === "inter-ac" || lv === "inter-ac") {
+    return "Inter-Academic League";
+  }
+  return "";
+}
+
+/* ------------------------------------------------------------------ */
 /*  Group labels for sections within a year                            */
 /* ------------------------------------------------------------------ */
 function tierLabel(tier: number): string {
@@ -296,6 +316,56 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
               </MethodologyNote>
             </div>
 
+            {/* League filter */}
+            <div className="flex items-center gap-3 mb-2">
+              <label htmlFor="champ-league-filter" className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.7)" }}>
+                Filter by league:
+              </label>
+              <select
+                id="champ-league-filter"
+                className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium"
+                style={{ color: "var(--psp-navy)" }}
+                defaultValue=""
+              >
+                <option value="">All Leagues</option>
+                <option value="Philadelphia Catholic League">Catholic League</option>
+                <option value="Philadelphia Public League">Public League</option>
+                <option value="Inter-Academic League">Inter-Ac</option>
+                <option value="Independent">Independent</option>
+                <option value="__other__">Other</option>
+              </select>
+            </div>
+            <script dangerouslySetInnerHTML={{ __html: `
+              (function() {
+                var KNOWN = ['Philadelphia Catholic League','Philadelphia Public League','Inter-Academic League','Independent'];
+                var sel = document.getElementById('champ-league-filter');
+                if (!sel) return;
+                sel.addEventListener('change', function() {
+                  var val = this.value;
+                  // Filter individual championship entries
+                  var entries = document.querySelectorAll('[data-champ-league]');
+                  entries.forEach(function(el) {
+                    var league = el.getAttribute('data-champ-league') || '';
+                    var show = false;
+                    if (!val) {
+                      show = true;
+                    } else if (val === '__other__') {
+                      show = !league || KNOWN.indexOf(league) === -1;
+                    } else {
+                      show = league === val;
+                    }
+                    el.style.display = show ? '' : 'none';
+                  });
+                  // Hide year cards with no visible entries
+                  var yearCards = document.querySelectorAll('[data-champ-year-card]');
+                  yearCards.forEach(function(card) {
+                    var visible = card.querySelectorAll('[data-champ-league]:not([style*="display: none"])');
+                    card.style.display = visible.length > 0 ? '' : 'none';
+                  });
+                });
+              })();
+            ` }} />
+
             {displayYears.map((yearData) => {
               // Group championships within the year by tier
               const champsByTier: Record<number, Championship[]> = {};
@@ -307,7 +377,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
               const tiers = Object.keys(champsByTier).map(Number).sort();
 
               return (
-                <div key={yearData.label} className="rounded-xl overflow-hidden border"
+                <div key={yearData.label} data-champ-year-card="" className="rounded-xl overflow-hidden border"
                   style={{ borderColor: "rgba(240,165,0,0.2)" }}>
                   {/* Year header */}
                   <div className="px-5 py-3 flex items-center justify-between"
@@ -341,7 +411,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
                           const champGame = c.season_id ? champGamesMap[`${c.season_id}|${c.school_id}|${c.opponent_id}`] : null;
 
                           return (
-                            <div key={c.id} className="px-5 py-3"
+                            <div key={c.id} data-champ-league={getChampLeague(c)} className="px-5 py-3"
                               style={{
                                 borderBottom: idx < champsByTier[tier].length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                               }}>
