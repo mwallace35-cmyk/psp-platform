@@ -246,7 +246,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                   </span>
                 )}
                 {school.piaa_class && (
-                  <Badge variant="outline" className="text-xs bg-amber-500/20 text-amber-200 border-amber-400/30">
+                  <Badge variant="info" className="text-xs bg-amber-500/20 text-amber-200">
                     Class {school.piaa_class}
                   </Badge>
                 )}
