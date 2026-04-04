@@ -155,7 +155,7 @@ export interface TeamPageClientProps {
   tedCoverage?: { hasNotes: boolean; seasonRange?: string } | null;
 }
 
-export type TabType = "overview" | "stats" | "schedule" | "roster" | "news";
+export type TabType = "overview" | "stats" | "schedule" | "roster" | "media" | "news";
 
 // ─── Era Definitions ────────────────────────────────────────────────
 

@@ -10,6 +10,7 @@ import TeamStats from "@/components/team/TeamStats";
 
 // Sub-components
 import TeamOverviewTab from "./TeamOverviewTab";
+import MediaGallery from "@/components/media/MediaGallery";
 import TeamSeasonHistory from "./TeamSeasonHistory";
 import TeamSidebar from "./TeamSidebar";
 
@@ -26,7 +27,7 @@ import {
 } from "./team-utils";
 
 /** Module-level constants */
-const TAB_OPTIONS: TabType[] = ["overview", "stats", "schedule", "roster", "news"];
+const TAB_OPTIONS: TabType[] = ["overview", "stats", "schedule", "roster", "media", "news"];
 const CURRENT_SEASON = "2025-26";
 
 export default function TeamPageClient({
@@ -195,6 +196,11 @@ export default function TeamPageClient({
                     <p className="text-sm text-gray-400">Roster data not available for this season.</p>
                   </div>
                 )
+              )}
+
+              {/* Media Tab */}
+              {activeTab === "media" && (
+                <MediaGallery schoolId={school.id} sport={sport} showUpload />
               )}
 
               {/* News Tab */}

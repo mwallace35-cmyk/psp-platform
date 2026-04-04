@@ -16,6 +16,7 @@ import GameLogAccordion from "@/components/game-log/GameLogAccordion";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
 import PlayerHighlightsSection from "@/components/highlights/PlayerHighlightsSection";
+import MediaGallery from "@/components/media/MediaGallery";
 import PlayerStatTable from "@/components/players/PlayerStatTable";
 import PlayerProfileTabs from "@/components/players/PlayerProfileTabs";
 import InTheNews from "@/components/players/InTheNews";
@@ -629,6 +630,9 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               playerName={player.name}
               hudlProfileUrl={player.hudl_profile_url}
             />
+
+            {/* Player Media Gallery */}
+            <MediaGallery playerId={player.id} sport={sport} showUpload />
 
             {/* Career context cards */}
             {sport === "football" && footballTotals && footballTotals.rushYards > 0 && (

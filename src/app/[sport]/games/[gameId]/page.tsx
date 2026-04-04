@@ -12,6 +12,7 @@ import {
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import GameFilmSection from "@/components/highlights/GameFilmSection";
+import MediaGallery from "@/components/media/MediaGallery";
 import HeadToHeadBadge from "@/components/game/HeadToHeadBadge";
 import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
 import type { Metadata } from "next";
@@ -1117,6 +1118,9 @@ export default async function GameDetailPage({
           )}
         </div>
       )}
+
+      {/* Game Media Gallery */}
+      <MediaGallery gameId={gameId} sport={sport} showUpload />
 
       {/* Game Film Section */}
       <GameFilmSection gameId={gameId} sportSlug={sport} />

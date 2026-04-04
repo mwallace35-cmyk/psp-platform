@@ -15,6 +15,7 @@ const navItems = [
     { href: "/admin/potw", label: "Player of Week", icon: "⭐" },
     { href: "/admin/coaching", label: "Coaching Staff", icon: "👔" },
     { href: "/admin/highlights", label: "Highlights", icon: "🎥" },
+    { href: "/admin/media", label: "Media", icon: "📸" },
   ]},
   { section: "Data & Tools", items: [
     { href: "/admin/import", label: "Import", icon: "📥" },

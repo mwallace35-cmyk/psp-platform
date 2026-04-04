@@ -262,9 +262,10 @@ export async function middleware(request: NextRequest) {
   // Add security headers
   const response = NextResponse.next();
 
-  // Request body size check (1MB limit)
+  // Request body size check (1MB limit, 105MB for media uploads)
   const contentLength = request.headers.get("content-length");
-  if (contentLength && parseInt(contentLength) > 1_000_000) {
+  const maxSize = pathname.startsWith("/api/media/upload") ? 105_000_000 : 1_000_000;
+  if (contentLength && parseInt(contentLength) > maxSize) {
     return new NextResponse("Request too large", { status: 413 });
   }
 
