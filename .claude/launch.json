@@ -4,7 +4,7 @@
     {
       "name": "next-dev",
       "runtimeExecutable": "/opt/homebrew/Cellar/node/25.8.1_1/bin/node",
-      "runtimeArgs": ["/opt/homebrew/Cellar/node/25.8.1_1/lib/node_modules/npm/bin/npm-cli.js", "run", "dev"],
+      "runtimeArgs": ["node_modules/.bin/next", "dev"],
       "cwd": "/Users/admin/tedsilary.com/phillysportspack/psp-platform/next-app",
       "port": 3000,
       "autoPort": true

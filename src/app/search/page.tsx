@@ -1,375 +1,383 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { searchAll, SearchResult } from "@/lib/data";
 import { createStaticClient } from "@/lib/supabase/static";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import type { Metadata } from "next";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
+import SearchHero from "@/components/search/SearchHero";
+import SearchResultCard from "@/components/search/SearchResultCard";
+import EntityTypeTabs from "@/components/search/EntityTypeTabs";
 import SearchFilters from "@/components/search/SearchFilters";
+import EmptyState from "@/components/search/EmptyState";
 
 export const metadata: Metadata = {
   title: "Search — PhillySportsPack",
-  description: "Search players, schools, coaches, and seasons in the Philadelphia high school sports database.",
+  description:
+    "Search players, schools, coaches, and seasons in the Philadelphia high school sports database.",
   alternates: { canonical: "https://phillysportspack.com/search" },
 };
 
-export const revalidate = 3600; // ISR: revalidate every hour
-type GroupedResults = Partial<Record<SearchResult['entity_type'] | 'other', SearchResult[]>>;
+export const revalidate = 3600;
+
+/* ── Sport config for discovery cards ── */
+const SPORTS_DISCOVERY = [
+  { slug: "football", name: "Football", emoji: "\u{1F3C8}", color: "#16a34a" },
+  { slug: "basketball", name: "Basketball", emoji: "\u{1F3C0}", color: "#3b82f6" },
+  { slug: "baseball", name: "Baseball", emoji: "\u26BE", color: "#dc2626" },
+  { slug: "track-field", name: "Track", emoji: "\u{1F3C3}", color: "#7c3aed" },
+  { slug: "lacrosse", name: "Lacrosse", emoji: "\u{1F94D}", color: "#0891b2" },
+  { slug: "wrestling", name: "Wrestling", emoji: "\u{1F93C}", color: "#ca8a04" },
+  { slug: "soccer", name: "Soccer", emoji: "\u26BD", color: "#059669" },
+];
+
+const LEAGUE_CARDS = [
+  {
+    name: "Catholic League",
+    slug: "catholic",
+    color: "var(--psp-gold)",
+    description:
+      "The PCL is the premier athletic conference in the Philadelphia area, fielding powerhouse programs across all sports.",
+  },
+  {
+    name: "Public League",
+    slug: "public",
+    color: "#2563eb",
+    description:
+      "Philadelphia's public school league features deep talent pools and fierce rivalries across the city.",
+  },
+  {
+    name: "Inter-Ac",
+    slug: "inter-ac",
+    color: "#7c3aed",
+    description:
+      "The Inter-Ac features prestigious independent schools with strong athletic traditions.",
+  },
+];
+
+const sportSlugMap: Record<string, string> = {
+  Football: "football",
+  Basketball: "basketball",
+  Baseball: "baseball",
+  "Track & Field": "track-field",
+  Lacrosse: "lacrosse",
+  Wrestling: "wrestling",
+  Soccer: "soccer",
+};
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sport?: string }>;
+  searchParams: Promise<{ q?: string; type?: string; sport?: string; league?: string; era?: string; position?: string }>;
 }) {
-  const { q = "", sport } = await searchParams;
-  const searchResponse = q.length >= 2 ? await searchAll(q) : { data: [], total: 0, page: 1, pageSize: 30, hasMore: false };
-  const results = searchResponse.data;
+  const { q = "", type: activeType } = await searchParams;
+  const supabase = createStaticClient();
 
-  // Group results by entity type with proper typing
-  const grouped: GroupedResults = {};
-  for (const r of results) {
-    const type: SearchResult['entity_type'] | 'other' = r.entity_type || "other";
-    if (!grouped[type]) {
-      grouped[type] = [];
-    }
-    grouped[type]?.push(r);
-  }
+  /* ── Search results (when query present) ── */
+  const searchResponse =
+    q.length >= 2
+      ? await searchAll(q)
+      : { data: [], total: 0, page: 1, pageSize: 30, hasMore: false };
+  const allResults = searchResponse.data;
 
-  // Fetch discovery data only when no search query
+  /* Compute tab counts */
+  const counts = {
+    all: allResults.length,
+    player: allResults.filter((r) => r.entity_type === "player").length,
+    school: allResults.filter((r) => r.entity_type === "school").length,
+    coach: allResults.filter((r) => r.entity_type === "coach").length,
+  };
+
+  /* Filter by active type tab */
+  const filteredResults =
+    activeType && activeType !== "all"
+      ? allResults.filter((r) => r.entity_type === activeType)
+      : allResults;
+
+  /* ── Discovery data (no query) ── */
+  let stats = { players: 55232, schools: 738, sports: 7 };
+  let trendingSearches: { display_name: string; entity_type: string; url_path: string }[] = [];
   let leagueSchools: any[] = [];
   let risingPrograms: any[] = [];
+  let leagueCounts: Record<string, number> = {};
 
   if (!q) {
-    const supabase = createStaticClient();
+    const [playerCountRes, schoolCountRes, trendingRes, leagueSchoolsRes, risingRes] =
+      await Promise.all([
+        supabase
+          .from("players")
+          .select("id", { count: "exact", head: true })
+          .is("deleted_at", null),
+        supabase
+          .from("schools")
+          .select("id", { count: "exact", head: true })
+          .is("deleted_at", null),
+        supabase
+          .from("search_index")
+          .select("display_name, entity_type, url_path")
+          .not("url_path", "is", null)
+          .limit(8),
+        supabase
+          .from("schools")
+          .select("id, slug, name, league_id, leagues(id, name)")
+          .is("deleted_at", null)
+          .order("name")
+          .limit(200),
+        supabase
+          .from("championships")
+          .select("school_id, schools(id, name, slug), sports(emoji, name)")
+          .is("schools.deleted_at", null)
+          .order("created_at", { ascending: false })
+          .limit(50),
+      ]);
 
-    // Fetch schools grouped by league
-    const { data: allLeagueSchools } = await supabase
-      .from("schools")
-      .select("id, slug, name, league_id, leagues(id, name)")
-      .is("deleted_at", null)
-      .order("name")
-      .limit(200);
+    stats = {
+      players: playerCountRes.count ?? 55232,
+      schools: schoolCountRes.count ?? 738,
+      sports: 7,
+    };
 
-    leagueSchools = allLeagueSchools ?? [];
+    trendingSearches = (trendingRes.data ?? []).filter(
+      (t) => t.display_name && t.url_path
+    );
 
-    // Fetch schools with recent championships for "Rising Programs"
-    const { data: recentChamps } = await supabase
-      .from("championships")
-      .select("school_id, schools(id, name, slug), sports(emoji, name)")
-      .is("schools.deleted_at", null)
-      .order("created_at", { ascending: false })
-      .limit(50);
+    leagueSchools = leagueSchoolsRes.data ?? [];
 
-    // Deduplicate by school_id and get top 3
+    // Compute league counts
+    for (const s of leagueSchools) {
+      const name = (s as any).leagues?.name || "Other";
+      leagueCounts[name] = (leagueCounts[name] || 0) + 1;
+    }
+
+    // Rising programs (deduplicated)
     const seenSchools = new Set<number>();
-    risingPrograms = (recentChamps ?? [])
-      .filter(c => {
+    risingPrograms = (risingRes.data ?? [])
+      .filter((c) => {
         if (!c.school_id || seenSchools.has(c.school_id)) return false;
         seenSchools.add(c.school_id);
         return true;
       })
-      .slice(0, 3)
-      .map(c => {
+      .slice(0, 6)
+      .map((c) => {
         const school = Array.isArray(c.schools) ? c.schools[0] : c.schools;
         const sport = Array.isArray(c.sports) ? c.sports[0] : c.sports;
         return {
           id: c.school_id,
           name: school?.name || "Unknown",
           slug: school?.slug || "",
-          sport: sport?.emoji || "📋",
+          sport: sport?.emoji || "",
           sportName: sport?.name || "Unknown",
         };
       });
   }
 
-  const typeLabels: Record<string, { label: string; icon: string }> = {
-    school: { label: "Schools", icon: "🏫" },
-    player: { label: "Players", icon: "👤" },
-    coach: { label: "Coaches", icon: "🧑‍🏫" },
-    other: { label: "Other", icon: "📋" },
-  };
-
-  // Map sport names to URL slugs
-  const sportSlugMap: Record<string, string> = {
-    'Football': 'football',
-    'Basketball': 'basketball',
-    'Baseball': 'baseball',
-    'Track & Field': 'track-field',
-    'Lacrosse': 'lacrosse',
-    'Wrestling': 'wrestling',
-    'Soccer': 'soccer',
-  };
-
   return (
-    <main id="main-content">
-      <BreadcrumbJsonLd items={[
-        { name: "Home", url: "https://phillysportspack.com" },
-        { name: "Search", url: "https://phillysportspack.com/search" },
-      ]} />
+    <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://phillysportspack.com" },
+          { name: "Search", url: "https://phillysportspack.com/search" },
+        ]}
+      />
 
-      <section className="py-10" style={{ background: "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 100%)" }}>
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="psp-h1 text-white mb-4">
-            Search
-          </h1>
-          <form action="/search" method="GET">
-            <div className="flex gap-2 max-w-2xl">
-              <input
-                type="text"
-                name="q"
-                defaultValue={q}
-                placeholder="Search players, schools, coaches..."
-                aria-label="Search players, schools, and coaches"
-                className="flex-1 px-4 py-3 rounded-lg text-sm bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:bg-white/15 focus:border-[var(--psp-gold)] focus:outline-none"
-              />
-              <button type="submit" className="btn-primary px-6 py-3">
-                Search
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
+      {/* ── Hero ── */}
+      <SearchHero
+        query={q}
+        stats={stats}
+        trendingSearches={
+          trendingSearches.length > 0
+            ? trendingSearches
+            : [
+                { display_name: "St. Joseph's Prep", entity_type: "school", url_path: "/football/schools/saint-josephs-prep" },
+                { display_name: "Roman Catholic", entity_type: "school", url_path: "/basketball/schools/roman-catholic" },
+                { display_name: "Imhotep Charter", entity_type: "school", url_path: "/football/schools/imhotep-charter" },
+                { display_name: "Neumann-Goretti", entity_type: "school", url_path: "/basketball/schools/neumann-goretti" },
+                { display_name: "La Salle", entity_type: "school", url_path: "/football/schools/la-salle-college-hs" },
+                { display_name: "Archbishop Wood", entity_type: "school", url_path: "/football/schools/archbishop-wood" },
+              ]
+        }
+      />
 
-      {/* School Discovery Section */}
+      {/* ══════════════════════════════════════════════
+          DISCOVERY SECTION (no query)
+         ══════════════════════════════════════════════ */}
       {!q && (
-        <section style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }}>
-          <div className="sec-head">
-            <h2>Discover Schools</h2>
-          </div>
-
-          {/* Rising Programs Spotlight */}
-          <div style={{
-            background: "linear-gradient(135deg, var(--psp-navy), #0f1a2e)",
-            borderRadius: 8,
-            padding: "20px 24px",
-            marginBottom: 24,
-          }}>
-            <h3 style={{ fontSize: 13, fontWeight: 700, color: "var(--psp-gold)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
-              🔥 Rising Programs
-            </h3>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
-              {risingPrograms.length > 0 ? (
-                risingPrograms.map((school, i) => {
-                  const sportSlug = sportSlugMap[school.sportName] || 'football';
-                  return (
-                    <Link key={school.id} href={`/${sportSlug}/schools/${school.slug}`} style={{ textDecoration: "none" }}>
-                      <div style={{
-                        background: "rgba(255,255,255,.08)",
-                        borderRadius: 6,
-                        padding: "14px 16px",
-                        borderLeft: `3px solid var(--psp-gold)`,
-                        transition: ".15s",
-                      }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-                          <span>{school.sport}</span>
-                          <span style={{ fontWeight: 700, fontSize: 13, color: "#fff" }}>{school.name}</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: "rgba(255,255,255,.6)" }}>Recent champion</div>
-                      </div>
-                    </Link>
-                  );
-                })
-              ) : (
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", gridColumn: "1 / -1", padding: "10px 0" }}>
-                  No recent champions yet
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* League Sections */}
-          {Object.entries(
-            leagueSchools.reduce((acc: Record<string, any[]>, school: any) => {
-              const leagueName = school.leagues?.name || "Other";
-              if (!acc[leagueName]) acc[leagueName] = [];
-              acc[leagueName].push(school);
-              return acc;
-            }, {})
-          ).map(([leagueName, schools], idx) => {
-            const leagueColors = {
-              "Catholic League": "var(--psp-gold)",
-              "Public League": "#2563eb",
-              "Inter-Ac": "#7c3aed",
-              "Other": "#666",
-            };
-            const color = (leagueColors as Record<string, string>)[leagueName] || "#666";
-            const descriptions = {
-              "Catholic League": "The PCL is the premier athletic conference in the Philadelphia area, fielding powerhouse programs across all sports.",
-              "Public League": "Philadelphia's public school league features deep talent pools and fierce rivalries across the city.",
-              "Inter-Ac": "The Inter-Ac features prestigious independent schools with strong athletic traditions.",
-            };
-            const description = (descriptions as Record<string, string>)[leagueName] || "Schools in this league";
-
-            return (
-              <div key={leagueName} style={{ marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <div style={{ width: 4, height: 20, background: color, borderRadius: 2 }} />
-                  <h3 className="psp-h4" style={{ color: "var(--psp-navy)" }}>
-                    {leagueName}
-                  </h3>
-                </div>
-                <p style={{ fontSize: 12, color: "var(--psp-gray-500)", marginBottom: 12, paddingLeft: 12 }}>
-                  {description}
-                </p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, paddingLeft: 12 }}>
-                  {schools.slice(0, 20).map((school: any) => (
-                    <Link
-                      key={school.id}
-                      href={`/football/schools/${school.slug}`}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        padding: "8px 14px",
-                        background: "var(--psp-white)",
-                        border: "1px solid var(--g100)",
-                        borderRadius: 6,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        color: "var(--psp-navy)",
-                        textDecoration: "none",
-                        transition: ".15s",
-                      }}
-                    >
-                      🏫 {school.name}
-                    </Link>
-                  ))}
-                  {schools.length > 20 && (
-                    <div style={{ fontSize: 12, color: "var(--psp-gray-400)", paddingTop: 8 }}>
-                      +{schools.length - 20} more
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-
-          {/* Sport Switcher */}
-          <div style={{
-            display: "flex",
-            gap: 8,
-            justifyContent: "center",
-            padding: "16px 0",
-            borderTop: "1px solid var(--g100)",
-            marginTop: 8,
-          }}>
-            {[
-              { label: "Football", href: "/football", emoji: "🏈", color: "#16a34a" },
-              { label: "Basketball", href: "/basketball", emoji: "🏀", color: "#3b82f6" },
-              { label: "Baseball", href: "/baseball", emoji: "⚾", color: "#dc2626" },
-              { label: "Track", href: "/track-field", emoji: "🏃", color: "#7c3aed" },
-              { label: "Lacrosse", href: "/lacrosse", emoji: "🥍", color: "#0891b2" },
-              { label: "Wrestling", href: "/wrestling", emoji: "🤼", color: "#ca8a04" },
-              { label: "Soccer", href: "/soccer", emoji: "⚽", color: "#059669" },
-            ].map((sport) => (
+        <section className="max-w-7xl mx-auto px-4 py-10">
+          {/* ── Browse by Sport ── */}
+          <h2
+            className="text-sm font-bold uppercase tracking-wider mb-4"
+            style={{ color: "var(--psp-gray-500)" }}
+          >
+            Browse by Sport
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-10">
+            {SPORTS_DISCOVERY.map((sport) => (
               <Link
-                key={sport.href}
-                href={sport.href}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 4,
-                  padding: "10px 14px",
-                  borderRadius: 8,
-                  border: "1px solid var(--g100)",
-                  textDecoration: "none",
-                  transition: ".15s",
-                  minWidth: 70,
-                }}
+                key={sport.slug}
+                href={`/${sport.slug}`}
+                className="flex items-center gap-2.5 px-3.5 py-3 bg-white rounded-lg border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5 group"
+                style={{ borderLeftWidth: 3, borderLeftColor: sport.color }}
               >
-                <span style={{ fontSize: 22 }} aria-hidden="true">{sport.emoji}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--psp-navy)" }}>{sport.label}</span>
+                <span className="text-xl" aria-hidden>
+                  {sport.emoji}
+                </span>
+                <span
+                  className="text-sm font-semibold"
+                  style={{ color: "var(--psp-navy)" }}
+                >
+                  {sport.name}
+                </span>
               </Link>
             ))}
           </div>
+
+          {/* ── Browse by League ── */}
+          <h2
+            className="text-sm font-bold uppercase tracking-wider mb-4"
+            style={{ color: "var(--psp-gray-500)" }}
+          >
+            Browse by League
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            {LEAGUE_CARDS.map((league) => (
+              <Link
+                key={league.slug}
+                href={`/schools?league=${league.slug}`}
+                className="block bg-white rounded-xl border border-gray-100 p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg group"
+                style={{ borderTopWidth: 3, borderTopColor: league.color }}
+              >
+                <h3
+                  className="font-bold text-lg mb-1"
+                  style={{
+                    fontFamily: "var(--font-bebas), 'Bebas Neue', sans-serif",
+                    color: "var(--psp-navy)",
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  {league.name.toUpperCase()}
+                </h3>
+                <p
+                  className="text-xs leading-relaxed mb-3"
+                  style={{ color: "var(--psp-gray-500)" }}
+                >
+                  {league.description}
+                </p>
+                <span
+                  className="text-xs font-semibold inline-flex items-center gap-1"
+                  style={{ color: league.color }}
+                >
+                  {leagueCounts[league.name] || 0} schools
+                  <span className="group-hover:translate-x-0.5 transition-transform">
+                    &rarr;
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
+
+          {/* ── Rising Programs ── */}
+          {risingPrograms.length > 0 && (
+            <>
+              <div
+                className="rounded-xl p-6"
+                style={{ background: "var(--psp-navy)" }}
+              >
+                <h3
+                  className="text-[10px] font-bold uppercase tracking-[0.15em] mb-4"
+                  style={{ color: "var(--psp-gold)" }}
+                >
+                  Rising Programs
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {risingPrograms.map((school) => {
+                    const sportSlug =
+                      sportSlugMap[school.sportName] || "football";
+                    return (
+                      <Link
+                        key={school.id}
+                        href={`/${sportSlug}/schools/${school.slug}`}
+                        className="block rounded-lg p-4 transition-all hover:bg-white/10"
+                        style={{
+                          background: "rgba(255,255,255,0.06)",
+                          borderLeft: "3px solid var(--psp-gold)",
+                        }}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-base">{school.sport}</span>
+                          <span className="text-sm font-bold text-white">
+                            {school.name}
+                          </span>
+                        </div>
+                        <span
+                          className="text-[11px]"
+                          style={{ color: "rgba(255,255,255,0.5)" }}
+                        >
+                          Recent champion
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
         </section>
       )}
 
-      {q.length >= 2 && <SearchFilters />}
+      {/* ══════════════════════════════════════════════
+          SEARCH RESULTS SECTION (with query)
+         ══════════════════════════════════════════════ */}
+      {q.length >= 2 && (
+        <>
+          {/* Entity type tabs */}
+          <Suspense>
+            <EntityTypeTabs counts={counts} query={q} />
+          </Suspense>
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 py-8">
-        <LeaderboardAd id="psp-search-banner" />
-        {q.length >= 2 ? (
-          results.length > 0 ? (
-            <div className="space-y-8">
-              <div className="flex items-center justify-between">
-                <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
-                  {results.length} result{results.length !== 1 ? "s" : ""} for &quot;<strong>{q}</strong>&quot;
+          {/* Filters */}
+          <Suspense>
+            <SearchFilters />
+          </Suspense>
+
+          {/* Results */}
+          <div className="max-w-7xl mx-auto px-4 py-6">
+            <LeaderboardAd id="psp-search-banner" />
+
+            {filteredResults.length > 0 ? (
+              <>
+                {/* Results header */}
+                <p
+                  className="text-sm mb-4"
+                  style={{ color: "var(--psp-gray-500)" }}
+                >
+                  {filteredResults.length} result
+                  {filteredResults.length !== 1 ? "s" : ""} for &ldquo;
+                  <strong style={{ color: "var(--psp-navy)" }}>{q}</strong>
+                  &rdquo;
                 </p>
-                <div className="flex gap-1 text-xs">
-                  {Object.entries(grouped).map(([type, items]) => (
-                    <span
-                      key={type}
-                      className="px-2 py-1 rounded-full"
-                      style={{
-                        background: "rgba(240, 165, 0, 0.1)",
-                        color: "var(--psp-gold)",
-                      }}
-                    >
-                      {typeLabels[type]?.icon} {items.length}
-                    </span>
+
+                {/* Result cards */}
+                <div className="space-y-2">
+                  {filteredResults.map((result, idx) => (
+                    <SearchResultCard key={idx} result={result} />
                   ))}
                 </div>
-              </div>
-              {Object.entries(grouped).map(([type, items]) => (
-                <div key={type}>
-                  <h2 className="psp-h3 mb-3 flex items-center gap-2">
-                    <span>{typeLabels[type]?.icon || "📋"}</span>
-                    {typeLabels[type]?.label || type} ({items.length})
-                  </h2>
-                  <div className="space-y-2">
-                    {items?.map((item, idx: number) => (
-                      <Link
-                        key={idx}
-                        href={item.url_path || "#"}
-                        className="block bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 hover:shadow-md transition-all"
-                      >
-                        <div className="font-medium text-sm" style={{ color: "var(--psp-navy)" }}>
-                          {item.display_name}
-                        </div>
-                        {item.context && (
-                          <div className="text-xs mt-0.5" style={{ color: "var(--psp-gray-500)" }}>
-                            {item.context}
-                          </div>
-                        )}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
-              <div className="text-4xl mb-4">🔍</div>
-              <h3 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>
-                No results found for &quot;{q}&quot;
-              </h3>
-              <p className="text-sm">Try a different search term or browse by sport.</p>
-            </div>
-          )
-        ) : (
-          <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
-            <div className="text-4xl mb-4">🔍</div>
-            <h3 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>
-              Search the Database
-            </h3>
-            <p className="text-sm">Enter at least 2 characters to search players, schools, and coaches.</p>
-            <div className="flex flex-wrap gap-2 justify-center mt-6">
-              {["St. Joseph's Prep", "Roman Catholic", "Neumann-Goretti", "Imhotep Charter"].map((term) => (
-                <Link
-                  key={term}
-                  href={`/search?q=${encodeURIComponent(term)}`}
-                  className="px-4 py-2 rounded-full text-sm border border-[var(--psp-gray-200)] hover:border-[var(--psp-gray-300)] transition-colors"
-                  style={{ color: "var(--psp-navy)" }}
-                >
-                  {term}
-                </Link>
-              ))}
-            </div>
+              </>
+            ) : (
+              <EmptyState query={q} trendingSearches={trendingSearches} />
+            )}
+
+            <InContentAd id="psp-search-btm" />
           </div>
-        )}
-        <InContentAd id="psp-search-btm" />
-      </main>
+        </>
+      )}
+
+      {/* Short query / no query with results area */}
+      {q && q.length < 2 && (
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <EmptyState query={q} trendingSearches={trendingSearches} />
+        </div>
+      )}
 
       {/* JSON-LD for Search Page */}
       <script
@@ -378,9 +386,10 @@ export default async function SearchPage({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "SearchResultsPage",
-            name: "Search — PhillySportsPack",
+            name: "Search \u2014 PhillySportsPack",
             url: "https://phillysportspack.com/search",
-            description: "Search the Philadelphia high school sports database for players, schools, coaches, and seasons.",
+            description:
+              "Search the Philadelphia high school sports database for players, schools, coaches, and seasons.",
             isPartOf: {
               "@type": "WebSite",
               name: "PhillySportsPack",
@@ -389,15 +398,16 @@ export default async function SearchPage({
                 "@type": "SearchAction",
                 target: {
                   "@type": "EntryPoint",
-                  urlTemplate: "https://phillysportspack.com/search?q={search_term_string}",
+                  urlTemplate:
+                    "https://phillysportspack.com/search?q={search_term_string}",
                 },
                 query_input: "required name=search_term_string",
               },
             },
             mainEntity: {
               "@type": "ItemList",
-              numberOfItems: results.length,
-              itemListElement: results.slice(0, 10).map((result, idx) => ({
+              numberOfItems: allResults.length,
+              itemListElement: allResults.slice(0, 10).map((result, idx) => ({
                 "@type": "ListItem",
                 position: idx + 1,
                 name: result.display_name,
@@ -408,6 +418,6 @@ export default async function SearchPage({
           }),
         }}
       />
-    </main>
+    </>
   );
 }
