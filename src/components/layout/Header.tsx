@@ -45,6 +45,7 @@ const MORE_SPORTS = [
 
 // Desktop: "Tools" dropdown (was "More" — Schools/Rankings/Our Guys promoted to top-level)
 const TOOLS_ITEMS = [
+  { href: "/events", label: "Events" },
   { href: "/recruiting", label: "Recruiting" },
   { href: "/recruit-finder", label: "Recruit Finder" },
   { href: "/compare", label: "Compare Players" },

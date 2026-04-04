@@ -139,16 +139,6 @@ let config: NextConfig = {
         permanent: true,
       },
       {
-        source: "/events",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/events/:path*",
-        destination: "/",
-        permanent: true,
-      },
-      {
         source: "/about",
         destination: "/hof",
         permanent: true,

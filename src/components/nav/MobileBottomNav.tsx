@@ -19,6 +19,7 @@ const SPORTS = [
 
 const QUICK_LINKS = [
   { href: '/scores',    label: 'Scores',     emoji: '\u{1F38A}' },
+  { href: '/events',    label: 'Events',     emoji: '\u{1F4C5}' },
   { href: '/schools',   label: 'Schools',    emoji: '\u{1F3EB}' },
   { href: '/articles',  label: 'News',       emoji: '\u{1F4F0}' },
   { href: '/awards',    label: 'Awards',     emoji: '\u{1F3C6}' },
