@@ -89,7 +89,7 @@ export default function EventCard({ event }: { event: CommunityEvent }) {
       <div className="p-4 flex-1 flex flex-col gap-2">
         <EventTypePill type={event.event_type} />
         <h3
-          className="text-xl leading-tight line-clamp-2 transition group-hover:text-[var(--psp-gold-text)]"
+          className="text-2xl leading-tight line-clamp-2 transition group-hover:text-[var(--psp-gold-text)]"
           style={{
             fontFamily: "'Bebas Neue', sans-serif",
             color: "var(--psp-navy)",
@@ -115,7 +115,7 @@ export default function EventCard({ event }: { event: CommunityEvent }) {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-2.5 border-t border-gray-100 flex items-center justify-between">
+      <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between mt-auto">
         {event.is_free ? (
           <span className="text-[0.7rem] font-bold px-2 py-0.5 rounded bg-green-50 text-green-700 tracking-wide">
             FREE

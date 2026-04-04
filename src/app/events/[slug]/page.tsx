@@ -93,25 +93,25 @@ export default async function EventDetailPage({ params }: PageProps) {
     <main id="main-content" className="min-h-screen" style={{ background: "var(--psp-gray-50, #f8fafc)" }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <nav className="text-sm text-gray-400 mb-5">
-          <Link href="/" className="hover:underline" style={{ color: "var(--psp-gold-text)" }}>Home</Link>
-          {" / "}
-          <Link href="/events" className="hover:underline" style={{ color: "var(--psp-gold-text)" }}>Events</Link>
-          {" / "}
-          <span className="text-gray-500">{event.title}</span>
-        </nav>
+      {/* Navy header strip */}
+      <div className="px-4 pt-8 pb-10" style={{ background: "var(--psp-navy)" }}>
+        <div className="max-w-4xl mx-auto">
+          {/* Breadcrumb */}
+          <nav className="text-sm mb-4" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <Link href="/" className="hover:underline" style={{ color: "var(--psp-gold)" }}>Home</Link>
+            {" / "}
+            <Link href="/events" className="hover:underline" style={{ color: "var(--psp-gold)" }}>Events</Link>
+            {" / "}
+            <span style={{ color: "rgba(255,255,255,0.6)" }}>{event.title}</span>
+          </nav>
 
-        {/* Header */}
-        <div className="mb-8">
           <EventTypePill type={event.event_type} size="md" />
           <h1
             className="mt-3 mb-2"
             style={{
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: "clamp(2rem, 5vw, 3rem)",
-              color: "var(--psp-navy)",
+              color: "white",
               lineHeight: 1.05,
               letterSpacing: "0.01em",
             }}
@@ -119,11 +119,14 @@ export default async function EventDetailPage({ params }: PageProps) {
             {event.title}
           </h1>
           {event.organizer && (
-            <p className="text-gray-500">
-              Organized by <strong className="text-gray-700">{event.organizer}</strong>
+            <p style={{ color: "rgba(255,255,255,0.5)" }}>
+              Organized by <strong style={{ color: "rgba(255,255,255,0.8)" }}>{event.organizer}</strong>
             </p>
           )}
         </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 -mt-4 relative z-10 pb-8">
 
         {/* Info grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">

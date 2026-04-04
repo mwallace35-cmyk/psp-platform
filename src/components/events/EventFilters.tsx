@@ -104,7 +104,7 @@ function FilterRow({
 }) {
   return (
     <div className="flex flex-wrap gap-1.5 items-center mb-3">
-      <span className="text-[0.7rem] font-semibold uppercase tracking-wider text-gray-500 mr-1 min-w-12">
+      <span className="text-[0.7rem] font-bold uppercase tracking-[0.08em] text-gray-400 mr-2 min-w-12">
         {label}
       </span>
       {children}
@@ -127,7 +127,7 @@ function FilterPill({
       className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition border cursor-pointer ${
         active
           ? "bg-[var(--psp-navy)] text-white border-[var(--psp-navy)]"
-          : "bg-white text-gray-600 border-gray-200 hover:border-[var(--psp-gold)] hover:text-[var(--psp-gold-text)]"
+          : "bg-gray-50 text-gray-600 border-gray-200 hover:border-[var(--psp-gold)] hover:text-[var(--psp-gold-text)] hover:bg-white"
       }`}
     >
       {label}

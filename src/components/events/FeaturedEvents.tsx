@@ -20,7 +20,12 @@ export default function FeaturedEvents({
   if (!events.length) return null;
 
   return (
-    <section className="px-4 pb-6" style={{ background: "var(--psp-navy)" }}>
+    <section className="relative px-4 pb-8" style={{ background: "var(--psp-navy)" }}>
+      {/* Bottom fade into light bg */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, var(--psp-navy), var(--psp-gray-50, #f8fafc))" }}
+      />
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-3 mb-3">
           <span
