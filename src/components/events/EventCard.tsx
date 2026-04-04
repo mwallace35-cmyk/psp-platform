@@ -37,7 +37,7 @@ export default function EventCard({ event }: { event: CommunityEvent }) {
   return (
     <Link
       href={`/events/${event.slug}`}
-      className="group block bg-white border border-gray-200 rounded-lg overflow-hidden transition hover:border-[var(--psp-gold)] hover:shadow-lg hover:-translate-y-0.5"
+      className="group flex flex-col bg-white border border-gray-200 rounded-lg overflow-hidden transition hover:border-[var(--psp-gold)] hover:shadow-lg hover:-translate-y-0.5"
     >
       {/* Date strip */}
       <div className="flex items-stretch border-b border-gray-100">
