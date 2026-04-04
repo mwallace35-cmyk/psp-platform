@@ -288,7 +288,7 @@ export function rosterToDisplay(roster: DBRosterEntry[]) {
 }
 
 export function getPositionGroups(sportId: string): Record<string, string[]> {
-  if (sportId === "basketball") {
+  if (sportId === "basketball" || sportId === "girls-basketball") {
     return {
       Guards: ["PG", "SG", "G"],
       Forwards: ["SF", "PF", "F"],

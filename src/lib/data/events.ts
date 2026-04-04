@@ -9,6 +9,7 @@ import {
   LeaderboardEntry,
   Season,
 } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 export interface PaginatedResult<T> {
   data: T[];
@@ -1091,7 +1092,7 @@ export const getLeaderboardSeasons = cache(async (sport: string): Promise<Leader
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const table = sport === "basketball" ? "basketball_player_seasons" : "football_player_seasons";
+          const table = isBasketballSport(sport) ? "basketball_player_seasons" : "football_player_seasons";
 
           // 1. Get candidate seasons (2000+ covers all years with real archive data)
           const { data: candidateSeasons } = await supabase
@@ -1106,10 +1107,14 @@ export const getLeaderboardSeasons = cache(async (sport: string): Promise<Leader
           const MIN_ROWS = 10;
           const checks = await Promise.all(
             candidateSeasons.map(async (s: { id: number }) => {
-              const { count } = await supabase
+              let countQuery = supabase
                 .from(table)
                 .select("id", { count: "exact", head: true })
                 .eq("season_id", s.id);
+              if (isBasketballSport(sport)) {
+                countQuery = countQuery.eq("gender", getBasketballGender(sport));
+              }
+              const { count } = await countQuery;
               return { id: s.id, count: count ?? 0 };
             })
           );
@@ -1264,9 +1269,9 @@ export async function getSchoolChampionshipLeaderboard(sportFilter?: string, lim
             school_slug: v.slug,
             total_championships: v.count,
             fb_champs: sportFilter === "football" ? v.count : 0,
-            bb_champs: sportFilter === "basketball" ? v.count : 0,
+            bb_champs: isBasketballSport(sportFilter) ? v.count : 0,
             base_champs: sportFilter === "baseball" ? v.count : 0,
-            other_champs: !["football", "basketball", "baseball"].includes(sportFilter) ? v.count : 0,
+            other_champs: !["football", "basketball", "girls-basketball", "baseball"].includes(sportFilter) ? v.count : 0,
           }))
           .sort((a, b) => b.total_championships - a.total_championships)
           .slice(0, cappedLimit);
@@ -1294,7 +1299,7 @@ export async function getSchoolChampionshipLeaderboard(sportFilter?: string, lim
           };
           existing.total++;
           if (sport === "football") existing.fb++;
-          else if (sport === "basketball") existing.bb++;
+          else if (isBasketballSport(sport)) existing.bb++;
           else if (sport === "baseball") existing.base++;
           else existing.other++;
           counts.set(sid, existing);
@@ -1395,7 +1400,7 @@ export async function getSchoolStatProduction(sport: string, orderBy: string = "
           .sort((a, b) => ((b[sortKey] as number) || 0) - ((a[sortKey] as number) || 0))
           .slice(0, cappedLimit);
 
-      } else if (sport === "basketball") {
+      } else if (isBasketballSport(sport)) {
         // Filter out excluded seasons dynamically instead of hard-coding season_id 264
         // TODO: Add exclude_from_leaders boolean column to seasons table via migration
         const { data: bbExcludedSeasons } = await supabase
@@ -1408,6 +1413,7 @@ export async function getSchoolStatProduction(sport: string, orderBy: string = "
         let bbProdQuery = supabase
           .from("basketball_player_seasons")
           .select("school_id, points, rebounds, assists, steals, blocks, games_played, schools!inner(name, slug)")
+          .eq("gender", getBasketballGender(sport))
           .not("games_played", "is", null);
         if (bbExcludedIds.length > 0) {
           bbProdQuery = bbProdQuery.not("season_id", "in", `(${bbExcludedIds.join(",")})`);

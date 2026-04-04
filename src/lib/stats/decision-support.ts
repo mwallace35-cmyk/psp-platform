@@ -353,6 +353,15 @@ export function predictAllCityProbability(
         assists: 5,
       },
     },
+    "girls-basketball": {
+      keyStats: ["ppg", "points", "rebounds", "assists"],
+      thresholds: {
+        ppg: 18,
+        points: 450,
+        rebounds: 7,
+        assists: 5,
+      },
+    },
     baseball: {
       keyStats: ["batting_avg", "home_runs", "rbi"],
       thresholds: {

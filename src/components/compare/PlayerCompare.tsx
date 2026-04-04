@@ -70,7 +70,7 @@ const BASEBALL_STAT_ORDER: StatConfig[] = [
 
 function getStatOrder(sport: string) {
   if (sport === "football") return FOOTBALL_STAT_ORDER;
-  if (sport === "basketball") return BASKETBALL_STAT_ORDER;
+  if (sport === "basketball" || sport === "girls-basketball") return BASKETBALL_STAT_ORDER;
   if (sport === "baseball") return BASEBALL_STAT_ORDER;
   return [];
 }

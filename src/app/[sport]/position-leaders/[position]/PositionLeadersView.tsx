@@ -48,7 +48,7 @@ export default function PositionLeadersView({
       if (["WR", "TE"].includes(position)) return "Rec Yards";
       return "Games Played";
     }
-    if (sport === "basketball") {
+    if (sport === "basketball" || sport === "girls-basketball") {
       if (position === "PG") return "Assists";
       if (position === "C" || position === "PF") return "Rebounds";
       return "Points";

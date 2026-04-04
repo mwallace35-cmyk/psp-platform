@@ -959,7 +959,7 @@ export default async function GameDetailPage({
                   awayName={opponentFromNotes ?? (away ? getSchoolDisplayName(away) : "Away")}
                   sport={sport}
                 />
-              ) : sport === "basketball" ? (
+              ) : sport === "basketball" || sport === "girls-basketball" ? (
                 <BasketballBoxScore
                   stats={realBoxScore}
                   homeSchoolId={game.home_school_id}
@@ -1019,7 +1019,7 @@ export default async function GameDetailPage({
                       <thead>
                         <tr className="text-gray-300 border-b border-gray-700">
                           <th className="text-left py-1 pr-2">Player</th>
-                          {sport === "basketball" && (
+                          {(sport === "basketball" || sport === "girls-basketball") && (
                             <>
                               <th className="text-right py-1 px-1">GP</th>
                               <th className="text-right py-1 px-1">Pts</th>
@@ -1056,7 +1056,7 @@ export default async function GameDetailPage({
                                 <span className="text-gray-200">{p.player_name}</span>
                               )}
                             </td>
-                            {sport === "basketball" && (
+                            {(sport === "basketball" || sport === "girls-basketball") && (
                               <>
                                 <td className="text-right py-1.5 px-1 text-gray-300">{p.games_played ?? "-"}</td>
                                 <td className="text-right py-1.5 px-1 font-semibold text-[var(--psp-gold)]">{p.points ?? "-"}</td>

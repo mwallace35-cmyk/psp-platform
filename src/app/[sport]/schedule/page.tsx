@@ -234,7 +234,7 @@ export default async function SchedulePage({
       {/* Sport-specific view */}
       {sport === "football" ? (
         <FootballScheduleView {...viewProps} />
-      ) : sport === "basketball" ? (
+      ) : sport === "basketball" || sport === "girls-basketball" ? (
         <BasketballScheduleView {...viewProps} />
       ) : sport === "baseball" ? (
         <BaseballScheduleView {...viewProps} />

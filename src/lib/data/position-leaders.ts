@@ -4,6 +4,7 @@ import {
   withErrorHandling,
   withRetry,
 } from "./common";
+import { isBasketballSport } from "./utils";
 
 /**
  * Position leader with career stats
@@ -288,6 +289,7 @@ export function getPositionsForSport(sport: string): string[] {
   const positionMap: Record<string, string[]> = {
     football: ["QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB"],
     basketball: ["PG", "SG", "SF", "PF", "C"],
+    "girls-basketball": ["PG", "SG", "SF", "PF", "C"],
     baseball: ["P", "C", "IF", "OF"],
   };
   return positionMap[sport] || [];
@@ -309,6 +311,13 @@ export function getPositionDisplayName(sport: string, position: string): string 
       DB: "Defensive Backs",
     },
     basketball: {
+      PG: "Point Guards",
+      SG: "Shooting Guards",
+      SF: "Small Forwards",
+      PF: "Power Forwards",
+      C: "Centers",
+    },
+    "girls-basketball": {
       PG: "Point Guards",
       SG: "Shooting Guards",
       SF: "Small Forwards",

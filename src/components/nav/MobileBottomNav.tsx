@@ -8,7 +8,8 @@ import styles from '@/app/homepage.module.css';
 
 const SPORTS = [
   { label: 'Football',      slug: 'football',    emoji: '\u{1F3C8}', color: 'var(--fb)' },
-  { label: 'Basketball',    slug: 'basketball',  emoji: '\u{1F3C0}', color: 'var(--psp-blue)' },
+  { label: 'Boys Basketball', slug: 'basketball',  emoji: '\u{1F3C0}', color: 'var(--psp-blue)' },
+  { label: 'Girls Basketball', slug: 'girls-basketball', emoji: '\u{1F3C0}', color: 'var(--gb)' },
   { label: 'Baseball',      slug: 'baseball',    emoji: '\u26BE',     color: 'var(--base)' },
   { label: 'Soccer',        slug: 'soccer',      emoji: '\u26BD',     color: 'var(--soccer)' },
   { label: 'Lacrosse',      slug: 'lacrosse',    emoji: '\u{1F94D}', color: 'var(--lac)' },

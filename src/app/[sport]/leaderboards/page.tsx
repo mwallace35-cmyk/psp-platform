@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
-import { SPORT_META, getFootballLeaders, getBasketballLeaders, getLeaderboardSeasons } from "@/lib/data";
+import { SPORT_META, getFootballLeaders, getBasketballLeaders, getLeaderboardSeasons, isBasketballSport } from "@/lib/data";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import LeaderboardFilters from "@/components/leaderboards/LeaderboardFilters";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
@@ -22,6 +22,17 @@ const STAT_CATEGORIES: Record<string, { slug: string; label: string; icon: strin
     { slug: "returns", label: "Return Yards", icon: "⚡", statKey: "returns", valueKey: "kick_ret_yards", valueLabel: "Yds" },
   ],
   basketball: [
+    { slug: "scoring", label: "Scoring", icon: "🏀", statKey: "scoring", valueKey: "points", valueLabel: "Pts" },
+    { slug: "ppg", label: "Points Per Game", icon: "📊", statKey: "ppg", valueKey: "ppg", valueLabel: "PPG" },
+    { slug: "rebounds", label: "Rebounds", icon: "💪", statKey: "rebounds", valueKey: "rebounds", valueLabel: "Reb" },
+    { slug: "assists", label: "Assists", icon: "🤝", statKey: "assists", valueKey: "assists", valueLabel: "Ast" },
+    { slug: "steals", label: "Steals", icon: "👋", statKey: "steals", valueKey: "steals", valueLabel: "Stl" },
+    { slug: "blocks", label: "Blocks", icon: "✋", statKey: "blocks", valueKey: "blocks", valueLabel: "Blk" },
+    { slug: "shooting", label: "Field Goal %", icon: "🎯", statKey: "shooting", valueKey: "fg_pct", valueLabel: "FG%" },
+    { slug: "three-point", label: "3-Point %", icon: "🏹", statKey: "three-point", valueKey: "three_pct", valueLabel: "3PT%" },
+    { slug: "free-throws", label: "Free Throw %", icon: "🎪", statKey: "free-throws", valueKey: "ft_pct", valueLabel: "FT%" },
+  ],
+  "girls-basketball": [
     { slug: "scoring", label: "Scoring", icon: "🏀", statKey: "scoring", valueKey: "points", valueLabel: "Pts" },
     { slug: "ppg", label: "Points Per Game", icon: "📊", statKey: "ppg", valueKey: "ppg", valueLabel: "PPG" },
     { slug: "rebounds", label: "Rebounds", icon: "💪", statKey: "rebounds", valueKey: "rebounds", valueLabel: "Reb" },
@@ -78,7 +89,7 @@ export default async function LeaderboardsIndex({ params, searchParams }: { para
         let leaders: any[] = [];
         if (sport === "football") {
           leaders = await getFootballLeaders(cat.statKey, 5, seasonId);
-        } else if (sport === "basketball") {
+        } else if (isBasketballSport(sport)) {
           leaders = await getBasketballLeaders(cat.statKey, 5, seasonId);
         }
         leaderData[cat.slug] = leaders.slice(0, 5).map((r: any) => ({

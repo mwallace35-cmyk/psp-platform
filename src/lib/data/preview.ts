@@ -7,6 +7,7 @@ import {
   Game,
   TeamSeason,
 } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 // Helper types for Supabase query results
 interface PlayerData {
@@ -268,7 +269,7 @@ export const getReturningRoster = cache(
             // Sort by total_yards descending
             result.sort((a, b) => b.total_yards - a.total_yards);
             return result;
-          } else if (sportId === "basketball") {
+          } else if (isBasketballSport(sportId)) {
             const { data } = await supabase
               .from("basketball_player_seasons")
               .select(
@@ -276,7 +277,8 @@ export const getReturningRoster = cache(
                  players(id, name, slug, positions, graduation_year, height, weight)`
               )
               .eq("school_id", schoolId)
-              .eq("season_id", previousSeasonId);
+              .eq("season_id", previousSeasonId)
+              .eq("gender", getBasketballGender(sportId));
 
             if (!data) return [];
 

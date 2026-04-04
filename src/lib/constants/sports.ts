@@ -10,6 +10,7 @@
 export const SPORT_COLORS: Record<string, string> = {
   football: "var(--fb)",
   basketball: "var(--bb)",
+  "girls-basketball": "var(--gb)",
   baseball: "var(--base)",
   "track-field": "var(--track)",
   lacrosse: "var(--lac)",
@@ -24,6 +25,7 @@ export const SPORT_COLORS: Record<string, string> = {
 export const SPORT_COLORS_HEX: Record<string, string> = {
   football: "#16a34a",
   basketball: "#3b82f6",
+  "girls-basketball": "#ec4899",
   baseball: "#dc2626",
   "track-field": "#7c3aed",
   lacrosse: "#0891b2",
@@ -39,6 +41,7 @@ export const SPORT_COLORS_HEX: Record<string, string> = {
 export const SPORT_GRADIENTS: Record<string, string> = {
   football: "from-[#0a1628] to-[#16a34a]",
   basketball: "from-[#0a1628] to-[#3b82f6]",
+  "girls-basketball": "from-[#0a1628] to-[#ec4899]",
   baseball: "from-[#0a1628] to-[#dc2626]",
   "track-field": "from-[#0a1628] to-[#7c3aed]",
   lacrosse: "from-[#0a1628] to-[#0891b2]",

@@ -3,6 +3,7 @@ import { withErrorHandling } from "@/lib/errors";
 import { withRetry } from "@/lib/retry";
 import { cache } from "react";
 import type { Player, School } from "@/lib/data/common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -603,6 +604,7 @@ const BASE_STAT_DEFS: Record<string, StatDefinition> = {
 export const SPORT_STAT_DEFS: Record<string, Record<string, StatDefinition>> = {
   football: FB_STAT_DEFS,
   basketball: BB_STAT_DEFS,
+  "girls-basketball": BB_STAT_DEFS,
   baseball: BASE_STAT_DEFS,
 };
 
@@ -725,7 +727,7 @@ export async function getComputedCareerLeaders(
 
         let tableName = "";
         if (sportSlug === "football") tableName = "football_player_seasons";
-        else if (sportSlug === "basketball") tableName = "basketball_player_seasons";
+        else if (isBasketballSport(sportSlug)) tableName = "basketball_player_seasons";
         else if (sportSlug === "baseball") tableName = "baseball_player_seasons";
         else return [];
 
@@ -757,7 +759,7 @@ export async function getComputedSeasonLeaders(
 
         let tableName = "";
         if (sportSlug === "football") tableName = "football_player_seasons";
-        else if (sportSlug === "basketball") tableName = "basketball_player_seasons";
+        else if (isBasketballSport(sportSlug)) tableName = "basketball_player_seasons";
         else if (sportSlug === "baseball") tableName = "baseball_player_seasons";
         else return [];
 
@@ -832,15 +834,19 @@ export async function getSchoolRecordBook(
 
       let tableName = "";
       if (sportSlug === "football") tableName = "football_player_seasons";
-      else if (sportSlug === "basketball") tableName = "basketball_player_seasons";
+      else if (isBasketballSport(sportSlug)) tableName = "basketball_player_seasons";
       else if (sportSlug === "baseball") tableName = "baseball_player_seasons";
       else return {};
 
       // Fetch all seasons for this school — select * to avoid PostgREST template parsing issues
-      const { data: schoolSeasons, error } = await client
+      let schoolQuery = client
         .from(tableName)
         .select("*, players(name, slug), schools(name, slug), seasons(label, year_start)")
-        .eq("school_id", schoolId)
+        .eq("school_id", schoolId);
+      if (isBasketballSport(sportSlug)) {
+        schoolQuery = schoolQuery.eq("gender", getBasketballGender(sportSlug));
+      }
+      const { data: schoolSeasons, error } = await schoolQuery
         .limit(500) as { data: any[] | null; error: any };
 
       if (error || !schoolSeasons) {
@@ -1018,8 +1024,9 @@ export const COMPOUND_CATEGORIES: Record<CompoundCategory, CompoundCategoryDef> 
 };
 
 export function getCompoundCategoriesForSport(sport: string): CompoundCategory[] {
+  const matchSport = isBasketballSport(sport) ? "basketball" : sport;
   return (Object.entries(COMPOUND_CATEGORIES) as [CompoundCategory, CompoundCategoryDef][])
-    .filter(([, def]) => def.sport === sport)
+    .filter(([, def]) => def.sport === matchSport)
     .map(([key]) => key);
 }
 
@@ -1117,13 +1124,15 @@ export async function getCompoundLeaders(
           }
         }
 
-        if (sport === "basketball") {
-          const { data: rows, error } = await client
+        if (isBasketballSport(sport)) {
+          let bbQuery = client
             .from("basketball_player_seasons")
             .select(
               "player_id, games_played, points, ppg, rebounds, rpg, assists, steals, players(name, slug), schools(name, slug), season_id, seasons!inner(id, is_current)"
             )
             .eq("seasons.is_current", true)
+            .eq("gender", getBasketballGender(sport));
+          const { data: rows, error } = await bbQuery
             .limit(1000) as { data: any[] | null; error: any };
 
           if (error || !rows) return [];

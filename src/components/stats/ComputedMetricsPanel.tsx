@@ -181,7 +181,7 @@ export default function ComputedMetricsPanel({
     unit: string;
   }> = [];
 
-  if (sport === 'basketball') {
+  if (sport === 'basketball' || sport === 'girls-basketball') {
     const bb = stats as BasketballStats;
 
     // Points per game

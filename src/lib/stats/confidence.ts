@@ -66,6 +66,12 @@ const GAME_THRESHOLDS: Record<SportId, Record<ReliabilityLevel, number>> = {
     medium: 24,
     high: 25, // Full high school season
   },
+  "girls-basketball": {
+    insufficient: 8,
+    low: 15,
+    medium: 24,
+    high: 25, // Full high school season
+  },
   baseball: {
     insufficient: 10,
     low: 20,
@@ -109,6 +115,7 @@ const STAT_SPECIFIC_THRESHOLDS: Record<string, Record<SportId, number>> = {
   pass_int: {
     football: 8,
     basketball: 0,
+    "girls-basketball": 0,
     baseball: 0,
     "track-field": 0,
     lacrosse: 0,
@@ -119,6 +126,7 @@ const STAT_SPECIFIC_THRESHOLDS: Record<string, Record<SportId, number>> = {
   steals: {
     football: 0,
     basketball: 20,
+    "girls-basketball": 20,
     baseball: 0,
     "track-field": 0,
     lacrosse: 0,
@@ -128,6 +136,7 @@ const STAT_SPECIFIC_THRESHOLDS: Record<string, Record<SportId, number>> = {
   blocks: {
     football: 0,
     basketball: 20,
+    "girls-basketball": 20,
     baseball: 0,
     "track-field": 0,
     lacrosse: 0,

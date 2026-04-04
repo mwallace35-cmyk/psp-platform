@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "psp-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "name": "next-dev",
+      "runtimeExecutable": "/opt/homebrew/Cellar/node/25.8.1_1/bin/node",
+      "runtimeArgs": ["/opt/homebrew/Cellar/node/25.8.1_1/lib/node_modules/npm/bin/npm-cli.js", "run", "dev"],
       "cwd": "/Users/admin/tedsilary.com/phillysportspack/psp-platform/next-app",
       "port": 3000,
       "autoPort": true

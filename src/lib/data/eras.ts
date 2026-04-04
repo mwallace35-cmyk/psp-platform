@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { createClient, withErrorHandling, withRetry } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 /**
  * Statistical era data point
@@ -100,7 +101,7 @@ export const getStatByEra = cache(
             let tableName = "";
             if (sportSlug === "football") {
               tableName = "football_player_seasons";
-            } else if (sportSlug === "basketball") {
+            } else if (isBasketballSport(sportSlug)) {
               tableName = "basketball_player_seasons";
             } else if (sportSlug === "baseball") {
               tableName = "baseball_player_seasons";
@@ -109,12 +110,16 @@ export const getStatByEra = cache(
             }
 
             // Fetch all player seasons with season info
-            const { data: rawData, error } = await supabase
+            let eraQuery = supabase
               .from(tableName)
               .select(
                 `${statType}, season_id, seasons(id, year_start, year_end, label)`
               )
               .not(statType, "is", null);
+            if (isBasketballSport(sportSlug)) {
+              eraQuery = eraQuery.eq("gender", getBasketballGender(sportSlug));
+            }
+            const { data: rawData, error } = await eraQuery;
 
             if (error) {
               console.error("Era query error:", error);

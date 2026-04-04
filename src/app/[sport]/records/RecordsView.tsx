@@ -59,6 +59,7 @@ interface RecordsViewProps {
 const SPORT_CATEGORIES: Record<string, string[]> = {
   football: ["Rushing", "Passing", "Receiving", "Scoring", "Kicking", "Defense", "Special Teams", "Miscellaneous"],
   basketball: ["Scoring", "Rebounds", "Assists", "Steals", "Blocks", "Shooting", "Team Records"],
+  "girls-basketball": ["Scoring", "Rebounds", "Assists", "Steals", "Blocks", "Shooting", "Team Records"],
   baseball: ["Batting", "Pitching", "Team Records"],
 };
 

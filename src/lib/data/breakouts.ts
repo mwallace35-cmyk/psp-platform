@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { createClient, withErrorHandling, withRetry } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 /**
  * Breakout player alert
@@ -45,7 +46,7 @@ export const getBreakoutPlayers = cache(
               statColumn = "rush_yards";
               tableName = "football_player_seasons";
               statLabel = "Rushing Yards";
-            } else if (sportSlug === "basketball") {
+            } else if (isBasketballSport(sportSlug)) {
               statColumn = "points";
               tableName = "basketball_player_seasons";
               statLabel = "Points";
@@ -58,7 +59,7 @@ export const getBreakoutPlayers = cache(
             }
 
             // Fetch all seasons for the sport with relations
-            const { data: rawSeasons, error } = await supabase
+            let breakoutQuery = supabase
               .from(tableName)
               .select(
                 `id, player_id, school_id, season_id,
@@ -68,6 +69,10 @@ export const getBreakoutPlayers = cache(
                  seasons(id, label)`
               )
               .not(`${statColumn}`, "is", null);
+            if (isBasketballSport(sportSlug)) {
+              breakoutQuery = breakoutQuery.eq("gender", getBasketballGender(sportSlug));
+            }
+            const { data: rawSeasons, error } = await breakoutQuery;
 
             if (error) {
               console.error("Breakouts query error:", error);

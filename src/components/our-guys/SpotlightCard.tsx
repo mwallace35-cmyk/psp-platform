@@ -14,7 +14,7 @@ function formatStatLine(stats: Record<string, number>, sport: string): string {
     if (stats.rec_td) parts.push(`${stats.rec_td} rec TD`);
     if (stats.carries) parts.push(`${stats.carries} car`);
     if (stats.receptions) parts.push(`${stats.receptions} rec`);
-  } else if (sport === "basketball") {
+  } else if (sport === "basketball" || sport === "girls-basketball") {
     if (stats.pts || stats.points) parts.push(`${stats.pts || stats.points} pts`);
     if (stats.reb || stats.rebounds) parts.push(`${stats.reb || stats.rebounds} reb`);
     if (stats.ast || stats.assists) parts.push(`${stats.ast || stats.assists} ast`);

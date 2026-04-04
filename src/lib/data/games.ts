@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { createClient, withErrorHandling, withRetry } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 // ============================================================================
 // GAME DETAIL & BOX SCORE DATA FETCHERS
@@ -766,12 +767,13 @@ export const getTeamSeasonStats = cache(
             };
 
             async function fetchTeamStats(schoolId: number): Promise<TeamSeasonPlayer[]> {
-              if (sport === "basketball") {
+              if (isBasketballSport(sport)) {
                 const { data } = await supabase
                   .from("basketball_player_seasons")
                   .select("player_id, points, ppg, games_played, rebounds, rpg, assists, jersey_number, players(id, name, slug, positions)")
                   .eq("school_id", schoolId)
                   .eq("season_id", seasonId)
+                  .eq("gender", getBasketballGender(sport))
                   .order("points", { ascending: false, nullsFirst: false })
                   .limit(20);
                 return (data ?? []).map((r: any) => ({

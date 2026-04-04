@@ -76,7 +76,7 @@ export default function SportHubStandings({
   const DIVISION_ORDER = getDivisionOrder(sport);
 
   // For basketball PCL, collapse divisions into single league
-  const isPCLSingleLeague = sport === "basketball";
+  const isPCLSingleLeague = sport === "basketball" || sport === "girls-basketball";
 
   // Derive tabs and grouped data from standings
   const { tabs, grouped } = useMemo(() => {

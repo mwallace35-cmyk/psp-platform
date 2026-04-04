@@ -192,7 +192,7 @@ export function categorizeBasketballAward(award: RawAward): CategorizedAward | n
 
 export function buildAwardTiers(awards: RawAward[], sport?: string) {
   // Choose categorization function based on sport
-  const categoryFunction = sport === 'basketball' ? categorizeBasketballAward : categorizeFootballAward;
+  const categoryFunction = (sport === 'basketball' || sport === 'girls-basketball') ? categorizeBasketballAward : categorizeFootballAward;
   const categorized = awards.map(categoryFunction).filter(Boolean) as CategorizedAward[];
 
   // Group by tier > selector+level+team

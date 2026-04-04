@@ -69,7 +69,7 @@ function aggregateStats(seasonData: any[], sport: string): Record<string, number
     }
 
     Object.assign(stats, totals);
-  } else if (sport === "basketball") {
+  } else if (sport === "basketball" || sport === "girls-basketball") {
     const totals = {
       games_played: 0,
       points: 0,

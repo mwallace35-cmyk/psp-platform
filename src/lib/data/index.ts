@@ -33,6 +33,9 @@ export {
   withRetry,
 } from "./common";
 
+// Sport helpers (basketball gender support)
+export { isBasketballSport, getBasketballGender } from "./utils";
+
 // Player functions
 export {
   getPlayerBySlug,

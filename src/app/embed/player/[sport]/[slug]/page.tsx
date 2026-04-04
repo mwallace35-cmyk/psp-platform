@@ -93,7 +93,7 @@ async function getPlayerCardData(sport: string, slug: string) {
       if (totals.totalTd > 0)
         stats.push({ label: "Total TD", value: String(totals.totalTd) });
     }
-  } else if (sport === "basketball") {
+  } else if (sport === "basketball" || sport === "girls-basketball") {
     const { data } = await supabase
       .from("basketball_player_seasons")
       .select("points, ppg, rebounds, assists, games_played")

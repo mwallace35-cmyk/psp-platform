@@ -5,6 +5,7 @@ import {
   withRetry,
   Season,
 } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 /**
  * Greatest season with dominance score
@@ -165,7 +166,7 @@ export const getGreatestFootballSeasons = cache(
  * Get greatest basketball seasons with dominance scoring
  */
 export const getGreatestBasketballSeasons = cache(
-  async (statFilter?: string, limit: number = 50): Promise<GreatestSeason[]> => {
+  async (statFilter?: string, limit: number = 50, gender: "M" | "F" = "M"): Promise<GreatestSeason[]> => {
     return withErrorHandling(
       async () => {
         return withRetry(
@@ -182,6 +183,7 @@ export const getGreatestBasketballSeasons = cache(
                  schools(id, name, slug),
                  seasons(id, year_start, year_end, label)`
               )
+              .eq("gender", gender)
               .limit(5000);
 
             if (error) {
@@ -416,6 +418,7 @@ export function getGreatestSeasonCategories(
   const categoryMap: Record<string, string[]> = {
     football: ["All", "Rushing", "Passing", "Touchdowns"],
     basketball: ["All", "Scoring", "Points Per Game", "Assists"],
+    "girls-basketball": ["All", "Scoring", "Points Per Game", "Assists"],
     baseball: ["All", "Hits", "Home Runs", "RBIs"],
   };
   return categoryMap[sport] || ["All"];

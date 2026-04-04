@@ -61,7 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const statCategories =
       sport === "football"
         ? ["rushing", "passing", "receiving", "scoring"]
-        : sport === "basketball"
+        : sport === "basketball" || sport === "girls-basketball"
           ? ["scoring", "rebounds", "assists"]
           : sport === "baseball"
             ? ["batting", "pitching"]

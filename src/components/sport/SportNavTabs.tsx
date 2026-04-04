@@ -34,6 +34,7 @@ const SPORT_TAB_CONFIG: Record<string, Tab[]> = {
     { href: '/football/awards', label: 'Awards' },
   ]),
   basketball: buildTabs('basketball'),
+  'girls-basketball': buildTabs('girls-basketball'),
   baseball: buildTabs('baseball'),
   soccer: buildTabs('soccer'),
   lacrosse: buildTabs('lacrosse'),
@@ -43,7 +44,8 @@ const SPORT_TAB_CONFIG: Record<string, Tab[]> = {
 
 const SPORT_DISPLAY_NAMES: Record<string, string> = {
   football: 'Football',
-  basketball: 'Basketball',
+  basketball: 'Boys Basketball',
+  'girls-basketball': 'Girls Basketball',
   baseball: 'Baseball',
   soccer: 'Soccer',
   lacrosse: 'Lacrosse',

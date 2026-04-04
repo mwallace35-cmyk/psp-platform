@@ -67,7 +67,7 @@ export default function SearchFilters({ onFiltersChange }: SearchFiltersProps) {
 
   const getPositions = () => {
     if (sport === "football") return FOOTBALL_POSITIONS;
-    if (sport === "basketball") return BASKETBALL_POSITIONS;
+    if (sport === "basketball" || sport === "girls-basketball") return BASKETBALL_POSITIONS;
     if (sport === "baseball") return BASEBALL_POSITIONS;
     return [];
   };

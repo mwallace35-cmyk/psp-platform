@@ -97,9 +97,9 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
               </Link>
             </>
           )}
-          {sport === "basketball" && (
+          {(sport === "basketball" || sport === "girls-basketball") && (
             <Link
-              href="/basketball/leaderboards"
+              href={`/${sport}/leaderboards`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-orange-600/30 bg-orange-600/[0.08] text-orange-600"
             >
               📊 Scoring Leaders
@@ -122,7 +122,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Pro Bowl-style tier roster for football and basketball */}
-            {(sport === "football" || sport === "basketball") && data.tabs.length > 0 && (() => {
+            {(sport === "football" || sport === "basketball" || sport === "girls-basketball") && data.tabs.length > 0 && (() => {
               const allAwards = data.tabs.flatMap(tab => tab.awards.map(a => ({
                 award_name: a.award_name ?? a.award_type ?? null,
                 player_name: a.displayName ?? a.players?.name ?? (a as any).player_name ?? null,

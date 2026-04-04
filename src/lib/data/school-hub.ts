@@ -7,6 +7,7 @@ import {
   type Season,
 } from "./common";
 import { getCurrentSeasonLabel } from "@/lib/sports";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 /**
  * School hub data with ALL relations (league, colors, contact info, etc.)
@@ -880,7 +881,7 @@ export const getSchoolRoster = cache(
                   primary_stat_value: r.total_yards ?? null,
                   primary_stat_label: "Total Yards",
                 })) as SchoolRosterPlayer[];
-            } else if (sportId === "basketball") {
+            } else if (isBasketballSport(sportId)) {
               const { data } = await (supabase as any)
                 .from("basketball_player_seasons")
                 .select(
@@ -890,7 +891,8 @@ export const getSchoolRoster = cache(
                 `
                 )
                 .eq("school_id", schoolId)
-                .eq("season_id", seasonId);
+                .eq("season_id", seasonId)
+                .eq("gender", getBasketballGender(sportId));
               rows = data ?? [];
               return rows
                 .sort((a, b) => {
@@ -1007,6 +1009,12 @@ export const getSchoolStatLeaders = cache(
                 { column: "assists", label: "Assists" },
                 { column: "steals", label: "Steals" },
               ],
+              "girls-basketball": [
+                { column: "points", label: "Points" },
+                { column: "rebounds", label: "Rebounds" },
+                { column: "assists", label: "Assists" },
+                { column: "steals", label: "Steals" },
+              ],
               baseball: [
                 { column: "hits", label: "Hits" },
                 { column: "home_runs", label: "Home Runs" },
@@ -1018,6 +1026,7 @@ export const getSchoolStatLeaders = cache(
             const tableBySport: Record<string, string> = {
               football: "football_player_seasons",
               basketball: "basketball_player_seasons",
+              "girls-basketball": "basketball_player_seasons",
               baseball: "baseball_player_seasons",
             };
 
@@ -1027,14 +1036,18 @@ export const getSchoolStatLeaders = cache(
 
             const results = await Promise.allSettled(
               statDefs.map(async ({ column, label }) => {
-                const { data } = await (supabase as any)
+                let statQuery = (supabase as any)
                   .from(tableName)
                   .select(
                     `player_id, games_played, ${column}, player:players!inner(name, slug)`
                   )
                   .eq("school_id", schoolId)
                   .eq("season_id", seasonId)
-                  .not(column, "is", null)
+                  .not(column, "is", null);
+                if (isBasketballSport(sportId)) {
+                  statQuery = statQuery.eq("gender", getBasketballGender(sportId));
+                }
+                const { data } = await statQuery
                   .order(column, { ascending: false })
                   .limit(5);
 
@@ -1150,7 +1163,7 @@ export const getSchoolGamesWithStats = cache(
             const statsTable =
               sportId === "football"
                 ? "football_game_stats"
-                : sportId === "basketball"
+                : isBasketballSport(sportId)
                   ? "basketball_game_stats"
                   : null;
 

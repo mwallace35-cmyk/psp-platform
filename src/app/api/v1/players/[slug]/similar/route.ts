@@ -45,7 +45,7 @@ export async function GET(
 
   // Resolve sport — respect ?sport= param, fall back to football-first
   let resolvedSport: string;
-  if (sport === 'basketball' && hasBk) {
+  if ((sport === 'basketball' || sport === 'girls-basketball') && hasBk) {
     resolvedSport = 'basketball';
   } else if (sport === 'football' && hasFb) {
     resolvedSport = 'football';

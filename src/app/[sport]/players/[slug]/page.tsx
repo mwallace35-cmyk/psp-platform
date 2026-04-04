@@ -3,7 +3,7 @@ import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
-import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, getPlayerJerseyNumber, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
+import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, getPlayerJerseyNumber, isBasketballSport, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
 import { Breadcrumb, SocialProfileBar, ClaimProfileButton } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
@@ -100,7 +100,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   const stats = await (
     sport === "football"
       ? getFootballPlayerStats(player.id) as unknown as Promise<FootballPlayerSeason[]>
-      : sport === "basketball"
+      : isBasketballSport(sport)
       ? getBasketballPlayerStats(player.id) as unknown as Promise<BasketballPlayerSeason[]>
       : sport === "baseball"
       ? getBaseballPlayerStats(player.id) as unknown as Promise<BaseballPlayerSeason[]>
@@ -115,8 +115,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   // Parallelize remaining fetches
   const [awards, gameLog, teamGames, crossSportPlayers, recruitingProfile, jerseyNumber] = await Promise.all([
     getPlayerAwards(player.id),
-    (sport === "football" || sport === "basketball") ? getPlayerGameLog(player.id, sport) : Promise.resolve([]),
-    (sport === "football" || sport === "basketball") && player.primary_school_id && seasonIds.length > 0
+    (sport === "football" || isBasketballSport(sport)) ? getPlayerGameLog(player.id, sport) : Promise.resolve([]),
+    (sport === "football" || isBasketballSport(sport)) && player.primary_school_id && seasonIds.length > 0
       ? getPlayerTeamGames(player.primary_school_id, sport, seasonIds)
       : Promise.resolve([]),
     player.primary_school_id ? getCrossSportPlayers(player.name, player.primary_school_id) : Promise.resolve([]),
@@ -154,7 +154,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   })() : null;
 
   // Basketball career totals
-  const basketballTotals = sport === "basketball" && stats.length > 0 ? {
+  const basketballTotals = isBasketballSport(sport) && stats.length > 0 ? {
     points: (stats as BasketballPlayerSeason[]).reduce((sum, s) => sum + (s.points || 0), 0),
     games: (stats as BasketballPlayerSeason[]).reduce((sum, s) => sum + (s.games_played || 0), 0),
     rebounds: (stats as BasketballPlayerSeason[]).reduce((sum, s) => sum + (s.rebounds || 0), 0),
@@ -261,7 +261,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         heroStats.push({ label: "Rec Yards", value: footballTotals.recYards.toLocaleString() });
       }
     }
-  } else if (sport === "basketball" && basketballTotals) {
+  } else if (isBasketballSport(sport) && basketballTotals) {
     const ppg = basketballTotals.games > 0 ? (basketballTotals.points / basketballTotals.games).toFixed(1) : "0";
     const rpg = basketballTotals.games > 0 ? (basketballTotals.rebounds / basketballTotals.games).toFixed(1) : "0";
     const apg = basketballTotals.games > 0 ? (basketballTotals.assists / basketballTotals.games).toFixed(1) : "0";
@@ -284,7 +284,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   const tabList: { id: string; label: string }[] = [
     { id: "stats", label: "Stats" },
   ];
-  if (mergedGames.length > 0 && (sport === "football" || sport === "basketball")) {
+  if (mergedGames.length > 0 && (sport === "football" || isBasketballSport(sport))) {
     tabList.push({ id: "game-log", label: "Game Log" });
   }
   tabList.push({ id: "overview", label: "Overview" });
@@ -490,7 +490,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         >
           Season-by-Season Stats
         </h2>
-        {stats.length > 0 && (sport === "football" || sport === "basketball" || sport === "baseball") ? (
+        {stats.length > 0 && (sport === "football" || isBasketballSport(sport) || sport === "baseball") ? (
           <PlayerStatTable
             sport={sport as "football" | "basketball" | "baseball"}
             stats={stats}
@@ -516,7 +516,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       </section>
 
       {/* ============ GAME LOG SECTION ============ */}
-      {mergedGames.length > 0 && (sport === "football" || sport === "basketball") && (
+      {mergedGames.length > 0 && (sport === "football" || isBasketballSport(sport)) && (
         <section id="game-log" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-b border-gray-200">
           <h2
             className="psp-h2 text-[var(--psp-navy)] mb-6"
@@ -583,7 +583,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 />
               </div>
             )}
-            {sport === "basketball" && stats.length > 0 && (
+            {isBasketballSport(sport) && stats.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-5">
                 <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
                   Career Trajectory
@@ -663,7 +663,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 </div>
               </div>
             )}
-            {sport === "basketball" && basketballTotals && basketballTotals.points > 0 && (
+            {isBasketballSport(sport) && basketballTotals && basketballTotals.points > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h3 className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Career Context

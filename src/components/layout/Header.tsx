@@ -262,7 +262,7 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Basketball Dropdown — clickable link + hover dropdown */}
+            {/* Boys Basketball Dropdown — clickable link + hover dropdown */}
             <div
               className="nav-dd"
               onMouseEnter={() => setOpenDropdown("basketball")}
@@ -289,20 +289,67 @@ export default function Header() {
                   }
                 }}
               >
-                Basketball <span style={{ fontSize: "0.7em" }}>&#9662;</span>
+                Boys Basketball <span style={{ fontSize: "0.7em" }}>&#9662;</span>
               </Link>
               <div
                 className="dd-menu"
                 role="menu"
-                aria-label="Basketball menu"
+                aria-label="Boys Basketball menu"
                 style={{ display: openDropdown === "basketball" ? "block" : undefined }}
                 onKeyDown={handleMenuKeyDown}
               >
                 <Link href="/basketball" role="menuitem" aria-current={isActive("/basketball") ? "page" : undefined} style={{ fontWeight: 600 }}>
-                  Basketball Hub
+                  Boys Basketball Hub
                 </Link>
                 {SPORT_SUB_ITEMS.map((item) => (
                   <Link key={item.suffix} href={`/basketball${item.suffix}`} role="menuitem" aria-current={isActive(`/basketball${item.suffix}`) ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Girls Basketball Dropdown — clickable link + hover dropdown */}
+            <div
+              className="nav-dd"
+              onMouseEnter={() => setOpenDropdown("girls-basketball")}
+              onMouseLeave={() => setOpenDropdown(prev => prev === "girls-basketball" ? null : prev)}
+            >
+              <Link
+                href="/girls-basketball"
+                className={`nav-link ${isActive("/girls-basketball") ? "active" : ""}`}
+                style={{ display: "flex", alignItems: "center", gap: "4px" }}
+                aria-current={isActive("/girls-basketball") ? "page" : undefined}
+                aria-haspopup="menu"
+                aria-expanded={openDropdown === "girls-basketball"}
+                onFocus={() => setOpenDropdown("girls-basketball")}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setOpenDropdown("girls-basketball");
+                    setTimeout(() => {
+                      const menu = (e.currentTarget as HTMLElement).nextElementSibling as HTMLElement | null;
+                      if (menu) menu.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+                    }, 0);
+                  } else if (e.key === "Escape") {
+                    handleDropdownClose();
+                  }
+                }}
+              >
+                Girls Basketball <span style={{ fontSize: "0.7em" }}>&#9662;</span>
+              </Link>
+              <div
+                className="dd-menu"
+                role="menu"
+                aria-label="Girls Basketball menu"
+                style={{ display: openDropdown === "girls-basketball" ? "block" : undefined }}
+                onKeyDown={handleMenuKeyDown}
+              >
+                <Link href="/girls-basketball" role="menuitem" aria-current={isActive("/girls-basketball") ? "page" : undefined} style={{ fontWeight: 600 }}>
+                  Girls Basketball Hub
+                </Link>
+                {SPORT_SUB_ITEMS.map((item) => (
+                  <Link key={item.suffix} href={`/girls-basketball${item.suffix}`} role="menuitem" aria-current={isActive(`/girls-basketball${item.suffix}`) ? "page" : undefined}>
                     {item.label}
                   </Link>
                 ))}

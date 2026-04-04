@@ -49,7 +49,7 @@ export default function OffenseDefenseSummary({
     .slice(0, 5);
 
   // Determine scoring label based on sport
-  const label = sport === "basketball" ? "Points" : "Points";
+  const label = (sport === "basketball" || sport === "girls-basketball") ? "Points" : "Points";
 
   // Find best/worst offensive and defensive seasons
   const bestOffense = withScoring.reduce((best, ts) => {

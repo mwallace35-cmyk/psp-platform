@@ -8,6 +8,7 @@ import {
   Season,
   Championship,
 } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 // Helper type for sorting season-joined data
 interface SeasonJoinedRecord {
@@ -41,14 +42,18 @@ export const getSportOverview = cache(async (sportId: string) => {
           const PLAYER_STAT_TABLES: Record<string, string> = {
             football: "football_player_seasons",
             basketball: "basketball_player_seasons",
+            "girls-basketball": "basketball_player_seasons",
             baseball: "baseball_player_seasons",
           };
           const statTable = PLAYER_STAT_TABLES[sportId];
 
           // For sports with typed tables, count from that table; otherwise count from player_seasons_misc
-          const playerQuery = statTable
+          let playerQuery = statTable
             ? supabase.from(statTable).select("player_id", { count: "exact", head: true })
             : supabase.from("player_seasons_misc").select("player_id", { count: "exact", head: true }).eq("sport_id", sportId);
+          if (statTable && isBasketballSport(sportId)) {
+            playerQuery = playerQuery.eq("gender", getBasketballGender(sportId));
+          }
 
           const [schoolsRes, playersRes, seasonsRes, champsRes] = await Promise.all([
             supabase.from("team_seasons").select("school_id", { count: "exact", head: true }).eq("sport_id", sportId),
@@ -248,6 +253,7 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
           const PLAYER_STAT_TABLES: Record<string, string> = {
             football: "football_player_seasons",
             basketball: "basketball_player_seasons",
+            "girls-basketball": "basketball_player_seasons",
             baseball: "baseball_player_seasons",
           };
           const statTable = PLAYER_STAT_TABLES[sportId];
@@ -285,7 +291,7 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
           }
 
           // For typed sports, fetch from player_seasons with next_level priority
-          const { data } = await supabase
+          let notableQuery = supabase
             .from(statTable)
             .select(
               `
@@ -299,8 +305,11 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
             `
             )
             .eq("school_id", schoolId)
-            .limit(200)
             .is("players.deleted_at", null);
+          if (isBasketballSport(sportId)) {
+            notableQuery = notableQuery.eq("gender", getBasketballGender(sportId));
+          }
+          const { data } = await notableQuery.limit(200);
 
           if (!data) return [];
 

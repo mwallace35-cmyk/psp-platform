@@ -2,13 +2,14 @@ import { describe, it, expect } from "vitest";
 import { VALID_SPORTS, SPORT_META, isValidSport } from "@/lib/sports";
 
 describe("Sports Configuration", () => {
-  it("should have 7 valid sports", () => {
-    expect(VALID_SPORTS).toHaveLength(7);
+  it("should have 8 valid sports", () => {
+    expect(VALID_SPORTS).toHaveLength(8);
   });
 
   it("should include all expected sports", () => {
     expect(VALID_SPORTS).toContain("football");
     expect(VALID_SPORTS).toContain("basketball");
+    expect(VALID_SPORTS).toContain("girls-basketball");
     expect(VALID_SPORTS).toContain("baseball");
     expect(VALID_SPORTS).toContain("track-field");
     expect(VALID_SPORTS).toContain("lacrosse");

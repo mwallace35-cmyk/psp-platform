@@ -182,7 +182,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       getTeamsWithRecords(sport, 1, 200),
       getTrackedAlumni({ sport }, 8),
       Promise.allSettled(compoundPromises),
-      getRecordWatchData(sport, sport === "basketball" ? 25 : 11),
+      getRecordWatchData(sport, (sport === "basketball" || sport === "girls-basketball") ? 25 : 11),
       getSeasonPhaseForSport(sport),
     ]);
 
@@ -365,7 +365,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
       </div>
 
       {/* Playoff Preview (basketball only) */}
-      {sport === "basketball" && <PlayoffPreview />}
+      {(sport === "basketball" || sport === "girls-basketball") && <PlayoffPreview />}
 
       {/* 3. QUICK ACCESS — Navigation cards for key sections */}
       <div className="bg-[var(--psp-navy)]">

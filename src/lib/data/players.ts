@@ -10,6 +10,7 @@ import {
   Award,
   PlayerSearchResult,
 } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 // Type guard for season data with proper typing
 interface SeasonData {
@@ -89,7 +90,7 @@ export async function getFootballPlayerStats(playerId: number) {
  * Get basketball player stats by player ID
  * OPTIMIZED: Explicit column selection instead of SELECT *
  */
-export async function getBasketballPlayerStats(playerId: number) {
+export async function getBasketballPlayerStats(playerId: number, gender: "M" | "F" = "M") {
   return withErrorHandling(
     async () => {
       return withRetry(
@@ -99,6 +100,7 @@ export async function getBasketballPlayerStats(playerId: number) {
             .from("basketball_player_seasons")
             .select("id, player_id, school_id, season_id, games_played, points, ppg, rebounds, assists, steals, blocks, seasons(year_start, year_end, label), schools(name, slug)")
             .eq("player_id", playerId)
+            .eq("gender", gender)
             .order("created_at", { ascending: true });
           return sortBySeasonYear((data ?? []) as unknown as PlayerSeasonRecord[]) as unknown as BasketballPlayerSeason[];
         },
@@ -107,7 +109,7 @@ export async function getBasketballPlayerStats(playerId: number) {
     },
     [],
     "DATA_BASKETBALL_PLAYER_STATS",
-    { playerId }
+    { playerId, gender }
   );
 }
 
@@ -169,6 +171,7 @@ export async function getPlayerStats(playerId: number, sportId: string) {
       const PLAYER_STAT_TABLES: Record<string, string> = {
         football: "football_player_seasons",
         basketball: "basketball_player_seasons",
+        "girls-basketball": "basketball_player_seasons",
         baseball: "baseball_player_seasons",
       };
 
@@ -177,10 +180,17 @@ export async function getPlayerStats(playerId: number, sportId: string) {
         return [];
       }
 
-      const { data } = await supabase
+      let query = supabase
         .from(statTable)
         .select("*")
-        .eq("player_id", playerId)
+        .eq("player_id", playerId);
+
+      // Filter by gender for basketball tables
+      if (isBasketballSport(sportId)) {
+        query = query.eq("gender", getBasketballGender(sportId));
+      }
+
+      const { data } = await query
         .order("created_at", { ascending: true })
         .limit(100);
 

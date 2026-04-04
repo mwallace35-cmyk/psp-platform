@@ -77,7 +77,7 @@ export default async function SchoolLeaderboardPage({
   } else if (validTab === "wins") {
     winsData = await getSchoolWinsLeaderboard(sport, "total_wins", 50);
   } else if (validTab === "championships") {
-    champsData = await getSchoolChampionshipLeaderboard(sport === "football" || sport === "basketball" || sport === "baseball" ? sport : undefined, 50);
+    champsData = await getSchoolChampionshipLeaderboard(sport === "football" || sport === "basketball" || sport === "girls-basketball" || sport === "baseball" ? sport : undefined, 50);
   } else if (validTab === "stats") {
     statsData = await getSchoolStatProduction(sport, "total_yards", 50);
   }

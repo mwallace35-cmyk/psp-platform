@@ -175,7 +175,7 @@ export interface Position {
 // Shared Types
 // ============================================================================
 
-export type Sport = 'football' | 'basketball' | 'baseball' | 'track' | 'lacrosse' | 'wrestling' | 'soccer';
+export type Sport = 'football' | 'basketball' | 'girls-basketball' | 'baseball' | 'track' | 'lacrosse' | 'wrestling' | 'soccer';
 
 export type ColorScale = 'green-red' | 'blue-gold';
 
@@ -279,7 +279,7 @@ export function formatSeasonLabel(year: number | string): string {
 /**
  * Validate sport type
  */
-export const VALID_SPORTS: Sport[] = ['football', 'basketball', 'baseball', 'track', 'lacrosse', 'wrestling', 'soccer'];
+export const VALID_SPORTS: Sport[] = ['football', 'basketball', 'girls-basketball', 'baseball', 'track', 'lacrosse', 'wrestling', 'soccer'];
 
 export function isValidSport(sport: string): sport is Sport {
   return VALID_SPORTS.includes(sport as Sport);

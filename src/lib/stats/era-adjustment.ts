@@ -382,7 +382,7 @@ export function getEraContext(
   }
 
   // Basketball stats
-  if (sport === "basketball") {
+  if (sport === "basketball" || sport === "girls-basketball") {
     if (
       statName === "points" ||
       statName === "ppg" ||

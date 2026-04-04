@@ -111,7 +111,7 @@ export default async function Image({ params }: { params: Promise<{ sport: strin
         .from("football_player_seasons")
         .select("*", { count: "exact", head: true });
       stats.playerCount = count || 0;
-    } else if (sportId === "basketball") {
+    } else if (sportId === "basketball" || sportId === "girls-basketball") {
       const { count } = await supabase
         .from("basketball_player_seasons")
         .select("*", { count: "exact", head: true });

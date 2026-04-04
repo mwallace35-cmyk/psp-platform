@@ -9,6 +9,7 @@ import {
   type BasketballPlayerSeason,
   type BaseballPlayerSeason,
 } from "./common";
+import { isBasketballSport } from "./utils";
 
 /**
  * Pro athlete with school and career info
@@ -57,6 +58,7 @@ export const getProPlayers = cache(
               const sportMap: Record<string, string[]> = {
                 football: ["Football", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB"],
                 basketball: ["Basketball", "G", "F", "C"],
+                "girls-basketball": ["Basketball", "G", "F", "C"],
                 baseball: ["Baseball", "P", "C", "IF", "OF"],
               };
               const positions = sportMap[sportFilter] || [];

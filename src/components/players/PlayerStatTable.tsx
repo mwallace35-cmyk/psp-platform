@@ -7,7 +7,7 @@ import type { FootballPlayerSeason, BasketballPlayerSeason, BaseballPlayerSeason
 /* ------------------------------------------------------------------ */
 
 interface PlayerStatTableProps {
-  sport: "football" | "basketball" | "baseball";
+  sport: "football" | "basketball" | "girls-basketball" | "baseball";
   stats: (FootballPlayerSeason | BasketballPlayerSeason | BaseballPlayerSeason)[];
   sportColor: string;
   playerName?: string;
@@ -78,7 +78,7 @@ const BB_COLS: Col<BaseballPlayerSeason>[] = [
 /* ---------- main column to highlight best season ---------- */
 function primaryStatKey(sport: string): string {
   if (sport === "football") return "rush_yds";
-  if (sport === "basketball") return "pts";
+  if (sport === "basketball" || sport === "girls-basketball") return "pts";
   return "avg";
 }
 
@@ -89,7 +89,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cols: Col<any>[] =
-    sport === "football" ? FB_COLS : sport === "basketball" ? BK_COLS : BB_COLS;
+    sport === "football" ? FB_COLS : sport === "basketball" || sport === "girls-basketball" ? BK_COLS : BB_COLS;
 
   const visibleCols = cols.filter((c) => !c.hide || !c.hide(stats as never[]));
 
@@ -115,7 +115,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
   if (sport === "football" && totals["car"] > 0) {
     totals["ypc"] = totals["rush_yds"] / totals["car"];
   }
-  if (sport === "basketball" && totals["gp"] > 0) {
+  if ((sport === "basketball" || sport === "girls-basketball") && totals["gp"] > 0) {
     totals["ppg"] = totals["pts"] / totals["gp"];
   }
 

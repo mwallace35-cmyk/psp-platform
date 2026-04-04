@@ -8,7 +8,7 @@ import type { Metadata } from 'next';
 export const revalidate = 3600;
 export const metadata: Metadata = {
   title: 'School Directory — PhillySportsPack',
-  description: 'Browse all Philadelphia-area high schools. Filter by league, search by name, and explore championship histories across Catholic League, Public League, Inter-Ac, and more.',
+  description: 'Browse Philadelphia city league high schools. Filter by league, search by name, and explore championship histories across Catholic League, Public League, and Inter-Ac.',
   alternates: {
     canonical: 'https://phillysportspack.com/schools',
   },
@@ -38,11 +38,10 @@ interface SchoolData {
   win_pct: number | null;
 }
 
-const CORE_LEAGUES = [
+const CITY_LEAGUES = [
   'Philadelphia Catholic League',
   'Philadelphia Public League',
   'Inter-Academic League',
-  'Independent',
 ];
 
 export default async function SchoolsPage() {
@@ -120,9 +119,12 @@ export default async function SchoolsPage() {
         };
       });
 
+      // Filter to city leagues only
+      schools = schools.filter(s => s.league && CITY_LEAGUES.includes(s.league));
+
       // Rising programs = schools with recent championships (since 2020)
       risingPrograms = data
-        .filter((row: any) => row.recent_championships > 0)
+        .filter((row: any) => row.recent_championships > 0 && row.league_name && CITY_LEAGUES.includes(row.league_name))
         .map((row: any) => ({
           id: row.id,
           slug: row.slug,
@@ -137,7 +139,7 @@ export default async function SchoolsPage() {
     fetchFailed = true;
   }
 
-  const leagues = [...CORE_LEAGUES, 'Other'];
+  const leagues = [...CITY_LEAGUES];
 
   // Aggregate stats for the hero section
   const schoolsWithData = schools.filter(s => s.has_data);

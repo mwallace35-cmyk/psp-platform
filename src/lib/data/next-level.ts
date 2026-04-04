@@ -5,6 +5,7 @@ import {
   withRetry,
   type Season,
 } from "./common";
+import { isBasketballSport, getBasketballGender } from "./utils";
 
 /**
  * Pro athlete with school and stats info
@@ -232,7 +233,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
                 .eq("player_id", playerId)
                 .order("seasons(year_start)", { ascending: true });
               if (fbStats) athlete.football_stats = fbStats;
-            } else if (sport === "basketball") {
+            } else if (isBasketballSport(sport)) {
               const { data: bbStats } = await supabase
                 .from("basketball_player_seasons")
                 .select(
@@ -244,6 +245,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
                 `
                 )
                 .eq("player_id", playerId)
+                .eq("gender", getBasketballGender(sport))
                 .order("seasons(year_start)", { ascending: true });
               if (bbStats) athlete.basketball_stats = bbStats;
             } else if (sport === "baseball") {

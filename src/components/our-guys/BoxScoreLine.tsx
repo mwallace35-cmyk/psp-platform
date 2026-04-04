@@ -23,7 +23,7 @@ function formatCompactStats(stats: Record<string, number>, sport: string): strin
     if (stats.rec_yds || stats.receivingYards) parts.push(`${stats.rec_yds || stats.receivingYards} rec`);
     const tds = (stats.rush_td || 0) + (stats.pass_td || 0) + (stats.rec_td || 0);
     if (tds > 0) parts.push(`${tds} TD`);
-  } else if (sport === "basketball") {
+  } else if (sport === "basketball" || sport === "girls-basketball") {
     if (stats.pts || stats.points) parts.push(`${stats.pts || stats.points} pts`);
     if (stats.reb || stats.rebounds) parts.push(`${stats.reb || stats.rebounds} reb`);
     if (stats.ast || stats.assists) parts.push(`${stats.ast || stats.assists} ast`);

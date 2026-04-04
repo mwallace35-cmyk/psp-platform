@@ -5,6 +5,7 @@ import {
   withRetry,
   type Player,
 } from "./common";
+import { isBasketballSport } from "./utils";
 
 /**
  * Similar player with similarity score
@@ -218,15 +219,14 @@ export const getSimilarBaseballPlayers = cache(
  */
 export const getSimilarPlayers = cache(
   async (playerId: number, sportId: string, limit: number = 5) => {
-    switch (sportId) {
-      case "football":
-        return getSimilarFootballPlayers(playerId, limit);
-      case "basketball":
-        return getSimilarBasketballPlayers(playerId, limit);
-      case "baseball":
-        return getSimilarBaseballPlayers(playerId, limit);
-      default:
-        return [];
+    if (sportId === "football") {
+      return getSimilarFootballPlayers(playerId, limit);
+    } else if (isBasketballSport(sportId)) {
+      return getSimilarBasketballPlayers(playerId, limit);
+    } else if (sportId === "baseball") {
+      return getSimilarBaseballPlayers(playerId, limit);
+    } else {
+      return [];
     }
   }
 );

@@ -96,7 +96,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
       if (!isNaN(threshold)) {
         rows = rows.filter((r) => {
           if (sport === "football") return (r.totalYards ?? 0) >= threshold;
-          if (sport === "basketball") return (r.ppg ?? 0) >= threshold;
+          if (sport === "basketball" || sport === "girls-basketball") return (r.ppg ?? 0) >= threshold;
           if (sport === "baseball") return (r.battingAvg ?? 0) >= threshold;
           return true;
         });
@@ -133,7 +133,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
     setPosition("");
     setMinStat("");
     if (newSport === "football") setSortKey("totalYards");
-    else if (newSport === "basketball") setSortKey("ppg");
+    else if (newSport === "basketball" || newSport === "girls-basketball") setSortKey("ppg");
     else if (newSport === "baseball") setSortKey("battingAvg");
     setSortDir("desc");
   }, []);
@@ -142,14 +142,14 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
   const handleExport = useCallback(() => {
     const header = sport === "football"
       ? "Name,School,Position,Class,Rush Yds,Pass Yds,Rec Yds,Total TDs,Awards"
-      : sport === "basketball"
+      : sport === "basketball" || sport === "girls-basketball"
       ? "Name,School,Position,Class,PPG,RPG,APG,Points,Awards"
       : "Name,School,Position,Class,AVG,HR,RBI,ERA,Awards";
 
     const csvRows = filtered.map((r) => {
       const base = `"${r.playerName}","${r.schoolName}","${r.position ?? ""}",${r.classYear ?? ""}`;
       if (sport === "football") return `${base},${r.rushYards ?? ""},${r.passYards ?? ""},${r.recYards ?? ""},${r.totalTd ?? ""},${r.awardsCount}`;
-      if (sport === "basketball") return `${base},${r.ppg ?? ""},${r.rpg ?? ""},${r.apg ?? ""},${r.points ?? ""},${r.awardsCount}`;
+      if (sport === "basketball" || sport === "girls-basketball") return `${base},${r.ppg ?? ""},${r.rpg ?? ""},${r.apg ?? ""},${r.points ?? ""},${r.awardsCount}`;
       return `${base},${r.battingAvg ?? ""},${r.homeRuns ?? ""},${r.rbi ?? ""},${r.era ?? ""},${r.awardsCount}`;
     });
 
@@ -170,7 +170,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
         { key: "totalYards", label: "Total Yds" },
       ];
     }
-    if (sport === "basketball") {
+    if (sport === "basketball" || sport === "girls-basketball") {
       return [
         { key: "ppg", label: "PPG" },
         { key: "rpg", label: "RPG" },
@@ -187,7 +187,7 @@ export default function RecruitFinderClient({ initialData }: { initialData: Recr
   }, [sport]);
 
   const sportColor = SPORTS.find((s) => s.value === sport)?.color ?? "var(--psp-gold)";
-  const minStatPlaceholder = sport === "football" ? "Min total yards" : sport === "basketball" ? "Min PPG" : "Min batting avg";
+  const minStatPlaceholder = sport === "football" ? "Min total yards" : sport === "basketball" || sport === "girls-basketball" ? "Min PPG" : "Min batting avg";
 
   return (
     <div>

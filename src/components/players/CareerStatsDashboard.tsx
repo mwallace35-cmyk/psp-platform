@@ -119,7 +119,7 @@ export default function CareerStatsDashboard({ sport, stats }: Props) {
 
   const cards = sport === 'football'
     ? buildFootballCards(stats)
-    : sport === 'basketball'
+    : sport === 'basketball' || sport === 'girls-basketball'
     ? buildBasketballCards(stats)
     : buildBaseballCards(stats);
 

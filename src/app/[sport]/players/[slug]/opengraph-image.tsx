@@ -115,7 +115,7 @@ export default async function Image({ params }: { params: Promise<{ sport: strin
               careerStatsDisplay.push({ label: "Rec Yards", value: totalRecYards.toLocaleString() });
             }
           }
-        } else if (sport === "basketball") {
+        } else if (sport === "basketball" || sport === "girls-basketball") {
           const { data: statsData } = await supabase
             .from("basketball_player_seasons")
             .select("points, games_played, rebounds")

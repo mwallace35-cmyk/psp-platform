@@ -32,6 +32,12 @@ const SPORT_COLOR_PALETTE: Record<SportId, SportColorMap> = {
     accent: "#fb923c",
     text: "#ffffff",
   },
+  "girls-basketball": {
+    primary: "#ec4899",
+    secondary: "#831843",
+    accent: "#f472b6",
+    text: "#ffffff",
+  },
   baseball: {
     primary: "#dc2626",
     secondary: "#7f1d1d",

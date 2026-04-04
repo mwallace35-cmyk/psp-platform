@@ -10,6 +10,7 @@ import {
   getBasketballCareerLeaders,
   getStatTotalCount,
   getLeaderboardSeasons,
+  isBasketballSport,
 } from "@/lib/data";
 import type { CareerLeaderRow } from "@/lib/data/events";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -155,6 +156,7 @@ const SOCCER_STATS: StatConfig[] = [
 const SPORT_STAT_MAP: Record<string, StatConfig[]> = {
   football: FOOTBALL_STATS,
   basketball: BASKETBALL_STATS,
+  "girls-basketball": BASKETBALL_STATS,
   baseball: BASEBALL_STATS,
   "track-field": TRACK_FIELD_STATS,
   lacrosse: LACROSSE_STATS,
@@ -266,7 +268,7 @@ export default async function LeaderboardPage({
     const careerFilters = filterClass ? { graduationYear: filterClass } : undefined;
     if (sport === "football") {
       careerLeaders = await getFootballCareerLeaders(statConfig.key, 100, careerFilters);
-    } else if (sport === "basketball") {
+    } else if (isBasketballSport(sport)) {
       careerLeaders = await getBasketballCareerLeaders(statConfig.key, 100, careerFilters);
     }
 
@@ -296,7 +298,7 @@ export default async function LeaderboardPage({
     let leaders: RawLeader[] = [];
     if (sport === "football") {
       leaders = await getFootballLeaders(statConfig.key, 100, seasonId);
-    } else if (sport === "basketball") {
+    } else if (isBasketballSport(sport)) {
       leaders = await getBasketballLeaders(statConfig.key, 100, seasonId);
     }
 

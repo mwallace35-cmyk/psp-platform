@@ -586,7 +586,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                         {player.points && player.points > 0 ? <div>🎯 {player.points} pts</div> : null}
                       </div>
                     )}
-                    {sport === "basketball" && (
+                    {(sport === "basketball" || sport === "girls-basketball") && (
                       <div className="text-sm space-y-1" style={{ color: "#e5e7eb" }}>
                         {player.ppg ? <div>🏀 {player.ppg.toFixed(1)} PPG</div> : null}
                         {player.total_points ? <div>📊 {player.total_points} total pts</div> : null}
@@ -855,7 +855,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                     </>
                   )}
 
-                  {sport === "basketball" && (
+                  {(sport === "basketball" || sport === "girls-basketball") && (
                     <>
                       <thead>
                         <tr className="bg-[var(--psp-navy)]">

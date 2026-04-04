@@ -138,7 +138,7 @@ export default function SimilarPlayers({
                     <p className="text-xs text-gray-400 mt-1">
                       {player.primary_stat_value.toLocaleString()}
                       <br />
-                      {sportId === "basketball" ? "pts" : "yds"}
+                      {sportId === "basketball" || sportId === "girls-basketball" ? "pts" : "yds"}
                     </p>
                   )}
                 </div>

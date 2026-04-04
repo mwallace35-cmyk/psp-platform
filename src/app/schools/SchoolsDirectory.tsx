@@ -62,12 +62,6 @@ const LEAGUE_COLORS: Record<string, string> = {
   'Inter-Academic League': '#16a34a',
   'Inter-Ac League': '#16a34a',
   'Inter-Ac': '#16a34a',
-  'Central League': '#ea580c',
-  'Delaware Valley League': '#0891b2',
-  'Suburban One League': '#7c3aed',
-  'Ches-Mont League': '#db2777',
-  'SOL Conference': '#7c3aed',
-  'PIAA Independent': '#64748b',
 };
 
 const SPORT_EMOJI: Record<string, string> = {
@@ -237,7 +231,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
             School Directory
           </h1>
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', margin: 0, maxWidth: 600 }}>
-            Browse every high school program across Philadelphia and the surrounding area. Search by name, filter by league, or explore the alphabet.
+            Browse Philadelphia's city league high schools — Catholic League, Public League, and Inter-Ac. Search by name, filter by league, or explore the alphabet.
           </p>
         </div>
       </div>

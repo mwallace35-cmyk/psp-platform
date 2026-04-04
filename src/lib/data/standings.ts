@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { isBasketballSport } from "./utils";
 import {
   createClient,
   withErrorHandling,
@@ -162,7 +163,7 @@ export const getLeagueStandings = cache(
               const key = `${schoolLeagueId}${divisionSuffix}:${seasonLabel}`;
               // For basketball PPL, use "Conference" for named divisions (American, National, etc.)
               // and "Division" for letter divisions (A, B, C...)
-              const divSuffix = (sportSlug === "basketball" && division && division.length > 1)
+              const divSuffix = (isBasketballSport(sportSlug) && division && division.length > 1)
                 ? "Conference"
                 : "Division";
               const displayName = division ? `${leagueName} — ${division} ${divSuffix}` : leagueName;

@@ -165,7 +165,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
           {[
-            { user: "CoachK_Philly", text: `Big matchup tonight — ${sport === "football" ? "Prep vs La Salle" : sport === "basketball" ? "Neumann vs Roman" : "La Salle vs Prep"} will set the tone for the league.`, time: "2h ago", type: "hot_take" },
+            { user: "CoachK_Philly", text: `Big matchup tonight — ${sport === "football" ? "Prep vs La Salle" : sport === "basketball" || sport === "girls-basketball" ? "Neumann vs Roman" : "La Salle vs Prep"} will set the tone for the league.`, time: "2h ago", type: "hot_take" },
             { user: "PhillyHoopsScout", text: "Just left practice — keep an eye on the freshman class this year. Philly is LOADED.", time: "4h ago", type: "insider" },
             { user: "PSP_Community", text: `Who's your pick for ${meta.name} Player of the Week? Cast your vote now!`, time: "6h ago", type: "poll" },
           ].map((item, i) => (

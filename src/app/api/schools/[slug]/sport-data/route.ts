@@ -12,6 +12,7 @@ import { getSchoolRivalries } from "@/lib/data/rivalries";
 const VALID_SPORTS = [
   "football",
   "basketball",
+  "girls-basketball",
   "baseball",
   "soccer",
   "lacrosse",
