@@ -3,7 +3,7 @@ import Link from "next/link";
 import nextDynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
-import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, getPlayerJerseyNumber, isBasketballSport, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
+import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, getPlayerJerseyNumber, getPlayerSchoolHistory, isBasketballSport, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
 import { Breadcrumb, SocialProfileBar, ClaimProfileButton } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
@@ -19,6 +19,7 @@ import PlayerHighlightsSection from "@/components/highlights/PlayerHighlightsSec
 import MediaGallery from "@/components/media/MediaGallery";
 import PlayerStatTable from "@/components/players/PlayerStatTable";
 import PlayerProfileTabs from "@/components/players/PlayerProfileTabs";
+import PlayerSchoolHistory from "@/components/players/PlayerSchoolHistory";
 import InTheNews from "@/components/players/InTheNews";
 import type { MergedGameEntry, SeasonAward } from "@/components/game-log/GameLogAccordion";
 import type { Metadata } from "next";
@@ -114,7 +115,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     .filter((id): id is number => id != null);
 
   // Parallelize remaining fetches
-  const [awards, gameLog, teamGames, crossSportPlayers, recruitingProfile, jerseyNumber] = await Promise.all([
+  const [awards, gameLog, teamGames, crossSportPlayers, recruitingProfile, jerseyNumber, schoolHistory] = await Promise.all([
     getPlayerAwards(player.id),
     (sport === "football" || isBasketballSport(sport)) ? getPlayerGameLog(player.id, sport) : Promise.resolve([]),
     (sport === "football" || isBasketballSport(sport)) && player.primary_school_id && seasonIds.length > 0
@@ -137,7 +138,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       }
     })(),
     getPlayerJerseyNumber(player.id),
-  ]) as [Award[], PlayerGameLog[], TeamGame[], any[], any, string | null];
+    getPlayerSchoolHistory(player.id, player.primary_school_id),
+  ]) as [Award[], PlayerGameLog[], TeamGame[], any[], any, string | null, Awaited<ReturnType<typeof getPlayerSchoolHistory>>];
 
   // Football career totals
   const footballTotals = sport === "football" && stats.length > 0 ? (() => {
@@ -369,11 +371,11 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
               {/* Meta row: school, position, class, jersey, badges */}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2">
-                {player.schools && (
-                  <Link href={`/${sport}/schools/${player.schools?.slug}`} className="text-sm font-semibold hover:underline" style={{ color: "var(--psp-gold)" }}>
-                    {player.schools?.name}
-                  </Link>
-                )}
+                <PlayerSchoolHistory
+                  schoolHistory={schoolHistory}
+                  sport={sport}
+                  fallbackSchool={player.schools}
+                />
                 {player.positions && player.positions.length > 0 && (
                   <span
                     className="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-md"

@@ -46,6 +46,8 @@ export {
   getPlayerStats,
   getPlayerJerseyNumber,
   getCrossSportPlayers,
+  getPlayerSchoolHistory,
+  type SchoolHistoryEntry,
 } from "./players";
 
 // School functions

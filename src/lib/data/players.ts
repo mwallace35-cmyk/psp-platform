@@ -219,6 +219,127 @@ export async function getPlayerJerseyNumber(playerId: number): Promise<string | 
 }
 
 /**
+ * Derive school history for a player from game_player_stats + transfers table.
+ * Returns schools in chronological order with season ranges.
+ */
+export interface SchoolHistoryEntry {
+  school: { name: string; slug: string; id: number };
+  seasons: string[];
+  firstSeason: string;
+  lastSeason: string;
+  isGraduationSchool: boolean;
+}
+
+export async function getPlayerSchoolHistory(
+  playerId: number,
+  primarySchoolId: number | undefined
+): Promise<SchoolHistoryEntry[]> {
+  return withErrorHandling(
+    async () => {
+      const supabase = await createClient();
+
+      // Step 1: Get distinct school_id + season_id pairs from game_player_stats
+      // Use a simple query without nested joins to avoid PostgREST issues
+      const { data: statsData } = await supabase
+        .from("game_player_stats")
+        .select("school_id, game_id")
+        .eq("player_id", playerId);
+
+      if (!statsData || statsData.length === 0) return [];
+
+      // Get unique school IDs
+      const schoolIds = [...new Set(statsData.map((r) => r.school_id).filter(Boolean))] as number[];
+
+      // If only one school, no transfer display needed
+      if (schoolIds.length <= 1) return [];
+
+      // Step 2: Get game season info for these games
+      const gameIds = [...new Set(statsData.map((r) => r.game_id).filter(Boolean))] as number[];
+      const { data: gamesData } = await supabase
+        .from("games")
+        .select("id, season_id, seasons(label, year_start)")
+        .in("id", gameIds);
+
+      if (!gamesData) return [];
+
+      // Build game_id → season lookup
+      const gameSeasonMap = new Map<number, { label: string; year_start: number }>();
+      for (const g of gamesData) {
+        const season = Array.isArray(g.seasons) ? g.seasons[0] : g.seasons;
+        if (season?.label) gameSeasonMap.set(g.id, season as { label: string; year_start: number });
+      }
+
+      // Group by school_id, collect seasons
+      const schoolMap = new Map<number, { seasons: Set<string>; minYear: number; maxYear: number }>();
+      for (const row of statsData) {
+        const schoolId = row.school_id;
+        if (!schoolId) continue;
+        const season = gameSeasonMap.get(row.game_id);
+        if (!season) continue;
+
+        if (!schoolMap.has(schoolId)) {
+          schoolMap.set(schoolId, { seasons: new Set(), minYear: Infinity, maxYear: -Infinity });
+        }
+        const entry = schoolMap.get(schoolId)!;
+        entry.seasons.add(season.label);
+        entry.minYear = Math.min(entry.minYear, season.year_start);
+        entry.maxYear = Math.max(entry.maxYear, season.year_start);
+      }
+
+      // Also check transfers table for any explicit records
+      const { data: transfers } = await supabase
+        .from("transfers")
+        .select("from_school_id, to_school_id, transfer_year")
+        .eq("player_id", playerId);
+
+      if (transfers) {
+        for (const t of transfers) {
+          for (const sid of [t.from_school_id, t.to_school_id]) {
+            if (sid && !schoolMap.has(sid)) {
+              schoolMap.set(sid, { seasons: new Set(), minYear: t.transfer_year, maxYear: t.transfer_year });
+            }
+          }
+        }
+      }
+
+      // Still only one school after transfers check
+      if (schoolMap.size <= 1) return [];
+
+      // Step 3: Fetch school details
+      const allSchoolIds = Array.from(schoolMap.keys());
+      const { data: schools } = await supabase
+        .from("schools")
+        .select("id, name, slug")
+        .in("id", allSchoolIds);
+
+      if (!schools) return [];
+
+      // Build result sorted by earliest season
+      const result: SchoolHistoryEntry[] = schools
+        .map((s) => {
+          const entry = schoolMap.get(s.id)!;
+          const sortedSeasons = Array.from(entry.seasons).sort();
+          return {
+            school: { name: s.name, slug: s.slug, id: s.id },
+            seasons: sortedSeasons,
+            firstSeason: sortedSeasons[0] || "",
+            lastSeason: sortedSeasons[sortedSeasons.length - 1] || "",
+            isGraduationSchool: s.id === primarySchoolId,
+            _minYear: entry.minYear,
+          };
+        })
+        .sort((a, b) => (a as any)._minYear - (b as any)._minYear)
+        .map(({ _minYear, ...rest }) => rest);
+
+      return result;
+    },
+    [],
+    "DATA_PLAYER_SCHOOL_HISTORY",
+    { playerId }
+  );
+}
+
+/**
  * Get cross-sport player entries (same player in different sports)
  */
 export async function getCrossSportPlayers(playerName: string, schoolId: number) {
