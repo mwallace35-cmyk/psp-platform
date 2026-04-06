@@ -16,7 +16,9 @@ export type PageType =
   | "articles"
   | "article-detail"
   | "potw"
-  | "events";
+  | "events"
+  | "legends-hub"
+  | "legends-detail";
 
 interface SEOParams {
   pageType: PageType;
@@ -153,6 +155,25 @@ export function generatePageMetadata(params: SEOParams): Metadata {
       description =
         "The Pulse — your guide to upcoming Philadelphia high school sports events, showcases, camps, combines, and tryouts. Never miss a moment in Philly HS athletics.";
       url = `${SITE_URL}/pulse`;
+      break;
+
+    case "legends-hub":
+      title = `Legends & Tributes | The Ted Silary Hall of Fame | ${SITE_NAME}`;
+      description =
+        "Coach tributes, player spotlights, and In Memoriam pages -- original content by Ted Silary preserving the stories of Philly's greatest.";
+      url = `${SITE_URL}/hof/legends`;
+      break;
+
+    case "legends-detail":
+      title = params.title
+        ? `${params.title} — Legends | ${SITE_NAME}`
+        : `Legends | ${SITE_NAME}`;
+      description =
+        params.description ||
+        "A tribute to a Philadelphia high school sports legend. Written by Ted Silary.";
+      url = params.slug
+        ? `${SITE_URL}/hof/legends/${params.slug}`
+        : `${SITE_URL}/hof/legends`;
       break;
   }
 

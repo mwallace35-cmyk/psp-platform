@@ -54,8 +54,27 @@ export function categorizeFootballAward(award: RawAward): CategorizedAward | nul
   else if (name.includes('Second Team')) result.team = 'Second Team';
   else if (name.includes('Third Team')) result.team = 'Third Team';
 
+  // PRIORITY: Coach of the Year — check BEFORE league checks so
+  // "Coaches All-Catholic Red Division Coach of the Year" lands in COTY, not League
+  if (name.includes('Coach of the Year')) {
+    result.tier = 'coty';
+    // Strip selector prefix from level to avoid "Coaches Coaches All-Catholic..."
+    result.selector = name.includes('Coaches') ? 'Coaches' : '';
+    result.level = result.selector && name.startsWith(result.selector + ' ')
+      ? name.slice(result.selector.length + 1)
+      : name;
+  }
+  // PRIORITY: MVPs / Player of the Year — check BEFORE league checks so
+  // "Coaches All-Catholic Red Division MVP" lands in MVP, not League
+  else if (name.includes('MVP') || name.includes('Player of the Year') || name.includes('Best Prospect')) {
+    result.tier = 'mvp';
+    result.selector = name.includes('Daily News') ? 'Daily News' : name.includes('Coaches') ? 'Coaches' : '';
+    result.level = result.selector && name.startsWith(result.selector + ' ')
+      ? name.slice(result.selector.length + 1)
+      : name;
+  }
   // TIER 1: League Awards
-  if (name.includes('All-Catholic') || name.includes('Catholic League')) {
+  else if (name.includes('All-Catholic') || name.includes('Catholic League')) {
     result.tier = 'league';
     // Preserve Red/Blue division distinction
     if (name.includes('Red Division')) {
@@ -108,18 +127,6 @@ export function categorizeFootballAward(award: RawAward): CategorizedAward | nul
     result.tier = 'state';
     result.level = 'All-American';
     result.selector = '';
-  }
-  // MVPs / Player of the Year
-  else if (name.includes('Player of the Year') || name.includes('MVP') || name.includes('Best Prospect')) {
-    result.tier = 'mvp';
-    result.level = name;
-    result.selector = name.includes('Daily News') ? 'Daily News' : name.includes('Coaches') ? 'Coaches' : '';
-  }
-  // Coach of the Year
-  else if (name.includes('Coach of the Year')) {
-    result.tier = 'coty';
-    result.level = name;
-    result.selector = name.includes('Coaches') ? 'Coaches' : '';
   }
   // Other (stat leaders, decade teams, etc.)
   else {

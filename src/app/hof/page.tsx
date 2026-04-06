@@ -43,10 +43,97 @@ const FEATURED_HOF_CARDS = [
     external: false,
     cta: "View Inductees",
   },
+  {
+    id: "legends",
+    org: "Legends",
+    type: "Coaches",
+    badge: "TED SILARY ORIGINALS",
+    badgeColor: "#f0a500",
+    badgeIcon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+        <path d="M12 6l1.5 3.5L17 11l-3.5 1.5L12 16l-1.5-3.5L7 11l3.5-1.5z" />
+      </svg>
+    ),
+    accent: "#f0a500",
+    description:
+      "Tributes to the coaches who built Philadelphia high school sports -- original profiles by Ted Silary.",
+    href: "/hof/legends",
+    external: false,
+    cta: "View Legends",
+  },
 ];
+
+/* Middle row: state champions (full width) */
+const STATE_CHAMPS_CARD = {
+  id: "state-champions",
+  org: "State Champions",
+  type: "Championships",
+  badge: "PIAA STATE TITLES",
+  badgeColor: "#f0a500",
+  badgeIcon: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+      <path d="M4 22h16" />
+      <path d="M10 22V8a6 6 0 0 1 12 0v14" />
+      <path d="M2 8a6 6 0 0 1 12 0" />
+    </svg>
+  ),
+  accent: "#f0a500",
+  description:
+    "Championship celebration pages — every title game, every roster, every stat. Ted Silary documented each state championship run in full detail.",
+  href: "/hof/state-champions",
+  external: false,
+  cta: "View Champions",
+};
 
 /* Bottom row: secondary / external */
 const SECONDARY_HOF_CARDS = [
+  {
+    id: "in-memoriam",
+    org: "In Memoriam",
+    type: "Tributes",
+    badge: "REMEMBERING",
+    badgeColor: "#94a3b8",
+    badgeIcon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+      </svg>
+    ),
+    accent: "#94a3b8",
+    description:
+      "Honoring the players and figures taken too soon -- their stories live on through Ted Silary's words.",
+    href: "/hof/in-memoriam",
+    external: false,
+    cta: "View Tributes",
+  },
+  {
+    id: "spotlights",
+    org: "Player Spotlights",
+    type: "Performances",
+    badge: "SPOTLIGHT",
+    badgeColor: "#3b82f6",
+    badgeIcon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="5" />
+        <line x1="12" y1="1" x2="12" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="23" />
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="1" y1="12" x2="3" y2="12" />
+        <line x1="21" y1="12" x2="23" y2="12" />
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      </svg>
+    ),
+    accent: "#3b82f6",
+    description:
+      "Record-breaking performances and remarkable stories -- Wilt Chamberlain, George Baker, and more.",
+    href: "/hof/spotlights",
+    external: false,
+    cta: "View Spotlights",
+  },
   {
     id: "schools",
     org: "School Halls of Fame",
@@ -107,7 +194,7 @@ const SECONDARY_HOF_CARDS = [
 
 /* ─── Featured Athletes ─── */
 const FEATURED_ATHLETES = [
-  { name: "Wilt Chamberlain", school: "Overbrook HS", sport: "Basketball", slug: null },
+  { name: "Wilt Chamberlain", school: "Overbrook HS", sport: "Basketball", slug: "/hof/legends/wilt-chamberlain" },
   { name: "Leroy Kelly", school: "Simon Gratz HS", sport: "Football", slug: null },
   { name: "Dawn Staley", school: "Dobbins Tech", sport: "Basketball", slug: null },
   { name: "Jahri Evans", school: "Frankford HS", sport: "Football", slug: null },
@@ -340,7 +427,7 @@ export default function HallOfFamePage() {
           className="hof-featured-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
+            gridTemplateColumns: "repeat(3, 1fr)",
             gap: "1.5rem",
             marginBottom: "1.5rem",
           }}
@@ -350,7 +437,12 @@ export default function HallOfFamePage() {
           ))}
         </div>
 
-        {/* ── Bottom row: 3 secondary / external cards ── */}
+        {/* ── State Champions card (full width) ── */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          <HofCard card={STATE_CHAMPS_CARD} featured />
+        </div>
+
+        {/* ── Bottom row: secondary / external cards ── */}
         <div
           className="hof-secondary-grid"
           style={{
@@ -561,6 +653,10 @@ export default function HallOfFamePage() {
             @media (max-width: 768px) {
               .hof-featured-grid {
                 grid-template-columns: 1fr !important;
+              }
+            @media (min-width: 769px) and (max-width: 960px) {
+              .hof-featured-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
               }
               .hof-secondary-grid {
                 grid-template-columns: 1fr !important;

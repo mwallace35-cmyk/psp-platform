@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 
 interface AwardPlayer {
@@ -104,10 +104,10 @@ const SPORT_BADGE_COLORS: Record<string, string> = {
   baseball: '#dc2626',
 };
 
-const SELECTOR_TABS = [
+const SELECTOR_TABS: { id: string; label: string; discontinued?: boolean; yearNote?: string }[] = [
   { id: 'all', label: 'All Awards' },
   { id: 'Coaches', label: 'Coaches' },
-  { id: 'Daily News', label: 'Daily News' },
+  { id: 'Daily News', label: 'Daily News', discontinued: true, yearNote: '1978\u20132018' },
   { id: 'state', label: 'State & National' },
   { id: 'mvp', label: 'MVPs' },
   { id: 'coty', label: 'Coach of the Year' },
@@ -120,6 +120,35 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
   const [activeTab, setActiveTab] = useState('all');
   const [sortBy, setSortBy] = useState<SortBy>('default');
   const isFootball = sport === 'football';
+
+  // Compute years available for the active tab (before year filtering)
+  const tabYears = useMemo(() => {
+    const yearSet = new Set<number>();
+    for (const tier of tiers) {
+      for (const team of tier.teams) {
+        // Apply same tab filter logic but skip year filter
+        const matchesTab =
+          activeTab === 'all' ||
+          (activeTab === 'state' && tier.tierName === 'State & National') ||
+          (activeTab === 'mvp' && tier.tierName === 'MVPs & Player Awards') ||
+          (activeTab === 'coty' && tier.tierName === 'Coach of the Year') ||
+          team.selector === activeTab;
+        if (matchesTab) {
+          for (const p of team.players) {
+            if (p.year) yearSet.add(p.year);
+          }
+        }
+      }
+    }
+    return Array.from(yearSet).sort((a, b) => b - a);
+  }, [tiers, activeTab]);
+
+  // Reset selected year when switching tabs if current year isn't available
+  useEffect(() => {
+    if (selectedYear && !tabYears.includes(selectedYear)) {
+      setSelectedYear(tabYears[0] ?? null);
+    }
+  }, [activeTab, tabYears, selectedYear]);
 
   const filteredTiers = useMemo(() => {
     return tiers.map(tier => ({
@@ -171,7 +200,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
             </button>
           ))}
         </div>
-        {availableYears && availableYears.length > 0 && (
+        {tabYears.length > 0 && (
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <select
               value={selectedYear ?? ''}
@@ -188,7 +217,7 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
               }}
             >
               <option value="">All Years</option>
-              {availableYears.map(y => <option key={y} value={y}>{`${String(y - 1).slice(-2)}-${String(y).slice(-2)}`}</option>)}
+              {tabYears.map(y => <option key={y} value={y}>{`${String(y - 1).slice(-2)}-${String(y).slice(-2)}`}</option>)}
             </select>
             {selectedYear && (
               <button onClick={() => setSelectedYear(null)} style={{ fontSize: 12, color: '#94a3b8', cursor: 'pointer', background: 'none', border: 'none', textDecoration: 'underline' }}>
@@ -198,6 +227,32 @@ export default function AwardTierRoster({ tiers, sport, availableYears }: Props)
           </div>
         )}
       </div>
+
+      {/* Discontinued badge */}
+      {(() => {
+        const activeTabMeta = SELECTOR_TABS.find(t => t.id === activeTab);
+        if (activeTabMeta?.discontinued && activeTabMeta.yearNote) {
+          return (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16,
+              padding: '8px 14px', borderRadius: 8,
+              background: '#fef3c7', border: '1px solid #fde68a',
+            }}>
+              <span style={{ fontSize: 13, color: '#92400e', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+                {activeTabMeta.label} ({activeTabMeta.yearNote})
+              </span>
+              <span style={{
+                fontSize: 11, fontWeight: 700, color: '#dc2626',
+                background: '#fee2e2', padding: '2px 8px', borderRadius: 4,
+                textTransform: 'uppercase', letterSpacing: '0.05em',
+              }}>
+                Discontinued
+              </span>
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* Empty state */}
       {filteredTiers.length === 0 && (

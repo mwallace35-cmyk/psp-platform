@@ -3,6 +3,8 @@ import type { MetadataRoute } from "next";
 import { createStaticClient } from "@/lib/supabase/static";
 import { VALID_SPORTS } from "@/lib/data";
 import { captureError } from "@/lib/error-tracking";
+import { getLegendsByCategory } from "@/lib/data/legends";
+import { ALL_STATE_CHAMPIONSHIPS } from "@/lib/data/state-champions";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://phillysportspack.com";
@@ -440,6 +442,56 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     }
   );
+
+  // HOF Legends (coaches), In Memoriam, and Player Spotlights
+  const hofSections = [
+    { path: "legends", category: "coach" as const },
+    { path: "in-memoriam", category: "in-memoriam" as const },
+    { path: "spotlights", category: "player-spotlight" as const },
+  ];
+
+  for (const section of hofSections) {
+    entries.push({
+      url: `${baseUrl}/hof/${section.path}`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.8,
+    });
+
+    for (const legend of getLegendsByCategory(section.category)) {
+      entries.push({
+        url: `${baseUrl}/hof/${section.path}/${legend.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "yearly",
+        priority: 0.7,
+      });
+    }
+  }
+
+  // Coaching records page
+  entries.push({
+    url: `${baseUrl}/hof/legends/records`,
+    lastModified: new Date(),
+    changeFrequency: "yearly",
+    priority: 0.8,
+  });
+
+  // State champions hub + detail pages
+  entries.push({
+    url: `${baseUrl}/hof/state-champions`,
+    lastModified: new Date(),
+    changeFrequency: "yearly",
+    priority: 0.8,
+  });
+
+  for (const champ of ALL_STATE_CHAMPIONSHIPS) {
+    entries.push({
+      url: `${baseUrl}/hof/state-champions/${champ.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.7,
+    });
+  }
 
   return entries;
 }
