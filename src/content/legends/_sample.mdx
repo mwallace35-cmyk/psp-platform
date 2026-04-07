@@ -1,0 +1,53 @@
+---
+slug: _sample
+name: Sample Legend
+category: coach
+sport: football
+role: Head Coach
+schools:
+  - Test School
+careerSpan: "1970-1990"
+excerpt: "A smoke-test MDX file used to validate the loadLegend pipeline."
+highlights:
+  - First highlight
+  - Second highlight
+stints:
+  - school: Test School
+    sport: football
+    startYear: 1970
+    endYear: 1990
+    role: Head Coach
+    overallRecord:
+      wins: 100
+      losses: 50
+      ties: 2
+championships:
+  - year: 1985
+    title: City Championship
+    opponent: Rival High
+    score: "21-14"
+    recapId: title-1985
+allStars:
+  - team: first
+    player: John Doe
+    position: QB
+    year: 1985
+  - team: second
+    player: Jane Smith
+    position: RB
+    year: 1986
+photos: []
+statsAtAGlance:
+  - label: Wins
+    value: 100
+  - label: Titles
+    value: 1
+sourceFiles: [_sample.html]
+---
+
+## A Sample Narrative
+
+This file exists only to smoke-test the loadLegend pipeline. It is ignored
+by `generateStaticParams` through the underscore prefix.
+
+{{ChampionshipRecap id="title-1985"}}
