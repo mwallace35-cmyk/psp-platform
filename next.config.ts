@@ -43,6 +43,14 @@ let config: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // Cache images at the CDN level for 1 year
     minimumCacheTTL: 31536000,
+    // Remote images served from Supabase Storage (legend-photos bucket, etc.)
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "uxshabfmgjsykurzvkcr.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
   },
 
   // Caching headers for static assets
