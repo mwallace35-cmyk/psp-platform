@@ -34,6 +34,18 @@ const OverallRecordSchema = z.object({
   ties: z.number().int().nonnegative().optional().default(0),
 });
 
+const StintTitlesSchema = z.object({
+  league: z.number().int().nonnegative().optional(),
+  city: z.number().int().nonnegative().optional(),
+  state: z.number().int().nonnegative().optional(),
+});
+
+const StintStreakSchema = z.object({
+  games: z.number().int().positive(),
+  type: z.enum(["win", "unbeaten"]),
+  span: z.string().min(1), // free-form, e.g. "1995-1997"
+});
+
 const StintSchema = z.object({
   school: z.string().min(1),
   sport: z.enum(SPORTS),
@@ -41,6 +53,42 @@ const StintSchema = z.object({
   endYear: z.number().int().min(1900).max(2100).nullable(),
   role: z.string().min(1),
   overallRecord: OverallRecordSchema.optional(),
+  // Optional richer fields rendered by {{CareerLedger}}.
+  // Existing files without these still validate.
+  titles: StintTitlesSchema.optional(),
+  streak: StintStreakSchema.optional(),
+  notes: z.array(z.string()).optional(),
+});
+
+export const NEXTLEVEL_LEAGUES = [
+  "NFL",
+  "NBA",
+  "MLB",
+  "NHL",
+  "MLS",
+  "WNBA",
+  "D1",
+  "D2",
+  "D3",
+] as const;
+
+const NextLevelAlumSchema = z.object({
+  name: z.string().min(1),
+  level: z.enum(NEXTLEVEL_LEAGUES),
+  team: z.string().optional(), // college or pro team
+  position: z.string().optional(),
+  draftYear: z.number().int().min(1900).max(2100).optional(),
+  draftRound: z.number().int().positive().optional(),
+  notes: z.string().optional(),
+});
+
+const ArchivalQuoteSchema = z.object({
+  id: z.string().min(1), // referenced by {{ArchivalQuote id="..."}}
+  text: z.string().min(1),
+  speaker: z.string().min(1),
+  role: z.string().optional(), // "Roman Catholic '02"
+  context: z.string().optional(), // "after the 1999 CL final"
+  date: z.string().optional(),
 });
 
 const ChampionshipSchema = z.object({
@@ -104,6 +152,9 @@ export const LegendFrontmatterSchema = z.object({
   photos: z.array(PhotoSchema).optional().default([]),
   pullQuotes: z.array(PullQuoteSchema).optional().default([]),
   statsAtAGlance: z.array(StatAtAGlanceSchema).optional().default([]),
+  // Phase 6/7 toolkit additions — opt-in, existing files default to empty.
+  nextLevelAlumni: z.array(NextLevelAlumSchema).optional().default([]),
+  archivalQuotes: z.array(ArchivalQuoteSchema).optional().default([]),
   sourceFiles: z.array(z.string()).default([]),
 });
 
@@ -114,6 +165,8 @@ export type AllStar = z.infer<typeof AllStarSchema>;
 export type Photo = z.infer<typeof PhotoSchema>;
 export type PullQuote = z.infer<typeof PullQuoteSchema>;
 export type StatAtAGlance = z.infer<typeof StatAtAGlanceSchema>;
+export type NextLevelAlum = z.infer<typeof NextLevelAlumSchema>;
+export type ArchivalQuote = z.infer<typeof ArchivalQuoteSchema>;
 
 export interface LoadedLegend {
   frontmatter: LegendFrontmatter;

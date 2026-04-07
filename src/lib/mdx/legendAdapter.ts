@@ -96,6 +96,8 @@ function legacyToFrontmatter(l: LegacyLegend): LegendFrontmatter {
     photos: [],
     pullQuotes: [],
     statsAtAGlance: [],
+    nextLevelAlumni: [],
+    archivalQuotes: [],
     sourceFiles: l.sourceFiles,
   };
 }

@@ -4,6 +4,9 @@ import ChampionshipRecap from "./ChampionshipRecap";
 import PhotoInline from "./PhotoInline";
 import PullQuote from "./PullQuote";
 import AllStarTable, { type AllStarMatch } from "./AllStarTable";
+import NextLevelAlumni from "./NextLevelAlumni";
+import CareerLedger from "./CareerLedger";
+import ArchivalQuote from "./ArchivalQuote";
 
 interface Props {
   frontmatter: LegendFrontmatter;
@@ -28,7 +31,7 @@ interface Props {
  * can jump to each narrative section.
  */
 const TOKEN_REGEX =
-  /\{\{\s*(ChampionshipRecap|PhotoInline|PullQuote|AllStarTable)(\s+id=["']([^"']+)["'])?\s*\}\}/g;
+  /\{\{\s*(ChampionshipRecap|PhotoInline|PullQuote|AllStarTable|NextLevelAlumni|CareerLedger|ArchivalQuote)(\s+id=["']([^"']+)["'])?\s*\}\}/g;
 
 interface MarkdownChunk {
   type: "md";
@@ -143,6 +146,34 @@ export default function LegendBody({
               />
             </div>
           );
+        }
+
+        if (chunk.name === "NextLevelAlumni") {
+          if (
+            !frontmatter.nextLevelAlumni ||
+            frontmatter.nextLevelAlumni.length === 0
+          ) {
+            return null;
+          }
+          return (
+            <NextLevelAlumni
+              key={`alumni-${i}`}
+              alumni={frontmatter.nextLevelAlumni}
+            />
+          );
+        }
+
+        if (chunk.name === "CareerLedger") {
+          if (!frontmatter.stints || frontmatter.stints.length === 0) {
+            return null;
+          }
+          return <CareerLedger key={`ledger-${i}`} stints={frontmatter.stints} />;
+        }
+
+        if (chunk.name === "ArchivalQuote" && chunk.id) {
+          const aq = frontmatter.archivalQuotes?.find((q) => q.id === chunk.id);
+          if (!aq) return null;
+          return <ArchivalQuote key={`aq-${i}`} quote={aq} />;
         }
 
         return null;
