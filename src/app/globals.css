@@ -347,6 +347,99 @@ body {
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+/* Legend page prose container — used by /hof/legends/[slug] body markdown.
+   Defined here as semantic CSS because the renderer emits HTML strings
+   that Tailwind v4's static extractor can't see. Keep selectors scoped
+   to .legend-prose so they never bleed into other pages. */
+.legend-prose p {
+  margin: 0 0 1rem;
+  color: var(--psp-gray-700, #374151);
+  line-height: 1.7;
+}
+.legend-prose h1 {
+  font-family: "Bebas Neue", system-ui, sans-serif;
+  font-size: 1.875rem;
+  color: var(--psp-navy);
+  margin: 2rem 0 1rem;
+}
+.legend-prose h2 {
+  font-family: "Bebas Neue", system-ui, sans-serif;
+  font-size: 1.5rem;
+  color: var(--psp-navy);
+  margin: 2.5rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--psp-gray-200, #e5e7eb);
+}
+.legend-prose h3 {
+  font-family: "Bebas Neue", system-ui, sans-serif;
+  font-size: 1.25rem;
+  color: var(--psp-navy);
+  margin: 2rem 0 0.75rem;
+}
+.legend-prose h4 {
+  font-family: "Bebas Neue", system-ui, sans-serif;
+  font-size: 1.125rem;
+  color: var(--psp-navy);
+  margin: 1.5rem 0 0.5rem;
+}
+.legend-prose ul,
+.legend-prose ol {
+  margin: 0 0 1.25rem;
+  padding-left: 1.5rem;
+}
+.legend-prose ul { list-style: disc outside; }
+.legend-prose ol { list-style: decimal outside; }
+.legend-prose li {
+  margin: 0.4rem 0;
+  color: var(--psp-gray-700, #374151);
+  line-height: 1.65;
+}
+.legend-prose li::marker { color: var(--psp-gold); }
+.legend-prose li > p { margin: 0; }
+.legend-prose blockquote {
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 4px solid var(--psp-gold);
+  color: var(--psp-gray-600, #4b5563);
+  font-style: italic;
+}
+.legend-prose blockquote p { margin-bottom: 0.5rem; }
+.legend-prose blockquote p:last-child { margin-bottom: 0; }
+.legend-prose strong {
+  font-weight: 600;
+  color: var(--psp-navy);
+}
+.legend-prose a {
+  color: var(--psp-blue, #3b82f6);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+.legend-prose a:hover { color: var(--psp-navy); }
+.legend-prose code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.85em;
+  background: var(--psp-gray-100, #f3f4f6);
+  color: var(--psp-navy);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+.legend-prose pre {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.85em;
+  background: var(--psp-gray-100, #f3f4f6);
+  color: var(--psp-navy);
+  padding: 1rem;
+  border-radius: 0.375rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+.legend-prose hr {
+  border: 0;
+  border-top: 1px solid var(--psp-gray-200, #e5e7eb);
+  margin: 2rem 0;
+}
+
 /* Accessibility: Screen reader only content */
 .sr-only {
   position: absolute;
