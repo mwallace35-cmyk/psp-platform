@@ -18,6 +18,7 @@ import CompoundLeaderboards from "@/components/leaderboards/CompoundLeaderboards
 import RecordWatch from "@/components/widgets/RecordWatch";
 import DidYouKnow from "@/components/ui/DidYouKnow";
 import SportIcon from "@/components/ui/SportIcon";
+import PowerRankings from "@/components/rankings/PowerRankings";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
@@ -386,6 +387,13 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
           sportName={meta.name}
           sportColorHex={sportColorHex}
         />
+      </div>
+
+      {/* 5.5 POWER RANKINGS — Phase 4b drop-in (audit SH-2) */}
+      <div className="bg-[var(--psp-navy)] py-6">
+        <div className="max-w-6xl mx-auto px-4">
+          <PowerRankings sport={sport} sportColor={sportColorHex} limit={10} />
+        </div>
       </div>
 
       {/* Compound Leaderboards + Record Watch */}

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import MobileMenuDrawer from "./MobileMenuDrawer";
 
 // Lazy load SearchTypeahead since it's a heavy client component
 const SearchTypeahead = dynamic(() => import("../search/SearchTypeahead"), {
@@ -63,6 +64,7 @@ const ACCOUNT_ITEMS = [
 export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const announcementRef = useRef<HTMLDivElement>(null);
   const desktopNavRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -486,22 +488,38 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Mobile Search Icon (hamburger removed — bottom nav is sole mobile menu) */}
-          <Link
-            href="/search"
-            className="md:hidden"
-            style={{ color: "#fff", padding: 8 }}
-            aria-label="Search"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </Link>
+          {/* Mobile right-side: search + hamburger (Phase 4c, audit CC-10) */}
+          <div className="md:hidden flex items-center gap-1 ml-auto">
+            <Link
+              href="/search"
+              className="inline-flex items-center justify-center w-10 h-10"
+              style={{ color: "#fff" }}
+              aria-label="Search"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </Link>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="inline-flex items-center justify-center w-10 h-10 bg-transparent border-0 cursor-pointer"
+              style={{ color: "#fff" }}
+              aria-label="Open navigation menu"
+              aria-haspopup="dialog"
+              aria-expanded={mobileMenuOpen}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* Mobile menu removed — MobileBottomNav is the sole mobile navigation */}
+      {/* Phase 4c: mobile drawer (full nav for the long tail) */}
+      <MobileMenuDrawer open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </header>
   );
 }

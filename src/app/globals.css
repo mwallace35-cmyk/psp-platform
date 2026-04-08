@@ -186,6 +186,13 @@
   letter-spacing: -0.01em;
 }
 
+/* Phase 3b/4 cream-text utilities — needed because Tailwind v4 arbitrary
+   value classes (text-[var(--psp-text-cream)]) lose to the legacy body color
+   inheritance. See feedback/issues_log.md ISSUE-009. */
+.psp-cream { color: var(--psp-text-cream) !important; }
+.psp-cream-muted { color: var(--psp-text-cream-muted) !important; }
+.psp-cream-dim { color: var(--psp-text-cream-dim) !important; }
+
 /* ===== DARK MODE OVERRIDES ===== */
 [data-theme="dark"] {
   /* Card backgrounds */
@@ -855,9 +862,9 @@ button:focus:not(:focus-visible) {
 
 /* ===== MOBILE NAVIGATION FIX - HIDE DESKTOP NAV ON MOBILE ===== */
 @media (max-width: 768px) {
-  /* Hide all main nav sport links (Football, Basketball, Baseball, More, etc.) on mobile */
+  /* Phase 4c: logo left, hamburger + search right (audit CC-10) */
   .mainnav-inner {
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 
   /* Hide nav-dd (dropdown menus) on mobile */

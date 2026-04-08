@@ -10,6 +10,7 @@ import HomeArticlesSection from '@/components/home/HomeArticlesSection';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import HeroMonument from '@/components/home/HeroMonument';
 import ThisDayInHistory from '@/components/home/ThisDayInHistory';
+import Masthead from '@/components/home/Masthead';
 import UIIcon from '@/components/ui/UIIcon';
 import SportIcon from '@/components/ui/SportIcon';
 
@@ -86,6 +87,9 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-[var(--psp-navy)]">
       <OrganizationJsonLd />
+
+      {/* Phase 4d: Broadsheet masthead — editorial title block */}
+      <Masthead />
 
       {/* Hero — Search-First */}
       <HeroMonument />
