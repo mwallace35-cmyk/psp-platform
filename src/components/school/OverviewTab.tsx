@@ -26,8 +26,8 @@ export default function OverviewTab({ school, sports, currentSeasons, recentGame
       {/* This Season Banner */}
       <ThisSeasonBanner seasons={currentSeasons} schoolSlug={slug} />
 
-      {/* Sport Program Cards */}
-      {sports.length > 0 && (
+      {/* Sport Program Cards — SP-4: hide cards with 0 players AND 0 seasons */}
+      {sports.filter((s: any) => (s.player_count ?? 0) > 0 || (s.season_count ?? 0) > 0 || (s.championship_count ?? 0) > 0).length > 0 && (
         <section>
           <h2
             className="psp-h2 mb-4"
@@ -36,7 +36,9 @@ export default function OverviewTab({ school, sports, currentSeasons, recentGame
             Sports Programs
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sports.map((sport: any) => (
+            {sports
+              .filter((s: any) => (s.player_count ?? 0) > 0 || (s.season_count ?? 0) > 0 || (s.championship_count ?? 0) > 0)
+              .map((sport: any) => (
               <Link
                 key={sport.sport_id}
                 href={`/${sport.sport_id}/schools/${slug}`}

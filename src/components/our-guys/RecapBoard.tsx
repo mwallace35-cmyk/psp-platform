@@ -168,12 +168,22 @@ export async function RecapBoard() {
     return perf.team_name === game.homeTeam ? game.awayTeam : game.homeTeam;
   };
 
-  // Format date for display
-  const displayDate = new Date(latestGameDate + "T12:00:00").toLocaleDateString("en-US", {
+  // Format date for display + relative-time freshness label (audit OG-1)
+  const gameDateObj = new Date(latestGameDate + "T12:00:00");
+  const baseDate = gameDateObj.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
   });
+  const relativeLabel =
+    daysSinceLastGame === 0
+      ? "today"
+      : daysSinceLastGame === 1
+        ? "yesterday"
+        : daysSinceLastGame < 7
+          ? `${daysSinceLastGame} days ago`
+          : `${Math.floor(daysSinceLastGame / 7)} week${daysSinceLastGame < 14 ? "" : "s"} ago`;
+  const displayDate = `${baseDate} · ${relativeLabel}`;
 
   // Build spotlight data
   const spotlightData: SpotlightData[] = spotlightPerfs.map((p: any) => ({

@@ -88,6 +88,11 @@ export default function SportNavTabs({ sport }: SportNavProps) {
       aria-label={`${sportName} section navigation`}
     >
       <div className="max-w-7xl mx-auto px-4 relative">
+        {/* SH-5 fix: right-edge fade indicator for off-screen tabs */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 right-0 w-12 h-full bg-gradient-to-l from-white to-transparent z-10"
+        />
         <div
           ref={scrollRef}
           className="flex gap-2 overflow-x-auto scrollbar-hide py-3 snap-x snap-proximity"

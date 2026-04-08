@@ -19,7 +19,7 @@ const FEATURED_HOF_CARDS = [
     ),
     accent: "#f0a500",
     description:
-      "Honoring the legends of Philadelphia Public League athletics, curated by PhillySportsPack from Ted Silary's lifetime of coverage.",
+      "165 Public League legends. Curated by PSP from the Ted Silary archive.",
     href: "/hof/public-league",
     external: false,
     cta: "View Inductees",
@@ -38,7 +38,7 @@ const FEATURED_HOF_CARDS = [
     ),
     accent: "#7c3aed",
     description:
-      "The City All Star Chapter of the Pennsylvania Sports Hall of Fame, celebrating multi-sport excellence across Philadelphia.",
+      "Multi-sport excellence across Philadelphia. PA Sports Hall of Fame, City All Star Chapter.",
     href: "/hof/city-all-star",
     external: false,
     cta: "View Inductees",
@@ -57,7 +57,7 @@ const FEATURED_HOF_CARDS = [
     ),
     accent: "#f0a500",
     description:
-      "Tributes to the coaches who built Philadelphia high school sports -- original profiles by Ted Silary.",
+      "53 coaches who built Philly high school sports — profiles by Ted Silary.",
     href: "/hof/legends",
     external: false,
     cta: "View Legends",
@@ -82,7 +82,7 @@ const STATE_CHAMPS_CARD = {
   ),
   accent: "#f0a500",
   description:
-    "Championship celebration pages — every title game, every roster, every stat. Ted Silary documented each state championship run in full detail.",
+    "Every title game, every roster, every stat. Ted Silary documented each state championship run.",
   href: "/hof/state-champions",
   external: false,
   cta: "View Champions",

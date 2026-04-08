@@ -49,9 +49,9 @@ export default function HeroMonument() {
             </span>
           </h1>
 
-          {/* Subtitle */}
+          {/* Subtitle — tightened from 25 → 11 words (audit H1-M2) */}
           <p className="text-gray-300 text-sm md:text-base mb-6 max-w-lg">
-            Every stat, every champion, every player. Find your school, check the leaderboards, explore the history.
+            Every stat. Every champion. Every player. Decades of Philly sports, one database.
           </p>
 
           {/* Search bar — the main CTA */}

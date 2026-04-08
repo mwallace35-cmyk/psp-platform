@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createStaticClient } from '@/lib/supabase/static';
 import { getCurrentSeasonId } from '@/lib/data/seasons';
 import { getSchoolDisplayName } from '@/lib/utils/schoolDisplayName';
+import LastUpdated from '@/components/ui/LastUpdated';
 
 /**
  * Build the most descriptive game label possible from available fields.
@@ -106,9 +107,12 @@ export default async function HomeScoresSection() {
         <h2 className="text-lg font-bebas text-gray-100 tracking-wider">
           {scoresLabel === 'this-week' ? 'This Week' : 'Recent Scores'}
         </h2>
-        <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
-          All Scores &rarr;
-        </Link>
+        <div className="flex items-center gap-3">
+          <LastUpdated date={now} prefix="Refreshed" />
+          <Link href="/scores" className="text-xs text-[var(--psp-gold)] hover:text-[var(--psp-gold-light)] transition">
+            All Scores &rarr;
+          </Link>
+        </div>
       </div>
       {scoresLabel === 'this-week' ? (
         <p className="text-xs text-gray-300 mb-3">{weekRangeLabel}</p>
