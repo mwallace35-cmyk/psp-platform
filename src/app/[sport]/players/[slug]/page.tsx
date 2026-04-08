@@ -613,7 +613,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* Career Trajectory Chart */}
             {sport === "football" && stats.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-5">
                 <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
                   Career Trajectory
                 </h2>
@@ -631,7 +631,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               </div>
             )}
             {isBasketballSport(sport) && stats.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-5">
                 <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
                   Career Trajectory
                 </h2>
@@ -649,7 +649,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               </div>
             )}
             {sport === "baseball" && stats.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-5">
                 <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
                   Career Trajectory
                 </h2>
@@ -682,7 +682,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* Career context cards */}
             {sport === "football" && footballTotals && footballTotals.rushYards > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-6">
                 <h3 className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Career Context
                 </h3>
@@ -714,7 +714,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               </div>
             )}
             {isBasketballSport(sport) && basketballTotals && basketballTotals.points > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-6">
                 <h3 className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}>
                   Career Context
                 </h3>
@@ -731,7 +731,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Player info card */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-6">
               <h2 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                 Player Info
               </h2>
@@ -794,7 +794,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* Pro/college info */}
             {(player.college || player.pro_team) && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-6">
                 <h2 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                   Next Level
                 </h2>
@@ -826,7 +826,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* Cross-sport links */}
             {crossSportPlayers && crossSportPlayers.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-6">
                 <h2 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
                   Also Plays
                 </h2>

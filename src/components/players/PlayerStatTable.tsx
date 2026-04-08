@@ -122,27 +122,27 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
   return (
     <div>
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto rounded-lg border border-gray-200">
+      <div className="hidden md:block overflow-x-auto rounded-lg border border-[var(--psp-rule-strong)]">
         <table className="w-full text-sm" aria-label={playerName ? `Career statistics for ${playerName}` : "Season-by-season statistics"}>
           <caption className="sr-only">{playerName ? `Career statistics for ${playerName}` : "Season-by-season statistics"}</caption>
           <thead>
-            <tr style={{ background: "var(--psp-navy)" }}>
+            <tr style={{ background: "var(--psp-ink-deep)" }}>
               <th
                 scope="col"
-                className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 font-bebas tracking-[0.08em]"
+                className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)] font-bebas tracking-[0.08em]"
               >
                 Season
               </th>
               <th
                 scope="col"
-                className="text-left px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 font-bebas tracking-[0.08em]"
+                className="text-left px-3 py-3 text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)] font-bebas tracking-[0.08em]"
               >
                 School
               </th>
               {visibleCols.map((col) => (
                 <th
                   key={col.key}
-                  className="text-right px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 font-bebas tracking-[0.08em]"
+                  className="text-right px-3 py-3 text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)] font-bebas tracking-[0.08em]"
                 >
                   {col.label}
                 </th>
@@ -157,17 +157,17 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
               return (
                 <tr
                   key={(s as { id: number }).id}
-                  className="border-t border-gray-100 transition-colors hover:bg-gray-50"
+                  className="border-t border-[var(--psp-rule)] transition-colors hover:bg-white/5"
                   style={{
                     background: isBest
-                      ? "rgba(240, 165, 0, 0.12)"
+                      ? "rgba(240, 165, 0, 0.10)"
                       : i % 2 === 0
-                      ? "#fff"
-                      : "#fafafa",
+                      ? "var(--psp-navy-mid)"
+                      : "var(--psp-navy)",
                     boxShadow: isBest ? "inset 4px 0 0 var(--psp-gold)" : undefined,
                   }}
                 >
-                  <td className="px-4 py-2.5 font-semibold whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>
+                  <td className="px-4 py-2.5 font-semibold whitespace-nowrap" style={{ color: "var(--psp-text-cream)" }}>
                     {isBest && (
                       <span
                         className="inline-block w-1.5 h-1.5 rounded-full mr-1.5"
@@ -187,7 +187,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                         {school.name}
                       </Link>
                     ) : (
-                      <span className="text-gray-300">\u2014</span>
+                      <span className="text-[var(--psp-text-cream-dim)]">\u2014</span>
                     )}
                   </td>
                   {visibleCols.map((col) => {
@@ -199,8 +199,8 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                         style={{
                           fontWeight: isHighlighted || col.key === "total_td" || col.key === "pts" ? 700 : 400,
                           color: isHighlighted
-                            ? "var(--psp-gold-text)"
-                            : "var(--psp-navy)",
+                            ? "var(--psp-gold)"
+                            : "var(--psp-text-cream)",
                         }}
                       >
                         {col.getValue(s as never)}
@@ -259,13 +259,13 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
               key={(s as { id: number }).id}
               className="rounded-lg border p-4"
               style={{
-                background: isBest ? "rgba(240, 165, 0, 0.06)" : "#fff",
-                borderColor: isBest ? "var(--psp-gold)" : "#e5e7eb",
+                background: isBest ? "rgba(240, 165, 0, 0.10)" : "var(--psp-navy-mid)",
+                borderColor: isBest ? "var(--psp-gold)" : "var(--psp-rule-strong)",
                 borderWidth: isBest ? "2px" : "1px",
               }}
             >
               <div className="flex justify-between items-baseline mb-3">
-                <span className="font-bold text-sm font-bebas tracking-wider" style={{ color: "var(--psp-navy)" }}>
+                <span className="font-bold text-sm font-bebas tracking-wider" style={{ color: "var(--psp-text-cream)" }}>
                   {isBest && (
                     <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: "var(--psp-gold)", verticalAlign: "middle" }} />
                   )}
@@ -280,11 +280,11 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
               <div className="grid grid-cols-3 gap-2 text-center">
                 {visibleCols.slice(0, 6).map((col) => (
                   <div key={col.key}>
-                    <div className="text-xs font-bold uppercase tracking-wider text-gray-300">{col.label}</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)]">{col.label}</div>
                     <div
                       className="font-bold text-sm tabular-nums"
                       style={{
-                        color: isBest && col.key === primaryStatKey(sport) ? "var(--psp-gold-text)" : "var(--psp-navy)",
+                        color: isBest && col.key === primaryStatKey(sport) ? "var(--psp-gold)" : "var(--psp-text-cream)",
                       }}
                     >
                       {col.getValue(s as never)}
@@ -293,11 +293,11 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                 ))}
               </div>
               {visibleCols.length > 6 && (
-                <div className="grid grid-cols-3 gap-2 text-center mt-2 pt-2 border-t border-gray-100">
+                <div className="grid grid-cols-3 gap-2 text-center mt-2 pt-2 border-t border-[var(--psp-rule)]">
                   {visibleCols.slice(6).map((col) => (
                     <div key={col.key}>
-                      <div className="text-xs font-bold uppercase tracking-wider text-gray-300">{col.label}</div>
-                      <div className="font-bold text-sm tabular-nums" style={{ color: "var(--psp-navy)" }}>
+                      <div className="text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)]">{col.label}</div>
+                      <div className="font-bold text-sm tabular-nums" style={{ color: "var(--psp-text-cream)" }}>
                         {col.getValue(s as never)}
                       </div>
                     </div>

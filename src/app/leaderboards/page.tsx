@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getFootballLeaders, getBasketballLeaders } from '@/lib/data';
+import SportIcon from '@/components/ui/SportIcon';
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
@@ -50,10 +51,10 @@ function StatPills({ stats }: { stats: string[] }) {
           style={{
             fontSize: '0.75rem',
             padding: '0.2rem 0.5rem',
-            background: 'var(--psp-surface-alt, #f5f5f5)',
+            background: 'rgba(245, 235, 214, 0.06)',
             borderRadius: '4px',
-            color: 'var(--psp-muted)',
-            border: '1px solid var(--psp-border)',
+            color: 'var(--psp-text-cream-muted)',
+            border: '1px solid var(--psp-rule-strong)',
           }}
         >
           {s}
@@ -73,18 +74,19 @@ export default async function LeaderboardsPage() {
   const bbRows = (bbRaw as LeaderRow[]).slice(0, 3);
 
   return (
+    <div style={{ background: 'var(--psp-navy)', minHeight: '100vh' }}>
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1rem' }}>
       <div style={{ marginBottom: '2rem' }}>
         <h1
           className="psp-h1"
           style={{
-            color: 'var(--psp-navy)',
+            color: 'var(--psp-text-cream)',
             marginBottom: '0.5rem',
           }}
         >
           LEADERBOARDS
         </h1>
-        <p style={{ color: 'var(--psp-muted)', fontSize: '1rem', maxWidth: '600px' }}>
+        <p style={{ color: 'var(--psp-text-cream-muted)', fontSize: '1rem', maxWidth: '600px' }}>
           Top statistical leaders across all Philadelphia high school sports. Select a sport to
           view full rankings.
         </p>
@@ -92,9 +94,9 @@ export default async function LeaderboardsPage() {
 
       <nav
         aria-label="Breadcrumb"
-        style={{ marginBottom: '1.5rem', fontSize: '0.875rem', color: 'var(--psp-muted)' }}
+        style={{ marginBottom: '1.5rem', fontSize: '0.875rem', color: 'var(--psp-text-cream-muted)' }}
       >
-        <Link href="/" style={{ color: 'var(--psp-gold-text)', textDecoration: 'none' }}>
+        <Link href="/" style={{ color: 'var(--psp-gold)', textDecoration: 'none' }}>
           Home
         </Link>
         {' › '}
@@ -112,39 +114,39 @@ export default async function LeaderboardsPage() {
         <Link href="/football/leaderboards" style={{ textDecoration: 'none', color: 'inherit' }}>
           <div
             style={{
-              border: '1px solid var(--psp-border)',
+              border: '1px solid var(--psp-rule-strong)',
               borderRadius: '12px',
               overflow: 'hidden',
-              background: 'var(--psp-surface)',
+              background: 'var(--psp-navy-mid)',
               transition: 'transform 0.15s ease, box-shadow 0.15s ease',
             }}
             className="hover:shadow-lg hover:-translate-y-0.5"
           >
-            <div style={{ height: '4px', background: '#8B4513' }} />
+            <div style={{ height: '4px', background: 'var(--fb)' }} />
             <div style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '2rem' }} role="img" aria-label="football">🏈</span>
-                <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
+                <SportIcon sport="football" size="sm" />
+                <h2 className="psp-h3" style={{ color: 'var(--psp-text-cream)', margin: 0 }}>
                   Football
                 </h2>
-                <span style={{ marginLeft: 'auto', fontSize: '0.75rem', padding: '0.15rem 0.45rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
+                <span style={{ marginLeft: 'auto', fontSize: '0.75rem', padding: '0.15rem 0.45rem', background: 'rgba(230,57,70,0.15)', color: 'var(--psp-live)', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
                   LIVE
                 </span>
               </div>
               {fbRows.length > 0 ? (
                 <div style={{ marginBottom: '0.75rem' }}>
-                  <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--psp-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
+                  <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--psp-text-cream-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
                     Rush Yards Leaders
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     {fbRows.map((row, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
-                        <span style={{ color: '#8B4513', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.75rem' }}>{i + 1}.</span>
+                        <span style={{ color: 'var(--fb)', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.75rem' }}>{i + 1}.</span>
                         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-                          <span style={{ fontWeight: 600, color: 'var(--psp-navy)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
-                          <span style={{ color: 'var(--psp-muted)', fontSize: '0.6875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
+                          <span style={{ fontWeight: 600, color: 'var(--psp-text-cream)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
+                          <span style={{ color: 'var(--psp-text-cream-muted)', fontSize: '0.6875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
                         </div>
-                        <span style={{ fontWeight: 700, color: '#8B4513', fontSize: '0.78rem', minWidth: '3.5rem', textAlign: 'right' }}>
+                        <span style={{ fontWeight: 700, color: 'var(--fb)', fontSize: '0.78rem', minWidth: '3.5rem', textAlign: 'right' }}>
                           {row.rush_yards != null ? Number(row.rush_yards).toLocaleString() : '—'}{' '}yds
                         </span>
                       </div>
@@ -154,7 +156,7 @@ export default async function LeaderboardsPage() {
               ) : (
                 <StatPills stats={['Rushing Yards', 'Passing Yards', 'Touchdowns', 'Tackles']} />
               )}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#8B4513', fontWeight: 600, fontSize: '0.875rem', marginTop: fbRows.length > 0 ? '0.5rem' : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'var(--fb)', fontWeight: 600, fontSize: '0.875rem', marginTop: fbRows.length > 0 ? '0.5rem' : 0 }}>
                 <span>View Football Leaders</span>
                 <span>→</span>
               </div>
@@ -165,39 +167,39 @@ export default async function LeaderboardsPage() {
         <Link href="/basketball/leaderboards" style={{ textDecoration: 'none', color: 'inherit' }}>
           <div
             style={{
-              border: '1px solid var(--psp-border)',
+              border: '1px solid var(--psp-rule-strong)',
               borderRadius: '12px',
               overflow: 'hidden',
-              background: 'var(--psp-surface)',
+              background: 'var(--psp-navy-mid)',
               transition: 'transform 0.15s ease, box-shadow 0.15s ease',
             }}
             className="hover:shadow-lg hover:-translate-y-0.5"
           >
-            <div style={{ height: '4px', background: '#FF6B00' }} />
+            <div style={{ height: '4px', background: 'var(--bb)' }} />
             <div style={{ padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '2rem' }} role="img" aria-label="basketball">🏀</span>
-                <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
+                <SportIcon sport="basketball" size="sm" />
+                <h2 className="psp-h3" style={{ color: 'var(--psp-text-cream)', margin: 0 }}>
                   Basketball
                 </h2>
-                <span style={{ marginLeft: 'auto', fontSize: '0.75rem', padding: '0.15rem 0.45rem', background: '#e8f5e9', color: '#2e7d32', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
+                <span style={{ marginLeft: 'auto', fontSize: '0.75rem', padding: '0.15rem 0.45rem', background: 'rgba(230,57,70,0.15)', color: 'var(--psp-live)', borderRadius: '3px', fontWeight: 700, letterSpacing: '0.04em' }}>
                   LIVE
                 </span>
               </div>
               {bbRows.length > 0 ? (
                 <div style={{ marginBottom: '0.75rem' }}>
-                  <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--psp-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
+                  <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--psp-text-cream-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.5rem' }}>
                     PPG Leaders
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     {bbRows.map((row, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
-                        <span style={{ color: '#FF6B00', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.75rem' }}>{i + 1}.</span>
+                        <span style={{ color: 'var(--bb)', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.75rem' }}>{i + 1}.</span>
                         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-                          <span style={{ fontWeight: 600, color: 'var(--psp-navy)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
-                          <span style={{ color: 'var(--psp-muted)', fontSize: '0.6875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
+                          <span style={{ fontWeight: 600, color: 'var(--psp-text-cream)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
+                          <span style={{ color: 'var(--psp-text-cream-muted)', fontSize: '0.6875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
                         </div>
-                        <span style={{ fontWeight: 700, color: '#FF6B00', fontSize: '0.78rem', minWidth: '3.5rem', textAlign: 'right' }}>
+                        <span style={{ fontWeight: 700, color: 'var(--bb)', fontSize: '0.78rem', minWidth: '3.5rem', textAlign: 'right' }}>
                           {row.ppg ?? '—'} PPG
                         </span>
                       </div>
@@ -207,7 +209,7 @@ export default async function LeaderboardsPage() {
               ) : (
                 <StatPills stats={['Points Per Game', 'Rebounds', 'Assists', 'Steals']} />
               )}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#FF6B00', fontWeight: 600, fontSize: '0.875rem', marginTop: bbRows.length > 0 ? '0.5rem' : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'var(--bb)', fontWeight: 600, fontSize: '0.875rem', marginTop: bbRows.length > 0 ? '0.5rem' : 0 }}>
                 <span>View Basketball Leaders</span>
                 <span>→</span>
               </div>
@@ -220,14 +222,14 @@ export default async function LeaderboardsPage() {
         {STATIC_SPORTS.map((sport) => (
           <Link key={sport.slug} href={`/${sport.slug}/leaderboards`} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div
-              style={{ border: '1px solid var(--psp-border)', borderRadius: '12px', overflow: 'hidden', background: 'var(--psp-surface)', transition: 'transform 0.15s ease, box-shadow 0.15s ease' }}
+              style={{ border: '1px solid var(--psp-rule-strong)', borderRadius: '12px', overflow: 'hidden', background: 'var(--psp-navy-mid)', transition: 'transform 0.15s ease, box-shadow 0.15s ease' }}
               className="hover:shadow-lg hover:-translate-y-0.5"
             >
               <div style={{ height: '4px', background: sport.color }} />
               <div style={{ padding: '1.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                  <span style={{ fontSize: '2rem' }} role="img" aria-label={sport.name}>{sport.emoji}</span>
-                  <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>{sport.name}</h2>
+                  <SportIcon sport={sport.slug} size="sm" />
+                  <h2 className="psp-h3" style={{ color: 'var(--psp-text-cream)', margin: 0 }}>{sport.name}</h2>
                 </div>
                 <StatPills stats={sport.stats} />
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: sport.color, fontWeight: 600, fontSize: '0.875rem' }}>
@@ -241,11 +243,11 @@ export default async function LeaderboardsPage() {
       </div>
 
       {/* By Class Year */}
-      <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: 'var(--psp-surface)', borderRadius: '12px', border: '1px solid var(--psp-border)' }}>
-        <p className="psp-h4" style={{ color: 'var(--psp-navy)', margin: '0 0 0.75rem' }}>
+      <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: 'var(--psp-navy-mid)', borderRadius: '12px', border: '1px solid var(--psp-rule-strong)' }}>
+        <p className="psp-h4" style={{ color: 'var(--psp-text-cream)', margin: '0 0 0.75rem' }}>
           BROWSE BY CLASS YEAR
         </p>
-        <p style={{ color: 'var(--psp-muted)', fontSize: '0.85rem', margin: '0 0 1rem' }}>
+        <p style={{ color: 'var(--psp-text-cream-muted)', fontSize: '0.85rem', margin: '0 0 1rem' }}>
           See top performers from each graduating class across all sports.
         </p>
         <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
@@ -256,12 +258,13 @@ export default async function LeaderboardsPage() {
               style={{
                 padding: '0.45rem 1.25rem',
                 borderRadius: '8px',
-                background: 'var(--psp-navy)',
-                color: '#fff',
+                background: 'transparent',
+                border: '1px solid var(--psp-rule-strong)',
+                color: 'var(--psp-text-cream)',
                 fontWeight: 700,
                 fontSize: '0.875rem',
                 textDecoration: 'none',
-                transition: 'opacity 0.15s',
+                transition: 'border-color 0.15s, color 0.15s',
               }}
             >
               Class of {yr}
@@ -288,6 +291,7 @@ export default async function LeaderboardsPage() {
           </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 }

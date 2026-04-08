@@ -181,9 +181,10 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
     ? (school.colors as Record<string, string>).secondary || null
     : null;
 
-  const heroGradient = primaryColor
-    ? `linear-gradient(135deg, ${primaryColor} 0%, #0a1628 50%, ${primaryColor}15 100%)`
-    : "linear-gradient(135deg, var(--psp-navy) 0%, var(--psp-navy-mid) 60%, var(--psp-blue)22 100%)";
+  // Audit SP-1 fix: kill the hot red gradient. Hero is always navy now;
+  // school primary color shows as a thin top accent strip below the header.
+  const heroBackground = "var(--psp-navy)";
+  const heroAccentColor = primaryColor || "var(--psp-gold)";
 
   return (
     <>
@@ -196,7 +197,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
       />
 
       {/* Hero Section */}
-      <section className="py-10 md:py-14" style={{ background: heroGradient }}>
+      <section className="py-10 md:py-14" style={{ background: heroBackground, borderTop: `3px solid ${heroAccentColor}` }}>
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb
             items={[

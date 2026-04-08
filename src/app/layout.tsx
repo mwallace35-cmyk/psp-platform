@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Bebas_Neue, DM_Sans } from "next/font/google";
+import { Bebas_Neue, DM_Sans, Fraunces, Inter_Tight } from "next/font/google";
 import { headers } from "next/headers";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 import { WebVitalsReporter } from "@/app/web-vitals-reporter";
@@ -15,6 +15,10 @@ import "./globals.css";
 import "./type-scale.css";
 import "./mobile-nav-spacer.css";
 
+// Legacy fonts — kept for backward compat with components still hardcoding
+// Bebas/DM Sans references in CSS modules and inline styles. Phase 3b ships
+// the new display + body fonts as the active typography system; legacy can
+// be removed in Phase 5 polish once every consumer is migrated.
 const bebasNeue = Bebas_Neue({
   weight: "400",
   subsets: ["latin"],
@@ -25,6 +29,22 @@ const bebasNeue = Bebas_Neue({
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",
+  display: "swap",
+});
+
+// Phase 3b — new mockup typography:
+// Fraunces (variable serif) for display + editorial moments,
+// Inter Tight (condensed sans) for body, UI, and tabular figures.
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  axes: ["opsz", "SOFT", "WONK"],
+});
+
+const interTight = Inter_Tight({
+  subsets: ["latin"],
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -90,7 +110,7 @@ export default async function RootLayout({
   const nonce = headersList.get("x-csp-nonce") || "";
 
   return (
-    <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable} ${fraunces.variable} ${interTight.variable}`}>
       <head>
         {/* Feed autodiscovery */}
         <link rel="alternate" type="application/rss+xml" title="PhillySportsPack RSS" href="/feed" />

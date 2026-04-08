@@ -57,6 +57,20 @@
   --wrest: #ca8a04;
   --soccer: #059669;
 
+  /* ===== Phase 3a: Mockup direction tokens =====
+     Dark-theme palette + editorial accents from the audit mockups.
+     Coexist with the legacy palette during the page-by-page migration.
+     Naming: --psp- prefix everywhere to avoid collision with the existing
+     --text / --bg legacy tokens. */
+  --psp-cream: #f5ebd6;          /* newsprint cream — editorial accent */
+  --psp-ink-deep: #06101e;       /* deepest navy for dividers/footers */
+  --psp-rule: rgba(245, 235, 214, 0.12);        /* hairlines on dark */
+  --psp-rule-strong: rgba(245, 235, 214, 0.28); /* stronger hairlines */
+  --psp-text-cream: #f5ebd6;                    /* primary text on dark */
+  --psp-text-cream-muted: rgba(245, 235, 214, 0.58); /* secondary text on dark */
+  --psp-text-cream-dim: rgba(245, 235, 214, 0.38);   /* tertiary/captions */
+  --psp-live: #e63946;           /* LIVE indicator only — broadcast red */
+
   /* ===== DESIGN TOKENS ===== */
 
   /* Border Radius System - Standardized corner rounding */
@@ -162,8 +176,14 @@
 }
 
 /* ===== UTILITY CLASSES ===== */
+/* font-heading: now points at the Phase 3b display font (Fraunces) with
+   Bebas Neue / DM Sans as fallbacks for any consumer that hasn't been migrated. */
 .font-heading {
-  font-family: 'Bebas Neue', 'DM Sans', system-ui, sans-serif;
+  font-family: var(--font-display), 'Fraunces', 'Bebas Neue', 'DM Sans', system-ui, serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 20;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 /* ===== DARK MODE OVERRIDES ===== */
@@ -334,7 +354,7 @@
 }
 
 body {
-  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body), 'Inter Tight', 'DM Sans', system-ui, -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   font-size: 14px;

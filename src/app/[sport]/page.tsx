@@ -322,7 +322,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
   const fallbackBannerSport = sport === 'track-field' ? 'track' : sport;
 
   return (
-    <main id="main-content">
+    <main id="main-content" className="bg-[var(--psp-navy)] min-h-screen">
       {/* Breadcrumb JSON-LD */}
       <BreadcrumbJsonLd items={[
         { name: "Home", url: "https://phillysportspack.com" },

@@ -1,6 +1,7 @@
-/* PSP Type Scale — Formalized March 2026 */
+/* PSP Type Scale — Formalized March 2026, updated April 2026 */
 /* Typography system for Philadelphia Sports Pack */
-/* Bebas Neue for display headings, DM Sans for all body and text */
+/* Fraunces (variable serif) for display headings, Inter Tight for body/UI */
+/* Phase 3b: switched from Bebas Neue + DM Sans → Fraunces + Inter Tight */
 
 :root {
   --psp-navy: #0a1628;
@@ -20,71 +21,81 @@
   --ts-small: clamp(0.875rem, 1.2vw, 0.9375rem); /* 14px → 15px */
 }
 
-/* H1: Display heading — Bebas Neue, responsive 32–64px (page titles only) */
+/* H1: Display heading — Fraunces variable serif, responsive 32–64px (page titles only) */
 /* NOTE: Color is NOT set here — use Tailwind text-* or inherit from parent */
 .psp-h1 {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display), 'Fraunces', 'Bebas Neue', serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 20, 'WONK' 0;
   font-size: var(--ts-h1);
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.015em;
   margin: 0;
   padding: 0;
 }
 
 .psp-h1-lg {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--font-display), 'Fraunces', 'Bebas Neue', serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 20, 'WONK' 0;
   font-size: var(--ts-h1-lg);
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
   margin: 0;
   padding: 0;
 }
 
-/* H2: Section heading — DM Sans Bold, responsive 24–28px */
+/* H2: Section heading — Fraunces 700, responsive 24–28px */
 .psp-h2 {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display), 'Fraunces', 'DM Sans', serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 20;
   font-size: var(--ts-h2);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
   margin: 0;
   padding: 0;
 }
 
-/* H3: Subsection heading — DM Sans Bold, responsive 20–24px */
+/* H3: Subsection heading — Fraunces 700, responsive 20–24px */
 .psp-h3 {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-display), 'Fraunces', 'DM Sans', serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 20;
   font-size: var(--ts-h3);
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.25;
   margin: 0;
   padding: 0;
 }
 
-/* H4: Minor heading — DM Sans SemiBold, responsive 16–20px */
+/* H4: Minor heading — Inter Tight 700 (UI weight, not display), responsive 16–20px */
 .psp-h4 {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body), 'Inter Tight', 'DM Sans', sans-serif;
   font-size: var(--ts-h4);
-  font-weight: 600;
-  line-height: 1.4;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
   margin: 0;
   padding: 0;
 }
 
-/* Body: Default text — DM Sans Regular, responsive 15–16px */
+/* Body: Default text — Inter Tight Regular, responsive 15–16px */
 .psp-body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body), 'Inter Tight', 'DM Sans', sans-serif;
   font-size: var(--ts-body);
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.55;
   margin: 0;
   padding: 0;
 }
 
-/* Small: Smaller body text — DM Sans Medium, responsive 14–15px */
+/* Small: Smaller body text — Inter Tight Medium, responsive 14–15px */
 .psp-small {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body), 'Inter Tight', 'DM Sans', sans-serif;
   font-size: var(--ts-small);
   font-weight: 500;
   line-height: 1.5;
@@ -92,9 +103,9 @@
   padding: 0;
 }
 
-/* Caption: Helper text, labels — DM Sans SemiBold, 12px, uppercase */
+/* Caption: Helper text, labels — Inter Tight SemiBold, 12px, uppercase */
 .psp-caption {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body), 'Inter Tight', 'DM Sans', sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
