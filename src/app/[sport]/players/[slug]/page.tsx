@@ -12,6 +12,7 @@ import RelatedArticles from "@/components/articles/RelatedArticles";
 import PlayerHofBadges from "@/components/hof/PlayerHofBadges";
 import MultiSportBanner from "@/components/players/MultiSportBanner";
 import { buildOgImageUrl } from "@/lib/og-utils";
+import { buildPlayerCaption } from "@/lib/ig-caption";
 import GameLogAccordion from "@/components/game-log/GameLogAccordion";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
@@ -403,22 +404,65 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   </span>
                 )}
                 {(awards as Award[]).length > 0 && (
-                  <span
-                    className="px-2 py-0.5 text-xs font-bold rounded-md"
+                  <a
+                    href="#awards"
+                    className="px-2 py-0.5 text-xs font-bold rounded-md hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] transition"
                     style={{ background: "rgba(240,165,0,0.2)", color: "var(--psp-gold)", border: "1px solid rgba(240,165,0,0.3)" }}
+                    aria-label={`Jump to ${(awards as Award[]).length} award${(awards as Award[]).length !== 1 ? "s" : ""} section`}
                   >
                     {(awards as Award[]).length} Award{(awards as Award[]).length !== 1 ? "s" : ""}
-                  </span>
+                  </a>
                 )}
               </div>
 
               {/* Actions row */}
               <div className="mt-4 flex flex-wrap items-center gap-3">
-                <ShareButtons
-                  url={`/${sport}/players/${slug}`}
-                  title={`${player.name} -- ${meta.name} Stats | PhillySportsPack`}
-                  description={`Check out ${player.name}'s career stats on PhillySportsPack.com`}
-                />
+                {(() => {
+                  const headlineStat = (() => {
+                    if (sport === "football" && footballTotals) {
+                      if (footballTotals.rushYards >= footballTotals.passYards && footballTotals.rushYards >= footballTotals.recYards && footballTotals.rushYards > 0) {
+                        return `${footballTotals.rushYards.toLocaleString()} Career Rush Yds`;
+                      }
+                      if (footballTotals.passYards >= footballTotals.recYards && footballTotals.passYards > 0) {
+                        return `${footballTotals.passYards.toLocaleString()} Career Pass Yds`;
+                      }
+                      if (footballTotals.recYards > 0) {
+                        return `${footballTotals.recYards.toLocaleString()} Career Rec Yds`;
+                      }
+                      if (footballTotals.totalTd > 0) {
+                        return `${footballTotals.totalTd} Career TDs`;
+                      }
+                    }
+                    if (isBasketballSport(sport) && basketballTotals && basketballTotals.points > 0) {
+                      return `${basketballTotals.points.toLocaleString()} Career Points`;
+                    }
+                    return "";
+                  })();
+                  const schoolName = player.schools?.name ?? "";
+                  const igQs = new URLSearchParams({
+                    name: player.name,
+                    ...(schoolName ? { school: schoolName } : {}),
+                    sport,
+                    ...(headlineStat ? { stat: headlineStat } : {}),
+                  }).toString();
+                  const igImageUrl = `/api/og/ig-story/player?${igQs}`;
+                  const igCaption = buildPlayerCaption({
+                    name: player.name,
+                    school: schoolName || undefined,
+                    sport,
+                    headline: headlineStat || undefined,
+                    url: `https://phillysportspack.com/${sport}/players/${slug}`,
+                  });
+                  return (
+                    <ShareButtons
+                      url={`/${sport}/players/${slug}`}
+                      title={`${player.name} -- ${meta.name} Stats | PhillySportsPack`}
+                      description={`Check out ${player.name}'s career stats on PhillySportsPack.com`}
+                      igImageUrl={igImageUrl}
+                      igCaption={igCaption}
+                    />
+                  );
+                })()}
                 <Link
                   href={`/compare?players=${slug}&sport=${sport}`}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"

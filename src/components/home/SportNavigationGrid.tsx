@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { SPORT_GLYPHS } from '@/components/ui/SportIcon';
 
 interface SportNavigationGridProps {
   sports: Array<{
@@ -9,17 +10,18 @@ interface SportNavigationGridProps {
   }>;
 }
 
-const SPORT_CONFIG: Record<string, { emoji: string; color: string; bgGlow: string }> = {
-  football:       { emoji: '🏈', color: '#16a34a', bgGlow: 'rgba(22,163,74,0.15)' },
-  basketball:     { emoji: '🏀', color: '#3b82f6', bgGlow: 'rgba(59,130,246,0.15)' },
-  baseball:       { emoji: '⚾', color: '#dc2626', bgGlow: 'rgba(220,38,38,0.15)' },
-  soccer:         { emoji: '⚽', color: '#059669', bgGlow: 'rgba(5,150,105,0.15)' },
-  lacrosse:       { emoji: '🥍', color: '#0891b2', bgGlow: 'rgba(8,145,178,0.15)' },
-  wrestling:      { emoji: '🤼', color: '#ca8a04', bgGlow: 'rgba(202,138,4,0.15)' },
-  'track-field':  { emoji: '🏃', color: '#7c3aed', bgGlow: 'rgba(124,58,237,0.15)' },
+const SPORT_CONFIG: Record<string, { color: string; bgGlow: string }> = {
+  football:       { color: '#16a34a', bgGlow: 'rgba(22,163,74,0.15)' },
+  basketball:     { color: '#3b82f6', bgGlow: 'rgba(59,130,246,0.15)' },
+  baseball:       { color: '#dc2626', bgGlow: 'rgba(220,38,38,0.15)' },
+  soccer:         { color: '#059669', bgGlow: 'rgba(5,150,105,0.15)' },
+  lacrosse:       { color: '#0891b2', bgGlow: 'rgba(8,145,178,0.15)' },
+  wrestling:      { color: '#ca8a04', bgGlow: 'rgba(202,138,4,0.15)' },
+  'track-field':  { color: '#7c3aed', bgGlow: 'rgba(124,58,237,0.15)' },
 };
 
-function ShieldBadge({ sport, config }: { sport: { name: string; slug: string }; config: { emoji: string; color: string; bgGlow: string } }) {
+function ShieldBadge({ sport, config }: { sport: { name: string; slug: string }; config: { color: string; bgGlow: string } }) {
+  const Glyph = SPORT_GLYPHS[sport.slug];
   return (
     <Link href={`/${sport.slug}`} className="group block rounded-lg focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none">
       <div className="relative flex flex-col items-center transition-transform duration-200 group-hover:scale-105 group-focus-visible:scale-105">
@@ -41,9 +43,14 @@ function ShieldBadge({ sport, config }: { sport: { name: string; slug: string };
               border: `2px solid ${config.color}`,
             }}
           >
-            {/* Emoji */}
-            <span className="text-3xl md:text-4xl mb-1 drop-shadow-sm transition-transform group-hover:scale-110 group-focus-visible:scale-110" role="img" aria-label={sport.name}>
-              {config.emoji}
+            {/* Sport glyph */}
+            <span
+              className="mb-1 drop-shadow-sm transition-transform group-hover:scale-110 group-focus-visible:scale-110 inline-flex items-center justify-center"
+              role="img"
+              aria-label={sport.name}
+              style={{ color: config.color }}
+            >
+              {Glyph ? <Glyph width={36} height={36} aria-hidden="true" /> : null}
             </span>
             {/* Accent line */}
             <div className="w-8 h-0.5 rounded-full mb-1 transition-all group-hover:w-12" style={{ backgroundColor: config.color }} />
@@ -98,14 +105,14 @@ export default function SportNavigationGrid({ sports }: SportNavigationGridProps
         {/* Top row: Football, Basketball, Baseball */}
         <div className="flex justify-center gap-6 md:gap-10 mb-6 md:mb-8">
           {allSports.slice(0, topRowCount).map((sport) => {
-            const config = SPORT_CONFIG[sport.slug] || { emoji: '🏅', color: '#6b7280', bgGlow: 'rgba(107,114,128,0.15)' };
+            const config = SPORT_CONFIG[sport.slug] || { color: '#6b7280', bgGlow: 'rgba(107,114,128,0.15)' };
             return <ShieldBadge key={sport.id} sport={sport} config={config} />;
           })}
         </div>
         {/* Bottom row: Soccer, Lacrosse, Track & Field, Wrestling */}
         <div className="flex flex-wrap justify-center gap-6 md:gap-10">
           {allSports.slice(topRowCount).map((sport) => {
-            const config = SPORT_CONFIG[sport.slug] || { emoji: '🏅', color: '#6b7280', bgGlow: 'rgba(107,114,128,0.15)' };
+            const config = SPORT_CONFIG[sport.slug] || { color: '#6b7280', bgGlow: 'rgba(107,114,128,0.15)' };
             return <ShieldBadge key={sport.id} sport={sport} config={config} />;
           })}
 

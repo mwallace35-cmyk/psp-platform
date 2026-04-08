@@ -17,6 +17,7 @@ import SportHubStandings from "@/components/sport-layouts/SportHubStandings";
 import CompoundLeaderboards from "@/components/leaderboards/CompoundLeaderboards";
 import RecordWatch from "@/components/widgets/RecordWatch";
 import DidYouKnow from "@/components/ui/DidYouKnow";
+import SportIcon from "@/components/ui/SportIcon";
 import { captureError } from "@/lib/error-tracking";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { SPORT_COLORS, SPORT_COLORS_HEX, SPORT_GRADIENTS } from "@/lib/constants/sports";
@@ -419,9 +420,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
             >
               <div className="bg-[var(--psp-navy-mid)] border border-[var(--psp-gold)]/25 rounded-xl p-5 hover:border-[var(--psp-gold)]/50 transition-colors group">
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl shrink-0" role="img" aria-label="Football">
-                    🏈
-                  </span>
+                  <SportIcon sport="football" size="sm" className="shrink-0" />
                   <div className="min-w-0">
                     <h3
                       className="font-heading text-[var(--psp-gold)] tracking-wide mb-1"

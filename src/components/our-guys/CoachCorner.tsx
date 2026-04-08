@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/data/common";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface CoachRecap {
   coachName: string;
@@ -170,7 +171,7 @@ export async function CoachCorner() {
         alignItems: "center",
         gap: "8px",
       }}>
-        <span>🏈</span> COACH CORNER
+        <SportIcon sport="football" size="sm" /> COACH CORNER
       </h3>
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         {coaches.map((coach, i) => (

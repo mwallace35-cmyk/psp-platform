@@ -140,8 +140,10 @@ export default async function LeaderboardsPage() {
                     {fbRows.map((row, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
                         <span style={{ color: '#8B4513', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.75rem' }}>{i + 1}.</span>
-                        <span style={{ fontWeight: 600, color: 'var(--psp-navy)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
-                        <span style={{ color: 'var(--psp-muted)', fontSize: '0.75rem', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
+                        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--psp-navy)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
+                          <span style={{ color: 'var(--psp-muted)', fontSize: '0.6875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
+                        </div>
                         <span style={{ fontWeight: 700, color: '#8B4513', fontSize: '0.78rem', minWidth: '3.5rem', textAlign: 'right' }}>
                           {row.rush_yards != null ? Number(row.rush_yards).toLocaleString() : '—'}{' '}yds
                         </span>
@@ -191,8 +193,10 @@ export default async function LeaderboardsPage() {
                     {bbRows.map((row, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
                         <span style={{ color: '#FF6B00', fontWeight: 700, minWidth: '1.1rem', fontSize: '0.75rem' }}>{i + 1}.</span>
-                        <span style={{ fontWeight: 600, color: 'var(--psp-navy)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
-                        <span style={{ color: 'var(--psp-muted)', fontSize: '0.75rem', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
+                        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--psp-navy)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{playerName(row)}</span>
+                          <span style={{ color: 'var(--psp-muted)', fontSize: '0.6875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{schoolName(row)}</span>
+                        </div>
                         <span style={{ fontWeight: 700, color: '#FF6B00', fontSize: '0.78rem', minWidth: '3.5rem', textAlign: 'right' }}>
                           {row.ppg ?? '—'} PPG
                         </span>

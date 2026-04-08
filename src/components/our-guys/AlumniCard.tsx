@@ -1,14 +1,20 @@
 import Link from "next/link";
+import SportIcon from "@/components/ui/SportIcon";
+import UIIcon, { type UIIconName } from "@/components/ui/UIIcon";
 
-const LEVEL_BADGES: Record<string, { label: string; color: string; icon: string }> = {
-  pro: { label: "PRO", color: "#f0a500", icon: "🏆" },
-  college: { label: "COLLEGE", color: "#3b82f6", icon: "🎓" },
-  coaching: { label: "COACH", color: "#16a34a", icon: "📋" },
-  staff: { label: "STAFF", color: "#7c3aed", icon: "🏫" },
+const LEVEL_BADGES: Record<string, { label: string; color: string; icon: UIIconName }> = {
+  pro: { label: "PRO", color: "#f0a500", icon: "trophy" },
+  college: { label: "COLLEGE", color: "#3b82f6", icon: "school" },
+  coaching: { label: "COACH", color: "#16a34a", icon: "users" },
+  staff: { label: "STAFF", color: "#7c3aed", icon: "school" },
 };
 
-const LEAGUE_ICONS: Record<string, string> = {
-  NFL: "🏈", NBA: "🏀", MLB: "⚾", MLS: "⚽",
+// League → SportIcon sport slug
+const LEAGUE_TO_SPORT: Record<string, string> = {
+  NFL: "football",
+  NBA: "basketball",
+  MLB: "baseball",
+  MLS: "soccer",
 };
 
 interface AlumniCardProps {
@@ -30,7 +36,7 @@ interface AlumniCardProps {
 
 export default function AlumniCard({ person }: AlumniCardProps) {
   const badge = LEVEL_BADGES[person.current_level] || LEVEL_BADGES.college;
-  const leagueIcon = person.pro_league ? LEAGUE_ICONS[person.pro_league] || "🏅" : null;
+  const leagueSport = person.pro_league ? LEAGUE_TO_SPORT[person.pro_league] : null;
 
   return (
     <div
@@ -58,7 +64,13 @@ export default function AlumniCard({ person }: AlumniCardProps) {
           </div>
         )}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-          <span style={{ fontSize: 20 }}>{leagueIcon || badge.icon}</span>
+          {leagueSport ? (
+            <SportIcon sport={leagueSport} size="sm" />
+          ) : (
+            <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: 8, background: `${badge.color}22`, color: badge.color }}>
+              <UIIcon name={badge.icon} size={18} aria-label={badge.label} />
+            </span>
+          )}
           <h3 className="psp-small" style={{ margin: 0 }}>
             {person.person_name}
           </h3>

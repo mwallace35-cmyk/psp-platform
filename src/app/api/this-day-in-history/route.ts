@@ -26,8 +26,15 @@ export async function GET(request: NextRequest) {
     const mm = String(month).padStart(2, "0");
     const dd = String(day).padStart(2, "0");
 
-    // Fetch games on this month-day using date pattern matching
+    // PostgREST doesn't support `column::text` casting in filters reliably,
+    // so build an explicit list of dates (this-day-in-history across 30 years)
     // game_date is stored as DATE, format YYYY-MM-DD
+    const currentYear = new Date().getFullYear();
+    const targetDates: string[] = [];
+    for (let y = currentYear; y >= currentYear - 30; y--) {
+      targetDates.push(`${y}-${mm}-${dd}`);
+    }
+
     const { data: games, error } = await (supabase as any)
       .from("games")
       .select(
@@ -35,7 +42,7 @@ export async function GET(request: NextRequest) {
          home_school:schools!games_home_school_id_fkey(name, slug),
          away_school:schools!games_away_school_id_fkey(name, slug)`
       )
-      .like("game_date", `%-${mm}-${dd}`)
+      .in("game_date", targetDates)
       .not("home_score", "is", null)
       .not("away_score", "is", null)
       .order("game_date", { ascending: false })

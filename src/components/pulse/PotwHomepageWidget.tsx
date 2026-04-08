@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { SPORT_META } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 import type { SportId } from '@/lib/sports';
 
 interface Nominee {
@@ -154,7 +155,7 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <span className="text-4xl">🏆</span>
+              <span className="inline-flex w-12 h-12 items-center justify-center rounded-xl bg-[var(--psp-gold)]/15 text-[var(--psp-gold)]"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--psp-gold)] opacity-75" />
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--psp-gold)]" />
@@ -213,7 +214,7 @@ export default function PotwHomepageWidget({ nominees, endsAt }: PotwHomepageWid
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">{sportMeta?.emoji || '🏅'}</span>
+                      <SportIcon sport={nominee.sport_id || 'football'} size="sm" />
                       <h3 className="text-sm font-bold text-white truncate">{nominee.player_name}</h3>
                     </div>
                     <p className="text-xs text-gray-300 truncate">{nominee.school_name}</p>

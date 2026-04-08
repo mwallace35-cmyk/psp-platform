@@ -48,7 +48,7 @@ export default function Footer() {
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li><Link href="/support">Support</Link></li>
             <li><Link href="/advertise">Advertise</Link></li>
-            <li><Link href="/hof">Hall of Fame</Link></li>
+            <li><Link href="/press">Press</Link></li>
             <li><Link href="/feed">RSS Feed</Link></li>
           </ul>
         </nav>

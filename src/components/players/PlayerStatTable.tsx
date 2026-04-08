@@ -160,10 +160,11 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                   className="border-t border-gray-100 transition-colors hover:bg-gray-50"
                   style={{
                     background: isBest
-                      ? "rgba(240, 165, 0, 0.08)"
+                      ? "rgba(240, 165, 0, 0.12)"
                       : i % 2 === 0
                       ? "#fff"
                       : "#fafafa",
+                    boxShadow: isBest ? "inset 4px 0 0 var(--psp-gold)" : undefined,
                   }}
                 >
                   <td className="px-4 py-2.5 font-semibold whitespace-nowrap" style={{ color: "var(--psp-navy)" }}>
@@ -189,20 +190,23 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                       <span className="text-gray-300">\u2014</span>
                     )}
                   </td>
-                  {visibleCols.map((col) => (
-                    <td
-                      key={col.key}
-                      className="text-right px-3 py-2.5 tabular-nums"
-                      style={{
-                        fontWeight: col.key === "total_td" || col.key === "pts" ? 700 : 400,
-                        color: isBest && (col.key === primaryStatKey(sport) || col.key === "total_td")
-                          ? "var(--psp-gold)"
-                          : "var(--psp-navy)",
-                      }}
-                    >
-                      {col.getValue(s as never)}
-                    </td>
-                  ))}
+                  {visibleCols.map((col) => {
+                    const isHighlighted = isBest && (col.key === primaryStatKey(sport) || col.key === "total_td");
+                    return (
+                      <td
+                        key={col.key}
+                        className="text-right px-3 py-2.5 tabular-nums"
+                        style={{
+                          fontWeight: isHighlighted || col.key === "total_td" || col.key === "pts" ? 700 : 400,
+                          color: isHighlighted
+                            ? "var(--psp-gold-text)"
+                            : "var(--psp-navy)",
+                        }}
+                      >
+                        {col.getValue(s as never)}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}
@@ -280,7 +284,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                     <div
                       className="font-bold text-sm tabular-nums"
                       style={{
-                        color: isBest && col.key === primaryStatKey(sport) ? "var(--psp-gold)" : "var(--psp-navy)",
+                        color: isBest && col.key === primaryStatKey(sport) ? "var(--psp-gold-text)" : "var(--psp-navy)",
                       }}
                     >
                       {col.getValue(s as never)}

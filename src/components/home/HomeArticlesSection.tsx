@@ -1,10 +1,6 @@
 import Link from 'next/link';
 import { createStaticClient } from '@/lib/supabase/static';
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: '\uD83C\uDFC8', basketball: '\uD83C\uDFC0', baseball: '\u26BE', soccer: '\u26BD',
-  lacrosse: '\uD83E\uDD4D', 'track-field': '\uD83C\uDFC3', wrestling: '\uD83E\uDD3C',
-};
+import { SPORT_GLYPHS } from '@/components/ui/SportIcon';
 
 const SPORT_COLOR: Record<string, string> = {
   football: '#16a34a', basketball: '#3b82f6', baseball: '#dc2626',
@@ -50,7 +46,7 @@ export default async function HomeArticlesSection() {
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
-                <span className="text-sm">{SPORT_EMOJI[sportId] || '\uD83D\uDCF0'}</span>
+                {(() => { const Glyph = SPORT_GLYPHS[sportId]; return Glyph ? <Glyph width={14} height={14} style={{ color: dotColor }} aria-hidden="true" /> : null; })()}
                 <span className="text-xs text-gray-300 uppercase tracking-wider">
                   {(article.content_type as string) || 'article'}
                 </span>

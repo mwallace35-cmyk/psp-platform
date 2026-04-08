@@ -241,7 +241,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                   </Badge>
                 )}
                 {school.school_type && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/10 text-gray-200">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/10 text-gray-200 capitalize">
                     {school.school_type}
                   </span>
                 )}

@@ -43,7 +43,7 @@ const MORE_SPORTS = [
   { href: "/baseball", label: "Baseball", color: "var(--base)" },
 ];
 
-// Desktop: "Tools" dropdown (was "More" — Schools/Rankings/Our Guys promoted to top-level)
+// Desktop: "Tools" dropdown — Hall of Fame promoted to top-level (audit CC-5)
 const TOOLS_ITEMS = [
   { href: "/events", label: "Events" },
   { href: "/recruiting", label: "Recruiting" },
@@ -52,7 +52,6 @@ const TOOLS_ITEMS = [
   { href: "/coaches", label: "Coaches" },
   { href: "/pickem", label: "Pick'em" },
   { href: "/challenge", label: "Stats Challenge" },
-  { href: "/hof", label: "Hall of Fame" },
 ];
 
 // Account items for desktop dropdown only
@@ -403,6 +402,11 @@ export default function Header() {
             {/* Our Guys — promoted to top-level */}
             <Link href="/our-guys" className={`nav-link ${isActive("/our-guys") ? "active" : ""}`} aria-current={isActive("/our-guys") ? "page" : undefined}>
               Our Guys
+            </Link>
+
+            {/* Hall of Fame — promoted to top-level (audit CC-5) */}
+            <Link href="/hof" className={`nav-link ${isActive("/hof") ? "active" : ""}`} aria-current={isActive("/hof") ? "page" : undefined}>
+              Hall of Fame
             </Link>
 
             {/* Tools Dropdown (was "More") */}

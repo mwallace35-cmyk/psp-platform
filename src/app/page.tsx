@@ -10,6 +10,8 @@ import HomeArticlesSection from '@/components/home/HomeArticlesSection';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import HeroMonument from '@/components/home/HeroMonument';
 import ThisDayInHistory from '@/components/home/ThisDayInHistory';
+import UIIcon from '@/components/ui/UIIcon';
+import SportIcon from '@/components/ui/SportIcon';
 
 export const revalidate = 300; // 5 min ISR — live content
 
@@ -73,12 +75,12 @@ export default async function HomePage() {
   }));
   const activePickemCount = pickemCountRes.count ?? 0;
 
-  const LEAGUE_BADGES: Record<string, { icon: string; bg: string }> = {
-    NFL: { icon: '\uD83C\uDFC8', bg: 'bg-green-700' },
-    NBA: { icon: '\uD83C\uDFC0', bg: 'bg-orange-600' },
-    MLB: { icon: '\u26BE', bg: 'bg-blue-700' },
-    MLS: { icon: '\u26BD', bg: 'bg-emerald-600' },
-    NHL: { icon: '\uD83C\uDFD2', bg: 'bg-slate-600' },
+  const LEAGUE_BADGES: Record<string, { bg: string }> = {
+    NFL: { bg: 'bg-green-700' },
+    NBA: { bg: 'bg-orange-600' },
+    MLB: { bg: 'bg-blue-700' },
+    MLS: { bg: 'bg-emerald-600' },
+    NHL: { bg: 'bg-slate-600' },
   };
 
   return (
@@ -149,8 +151,8 @@ export default async function HomePage() {
                             </p>
                           </div>
                           {league ? (
-                            <span className={`shrink-0 text-xs font-bold text-white px-2 py-0.5 rounded ${league.bg}`}>
-                              {league.icon} {a.pro_league as string}
+                            <span className={`shrink-0 text-xs font-bold text-white px-2 py-0.5 rounded tracking-wider ${league.bg}`}>
+                              {a.pro_league as string}
                             </span>
                           ) : (a.pro_league as string) ? (
                             <span className="shrink-0 text-xs font-bold text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 px-2 py-0.5 rounded">
@@ -174,7 +176,9 @@ export default async function HomePage() {
                 href="/pickem"
                 className="group flex items-center gap-4 bg-gradient-to-br from-[var(--psp-navy-mid)] to-[#0d1a30] rounded-lg border border-[var(--psp-gold)]/30 p-4 hover:border-[var(--psp-gold)]/60 hover:shadow-lg hover:shadow-[var(--psp-gold)]/10 transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none"
               >
-                <div className="text-3xl group-hover:scale-110 group-focus-visible:scale-110 transition-transform shrink-0" role="img" aria-label="football">🏈</div>
+                <div className="group-hover:scale-110 group-focus-visible:scale-110 transition-transform shrink-0">
+                  <SportIcon sport="football" size="sm" />
+                </div>
                 <div className="flex-1 min-w-0">
                   <h2 className="text-sm font-bold text-[var(--psp-gold)] group-hover:text-[var(--psp-gold-light)] transition">Pick&apos;em</h2>
                   <p className="text-xs text-gray-300 mt-0.5">Make your picks for this week&apos;s games</p>
@@ -187,7 +191,9 @@ export default async function HomePage() {
 
             {/* Power Rankings */}
             <Link href="/rankings" className="group flex items-center gap-3 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none">
-              <div className="text-2xl group-hover:scale-110 group-focus-visible:scale-110 transition-transform" role="img" aria-label="chart">📊</div>
+              <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 group-hover:scale-110 group-focus-visible:scale-110 transition-transform shrink-0">
+                <UIIcon name="chart" size={20} aria-label="Power Rankings" />
+              </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Power Rankings</h2>
                 <p className="text-xs text-gray-300 mt-0.5">See who&apos;s on top this week</p>
@@ -199,7 +205,9 @@ export default async function HomePage() {
 
             {/* Hall of Fame Link */}
             <Link href="/hof" className="group flex items-center gap-3 bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 p-4 hover:border-[var(--psp-gold)]/50 hover:shadow-lg hover:shadow-[var(--psp-gold)]/5 transition-all focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] focus-visible:outline-none">
-              <div className="text-2xl group-hover:scale-110 group-focus-visible:scale-110 transition-transform" role="img" aria-label="trophy">🏆</div>
+              <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 group-hover:scale-110 group-focus-visible:scale-110 transition-transform shrink-0">
+                <UIIcon name="trophy" size={20} aria-label="Hall of Fame" />
+              </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition">Hall of Fame</h2>
                 <p className="text-xs text-gray-300 mt-0.5">Philly&apos;s greatest athletes</p>

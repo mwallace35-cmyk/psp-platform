@@ -4,41 +4,46 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ThemeToggle from '../ui/ThemeToggle';
+import SportIcon from '../ui/SportIcon';
+import UIIcon, { type UIIconName } from '../ui/UIIcon';
 import styles from '@/app/homepage.module.css';
 
-const SPORTS = [
-  { label: 'Football',      slug: 'football',    emoji: '\u{1F3C8}', color: 'var(--fb)' },
-  { label: 'Boys Basketball', slug: 'basketball',  emoji: '\u{1F3C0}', color: 'var(--psp-blue)' },
-  { label: 'Girls Basketball', slug: 'girls-basketball', emoji: '\u{1F3C0}', color: 'var(--gb)' },
-  { label: 'Baseball',      slug: 'baseball',    emoji: '\u26BE',     color: 'var(--base)' },
-  { label: 'Soccer',        slug: 'soccer',      emoji: '\u26BD',     color: 'var(--soccer)' },
-  { label: 'Lacrosse',      slug: 'lacrosse',    emoji: '\u{1F94D}', color: 'var(--lac)' },
-  { label: 'Track & Field', slug: 'track-field', emoji: '\u{1F3C3}', color: 'var(--track)' },
-  { label: 'Wrestling',     slug: 'wrestling',   emoji: '\u{1F93C}', color: 'var(--wrest)' },
+interface SportEntry { label: string; slug: string; color: string; }
+interface MenuEntry { href: string; label: string; icon: UIIconName; }
+
+const SPORTS: SportEntry[] = [
+  { label: 'Football',         slug: 'football',         color: 'var(--fb)' },
+  { label: 'Boys Basketball',  slug: 'basketball',       color: 'var(--psp-blue)' },
+  { label: 'Girls Basketball', slug: 'girls-basketball', color: 'var(--gb)' },
+  { label: 'Baseball',         slug: 'baseball',         color: 'var(--base)' },
+  { label: 'Soccer',           slug: 'soccer',           color: 'var(--soccer)' },
+  { label: 'Lacrosse',         slug: 'lacrosse',         color: 'var(--lac)' },
+  { label: 'Track & Field',    slug: 'track-field',      color: 'var(--track)' },
+  { label: 'Wrestling',        slug: 'wrestling',        color: 'var(--wrest)' },
 ];
 
-const QUICK_LINKS = [
-  { href: '/scores',    label: 'Scores',     emoji: '\u{1F38A}' },
-  { href: '/events',    label: 'Events',     emoji: '\u{1F4C5}' },
-  { href: '/schools',   label: 'Schools',    emoji: '\u{1F3EB}' },
-  { href: '/articles',  label: 'News',       emoji: '\u{1F4F0}' },
-  { href: '/awards',    label: 'Awards',     emoji: '\u{1F3C6}' },
+const QUICK_LINKS: MenuEntry[] = [
+  { href: '/scores',    label: 'Scores',  icon: 'calendar' },
+  { href: '/events',    label: 'Events',  icon: 'calendar' },
+  { href: '/schools',   label: 'Schools', icon: 'school' },
+  { href: '/articles',  label: 'News',    icon: 'news' },
+  { href: '/awards',    label: 'Awards',  icon: 'award' },
 ];
 
-const EXPLORE_LINKS = [
-  { href: '/rankings',      label: 'Power Rankings',     emoji: '\u26A1' },
-  { href: '/our-guys',      label: 'Our Guys',           emoji: '\u{1F30D}' },
-  { href: '/recruiting',    label: 'Recruiting',         emoji: '\u{1F3AF}' },
-  { href: '/hof',           label: 'Hall of Fame',       emoji: '\u{1F3C6}' },
-  { href: '/potw',          label: 'Player of the Week', emoji: '\u{1F31F}' },
+const EXPLORE_LINKS: MenuEntry[] = [
+  { href: '/rankings',   label: 'Power Rankings',     icon: 'zap' },
+  { href: '/our-guys',   label: 'Our Guys',           icon: 'users' },
+  { href: '/recruiting', label: 'Recruiting',         icon: 'target' },
+  { href: '/hof',        label: 'Hall of Fame',       icon: 'trophy' },
+  { href: '/potw',       label: 'Player of the Week', icon: 'star' },
 ];
 
-const TOOLS_LINKS = [
-  { href: '/compare',        label: 'Compare Players',  emoji: '\u{1F504}' },
-  { href: '/recruit-finder', label: 'Recruit Finder',   emoji: '\u{1F50D}' },
-  { href: '/coaches',        label: 'Coaches',          emoji: '\u{1F4CB}' },
-  { href: '/pickem',         label: "Pick'em",          emoji: '\u{1F3C8}' },
-  { href: '/challenge',      label: 'Stats Challenge',  emoji: '\u{1F9E0}' },
+const TOOLS_LINKS: MenuEntry[] = [
+  { href: '/compare',        label: 'Compare Players', icon: 'users' },
+  { href: '/recruit-finder', label: 'Recruit Finder',  icon: 'search' },
+  { href: '/coaches',        label: 'Coaches',         icon: 'users' },
+  { href: '/pickem',         label: "Pick'em",         icon: 'target' },
+  { href: '/challenge',      label: 'Stats Challenge', icon: 'chart' },
 ];
 
 export default function MobileBottomNav() {
@@ -115,7 +120,7 @@ export default function MobileBottomNav() {
           className={`${styles.mobileNavItem} ${pathname === '/' ? styles.mobileNavItemActive : ''}`}
           title="Home"
         >
-          <span className={styles.mobileNavIcon}>{'\u{1F3E0}'}</span>
+          <span className={styles.mobileNavIcon}><UIIcon name="home" size={22} /></span>
           <span className={styles.mobileNavLabel}>Home</span>
         </Link>
 
@@ -126,7 +131,7 @@ export default function MobileBottomNav() {
           aria-haspopup="dialog"
           aria-expanded={isSportPickerOpen}
         >
-          <span className={styles.mobileNavIcon}>{'\u{1F3C6}'}</span>
+          <span className={styles.mobileNavIcon}><UIIcon name="trophy" size={22} /></span>
           <span className={styles.mobileNavLabel}>Sports</span>
         </button>
 
@@ -135,7 +140,7 @@ export default function MobileBottomNav() {
           className={`${styles.mobileNavItem} ${isActive('/search') ? styles.mobileNavItemActive : ''}`}
           title="Search"
         >
-          <span className={styles.mobileNavIcon}>{'\u{1F50D}'}</span>
+          <span className={styles.mobileNavIcon}><UIIcon name="search" size={22} /></span>
           <span className={styles.mobileNavLabel}>Search</span>
         </Link>
 
@@ -144,7 +149,7 @@ export default function MobileBottomNav() {
           className={`${styles.mobileNavItem} ${isActive('/my-schools') ? styles.mobileNavItemActive : ''}`}
           title="My Schools"
         >
-          <span className={styles.mobileNavIcon}>{'\u2605'}</span>
+          <span className={styles.mobileNavIcon}><UIIcon name="star" size={22} /></span>
           <span className={styles.mobileNavLabel}>My Schools</span>
         </Link>
 
@@ -155,7 +160,7 @@ export default function MobileBottomNav() {
           aria-haspopup="dialog"
           aria-expanded={isMenuOpen}
         >
-          <span className={styles.mobileNavIcon}>{'\u2630'}</span>
+          <span className={styles.mobileNavIcon}><UIIcon name="menu" size={22} /></span>
           <span className={styles.mobileNavLabel}>Menu</span>
         </button>
       </nav>
@@ -186,7 +191,7 @@ export default function MobileBottomNav() {
                   className={`${styles.mobileMenuItem} ${pathname.startsWith('/' + sport.slug) ? styles.mobileNavItemActive : ''}`}
                   onClick={closeAll}
                 >
-                  <span>{sport.emoji}</span>
+                  <SportIcon sport={sport.slug} size="sm" />
                   <span>{sport.label}</span>
                 </Link>
               ))}
@@ -233,7 +238,7 @@ export default function MobileBottomNav() {
                       textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600,
                     }}
                   >
-                    <span style={{ fontSize: '1rem' }}>{sport.emoji}</span>
+                    <SportIcon sport={sport.slug} size="sm" />
                     {sport.label}
                   </Link>
                 ))}
@@ -255,8 +260,8 @@ export default function MobileBottomNav() {
                 Account
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <MenuLink href="/my-schools" emoji={'\u2605'} label="My Schools" pathname={pathname} onClose={closeAll} />
-                <MenuLink href="/signup" emoji={'\u{1F464}'} label="Sign Up / Log In" pathname={pathname} onClose={closeAll} />
+                <MenuLink href="/my-schools" icon="star" label="My Schools" pathname={pathname} onClose={closeAll} />
+                <MenuLink href="/signup" icon="users" label="Sign Up / Log In" pathname={pathname} onClose={closeAll} />
               </div>
             </div>
 
@@ -275,7 +280,7 @@ export default function MobileBottomNav() {
 /** Section with title + link list */
 function MenuSection({ title, items, pathname, onClose }: {
   title: string;
-  items: { href: string; label: string; emoji: string }[];
+  items: MenuEntry[];
   pathname: string;
   onClose: () => void;
 }) {
@@ -294,8 +299,8 @@ function MenuSection({ title, items, pathname, onClose }: {
 }
 
 /** Individual menu link */
-function MenuLink({ href, emoji, label, pathname, onClose }: {
-  href: string; emoji: string; label: string; pathname: string; onClose: () => void;
+function MenuLink({ href, icon, label, pathname, onClose }: {
+  href: string; icon: UIIconName; label: string; pathname: string; onClose: () => void;
 }) {
   const active = pathname === href || pathname.startsWith(href + '/');
   return (
@@ -310,7 +315,9 @@ function MenuLink({ href, emoji, label, pathname, onClose }: {
         background: active ? 'rgba(240,165,0,0.08)' : 'transparent',
       }}
     >
-      <span style={{ fontSize: '1.1rem', minWidth: 24, textAlign: 'center' }}>{emoji}</span>
+      <span style={{ minWidth: 24, display: 'inline-flex', justifyContent: 'center' }}>
+        <UIIcon name={icon} size={18} />
+      </span>
       {label}
     </Link>
   );

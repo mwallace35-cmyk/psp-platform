@@ -1,3 +1,5 @@
+import UIIcon from "@/components/ui/UIIcon";
+
 interface SpotlightAlumni {
   id: number;
   person_name: string;
@@ -96,10 +98,22 @@ export default function SpotlightHero({ alumni, latestPost }: SpotlightHeroProps
           )}
 
           {/* High school + college */}
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
-            {alumni.high_school_name && <div>🏫 {alumni.high_school_name}</div>}
-            {alumni.college && <div>🎓 {alumni.college}</div>}
-            {alumni.draft_info && <div>📋 {alumni.draft_info}</div>}
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", lineHeight: 1.6, display: "flex", flexDirection: "column", gap: 4 }}>
+            {alumni.high_school_name && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <UIIcon name="school" size={12} /> {alumni.high_school_name}
+              </div>
+            )}
+            {alumni.college && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <UIIcon name="users" size={12} /> {alumni.college}
+              </div>
+            )}
+            {alumni.draft_info && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <UIIcon name="award" size={12} /> {alumni.draft_info}
+              </div>
+            )}
           </div>
 
           {/* Bio note */}
