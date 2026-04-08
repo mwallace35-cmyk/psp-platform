@@ -51,11 +51,19 @@ export default async function HomeArticlesSection() {
                   {(article.content_type as string) || 'article'}
                 </span>
               </div>
-              <h3 className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition line-clamp-2">
+              <h3
+                className="text-sm font-bold text-gray-100 group-hover:text-[var(--psp-gold)] transition line-clamp-2"
+                title={article.title as string}
+              >
                 {article.title as string}
               </h3>
               {excerptText && (
-                <p className="text-xs text-gray-300 mt-1 line-clamp-2">{excerptText}</p>
+                <p
+                  className="text-xs text-gray-300 mt-1 line-clamp-2"
+                  title={excerptText}
+                >
+                  {excerptText}
+                </p>
               )}
               <p className="text-xs text-gray-400 mt-2">
                 {article.author_name as string} &middot; {new Date(article.published_at as string).toLocaleDateString()}

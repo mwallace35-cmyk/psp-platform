@@ -600,13 +600,20 @@ button:focus:not(:focus-visible) {
 }
 
 /* ===== ESPN TOP BAR (used by Header.tsx) ===== */
-.logo-mark { font-weight: 900; font-size: 18px; color: #fff; letter-spacing: -0.02em; }
+.logo-mark { font-weight: 900; font-size: 18px; color: #fff; letter-spacing: -0.02em; margin-right: clamp(16px, 2.5vw, 28px); flex-shrink: 0; white-space: nowrap; }
 .logo-mark span { color: var(--psp-gold); }
 
 /* ===== MAIN NAV ===== */
 .mainnav { background: var(--espn-dark); border-bottom: 1px solid #333; }
 .mainnav-inner { max-width: 1200px; margin: auto; display: flex; align-items: center; height: 44px; gap: 2px; padding: 0 16px; }
-.nav-link { font-size: 13px; font-weight: 600; color: #e2e8f0; padding: 0 16px; height: 44px; display: flex; align-items: center; position: relative; cursor: pointer; white-space: nowrap; transition: .15s; text-decoration: none; min-height: 44px; }
+.nav-link { font-size: 13px; font-weight: 600; color: #e2e8f0; padding: 0 14px; height: 44px; display: flex; align-items: center; position: relative; cursor: pointer; white-space: nowrap; transition: .15s; text-decoration: none; min-height: 44px; }
+
+/* Tighten desktop nav at intermediate widths so the wordmark and "Scores" never collide */
+@media (min-width: 769px) and (max-width: 1180px) {
+  .logo-mark { font-size: 16px; margin-right: 14px; }
+  .nav-link { padding: 0 10px; font-size: 12px; }
+  .mainnav-inner { padding: 0 12px; }
+}
 .nav-link:hover { background: #222; text-decoration: none; color: #fff; }
 .nav-link:focus-visible { outline: 2px solid var(--psp-gold); outline-offset: -2px; }
 .nav-link.active { color: var(--psp-gold); }

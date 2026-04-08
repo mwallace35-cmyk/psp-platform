@@ -41,7 +41,7 @@ export default async function HomePage() {
     // Featured active alumni
     supabase
       .from('next_level_tracking')
-      .select('id, person_name, current_org, pro_league, sport_id, status, schools:high_school_id(name, slug)')
+      .select('id, person_name, current_org, pro_league, sport_id, status, schools:high_school_id(name, slug), players:player_id(slug)')
       .eq('featured', true)
       .eq('status', 'active')
       .limit(6),
@@ -64,6 +64,7 @@ export default async function HomePage() {
   const featuredAlumni = (alumniRes.data ?? []).map((a: Record<string, unknown>) => ({
     ...a,
     schools: Array.isArray(a.schools) ? a.schools[0] : a.schools,
+    players: Array.isArray(a.players) ? a.players[0] : a.players,
   }));
   const potwNominees = (potwRes.data ?? []).map((n: Record<string, unknown>) => ({
     id: String(n.id),
@@ -76,12 +77,12 @@ export default async function HomePage() {
   }));
   const activePickemCount = pickemCountRes.count ?? 0;
 
-  const LEAGUE_BADGES: Record<string, { bg: string }> = {
-    NFL: { bg: 'bg-green-700' },
-    NBA: { bg: 'bg-orange-600' },
-    MLB: { bg: 'bg-blue-700' },
-    MLS: { bg: 'bg-emerald-600' },
-    NHL: { bg: 'bg-slate-600' },
+  const LEAGUE_BADGES: Record<string, { ring: string; text: string }> = {
+    NFL: { ring: 'ring-emerald-500/40', text: 'text-emerald-300' },
+    NBA: { ring: 'ring-orange-500/40',  text: 'text-orange-300'  },
+    MLB: { ring: 'ring-sky-500/40',     text: 'text-sky-300'     },
+    MLS: { ring: 'ring-emerald-500/40', text: 'text-emerald-300' },
+    NHL: { ring: 'ring-slate-400/40',   text: 'text-slate-300'   },
   };
 
   return (
@@ -144,26 +145,41 @@ export default async function HomePage() {
                 <div className="space-y-2">
                   {featuredAlumni.slice(0, 5).map((a: Record<string, unknown>) => {
                     const school = a.schools as Record<string, unknown> | null;
+                    const player = a.players as Record<string, unknown> | null;
+                    const playerSlug = player?.slug as string | undefined;
                     const league = (a.pro_league as string) ? LEAGUE_BADGES[a.pro_league as string] : null;
-                    return (
-                      <div key={a.id as string} className="bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-3 py-2.5 hover:border-gray-600 transition">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="text-sm text-gray-100 font-medium">{a.person_name as string}</p>
-                            <p className="text-xs text-gray-300 truncate">
-                              {a.current_org as string} · {school?.name as string}
-                            </p>
-                          </div>
-                          {league ? (
-                            <span className={`shrink-0 text-xs font-bold text-white px-2 py-0.5 rounded tracking-wider ${league.bg}`}>
-                              {a.pro_league as string}
-                            </span>
-                          ) : (a.pro_league as string) ? (
-                            <span className="shrink-0 text-xs font-bold text-[var(--psp-gold)] bg-[var(--psp-gold)]/10 px-2 py-0.5 rounded">
-                              {a.pro_league as string}
-                            </span>
-                          ) : null}
+                    const personName = a.person_name as string;
+                    const subline = `${a.current_org as string} · ${school?.name as string}`;
+                    const inner = (
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="text-sm text-gray-100 font-medium truncate" title={personName}>{personName}</p>
+                          <p className="text-xs text-gray-300 truncate" title={subline}>
+                            {subline}
+                          </p>
                         </div>
+                        {league ? (
+                          <span className={`shrink-0 text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded-sm bg-transparent ring-1 ${league.ring} ${league.text}`}>
+                            {a.pro_league as string}
+                          </span>
+                        ) : (a.pro_league as string) ? (
+                          <span className="shrink-0 text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded-sm bg-transparent ring-1 ring-[var(--psp-gold)]/40 text-[var(--psp-gold)]">
+                            {a.pro_league as string}
+                          </span>
+                        ) : null}
+                      </div>
+                    );
+                    return playerSlug ? (
+                      <Link
+                        key={a.id as string}
+                        href={`/players/${playerSlug}`}
+                        className="block bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-3 py-2.5 hover:border-[var(--psp-gold)]/40 hover:bg-[var(--psp-navy-mid)]/80 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)]"
+                      >
+                        {inner}
+                      </Link>
+                    ) : (
+                      <div key={a.id as string} className="block bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-3 py-2.5">
+                        {inner}
                       </div>
                     );
                   })}

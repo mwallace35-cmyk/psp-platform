@@ -144,13 +144,23 @@ export default async function HomeScoresSection() {
                 )}
                 <div className="flex items-center w-full">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${awayWon ? 'text-gray-100' : 'text-gray-300'}`}>{away ? getSchoolDisplayName(away as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}</span>
-                    <span className={`text-sm font-bold tabular-nums ${awayWon ? 'text-gray-100' : 'text-gray-300'}`}>{game.away_score as number}</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`text-sm font-medium truncate min-w-0 ${awayWon ? 'text-gray-100' : 'text-gray-300'}`}
+                      title={away ? getSchoolDisplayName(away as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}
+                    >
+                      {away ? getSchoolDisplayName(away as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}
+                    </span>
+                    <span className={`text-sm font-bold tabular-nums shrink-0 ${awayWon ? 'text-gray-100' : 'text-gray-300'}`}>{game.away_score as number}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${homeWon ? 'text-gray-100' : 'text-gray-300'}`}>{home ? getSchoolDisplayName(home as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}</span>
-                    <span className={`text-sm font-bold tabular-nums ${homeWon ? 'text-gray-100' : 'text-gray-300'}`}>{game.home_score as number}</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`text-sm font-medium truncate min-w-0 ${homeWon ? 'text-gray-100' : 'text-gray-300'}`}
+                      title={home ? getSchoolDisplayName(home as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}
+                    >
+                      {home ? getSchoolDisplayName(home as { name: string; city?: string | null; league_id?: number | null }) : 'TBD'}
+                    </span>
+                    <span className={`text-sm font-bold tabular-nums shrink-0 ${homeWon ? 'text-gray-100' : 'text-gray-300'}`}>{game.home_score as number}</span>
                   </div>
                 </div>
                 <span className="text-xs text-gray-400 ml-3 shrink-0">
