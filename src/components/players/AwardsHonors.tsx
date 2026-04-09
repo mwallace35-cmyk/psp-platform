@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
 interface Award {
@@ -94,7 +95,12 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
     fetchAwards();
   }, [playerId, supabase]);
 
-  const awardsByYear = (awards ?? []).reduce(
+  // Separate hero-tier awards (player-of-decade, 30-year-team) from regular awards
+  const HERO_TYPES = new Set(['player-of-decade', '30-year-team']);
+  const heroAwards = (awards ?? []).filter((a) => HERO_TYPES.has(a.award_type ?? ''));
+  const regularAwards = (awards ?? []).filter((a) => !HERO_TYPES.has(a.award_type ?? ''));
+
+  const awardsByYear = (regularAwards ?? []).reduce(
     (acc, award) => {
       if (!acc[award.year]) acc[award.year] = [];
       acc[award.year].push(award);
@@ -104,6 +110,13 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
   );
 
   const sortedYears = Object.keys(awardsByYear).map(Number).sort((a, b) => b - a);
+
+  /** Build a decade link from a player-of-decade award name like "Ted Silary 1990s Player of the Decade" */
+  function decadeHrefFromAwardName(name: string): string {
+    const m = name.match(/(\d{4}s)/);
+    if (m) return `/hof/decades/${m[1]}`;
+    return '/hof/decades';
+  }
 
   if (loading) {
     return (
@@ -140,6 +153,68 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
         <p className="text-gray-400 text-base">No awards recorded yet</p>
       ) : (
         <div className="flex flex-col gap-8">
+          {/* ── Hero-tier: Player of the Decade + 30-Year Team ── */}
+          {heroAwards.length > 0 && (
+            <div className="flex flex-col gap-3">
+              {heroAwards.map((award) => {
+                const is30Year = award.award_type === '30-year-team';
+                const href = is30Year
+                  ? '/hof/decades#thirty-year'
+                  : decadeHrefFromAwardName(award.award_name);
+                const bgColor = is30Year ? '#fef3c7' : '#ede9fe';
+                const borderColor = is30Year ? '#f59e0b' : '#7c3aed';
+                const textColor = is30Year ? '#92400e' : '#4c1d95';
+                const glowColor = is30Year ? 'rgba(245,158,11,0.2)' : 'rgba(124,58,237,0.15)';
+                const badgeLabel = is30Year ? '30-Year Team' : 'Player of the Decade';
+                const badgeIcon = is30Year ? '\u{1F3C6}' : '\u2605'; // trophy or star
+
+                return (
+                  <Link key={award.id} href={href} style={{ textDecoration: 'none' }}>
+                    <div
+                      style={{
+                        background: bgColor,
+                        border: `2px solid ${borderColor}`,
+                        borderRadius: '12px',
+                        padding: '14px 18px',
+                        boxShadow: `0 4px 16px ${glowColor}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        cursor: 'pointer',
+                        transition: 'transform 0.15s, box-shadow 0.15s',
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+                        (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 24px ${glowColor}`;
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                        (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 16px ${glowColor}`;
+                      }}
+                    >
+                      <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>{badgeIcon}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: borderColor, margin: '0 0 2px' }}>
+                          {badgeLabel}
+                        </p>
+                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem', fontWeight: 700, color: textColor, margin: 0, lineHeight: 1.3 }}>
+                          {award.award_name}
+                        </p>
+                        {award.award_tier && (
+                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: textColor, margin: '2px 0 0', opacity: 0.7 }}>
+                            {award.award_tier}
+                          </p>
+                        )}
+                      </div>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', fontWeight: 700, color: borderColor, flexShrink: 0 }}>
+                        View ›
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
           {sortedYears.map((year) => (
             <div key={year}>
               {/* Year Header */}

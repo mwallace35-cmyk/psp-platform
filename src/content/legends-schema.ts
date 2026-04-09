@@ -156,6 +156,10 @@ export const LegendFrontmatterSchema = z.object({
   nextLevelAlumni: z.array(NextLevelAlumSchema).optional().default([]),
   archivalQuotes: z.array(ArchivalQuoteSchema).optional().default([]),
   sourceFiles: z.array(z.string()).default([]),
+  // Decade honors — populated for coaches named Ted Silary Coach of the Decade
+  // Value is the decade slug ("1970s" | "1980s" | "1990s" | "2000s" | "Catholic")
+  // or null if not applicable.
+  coachOfDecade: z.string().optional(),
 });
 
 export type LegendFrontmatter = z.infer<typeof LegendFrontmatterSchema>;

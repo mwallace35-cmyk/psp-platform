@@ -62,6 +62,28 @@ const FEATURED_HOF_CARDS = [
     external: false,
     cta: "View Legends",
   },
+  {
+    id: "decades",
+    org: "Teams of the Decades",
+    type: "Football",
+    badge: "TED SILARY CANON",
+    badgeColor: "#f0a500",
+    badgeIcon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+        <path d="M4 22h16" />
+        <path d="M10 22V8a6 6 0 0 1 12 0v14" />
+        <path d="M2 8a6 6 0 0 1 12 0" />
+      </svg>
+    ),
+    accent: "#f0a500",
+    description:
+      "The 30-Year Team (1976–2005) and four All-Decade football teams — 246 picks across 30 years of Philly football.",
+    href: "/hof/decades",
+    external: false,
+    cta: "View Decade Teams",
+  },
 ];
 
 /* Middle row: state champions (full width) */

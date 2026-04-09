@@ -100,6 +100,77 @@ export default function LegendShell({
         <StatsAtAGlance stats={legend.statsAtAGlance} />
       )}
 
+      {/* Coach of the Decade honor banner */}
+      {legend.coachOfDecade && (
+        <section className="max-w-4xl mx-auto px-4 pt-6">
+          {(() => {
+            const decade = legend.coachOfDecade as string;
+            const isRealDecade = ["1970s", "1980s", "1990s", "2000s"].includes(decade);
+            const href = isRealDecade ? `/hof/decades/${decade}` : "/hof/decades";
+            const label = isRealDecade
+              ? `${decade} Coach of the Decade`
+              : "Catholic League Coach of the Decade";
+            return (
+              <Link href={href}>
+                <div
+                  style={{
+                    background: "linear-gradient(135deg, rgba(240,165,0,0.1) 0%, rgba(240,165,0,0.04) 100%)",
+                    border: "2px solid rgba(240,165,0,0.4)",
+                    borderRadius: "12px",
+                    padding: "1rem 1.25rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "1rem",
+                    cursor: "pointer",
+                    textDecoration: "none",
+                  }}
+                >
+                  <span style={{ fontSize: "1.75rem", flexShrink: 0 }}>&#127942;</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "0.65rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        color: "#f0a500",
+                        margin: "0 0 2px",
+                      }}
+                    >
+                      Ted Silary Canon
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: "'Bebas Neue', sans-serif",
+                        fontSize: "1.2rem",
+                        letterSpacing: "0.04em",
+                        color: "#92400e",
+                        margin: 0,
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {label}
+                    </p>
+                  </div>
+                  <span
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "0.8rem",
+                      fontWeight: 700,
+                      color: "#f0a500",
+                      flexShrink: 0,
+                    }}
+                  >
+                    View Decade Team ›
+                  </span>
+                </div>
+              </Link>
+            );
+          })()}
+        </section>
+      )}
+
       {/* Highlights / Quick Facts ribbon */}
       {legend.highlights && legend.highlights.length > 0 && (
         <section className="max-w-4xl mx-auto px-4 pt-10">
