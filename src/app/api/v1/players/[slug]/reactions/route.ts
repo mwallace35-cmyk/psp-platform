@@ -35,28 +35,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    // Upsert with increment — using RPC if available, else manual
-    const { data: existing } = await supabase
-      .from('player_reactions')
-      .select('count')
-      .eq('player_slug', slug)
-      .eq('reaction', reaction)
-      .single();
-
-    if (existing) {
-      await supabase
-        .from('player_reactions')
-        .update({ count: existing.count + 1, updated_at: new Date().toISOString() })
-        .eq('player_slug', slug)
-        .eq('reaction', reaction);
-    } else {
-      await supabase
-        .from('player_reactions')
-        .insert({ player_slug: slug, reaction, count: 1, updated_at: new Date().toISOString() });
-    }
+    // Atomic increment via SECURITY DEFINER RPC (no public UPDATE policy)
+    const { error } = await supabase.rpc('increment_player_reaction', {
+      p_slug: slug,
+      p_reaction: reaction,
+    });
+    if (error) throw error;
 
     return NextResponse.json({ ok: true });
   } catch {

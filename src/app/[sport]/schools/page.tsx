@@ -49,7 +49,7 @@ export default async function SportSchoolsPage({ params }: { params: Promise<Pag
 
   // Fetch directory, logos, games, team_seasons, and current-season records in parallel
   const [dirRes, logosRes, gamesRes, tsRes, currentRecordsRes] = await Promise.all([
-    supabase.from('school_directory_mv').select('*').order('name'),
+    supabase.rpc('get_school_directory'),
     supabase.from('schools').select('id, logo_url').not('logo_url', 'is', null),
     supabase
       .from('games')

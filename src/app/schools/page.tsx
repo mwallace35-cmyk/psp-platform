@@ -52,12 +52,9 @@ export default async function SchoolsPage() {
   try {
     const supabase = createStaticClient();
 
-    // Single fast query against the pre-aggregated materialized view
+    // Single fast query against the pre-aggregated materialized view (via SECURITY DEFINER RPC)
     const [mvResult, logoResult] = await Promise.all([
-      supabase
-        .from('school_directory_mv')
-        .select('*')
-        .order('name', { ascending: true }),
+      supabase.rpc('get_school_directory'),
       supabase
         .from('schools')
         .select('id, logo_url')
