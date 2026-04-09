@@ -30,10 +30,6 @@ const CorrectionForm = nextDynamic(() => import("@/components/corrections/Correc
   loading: () => <div className="text-center py-4 text-gray-400 text-sm">Loading form...</div>,
 });
 
-const CareerTrajectoryChart = nextDynamic(() => import("@/components/players/CareerTrajectoryChart"), {
-  loading: () => <div className="w-full bg-white rounded-lg border border-gray-200 p-4 h-[340px] animate-pulse" role="status" aria-busy="true" aria-label="Loading chart" />,
-});
-
 const SimilarPlayers = nextDynamic(() => import("@/components/player/SimilarPlayers"), {
   loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" role="status" aria-busy="true" aria-label="Loading similar players" />,
 });
@@ -171,6 +167,54 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     if (g.games?.id) boxScoreByGameId.set(g.games.id, g);
   }
 
+  // Pull a numeric key from stats_json with graceful fallbacks for naming variants
+  const jsonNum = (sj: Record<string, unknown> | null | undefined, ...keys: string[]): number | null => {
+    if (!sj) return null;
+    for (const k of keys) {
+      const v = (sj as any)[k];
+      if (typeof v === "number") return v;
+      if (typeof v === "string" && v.trim() !== "" && !isNaN(Number(v))) return Number(v);
+    }
+    return null;
+  };
+
+  const buildEntryFromBox = (bs: PlayerGameLog | undefined) => {
+    const sj = bs?.stats_json as Record<string, unknown> | null | undefined;
+    return {
+      passCompletions: bs?.pass_completions ?? null,
+      passAttempts: jsonNum(sj, "pass_attempts", "pass_att"),
+      passYards: bs?.pass_yards ?? null,
+      passTd: jsonNum(sj, "pass_td", "pass_tds"),
+      passInt: jsonNum(sj, "interceptions", "pass_int"),
+      rushCarries: bs?.rush_carries ?? null,
+      rushYards: bs?.rush_yards ?? null,
+      rushTd: jsonNum(sj, "rush_td", "rush_tds"),
+      recCatches: bs?.rec_catches ?? null,
+      recYards: bs?.rec_yards ?? null,
+      recTd: jsonNum(sj, "rec_td", "rec_tds"),
+      points: bs?.points ?? null,
+      bbPoints: bs?.points ?? null,
+      sourceType: bs?.source_type ?? null,
+    };
+  };
+
+  const emptyBoxFields = {
+    passCompletions: null,
+    passAttempts: null,
+    passYards: null,
+    passTd: null,
+    passInt: null,
+    rushCarries: null,
+    rushYards: null,
+    rushTd: null,
+    recCatches: null,
+    recYards: null,
+    recTd: null,
+    points: null,
+    bbPoints: null,
+    sourceType: null,
+  };
+
   const mergedGames: MergedGameEntry[] = teamGames.map((tg) => {
     const bs = boxScoreByGameId.get(tg.id);
     return {
@@ -184,12 +228,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       homeSchool: tg.home_school,
       awaySchool: tg.away_school,
       hasBoxScore: !!bs,
-      rushYards: bs?.rush_yards ?? null,
-      passYards: bs?.pass_yards ?? null,
-      recYards: bs?.rec_yards ?? null,
-      points: bs?.points ?? null,
-      bbPoints: bs?.points ?? null,
-      sourceType: bs?.source_type ?? null,
+      ...(bs ? buildEntryFromBox(bs) : emptyBoxFields),
     };
   });
 
@@ -208,12 +247,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         homeSchool: g.games.home_school,
         awaySchool: g.games.away_school,
         hasBoxScore: true,
-        rushYards: g.rush_yards,
-        passYards: g.pass_yards,
-        recYards: g.rec_yards,
-        points: g.points,
-        bbPoints: g.points,
-        sourceType: g.source_type ?? null,
+        ...buildEntryFromBox(g),
       });
     }
   }
@@ -245,43 +279,89 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   const heroStats: { label: string; value: string; sub?: string }[] = [];
   const mostRecent = stats.length > 0 ? stats[stats.length - 1] : null; // stats are usually sorted ascending
 
+  // Helper: only push a stat card if the raw numeric value is > 0
+  const pushIfNonZero = (
+    target: { label: string; value: string; sub?: string }[],
+    raw: number | null | undefined,
+    label: string,
+    formatted?: string,
+  ) => {
+    if (raw == null || !Number.isFinite(raw) || raw <= 0) return;
+    target.push({ label, value: formatted ?? raw.toLocaleString() });
+  };
+
   if (sport === "football" && footballTotals) {
-    // Decide if QB or skill position based on career totals
-    const isQB = footballTotals.passYards > footballTotals.rushYards;
-    if (isQB) {
-      heroStats.push(
-        { label: "Pass Yards", value: footballTotals.passYards.toLocaleString() },
-        { label: "Pass TDs", value: String(footballTotals.passTd) },
-        { label: "Total TDs", value: String(footballTotals.totalTd) },
-      );
-    } else {
-      heroStats.push(
-        { label: "Rush Yards", value: footballTotals.rushYards.toLocaleString() },
-        { label: "TDs", value: String(footballTotals.totalTd) },
-      );
-      if (footballTotals.rushCarries > 0) {
-        heroStats.push({ label: "YPC", value: (footballTotals.rushYards / footballTotals.rushCarries).toFixed(1) });
-      } else if (footballTotals.recYards > 0) {
-        heroStats.push({ label: "Rec Yards", value: footballTotals.recYards.toLocaleString() });
-      }
+    // Position-aware ordering. Priority list per position; first 3 with non-zero values win.
+    const candidates: { label: string; value: string; sub?: string }[] = [];
+    const primaryPos = (player.positions?.[0] || "").toUpperCase();
+
+    const ypcRaw = footballTotals.rushCarries > 0 ? footballTotals.rushYards / footballTotals.rushCarries : 0;
+    const ypcFmt = footballTotals.rushCarries > 0 ? (footballTotals.rushYards / footballTotals.rushCarries).toFixed(1) : "0";
+
+    const CARD_POOL: Record<string, { label: string; raw: number; formatted?: string }> = {
+      passYards: { label: "Pass Yards", raw: footballTotals.passYards },
+      passTds: { label: "Pass TDs", raw: footballTotals.passTd },
+      rushYards: { label: "Rush Yards", raw: footballTotals.rushYards },
+      rushTds: { label: "Rush TDs", raw: footballTotals.rushTd },
+      recYards: { label: "Rec Yards", raw: footballTotals.recYards },
+      recTds: { label: "Rec TDs", raw: footballTotals.recTd },
+      totalTds: { label: "Total TDs", raw: footballTotals.totalTd },
+      ypc: { label: "YPC", raw: ypcRaw, formatted: ypcFmt },
+      games: { label: "Games", raw: footballTotals.gamesPlayed },
+    };
+
+    const positionOrder: Record<string, string[]> = {
+      QB: ["passYards", "passTds", "rushYards", "rushTds", "totalTds"],
+      RB: ["rushYards", "rushTds", "ypc", "recYards", "totalTds"],
+      WR: ["recYards", "recTds", "rushYards", "totalTds"],
+      TE: ["recYards", "recTds", "totalTds"],
+      ATH: ["rushYards", "recYards", "passYards", "totalTds"],
+      OL: ["games"],
+      DL: ["games"],
+      LB: ["games"],
+      DB: ["games"],
+      K:  ["games"],
+      P:  ["games"],
+    };
+
+    // Fallback order: whichever career totals are biggest (legacy heuristic)
+    const fallbackOrder = (() => {
+      const buckets = [
+        { key: "passYards", val: footballTotals.passYards },
+        { key: "rushYards", val: footballTotals.rushYards },
+        { key: "recYards", val: footballTotals.recYards },
+      ].sort((a, b) => b.val - a.val);
+      const primaryKey = buckets[0].key as "passYards" | "rushYards" | "recYards";
+      if (primaryKey === "passYards") return ["passYards", "passTds", "rushYards", "totalTds"];
+      if (primaryKey === "rushYards") return ["rushYards", "rushTds", "ypc", "totalTds"];
+      return ["recYards", "recTds", "rushYards", "totalTds"];
+    })();
+
+    const order = positionOrder[primaryPos] || fallbackOrder;
+    for (const key of order) {
+      const card = CARD_POOL[key];
+      if (!card) continue;
+      pushIfNonZero(candidates, card.raw, card.label, card.formatted);
+      if (candidates.length >= 3) break;
     }
+    heroStats.push(...candidates.slice(0, 3));
   } else if (isBasketballSport(sport) && basketballTotals) {
-    const ppg = basketballTotals.games > 0 ? (basketballTotals.points / basketballTotals.games).toFixed(1) : "0";
-    const rpg = basketballTotals.games > 0 ? (basketballTotals.rebounds / basketballTotals.games).toFixed(1) : "0";
-    const apg = basketballTotals.games > 0 ? (basketballTotals.assists / basketballTotals.games).toFixed(1) : "0";
-    heroStats.push(
-      { label: "PPG", value: ppg },
-      { label: "RPG", value: rpg },
-      { label: "APG", value: apg },
-    );
+    const ppg = basketballTotals.games > 0 ? basketballTotals.points / basketballTotals.games : 0;
+    const rpg = basketballTotals.games > 0 ? basketballTotals.rebounds / basketballTotals.games : 0;
+    const apg = basketballTotals.games > 0 ? basketballTotals.assists / basketballTotals.games : 0;
+    pushIfNonZero(heroStats, ppg, "PPG", ppg.toFixed(1));
+    pushIfNonZero(heroStats, rpg, "RPG", rpg.toFixed(1));
+    pushIfNonZero(heroStats, apg, "APG", apg.toFixed(1));
   } else if (sport === "baseball" && stats.length > 0) {
     const bbStats = stats as BaseballPlayerSeason[];
     const last = bbStats[bbStats.length - 1];
-    heroStats.push(
-      { label: "AVG", value: last.batting_avg != null ? last.batting_avg.toFixed(3) : ".000" },
-      { label: "HR", value: String(last.home_runs || 0) },
-    );
-    if (last.era != null) heroStats.push({ label: "ERA", value: last.era.toFixed(2) });
+    if (last.batting_avg != null && last.batting_avg > 0) {
+      heroStats.push({ label: "AVG", value: last.batting_avg.toFixed(3) });
+    }
+    pushIfNonZero(heroStats, last.home_runs, "HR", String(last.home_runs || 0));
+    if (last.era != null && last.era > 0) {
+      heroStats.push({ label: "ERA", value: last.era.toFixed(2) });
+    }
   }
 
   /* ===== Build tab list ===== */
@@ -307,13 +387,32 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   const CAT_ICONS: Record<string, string> = { offense: "\u26A1", defense: "\uD83D\uDEE1\uFE0F", specialist: "\uD83C\uDFAF" };
   const DEFAULT_STYLE = { bg: "#f3f4f6", border: "#d1d5db", text: "#374151", badge: "#6b7280" };
 
-  const awardsByYear: Record<number, Award[]> = {};
+  // Partition awards: meta-awards (all-era, all-decade) render in a separate
+  // "Career & Era Honors" section, not under a single year bucket.
+  const CAREER_AWARD_TYPES = new Set(["all-era", "all-decade"]);
+  const careerAwards: Award[] = [];
+  const seasonalAwards: Award[] = [];
   (awards as Award[]).forEach(a => {
+    if (CAREER_AWARD_TYPES.has(a.award_type ?? "")) careerAwards.push(a);
+    else seasonalAwards.push(a);
+  });
+
+  const awardsByYear: Record<number, Award[]> = {};
+  seasonalAwards.forEach(a => {
     const y = a.year || (a.seasons?.label ? parseInt(a.seasons.label.split("-")[0]) + 1 : 0);
     if (!awardsByYear[y]) awardsByYear[y] = [];
     awardsByYear[y].push(a);
   });
   const awardYears = Object.keys(awardsByYear).map(Number).sort((a, b) => b - a);
+
+  // Derive a display label for career/era awards from source_file or award_name
+  const careerAwardRangeLabel = (a: Award): string => {
+    const src = (a as { source_file?: string | null }).source_file || "";
+    const decadeMatch = src.match(/decade(\d{4})s/i);
+    if (decadeMatch) return `${decadeMatch[1]}s`;
+    if (a.award_type === "all-era") return "40-Year";
+    return "";
+  };
 
   return (
     <>
@@ -387,6 +486,12 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 )}
                 {player.graduation_year && (
                   <span className="text-sm text-gray-300">Class of {player.graduation_year}</span>
+                )}
+                {player.height && (
+                  <span className="text-sm text-gray-300">· {player.height}</span>
+                )}
+                {sport === "football" && footballTotals && footballTotals.gamesPlayed > 0 && (
+                  <span className="text-sm text-gray-300">· {footballTotals.gamesPlayed} GP</span>
                 )}
                 {player.is_multi_sport && (
                   <span className="px-2 py-0.5 text-xs font-bold rounded-md" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
@@ -548,18 +653,6 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           <p className="text-gray-400 text-sm">No season statistics available.</p>
         )}
 
-        {/* More from school link */}
-        {player.schools && (
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <h2 className="psp-h3 mb-2" style={{ color: "var(--psp-navy)" }}>
-              More from {player.schools?.name}
-            </h2>
-            <p className="text-sm text-gray-400 mb-3">Explore other players from this school</p>
-            <Link href={`/${sport}/schools/${player.schools?.slug}`} className="inline-block px-5 py-2.5 rounded-lg font-medium text-sm" style={{ background: "var(--psp-navy)", color: "white" }}>
-              View {player.schools?.name} roster
-            </Link>
-          </div>
-        )}
       </section>
 
       {/* ============ GAME LOG SECTION ============ */}
@@ -582,11 +675,26 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               award_name: a.award_name,
               award_type: a.award_type,
               category: a.category,
-              seasonLabel: a.seasons?.label,
+              // Prefer seasons.label; fall back to deriving from a.year (year = season_start)
+              seasonLabel: a.seasons?.label ?? (a.year ? `${a.year}-${String((a.year + 1) % 100).padStart(2, '0')}` : undefined),
             }))}
             sport={sport}
             playerSchoolId={player.primary_school_id ?? null}
             playerName={player.name}
+            playerPositions={player.positions ?? []}
+            seasonTotals={
+              sport === "football"
+                ? (stats as FootballPlayerSeason[]).map(s => ({
+                    seasonLabel: s.seasons?.label ?? "",
+                    passYards: s.pass_yards,
+                    passTd: s.pass_td,
+                    rushYards: s.rush_yards,
+                    rushTd: s.rush_td,
+                    recYards: s.rec_yards,
+                    recTd: s.rec_td,
+                  }))
+                : []
+            }
           />
         </section>
       )}
@@ -611,62 +719,6 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
               />
             </div>
 
-            {/* Career Trajectory Chart */}
-            {sport === "football" && stats.length > 0 && (
-              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-5">
-                <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
-                  Career Trajectory
-                </h2>
-                <CareerTrajectoryChart
-                  sport={sport}
-                  seasons={(stats as FootballPlayerSeason[]).map((s) => ({
-                    label: s.seasons?.label || "Unknown",
-                    stats: {
-                      pass_yards: s.pass_yards || 0,
-                      rush_yards: s.rush_yards || 0,
-                      rec_yards: s.rec_yards || 0,
-                    },
-                  }))}
-                />
-              </div>
-            )}
-            {isBasketballSport(sport) && stats.length > 0 && (
-              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-5">
-                <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
-                  Career Trajectory
-                </h2>
-                <CareerTrajectoryChart
-                  sport={sport}
-                  seasons={(stats as BasketballPlayerSeason[]).map((s) => ({
-                    label: s.seasons?.label || "Unknown",
-                    stats: {
-                      points: s.points || 0,
-                      rebounds: s.rebounds || 0,
-                      assists: s.assists || 0,
-                    },
-                  }))}
-                />
-              </div>
-            )}
-            {sport === "baseball" && stats.length > 0 && (
-              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-5">
-                <h2 className="psp-h2 mb-3" style={{ color: "var(--psp-navy)" }}>
-                  Career Trajectory
-                </h2>
-                <CareerTrajectoryChart
-                  sport={sport}
-                  seasons={(stats as BaseballPlayerSeason[]).map((s) => ({
-                    label: s.seasons?.label || "Unknown",
-                    stats: {
-                      hits: (s as any).hits || 0,
-                      rbi: (s as any).rbi || 0,
-                      home_runs: s.home_runs || 0,
-                    },
-                  }))}
-                />
-              </div>
-            )}
-
             {/* In The News */}
             <InTheNews entityType="player" entityId={player.id} />
 
@@ -680,107 +732,10 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* Player Media Gallery */}
             <MediaGallery playerId={player.id} sport={sport} showUpload />
 
-            {/* Career context cards */}
-            {sport === "football" && footballTotals && footballTotals.rushYards > 0 && (
-              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-6">
-                <h3 className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}>
-                  Career Context
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-600">
-                      {player.name} totaled <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.rushYards.toLocaleString()}</span> career rushing yards
-                      {footballTotals.passYards > 0 && (<>, <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.passYards.toLocaleString()}</span> passing yards</>)}
-                      {footballTotals.recYards > 0 && (<>, <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.recYards.toLocaleString()}</span> receiving yards</>)}
-                      {" "}and <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{footballTotals.totalTd}</span> total touchdowns.
-                    </p>
-                    <div className="flex flex-wrap gap-3 mt-3">
-                      <Link href={`/${sport}/leaderboards/rushing`} className="text-xs font-medium hover:underline" style={{ color: "var(--psp-blue)" }}>
-                        Rushing leaders
-                      </Link>
-                      {footballTotals.passYards > 0 && (
-                        <Link href={`/${sport}/leaderboards/passing`} className="text-xs font-medium hover:underline" style={{ color: "var(--psp-blue)" }}>
-                          Passing leaders
-                        </Link>
-                      )}
-                      {footballTotals.recYards > 0 && (
-                        <Link href={`/${sport}/leaderboards/receiving`} className="text-xs font-medium hover:underline" style={{ color: "var(--psp-blue)" }}>
-                          Receiving leaders
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            {isBasketballSport(sport) && basketballTotals && basketballTotals.points > 0 && (
-              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-6">
-                <h3 className="psp-h3 mb-4" style={{ color: "var(--psp-navy)" }}>
-                  Career Context
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {player.name} scored <span className="font-bold" style={{ color: "var(--psp-gold)" }}>{basketballTotals.points.toLocaleString()} career points</span> at {player.schools?.name || "a Philadelphia school"}.
-                </p>
-                <Link href={`/${sport}/leaderboards/scoring`} className="text-xs font-medium hover:underline mt-3 inline-block" style={{ color: "var(--psp-blue)" }}>
-                  See scoring leaders
-                </Link>
-              </div>
-            )}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Player info card */}
-            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-[var(--psp-rule-strong)] p-6">
-              <h2 className="font-bold text-xs uppercase tracking-wider mb-4" style={{ color: "var(--psp-gray-400)" }}>
-                Player Info
-              </h2>
-              <dl className="space-y-3 text-sm">
-                {player.primary_school_id && player.schools && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-400">School</dt>
-                    <dd>
-                      <Link href={`/${sport}/schools/${player.schools?.slug}`} className="font-medium hover:underline" style={{ color: "var(--psp-navy)" }}>
-                        {player.schools?.name}
-                      </Link>
-                    </dd>
-                  </div>
-                )}
-                {player.positions && player.positions.length > 0 && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-400">Position</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.positions.join(", ")}</dd>
-                  </div>
-                )}
-                {player.graduation_year && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-400">Class</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.graduation_year}</dd>
-                  </div>
-                )}
-                {player.height && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-400">Height</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.height}</dd>
-                  </div>
-                )}
-                {footballTotals && fbVis?.rush_carries && footballTotals.rushCarries > 0 && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-400">Yards/Carry</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>
-                      {(footballTotals.rushYards / footballTotals.rushCarries).toFixed(1)}
-                    </dd>
-                  </div>
-                )}
-                {footballTotals && footballTotals.gamesPlayed > 0 && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-400">Career Games</dt>
-                    <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{footballTotals.gamesPlayed}</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-
             <PSPPromo size="sidebar" variant={4} />
 
             {/* Similar Players */}
@@ -802,7 +757,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   {player.college && (
                     <div className="flex justify-between">
                       <dt className="text-gray-400">College</dt>
-                      <dd className="font-medium" style={{ color: "var(--psp-navy)" }}>{player.college}</dd>
+                      <dd className="font-medium" style={{ color: "var(--psp-text-cream)" }}>{player.college}</dd>
                     </div>
                   )}
                   {player.pro_team && (
@@ -814,7 +769,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   {player.pro_draft_info && (
                     <div className="flex justify-between">
                       <dt className="text-gray-400">Draft</dt>
-                      <dd className="font-medium text-xs" style={{ color: "var(--psp-navy)" }}>{player.pro_draft_info}</dd>
+                      <dd className="font-medium text-xs" style={{ color: "var(--psp-text-cream)" }}>{player.pro_draft_info}</dd>
                     </div>
                   )}
                 </dl>
@@ -876,7 +831,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             </Link>
           </div>
           <div className="space-y-6">
-            {awardYears.map(year => (
+            {awardYears.filter(y => y > 0).map(year => (
               <div key={year}>
                 <div className="flex items-center gap-3 mb-3">
                   <span className="psp-h4" style={{ color: "var(--psp-gold, #f0a500)" }}>
@@ -936,7 +891,72 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                 </div>
               </div>
             ))}
+
+            {/* Career & Era Honors — meta-awards that span multiple years */}
+            {careerAwards.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-3 mt-2">
+                  <span className="psp-h4" style={{ color: "var(--psp-gold, #f0a500)" }}>
+                    Career &amp; Era Honors
+                  </span>
+                  <div className="flex-1 h-px" style={{ background: "var(--psp-gray-200, #e2e8f0)" }} />
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {careerAwards.map(a => {
+                    const tier = a.award_tier || "";
+                    const colors = TIER_COLORS[tier] || DEFAULT_STYLE;
+                    const range = careerAwardRangeLabel(a);
+                    let label = a.award_name || a.award_type || "Career Honor";
+                    label = label.replace(/^(football|basketball|baseball|soccer|lacrosse|wrestling|track-field)-/, "").replace(/-/g, " ");
+                    return (
+                      <div
+                        key={a.id}
+                        className="rounded-xl px-4 py-3 transition-transform hover:-translate-y-0.5"
+                        style={{
+                          background: colors.bg,
+                          border: `2px solid ${colors.border}`,
+                          minWidth: "180px",
+                          maxWidth: "300px",
+                          boxShadow: `0 2px 8px ${colors.border}20`,
+                        }}
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className="text-lg shrink-0">{"\uD83C\uDFC5"}</span>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sm leading-tight capitalize" style={{ color: colors.text }}>
+                              {label}
+                            </p>
+                            {range && (
+                              <p className="text-xs mt-0.5 uppercase tracking-wider font-medium" style={{ color: colors.text, opacity: 0.7 }}>
+                                {range}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
+        </section>
+      )}
+
+      {/* ============ MORE FROM SCHOOL ============ */}
+      {player.schools && (
+        <section className="max-w-7xl mx-auto px-4 py-8 border-t border-gray-200">
+          <h2 className="psp-h3 mb-2" style={{ color: "var(--psp-navy)" }}>
+            More from {player.schools?.name}
+          </h2>
+          <p className="text-sm text-gray-500 mb-3">Explore other players from this school</p>
+          <Link
+            href={`/${sport}/schools/${player.schools?.slug}`}
+            className="inline-block px-5 py-2.5 rounded-lg font-medium text-sm"
+            style={{ background: "var(--psp-navy)", color: "white" }}
+          >
+            View {player.schools?.name} roster
+          </Link>
         </section>
       )}
 

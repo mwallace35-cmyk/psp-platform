@@ -19,6 +19,7 @@ import LeaderboardTable from "@/components/ui/LeaderboardTable";
 import LeaderboardFilters from "@/components/leaderboards/LeaderboardFilters";
 import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
+import { buildLeaderboardCaption } from "@/lib/ig-caption";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
 import type { Metadata } from "next";
@@ -398,11 +399,44 @@ export default async function LeaderboardPage({
           </h1>
           <p className="text-sm text-gray-300 mt-2">{subtitle}</p>
           <div className="mt-6">
-            <ShareButtons
-              url={`/${sport}/leaderboards/${stat}${isCareer ? "?mode=career" : ""}`}
-              title={`${isCareer ? "Career " : ""}${statConfig.label} Leaders | PhillySportsPack`}
-              description={`Top ${isCareer ? "all-time career " : ""}${statConfig.label.toLowerCase()} leaders in Philadelphia high school ${meta.name.toLowerCase()}.`}
-            />
+            {(() => {
+              const primaryCol = activeCols[0];
+              const igRows = tableData.slice(0, 5).map((row) => {
+                const rawVal = (row as unknown as Record<string, unknown>)[primaryCol];
+                const value = rawVal == null || rawVal === "—"
+                  ? ""
+                  : typeof rawVal === "number"
+                    ? rawVal.toLocaleString()
+                    : String(rawVal);
+                return {
+                  name: String(row.playerName ?? ""),
+                  school: String(row.schoolName ?? ""),
+                  value,
+                };
+              });
+              const igQs = new URLSearchParams({
+                sport,
+                statLabel: `${isCareer ? "Career " : ""}${statConfig.label}`,
+                scope: isCareer ? "career" : "season",
+                rows: JSON.stringify(igRows),
+              }).toString();
+              const igImageUrl = `/api/og/ig-story/leaderboard?${igQs}`;
+              const igCaption = buildLeaderboardCaption({
+                sport,
+                statLabel: statConfig.label,
+                isCareer,
+                url: `https://phillysportspack.com/${sport}/leaderboards/${stat}${isCareer ? "?mode=career" : ""}`,
+              });
+              return (
+                <ShareButtons
+                  url={`/${sport}/leaderboards/${stat}${isCareer ? "?mode=career" : ""}`}
+                  title={`${isCareer ? "Career " : ""}${statConfig.label} Leaders | PhillySportsPack`}
+                  description={`Top ${isCareer ? "all-time career " : ""}${statConfig.label.toLowerCase()} leaders in Philadelphia high school ${meta.name.toLowerCase()}.`}
+                  igImageUrl={igImageUrl}
+                  igCaption={igCaption}
+                />
+              );
+            })()}
           </div>
         </div>
       </section>

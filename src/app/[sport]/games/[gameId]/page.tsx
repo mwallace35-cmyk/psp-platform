@@ -14,7 +14,9 @@ import { Breadcrumb } from "@/components/ui";
 import GameFilmSection from "@/components/highlights/GameFilmSection";
 import MediaGallery from "@/components/media/MediaGallery";
 import HeadToHeadBadge from "@/components/game/HeadToHeadBadge";
+import ShareButtons from "@/components/social/ShareButtons";
 import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
+import { buildGameCaption } from "@/lib/ig-caption";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: hourly (games get new box scores frequently)
@@ -904,6 +906,46 @@ export default async function GameDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Share buttons */}
+      {(() => {
+        const shareDateRaw = game.game_date ? (() => {
+          try {
+            const d = new Date(game.game_date + "T12:00:00");
+            return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+          } catch {
+            return "";
+          }
+        })() : "";
+        const igQs = new URLSearchParams({
+          home: h1Home,
+          away: h1Away,
+          ...(hasScore ? { homeScore: String(game.home_score), awayScore: String(game.away_score) } : {}),
+          sport,
+          ...(shareDateRaw ? { date: shareDateRaw } : {}),
+        }).toString();
+        const igImageUrl = `/api/og/ig-story/game?${igQs}`;
+        const igCaption = buildGameCaption({
+          home: h1Home,
+          away: h1Away,
+          homeScore: hasScore ? game.home_score : null,
+          awayScore: hasScore ? game.away_score : null,
+          sport,
+          date: shareDateRaw,
+          url: `https://phillysportspack.com/${sport}/games/${gameIdStr}`,
+        });
+        return (
+          <div className="mb-6 flex justify-end">
+            <ShareButtons
+              url={`/${sport}/games/${gameIdStr}`}
+              title={`${h1Away} vs ${h1Home}${h1Score} | PhillySportsPack`}
+              description={`Box score and game details for ${h1Away} vs ${h1Home}${h1Score}.`}
+              igImageUrl={igImageUrl}
+              igCaption={igCaption}
+            />
+          </div>
+        );
+      })()}
 
       {/* Head-to-Head Badge */}
       {game.home_school_id && game.away_school_id && (
