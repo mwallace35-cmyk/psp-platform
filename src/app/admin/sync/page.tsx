@@ -1,3 +1,4 @@
+// This page is fully client-side: uses localStorage + ephemeral state, no server data.
 "use client";
 
 import { useState, useEffect } from "react";
