@@ -6,6 +6,8 @@ import {
 } from "@/lib/mdx/legendAdapter";
 import { fetchApprovedTributes } from "@/lib/legends/fetchTributes";
 import LegendShell from "@/components/legends/LegendShell";
+import LegacyBadge from "@/components/legacy/LegacyBadge";
+import { getLegacyProfileForLegend } from "@/lib/data/legacy";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -53,13 +55,19 @@ export default async function LegendDetailPage({ params }: PageProps) {
   const unified = getUnifiedLegendBySlug(slug);
   if (!unified || unified.frontmatter.category !== "coach") notFound();
 
-  const [tributes, allLegends] = await Promise.all([
+  const [tributes, allLegends, legacyProfile] = await Promise.all([
     fetchApprovedTributes(slug),
     Promise.resolve(getAllUnifiedLegends()),
+    getLegacyProfileForLegend(slug),
   ]);
 
   return (
     <>
+      {legacyProfile && (
+        <div className="max-w-6xl mx-auto px-4 pt-4 flex justify-end">
+          <LegacyBadge href={`/legacy/${legacyProfile.slug}`} />
+        </div>
+      )}
       <LegendShell
         unified={unified}
         allLegends={allLegends}

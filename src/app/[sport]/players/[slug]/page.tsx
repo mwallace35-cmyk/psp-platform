@@ -10,6 +10,8 @@ import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import PlayerHofBadges from "@/components/hof/PlayerHofBadges";
+import LegacyBadge from "@/components/legacy/LegacyBadge";
+import { getLegacyProfileForPlayer } from "@/lib/data/legacy";
 import MultiSportBanner from "@/components/players/MultiSportBanner";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { buildPlayerCaption } from "@/lib/ig-caption";
@@ -137,6 +139,8 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     getPlayerJerseyNumber(player.id),
     getPlayerSchoolHistory(player.id, player.primary_school_id),
   ]) as [Award[], PlayerGameLog[], TeamGame[], any[], any, string | null, Awaited<ReturnType<typeof getPlayerSchoolHistory>>];
+
+  const legacyProfile = await getLegacyProfileForPlayer(player.id);
 
   // Football career totals
   const footballTotals = sport === "football" && stats.length > 0 ? (() => {
@@ -507,6 +511,9 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
                   <span className="px-2 py-0.5 text-xs font-bold rounded-md bg-blue-600 text-white">
                     College
                   </span>
+                )}
+                {legacyProfile && (
+                  <LegacyBadge href={`/legacy/${legacyProfile.slug}`} />
                 )}
                 {(awards as Award[]).length > 0 && (
                   <a
