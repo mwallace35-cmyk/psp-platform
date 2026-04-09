@@ -18,7 +18,8 @@ export default function PushNotificationBanner({ topics = ['game_results', 'recr
     const cur = Notification.permission as Permission;
     setPermission(cur);
     if (cur === 'default') {
-      const t = setTimeout(() => setVisible(true), 2500);
+      // 8s delay gives readers a full hero view before the banner appears.
+      const t = setTimeout(() => setVisible(true), 8000);
       return () => clearTimeout(t);
     }
     if (cur === 'granted') setEnabled(true);

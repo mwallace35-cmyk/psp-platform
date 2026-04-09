@@ -1674,3 +1674,137 @@ select:focus {
   }
 }
 
+/* =====================================================================
+   Article Detail Page — scoped styles + motion
+   Applied only to .psp-article-prose (body) and .psp-article-hero (hero)
+   so nothing bleeds into other routes.
+   ===================================================================== */
+
+@keyframes psp-fade-in-up {
+  from { opacity: 0; transform: translate3d(0, 24px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes psp-pulse-down {
+  0%, 100% { transform: translate(-50%, 0); opacity: 0.45; }
+  50%      { transform: translate(-50%, 6px); opacity: 0.9; }
+}
+
+.psp-fade-in-up {
+  opacity: 0;
+  animation: psp-fade-in-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.psp-pulse-down {
+  animation: psp-pulse-down 2.2s ease-in-out infinite;
+}
+
+/* Article body prose — scoped to .psp-article-prose */
+.psp-article-prose {
+  font-family: var(--font-body), 'Inter Tight', 'DM Sans', system-ui, sans-serif;
+  font-size: clamp(1rem, 1.2vw + 0.5rem, 1.125rem);
+  line-height: 1.75;
+  color: #1a2744;
+  max-width: 68ch;
+}
+.psp-article-prose > p,
+.psp-article-prose > ul,
+.psp-article-prose > ol,
+.psp-article-prose > blockquote {
+  margin: 0 0 1.4em;
+}
+.psp-article-prose > p:first-of-type {
+  font-size: clamp(1.125rem, 1.5vw + 0.5rem, 1.25rem);
+  line-height: 1.65;
+  color: #0a1628;
+  font-weight: 500;
+}
+.psp-article-prose > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-display), 'Fraunces', serif;
+  font-weight: 800;
+  font-size: 4.4em;
+  line-height: 0.82;
+  padding: 0.08em 0.12em 0 0;
+  color: var(--psp-accent, var(--psp-navy));
+}
+.psp-article-prose h1,
+.psp-article-prose h2,
+.psp-article-prose h3,
+.psp-article-prose h4 {
+  font-family: var(--font-display), 'Fraunces', serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 20;
+  color: #0a1628;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+.psp-article-prose h2 {
+  font-size: clamp(1.5rem, 2.2vw + 0.5rem, 2rem);
+  font-weight: 800;
+  margin: 2.4em 0 0.7em;
+  padding-bottom: 0.4em;
+  border-bottom: 2px solid var(--psp-accent, var(--psp-navy));
+  display: inline-block;
+}
+.psp-article-prose h3 {
+  font-size: clamp(1.25rem, 1.5vw + 0.5rem, 1.5rem);
+  font-weight: 700;
+  margin: 2em 0 0.6em;
+}
+.psp-article-prose strong { color: #0a1628; font-weight: 700; }
+.psp-article-prose em { color: #374151; }
+.psp-article-prose a {
+  color: var(--psp-gold-text, #b87900);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+.psp-article-prose ul,
+.psp-article-prose ol { padding-left: 1.4em; }
+.psp-article-prose ul { list-style: disc; }
+.psp-article-prose ol { list-style: decimal; }
+.psp-article-prose li { margin: 0 0 0.4em; }
+.psp-article-prose blockquote {
+  margin: 1.8em 0;
+  padding: 0.6em 0 0.6em 1.25em;
+  border-left: 4px solid var(--psp-accent, var(--psp-gold));
+  font-family: var(--font-display), 'Fraunces', serif;
+  font-style: italic;
+  font-size: clamp(1.125rem, 1.5vw + 0.5rem, 1.375rem);
+  line-height: 1.5;
+  color: #0a1628;
+}
+.psp-article-prose hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(10,22,40,0.2), transparent);
+  margin: 2.5em 0;
+}
+
+/* Related-articles hover lift */
+.psp-related-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.psp-related-card:hover {
+  transform: translateY(-2px);
+}
+.psp-related-card:hover .psp-related-title {
+  color: var(--psp-gold-text, #b87900);
+}
+
+/* Newsprint dot texture background */
+.psp-newsprint-bg {
+  position: relative;
+  background: var(--psp-cream, #f5ebd6);
+}
+.psp-newsprint-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle at 1px 1px, #000 1px, transparent 0);
+  background-size: 24px 24px;
+  opacity: 0.04;
+}
+
