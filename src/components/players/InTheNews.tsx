@@ -15,24 +15,18 @@ interface Props {
 export default async function InTheNews({ entityType, entityId, limit = 3 }: Props) {
   const supabase = createStaticClient();
 
-  const { data: mentions } = await supabase
-    .from('article_mentions')
-    .select('article_id, articles!inner(id, slug, title, sport_id, published_at, author_name)')
-    .eq('entity_type', entityType)
-    .eq('entity_id', entityId)
-    .order('created_at', { ascending: false })
+  const column = entityType === 'player' ? 'player_id' : 'school_id';
+
+  const { data: articles } = await supabase
+    .from('articles')
+    .select('id, slug, title, sport_id, published_at, author_name')
+    .eq(column, entityId)
+    .eq('status', 'published')
+    .is('deleted_at', null)
+    .order('published_at', { ascending: false })
     .limit(limit);
 
-  if (!mentions || mentions.length === 0) return null;
-
-  const articles = mentions
-    .map((m: Record<string, unknown>) => {
-      const a = Array.isArray(m.articles) ? m.articles[0] : m.articles;
-      return a as { id: number; slug: string; title: string; sport_id: string; published_at: string; author_name: string } | null;
-    })
-    .filter(Boolean);
-
-  if (articles.length === 0) return null;
+  if (!articles || articles.length === 0) return null;
 
   return (
     <div className="mt-6">
@@ -42,18 +36,18 @@ export default async function InTheNews({ entityType, entityId, limit = 3 }: Pro
       <div className="space-y-2">
         {articles.map((article) => (
           <Link
-            key={article!.id}
-            href={`/articles/${article!.slug}`}
+            key={article.id}
+            href={`/articles/${article.slug}`}
             className="block bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-3 hover:border-[var(--psp-gold)]/30 transition group"
           >
             <div className="flex items-start gap-2">
-              <span className="text-sm shrink-0">{SPORT_EMOJI[article!.sport_id] || '📰'}</span>
+              <span className="text-sm shrink-0">{SPORT_EMOJI[article.sport_id] || '📰'}</span>
               <div className="min-w-0">
                 <p className="text-sm text-gray-200 font-medium group-hover:text-[var(--psp-gold)] transition line-clamp-2">
-                  {article!.title}
+                  {article.title}
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
-                  {article!.author_name || 'PSP Staff'} · {new Date(article!.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {article.author_name || 'PSP Staff'} · {new Date(article.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
             </div>

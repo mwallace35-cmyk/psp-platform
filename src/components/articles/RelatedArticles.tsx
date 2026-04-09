@@ -11,23 +11,14 @@ interface RelatedArticlesProps {
 export default async function RelatedArticles({ entityType, entityId }: RelatedArticlesProps) {
   const supabase = createStaticClient();
 
-  // Get article IDs linked to this entity
-  const { data: mentions } = await supabase
-    .from('article_mentions')
-    .select('article_id')
-    .eq('entity_type', entityType)
-    .eq('entity_id', entityId);
+  const column = entityType === 'player' ? 'player_id' : 'school_id';
 
-  if (!mentions || mentions.length === 0) return null;
-
-  const articleIds = mentions.map((m) => m.article_id);
-
-  // Fetch the actual articles
   const { data: articles } = await supabase
     .from('articles')
     .select('slug, title, sport_id, published_at, excerpt, featured_image_url')
-    .in('id', articleIds)
+    .eq(column, entityId)
     .eq('status', 'published')
+    .is('deleted_at', null)
     .order('published_at', { ascending: false })
     .limit(5);
 
