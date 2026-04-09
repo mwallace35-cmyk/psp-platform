@@ -2,6 +2,11 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import RecordOfTheDayHero from "./RecordOfTheDayHero";
+import CuratedRecordCard from "./CuratedRecordCard";
+import SchoolRecordsTab from "./SchoolRecordsTab";
+import LeaderboardTable from "./LeaderboardTable";
+import CategoryTabs from "./CategoryTabs";
 
 // Curated records from database
 interface CuratedRecord {
@@ -92,9 +97,6 @@ const YEAR_ERAS = [
   { label: "1980s", min: 1980, max: 1989 },
   { label: "Pre-1980", min: 1900, max: 1979 },
 ];
-
-// Team category detection
-const TEAM_CATEGORIES = new Set(["Team", "Team Records"]);
 
 // Helper: date-based seed for "Record of the Day"
 function getRecordOfTheDayIndex(records: CuratedRecord[]): number {
@@ -342,66 +344,19 @@ export default function RecordsView({
       {recordOfTheDay && <RecordOfTheDayHero record={recordOfTheDay} sport={sport} sportColor={sportColor} />}
 
       {/* Category Pills Navigation */}
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          marginBottom: 24,
-          overflowX: "auto",
-          paddingBottom: 8,
-          paddingLeft: 0,
-          paddingRight: 0,
+      <CategoryTabs
+        categories={categories}
+        categoryCounts={categoryCounts}
+        activeCategory={activeCategory}
+        schoolRecordBooksCount={schoolRecordBooks.length}
+        onSelectCategory={(cat) => {
+          setActiveCategory(cat);
+          setActiveStat(null);
+          setActiveScope(null);
+          setCuratedPage(1);
         }}
-      >
-        {categories.map((cat) => {
-          const count = categoryCounts[cat] || 0;
-          const isActive = activeCategory === cat;
-          return (
-            <button
-              key={cat}
-              onClick={() => {
-                setActiveCategory(cat);
-                setActiveStat(null);
-                setActiveScope(null);
-                setCuratedPage(1);
-              }}
-              style={{
-                padding: "8px 16px",
-                fontSize: 13,
-                fontWeight: 600,
-                color: isActive ? "var(--psp-navy, #0a1628)" : "var(--psp-navy, #0a1628)",
-                background: isActive ? "var(--psp-gold, #f0a500)" : "#f3f4f6",
-                border: `2px solid ${isActive ? "var(--psp-gold, #f0a500)" : "transparent"}`,
-                borderRadius: 20,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                transition: "all 200ms ease",
-                fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
-              }}
-            >
-              {cat} <span style={{ marginLeft: 6, opacity: 0.85 }}>({count})</span>
-            </button>
-          );
-        })}
-        <button
-          onClick={() => { setActiveCategory("__schools__"); setCuratedPage(1); }}
-          style={{
-            padding: "8px 16px",
-            fontSize: 13,
-            fontWeight: 600,
-            color: activeCategory === "__schools__" ? "var(--psp-navy, #0a1628)" : "var(--psp-navy, #0a1628)",
-            background: activeCategory === "__schools__" ? "var(--psp-gold, #f0a500)" : "#f3f4f6",
-            border: `2px solid ${activeCategory === "__schools__" ? "var(--psp-gold, #f0a500)" : "transparent"}`,
-            borderRadius: 20,
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-            transition: "all 200ms ease",
-            fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
-          }}
-        >
-          🏫 School Records ({schoolRecordBooks.length})
-        </button>
-      </div>
+        onSelectSchools={() => { setActiveCategory("__schools__"); setCuratedPage(1); }}
+      />
 
       {/* Filters Bar (Era) */}
       <div
@@ -524,107 +479,13 @@ export default function RecordsView({
 
           {/* Fix #4: Sequential layout (Leaderboard first, Archive below) */}
           {/* Computed Leaderboards */}
-          <div style={{ marginBottom: 40 }}>
-            <h3 className="psp-h3" style={{ marginBottom: 12 }}>
-              {activeStatForDisplay ? `${activeStatForDisplay} Leaderboard` : `${initialCategory} Leaderboard`}
-            </h3>
-            {leaderboardRecords.length > 0 ? (
-              <div style={{ overflowX: "auto" }}>
-                <table aria-label="Season and career records leaderboard" style={{ width: "100%", fontSize: 13, borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ borderBottom: "2px solid var(--psp-navy, #0a1628)" }}>
-                      <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 600, color: "#6b7280", fontSize: 11 }}>
-                        #
-                      </th>
-                      <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 600, color: "#6b7280", fontSize: 11 }}>
-                        Player
-                      </th>
-                      <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 600, color: "#6b7280", fontSize: 11 }}>
-                        School
-                      </th>
-                      {/* Fix #3: Show actual stat name instead of "Value" */}
-                      <th style={{ padding: "8px 12px", textAlign: "left", fontWeight: 600, color: "#6b7280", fontSize: 11 }}>
-                        Scope
-                      </th>
-                      <th style={{ padding: "8px 12px", textAlign: "right", fontWeight: 600, color: "#6b7280", fontSize: 11 }}>
-                        {activeStatForDisplay || "Value"}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leaderboardRecords.map((rec, idx) => {
-                      const rank = idx + 1;
-                      const bgColor =
-                        rank === 1 ? "rgba(240, 165, 0, 0.1)" : rank === 2 ? "rgba(192, 192, 192, 0.05)" : rank === 3 ? "rgba(205, 127, 50, 0.05)" : "transparent";
-                      return (
-                        <tr key={`${rec.player_slug}-${rec.scope}-${rec.rank}`} style={{ borderBottom: "1px solid #f3f4f6", background: bgColor }}>
-                          <td style={{ padding: "10px 12px", fontWeight: 700, color: rank <= 3 ? sportColor : "#9ca3af" }}>
-                            {rank <= 3 ? (["🥇", "🥈", "🥉"][rank - 1] + " ") : ""}
-                            {rank}
-                          </td>
-                          <td style={{ padding: "10px 12px" }}>
-                            <Link
-                              href={`/${sport}/players/${rec.player_slug}`}
-                              style={{ color: "var(--psp-navy, #0a1628)", textDecoration: "none", fontWeight: 500 }}
-                            >
-                              {rec.player_name}
-                            </Link>
-                          </td>
-                          <td style={{ padding: "10px 12px", fontSize: 12, color: "#6b7280" }}>
-                            <Link
-                              href={`/${sport}/schools/${rec.school_slug}`}
-                              style={{ color: "var(--psp-gold, #f0a500)", textDecoration: "none" }}
-                            >
-                              {rec.school_name}
-                            </Link>
-                          </td>
-                          {/* Fix #5: Add career/season scope badge */}
-                          <td style={{ padding: "10px 12px" }}>
-                            <span
-                              style={{
-                                fontSize: 10,
-                                fontWeight: 600,
-                                padding: "2px 6px",
-                                background: `${scopeColor(rec.scope)}20`,
-                                color: scopeColor(rec.scope),
-                                borderRadius: 3,
-                                textTransform: "uppercase",
-                              }}
-                            >
-                              {rec.scope}
-                            </span>
-                          </td>
-                          <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: sportColor }}>
-                            {rec.display_value}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div style={{ padding: "24px", textAlign: "center", color: "#9ca3af" }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
-                <p>No records available for this stat</p>
-              </div>
-            )}
-            <span
-              style={{
-                display: "inline-block",
-                fontSize: 11,
-                fontWeight: 600,
-                padding: "4px 8px",
-                background: "#3b82f618",
-                color: "#3b82f6",
-                borderRadius: 4,
-                marginTop: 12,
-                textTransform: "uppercase",
-              }}
-            >
-              Stats DB
-            </span>
-          </div>
+          <LeaderboardTable
+            leaderboardRecords={leaderboardRecords}
+            initialCategory={initialCategory}
+            activeStatForDisplay={activeStatForDisplay}
+            sport={sport}
+            sportColor={sportColor}
+          />
 
           {/* Curated Archive Records */}
           <div>
@@ -709,269 +570,6 @@ export default function RecordsView({
             </span>
           </div>
         </>
-      )}
-    </div>
-  );
-}
-
-// Record of the Day Hero
-function RecordOfTheDayHero({
-  record,
-  sport,
-  sportColor,
-}: {
-  record: CuratedRecord;
-  sport: string;
-  sportColor: string;
-}) {
-  const playerName = record.player_name || record.holder_name || "Unknown";
-  const schoolName = record.school_name || record.holder_school || "Unknown";
-
-  return (
-    <div
-      style={{
-        background: "linear-gradient(135deg, var(--psp-navy, #0a1628) 0%, var(--psp-navy, #0a1628) 80%, var(--psp-blue, #3b82f6) 100%)",
-        border: `3px solid var(--psp-gold, #f0a500)`,
-        borderRadius: 12,
-        padding: 24,
-        marginBottom: 32,
-        color: "#fff",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
-        <div style={{ flex: 1 }}>
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              color: "var(--psp-gold, #f0a500)",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              marginBottom: 8,
-            }}
-          >
-            📜 Record of the Day
-          </div>
-          <h2 className="psp-h1" style={{ margin: "0 0 12px 0" }}>
-            {record.record_value || record.record_number?.toLocaleString() || "Record"}
-          </h2>
-          <div style={{ fontSize: 16, marginBottom: 12 }}>
-            {record.player_slug ? (
-              <Link
-                href={`/${sport}/players/${record.player_slug}`}
-                style={{ color: "white", textDecoration: "none", fontWeight: 600, cursor: "pointer" }}
-              >
-                {playerName}
-              </Link>
-            ) : (
-              <span style={{ fontWeight: 600 }}>{playerName}</span>
-            )}
-            <span style={{ color: "rgba(255,255,255,0.7)" }}> — </span>
-            <Link
-              href={`/${sport}/schools/${record.school_slug}`}
-              style={{ color: "var(--psp-gold, #f0a500)", textDecoration: "none", fontWeight: 600 }}
-            >
-              {schoolName}
-            </Link>
-            {record.year_set && <span style={{ color: "rgba(255,255,255,0.7)" }}> ({record.year_set})</span>}
-          </div>
-          {record.description && (
-            <div style={{ fontSize: 14, color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
-              {record.description}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Curated Record Card
-function CuratedRecordCard({
-  record,
-  sport,
-  sportColor,
-}: {
-  record: CuratedRecord;
-  sport: string;
-  sportColor: string;
-}) {
-  const playerName = record.player_name || record.holder_name || "Unknown";
-  const schoolName = record.school_name || record.holder_school || "";
-  const isTeam = TEAM_CATEGORIES.has(record.category || "");
-
-  return (
-    <div
-      style={{
-        padding: 12,
-        background: "#fff",
-        border: "1px solid #e5e7eb",
-        borderRadius: 8,
-        fontSize: 13,
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 600, color: "var(--psp-navy, #0a1628)", marginBottom: 4 }}>
-            {record.subcategory || record.category}
-            {record.scope && (
-              <span
-                style={{
-                  marginLeft: 8,
-                  fontSize: 10,
-                  fontWeight: 600,
-                  padding: "2px 6px",
-                  background: `${scopeColor(record.scope)}18`,
-                  color: scopeColor(record.scope),
-                  borderRadius: 3,
-                  textTransform: "uppercase",
-                }}
-              >
-                {scopeLabel(record.scope)}
-              </span>
-            )}
-          </div>
-          <div style={{ color: "#6b7280", marginBottom: 4 }}>
-            {isTeam ? (
-              <>
-                {record.school_slug ? (
-                  <Link href={`/${sport}/schools/${record.school_slug}`} style={{ color: "var(--psp-navy)", fontWeight: 500, textDecoration: "none" }}>
-                    {schoolName}
-                  </Link>
-                ) : (
-                  <span style={{ fontWeight: 500 }}>{schoolName}</span>
-                )}
-              </>
-            ) : (
-              <>
-                {record.player_slug ? (
-                  <Link href={`/${sport}/players/${record.player_slug}`} style={{ color: "var(--psp-navy)", fontWeight: 500, textDecoration: "none" }}>
-                    {playerName}
-                  </Link>
-                ) : (
-                  <span style={{ fontWeight: 500 }}>{playerName}</span>
-                )}
-                {schoolName && " — "}
-                {schoolName && (
-                  <Link href={`/${sport}/schools/${record.school_slug}`} style={{ color: "var(--psp-gold, #f0a500)", textDecoration: "none" }}>
-                    {schoolName}
-                  </Link>
-                )}
-              </>
-            )}
-            {record.year_set && <span style={{ color: "#9ca3af" }}> ({record.year_set})</span>}
-          </div>
-          {record.description && <div style={{ fontSize: 11, color: "#9ca3af" }}>{record.description}</div>}
-        </div>
-        <div className="font-bebas text-lg tracking-wide" style={{ color: sportColor, whiteSpace: "nowrap" }}>
-          {record.record_value || record.record_number?.toLocaleString() || "—"}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// School Records Tab
-function SchoolRecordsTab({
-  schoolBooks,
-  totalSchools,
-  searchValue,
-  onSearch,
-  sport,
-  sportColor,
-}: {
-  schoolBooks: SchoolRecordBook[];
-  totalSchools: number;
-  searchValue: string;
-  onSearch: (v: string) => void;
-  sport: string;
-  sportColor: string;
-}) {
-  return (
-    <div>
-      {/* Search box */}
-      <div style={{ marginBottom: 24 }}>
-        <input
-          type="text"
-          placeholder={`Search ${totalSchools} schools...`}
-          value={searchValue}
-          onChange={(e) => onSearch(e.target.value)}
-          style={{
-            width: "100%",
-            maxWidth: 400,
-            padding: "10px 16px",
-            fontSize: 14,
-            border: "2px solid #e5e7eb",
-            borderRadius: 8,
-            outline: "none",
-            fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
-          }}
-          onFocus={(e) => (e.target.style.borderColor = sportColor)}
-          onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
-        />
-        {searchValue && (
-          <span style={{ marginLeft: 12, fontSize: 13, color: "#6b7280" }}>
-            {schoolBooks.length} of {totalSchools} schools
-          </span>
-        )}
-      </div>
-
-      {/* School cards grid */}
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}>
-        {schoolBooks.map((schoolBook) => (
-          <div key={schoolBook.school_slug} style={{ border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden", background: "#fff" }}>
-            {/* Header */}
-            <div
-              style={{
-                padding: "12px 16px",
-                background: "var(--psp-navy, #0a1628)",
-                borderBottom: `3px solid ${sportColor}`,
-              }}
-            >
-              <h3 className="psp-h4 text-white">
-                <Link href={`/${sport}/schools/${schoolBook.school_slug}`} style={{ color: "#fff", textDecoration: "none" }}>
-                  {schoolBook.school_name} →
-                </Link>
-              </h3>
-              <span style={{ fontSize: 12, color: "#9ca3af" }}>{schoolBook.records.length} records</span>
-            </div>
-
-            {/* Record table */}
-            <div style={{ padding: "8px 0" }}>
-              <table aria-label="School record book" style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid #f3f4f6" }}>
-                    <th style={{ padding: "6px 12px", textAlign: "left", fontSize: 10, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase" }}>
-                      Stat
-                    </th>
-                    <th style={{ padding: "6px 12px", textAlign: "right", fontSize: 10, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase" }}>
-                      Value
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {schoolBook.records.slice(0, 5).map((rec) => (
-                    <tr key={`${rec.player_slug}-${rec.scope}`} style={{ borderBottom: "1px solid #f9fafb" }}>
-                      <td style={{ padding: "6px 12px" }}>
-                        <span style={{ fontWeight: 500 }}>{rec.stat_name}</span>
-                      </td>
-                      <td style={{ padding: "6px 12px", textAlign: "right", fontWeight: 700, color: sportColor }}>
-                        {rec.display_value}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {schoolBooks.length === 0 && (
-        <div style={{ textAlign: "center", padding: "48px 0", color: "#9ca3af" }}>
-          <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
-          <p>No schools match "{searchValue}"</p>
-        </div>
       )}
     </div>
   );

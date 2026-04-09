@@ -4,17 +4,14 @@ import nextDynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, getPlayerJerseyNumber, getPlayerSchoolHistory, isBasketballSport, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
-import { Breadcrumb, SocialProfileBar, ClaimProfileButton } from "@/components/ui";
+import { ClaimProfileButton } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
-import ShareButtons from "@/components/social/ShareButtons";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import PlayerHofBadges from "@/components/hof/PlayerHofBadges";
-import LegacyBadge from "@/components/legacy/LegacyBadge";
 import { getLegacyProfileForPlayer } from "@/lib/data/legacy";
 import MultiSportBanner from "@/components/players/MultiSportBanner";
 import { buildOgImageUrl } from "@/lib/og-utils";
-import { buildPlayerCaption } from "@/lib/ig-caption";
 import GameLogAccordion from "@/components/game-log/GameLogAccordion";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
@@ -22,10 +19,11 @@ import PlayerHighlightsSection from "@/components/highlights/PlayerHighlightsSec
 import MediaGallery from "@/components/media/MediaGallery";
 import PlayerStatTable from "@/components/players/PlayerStatTable";
 import PlayerProfileTabs from "@/components/players/PlayerProfileTabs";
-import PlayerSchoolHistory from "@/components/players/PlayerSchoolHistory";
 import InTheNews from "@/components/players/InTheNews";
-import type { MergedGameEntry, SeasonAward } from "@/components/game-log/GameLogAccordion";
+import type { MergedGameEntry } from "@/components/game-log/GameLogAccordion";
 import type { Metadata } from "next";
+import PlayerHero from "./PlayerHero";
+import AwardsSection from "./AwardsSection";
 
 // Dynamic imports for heavy client components (below fold)
 const CorrectionForm = nextDynamic(() => import("@/components/corrections/CorrectionForm"), {
@@ -380,44 +378,6 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
     tabList.push({ id: "awards", label: "Awards" });
   }
 
-  /* ===== Awards grouping (for awards section) ===== */
-  const TIER_COLORS: Record<string, { bg: string; border: string; text: string; badge: string }> = {
-    "First Team": { bg: "#fef3c7", border: "#f59e0b", text: "#92400e", badge: "#f59e0b" },
-    "Second Team": { bg: "#e0e7ff", border: "#6366f1", text: "#3730a3", badge: "#6366f1" },
-    "Third Team": { bg: "#ecfdf5", border: "#10b981", text: "#065f46", badge: "#10b981" },
-    "Honorable Mention": { bg: "#f3f4f6", border: "#9ca3af", text: "#374151", badge: "#9ca3af" },
-    "MVP": { bg: "#fef3c7", border: "#d97706", text: "#92400e", badge: "#d97706" },
-  };
-  const CAT_ICONS: Record<string, string> = { offense: "\u26A1", defense: "\uD83D\uDEE1\uFE0F", specialist: "\uD83C\uDFAF" };
-  const DEFAULT_STYLE = { bg: "#f3f4f6", border: "#d1d5db", text: "#374151", badge: "#6b7280" };
-
-  // Partition awards: meta-awards (all-era, all-decade) render in a separate
-  // "Career & Era Honors" section, not under a single year bucket.
-  const CAREER_AWARD_TYPES = new Set(["all-era", "all-decade"]);
-  const careerAwards: Award[] = [];
-  const seasonalAwards: Award[] = [];
-  (awards as Award[]).forEach(a => {
-    if (CAREER_AWARD_TYPES.has(a.award_type ?? "")) careerAwards.push(a);
-    else seasonalAwards.push(a);
-  });
-
-  const awardsByYear: Record<number, Award[]> = {};
-  seasonalAwards.forEach(a => {
-    const y = a.year || (a.seasons?.label ? parseInt(a.seasons.label.split("-")[0]) + 1 : 0);
-    if (!awardsByYear[y]) awardsByYear[y] = [];
-    awardsByYear[y].push(a);
-  });
-  const awardYears = Object.keys(awardsByYear).map(Number).sort((a, b) => b - a);
-
-  // Derive a display label for career/era awards from source_file or award_name
-  const careerAwardRangeLabel = (a: Award): string => {
-    const src = (a as { source_file?: string | null }).source_file || "";
-    const decadeMatch = src.match(/decade(\d{4})s/i);
-    if (decadeMatch) return `${decadeMatch[1]}s`;
-    if (a.award_type === "all-era") return "40-Year";
-    return "";
-  };
-
   return (
     <>
       <BreadcrumbJsonLd items={[
@@ -437,194 +397,22 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
       />
 
       {/* ============ HERO SECTION ============ */}
-      <section className="relative" style={{ background: "var(--psp-navy)" }}>
-        {/* Sport-colored accent bar at very top */}
-        <div className="h-1" style={{ background: meta.color }} />
-
-        <div className="max-w-7xl mx-auto px-4 pt-6 pb-10 md:pt-8 md:pb-12">
-          {/* Breadcrumb */}
-          <Breadcrumb items={[
-            { label: meta.name, href: `/${sport}` },
-            { label: "Players" },
-            { label: player.name }
-          ]} />
-
-          <div className="flex items-start gap-5 mt-4">
-            {/* Avatar */}
-            <div
-              className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center flex-shrink-0"
-              style={{
-                background: jerseyNumber ? meta.color : `${meta.color}25`,
-                color: jerseyNumber ? 'white' : 'var(--psp-gold)',
-                border: `2px solid ${meta.color}40`
-              }}
-              aria-hidden="true"
-            >
-              <span className="font-display text-3xl md:text-4xl font-bold leading-none">
-                {jerseyNumber || schoolInitials}
-              </span>
-            </div>
-
-            <div className="flex-1 min-w-0">
-              {/* Player name */}
-              <h1
-                className="psp-h1-lg text-white leading-none"
-              >
-                {player.name}
-              </h1>
-
-              {/* Meta row: school, position, class, jersey, badges */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2">
-                <PlayerSchoolHistory
-                  schoolHistory={schoolHistory}
-                  sport={sport}
-                  fallbackSchool={player.schools}
-                />
-                {player.positions && player.positions.length > 0 && (
-                  <span
-                    className="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-md"
-                    style={{ background: `${meta.color}30`, color: meta.color, border: `1px solid ${meta.color}50` }}
-                  >
-                    {player.positions.join(" / ")}
-                  </span>
-                )}
-                {player.graduation_year && (
-                  <span className="text-sm text-gray-300">Class of {player.graduation_year}</span>
-                )}
-                {player.height && (
-                  <span className="text-sm text-gray-300">· {player.height}</span>
-                )}
-                {sport === "football" && footballTotals && footballTotals.gamesPlayed > 0 && (
-                  <span className="text-sm text-gray-300">· {footballTotals.gamesPlayed} GP</span>
-                )}
-                {player.is_multi_sport && (
-                  <span className="px-2 py-0.5 text-xs font-bold rounded-md" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
-                    Multi-Sport
-                  </span>
-                )}
-                {player.pro_team && (
-                  <span className="px-2 py-0.5 text-xs font-bold rounded-md" style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}>
-                    Pro Athlete
-                  </span>
-                )}
-                {player.college && !player.pro_team && (
-                  <span className="px-2 py-0.5 text-xs font-bold rounded-md bg-blue-600 text-white">
-                    College
-                  </span>
-                )}
-                {legacyProfile && (
-                  <LegacyBadge href={`/legacy/${legacyProfile.slug}`} />
-                )}
-                {(awards as Award[]).length > 0 && (
-                  <a
-                    href="#awards"
-                    className="px-2 py-0.5 text-xs font-bold rounded-md hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--psp-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--psp-navy)] transition"
-                    style={{ background: "rgba(240,165,0,0.2)", color: "var(--psp-gold)", border: "1px solid rgba(240,165,0,0.3)" }}
-                    aria-label={`Jump to ${(awards as Award[]).length} award${(awards as Award[]).length !== 1 ? "s" : ""} section`}
-                  >
-                    {(awards as Award[]).length} Award{(awards as Award[]).length !== 1 ? "s" : ""}
-                  </a>
-                )}
-              </div>
-
-              {/* Actions row */}
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                {(() => {
-                  const headlineStat = (() => {
-                    if (sport === "football" && footballTotals) {
-                      if (footballTotals.rushYards >= footballTotals.passYards && footballTotals.rushYards >= footballTotals.recYards && footballTotals.rushYards > 0) {
-                        return `${footballTotals.rushYards.toLocaleString()} Career Rush Yds`;
-                      }
-                      if (footballTotals.passYards >= footballTotals.recYards && footballTotals.passYards > 0) {
-                        return `${footballTotals.passYards.toLocaleString()} Career Pass Yds`;
-                      }
-                      if (footballTotals.recYards > 0) {
-                        return `${footballTotals.recYards.toLocaleString()} Career Rec Yds`;
-                      }
-                      if (footballTotals.totalTd > 0) {
-                        return `${footballTotals.totalTd} Career TDs`;
-                      }
-                    }
-                    if (isBasketballSport(sport) && basketballTotals && basketballTotals.points > 0) {
-                      return `${basketballTotals.points.toLocaleString()} Career Points`;
-                    }
-                    return "";
-                  })();
-                  const schoolName = player.schools?.name ?? "";
-                  const igQs = new URLSearchParams({
-                    name: player.name,
-                    ...(schoolName ? { school: schoolName } : {}),
-                    sport,
-                    ...(headlineStat ? { stat: headlineStat } : {}),
-                  }).toString();
-                  const igImageUrl = `/api/og/ig-story/player?${igQs}`;
-                  const igCaption = buildPlayerCaption({
-                    name: player.name,
-                    school: schoolName || undefined,
-                    sport,
-                    headline: headlineStat || undefined,
-                    url: `https://phillysportspack.com/${sport}/players/${slug}`,
-                  });
-                  return (
-                    <ShareButtons
-                      url={`/${sport}/players/${slug}`}
-                      title={`${player.name} -- ${meta.name} Stats | PhillySportsPack`}
-                      description={`Check out ${player.name}'s career stats on PhillySportsPack.com`}
-                      igImageUrl={igImageUrl}
-                      igCaption={igCaption}
-                    />
-                  );
-                })()}
-                <Link
-                  href={`/compare?players=${slug}&sport=${sport}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
-                  style={{ background: "var(--psp-blue, #3b82f6)", color: "white" }}
-                  title="Compare with another player"
-                >
-                  Compare
-                </Link>
-              </div>
-
-              {/* Social Profile Bar */}
-              <div className="mt-4">
-                <SocialProfileBar
-                  hudlUrl={player.hudl_profile_url || recruitingProfile?.url_hudl}
-                  on3Url={recruitingProfile?.url_on3}
-                  two47Url={recruitingProfile?.url_247}
-                  rivalsUrl={recruitingProfile?.url_rivals}
-                  twitterHandle={player.twitter_handle || recruitingProfile?.social_twitter}
-                  instagramHandle={player.instagram_handle || recruitingProfile?.social_instagram}
-                  maxPrepsUrl={recruitingProfile?.url_maxpreps}
-                  highlightsUrl={recruitingProfile?.highlights_url}
-                  isVerified={player.is_verified}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* ---- Hero Stat Highlight Cards ---- */}
-          {heroStats.length > 0 && (
-            <div className="flex flex-wrap gap-4 mt-8">
-              {heroStats.map((hs) => (
-                <div
-                  key={hs.label}
-                  className="rounded-xl px-6 py-4 min-w-[120px] flex-1 max-w-[200px]"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}
-                >
-                  <div
-                    className="psp-h1 text-white leading-none"
-                  >
-                    {hs.value}
-                  </div>
-                  <div className="text-xs font-bold uppercase tracking-wider mt-1.5" style={{ color: meta.color }}>
-                    {hs.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+      <PlayerHero
+        player={player}
+        sport={sport}
+        slug={slug}
+        meta={meta}
+        jerseyNumber={jerseyNumber}
+        schoolInitials={schoolInitials}
+        schoolHistory={schoolHistory}
+        legacyProfile={legacyProfile}
+        awards={awards as Award[]}
+        footballTotals={footballTotals}
+        basketballTotals={basketballTotals}
+        heroStats={heroStats}
+        recruitingProfile={recruitingProfile}
+        isBasketball={isBasketballSport(sport)}
+      />
 
       {/* ============ STICKY TAB NAVIGATION ============ */}
       <PlayerProfileTabs sportColor={meta.color} tabs={tabList} />
@@ -821,133 +609,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
       {/* ============ AWARDS SECTION ============ */}
       {(awards as Award[]).length > 0 && (
-        <section id="awards" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2
-              className="psp-h2"
-              style={{ color: "var(--psp-navy)" }}
-            >
-              Honors & Awards
-            </h2>
-            <Link
-              href={`/${sport}/awards`}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
-              style={{ background: "rgba(59,130,246,0.1)", color: "var(--psp-blue, #3b82f6)", border: "1px solid rgba(59,130,246,0.2)" }}
-            >
-              All {meta.name} Awards
-            </Link>
-          </div>
-          <div className="space-y-6">
-            {awardYears.filter(y => y > 0).map(year => (
-              <div key={year}>
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="psp-h4" style={{ color: "var(--psp-gold, #f0a500)" }}>
-                    {year > 1900 ? `${String(year - 1).slice(-2)}-${String(year).slice(-2)}` : year}
-                  </span>
-                  <div className="flex-1 h-px" style={{ background: "var(--psp-gray-200, #e2e8f0)" }} />
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {awardsByYear[year].map(a => {
-                    const tier = a.award_tier || "";
-                    const colors = TIER_COLORS[tier] || DEFAULT_STYLE;
-                    const catIcon = CAT_ICONS[a.category || ""] || "\uD83C\uDFC6";
-                    let label = a.award_name || a.award_type || "Award";
-                    label = label.replace(/^(football|basketball|baseball|soccer|lacrosse|wrestling|track-field)-/, "").replace(/-/g, " ");
-                    if (tier) {
-                      label = label.replace(/First Team/i, "").replace(/Second Team/i, "").replace(/Third Team/i, "").replace(/Honorable Mention/i, "").replace(/Red Division/i, "").trim().replace(/[-\s]+$/, "") || label;
-                    }
-
-                    return (
-                      <div
-                        key={a.id}
-                        className="rounded-xl px-4 py-3 transition-transform hover:-translate-y-0.5"
-                        style={{
-                          background: colors.bg,
-                          border: `2px solid ${colors.border}`,
-                          minWidth: "180px",
-                          maxWidth: "300px",
-                          boxShadow: `0 2px 8px ${colors.border}20`,
-                        }}
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className="text-lg shrink-0">{catIcon}</span>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-sm leading-tight capitalize" style={{ color: colors.text }}>
-                              {label}
-                            </p>
-                            {a.position && (
-                              <p className="text-xs mt-0.5" style={{ color: colors.text, opacity: 0.7 }}>{a.position}</p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          {tier && (
-                            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: colors.badge }}>
-                              {tier}
-                            </span>
-                          )}
-                          {a.category && (
-                            <span className="text-[10px] uppercase tracking-wider font-medium capitalize" style={{ color: colors.text, opacity: 0.75 }}>
-                              {a.category}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-
-            {/* Career & Era Honors — meta-awards that span multiple years */}
-            {careerAwards.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-3 mt-2">
-                  <span className="psp-h4" style={{ color: "var(--psp-gold, #f0a500)" }}>
-                    Career &amp; Era Honors
-                  </span>
-                  <div className="flex-1 h-px" style={{ background: "var(--psp-gray-200, #e2e8f0)" }} />
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {careerAwards.map(a => {
-                    const tier = a.award_tier || "";
-                    const colors = TIER_COLORS[tier] || DEFAULT_STYLE;
-                    const range = careerAwardRangeLabel(a);
-                    let label = a.award_name || a.award_type || "Career Honor";
-                    label = label.replace(/^(football|basketball|baseball|soccer|lacrosse|wrestling|track-field)-/, "").replace(/-/g, " ");
-                    return (
-                      <div
-                        key={a.id}
-                        className="rounded-xl px-4 py-3 transition-transform hover:-translate-y-0.5"
-                        style={{
-                          background: colors.bg,
-                          border: `2px solid ${colors.border}`,
-                          minWidth: "180px",
-                          maxWidth: "300px",
-                          boxShadow: `0 2px 8px ${colors.border}20`,
-                        }}
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className="text-lg shrink-0">{"\uD83C\uDFC5"}</span>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-sm leading-tight capitalize" style={{ color: colors.text }}>
-                              {label}
-                            </p>
-                            {range && (
-                              <p className="text-xs mt-0.5 uppercase tracking-wider font-medium" style={{ color: colors.text, opacity: 0.7 }}>
-                                {range}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
+        <AwardsSection awards={awards as Award[]} sport={sport} sportName={meta.name} />
       )}
 
       {/* ============ MORE FROM SCHOOL ============ */}
