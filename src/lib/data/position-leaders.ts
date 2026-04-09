@@ -7,6 +7,32 @@ import {
 import { isBasketballSport } from "./utils";
 
 /**
+ * Paginate through a Supabase query in 1000-row chunks until exhausted.
+ * Works around PostgREST's default 1000-row ceiling and any explicit .limit()
+ * that would silently truncate large result sets.
+ */
+async function fetchAllPaginated<T>(
+  buildQuery: (from: number, to: number) => any
+): Promise<{ data: T[] | null; error: any }> {
+  const PAGE = 1000;
+  const all: T[] = [];
+  let from = 0;
+  // Hard safety cap so a runaway query can't fetch forever.
+  const MAX_ROWS = 50000;
+
+  while (from < MAX_ROWS) {
+    const to = from + PAGE - 1;
+    const { data, error } = await buildQuery(from, to);
+    if (error) return { data: null, error };
+    if (!data || data.length === 0) break;
+    all.push(...(data as T[]));
+    if (data.length < PAGE) break;
+    from += PAGE;
+  }
+  return { data: all, error: null };
+}
+
+/**
  * Position leader with career stats
  */
 export interface PositionLeader {
@@ -59,13 +85,17 @@ export const getFootballPositionLeaders = cache(
               orderBy: "desc",
             };
 
-            // Get players by position filter
-            const { data: players, error: playerError } = await supabase
-              .from("players")
-              .select("id, name, slug, primary_school_id, graduation_year, positions")
-              .contains("positions", [position.toUpperCase()])
-              .is("deleted_at", null)
-              .limit(500);
+            // Get ALL players by position filter (paginated — there can be 900+ QBs)
+            const { data: players, error: playerError } = await fetchAllPaginated<any>(
+              (from, to) =>
+                supabase
+                  .from("players")
+                  .select("id, name, slug, primary_school_id, graduation_year, positions")
+                  .contains("positions", [position.toUpperCase()])
+                  .is("deleted_at", null)
+                  .order("id", { ascending: true })
+                  .range(from, to)
+            );
 
             if (playerError || !players) {
               console.error("Position leaders player query error:", playerError);
@@ -75,19 +105,31 @@ export const getFootballPositionLeaders = cache(
             const playerIds = players.map((p: any) => p.id);
             if (playerIds.length === 0) return [];
 
-            // Get seasons for all position players
-            const { data: seasons, error: seasonError } = await supabase
-              .from("football_player_seasons")
-              .select(
-                `id, player_id, season_id, school_id, games_played, rush_yards, pass_yards, rec_yards, rush_td, pass_td, rec_td,
-                 seasons(year_start, year_end, label),
-                 schools(id, name, slug, leagues(name))`
-              )
-              .in("player_id", playerIds);
-
-            if (seasonError || !seasons) {
-              console.error("Position leaders season query error:", seasonError);
-              return [];
+            // Get ALL seasons for position players (paginated — 900 players * several seasons
+            // easily exceeds PostgREST's 1000-row default ceiling).
+            // Batch playerIds in chunks of 500 to keep the .in() URL under Supabase limits.
+            const PLAYER_ID_CHUNK = 500;
+            const seasons: any[] = [];
+            for (let i = 0; i < playerIds.length; i += PLAYER_ID_CHUNK) {
+              const chunk = playerIds.slice(i, i + PLAYER_ID_CHUNK);
+              const { data: chunkSeasons, error: seasonError } = await fetchAllPaginated<any>(
+                (from, to) =>
+                  supabase
+                    .from("football_player_seasons")
+                    .select(
+                      `id, player_id, season_id, school_id, games_played, rush_yards, pass_yards, rec_yards, rush_td, pass_td, rec_td,
+                       seasons(year_start, year_end, label),
+                       schools(id, name, slug, leagues(name))`
+                    )
+                    .in("player_id", chunk)
+                    .order("id", { ascending: true })
+                    .range(from, to)
+              );
+              if (seasonError) {
+                console.error("Position leaders season query error:", seasonError);
+                return [];
+              }
+              if (chunkSeasons) seasons.push(...chunkSeasons);
             }
 
             // Group by player and aggregate stats
@@ -188,13 +230,17 @@ export const getBasketballPositionLeaders = cache(
 
             const primaryStat = positionStatMap[position.toUpperCase()] || "points";
 
-            // Get players by position
-            const { data: players, error: playerError } = await supabase
-              .from("players")
-              .select("id, name, slug, primary_school_id, graduation_year, positions")
-              .contains("positions", [position.toUpperCase()])
-              .is("deleted_at", null)
-              .limit(500);
+            // Get ALL players by position (paginated)
+            const { data: players, error: playerError } = await fetchAllPaginated<any>(
+              (from, to) =>
+                supabase
+                  .from("players")
+                  .select("id, name, slug, primary_school_id, graduation_year, positions")
+                  .contains("positions", [position.toUpperCase()])
+                  .is("deleted_at", null)
+                  .order("id", { ascending: true })
+                  .range(from, to)
+            );
 
             if (playerError || !players) {
               console.error("Position leaders player query error:", playerError);
@@ -204,19 +250,29 @@ export const getBasketballPositionLeaders = cache(
             const playerIds = players.map((p: any) => p.id);
             if (playerIds.length === 0) return [];
 
-            // Get basketball seasons
-            const { data: seasons, error: seasonError } = await supabase
-              .from("basketball_player_seasons")
-              .select(
-                `id, player_id, season_id, school_id, games_played, points, assists, rebounds,
-                 seasons(year_start, year_end, label),
-                 schools(id, name, slug, leagues(name))`
-              )
-              .in("player_id", playerIds);
-
-            if (seasonError || !seasons) {
-              console.error("Position leaders season query error:", seasonError);
-              return [];
+            // Get ALL basketball seasons (paginated, chunked by player id)
+            const PLAYER_ID_CHUNK = 500;
+            const seasons: any[] = [];
+            for (let i = 0; i < playerIds.length; i += PLAYER_ID_CHUNK) {
+              const chunk = playerIds.slice(i, i + PLAYER_ID_CHUNK);
+              const { data: chunkSeasons, error: seasonError } = await fetchAllPaginated<any>(
+                (from, to) =>
+                  supabase
+                    .from("basketball_player_seasons")
+                    .select(
+                      `id, player_id, season_id, school_id, games_played, points, assists, rebounds,
+                       seasons(year_start, year_end, label),
+                       schools(id, name, slug, leagues(name))`
+                    )
+                    .in("player_id", chunk)
+                    .order("id", { ascending: true })
+                    .range(from, to)
+              );
+              if (seasonError) {
+                console.error("Position leaders season query error:", seasonError);
+                return [];
+              }
+              if (chunkSeasons) seasons.push(...chunkSeasons);
             }
 
             // Aggregate

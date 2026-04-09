@@ -14,12 +14,27 @@ export interface SeasonAward {
   seasonLabel?: string;
 }
 
+export interface SeasonTotals {
+  seasonLabel: string;
+  passYards?: number | null;
+  passTd?: number | null;
+  rushYards?: number | null;
+  rushTd?: number | null;
+  recYards?: number | null;
+  recTd?: number | null;
+  points?: number | null;
+}
+
 export interface GameLogAccordionProps {
   games: MergedGameEntry[];
   awards: SeasonAward[];
   sport: string;
   playerSchoolId: number | null;
   playerName: string;
+  playerPositions?: string[];
+  /** Season-level stat totals (authoritative); used for collapsed-header summaries
+   *  when the per-game log is incomplete for that season. Keyed by season label. */
+  seasonTotals?: SeasonTotals[];
 }
 
 // Helper function to format award category
@@ -98,36 +113,93 @@ function formatStatDisplay(value: number | null): string {
   return value.toLocaleString();
 }
 
-// Calculate season stat totals (football)
-function calculateFootballSeasonStats(seasonGames: MergedGameEntry[]) {
-  let rushYards = 0;
-  let passYards = 0;
-  let recYards = 0;
-  let points = 0;
-  let boxScoreCount = 0;
+// Position-aware season summary for the collapsed header.
+// Primary stats lead (prominent). Secondary stats render smaller via the
+// `{ primary, secondary }` return shape.
+// Prefers the authoritative season-level totals when available, falling back
+// to a sum of the game log for that season.
+function calculateFootballSeasonStats(
+  seasonGames: MergedGameEntry[],
+  playerPositions: string[],
+  seasonTotal?: SeasonTotals,
+): { primary: string; secondary: string } {
+  let rushYards: number, rushTd: number;
+  let passYards: number, passTd: number;
+  let recYards: number, recTd: number;
 
-  for (const game of seasonGames) {
-    if (game.hasBoxScore) {
-      boxScoreCount++;
-      if (game.rushYards) rushYards += game.rushYards;
-      if (game.passYards) passYards += game.passYards;
-      if (game.recYards) recYards += game.recYards;
-      if (game.points) points += game.points;
+  if (seasonTotal) {
+    passYards = seasonTotal.passYards ?? 0;
+    passTd = seasonTotal.passTd ?? 0;
+    rushYards = seasonTotal.rushYards ?? 0;
+    rushTd = seasonTotal.rushTd ?? 0;
+    recYards = seasonTotal.recYards ?? 0;
+    recTd = seasonTotal.recTd ?? 0;
+  } else {
+    rushYards = 0; rushTd = 0;
+    passYards = 0; passTd = 0;
+    recYards = 0; recTd = 0;
+    for (const game of seasonGames) {
+      if (!game.hasBoxScore) continue;
+      rushYards += game.rushYards ?? 0;
+      rushTd += game.rushTd ?? 0;
+      passYards += game.passYards ?? 0;
+      passTd += game.passTd ?? 0;
+      recYards += game.recYards ?? 0;
+      recTd += game.recTd ?? 0;
     }
   }
 
-  const stats: string[] = [];
-  if (rushYards > 0) stats.push(`${rushYards.toLocaleString()} rush`);
-  if (passYards > 0) stats.push(`${passYards.toLocaleString()} pass`);
-  if (recYards > 0) stats.push(`${recYards.toLocaleString()} rec`);
-  if (points > 0) stats.push(`${points} pts`);
+  const pri = (s: string) => s;
+  const sec = (s: string) => s;
 
-  if (stats.length === 0) return 'No individual stats';
-  return stats.join(' � ');
+  // Only include a stat line if there's a meaningful positive yardage or TD.
+  // Negative rushing yards alone (e.g. QB sacks) don't warrant a display line.
+  const passStr = passYards > 0
+    ? `${passYards.toLocaleString()} pass yds${passTd > 0 ? ` · ${passTd} TD` : ''}`
+    : '';
+  const rushStr = rushYards > 0 || rushTd > 0
+    ? `${rushYards.toLocaleString()} rush yds${rushTd > 0 ? ` · ${rushTd} TD` : ''}`
+    : '';
+  const recStr = recYards > 0 || recTd > 0
+    ? `${recYards.toLocaleString()} rec yds${recTd > 0 ? ` · ${recTd} TD` : ''}`
+    : '';
+
+  const posUpper = (playerPositions || []).map(p => p.toUpperCase());
+  const isQB = posUpper.includes('QB');
+  const isRB = posUpper.includes('RB');
+  const isWR = posUpper.includes('WR') || posUpper.includes('TE');
+
+  let primary = '';
+  let secondaryParts: string[] = [];
+
+  if (isQB && passStr) {
+    primary = passStr;
+    if (rushStr) secondaryParts.push(rushStr);
+  } else if (isRB && rushStr) {
+    primary = rushStr;
+    if (recStr) secondaryParts.push(recStr);
+  } else if (isWR && recStr) {
+    primary = recStr;
+    if (rushStr) secondaryParts.push(rushStr);
+  } else {
+    // Fallback: whichever yardage is biggest wins primary
+    const buckets = [
+      { str: passStr, val: passYards },
+      { str: rushStr, val: rushYards },
+      { str: recStr, val: recYards },
+    ].sort((a, b) => b.val - a.val).filter(b => b.str);
+    if (buckets.length > 0) {
+      primary = buckets[0].str;
+      secondaryParts = buckets.slice(1, 3).map(b => b.str);
+    }
+  }
+
+  if (!primary) return { primary: 'No individual stats', secondary: '' };
+  return { primary: pri(primary), secondary: sec(secondaryParts.join(' · ')) };
 }
 
-// Calculate season stat totals (basketball)
-function calculateBasketballSeasonStats(seasonGames: MergedGameEntry[]) {
+// Basketball season totals (only PTS + PPG available in game_player_stats)
+function calculateBasketballSeasonStats(seasonGames: MergedGameEntry[]): { primary: string; secondary: string } {
   let totalPoints = 0;
   let boxScoreCount = 0;
 
@@ -138,10 +210,10 @@ function calculateBasketballSeasonStats(seasonGames: MergedGameEntry[]) {
     }
   }
 
-  if (boxScoreCount === 0) return 'No individual stats';
+  if (boxScoreCount === 0) return { primary: 'No individual stats', secondary: '' };
 
   const ppg = (totalPoints / boxScoreCount).toFixed(1);
-  return `${totalPoints} pts � ${ppg} ppg`;
+  return { primary: `${totalPoints.toLocaleString()} pts`, secondary: `${ppg} ppg · ${boxScoreCount} GP` };
 }
 
 export default function GameLogAccordion({
@@ -150,7 +222,14 @@ export default function GameLogAccordion({
   sport,
   playerSchoolId,
   playerName,
+  playerPositions = [],
+  seasonTotals = [],
 }: GameLogAccordionProps) {
+  const seasonTotalMap = useMemo(() => {
+    const m = new Map<string, SeasonTotals>();
+    for (const st of seasonTotals) m.set(st.seasonLabel, st);
+    return m;
+  }, [seasonTotals]);
   const groupedGames = useMemo(() => groupGamesBySeason(games), [games]);
   const seasonOrder = useMemo(() => Object.keys(groupedGames), [groupedGames]);
   const [expandedSeason, setExpandedSeason] = useState<string | null>(
@@ -203,7 +282,7 @@ export default function GameLogAccordion({
           const seasonAwards = seasonAwardsMap[season] || [];
           const seasonStatDisplay =
             sport === 'football'
-              ? calculateFootballSeasonStats(seasonGames)
+              ? calculateFootballSeasonStats(seasonGames, playerPositions, seasonTotalMap.get(season))
               : calculateBasketballSeasonStats(seasonGames);
 
           return (
@@ -276,16 +355,22 @@ export default function GameLogAccordion({
 
                 {/* Season Stats (right side) */}
                 <div
-                  className="ml-4 text-sm font-normal flex-shrink-0 whitespace-nowrap"
-                  style={{ color: 'var(--psp-gold)' }}
+                  className="ml-4 font-normal flex-shrink-0 whitespace-nowrap text-right leading-tight"
                 >
-                  {seasonStatDisplay}
+                  <div className="text-sm" style={{ color: 'var(--psp-gold)' }}>
+                    {seasonStatDisplay.primary}
+                  </div>
+                  {seasonStatDisplay.secondary && (
+                    <div className="text-[11px] mt-0.5 opacity-70" style={{ color: 'var(--psp-gold)' }}>
+                      {seasonStatDisplay.secondary}
+                    </div>
+                  )}
                 </div>
               </button>
 
               {/* Expanded Content */}
               {isExpanded && (
-                <div className="px-4 py-4 bg-white">
+                <div className="px-4 py-4" style={{ background: 'var(--psp-navy-mid)' }}>
                   {sport === 'football' ? (
                     <FootballGameTable
                       games={seasonGames}

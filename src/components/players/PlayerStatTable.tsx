@@ -49,14 +49,14 @@ const FB_COLS: Col<FootballPlayerSeason>[] = [
   { key: "gp", label: "GP", getValue: (s) => fmt(s.games_played), getRaw: (s) => s.games_played || 0, hide: (a) => a.every((s) => !s.games_played) },
   { key: "car", label: "CAR", getValue: (s) => fmt(s.rush_carries), getRaw: (s) => s.rush_carries || 0, hide: (a) => a.every((s) => !s.rush_carries) },
   { key: "rush_yds", label: "RUSH YDS", getValue: (s) => fmt(s.rush_yards), getRaw: (s) => s.rush_yards || 0, hide: (a) => a.every((s) => !s.rush_yards) },
-  { key: "rush_td", label: "RUSH TD", getValue: (s) => fmt(s.rush_td), getRaw: (s) => s.rush_td || 0 },
+  { key: "rush_td", label: "RUSH TD", getValue: (s) => fmt(s.rush_td), getRaw: (s) => s.rush_td || 0, hide: (a) => a.every((s) => !s.rush_td) },
   { key: "ypc", label: "YPC", getValue: (s) => s.rush_carries && s.rush_carries > 0 ? (((s.rush_yards || 0) / s.rush_carries)).toFixed(1) : "\u2014", getRaw: (s) => s.rush_carries && s.rush_carries > 0 ? (s.rush_yards || 0) / s.rush_carries : 0, hide: (a) => a.every((s) => !s.rush_carries) },
   { key: "pass_yds", label: "PASS YDS", getValue: (s) => fmt(s.pass_yards), getRaw: (s) => s.pass_yards || 0, hide: (a) => a.every((s) => !s.pass_yards) },
   { key: "pass_td", label: "PASS TD", getValue: (s) => fmt(s.pass_td), getRaw: (s) => s.pass_td || 0, hide: (a) => a.every((s) => !s.pass_td) },
   { key: "rec_yds", label: "REC YDS", getValue: (s) => fmt(s.rec_yards), getRaw: (s) => s.rec_yards || 0, hide: (a) => a.every((s) => !s.rec_yards) },
   { key: "rec_td", label: "REC TD", getValue: (s) => fmt(s.rec_td), getRaw: (s) => s.rec_td || 0, hide: (a) => a.every((s) => !s.rec_td) },
   { key: "int", label: "INT", getValue: (s) => fmt(s.interceptions), getRaw: (s) => s.interceptions || 0, hide: (a) => a.every((s) => !s.interceptions) },
-  { key: "total_td", label: "TOTAL TD", getValue: (s) => fmt(s.total_td), getRaw: (s) => s.total_td || 0 },
+  { key: "total_td", label: "TOTAL TD", getValue: (s) => fmt(s.total_td), getRaw: (s) => s.total_td || 0, hide: (a) => a.every((s) => !s.total_td) },
 ];
 
 const BK_COLS: Col<BasketballPlayerSeason>[] = [
@@ -123,13 +123,13 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
     <div>
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto rounded-lg border border-[var(--psp-rule-strong)]">
-        <table className="w-full text-sm" aria-label={playerName ? `Career statistics for ${playerName}` : "Season-by-season statistics"}>
+        <table className="text-sm" style={{ width: 'auto', maxWidth: '100%' }} aria-label={playerName ? `Career statistics for ${playerName}` : "Season-by-season statistics"}>
           <caption className="sr-only">{playerName ? `Career statistics for ${playerName}` : "Season-by-season statistics"}</caption>
           <thead>
             <tr style={{ background: "var(--psp-ink-deep)" }}>
               <th
                 scope="col"
-                className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)] font-bebas tracking-[0.08em]"
+                className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)] font-bebas tracking-[0.08em] whitespace-nowrap"
               >
                 Season
               </th>
@@ -142,7 +142,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
               {visibleCols.map((col) => (
                 <th
                   key={col.key}
-                  className="text-right px-3 py-3 text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)] font-bebas tracking-[0.08em]"
+                  className="text-right px-3 py-3 text-xs font-bold uppercase tracking-wider text-[var(--psp-text-cream-muted)] font-bebas tracking-[0.08em] whitespace-nowrap"
                 >
                   {col.label}
                 </th>
@@ -160,7 +160,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                   className="border-t border-[var(--psp-rule)] transition-colors hover:bg-white/5"
                   style={{
                     background: isBest
-                      ? "rgba(240, 165, 0, 0.10)"
+                      ? "linear-gradient(90deg, rgba(240,165,0,0.22) 0%, var(--psp-navy-mid) 60%)"
                       : i % 2 === 0
                       ? "var(--psp-navy-mid)"
                       : "var(--psp-navy)",
@@ -259,7 +259,9 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
               key={(s as { id: number }).id}
               className="rounded-lg border p-4"
               style={{
-                background: isBest ? "rgba(240, 165, 0, 0.10)" : "var(--psp-navy-mid)",
+                background: isBest
+                  ? "linear-gradient(135deg, rgba(240,165,0,0.22) 0%, var(--psp-navy-mid) 70%)"
+                  : "var(--psp-navy-mid)",
                 borderColor: isBest ? "var(--psp-gold)" : "var(--psp-rule-strong)",
                 borderWidth: isBest ? "2px" : "1px",
               }}
