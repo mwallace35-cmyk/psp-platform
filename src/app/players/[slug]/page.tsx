@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { createStaticClient } from "@/lib/supabase/static";
 
@@ -5,6 +6,19 @@ export const revalidate = 3600;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const title = slug
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+  return {
+    title: `${title} — PhillySportsPack`,
+    description: `Philadelphia high school athlete profile for ${title}. Career stats, awards, and game logs.`,
+    robots: { index: false, follow: true },
+  };
 }
 
 /**
