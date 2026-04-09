@@ -236,6 +236,17 @@ let config: NextConfig = {
         destination: "/compare",
         permanent: true,
       },
+      // Legacy career pages — Brett Gordon was mislabeled in memoriam; redirect old URL
+      {
+        source: "/hof/legends/brett-gordon",
+        destination: "/legacy/brett-gordon",
+        permanent: true,
+      },
+      {
+        source: "/hof/in-memoriam/brett-gordon",
+        destination: "/legacy/brett-gordon",
+        permanent: true,
+      },
     ];
   },
 };
