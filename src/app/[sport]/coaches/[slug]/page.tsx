@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SPORT_META } from "@/lib/data";
+import LegacyBadge from "@/components/legacy/LegacyBadge";
+import { getLegacyProfileForCoach } from "@/lib/data/legacy";
 import { validateSportParam, validateSportParamForMetadata } from "@/lib/validateSport";
 import { createStaticClient } from "@/lib/supabase/static";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
@@ -76,7 +78,10 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
   if (!coach) notFound();
 
   const meta = SPORT_META[sport];
-  const stints = await getCoachingStints(coach.id, sport);
+  const [stints, legacyProfile] = await Promise.all([
+    getCoachingStints(coach.id, sport),
+    getLegacyProfileForCoach(coach.id),
+  ]);
 
   const totalRecord = stints.reduce(
     (acc: { w: number; l: number; t: number; c: number }, st: CoachingStint) => ({
@@ -103,9 +108,14 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
             <span>/</span>
             <span className="text-white">Coaches</span>
           </div>
-          <h1 className="psp-h1 text-white">
-            {coach.name}
-          </h1>
+          <div className="flex items-center gap-3 flex-wrap mb-1">
+            <h1 className="psp-h1 text-white">
+              {coach.name}
+            </h1>
+            {legacyProfile && (
+              <LegacyBadge href={`/legacy/${legacyProfile.slug}`} />
+            )}
+          </div>
           <div className="flex flex-wrap gap-4 mt-4 text-sm">
             <span className="text-gray-300">{totalRecord.w}-{totalRecord.l}{totalRecord.t > 0 ? `-${totalRecord.t}` : ""} Career Record</span>
             {totalRecord.c > 0 && <span style={{ color: "var(--psp-gold)" }}>{totalRecord.c} Championship{totalRecord.c !== 1 ? "s" : ""}</span>}

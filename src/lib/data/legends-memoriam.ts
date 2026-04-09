@@ -1,47 +1,13 @@
 import type { Legend } from "./legends";
 
+// NOTE: Brett Gordon (slug: "brett-gordon") was previously listed here as in-memoriam.
+// He is ALIVE — he is the current La Salle head football coach.
+// His narrative and career data have been preserved in the legacy_profiles.narrative_md
+// column (seed: supabase/migrations/20260409_legacy_seed_gordons.sql).
+// His canonical page is now /legacy/brett-gordon.
+// The old /hof/legends/brett-gordon URL redirects there via next.config.ts.
+
 export const MEMORIAM_LEGENDS: Legend[] = [
-  {
-    slug: "brett-gordon",
-    name: "Brett Gordon",
-    category: "in-memoriam",
-    role: "Football Quarterback",
-    sport: "football",
-    schools: ["La Salle College High School"],
-    excerpt:
-      "La Salle's record-setting quarterback who led the Explorers to a 32-game winning streak and two Catholic League championships, named the Daily News top high school player of the century in 1999.",
-    narrative: `# Brett Gordon
-
-## La Salle High's Record-Setting Quarterback, 1995-97
-
-In 1999, the *Daily News* named Brett the top high school player for the century. Among the reasons: he led the Explorers to a record 32-game winning streak (and two Catholic League championships), set a new state record for TD passes with 84, and broke the previous city leagues record for career passing yardage by more than 1,800 yards.
-
-### Career Statistics
-
-Brett quarterbacked La Salle through three outstanding seasons:
-
-- **1995**: 7-0 league, 11-2 overall
-- **1996**: Undefeated regular season, Catholic League champions
-- **1997**: Catholic League champions, extended winning streak
-
-His career accomplishments included:
-- State record 84 touchdown passes
-- City leagues career passing yardage record (broke previous mark by 1,800+ yards)
-- 32-game winning streak
-- Two Catholic League championships
-- Named Daily News Player of the Century (1999)
-
-This tribute page includes stories, results, statistics, recaps of playoff games and all players/coaches on those three teams.`,
-    highlights: [
-      "Named Daily News top HS player of the century (1999)",
-      "State record 84 career TD passes",
-      "Led 32-game winning streak at La Salle",
-      "Two Catholic League championships (1996, 1997)",
-      "Broke city career passing yardage record by 1,800+ yards",
-    ],
-    careerSpan: "1995-97",
-    sourceFiles: ["brettgordon.html"],
-  },
   {
     slug: "brian-mccloskey",
     name: "Brian McCloskey",

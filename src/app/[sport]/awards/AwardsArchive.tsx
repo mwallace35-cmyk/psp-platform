@@ -445,6 +445,24 @@ export default function AwardsArchive({ tabs, sport }: AwardsArchiveProps) {
           </button>
           {tabs.map((tab) => {
             const info = CATEGORY_LABELS[tab.id];
+            // All-Decade/Era content lives at /hof/decades — redirect there
+            if (tab.id === "all-era") {
+              return (
+                <a
+                  key={tab.id}
+                  href="/hof/decades"
+                  className="px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700"
+                  style={{ textDecoration: "none" }}
+                >
+                  {info && <span className="hidden sm:inline">{info.emoji}</span>}
+                  <span className="hidden sm:inline">{info?.label || tab.label}</span>
+                  <span className="sm:hidden">{info?.shortLabel || tab.shortLabel}</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </a>
+              );
+            }
             return (
               <button
                 key={tab.id}
