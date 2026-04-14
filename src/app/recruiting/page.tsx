@@ -8,6 +8,7 @@ import type { ClassYearPlayer } from "@/components/recruiting/ClassYearSpotlight
 import AllAmericansSpotlight from "@/components/recruiting/AllAmericansSpotlight";
 import type { AllAmericanAward } from "@/components/recruiting/AllAmericansSpotlight";
 import RecruitingSubNav from "@/components/recruiting/RecruitingSubNav";
+import { SPORT_EMOJI } from "@/lib/sports";
 
 export const revalidate = 3600;
 
@@ -23,16 +24,6 @@ export const metadata: Metadata = {
 /* ============================================================================
    SPORT HELPERS
 ============================================================================ */
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: "\u{1F3C8}",
-  basketball: "\u{1F3C0}",
-  baseball: "\u26BE",
-  "track-field": "\u{1F3C3}",
-  lacrosse: "\u{1F94D}",
-  wrestling: "\u{1F93C}",
-  soccer: "\u26BD",
-};
 
 const SPORT_NAMES: Record<string, string> = {
   football: "Football",

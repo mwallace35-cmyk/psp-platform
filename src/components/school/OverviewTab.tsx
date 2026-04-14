@@ -1,15 +1,6 @@
 import Link from "next/link";
 import ThisSeasonBanner from "./ThisSeasonBanner";
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  baseball: "⚾",
-  "track-field": "🏃",
-  lacrosse: "🥍",
-  wrestling: "🤼",
-  soccer: "⚽",
-};
+import { SPORT_EMOJI } from "@/lib/sports";
 
 interface OverviewTabProps {
   school: any;

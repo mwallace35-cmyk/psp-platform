@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createClient, withErrorHandling, withRetry } from '@/lib/data/common';
+import { SPORT_EMOJI } from '@/lib/sports';
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
@@ -52,10 +53,6 @@ async function getArticles(): Promise<ArticleRow[]> {
   );
 }
 
-const SPORT_EMOJI: Record<string, string> = {
-  football: '🏈', basketball: '🏀', baseball: '⚾', soccer: '⚽',
-  lacrosse: '🥍', wrestling: '🤼', 'track-and-field': '🏃',
-};
 
 function getWeekRange(): string {
   const now = new Date();

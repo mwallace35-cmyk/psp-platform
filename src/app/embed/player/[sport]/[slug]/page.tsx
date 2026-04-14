@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createStaticClient } from "@/lib/supabase/static";
+import { SPORT_EMOJI } from "@/lib/sports";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -17,15 +18,6 @@ const SPORT_COLORS: Record<string, string> = {
   soccer: "#059669",
 };
 
-const SPORT_EMOJI: Record<string, string> = {
-  football: "\u{1F3C8}",
-  basketball: "\u{1F3C0}",
-  baseball: "\u26BE",
-  "track-field": "\u{1F3C3}",
-  lacrosse: "\u{1F94D}",
-  wrestling: "\u{1F93C}",
-  soccer: "\u26BD",
-};
 
 export async function generateMetadata({
   params,

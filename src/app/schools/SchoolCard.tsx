@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { SchoolLogo } from '@/components/ui';
+import { SPORT_EMOJI } from '@/lib/sports';
 
 export interface SchoolData {
   id: number;
@@ -25,15 +26,6 @@ export interface SchoolData {
   win_pct: number | null;
 }
 
-const SPORT_EMOJI: Record<string, string> = {
-  'football': '\u{1F3C8}',
-  'basketball': '\u{1F3C0}',
-  'baseball': '\u26BE',
-  'soccer': '\u26BD',
-  'lacrosse': '\u{1F94D}',
-  'track-field': '\u{1F3C3}',
-  'wrestling': '\u{1F93C}',
-};
 
 const LEAGUE_COLORS: Record<string, string> = {
   'Philadelphia Catholic League': '#f0a500',

@@ -9,6 +9,7 @@ import { CoachCorner } from '@/components/our-guys/CoachCorner';
 import { NewsRail } from '@/components/our-guys/NewsRail';
 import { ReactiveDidYouKnow } from '@/components/our-guys/ReactiveDidYouKnow';
 import SchoolPipelineRanking from '@/components/our-guys/SchoolPipelineRanking';
+import { SPORT_EMOJI } from '@/lib/sports';
 import './bar-theme.css';
 
 export const revalidate = 3600;
@@ -20,16 +21,6 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-/* Sport emoji helper */
-const SPORT_EMOJI: Record<string, string> = {
-  football: '\uD83C\uDFC8',
-  basketball: '\uD83C\uDFC0',
-  baseball: '\u26BE',
-  soccer: '\u26BD',
-  lacrosse: '\uD83E\uDD4D',
-  'track-field': '\uD83C\uDFC3',
-  wrestling: '\uD83E\uDD3C',
-};
 
 /* League pill colors — dark theme */
 const LEAGUE_STYLE: Record<string, string> = {

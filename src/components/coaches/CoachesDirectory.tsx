@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { SPORT_EMOJI } from "@/lib/sports";
 
 /* ── Types ── */
 
@@ -26,16 +27,6 @@ export interface CoachEntry {
 }
 
 /* ── Constants ── */
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  baseball: "⚾",
-  "track-field": "🏃",
-  lacrosse: "🥍",
-  wrestling: "🤼",
-  soccer: "⚽",
-};
 
 const LEAGUE_SHORT: Record<string, string> = {
   "Philadelphia Catholic League": "Catholic League",

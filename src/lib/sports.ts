@@ -20,6 +20,19 @@ export function isValidSport(sport: string): sport is SportId {
   return VALID_SPORTS.includes(sport as SportId);
 }
 
+// Canonical sport emoji map — import this instead of defining inline
+export const SPORT_EMOJI: Record<string, string> = {
+  football: "🏈",
+  basketball: "🏀",
+  "girls-basketball": "🏀",
+  baseball: "⚾",
+  "track-field": "🏃",
+  "track-and-field": "🏃",
+  lacrosse: "🥍",
+  wrestling: "🤼",
+  soccer: "⚽",
+};
+
 // Sport metadata
 export const SPORT_META: Record<SportId, { name: string; emoji: string; color: string; statCategories: string[] }> = {
   football: { name: "Football", emoji: "🏈", color: "#16a34a", statCategories: ["rushing", "passing", "receiving", "scoring"] },

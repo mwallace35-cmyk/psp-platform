@@ -1,16 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SPORT_META } from "@/lib/data";
-
-const SPORT_EMOJIS: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  baseball: "⚾",
-  soccer: "⚽",
-  lacrosse: "🥍",
-  "track-field": "🏃",
-  wrestling: "🤼",
-};
+import { SPORT_EMOJI } from "@/lib/sports";
 
 interface OtherSportStats {
   sport: string;
@@ -129,7 +120,7 @@ export default async function MultiSportBanner({
 
   if (otherSports.length === 0) return null;
 
-  const currentEmoji = SPORT_EMOJIS[currentSport] || "🏅";
+  const currentEmoji = SPORT_EMOJI[currentSport] || "🏅";
   const sportCount = otherSports.length + 1; // current + others
 
   return (
@@ -145,7 +136,7 @@ export default async function MultiSportBanner({
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
         <span style={{ fontSize: "1.2rem" }}>
           {currentEmoji}
-          {otherSports.map((os) => SPORT_EMOJIS[os.sport] || "🏅").join("")}
+          {otherSports.map((os) => SPORT_EMOJI[os.sport] || "🏅").join("")}
         </span>
         <span
           style={{

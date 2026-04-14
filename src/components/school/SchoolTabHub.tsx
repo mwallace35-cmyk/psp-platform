@@ -6,16 +6,7 @@ import OverviewTab from "./OverviewTab";
 import SportTab from "./SportTab";
 import LegacyTab from "./LegacyTab";
 import type { SchoolHubData, SchoolSportStats, CurrentSeasonInfo, SchoolGame, SchoolChampionshipData, NextLevelAthlete, SchoolCoach, SchoolAward, RecentSeasonData, SchoolRecord } from "@/lib/data/school-hub";
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  baseball: "⚾",
-  "track-field": "🏃",
-  lacrosse: "🥍",
-  wrestling: "🤼",
-  soccer: "⚽",
-};
+import { SPORT_EMOJI } from "@/lib/sports";
 
 interface SchoolTabHubProps {
   school: SchoolHubData;

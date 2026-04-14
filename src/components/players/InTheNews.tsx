@@ -1,10 +1,6 @@
 import Link from 'next/link';
 import { createStaticClient } from '@/lib/supabase/static';
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: '🏈', basketball: '🏀', baseball: '⚾', soccer: '⚽',
-  lacrosse: '🥍', 'track-field': '🏃', wrestling: '🤼',
-};
+import { SPORT_EMOJI } from '@/lib/sports';
 
 interface Props {
   entityType: 'player' | 'school';

@@ -5,12 +5,7 @@ import Link from "next/link";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { ALL_STATE_CHAMPIONSHIPS, type StateChampionship } from "@/lib/data/state-champions";
-
-const SPORT_EMOJIS: Record<string, string> = {
-  football: "\u{1F3C8}",
-  basketball: "\u{1F3C0}",
-  baseball: "\u26BE",
-};
+import { SPORT_EMOJI } from "@/lib/sports";
 
 const SPORT_COLORS: Record<string, string> = {
   football: "var(--psp-gold)",
@@ -33,7 +28,7 @@ function ChampCard({ champ }: { champ: StateChampionship }) {
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg">{SPORT_EMOJIS[champ.sport]}</span>
+                <span className="text-lg">{SPORT_EMOJI[champ.sport]}</span>
                 <span
                   className="text-xs font-bold uppercase tracking-wider"
                   style={{ color: sportColor }}
@@ -136,14 +131,14 @@ export default function StateChampionsPage() {
               {ALL_STATE_CHAMPIONSHIPS.length} Championships
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/80 text-sm font-semibold">
-              {SPORT_EMOJIS.football} {sportCounts.football} Football
+              {SPORT_EMOJI.football} {sportCounts.football} Football
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/80 text-sm font-semibold">
-              {SPORT_EMOJIS.basketball} {sportCounts.basketball} Basketball
+              {SPORT_EMOJI.basketball} {sportCounts.basketball} Basketball
             </span>
             {sportCounts.baseball > 0 && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-white/80 text-sm font-semibold">
-                {SPORT_EMOJIS.baseball} {sportCounts.baseball} Baseball
+                {SPORT_EMOJI.baseball} {sportCounts.baseball} Baseball
               </span>
             )}
           </div>
@@ -167,7 +162,7 @@ export default function StateChampionsPage() {
                         : "bg-[var(--psp-gray-100)] text-[var(--psp-gray-600)] hover:bg-[var(--psp-gray-200)]"
                     }`}
                   >
-                    {sport !== "all" && SPORT_EMOJIS[sport]}{" "}
+                    {sport !== "all" && SPORT_EMOJI[sport]}{" "}
                     {sport === "all" ? "All Sports" : sport.charAt(0).toUpperCase() + sport.slice(1)}
                   </button>
                 )

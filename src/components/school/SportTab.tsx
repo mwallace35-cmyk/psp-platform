@@ -7,16 +7,7 @@ import StatLeadersCard from "./StatLeadersCard";
 import TeamGameLog from "./TeamGameLog";
 import RivalryRecord from "./RivalryRecord";
 import type { SchoolHubData, CurrentSeasonInfo, SchoolChampionshipData, RecentSeasonData, SchoolAward, SchoolCoach } from "@/lib/data/school-hub";
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  baseball: "⚾",
-  "track-field": "🏃",
-  lacrosse: "🥍",
-  wrestling: "🤼",
-  soccer: "⚽",
-};
+import { SPORT_EMOJI } from "@/lib/sports";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic API response shape
 type SportData = Record<string, any>; // from /api/schools/[slug]/sport-data

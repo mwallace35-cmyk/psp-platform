@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: "\u{1F3C8}",
-  basketball: "\u{1F3C0}",
-  baseball: "\u26BE",
-  "track-field": "\u{1F3C3}",
-  lacrosse: "\u{1F94D}",
-  wrestling: "\u{1F93C}",
-  soccer: "\u26BD",
-};
+import { SPORT_EMOJI } from "@/lib/sports";
 
 interface OTDEvent {
   year: number;

@@ -9,6 +9,7 @@
  */
 
 import React from "react";
+import { SPORT_EMOJI } from "@/lib/sports";
 
 export const IG_STORY_WIDTH = 1080;
 export const IG_STORY_HEIGHT = 1920;
@@ -16,17 +17,6 @@ export const IG_STORY_HEIGHT = 1920;
 export const IG_CACHE_HEADERS = {
   "Cache-Control": "public, max-age=86400, s-maxage=2592000",
   "Content-Type": "image/png",
-};
-
-export const SPORT_EMOJI: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  "girls-basketball": "🏀",
-  baseball: "⚾",
-  soccer: "⚽",
-  lacrosse: "🥍",
-  "track-field": "🏃",
-  wrestling: "🤼",
 };
 
 export const SPORT_COLORS: Record<

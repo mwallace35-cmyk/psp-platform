@@ -11,13 +11,9 @@
  */
 
 import { ImageResponse } from 'next/og';
+import { SPORT_EMOJI } from '@/lib/sports';
 
 export const runtime = 'nodejs';
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: '🏈', basketball: '🏀', baseball: '⚾', soccer: '⚽',
-  lacrosse: '🥍', 'track-field': '🏃', wrestling: '🤼',
-};
 
 const SPORT_COLORS: Record<string, { accent: string; glow: string }> = {
   football:      { accent: '#16a34a', glow: '#22c55e' },

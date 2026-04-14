@@ -1,18 +1,8 @@
 import Link from "next/link";
 import { AchievementBadge } from "@/components/ui";
-import { SPORT_META, type SportId } from "@/lib/sports";
+import { SPORT_EMOJI, SPORT_META, type SportId } from "@/lib/sports";
 import SchoolRecordsSection from "./SchoolRecordsSection";
 import type { SchoolHubData, SchoolChampionshipData, NextLevelAthlete, SchoolCoach, SchoolAward, RecentSeasonData, SchoolRecord } from "@/lib/data/school-hub";
-
-const SPORT_EMOJI: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  baseball: "⚾",
-  "track-field": "🏃",
-  lacrosse: "🥍",
-  wrestling: "🤼",
-  soccer: "⚽",
-};
 
 interface LegacyTabProps {
   school: SchoolHubData;

@@ -4,12 +4,7 @@ import Link from "next/link";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { ALL_STATE_CHAMPIONSHIPS } from "@/lib/data/state-champions";
-
-const SPORT_EMOJIS: Record<string, string> = {
-  football: "\u{1F3C8}",
-  basketball: "\u{1F3C0}",
-  baseball: "\u26BE",
-};
+import { SPORT_EMOJI } from "@/lib/sports";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -54,7 +49,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
     .filter((c) => c.schoolSlug === champ.schoolSlug && c.slug !== champ.slug)
     .sort((a, b) => b.year - a.year);
 
-  const sportEmoji = SPORT_EMOJIS[champ.sport] ?? "";
+  const sportEmoji = SPORT_EMOJI[champ.sport] ?? "";
 
   return (
     <div className="min-h-screen bg-[var(--psp-cream)]">
@@ -245,7 +240,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
                       className="flex items-center justify-between p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-sm">{SPORT_EMOJIS[r.sport]}</span>
+                        <span className="text-sm">{SPORT_EMOJI[r.sport]}</span>
                         <span className="text-sm font-semibold text-[var(--psp-navy)]">
                           {r.year}
                         </span>

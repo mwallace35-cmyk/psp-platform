@@ -6,7 +6,7 @@ import {
   School,
   type Season,
 } from "./common";
-import { getCurrentSeasonLabel } from "@/lib/sports";
+import { getCurrentSeasonLabel, SPORT_EMOJI } from "@/lib/sports";
 import { isBasketballSport, getBasketballGender } from "./utils";
 
 // ─── Local row shapes for Supabase query results ─────────────────────────────
@@ -388,17 +388,6 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             (players ?? []).forEach((p) => uniqueIds.add(p.player_id));
             playerCountBySport.set(sport, uniqueIds);
           });
-
-          // Sport emoji mapping
-          const SPORT_EMOJI: Record<string, string> = {
-            football: "🏈",
-            basketball: "🏀",
-            baseball: "⚾",
-            "track-field": "🏃",
-            lacrosse: "🥍",
-            wrestling: "🤼",
-            soccer: "⚽",
-          };
 
           // Sport order for sorting
           const SPORT_ORDER: Record<string, number> = {

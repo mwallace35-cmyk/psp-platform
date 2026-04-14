@@ -10,6 +10,7 @@
 
 import { ImageResponse } from "next/og";
 import { createStaticClient } from "@/lib/supabase/static";
+import { SPORT_EMOJI } from "@/lib/sports";
 
 export const runtime = "nodejs";
 export const alt = "Player Profile - PhillySportsPack.com";
@@ -53,15 +54,6 @@ const SPORT_NAMES: Record<string, string> = {
   soccer: "Soccer",
 };
 
-const SPORT_EMOJIS: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  baseball: "⚾",
-  "track-field": "🏃",
-  lacrosse: "🥍",
-  wrestling: "🤼",
-  soccer: "⚽",
-};
 
 export default async function Image({ params }: { params: Promise<{ sport: string; slug: string }> }) {
   const { sport, slug } = await params;
@@ -203,7 +195,7 @@ export default async function Image({ params }: { params: Promise<{ sport: strin
           }}
         >
           {/* Sport badge */}
-          {sport in SPORT_EMOJIS && (
+          {sport in SPORT_EMOJI && (
             <div
               style={{
                 display: "flex",
@@ -215,7 +207,7 @@ export default async function Image({ params }: { params: Promise<{ sport: strin
                 fontWeight: "600",
               }}
             >
-              <span>{SPORT_EMOJIS[sport] || "🏅"}</span>
+              <span>{SPORT_EMOJI[sport] || "🏅"}</span>
               <span>{SPORT_NAMES[sport] || "Sports"}</span>
             </div>
           )}

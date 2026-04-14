@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link';
 import SchoolLogo from '@/components/ui/SchoolLogo';
 import TrajectoryBadge from '@/components/our-guys/TrajectoryBadge';
+import { SPORT_EMOJI } from '@/lib/sports';
 import type { TrajectoryLabel } from '@/components/our-guys/TrajectoryBadge';
 
 export interface AlumniRecord {
@@ -53,15 +54,6 @@ const LEAGUE_BADGES: Record<string, { icon: string; bg: string }> = {
   UFL: { icon: '\u{1F3C8}', bg: 'bg-gray-600' },
 };
 
-const SPORT_EMOJIS: Record<string, string> = {
-  football: '\u{1F3C8}',
-  basketball: '\u{1F3C0}',
-  baseball: '\u26BE',
-  soccer: '\u26BD',
-  lacrosse: '\u{1F94D}',
-  'track-field': '\u{1F3C3}',
-  wrestling: '\u{1F93C}',
-};
 
 const SPORT_LABELS: Record<string, string> = {
   football: 'Football',
@@ -174,7 +166,7 @@ function FeaturedHeroCarousel({ featured }: { featured: AlumniRecord[] }) {
           </div>
           <div className="hidden md:flex flex-col items-center gap-1 ml-6">
             <div className="w-20 h-20 rounded-full bg-navy-mid border-2 border-gold flex items-center justify-center text-3xl">
-              {SPORT_EMOJIS[a.sport_id || ''] || '\u{1F3C5}'}
+              {SPORT_EMOJI[a.sport_id || ''] || '\u{1F3C5}'}
             </div>
             {a.status === 'retired' && <span className="text-[10px] text-gray-400 uppercase tracking-wider">Legend</span>}
           </div>
@@ -593,7 +585,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
                 }`}
                 style={sportFilter === sport ? { backgroundColor: SPORT_COLORS[sport] } : {}}
               >
-                {SPORT_EMOJIS[sport]} {SPORT_LABELS[sport] || sport}
+                {SPORT_EMOJI[sport]} {SPORT_LABELS[sport] || sport}
               </button>
             ))}
           </div>
@@ -752,7 +744,7 @@ export default function OurGuysClient({ alumni, counts }: Props) {
           {groupedBySport.map(({ sport, athletes }) => (
             <div key={sport}>
               <div className="flex items-center gap-2 mb-4 pb-2 border-b-2" style={{ borderColor: SPORT_COLORS[sport] || '#6b7280' }}>
-                <span className="text-lg">{SPORT_EMOJIS[sport] || ''}</span>
+                <span className="text-lg">{SPORT_EMOJI[sport] || ''}</span>
                 <h2 className="psp-h3" style={{ color: SPORT_COLORS[sport] }}>
                   {SPORT_LABELS[sport] || sport}
                 </h2>
