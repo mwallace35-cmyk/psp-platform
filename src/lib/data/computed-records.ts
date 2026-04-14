@@ -53,6 +53,139 @@ interface RawStatRow {
   games_played?: number;
 }
 
+// ----------------------------------------------------------------------------
+// Narrow local types for Supabase rows used throughout this file.
+// NOTE: We intentionally avoid re-enabling the generated Database type — a
+// previous attempt at a typed client introduced 233 null errors. Keep these
+// manual.
+// ----------------------------------------------------------------------------
+
+/** Leader row returned by get_career_leaders / get_season_leaders RPCs. */
+interface LeaderRpcRow {
+  player_name: string | null;
+  player_slug: string | null;
+  school_name: string | null;
+  school_slug: string | null;
+  stat_value: number | string | null;
+  season_label?: string | null;
+  year_start?: number | null;
+}
+
+/** Minimal player join shape (PostgREST many-to-one returns object or array). */
+interface JoinedPlayer {
+  name: string | null;
+  slug: string | null;
+}
+
+/** Minimal school join shape. */
+interface JoinedSchool {
+  name: string | null;
+  slug: string | null;
+}
+
+/** Minimal season join shape. */
+interface JoinedSeason {
+  id?: number;
+  label?: string | null;
+  year_start?: number | null;
+  is_current?: boolean | null;
+}
+
+/**
+ * Generic player_seasons row with dynamic stat columns. Stat columns (e.g.
+ * rush_yards, points, ppg) are read indexed by key and normalized with `|| 0`,
+ * so we type them as `unknown` and narrow at read time via Number().
+ */
+interface PlayerSeasonRow {
+  player_id: number;
+  school_id?: number;
+  games_played?: number | null;
+  at_bats?: number | null;
+  innings_pitched?: number | null;
+  players?: JoinedPlayer | JoinedPlayer[] | null;
+  schools?: JoinedSchool | JoinedSchool[] | null;
+  seasons?: JoinedSeason | JoinedSeason[] | null;
+  // Dynamic stat columns — typed as unknown, narrowed via Number() at read.
+  [key: string]: unknown;
+}
+
+/** Row shape from the `records` table used in Record Watch. */
+interface RecordsRow {
+  id: number;
+  category: string | null;
+  subcategory: string | null;
+  scope: string | null;
+  record_value: string | null;
+  record_number: number | null;
+  holder_name: string | null;
+  year_set: number | null;
+  sport_id: number | null;
+}
+
+/** Narrow a PostgREST many-to-one join that may come back as array or object. */
+function pickJoin<T>(raw: T | T[] | null | undefined): T | null {
+  if (raw == null) return null;
+  return Array.isArray(raw) ? raw[0] ?? null : raw;
+}
+
+/**
+ * Compound leaderboard row shapes. These mirror the existing inline object
+ * access (e.g. `r.players?.name`) rather than using the `pickJoin` pattern,
+ * to preserve the file's prior runtime behavior exactly.
+ */
+interface CompoundFootballRow {
+  player_id: number;
+  games_played?: number | null;
+  rush_yards?: number | null;
+  rush_td?: number | null;
+  pass_yards?: number | null;
+  pass_td?: number | null;
+  rec_yards?: number | null;
+  rec_td?: number | null;
+  tackles?: number | string | null;
+  sacks?: number | string | null;
+  interceptions?: number | string | null;
+  receptions?: number | null;
+  season_id?: number | null;
+  players?: { name?: string | null; slug?: string | null } | null;
+  schools?: { name?: string | null; slug?: string | null } | null;
+  seasons?: { id?: number; is_current?: boolean | null } | null;
+}
+
+/**
+ * Row shape used by getRecordWatchData when pulling current-season leaders
+ * with `select("*, players(...), schools(...), seasons(...)")`. Stat columns
+ * are dynamic so we type them via an index signature.
+ */
+interface RecordWatchLeaderRow {
+  games_played?: number | null;
+  players?: { name?: string | null; slug?: string | null } | null;
+  schools?: { name?: string | null; slug?: string | null } | null;
+  seasons?: { id?: number; is_current?: boolean | null } | null;
+  [key: string]: unknown;
+}
+
+interface CompoundBasketballRow {
+  player_id: number;
+  games_played?: number | null;
+  points?: number | null;
+  ppg?: number | null;
+  rebounds?: number | null;
+  rpg?: number | null;
+  assists?: number | null;
+  steals?: number | null;
+  season_id?: number | null;
+  players?: { name?: string | null; slug?: string | null } | null;
+  schools?: { name?: string | null; slug?: string | null } | null;
+  seasons?: { id?: number; is_current?: boolean | null } | null;
+}
+
+/** Read a numeric stat column off a PlayerSeasonRow safely. */
+function readStat(row: PlayerSeasonRow, key: string): number {
+  const v = row[key];
+  return typeof v === "number" ? v : Number(v) || 0;
+}
+
 // ============================================================================
 // STAT DEFINITIONS BY SPORT
 // ============================================================================
@@ -645,7 +778,7 @@ async function aggregateCareerStats(
     return [];
   }
 
-  return (rows as any[]).map((row, idx) => ({
+  return (rows as LeaderRpcRow[]).map((row, idx) => ({
     stat_category: def.category,
     stat_name: def.name,
     scope: "career" as const,
@@ -687,7 +820,7 @@ async function fetchSeasonLeaders(
     return [];
   }
 
-  return (rows as any[]).map((row, idx) => ({
+  return (rows as LeaderRpcRow[]).map((row, idx) => ({
     stat_category: def.category,
     stat_name: def.name,
     scope: "season" as const,
@@ -847,7 +980,7 @@ export async function getSchoolRecordBook(
         schoolQuery = schoolQuery.eq("gender", getBasketballGender(sportSlug));
       }
       const { data: schoolSeasons, error } = await schoolQuery
-        .limit(500) as { data: any[] | null; error: any };
+        .limit(500) as { data: PlayerSeasonRow[] | null; error: unknown };
 
       if (error || !schoolSeasons) {
         return {};
@@ -870,8 +1003,14 @@ export async function getSchoolRecordBook(
           >();
 
           for (const row of schoolSeasons) {
-            const statValue = (row as any)[def.key] || 0;
-            const player = (row as any).players as Player | null;
+            const statValue = readStat(row, def.key);
+            const playerRaw = row.players as
+              | { name?: string | null; slug?: string | null }
+              | JoinedPlayer[]
+              | null
+              | undefined;
+            const player =
+              playerRaw && !Array.isArray(playerRaw) ? playerRaw : null;
             if (!player) continue;
 
             const existing = aggregated.get(row.player_id);
@@ -881,8 +1020,8 @@ export async function getSchoolRecordBook(
               aggregated.set(row.player_id, {
                 player_id: row.player_id,
                 value: statValue,
-                player_name: player.name,
-                player_slug: player.slug,
+                player_name: player.name ?? "Unknown",
+                player_slug: player.slug ?? "",
               });
             }
           }
@@ -892,6 +1031,17 @@ export async function getSchoolRecordBook(
             .sort((a, b) => (def.orderDir === "asc" ? a.value - b.value : b.value - a.value))
             .slice(0, 3);
 
+          // Preserve original access pattern: read `.schools` as an object
+          // directly off row 0 without unwrapping arrays.
+          const careerFirstRaw = schoolSeasons[0]?.schools as
+            | { name?: string | null; slug?: string | null }
+            | JoinedSchool[]
+            | null
+            | undefined;
+          const careerFirst =
+            careerFirstRaw && !Array.isArray(careerFirstRaw)
+              ? careerFirstRaw
+              : null;
           result[category].push(
             ...sorted.map((item, idx) => ({
               stat_category: def.category,
@@ -902,8 +1052,8 @@ export async function getSchoolRecordBook(
               display_value: formatStatValue(item.value, def),
               player_name: item.player_name,
               player_slug: item.player_slug,
-              school_name: schoolSeasons[0]?.schools?.name || "Unknown",
-              school_slug: schoolSeasons[0]?.schools?.slug || "",
+              school_name: careerFirst?.name || "Unknown",
+              school_slug: careerFirst?.slug || "",
               season_label: null,
               year: null,
               source: "computed" as const,
@@ -911,18 +1061,18 @@ export async function getSchoolRecordBook(
           );
         } else {
           // Season leaders
-          const filtered = schoolSeasons.filter((row: any) => {
-            const val = (row as any)[def.key];
+          const filtered = schoolSeasons.filter((row) => {
+            const val = row[def.key];
             if (val === null || val === undefined) return false;
 
             // Check minimums
-            if (def.minGames && (row as any).games_played < def.minGames) {
+            if (def.minGames && (row.games_played ?? 0) < def.minGames) {
               return false;
             }
             if (def.minValue) {
               if (
-                (def.key === "batting_avg" && (row as any).at_bats < def.minValue) ||
-                (def.key === "era" && (row as any).innings_pitched < def.minValue)
+                (def.key === "batting_avg" && (row.at_bats ?? 0) < def.minValue) ||
+                (def.key === "era" && (row.innings_pitched ?? 0) < def.minValue)
               ) {
                 return false;
               }
@@ -931,27 +1081,55 @@ export async function getSchoolRecordBook(
             return true;
           });
 
-          filtered.sort((a: any, b: any) => {
-            const aVal = (a as any)[def.key] || 0;
-            const bVal = (b as any)[def.key] || 0;
+          filtered.sort((a, b) => {
+            const aVal = readStat(a, def.key);
+            const bVal = readStat(b, def.key);
             return def.orderDir === "asc" ? aVal - bVal : bVal - aVal;
           });
 
+          // Preserve original access pattern: read `.schools` directly off
+          // row 0 without unwrapping arrays (mirrors prior runtime behavior).
+          const firstSchoolRaw = schoolSeasons[0]?.schools as
+            | { name?: string | null; slug?: string | null }
+            | JoinedSchool[]
+            | null
+            | undefined;
+          const firstSchool =
+            firstSchoolRaw && !Array.isArray(firstSchoolRaw)
+              ? firstSchoolRaw
+              : null;
           result[category].push(
-            ...filtered.slice(0, 3).map((row: any, idx: number) => {
-              const player = row.players as Player | null;
-              const season = row.seasons as any | null;
+            ...filtered.slice(0, 3).map((row, idx: number) => {
+              const playerRaw = row.players as
+                | { name?: string | null; slug?: string | null }
+                | JoinedPlayer[]
+                | null
+                | undefined;
+              const player =
+                playerRaw && !Array.isArray(playerRaw) ? playerRaw : null;
+              const seasonRaw = row.seasons as
+                | { label?: string | null; year_start?: number | null }
+                | JoinedSeason[]
+                | null
+                | undefined;
+              const season =
+                seasonRaw && !Array.isArray(seasonRaw) ? seasonRaw : null;
+              const rawVal = row[def.key];
+              const numVal = readStat(row, def.key);
               return {
                 stat_category: def.category,
                 stat_name: def.name,
                 scope: "season" as const,
                 rank: idx + 1,
-                value: (row as any)[def.key] || 0,
-                display_value: formatStatValue((row as any)[def.key], def),
+                value: numVal,
+                display_value: formatStatValue(
+                  typeof rawVal === "number" ? rawVal : numVal,
+                  def
+                ),
                 player_name: player?.name || "Unknown",
                 player_slug: player?.slug || "",
-                school_name: schoolSeasons[0]?.schools?.name || "Unknown",
-                school_slug: schoolSeasons[0]?.schools?.slug || "",
+                school_name: firstSchool?.name || "Unknown",
+                school_slug: firstSchool?.slug || "",
                 season_label: season?.label || null,
                 year: season?.year_start || null,
                 source: "computed" as const,
@@ -1051,14 +1229,14 @@ export async function getCompoundLeaders(
               "player_id, games_played, rush_yards, rush_td, pass_yards, pass_td, rec_yards, rec_td, tackles, sacks, interceptions, receptions, players(name, slug), schools(name, slug), season_id, seasons!inner(id, is_current)"
             )
             .eq("seasons.is_current", true)
-            .limit(1000) as { data: any[] | null; error: any };
+            .limit(1000) as { data: CompoundFootballRow[] | null; error: unknown };
 
           if (error || !rows) return [];
 
           if (category === "dual-threat-qb") {
             return rows
-              .filter((r: any) => (r.games_played || 0) >= 5 && ((r.pass_yards || 0) > 0))
-              .map((r: any) => {
+              .filter((r) => (r.games_played || 0) >= 5 && ((r.pass_yards || 0) > 0))
+              .map((r) => {
                 const passYds = r.pass_yards || 0;
                 const rushYds = r.rush_yards || 0;
                 return {
@@ -1076,8 +1254,8 @@ export async function getCompoundLeaders(
 
           if (category === "complete-back") {
             return rows
-              .filter((r: any) => (r.games_played || 0) >= 5 && ((r.rush_yards || 0) > 0))
-              .map((r: any) => {
+              .filter((r) => (r.games_played || 0) >= 5 && ((r.rush_yards || 0) > 0))
+              .map((r) => {
                 const rushYds = r.rush_yards || 0;
                 const recYds = r.rec_yards || 0;
                 const rushTd = r.rush_td || 0;
@@ -1103,10 +1281,10 @@ export async function getCompoundLeaders(
           if (category === "defensive-impact") {
             return rows
               .filter(
-                (r: any) =>
+                (r) =>
                   Number(r.tackles || 0) > 0 || Number(r.sacks || 0) > 0 || Number(r.interceptions || 0) > 0
               )
-              .map((r: any) => {
+              .map((r) => {
                 const tackles = Number(r.tackles) || 0;
                 const sacks = Number(r.sacks) || 0;
                 const ints = Number(r.interceptions) || 0;
@@ -1133,14 +1311,14 @@ export async function getCompoundLeaders(
             .eq("seasons.is_current", true)
             .eq("gender", getBasketballGender(sport));
           const { data: rows, error } = await bbQuery
-            .limit(1000) as { data: any[] | null; error: any };
+            .limit(1000) as { data: CompoundBasketballRow[] | null; error: unknown };
 
           if (error || !rows) return [];
 
           if (category === "all-around-guard") {
             return rows
-              .filter((r: any) => (r.points || 0) > 0 && (r.assists || 0) > 0)
-              .map((r: any) => {
+              .filter((r) => (r.points || 0) > 0 && (r.assists || 0) > 0)
+              .map((r) => {
                 const pts = r.points || 0;
                 const ast = r.assists || 0;
                 const stl = r.steals || 0;
@@ -1159,8 +1337,8 @@ export async function getCompoundLeaders(
 
           if (category === "double-double-machine") {
             return rows
-              .filter((r: any) => (r.ppg || 0) >= 10 && (r.rpg || 0) >= 8)
-              .map((r: any) => {
+              .filter((r) => (r.ppg || 0) >= 10 && (r.rpg || 0) >= 8)
+              .map((r) => {
                 const ppg = r.ppg || 0;
                 const rpg = r.rpg || 0;
                 return {
@@ -1230,8 +1408,9 @@ export async function getRecordWatchData(
         if (recErr || !records || records.length === 0) return [];
 
         // Filter records that have numeric values
-        const numericRecords = records.filter(
-          (r: any) => r.record_number != null && r.record_number > 0
+        const recordsTyped = records as unknown as RecordsRow[];
+        const numericRecords = recordsTyped.filter(
+          (r) => r.record_number != null && r.record_number > 0
         );
 
         if (numericRecords.length === 0) return [];
@@ -1270,7 +1449,7 @@ export async function getRecordWatchData(
             "*, players(name, slug), schools(name, slug), seasons!inner(id, is_current)"
           )
           .eq("seasons.is_current", true)
-          .limit(500) as { data: any[] | null; error: any };
+          .limit(500) as { data: RecordWatchLeaderRow[] | null; error: unknown };
 
         if (leadErr || !currentLeaders) return [];
 
@@ -1278,7 +1457,7 @@ export async function getRecordWatchData(
 
         for (const mapping of mappings) {
           // Find the matching record (fuzzy match on category/subcategory)
-          const matchingRecord = numericRecords.find((r: any) => {
+          const matchingRecord = numericRecords.find((r) => {
             const cat = (r.category || "").toLowerCase();
             const sub = (r.subcategory || "").toLowerCase();
             const label = mapping.label.toLowerCase();
@@ -1291,14 +1470,18 @@ export async function getRecordWatchData(
           if (!recordNum || recordNum <= 0) continue;
 
           // Find current season leader for this stat
+          const readCol = (r: RecordWatchLeaderRow): number => {
+            const v = r[mapping.column];
+            return typeof v === "number" ? v : Number(v) || 0;
+          };
           const sorted = currentLeaders
-            .filter((r: any) => (r[mapping.column] || 0) > 0)
-            .sort((a: any, b: any) => (b[mapping.column] || 0) - (a[mapping.column] || 0));
+            .filter((r) => readCol(r) > 0)
+            .sort((a, b) => readCol(b) - readCol(a));
 
           const leader = sorted[0];
           if (!leader) continue;
 
-          const currentVal = leader[mapping.column] || 0;
+          const currentVal = readCol(leader);
           const gamesPlayed = leader.games_played || 1;
           const gamesRemaining = Math.max(0, seasonLength - gamesPlayed);
           const perGame = currentVal / gamesPlayed;
@@ -1410,7 +1593,7 @@ export const getStatTotalCount = cache(async (
             .eq("is_current", true)
             .single();
 
-          let query = (supabase as any)
+          let query = supabase
             .from(mapping.table)
             .select("id", { count: "exact", head: true })
             .not(column, "is", null)
@@ -1418,8 +1601,11 @@ export const getStatTotalCount = cache(async (
 
           if (seasonId) {
             query = query.eq("season_id", seasonId);
-          } else if (currentSeason?.id) {
-            query = query.eq("season_id", currentSeason.id);
+          } else {
+            const seasonRow = currentSeason as { id?: number | string } | null;
+            if (seasonRow?.id != null) {
+              query = query.eq("season_id", seasonRow.id);
+            }
           }
 
           const { count } = await query;
