@@ -28,6 +28,70 @@ export interface GreatestSeason {
   percentile: number;
 }
 
+// Narrow local types for joined Supabase rows (joins may come back as
+// object or single-element array depending on the relationship).
+interface JoinedPlayer {
+  id?: number;
+  name?: string | null;
+  slug?: string | null;
+}
+
+interface JoinedSchool {
+  id?: number;
+  name?: string | null;
+  slug?: string | null;
+}
+
+interface JoinedSeason {
+  id?: number;
+  year_start?: number | null;
+  year_end?: number | null;
+  label?: string | null;
+}
+
+type MaybeJoin<T> = T | T[] | null | undefined;
+
+function pickOne<T>(raw: MaybeJoin<T>): T | null {
+  if (!raw) return null;
+  if (Array.isArray(raw)) return raw[0] ?? null;
+  return raw;
+}
+
+interface BaseSeasonRow {
+  id: number;
+  player_id: number;
+  season_id: number;
+  school_id: number;
+  players: MaybeJoin<JoinedPlayer>;
+  schools: MaybeJoin<JoinedSchool>;
+  seasons: MaybeJoin<JoinedSeason>;
+}
+
+interface FootballSeasonRow extends BaseSeasonRow {
+  rush_yards?: number | null;
+  pass_yards?: number | null;
+  rush_td?: number | null;
+  pass_td?: number | null;
+  rec_yards?: number | null;
+  rec_td?: number | null;
+}
+
+interface BasketballSeasonRow extends BaseSeasonRow {
+  points?: number | null;
+  ppg?: number | null;
+  rebounds?: number | null;
+  rpg?: number | null;
+  assists?: number | null;
+  apg?: number | null;
+}
+
+interface BaseballSeasonRow extends BaseSeasonRow {
+  hits?: number | null;
+  home_runs?: number | null;
+  rbi?: number | null;
+  at_bats?: number | null;
+}
+
 /**
  * Get greatest football seasons with dominance scoring
  */
@@ -56,7 +120,7 @@ export const getGreatestFootballSeasons = cache(
               return [];
             }
 
-            const allSeasons = seasons ?? [];
+            const allSeasons = (seasons ?? []) as unknown as FootballSeasonRow[];
 
             // Compute statistics and dominance scores
             const processedSeasons: GreatestSeason[] = [];
@@ -66,7 +130,7 @@ export const getGreatestFootballSeasons = cache(
             const categories: Array<{
               key: StatKey;
               label: string;
-              compute: (s: any) => number;
+              compute: (s: FootballSeasonRow) => number;
             }> = [
               {
                 key: "rush_yards",
@@ -118,16 +182,19 @@ export const getGreatestFootballSeasons = cache(
                 );
 
                 if (dominanceScore > 0) {
+                  const player = pickOne<JoinedPlayer>(season.players);
+                  const school = pickOne<JoinedSchool>(season.schools);
+                  const seasonRel = pickOne<JoinedSeason>(season.seasons);
                   processedSeasons.push({
                     player_id: season.player_id,
-                    player_name: (season.players as any)?.name || "Unknown",
-                    player_slug: (season.players as any)?.slug || "",
+                    player_name: player?.name || "Unknown",
+                    player_slug: player?.slug || "",
                     school_id: season.school_id,
-                    school_name: (season.schools as any)?.name || "Unknown",
-                    school_slug: (season.schools as any)?.slug || "",
+                    school_name: school?.name || "Unknown",
+                    school_slug: school?.slug || "",
                     season_id: season.season_id,
-                    season_label: (season.seasons as any)?.label || "",
-                    year_start: (season.seasons as any)?.year_start || 0,
+                    season_label: seasonRel?.label || "",
+                    year_start: seasonRel?.year_start || 0,
                     dominance_score: dominanceScore,
                     stat_category: category.label,
                     stat_value: statValue,
@@ -191,7 +258,7 @@ export const getGreatestBasketballSeasons = cache(
               return [];
             }
 
-            const allSeasons = seasons ?? [];
+            const allSeasons = (seasons ?? []) as unknown as BasketballSeasonRow[];
 
             const processedSeasons: GreatestSeason[] = [];
 
@@ -199,7 +266,7 @@ export const getGreatestBasketballSeasons = cache(
             const categories: Array<{
               key: StatKey;
               label: string;
-              compute: (s: any) => number;
+              compute: (s: BasketballSeasonRow) => number;
             }> = [
               {
                 key: "points",
@@ -245,16 +312,19 @@ export const getGreatestBasketballSeasons = cache(
                 );
 
                 if (dominanceScore > 0) {
+                  const player = pickOne<JoinedPlayer>(season.players);
+                  const school = pickOne<JoinedSchool>(season.schools);
+                  const seasonRel = pickOne<JoinedSeason>(season.seasons);
                   processedSeasons.push({
                     player_id: season.player_id,
-                    player_name: (season.players as any)?.name || "Unknown",
-                    player_slug: (season.players as any)?.slug || "",
+                    player_name: player?.name || "Unknown",
+                    player_slug: player?.slug || "",
                     school_id: season.school_id,
-                    school_name: (season.schools as any)?.name || "Unknown",
-                    school_slug: (season.schools as any)?.slug || "",
+                    school_name: school?.name || "Unknown",
+                    school_slug: school?.slug || "",
                     season_id: season.season_id,
-                    season_label: (season.seasons as any)?.label || "",
-                    year_start: (season.seasons as any)?.year_start || 0,
+                    season_label: seasonRel?.label || "",
+                    year_start: seasonRel?.year_start || 0,
                     dominance_score: dominanceScore,
                     stat_category: category.label,
                     stat_value: statValue,
@@ -314,14 +384,14 @@ export const getGreatestBaseballSeasons = cache(
               return [];
             }
 
-            const allSeasons = seasons ?? [];
+            const allSeasons = (seasons ?? []) as unknown as BaseballSeasonRow[];
             const processedSeasons: GreatestSeason[] = [];
 
             type StatKey = "hits" | "home_runs" | "rbi";
             const categories: Array<{
               key: StatKey;
               label: string;
-              compute: (s: any) => number;
+              compute: (s: BaseballSeasonRow) => number;
             }> = [
               {
                 key: "hits",
@@ -367,16 +437,19 @@ export const getGreatestBaseballSeasons = cache(
                 );
 
                 if (dominanceScore > 0) {
+                  const player = pickOne<JoinedPlayer>(season.players);
+                  const school = pickOne<JoinedSchool>(season.schools);
+                  const seasonRel = pickOne<JoinedSeason>(season.seasons);
                   processedSeasons.push({
                     player_id: season.player_id,
-                    player_name: (season.players as any)?.name || "Unknown",
-                    player_slug: (season.players as any)?.slug || "",
+                    player_name: player?.name || "Unknown",
+                    player_slug: player?.slug || "",
                     school_id: season.school_id,
-                    school_name: (season.schools as any)?.name || "Unknown",
-                    school_slug: (season.schools as any)?.slug || "",
+                    school_name: school?.name || "Unknown",
+                    school_slug: school?.slug || "",
                     season_id: season.season_id,
-                    season_label: (season.seasons as any)?.label || "",
-                    year_start: (season.seasons as any)?.year_start || 0,
+                    season_label: seasonRel?.label || "",
+                    year_start: seasonRel?.year_start || 0,
                     dominance_score: dominanceScore,
                     stat_category: category.label,
                     stat_value: statValue,

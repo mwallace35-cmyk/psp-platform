@@ -9,6 +9,183 @@ import {
 import { getCurrentSeasonLabel } from "@/lib/sports";
 import { isBasketballSport, getBasketballGender } from "./utils";
 
+// ─── Local row shapes for Supabase query results ─────────────────────────────
+
+type NamedRef = { name?: string | null; slug?: string | null } | null | undefined;
+
+interface TeamSeasonRow {
+  id?: number;
+  sport_id: string;
+  wins?: number | null;
+  losses?: number | null;
+  ties?: number | null;
+  playoff_result?: string | null;
+  sports?: { name?: string | null } | null;
+  seasons?: { label?: string | null; year_start?: number | null } | null;
+}
+
+interface ChampRow {
+  id?: number;
+  level?: string | null;
+  sport_id: string;
+  school_id?: number;
+  score?: string | null;
+  seasons?: { year_start?: number | null; label?: string | null } | null;
+  sports?: { name?: string | null } | null;
+  leagues?: { name?: string | null } | null;
+}
+
+interface PlayerIdRow {
+  player_id: number;
+  sport_id?: string;
+}
+
+interface ArticleMentionRow {
+  articles: unknown;
+}
+
+interface CoachingStintRow {
+  id: number;
+  sport_id: string;
+  start_year: number;
+  end_year: number | null;
+  role: string | null;
+  record_wins: number | null;
+  record_losses: number | null;
+  record_ties: number | null;
+  championships: number | null;
+  coaches?: { id?: number | null; name?: string | null; slug?: string | null } | null;
+  sports?: { name?: string | null } | null;
+}
+
+interface AwardRow {
+  id: number;
+  award_name: string | null;
+  sport_id: string | null;
+  tier: string | null;
+  player_name: string | null;
+  players?: { name?: string | null; slug?: string | null } | null;
+  seasons?: { label?: string | null; year_start?: number | null } | null;
+}
+
+interface GameRow {
+  id: number;
+  sport_id: string;
+  game_date: string | null;
+  home_school_id: number;
+  away_school_id: number;
+  home_score: number | null;
+  away_score: number | null;
+  home_school?: NamedRef;
+  away_school?: NamedRef;
+  seasons?: { label?: string | null } | null;
+}
+
+interface SchoolListRow {
+  id: number;
+  slug: string;
+  name: string;
+  city?: string | null;
+  state?: string | null;
+  league_id?: number | null;
+  leagues?: { id?: number; name?: string | null; short_name?: string | null } | null;
+}
+
+interface SchoolIdRef {
+  school_id: number;
+}
+
+interface UpcomingGameRow {
+  id: number;
+  sport_id: string;
+  game_date: string;
+  home_school_id: number;
+  away_school_id: number;
+  home_school?: NamedRef;
+  away_school?: NamedRef;
+}
+
+interface NextGameInfo {
+  game_date: string;
+  opponent_name: string;
+  opponent_slug: string;
+  is_home: boolean;
+}
+
+interface RosterRow {
+  player_id: number;
+  games_played?: number | null;
+  total_yards?: number | null;
+  points?: number | null;
+  hits?: number | null;
+  player?: {
+    id?: number;
+    slug?: string | null;
+    name?: string | null;
+    positions?: string[] | null;
+    graduation_year?: number | null;
+    height?: string | null;
+    weight?: number | null;
+  } | null;
+}
+
+interface StatLeaderRow {
+  player_id: number;
+  games_played: number | null;
+  player?: { name?: string | null; slug?: string | null } | null;
+  [column: string]: unknown;
+}
+
+interface BoxStatRow {
+  game_id: number;
+  rush_yards?: number | null;
+  rush_td?: number | null;
+  pass_yards?: number | null;
+  pass_td?: number | null;
+  rec_yards?: number | null;
+  rec_td?: number | null;
+  total_td?: number | null;
+  points?: number | null;
+  rebounds?: number | null;
+  assists?: number | null;
+  steals?: number | null;
+  player?: { name?: string | null; slug?: string | null } | null;
+}
+
+interface RecordRow {
+  id: number;
+  category: string;
+  subcategory: string | null;
+  scope: string | null;
+  record_value: string | null;
+  record_number: number | null;
+  holder_name: string | null;
+  year_set: number | null;
+  description: string | null;
+  sport_id: string | null;
+  players?: { name?: string | null; slug?: string | null } | null;
+  sports?: { name?: string | null } | null;
+  seasons?: { label?: string | null } | null;
+}
+
+// Minimal Supabase query-builder shape used where generated table types are
+// absent (database.types.ts remains disabled — see src/lib/supabase/static.ts).
+// This intentionally models only the subset of the PostgREST builder used in
+// this file and returns `Promise<{ data: unknown }>` at await time so callers
+// must narrow `data` themselves.
+interface DynamicQueryBuilder
+  extends PromiseLike<{ data: unknown; error: unknown }> {
+  select: (cols: string) => DynamicQueryBuilder;
+  eq: (col: string, val: unknown) => DynamicQueryBuilder;
+  in: (col: string, vals: unknown[]) => DynamicQueryBuilder;
+  not: (col: string, op: string, val: unknown) => DynamicQueryBuilder;
+  order: (col: string, opts?: { ascending?: boolean }) => DynamicQueryBuilder;
+  limit: (n: number) => DynamicQueryBuilder;
+}
+type DynamicSupabaseClient = {
+  from: (table: string) => DynamicQueryBuilder;
+};
+
 /**
  * School hub data with ALL relations (league, colors, contact info, etc.)
  */
@@ -105,7 +282,7 @@ export const getSchoolHubData = cache(async (slug: string) => {
             .is("deleted_at", null)
             .single();
           // Handle leagues array which might be single object or array
-          const schoolData = data as any;
+          const schoolData = data as (SchoolHubData & { leagues?: unknown }) | null;
           if (schoolData && Array.isArray(schoolData.leagues) && schoolData.leagues.length > 0) {
             schoolData.leagues = schoolData.leagues[0];
           }
@@ -181,7 +358,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
           const sportMap = new Map<string, { wins: number; losses: number; ties: number }>();
           const sportNameMap = new Map<string, string>();
 
-          teamSeasonData.forEach((ts: any) => {
+          (teamSeasonData as TeamSeasonRow[]).forEach((ts) => {
             const sportId = ts.sport_id;
             if (!sportMap.has(sportId)) {
               sportMap.set(sportId, { wins: 0, losses: 0, ties: 0 });
@@ -198,7 +375,7 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
 
           // Count championships by sport
           const champCountBySport = new Map<string, number>();
-          champData?.forEach((c: any) => {
+          (champData as { sport_id: string }[] | null)?.forEach((c) => {
             champCountBySport.set(c.sport_id, (champCountBySport.get(c.sport_id) ?? 0) + 1);
           });
 
@@ -206,18 +383,21 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
           const playerCountBySport = new Map<string, Set<number>>();
 
           // Major sports (football, basketball, baseball)
-          [
-            { sport: "football", data: fbPlayers },
-            { sport: "basketball", data: bbPlayers },
-            { sport: "baseball", data: baseballPlayers },
-          ].forEach(({ sport, data: players }) => {
+          (
+            [
+              { sport: "football", data: fbPlayers as PlayerIdRow[] | null },
+              { sport: "basketball", data: bbPlayers as PlayerIdRow[] | null },
+              { sport: "baseball", data: baseballPlayers as PlayerIdRow[] | null },
+            ] as const
+          ).forEach(({ sport, data: players }) => {
             const uniqueIds = new Set<number>();
-            (players ?? []).forEach((p: any) => uniqueIds.add(p.player_id));
+            (players ?? []).forEach((p) => uniqueIds.add(p.player_id));
             playerCountBySport.set(sport, uniqueIds);
           });
 
           // Minor sports from player_seasons_misc
-          (miscPlayers ?? []).forEach((p: any) => {
+          ((miscPlayers ?? []) as PlayerIdRow[]).forEach((p) => {
+            if (!p.sport_id) return;
             if (!playerCountBySport.has(p.sport_id)) {
               playerCountBySport.set(p.sport_id, new Set());
             }
@@ -248,15 +428,16 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
           };
 
           // Get unique sports from team_seasons and build result
+          const typedTeamSeasons = teamSeasonData as TeamSeasonRow[];
           const uniqueSports = Array.from(
-            new Map(teamSeasonData.map((ts: any) => [ts.sport_id, ts])).values()
+            new Map(typedTeamSeasons.map((ts) => [ts.sport_id, ts])).values()
           );
 
-          const result: SchoolSportStats[] = uniqueSports.map((ts: any) => {
+          const result: SchoolSportStats[] = uniqueSports.map((ts) => {
             const sportId = ts.sport_id;
             const stats = sportMap.get(sportId)!;
             const champCount = champCountBySport.get(sportId) ?? 0;
-            const seasonCount = teamSeasonData.filter((tsd: any) => tsd.sport_id === sportId).length;
+            const seasonCount = typedTeamSeasons.filter((tsd) => tsd.sport_id === sportId).length;
             const playerCount = playerCountBySport.get(sportId)?.size ?? 0;
 
             return {
@@ -343,21 +524,21 @@ export const getSchoolAllChampionships = cache(async (schoolId: number) => {
           if (!data) return [];
 
           // Sort by year descending
-          const sorted = (data as any[]).sort((a, b) => {
+          const sorted = (data as ChampRow[]).sort((a, b) => {
             const aYear = a.seasons?.year_start ?? 0;
             const bYear = b.seasons?.year_start ?? 0;
             return bYear - aYear;
           });
 
-          return sorted.map((c: any) => ({
-            id: c.id,
-            level: c.level,
+          return sorted.map((c) => ({
+            id: c.id ?? 0,
+            level: c.level ?? "",
             year: c.seasons?.year_start ?? 0,
             sport_id: c.sport_id,
             sport_name: c.sports?.name ?? "Unknown",
             season_label: c.seasons?.label ?? "Unknown",
-            league_name: c.leagues?.name,
-            score: c.score,
+            league_name: c.leagues?.name ?? undefined,
+            score: c.score ?? undefined,
           })) as SchoolChampionshipData[];
         },
         { maxRetries: 2, baseDelay: 500 }
@@ -396,21 +577,21 @@ export const getSchoolRecentSeasons = cache(async (schoolId: number, limit = 20)
             football: 0, basketball: 1, baseball: 2, soccer: 3,
             lacrosse: 4, "track-field": 5, "cross-country": 6, wrestling: 7,
           };
-          return (data as any[])
+          return (data as TeamSeasonRow[])
             .sort((a, b) => {
               const yearDiff = (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0);
               if (yearDiff !== 0) return yearDiff;
               return (SEASON_SPORT_ORDER[a.sport_id] ?? 99) - (SEASON_SPORT_ORDER[b.sport_id] ?? 99);
             })
             .map((ts) => ({
-              id: ts.id,
+              id: ts.id ?? 0,
               sport_id: ts.sport_id,
               sport_name: ts.sports?.name ?? "Unknown",
               season_label: ts.seasons?.label ?? "Unknown",
               wins: ts.wins ?? 0,
               losses: ts.losses ?? 0,
               ties: ts.ties ?? 0,
-              playoff_result: ts.playoff_result,
+              playoff_result: ts.playoff_result ?? undefined,
             })) as RecentSeasonData[];
         },
         { maxRetries: 2, baseDelay: 500 }
@@ -444,8 +625,7 @@ export const getSchoolArticles = cache(async (schoolId: number, limit = 10) => {
           if (!data?.length) return [];
 
           // Extract articles from mentions and filter nulls
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          return (data as any[])
+          return (data as ArticleMentionRow[])
             .map((m) => m.articles)
             .filter(Boolean)
             .slice(0, limit);
@@ -534,7 +714,7 @@ export const getSchoolCoaches = cache(async (schoolId: number) => {
 
           if (!data) return [];
 
-          return (data as any[]).map((stint) => ({
+          return (data as CoachingStintRow[]).map((stint) => ({
             id: stint.coaches?.id ?? stint.id,
             name: stint.coaches?.name ?? "Unknown",
             slug: stint.coaches?.slug ?? "",
@@ -582,7 +762,7 @@ export const getSchoolAwards = cache(async (schoolId: number, limit = 30) => {
 
           if (!data) return [];
 
-          return (data as any[])
+          return (data as AwardRow[])
             .sort((a, b) => (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0))
             .map((a) => ({
               id: a.id,
@@ -632,7 +812,7 @@ export const getSchoolRecentGames = cache(async (schoolId: number, limit = 15) =
 
           if (!data) return [];
 
-          return (data as any[])
+          return (data as GameRow[])
             .filter((g) => {
               // Filter out games where opponent name is missing
               const hasHome = g.home_school?.name;
@@ -692,11 +872,11 @@ export const getSchoolsByLeague = cache(async () => {
             .select("school_id");
 
           const champCountMap = new Map<number, number>();
-          (champData || []).forEach((c: any) => {
+          ((champData || []) as SchoolIdRef[]).forEach((c) => {
             champCountMap.set(c.school_id, (champCountMap.get(c.school_id) ?? 0) + 1);
           });
 
-          return (data as any[]).map((school) => ({
+          return (data as SchoolListRow[]).map((school) => ({
             ...school,
             champ_count: champCountMap.get(school.id) ?? 0,
           }));
@@ -754,7 +934,7 @@ export const getSchoolCurrentSeasons = cache(async (schoolId: number) => {
           if (!teamSeasons || teamSeasons.length === 0) return [];
 
           // Filter in JS to only rows where the joined season label matches
-          const current = (teamSeasons as any[]).filter(
+          const current = (teamSeasons as TeamSeasonRow[]).filter(
             (ts) => ts.seasons?.label === currentLabel
           );
           if (current.length === 0) return [];
@@ -778,8 +958,8 @@ export const getSchoolCurrentSeasons = cache(async (schoolId: number) => {
             .limit(10);
 
           // Build a map: sport_id -> earliest upcoming game
-          const nextGameBySport = new Map<string, any>();
-          (upcomingGames ?? []).forEach((g: any) => {
+          const nextGameBySport = new Map<string, NextGameInfo>();
+          ((upcomingGames ?? []) as UpcomingGameRow[]).forEach((g) => {
             if (!nextGameBySport.has(g.sport_id)) {
               const isHome = g.home_school_id === schoolId;
               const opponent = isHome ? g.away_school : g.home_school;
@@ -792,7 +972,7 @@ export const getSchoolCurrentSeasons = cache(async (schoolId: number) => {
             }
           });
 
-          return current.map((ts: any) => ({
+          return current.map((ts) => ({
             sport_id: ts.sport_id,
             sport_name: ts.sports?.name ?? ts.sport_id,
             wins: ts.wins ?? 0,
@@ -848,10 +1028,10 @@ export const getSchoolRoster = cache(
             if (!seasonRow) return [];
             const seasonId = seasonRow.id;
 
-            let rows: any[] = [];
+            let rows: RosterRow[] = [];
 
             if (sportId === "football") {
-              const { data } = await (supabase as any)
+              const { data } = await (supabase as unknown as DynamicSupabaseClient)
                 .from("football_player_seasons")
                 .select(
                   `
@@ -861,7 +1041,7 @@ export const getSchoolRoster = cache(
                 )
                 .eq("school_id", schoolId)
                 .eq("season_id", seasonId);
-              rows = data ?? [];
+              rows = (data as RosterRow[] | null) ?? [];
               return rows
                 .sort((a, b) => {
                   const posA = a.player?.positions?.[0] ?? "Z";
@@ -869,7 +1049,7 @@ export const getSchoolRoster = cache(
                   if (posA !== posB) return posA.localeCompare(posB);
                   return (a.player?.name ?? "").localeCompare(b.player?.name ?? "");
                 })
-                .map((r: any) => ({
+                .map((r) => ({
                   player_id: r.player_id,
                   player_slug: r.player?.slug ?? null,
                   player_name: r.player?.name ?? "Unknown",
@@ -882,7 +1062,7 @@ export const getSchoolRoster = cache(
                   primary_stat_label: "Total Yards",
                 })) as SchoolRosterPlayer[];
             } else if (isBasketballSport(sportId)) {
-              const { data } = await (supabase as any)
+              const { data } = await (supabase as unknown as DynamicSupabaseClient)
                 .from("basketball_player_seasons")
                 .select(
                   `
@@ -893,7 +1073,7 @@ export const getSchoolRoster = cache(
                 .eq("school_id", schoolId)
                 .eq("season_id", seasonId)
                 .eq("gender", getBasketballGender(sportId));
-              rows = data ?? [];
+              rows = (data as RosterRow[] | null) ?? [];
               return rows
                 .sort((a, b) => {
                   const posA = a.player?.positions?.[0] ?? "Z";
@@ -901,7 +1081,7 @@ export const getSchoolRoster = cache(
                   if (posA !== posB) return posA.localeCompare(posB);
                   return (a.player?.name ?? "").localeCompare(b.player?.name ?? "");
                 })
-                .map((r: any) => ({
+                .map((r) => ({
                   player_id: r.player_id,
                   player_slug: r.player?.slug ?? null,
                   player_name: r.player?.name ?? "Unknown",
@@ -914,7 +1094,7 @@ export const getSchoolRoster = cache(
                   primary_stat_label: "Points",
                 })) as SchoolRosterPlayer[];
             } else if (sportId === "baseball") {
-              const { data } = await (supabase as any)
+              const { data } = await (supabase as unknown as DynamicSupabaseClient)
                 .from("baseball_player_seasons")
                 .select(
                   `
@@ -924,7 +1104,7 @@ export const getSchoolRoster = cache(
                 )
                 .eq("school_id", schoolId)
                 .eq("season_id", seasonId);
-              rows = data ?? [];
+              rows = (data as RosterRow[] | null) ?? [];
               return rows
                 .sort((a, b) => {
                   const posA = a.player?.positions?.[0] ?? "Z";
@@ -932,7 +1112,7 @@ export const getSchoolRoster = cache(
                   if (posA !== posB) return posA.localeCompare(posB);
                   return (a.player?.name ?? "").localeCompare(b.player?.name ?? "");
                 })
-                .map((r: any) => ({
+                .map((r) => ({
                   player_id: r.player_id,
                   player_slug: r.player?.slug ?? null,
                   player_name: r.player?.name ?? "Unknown",
@@ -1036,7 +1216,7 @@ export const getSchoolStatLeaders = cache(
 
             const results = await Promise.allSettled(
               statDefs.map(async ({ column, label }) => {
-                let statQuery = (supabase as any)
+                let statQuery = (supabase as unknown as DynamicSupabaseClient)
                   .from(tableName)
                   .select(
                     `player_id, games_played, ${column}, player:players!inner(name, slug)`
@@ -1051,14 +1231,15 @@ export const getSchoolStatLeaders = cache(
                   .order(column, { ascending: false })
                   .limit(5);
 
-                if (!data || data.length === 0) return null;
+                const rows = (data as StatLeaderRow[] | null) ?? [];
+                if (rows.length === 0) return null;
 
                 return {
                   category: label,
-                  leaders: (data as any[]).map((r) => ({
+                  leaders: rows.map((r) => ({
                     player_name: r.player?.name ?? "Unknown",
                     player_slug: r.player?.slug ?? null,
-                    value: r[column] ?? 0,
+                    value: (r[column] as number | null | undefined) ?? 0,
                     games_played: r.games_played ?? null,
                   })),
                 } as StatLeaderCategory;
@@ -1157,7 +1338,7 @@ export const getSchoolGamesWithStats = cache(
 
             if (!gamesData || gamesData.length === 0) return [];
 
-            const gameIds = (gamesData as any[]).map((g) => g.id);
+            const gameIds = (gamesData as GameRow[]).map((g) => g.id);
 
             // Fetch box score stats
             const statsTable =
@@ -1170,7 +1351,7 @@ export const getSchoolGamesWithStats = cache(
             const statsByGame = new Map<number, BoxScorePlayerStat[]>();
 
             if (statsTable) {
-              const { data: statsData } = await (supabase as any)
+              const { data: statsData } = await (supabase as unknown as DynamicSupabaseClient)
                 .from(statsTable)
                 .select(
                   sportId === "football"
@@ -1179,7 +1360,7 @@ export const getSchoolGamesWithStats = cache(
                 )
                 .in("game_id", gameIds);
 
-              (statsData ?? []).forEach((s: any) => {
+              ((statsData ?? []) as BoxStatRow[]).forEach((s) => {
                 const entry: BoxScorePlayerStat = {
                   player_name: s.player?.name ?? "Unknown",
                   player_slug: s.player?.slug ?? null,
@@ -1207,7 +1388,7 @@ export const getSchoolGamesWithStats = cache(
               });
             }
 
-            return (gamesData as any[]).map((g) => ({
+            return (gamesData as GameRow[]).map((g) => ({
               game_id: g.id,
               game_date: g.game_date ?? null,
               sport_id: g.sport_id,
@@ -1279,7 +1460,7 @@ export const getSchoolRecords = cache(async (schoolId: number) => {
 
           if (!data) return [];
 
-          return (data as any[]).map((r) => ({
+          return (data as RecordRow[]).map((r) => ({
             id: r.id,
             category: r.category,
             subcategory: r.subcategory ?? null,

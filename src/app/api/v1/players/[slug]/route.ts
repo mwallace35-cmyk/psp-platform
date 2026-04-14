@@ -66,6 +66,83 @@ interface ApiResponse<T> {
   };
 }
 
+// --- Local narrow types for Supabase rows ---
+
+interface SchoolJoin {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+interface SeasonJoin {
+  year_start: number | null;
+  year_end: number | null;
+  label: string | null;
+}
+
+interface PlayerRow {
+  id: number;
+  slug: string;
+  name: string;
+  college?: string | null;
+  pro_team?: string | null;
+  graduation_year?: number | null;
+  positions?: string[] | null;
+  height?: string | null;
+  birth_date?: string | null;
+  is_multi_sport?: boolean | null;
+  pro_draft_info?: string | null;
+  schools?: SchoolJoin | SchoolJoin[] | null;
+}
+
+interface BaseSeasonRow {
+  school_id: number;
+  seasons?: SeasonJoin | SeasonJoin[] | null;
+  schools?: SchoolJoin | SchoolJoin[] | null;
+}
+
+interface FootballSeasonRow extends BaseSeasonRow {
+  rush_yards?: number | null;
+  rush_td?: number | null;
+  pass_yards?: number | null;
+  pass_td?: number | null;
+  rec_yards?: number | null;
+  rec_td?: number | null;
+  total_yards?: number | null;
+  total_td?: number | null;
+}
+
+interface BasketballSeasonRow extends BaseSeasonRow {
+  games_played?: number | null;
+  points?: number | null;
+  ppg?: number | null;
+  rebounds?: number | null;
+  assists?: number | null;
+  steals?: number | null;
+  blocks?: number | null;
+}
+
+interface BaseballSeasonRow extends BaseSeasonRow {
+  batting_avg?: number | null;
+  home_runs?: number | null;
+  era?: number | null;
+}
+
+interface AwardRow {
+  id: number;
+  award_name?: string | null;
+  award_type?: string | null;
+  category?: string | null;
+  seasons?: { year_start: number | null } | { year_start: number | null }[] | null;
+}
+
+// Supabase joins can come back as either an object or a single-element array
+// depending on FK cardinality inference. Normalize here.
+function firstOrSelf<T>(value: T | T[] | null | undefined): T | undefined {
+  if (value == null) return undefined;
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -120,15 +197,17 @@ export async function GET(
     const careerStats: CareerStats[] = [];
 
     if (footballStats.data && footballStats.data.length > 0) {
-      const grouped = new Map<number, any[]>();
-      footballStats.data.forEach((stat: any) => {
+      const footballRows = footballStats.data as unknown as FootballSeasonRow[];
+      const grouped = new Map<number, FootballSeasonRow[]>();
+      footballRows.forEach((stat) => {
         const schoolId = stat.school_id;
         if (!grouped.has(schoolId)) grouped.set(schoolId, []);
         grouped.get(schoolId)!.push(stat);
       });
 
-      grouped.forEach((stats, schoolId) => {
-        const firstSchool = stats[0].schools;
+      grouped.forEach((stats) => {
+        const firstSchool = firstOrSelf(stats[0].schools);
+        if (!firstSchool) return;
         careerStats.push({
           sport: "football",
           school: {
@@ -137,22 +216,22 @@ export async function GET(
             slug: firstSchool.slug,
           },
           seasons: stats
-            .sort((a: any, b: any) => {
-              const aYear = (a.seasons as any)?.year_start || 0;
-              const bYear = (b.seasons as any)?.year_start || 0;
+            .sort((a, b) => {
+              const aYear = firstOrSelf(a.seasons)?.year_start || 0;
+              const bYear = firstOrSelf(b.seasons)?.year_start || 0;
               return aYear - bYear;
             })
-            .map((stat: any) => ({
-              year: (stat.seasons as any)?.label || "",
+            .map((stat) => ({
+              year: firstOrSelf(stat.seasons)?.label || "",
               stats: {
-                rush_yards: stat.rush_yards,
-                rush_td: stat.rush_td,
-                pass_yards: stat.pass_yards,
-                pass_td: stat.pass_td,
-                rec_yards: stat.rec_yards,
-                rec_td: stat.rec_td,
-                total_yards: stat.total_yards,
-                total_td: stat.total_td,
+                rush_yards: stat.rush_yards ?? null,
+                rush_td: stat.rush_td ?? null,
+                pass_yards: stat.pass_yards ?? null,
+                pass_td: stat.pass_td ?? null,
+                rec_yards: stat.rec_yards ?? null,
+                rec_td: stat.rec_td ?? null,
+                total_yards: stat.total_yards ?? null,
+                total_td: stat.total_td ?? null,
               },
             })),
         });
@@ -160,15 +239,17 @@ export async function GET(
     }
 
     if (basketballStats.data && basketballStats.data.length > 0) {
-      const grouped = new Map<number, any[]>();
-      basketballStats.data.forEach((stat: any) => {
+      const basketballRows = basketballStats.data as unknown as BasketballSeasonRow[];
+      const grouped = new Map<number, BasketballSeasonRow[]>();
+      basketballRows.forEach((stat) => {
         const schoolId = stat.school_id;
         if (!grouped.has(schoolId)) grouped.set(schoolId, []);
         grouped.get(schoolId)!.push(stat);
       });
 
-      grouped.forEach((stats, schoolId) => {
-        const firstSchool = stats[0].schools;
+      grouped.forEach((stats) => {
+        const firstSchool = firstOrSelf(stats[0].schools);
+        if (!firstSchool) return;
         careerStats.push({
           sport: "basketball",
           school: {
@@ -177,21 +258,21 @@ export async function GET(
             slug: firstSchool.slug,
           },
           seasons: stats
-            .sort((a: any, b: any) => {
-              const aYear = (a.seasons as any)?.year_start || 0;
-              const bYear = (b.seasons as any)?.year_start || 0;
+            .sort((a, b) => {
+              const aYear = firstOrSelf(a.seasons)?.year_start || 0;
+              const bYear = firstOrSelf(b.seasons)?.year_start || 0;
               return aYear - bYear;
             })
-            .map((stat: any) => ({
-              year: (stat.seasons as any)?.label || "",
+            .map((stat) => ({
+              year: firstOrSelf(stat.seasons)?.label || "",
               stats: {
-                games_played: stat.games_played,
-                points: stat.points,
-                ppg: stat.ppg,
-                rebounds: stat.rebounds,
-                assists: stat.assists,
-                steals: stat.steals,
-                blocks: stat.blocks,
+                games_played: stat.games_played ?? null,
+                points: stat.points ?? null,
+                ppg: stat.ppg ?? null,
+                rebounds: stat.rebounds ?? null,
+                assists: stat.assists ?? null,
+                steals: stat.steals ?? null,
+                blocks: stat.blocks ?? null,
               },
             })),
         });
@@ -199,15 +280,17 @@ export async function GET(
     }
 
     if (baseballStats.data && baseballStats.data.length > 0) {
-      const grouped = new Map<number, any[]>();
-      baseballStats.data.forEach((stat: any) => {
+      const baseballRows = baseballStats.data as unknown as BaseballSeasonRow[];
+      const grouped = new Map<number, BaseballSeasonRow[]>();
+      baseballRows.forEach((stat) => {
         const schoolId = stat.school_id;
         if (!grouped.has(schoolId)) grouped.set(schoolId, []);
         grouped.get(schoolId)!.push(stat);
       });
 
-      grouped.forEach((stats, schoolId) => {
-        const firstSchool = stats[0].schools;
+      grouped.forEach((stats) => {
+        const firstSchool = firstOrSelf(stats[0].schools);
+        if (!firstSchool) return;
         careerStats.push({
           sport: "baseball",
           school: {
@@ -216,17 +299,17 @@ export async function GET(
             slug: firstSchool.slug,
           },
           seasons: stats
-            .sort((a: any, b: any) => {
-              const aYear = (a.seasons as any)?.year_start || 0;
-              const bYear = (b.seasons as any)?.year_start || 0;
+            .sort((a, b) => {
+              const aYear = firstOrSelf(a.seasons)?.year_start || 0;
+              const bYear = firstOrSelf(b.seasons)?.year_start || 0;
               return aYear - bYear;
             })
-            .map((stat: any) => ({
-              year: (stat.seasons as any)?.label || "",
+            .map((stat) => ({
+              year: firstOrSelf(stat.seasons)?.label || "",
               stats: {
-                batting_avg: stat.batting_avg,
-                home_runs: stat.home_runs,
-                era: stat.era,
+                batting_avg: stat.batting_avg ?? null,
+                home_runs: stat.home_runs ?? null,
+                era: stat.era ?? null,
               },
             })),
         });
@@ -234,31 +317,34 @@ export async function GET(
     }
 
     // Format awards
-    const awards = (playerAwards.data || []).map((award: any) => ({
+    const awardRows = (playerAwards.data || []) as unknown as AwardRow[];
+    const awards = awardRows.map((award) => ({
       id: award.id,
-      award_name: award.award_name,
-      award_type: award.award_type,
-      category: award.category,
-      year: (award.seasons as any)?.year_start || 0,
+      award_name: award.award_name ?? undefined,
+      award_type: award.award_type ?? undefined,
+      category: award.category ?? undefined,
+      year: firstOrSelf(award.seasons)?.year_start || 0,
     }));
 
+    const player = playerData as unknown as PlayerRow;
+    const primarySchool = firstOrSelf(player.schools);
     const playerDetail: PlayerDetailResponse = {
-      id: playerData.id,
-      slug: playerData.slug,
-      name: playerData.name,
-      college: playerData.college,
-      pro_team: playerData.pro_team,
-      graduation_year: playerData.graduation_year,
-      positions: playerData.positions,
-      height: playerData.height,
-      birth_date: playerData.birth_date,
-      is_multi_sport: playerData.is_multi_sport,
-      pro_draft_info: playerData.pro_draft_info,
-      primary_school: playerData.schools
+      id: player.id,
+      slug: player.slug,
+      name: player.name,
+      college: player.college ?? undefined,
+      pro_team: player.pro_team ?? undefined,
+      graduation_year: player.graduation_year ?? undefined,
+      positions: player.positions ?? undefined,
+      height: player.height ?? undefined,
+      birth_date: player.birth_date ?? undefined,
+      is_multi_sport: player.is_multi_sport ?? undefined,
+      pro_draft_info: player.pro_draft_info ?? undefined,
+      primary_school: primarySchool
         ? {
-            id: (playerData.schools as any).id,
-            name: (playerData.schools as any).name,
-            slug: (playerData.schools as any).slug,
+            id: primarySchool.id,
+            name: primarySchool.name,
+            slug: primarySchool.slug,
           }
         : undefined,
       career_stats: careerStats,

@@ -6,14 +6,97 @@ import {
 } from "./common";
 import { isBasketballSport } from "./utils";
 
+// --- Narrow local types (manual; do not re-enable database.types import) ---
+
+type SupabasePageResult<T> = {
+  data: T[] | null;
+  error: unknown;
+};
+
+type QueryBuilder<T> = PromiseLike<SupabasePageResult<T>>;
+
+interface PlayerRow {
+  id: number;
+  name: string | null;
+  slug: string | null;
+  primary_school_id: number | null;
+  graduation_year: number | null;
+  positions: string[] | null;
+}
+
+interface SeasonJoin {
+  year_start: number | null;
+  year_end?: number | null;
+  label?: string | null;
+}
+
+interface LeagueJoin {
+  name: string | null;
+}
+
+interface SchoolJoin {
+  id: number;
+  name: string | null;
+  slug: string | null;
+  leagues: LeagueJoin | LeagueJoin[] | null;
+}
+
+interface SeasonRowBase {
+  id: number;
+  player_id: number;
+  season_id: number | null;
+  school_id: number | null;
+  games_played: number | null;
+  seasons: SeasonJoin | SeasonJoin[] | null;
+  schools: SchoolJoin | SchoolJoin[] | null;
+}
+
+interface FootballSeasonRow extends SeasonRowBase {
+  rush_yards: number | null;
+  pass_yards: number | null;
+  rec_yards: number | null;
+  rush_td: number | null;
+  pass_td: number | null;
+  rec_td: number | null;
+}
+
+interface BasketballSeasonRow extends SeasonRowBase {
+  points: number | null;
+  assists: number | null;
+  rebounds: number | null;
+}
+
+/** Normalize a Supabase join that may come back as an array or single object. */
+function firstJoin<T>(rel: T | T[] | null | undefined): T | null {
+  if (rel == null) return null;
+  return Array.isArray(rel) ? (rel[0] ?? null) : rel;
+}
+
+interface PlayerAggregate {
+  player_id: number;
+  player_name: string;
+  player_slug: string;
+  // Kept wide to preserve exact runtime behavior from the prior `any`-typed code
+  // (DB nulls could flow through into the final object). PositionLeader accepts it via mapping.
+  school_id: number;
+  school_name: string;
+  school_slug: string;
+  positions: string[];
+  graduation_year?: number;
+  league?: string;
+  seasons?: number[];
+  total_stat: number;
+  season_count: number;
+}
+
 /**
  * Paginate through a Supabase query in 1000-row chunks until exhausted.
  * Works around PostgREST's default 1000-row ceiling and any explicit .limit()
  * that would silently truncate large result sets.
  */
 async function fetchAllPaginated<T>(
-  buildQuery: (from: number, to: number) => any
-): Promise<{ data: T[] | null; error: any }> {
+  buildQuery: (from: number, to: number) => QueryBuilder<T>
+): Promise<{ data: T[] | null; error: unknown }> {
   const PAGE = 1000;
   const all: T[] = [];
   let from = 0;
@@ -86,7 +169,7 @@ export const getFootballPositionLeaders = cache(
             };
 
             // Get ALL players by position filter (paginated — there can be 900+ QBs)
-            const { data: players, error: playerError } = await fetchAllPaginated<any>(
+            const { data: players, error: playerError } = await fetchAllPaginated<PlayerRow>(
               (from, to) =>
                 supabase
                   .from("players")
@@ -94,7 +177,7 @@ export const getFootballPositionLeaders = cache(
                   .contains("positions", [position.toUpperCase()])
                   .is("deleted_at", null)
                   .order("id", { ascending: true })
-                  .range(from, to)
+                  .range(from, to) as unknown as QueryBuilder<PlayerRow>
             );
 
             if (playerError || !players) {
@@ -102,17 +185,17 @@ export const getFootballPositionLeaders = cache(
               return [];
             }
 
-            const playerIds = players.map((p: any) => p.id);
+            const playerIds = players.map((p) => p.id);
             if (playerIds.length === 0) return [];
 
             // Get ALL seasons for position players (paginated — 900 players * several seasons
             // easily exceeds PostgREST's 1000-row default ceiling).
             // Batch playerIds in chunks of 500 to keep the .in() URL under Supabase limits.
             const PLAYER_ID_CHUNK = 500;
-            const seasons: any[] = [];
+            const seasons: FootballSeasonRow[] = [];
             for (let i = 0; i < playerIds.length; i += PLAYER_ID_CHUNK) {
               const chunk = playerIds.slice(i, i + PLAYER_ID_CHUNK);
-              const { data: chunkSeasons, error: seasonError } = await fetchAllPaginated<any>(
+              const { data: chunkSeasons, error: seasonError } = await fetchAllPaginated<FootballSeasonRow>(
                 (from, to) =>
                   supabase
                     .from("football_player_seasons")
@@ -123,7 +206,7 @@ export const getFootballPositionLeaders = cache(
                     )
                     .in("player_id", chunk)
                     .order("id", { ascending: true })
-                    .range(from, to)
+                    .range(from, to) as unknown as QueryBuilder<FootballSeasonRow>
               );
               if (seasonError) {
                 console.error("Position leaders season query error:", seasonError);
@@ -133,40 +216,45 @@ export const getFootballPositionLeaders = cache(
             }
 
             // Group by player and aggregate stats
-            const playerStatsMap: Record<number, any> = {};
+            const playerStatsMap: Record<number, PlayerAggregate> = {};
 
             for (const season of seasons) {
               const playerId = season.player_id;
+              const schoolJoin = firstJoin<SchoolJoin>(season.schools);
+              const leagueJoin = firstJoin<LeagueJoin>(schoolJoin?.leagues ?? null);
+              const seasonJoin = firstJoin<SeasonJoin>(season.seasons);
               if (!playerStatsMap[playerId]) {
-                const player = players.find((p: any) => p.id === playerId);
+                const player = players.find((p) => p.id === playerId);
                 playerStatsMap[playerId] = {
                   player_id: playerId,
                   player_name: player?.name || "Unknown",
                   player_slug: player?.slug || "",
-                  school_id: season.school_id,
-                  school_name: (season.schools as any)?.name || "Unknown",
-                  school_slug: (season.schools as any)?.slug || "",
+                  school_id: season.school_id as number,
+                  school_name: schoolJoin?.name || "Unknown",
+                  school_slug: schoolJoin?.slug || "",
                   positions: player?.positions || [],
-                  graduation_year: player?.graduation_year,
-                  league: (season.schools as any)?.leagues?.name,
+                  graduation_year: player?.graduation_year as number | undefined,
+                  league: leagueJoin?.name ?? undefined,
                   seasons: [],
                   total_stat: 0,
                   season_count: 0,
                 };
               }
 
-              // Accumulate stats
-              const statValue = (season as any)[statInfo.stat] || 0;
+              // Accumulate stats — read dynamic stat column via unknown cast + type guard.
+              const statKey = statInfo.stat as keyof FootballSeasonRow;
+              const rawValue: unknown = season[statKey];
+              const statValue = typeof rawValue === "number" ? rawValue : 0;
               playerStatsMap[playerId].total_stat += statValue;
               playerStatsMap[playerId].season_count += 1;
-              playerStatsMap[playerId].seasons.push(
-                (season.seasons as any)?.year_start || 0
+              playerStatsMap[playerId].seasons!.push(
+                seasonJoin?.year_start ?? 0
               );
             }
 
             // Transform to PositionLeader format
             let leaders: PositionLeader[] = Object.values(playerStatsMap)
-              .map((p: any) => ({
+              .map((p): PositionLeader => ({
                 player_id: p.player_id,
                 player_name: p.player_name,
                 player_slug: p.player_slug,
@@ -231,7 +319,7 @@ export const getBasketballPositionLeaders = cache(
             const primaryStat = positionStatMap[position.toUpperCase()] || "points";
 
             // Get ALL players by position (paginated)
-            const { data: players, error: playerError } = await fetchAllPaginated<any>(
+            const { data: players, error: playerError } = await fetchAllPaginated<PlayerRow>(
               (from, to) =>
                 supabase
                   .from("players")
@@ -239,7 +327,7 @@ export const getBasketballPositionLeaders = cache(
                   .contains("positions", [position.toUpperCase()])
                   .is("deleted_at", null)
                   .order("id", { ascending: true })
-                  .range(from, to)
+                  .range(from, to) as unknown as QueryBuilder<PlayerRow>
             );
 
             if (playerError || !players) {
@@ -247,15 +335,15 @@ export const getBasketballPositionLeaders = cache(
               return [];
             }
 
-            const playerIds = players.map((p: any) => p.id);
+            const playerIds = players.map((p) => p.id);
             if (playerIds.length === 0) return [];
 
             // Get ALL basketball seasons (paginated, chunked by player id)
             const PLAYER_ID_CHUNK = 500;
-            const seasons: any[] = [];
+            const seasons: BasketballSeasonRow[] = [];
             for (let i = 0; i < playerIds.length; i += PLAYER_ID_CHUNK) {
               const chunk = playerIds.slice(i, i + PLAYER_ID_CHUNK);
-              const { data: chunkSeasons, error: seasonError } = await fetchAllPaginated<any>(
+              const { data: chunkSeasons, error: seasonError } = await fetchAllPaginated<BasketballSeasonRow>(
                 (from, to) =>
                   supabase
                     .from("basketball_player_seasons")
@@ -266,7 +354,7 @@ export const getBasketballPositionLeaders = cache(
                     )
                     .in("player_id", chunk)
                     .order("id", { ascending: true })
-                    .range(from, to)
+                    .range(from, to) as unknown as QueryBuilder<BasketballSeasonRow>
               );
               if (seasonError) {
                 console.error("Position leaders season query error:", seasonError);
@@ -276,34 +364,38 @@ export const getBasketballPositionLeaders = cache(
             }
 
             // Aggregate
-            const playerStatsMap: Record<number, any> = {};
+            const playerStatsMap: Record<number, PlayerAggregate> = {};
 
             for (const season of seasons) {
               const playerId = season.player_id;
+              const schoolJoin = firstJoin<SchoolJoin>(season.schools);
+              const leagueJoin = firstJoin<LeagueJoin>(schoolJoin?.leagues ?? null);
               if (!playerStatsMap[playerId]) {
-                const player = players.find((p: any) => p.id === playerId);
+                const player = players.find((p) => p.id === playerId);
                 playerStatsMap[playerId] = {
                   player_id: playerId,
                   player_name: player?.name || "Unknown",
                   player_slug: player?.slug || "",
-                  school_id: season.school_id,
-                  school_name: (season.schools as any)?.name || "Unknown",
-                  school_slug: (season.schools as any)?.slug || "",
+                  school_id: season.school_id as number,
+                  school_name: schoolJoin?.name || "Unknown",
+                  school_slug: schoolJoin?.slug || "",
                   positions: player?.positions || [],
-                  graduation_year: player?.graduation_year,
-                  league: (season.schools as any)?.leagues?.name,
+                  graduation_year: player?.graduation_year as number | undefined,
+                  league: leagueJoin?.name ?? undefined,
                   total_stat: 0,
                   season_count: 0,
                 };
               }
 
-              const statValue = (season as any)[primaryStat] || 0;
+              const statKey = primaryStat as keyof BasketballSeasonRow;
+              const rawValue: unknown = season[statKey];
+              const statValue = typeof rawValue === "number" ? rawValue : 0;
               playerStatsMap[playerId].total_stat += statValue;
               playerStatsMap[playerId].season_count += 1;
             }
 
             let leaders: PositionLeader[] = Object.values(playerStatsMap)
-              .map((p: any) => ({
+              .map((p): PositionLeader => ({
                 player_id: p.player_id,
                 player_name: p.player_name,
                 player_slug: p.player_slug,

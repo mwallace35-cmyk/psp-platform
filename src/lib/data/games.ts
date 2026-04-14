@@ -3,6 +3,103 @@ import { createClient, withErrorHandling, withRetry } from "./common";
 import { isBasketballSport, getBasketballGender } from "./utils";
 
 // ============================================================================
+// INTERNAL ROW TYPES (for narrow typing of dynamic Supabase responses)
+// ============================================================================
+
+type PlayerJoinRow = { id: number; name: string; slug: string; positions?: string[] | null };
+
+interface PlayerGameLogRow {
+  id: number;
+  game_id: number;
+  sport_id: string | null;
+  games?: { game_date?: string | null } | null;
+}
+
+interface GameIdRow { game_id: number }
+interface IdRow { id: number }
+interface SeasonLabelJoinRow { id: number; seasons?: { label?: string | null } | null }
+
+interface BasketballSeasonRow {
+  player_id: number;
+  points: number | null;
+  ppg: number | null;
+  games_played: number | null;
+  rebounds: number | null;
+  assists: number | null;
+  jersey_number: string | null;
+  players?: PlayerJoinRow | PlayerJoinRow[] | null;
+}
+interface FootballSeasonRow {
+  player_id: number;
+  rush_yards: number | null;
+  rush_carries: number | null;
+  pass_yards: number | null;
+  pass_completions: number | null;
+  rec_yards: number | null;
+  rec_catches: number | null;
+  jersey_number: string | null;
+  players?: PlayerJoinRow | PlayerJoinRow[] | null;
+}
+interface BaseballSeasonRow {
+  player_id: number;
+  batting_avg: number | null;
+  hits: number | null;
+  at_bats: number | null;
+  rbi: number | null;
+  home_runs: number | null;
+  era: number | null;
+  wins: number | null;
+  losses: number | null;
+  jersey_number: string | null;
+  players?: PlayerJoinRow | PlayerJoinRow[] | null;
+}
+
+type SchoolLite = { id: number; name: string; slug: string };
+
+interface RivalryGameRow {
+  id: number;
+  game_date: string | null;
+  home_school_id: number | null;
+  away_school_id: number | null;
+  home_score: number | null;
+  away_score: number | null;
+  home_school: SchoolLite | SchoolLite[] | null;
+  away_school: SchoolLite | SchoolLite[] | null;
+}
+
+interface HeadToHeadGameRow {
+  id: number;
+  game_date: string | null;
+  home_school_id: number | null;
+  away_school_id: number | null;
+  home_score: number | null;
+  away_score: number | null;
+}
+
+interface TeamStatRow {
+  player_name: string | null;
+  rush_yards: number | null;
+  pass_yards: number | null;
+  rec_yards: number | null;
+  points: number | null;
+  game_id: number;
+}
+
+interface AdjacentGameRow {
+  id: number;
+  game_date: string;
+  home_school_id: number | null;
+  away_school_id: number | null;
+  home_school?: { name: string } | { name: string }[] | null;
+  away_school?: { name: string } | { name: string }[] | null;
+}
+
+function firstOrSelf<T>(v: T | T[] | null | undefined): T | null {
+  if (v == null) return null;
+  return Array.isArray(v) ? (v[0] ?? null) : v;
+}
+
+// ============================================================================
 // GAME DETAIL & BOX SCORE DATA FETCHERS
 // ============================================================================
 
@@ -224,8 +321,7 @@ export const getPlayerGameLog = cache(
               .eq("player_id", playerId);
             // Filter by sport if provided (important for multi-sport athletes)
             if (sportId && data) {
-              const filtered = (data as any[]).filter((row: any) => {
-                const gameDate = row.games?.game_date;
+              const filtered = (data as unknown as PlayerGameLogRow[]).filter((row) => {
                 // Use the sport_id on the game_player_stats row itself
                 return row.sport_id === sportId || !row.sport_id;
               });
@@ -490,7 +586,7 @@ export const getGamesBySportWithBoxScores = cache(
               .limit(1000);
 
             const { data: statsData } = await statsQuery;
-            const gameIdsWithStats = new Set((statsData ?? []).map((r: any) => r.game_id));
+            const gameIdsWithStats = new Set(((statsData ?? []) as GameIdRow[]).map((r) => r.game_id));
             const gameIdArray = Array.from(gameIdsWithStats);
 
             if (gameIdArray.length === 0) {
@@ -563,8 +659,8 @@ export const getBoxScoreSeasons = cache(
                 .range(offset, offset + pageSize - 1);
 
               if (!statsPage || statsPage.length === 0) break;
-              for (const r of statsPage) {
-                allGameIds.add((r as any).game_id);
+              for (const r of statsPage as GameIdRow[]) {
+                allGameIds.add(r.game_id);
               }
               if (statsPage.length < pageSize) break;
               offset += pageSize;
@@ -576,7 +672,7 @@ export const getBoxScoreSeasons = cache(
 
             // Get season info for these games (chunk .in() calls to avoid URL length limits)
             const chunkSize = 300;
-            const allGamesData: any[] = [];
+            const allGamesData: SeasonLabelJoinRow[] = [];
             for (let i = 0; i < gameIdArray.length; i += chunkSize) {
               const chunk = gameIdArray.slice(i, i + chunkSize);
               const { data: gamesData } = await supabase
@@ -584,13 +680,14 @@ export const getBoxScoreSeasons = cache(
                 .select("id, seasons(label)")
                 .eq("sport_id", sportId)
                 .in("id", chunk);
-              if (gamesData) allGamesData.push(...gamesData);
+              if (gamesData) allGamesData.push(...(gamesData as unknown as SeasonLabelJoinRow[]));
             }
 
             // Count games per season
             const seasonCounts = new Map<string, number>();
             for (const g of allGamesData) {
-              const label = (g as any).seasons?.label;
+              const seasonsJoin = firstOrSelf(g.seasons as { label?: string | null } | { label?: string | null }[] | null | undefined);
+              const label = seasonsJoin?.label;
               if (label) {
                 seasonCounts.set(label, (seasonCounts.get(label) ?? 0) + 1);
               }
@@ -640,7 +737,7 @@ export const getBoxScoreGamesBySeason = cache(
 
             if (!gamesInSeason || gamesInSeason.length === 0) return [];
 
-            const seasonGameIds = gamesInSeason.map((g: any) => g.id as number);
+            const seasonGameIds = (gamesInSeason as IdRow[]).map((g) => g.id);
 
             // Check which of these games have box score data (chunked)
             const gameIdsWithStats = new Set<number>();
@@ -653,8 +750,8 @@ export const getBoxScoreGamesBySeason = cache(
                 .eq("sport_id", sportId)
                 .in("game_id", chunk);
               if (statsData) {
-                for (const r of statsData) {
-                  gameIdsWithStats.add((r as any).game_id);
+                for (const r of statsData as GameIdRow[]) {
+                  gameIdsWithStats.add(r.game_id);
                 }
               }
             }
@@ -776,22 +873,25 @@ export const getTeamSeasonStats = cache(
                   .eq("gender", getBasketballGender(sport))
                   .order("points", { ascending: false, nullsFirst: false })
                   .limit(20);
-                return (data ?? []).map((r: any) => ({
-                  player_id: r.player_id,
-                  player_name: r.players?.name ?? "Unknown",
-                  player_slug: r.players?.slug ?? "",
-                  jersey_number: r.jersey_number,
-                  position: r.players?.positions?.[0] ?? null,
-                  points: r.points,
-                  ppg: r.ppg,
-                  games_played: r.games_played,
-                  rebounds: r.rebounds,
-                  assists: r.assists,
-                  rush_yards: null, rush_carries: null, pass_yards: null, pass_completions: null,
-                  rec_yards: null, rec_catches: null,
-                  batting_avg: null, hits: null, at_bats: null, rbi: null, home_runs: null,
-                  era: null, wins: null, losses: null,
-                }));
+                return ((data ?? []) as unknown as BasketballSeasonRow[]).map((r) => {
+                  const p = firstOrSelf(r.players);
+                  return {
+                    player_id: r.player_id,
+                    player_name: p?.name ?? "Unknown",
+                    player_slug: p?.slug ?? "",
+                    jersey_number: r.jersey_number,
+                    position: p?.positions?.[0] ?? null,
+                    points: r.points,
+                    ppg: r.ppg,
+                    games_played: r.games_played,
+                    rebounds: r.rebounds,
+                    assists: r.assists,
+                    rush_yards: null, rush_carries: null, pass_yards: null, pass_completions: null,
+                    rec_yards: null, rec_catches: null,
+                    batting_avg: null, hits: null, at_bats: null, rbi: null, home_runs: null,
+                    era: null, wins: null, losses: null,
+                  };
+                });
               } else if (sport === "football") {
                 const { data } = await supabase
                   .from("football_player_seasons")
@@ -799,26 +899,29 @@ export const getTeamSeasonStats = cache(
                   .eq("school_id", schoolId)
                   .eq("season_id", seasonId)
                   .limit(30);
-                return (data ?? []).map((r: any) => ({
-                  player_id: r.player_id,
-                  player_name: r.players?.name ?? "Unknown",
-                  player_slug: r.players?.slug ?? "",
-                  jersey_number: r.jersey_number,
-                  position: r.players?.positions?.[0] ?? null,
-                  points: null,
-                  ppg: null,
-                  games_played: null,
-                  rebounds: null,
-                  assists: null,
-                  rush_yards: r.rush_yards,
-                  rush_carries: r.rush_carries,
-                  pass_yards: r.pass_yards,
-                  pass_completions: r.pass_completions,
-                  rec_yards: r.rec_yards,
-                  rec_catches: r.rec_catches,
-                  batting_avg: null, hits: null, at_bats: null, rbi: null, home_runs: null,
-                  era: null, wins: null, losses: null,
-                }));
+                return ((data ?? []) as unknown as FootballSeasonRow[]).map((r) => {
+                  const p = firstOrSelf(r.players);
+                  return {
+                    player_id: r.player_id,
+                    player_name: p?.name ?? "Unknown",
+                    player_slug: p?.slug ?? "",
+                    jersey_number: r.jersey_number,
+                    position: p?.positions?.[0] ?? null,
+                    points: null,
+                    ppg: null,
+                    games_played: null,
+                    rebounds: null,
+                    assists: null,
+                    rush_yards: r.rush_yards,
+                    rush_carries: r.rush_carries,
+                    pass_yards: r.pass_yards,
+                    pass_completions: r.pass_completions,
+                    rec_yards: r.rec_yards,
+                    rec_catches: r.rec_catches,
+                    batting_avg: null, hits: null, at_bats: null, rbi: null, home_runs: null,
+                    era: null, wins: null, losses: null,
+                  };
+                });
               } else if (sport === "baseball") {
                 const { data } = await supabase
                   .from("baseball_player_seasons")
@@ -826,24 +929,27 @@ export const getTeamSeasonStats = cache(
                   .eq("school_id", schoolId)
                   .eq("season_id", seasonId)
                   .limit(25);
-                return (data ?? []).map((r: any) => ({
-                  player_id: r.player_id,
-                  player_name: r.players?.name ?? "Unknown",
-                  player_slug: r.players?.slug ?? "",
-                  jersey_number: r.jersey_number,
-                  position: r.players?.positions?.[0] ?? null,
-                  points: null, ppg: null, games_played: null, rebounds: null, assists: null,
-                  rush_yards: null, rush_carries: null, pass_yards: null, pass_completions: null,
-                  rec_yards: null, rec_catches: null,
-                  batting_avg: r.batting_avg,
-                  hits: r.hits,
-                  at_bats: r.at_bats,
-                  rbi: r.rbi,
-                  home_runs: r.home_runs,
-                  era: r.era,
-                  wins: r.wins,
-                  losses: r.losses,
-                }));
+                return ((data ?? []) as unknown as BaseballSeasonRow[]).map((r) => {
+                  const p = firstOrSelf(r.players);
+                  return {
+                    player_id: r.player_id,
+                    player_name: p?.name ?? "Unknown",
+                    player_slug: p?.slug ?? "",
+                    jersey_number: r.jersey_number,
+                    position: p?.positions?.[0] ?? null,
+                    points: null, ppg: null, games_played: null, rebounds: null, assists: null,
+                    rush_yards: null, rush_carries: null, pass_yards: null, pass_completions: null,
+                    rec_yards: null, rec_catches: null,
+                    batting_avg: r.batting_avg,
+                    hits: r.hits,
+                    at_bats: r.at_bats,
+                    rbi: r.rbi,
+                    home_runs: r.home_runs,
+                    era: r.era,
+                    wins: r.wins,
+                    losses: r.losses,
+                  };
+                });
               }
               return [];
             }
@@ -854,7 +960,7 @@ export const getTeamSeasonStats = cache(
               .from("schools")
               .select("id, name, slug")
               .in("id", schoolIds);
-            const schoolMap = new Map((schools ?? []).map((s: any) => [s.id, s]));
+            const schoolMap = new Map(((schools ?? []) as SchoolLite[]).map((s) => [s.id, s]));
 
             if (homeSchoolId) {
               const players = await fetchTeamStats(homeSchoolId);
@@ -956,12 +1062,13 @@ export const getSchoolRivalries = cache(
               isLastGameHome: boolean;
             }>();
 
-            for (const game of games as any[]) {
+            for (const game of games as unknown as RivalryGameRow[]) {
               const isHome = game.home_school_id === schoolId;
               const opponentId = isHome ? game.away_school_id : game.home_school_id;
-              const opponentData = isHome ? game.away_school : game.home_school;
+              const opponentRaw = isHome ? game.away_school : game.home_school;
+              const opponentData = firstOrSelf(opponentRaw);
 
-              if (!opponentData) continue;
+              if (!opponentData || opponentId == null) continue;
 
               if (!rivalryMap.has(opponentId)) {
                 rivalryMap.set(opponentId, {
@@ -1086,8 +1193,9 @@ export const getHeadToHead = cache(
 
             if (!schools || schools.length < 2) return null;
 
-            const schoolAData = schools.find((s: any) => s.id === schoolA);
-            const schoolBData = schools.find((s: any) => s.id === schoolB);
+            const schoolsTyped = schools as SchoolLite[];
+            const schoolAData = schoolsTyped.find((s) => s.id === schoolA);
+            const schoolBData = schoolsTyped.find((s) => s.id === schoolB);
             if (!schoolAData || !schoolBData) return null;
 
             // Get all games between the two schools in this sport
@@ -1112,9 +1220,9 @@ export const getHeadToHead = cache(
               .not("away_score", "is", null)
               .order("game_date", { ascending: false });
 
-            const allGames = [
-              ...((gamesAHome as any[]) ?? []),
-              ...((gamesBHome as any[]) ?? []),
+            const allGames: HeadToHeadGameRow[] = [
+              ...((gamesAHome as unknown as HeadToHeadGameRow[]) ?? []),
+              ...((gamesBHome as unknown as HeadToHeadGameRow[]) ?? []),
             ].sort((a, b) => (b.game_date || "").localeCompare(a.game_date || ""));
 
             if (allGames.length === 0) {
@@ -1143,8 +1251,9 @@ export const getHeadToHead = cache(
 
             for (const game of allGames) {
               const isAHome = game.home_school_id === schoolA;
-              const aScore = isAHome ? game.home_score : game.away_score;
-              const bScore = isAHome ? game.away_score : game.home_score;
+              // Scores guaranteed non-null by .not("...", "is", null) filters above
+              const aScore = (isAHome ? game.home_score : game.away_score) ?? 0;
+              const bScore = (isAHome ? game.away_score : game.home_score) ?? 0;
 
               let winnerId: number | null = null;
               if (aScore > bScore) {
@@ -1272,8 +1381,9 @@ export const getTeamStatLeaders = cache(
               };
             }
 
+            const typedRows = rows as unknown as TeamStatRow[];
             // Count unique games
-            const uniqueGames = new Set(rows.map((r: any) => r.game_id));
+            const uniqueGames = new Set(typedRows.map((r) => r.game_id));
 
             // Aggregate team totals
             let totalRush = 0, totalPass = 0, totalRec = 0, totalPts = 0;
@@ -1282,7 +1392,7 @@ export const getTeamStatLeaders = cache(
             const playerRec: Record<string, { yards: number; games: Set<number> }> = {};
             const playerPts: Record<string, { pts: number; games: Set<number> }> = {};
 
-            for (const row of rows as any[]) {
+            for (const row of typedRows) {
               const name = row.player_name || "Unknown";
               const gameId = row.game_id;
 
@@ -1399,18 +1509,20 @@ export const getAdjacentGames = cache(
           .order("game_date", { ascending: true })
           .limit(1);
 
-        const formatNav = (g: any) => {
+        const formatNav = (g: AdjacentGameRow | undefined | null) => {
           if (!g) return null;
           const isHome = g.home_school_id === homeSchoolId;
-          const opp = isHome
-            ? (Array.isArray(g.away_school) ? g.away_school[0]?.name : g.away_school?.name) ?? "Opponent"
-            : (Array.isArray(g.home_school) ? g.home_school[0]?.name : g.home_school?.name) ?? "Opponent";
+          const awayJoin = firstOrSelf(g.away_school);
+          const homeJoin = firstOrSelf(g.home_school);
+          const opp = (isHome ? awayJoin?.name : homeJoin?.name) ?? "Opponent";
           return { id: g.id, game_date: g.game_date, opponent: opp };
         };
 
+        const prevTyped = prevData as unknown as AdjacentGameRow[] | null;
+        const nextTyped = nextData as unknown as AdjacentGameRow[] | null;
         return {
-          prev: prevData?.[0] ? formatNav(prevData[0]) : null,
-          next: nextData?.[0] ? formatNav(nextData[0]) : null,
+          prev: prevTyped?.[0] ? formatNav(prevTyped[0]) : null,
+          next: nextTyped?.[0] ? formatNav(nextTyped[0]) : null,
         };
       },
       { prev: null, next: null },
