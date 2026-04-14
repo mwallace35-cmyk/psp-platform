@@ -12,9 +12,9 @@ interface PickemWeek {
   season_id: number;
   week_number: number;
   title: string;
-  is_open: boolean;
-  starts_at: string;
-  ends_at?: string;
+  status: string;
+  opens_at: string;
+  closes_at: string | null;
   created_at: string;
 }
 
@@ -22,13 +22,10 @@ interface Game {
   id: number;
   home_school_id: number;
   away_school_id: number;
-  game_date: string;
   final_home_score?: number;
   final_away_score?: number;
-  schools?: {
-    home: { id: number; name: string };
-    away: { id: number; name: string };
-  };
+  home_school?: { id: number; name: string } | null;
+  away_school?: { id: number; name: string } | null;
 }
 
 interface PickemClientProps {
@@ -62,15 +59,15 @@ export default function PickemClient({ initialWeeks, initialGames }: PickemClien
         supabase
           .from("pickem_weeks")
           .select("*")
-          .order("starts_at", { ascending: false }),
+          .order("opens_at", { ascending: false }),
         supabase
           .from("pickem_games")
           .select(`
             *,
-            schools:home_school_id(id, name),
-            away:away_school_id(id, name)
+            home_school:schools!pickem_games_home_school_id_fkey(id, name),
+            away_school:schools!pickem_games_away_school_id_fkey(id, name)
           `)
-          .order("game_date", { ascending: false }),
+          .order("created_at", { ascending: false }),
       ]);
 
       if (weeksRes.error) throw weeksRes.error;
@@ -101,8 +98,8 @@ export default function PickemClient({ initialWeeks, initialGames }: PickemClien
           season_id: Number(formData.season_id),
           week_number: Number(formData.week_number),
           title: formData.title,
-          is_open: true,
-          starts_at: new Date().toISOString(),
+          status: "open",
+          opens_at: new Date().toISOString(),
         },
       ]);
 
@@ -119,11 +116,12 @@ export default function PickemClient({ initialWeeks, initialGames }: PickemClien
     }
   }
 
-  async function handleToggleOpen(id: number, current: boolean) {
+  async function handleToggleOpen(id: number, current: string) {
+    const isOpen = current === "open";
     try {
       const { error } = await supabase
         .from("pickem_weeks")
-        .update({ is_open: !current, ends_at: !current ? null : new Date().toISOString() })
+        .update({ status: isOpen ? "closed" : "open", closes_at: isOpen ? new Date().toISOString() : null })
         .eq("id", id);
 
       if (error) throw error;
@@ -262,7 +260,7 @@ export default function PickemClient({ initialWeeks, initialGames }: PickemClien
                   </h3>
                   <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
                     {week.sport_id} • Season {week.season_id} • Week {week.week_number}
-                    {week.is_open ? (
+                    {week.status === "open" ? (
                       <span className="ml-2 px-2 py-0.5 rounded text-xs bg-green-100 text-green-900 font-semibold">
                         Open
                       </span>
@@ -275,11 +273,11 @@ export default function PickemClient({ initialWeeks, initialGames }: PickemClien
                 </div>
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => handleToggleOpen(week.id, week.is_open)}
+                    onClick={() => handleToggleOpen(week.id, week.status)}
                     variant="outline"
                     size="sm"
                   >
-                    {week.is_open ? "Close" : "Open"}
+                    {week.status === "open" ? "Close" : "Open"}
                   </Button>
                   <Button
                     onClick={() => handleDeleteWeek(week.id)}

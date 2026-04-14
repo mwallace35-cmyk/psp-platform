@@ -24,13 +24,10 @@ interface Game {
   id: number;
   home_school_id: number;
   away_school_id: number;
-  game_date: string;
   final_home_score?: number;
   final_away_score?: number;
-  schools?: {
-    home: { id: number; name: string; slug: string };
-    away: { id: number; name: string; slug: string };
-  };
+  home_school?: { id: number; name: string; slug: string } | null;
+  away_school?: { id: number; name: string; slug: string } | null;
 }
 
 interface PickemWeek {
@@ -38,8 +35,9 @@ interface PickemWeek {
   sport_id: string;
   week_number: number;
   title: string;
-  is_open: boolean;
-  starts_at: string;
+  status: string;
+  opens_at: string;
+  closes_at: string | null;
 }
 
 export default async function PickemPage() {
@@ -49,7 +47,7 @@ export default async function PickemPage() {
   const { data: weeksData } = await supabase
     .from("pickem_weeks")
     .select("*")
-    .order("starts_at", { ascending: false })
+    .order("opens_at", { ascending: false })
     .limit(1);
 
   const currentWeek = (weeksData || []).at(0) as PickemWeek | undefined;
@@ -61,11 +59,11 @@ export default async function PickemPage() {
       .from("pickem_games")
       .select(`
         *,
-        schools:home_school_id(id, name, slug),
-        away:away_school_id(id, name, slug)
+        home_school:schools!pickem_games_home_school_id_fkey(id, name, slug),
+        away_school:schools!pickem_games_away_school_id_fkey(id, name, slug)
       `)
       .eq("week_id", currentWeek.id)
-      .order("game_date");
+      .order("created_at");
 
     games = (gamesData || []) as Game[];
   }
@@ -137,7 +135,7 @@ export default async function PickemPage() {
                       </h2>
                       <p style={{ color: "var(--psp-gray-500)" }}>
                         {currentWeek.sport_id} • Week {currentWeek.week_number}
-                        {currentWeek.is_open ? (
+                        {currentWeek.status === "open" ? (
                           <span className="ml-3 px-3 py-1 rounded text-sm bg-green-100 text-green-900 font-semibold">
                             Voting Open
                           </span>
@@ -172,7 +170,7 @@ export default async function PickemPage() {
                             style={{ background: "rgba(59,130,246,0.05)" }}
                           >
                             <p className="font-semibold" style={{ color: "var(--psp-navy)" }}>
-                              {game.schools?.home?.name || "Home Team"}
+                              {game.home_school?.name || "Home Team"}
                             </p>
                             {game.final_home_score !== undefined && (
                               <p className="text-sm mt-1" style={{ color: "var(--psp-gold)" }}>
@@ -191,7 +189,7 @@ export default async function PickemPage() {
                             style={{ background: "rgba(59,130,246,0.05)" }}
                           >
                             <p className="font-semibold" style={{ color: "var(--psp-navy)" }}>
-                              {game.schools?.away?.name || "Away Team"}
+                              {game.away_school?.name || "Away Team"}
                             </p>
                             {game.final_away_score !== undefined && (
                               <p className="text-sm mt-1" style={{ color: "var(--psp-gold)" }}>
@@ -201,16 +199,14 @@ export default async function PickemPage() {
                           </button>
                         </div>
 
-                        <p className="text-xs mt-3" style={{ color: "var(--psp-gray-500)" }}>
-                          {new Date(game.game_date).toLocaleDateString()}
-                        </p>
+                        {/* game_date lives on games table, not pickem_games */}
                       </div>
                     ))}
                   </div>
                 )}
 
                 {/* Login CTA */}
-                {!currentWeek?.is_open && (
+                {currentWeek?.status !== "open" && (
                   <div
                     className="bg-blue-50 rounded-lg p-6 text-center border border-blue-200"
                     style={{ color: "var(--psp-navy)" }}

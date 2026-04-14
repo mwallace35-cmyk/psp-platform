@@ -14,7 +14,7 @@ export async function ReactiveDidYouKnow() {
   // First try reactive facts (from recent big games, last 7 days)
   const { data: reactiveFacts } = await (supabase as any)
     .from("did_you_know")
-    .select("id, fact, player_name, player_id, category_type")
+    .select("id, fact_text, player_name, player_id, category_type")
     .eq("category_type", "reactive")
     .eq("approved", true)
     .gt("expires_at", new Date().toISOString())
@@ -26,7 +26,7 @@ export async function ReactiveDidYouKnow() {
   if (reactiveFacts && reactiveFacts.length > 0) {
     facts = reactiveFacts.map((f: any) => ({
       id: f.id,
-      fact: f.fact,
+      fact: f.fact_text,
       playerName: f.player_name,
       playerId: f.player_id,
       categoryType: f.category_type,
@@ -34,9 +34,8 @@ export async function ReactiveDidYouKnow() {
   } else {
     const { data: curatedFacts } = await (supabase as any)
       .from("did_you_know")
-      .select("id, fact, player_name, player_id, category_type")
+      .select("id, fact_text, player_name, player_id, category_type")
       .eq("approved", true)
-      .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .limit(10);
 
@@ -45,7 +44,7 @@ export async function ReactiveDidYouKnow() {
       const shuffled = curatedFacts.sort(() => Math.random() - 0.5);
       facts = shuffled.slice(0, 3).map((f: any) => ({
         id: f.id,
-        fact: f.fact,
+        fact: f.fact_text,
         playerName: f.player_name,
         playerId: f.player_id,
         categoryType: f.category_type || "curated",

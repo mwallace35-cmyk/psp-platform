@@ -7,9 +7,9 @@ interface PickemWeek {
   season_id: number;
   week_number: number;
   title: string;
-  is_open: boolean;
-  starts_at: string;
-  ends_at?: string;
+  status: string;
+  opens_at: string;
+  closes_at: string | null;
   created_at: string;
 }
 
@@ -17,13 +17,10 @@ interface Game {
   id: number;
   home_school_id: number;
   away_school_id: number;
-  game_date: string;
   final_home_score?: number;
   final_away_score?: number;
-  schools?: {
-    home: { id: number; name: string };
-    away: { id: number; name: string };
-  };
+  home_school?: { id: number; name: string } | null;
+  away_school?: { id: number; name: string } | null;
 }
 
 export default async function PickemAdmin() {
@@ -33,15 +30,15 @@ export default async function PickemAdmin() {
     supabase
       .from("pickem_weeks")
       .select("*")
-      .order("starts_at", { ascending: false }),
+      .order("opens_at", { ascending: false }),
     supabase
       .from("pickem_games")
       .select(`
         *,
-        schools:home_school_id(id, name),
-        away:away_school_id(id, name)
+        home_school:schools!pickem_games_home_school_id_fkey(id, name),
+        away_school:schools!pickem_games_away_school_id_fkey(id, name)
       `)
-      .order("game_date", { ascending: false }),
+      .order("created_at", { ascending: false }),
   ]);
 
   const initialWeeks = ((weeksRes.data as PickemWeek[] | null) || []);

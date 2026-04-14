@@ -132,7 +132,7 @@ export async function getLegacyProfile(slug: string): Promise<LegacyProfile | nu
       .select("*")
       .eq("slug", slug)
       .eq("is_published", true)
-      .single();
+      .maybeSingle();
     if (error || !data) return null;
     return data as LegacyProfile;
   } catch {
@@ -161,7 +161,7 @@ export async function getLegacyProfileForPlayer(playerId: number): Promise<Legac
       .select("*")
       .eq("player_id", playerId)
       .eq("is_published", true)
-      .single();
+      .maybeSingle();
     return (data as LegacyProfile) ?? null;
   } catch {
     return null;
@@ -176,7 +176,7 @@ export async function getLegacyProfileForCoach(coachId: number): Promise<LegacyP
       .select("*")
       .eq("coach_id", coachId)
       .eq("is_published", true)
-      .single();
+      .maybeSingle();
     return (data as LegacyProfile) ?? null;
   } catch {
     return null;
@@ -191,7 +191,7 @@ export async function getLegacyProfileForLegend(legendSlug: string): Promise<Leg
       .select("*")
       .eq("legend_slug", legendSlug)
       .eq("is_published", true)
-      .single();
+      .maybeSingle();
     return (data as LegacyProfile) ?? null;
   } catch {
     return null;
