@@ -5,6 +5,7 @@ import TabGroup from "@/components/ui/TabGroup";
 import OverviewTab from "./OverviewTab";
 import SportTab from "./SportTab";
 import LegacyTab from "./LegacyTab";
+import type { SchoolHubData, SchoolSportStats, CurrentSeasonInfo, SchoolGame, SchoolChampionshipData, NextLevelAthlete, SchoolCoach, SchoolAward, RecentSeasonData, SchoolRecord } from "@/lib/data/school-hub";
 
 const SPORT_EMOJI: Record<string, string> = {
   football: "🏈",
@@ -17,16 +18,16 @@ const SPORT_EMOJI: Record<string, string> = {
 };
 
 interface SchoolTabHubProps {
-  school: any;
-  sports: any[];
-  currentSeasons: any[];
-  recentGames: any[];
-  championships: any[];
-  nextLevel: any[];
-  coaches: any[];
-  awards: any[];
-  recentSeasons: any[];
-  records: any[];
+  school: SchoolHubData;
+  sports: SchoolSportStats[];
+  currentSeasons: CurrentSeasonInfo[];
+  recentGames: SchoolGame[];
+  championships: SchoolChampionshipData[];
+  nextLevel: NextLevelAthlete[];
+  coaches: SchoolCoach[];
+  awards: SchoolAward[];
+  recentSeasons: RecentSeasonData[];
+  records: SchoolRecord[];
 }
 
 export default function SchoolTabHub({
@@ -45,8 +46,8 @@ export default function SchoolTabHub({
 
   // Build tabs: Overview, then each sport with seasons, then Legacy
   const sportTabs = sports
-    .filter((s: any) => s.season_count > 0)
-    .map((s: any) => ({
+    .filter((s) => s.season_count > 0)
+    .map((s) => ({
       key: s.sport_id,
       label: s.sport_name,
       icon: SPORT_EMOJI[s.sport_id] || "⚽",
@@ -103,11 +104,11 @@ export default function SchoolTabHub({
             school={school}
             sportId={activeTab}
             sportName={
-              sports.find((s: any) => s.sport_id === activeTab)?.sport_name ||
+              sports.find((s) => s.sport_id === activeTab)?.sport_name ||
               activeTab
             }
             currentSeason={currentSeasons.find(
-              (s: any) => s.sport_id === activeTab
+              (s) => s.sport_id === activeTab
             )}
             championships={championships}
             recentSeasons={recentSeasons}

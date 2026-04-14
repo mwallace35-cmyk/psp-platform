@@ -6,6 +6,7 @@ import SchoolRoster from "./SchoolRoster";
 import StatLeadersCard from "./StatLeadersCard";
 import TeamGameLog from "./TeamGameLog";
 import RivalryRecord from "./RivalryRecord";
+import type { SchoolHubData, CurrentSeasonInfo, SchoolChampionshipData, RecentSeasonData, SchoolAward, SchoolCoach } from "@/lib/data/school-hub";
 
 const SPORT_EMOJI: Record<string, string> = {
   football: "🏈",
@@ -17,15 +18,18 @@ const SPORT_EMOJI: Record<string, string> = {
   soccer: "⚽",
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic API response shape
+type SportData = Record<string, any>; // from /api/schools/[slug]/sport-data
+
 interface SportTabProps {
-  school: any;
+  school: SchoolHubData;
   sportId: string;
   sportName: string;
-  currentSeason?: any;
-  championships: any[];
-  recentSeasons: any[];
-  awards: any[];
-  coaches: any[];
+  currentSeason?: CurrentSeasonInfo;
+  championships: SchoolChampionshipData[];
+  recentSeasons: RecentSeasonData[];
+  awards: SchoolAward[];
+  coaches: SchoolCoach[];
 }
 
 export default function SportTab({
@@ -38,7 +42,7 @@ export default function SportTab({
   awards,
   coaches,
 }: SportTabProps) {
-  const [sportData, setSportData] = useState<any>(null);
+  const [sportData, setSportData] = useState<SportData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -60,10 +64,10 @@ export default function SportTab({
       });
   }, [school.slug, sportId]);
 
-  const filteredSeasons = recentSeasons.filter((s: any) => s.sport_id === sportId);
-  const filteredAwards = awards.filter((a: any) => a.sport_id === sportId);
-  const filteredChamps = championships.filter((c: any) => c.sport_id === sportId);
-  const filteredCoaches = coaches.filter((c: any) => c.sport_id === sportId);
+  const filteredSeasons = recentSeasons.filter((s) => s.sport_id === sportId);
+  const filteredAwards = awards.filter((a) => a.sport_id === sportId);
+  const filteredChamps = championships.filter((c) => c.sport_id === sportId);
+  const filteredCoaches = coaches.filter((c) => c.sport_id === sportId);
 
   // Loading skeleton
   if (loading) {
@@ -142,7 +146,7 @@ export default function SportTab({
             Stat Leaders
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sportData.statLeaders.map((cat: any) => (
+            {sportData.statLeaders.map((cat: SportData) => (
               <StatLeadersCard
                 key={cat.category}
                 title={cat.category}
@@ -201,9 +205,9 @@ export default function SportTab({
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredSeasons.map((season: any) => {
+                  {filteredSeasons.map((season) => {
                     const isChamp = filteredChamps.some(
-                      (c: any) => c.season_label === season.season_label
+                      (c) => c.season_label === season.season_label
                     );
                     return (
                       <tr key={season.id} className={isChamp ? "bg-amber-50" : ""}>
@@ -252,7 +256,7 @@ export default function SportTab({
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredAwards.map((award: any) => (
+                  {filteredAwards.map((award) => (
                     <tr key={award.id}>
                       <td>
                         {award.player_slug ? (
@@ -290,7 +294,7 @@ export default function SportTab({
             Championships ({filteredChamps.length})
           </h3>
           <div className="flex flex-wrap gap-2">
-            {filteredChamps.map((c: any, idx: number) => (
+            {filteredChamps.map((c, idx) => (
               <Link
                 key={c.id}
                 href={`/${c.sport_id}/schools/${school.slug}`}

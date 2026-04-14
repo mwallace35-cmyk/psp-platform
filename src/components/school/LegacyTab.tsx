@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AchievementBadge } from "@/components/ui";
 import { SPORT_META, type SportId } from "@/lib/sports";
 import SchoolRecordsSection from "./SchoolRecordsSection";
+import type { SchoolHubData, SchoolChampionshipData, NextLevelAthlete, SchoolCoach, SchoolAward, RecentSeasonData, SchoolRecord } from "@/lib/data/school-hub";
 
 const SPORT_EMOJI: Record<string, string> = {
   football: "🏈",
@@ -14,13 +15,13 @@ const SPORT_EMOJI: Record<string, string> = {
 };
 
 interface LegacyTabProps {
-  school: any;
-  championships: any[];
-  nextLevel: any[];
-  coaches: any[];
-  awards: any[];
-  recentSeasons: any[];
-  records: any[];
+  school: SchoolHubData;
+  championships: SchoolChampionshipData[];
+  nextLevel: NextLevelAthlete[];
+  coaches: SchoolCoach[];
+  awards: SchoolAward[];
+  recentSeasons: RecentSeasonData[];
+  records: SchoolRecord[];
 }
 
 export default function LegacyTab({
@@ -35,19 +36,19 @@ export default function LegacyTab({
   const slug = school.slug;
 
   // Group championships by sport
-  const champsBySport = new Map<string, any[]>();
-  championships.forEach((c: any) => {
+  const champsBySport = new Map<string, SchoolChampionshipData[]>();
+  championships.forEach((c) => {
     if (!champsBySport.has(c.sport_id)) champsBySport.set(c.sport_id, []);
     champsBySport.get(c.sport_id)!.push(c);
   });
 
   // Sort next level: pros first
-  const sortedNextLevel = [...nextLevel].sort((a: any, b: any) => {
+  const sortedNextLevel = [...nextLevel].sort((a, b) => {
     if (a.pro_league && !b.pro_league) return -1;
     if (!a.pro_league && b.pro_league) return 1;
     return a.person_name.localeCompare(b.person_name);
   });
-  const proCount = sortedNextLevel.filter((a: any) => a.pro_league).length;
+  const proCount = sortedNextLevel.filter((a) => a.pro_league).length;
 
   return (
     <div className="space-y-8">
@@ -81,7 +82,7 @@ export default function LegacyTab({
                   </Link>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {sportChamps.map((c: any, idx: number) => (
+                  {sportChamps.map((c, idx) => (
                     <Link
                       key={c.id}
                       href={`/${c.sport_id}/schools/${slug}`}
@@ -116,7 +117,7 @@ export default function LegacyTab({
             Coaching Staff
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {coaches.map((coach: any) => {
+            {coaches.map((coach) => {
               const yearRange = coach.end_year
                 ? `${coach.start_year}\u2013${coach.end_year}`
                 : `${coach.start_year}\u2013present`;
@@ -200,7 +201,7 @@ export default function LegacyTab({
                   </tr>
                 </thead>
                 <tbody>
-                  {recentSeasons.map((season: any) => {
+                  {recentSeasons.map((season) => {
                     const totalSeasonGames = season.wins + season.losses + (season.ties || 0);
                     const seasonWinPct =
                       totalSeasonGames > 0
@@ -208,7 +209,7 @@ export default function LegacyTab({
                         : "\u2014";
                     const hasRecord = totalSeasonGames > 0;
                     const isChampSeason = championships.some(
-                      (c: any) =>
+                      (c) =>
                         c.sport_id === season.sport_id &&
                         c.season_label === season.season_label
                     );
@@ -275,7 +276,7 @@ export default function LegacyTab({
                   </tr>
                 </thead>
                 <tbody>
-                  {awards.slice(0, 20).map((award: any) => (
+                  {awards.slice(0, 20).map((award) => (
                     <tr key={award.id}>
                       <td>
                         {award.player_slug ? (
@@ -346,7 +347,7 @@ export default function LegacyTab({
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedNextLevel.slice(0, 15).map((athlete: any, idx: number) => (
+                  {sortedNextLevel.slice(0, 15).map((athlete, idx) => (
                     <tr
                       key={athlete.id}
                       className={`${athlete.pro_league ? "bg-amber-50" : ""} animate-fade-in-up`}
