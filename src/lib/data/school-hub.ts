@@ -316,7 +316,6 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             { data: fbPlayers },
             { data: bbPlayers },
             { data: baseballPlayers },
-            { data: miscPlayers },
           ] = await Promise.all([
             // 1. Team seasons with sport info
             supabase
@@ -342,11 +341,6 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             supabase
               .from("baseball_player_seasons")
               .select("player_id")
-              .eq("school_id", schoolId),
-            // 6. Minor sports player seasons
-            supabase
-              .from("player_seasons_misc")
-              .select("player_id, sport_id")
               .eq("school_id", schoolId),
           ]);
 
@@ -393,15 +387,6 @@ export const getSchoolAllSportsStats = cache(async (schoolId: number) => {
             const uniqueIds = new Set<number>();
             (players ?? []).forEach((p) => uniqueIds.add(p.player_id));
             playerCountBySport.set(sport, uniqueIds);
-          });
-
-          // Minor sports from player_seasons_misc
-          ((miscPlayers ?? []) as PlayerIdRow[]).forEach((p) => {
-            if (!p.sport_id) return;
-            if (!playerCountBySport.has(p.sport_id)) {
-              playerCountBySport.set(p.sport_id, new Set());
-            }
-            playerCountBySport.get(p.sport_id)!.add(p.player_id);
           });
 
           // Sport emoji mapping

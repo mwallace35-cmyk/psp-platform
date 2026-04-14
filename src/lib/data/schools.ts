@@ -47,23 +47,23 @@ export const getSportOverview = cache(async (sportId: string) => {
           };
           const statTable = PLAYER_STAT_TABLES[sportId];
 
-          // For sports with typed tables, count from that table; otherwise count from player_seasons_misc
+          // For sports with typed tables, count from that table; minor sports have no player season data yet
           let playerQuery = statTable
             ? supabase.from(statTable).select("player_id", { count: "exact", head: true })
-            : supabase.from("player_seasons_misc").select("player_id", { count: "exact", head: true }).eq("sport_id", sportId);
-          if (statTable && isBasketballSport(sportId)) {
+            : null;
+          if (playerQuery && statTable && isBasketballSport(sportId)) {
             playerQuery = playerQuery.eq("gender", getBasketballGender(sportId));
           }
 
           const [schoolsRes, playersRes, seasonsRes, champsRes] = await Promise.all([
             supabase.from("team_seasons").select("school_id", { count: "exact", head: true }).eq("sport_id", sportId),
-            playerQuery,
+            playerQuery ?? Promise.resolve({ count: 0 }),
             supabase.from("team_seasons").select("season_id", { count: "exact", head: true }).eq("sport_id", sportId),
             supabase.from("championships").select("id", { count: "exact", head: true }).eq("sport_id", sportId),
           ]);
           return {
             schools: schoolsRes.count ?? 0,
-            players: playersRes.count ?? 0,
+            players: (playersRes as { count: number | null }).count ?? 0,
             seasons: seasonsRes.count ?? 0,
             championships: champsRes.count ?? 0,
           };

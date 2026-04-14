@@ -94,8 +94,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       supabase
         .from("baseball_player_seasons")
         .select("player_id"),
-      // Fetch all players from misc sports table
-      supabase.from("player_seasons_misc").select("player_id, sport_id"),
       // Fetch all coaches with their sports
       supabase.from("coaching_stints").select("sport_id, coach_id"),
       // Fetch all published articles
@@ -104,11 +102,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .select("slug, updated_at")
         .eq("status", "published")
         .order("slug"),
-      // Fetch all games with box scores
+      // Fetch all games (each game has a detail page)
       supabase
         .from("games")
         .select("id, sport_id")
-        .not("game_player_stats_count", "is", null),
+        .not("sport_id", "is", null),
     ]);
 
     const [
@@ -116,7 +114,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       fbPlayersSettled,
       bbPlayersSettled,
       bsbPlayersSettled,
-      miscPlayersSettled,
       coachesSettled,
       articlesSettled,
       gamesSettled,
@@ -187,17 +184,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     } else if (bsbPlayersSettled.status === "rejected") {
       captureError(bsbPlayersSettled.reason, { context: "sitemap", fetch: "baseball_players" });
-    }
-
-    // Map minor sport players
-    if (miscPlayersSettled.status === "fulfilled" && miscPlayersSettled.value.data) {
-      for (const row of miscPlayersSettled.value.data as Array<{ player_id: number; sport_id: string | null }>) {
-        if (!playerSportsMap.has(row.player_id)) {
-          playerSportsMap.set(row.player_id, row.sport_id || "miscellaneous");
-        }
-      }
-    } else if (miscPlayersSettled.status === "rejected") {
-      captureError(miscPlayersSettled.reason, { context: "sitemap", fetch: "misc_players" });
     }
 
     // Fetch all players in one query and add to sitemap

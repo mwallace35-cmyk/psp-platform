@@ -48,12 +48,11 @@ async function getSportBreakdown() {
 
   for (const sport of sports) {
     const statTable = SPORT_STAT_TABLES[sport];
-    const playerQuery = statTable
-      ? supabase.from(statTable).select("id", { count: "exact", head: true })
-      : supabase.from("player_seasons_misc").select("id", { count: "exact", head: true }).eq("sport_id", sport);
 
     const [players, teams, champs] = await Promise.all([
-      playerQuery,
+      statTable
+        ? supabase.from(statTable).select("id", { count: "exact", head: true })
+        : Promise.resolve({ count: 0 } as { count: number }),
       supabase.from("team_seasons").select("id", { count: "exact", head: true }).eq("sport_id", sport),
       supabase.from("championships").select("id", { count: "exact", head: true }).eq("sport_id", sport),
     ]);
