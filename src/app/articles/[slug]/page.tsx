@@ -2,7 +2,6 @@ import { createStaticClient } from '@/lib/supabase/static';
 import { generatePageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { SPORT_META, type SportId } from '@/lib/sports';
 import { ArticleJsonLd } from '@/components/seo/JsonLd';
@@ -11,6 +10,8 @@ import CommentSectionLazy from '@/components/comments/CommentSectionLazy';
 import { sanitizeHtml } from '@/lib/sanitize';
 import ShareButtons from '@/components/social/ShareButtons';
 import JoinCTA from '@/components/ui/JoinCTA';
+import ArticleHero from './ArticleHero';
+import ArticleStatsRibbon from './ArticleStatsRibbon';
 
 export const revalidate = 3600;
 
@@ -231,223 +232,25 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       {/* Sport accent bar — full-width strip in sport color */}
       <div className="w-full h-1" style={{ background: accent.bar }} aria-hidden />
 
-      {/* ================================================================= */}
-      {/* IMMERSIVE HERO                                                      */}
-      {/* ================================================================= */}
-      <header
-        className="psp-article-hero relative w-full overflow-hidden"
-        style={{
-          minHeight: 'clamp(440px, 78vh, 720px)',
-          background: 'var(--psp-navy)',
-        }}
-      >
-        {article.featured_image_url && (
-          <Image
-            src={article.featured_image_url}
-            alt={article.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        )}
+      <ArticleHero
+        title={article.title}
+        excerpt={article.excerpt}
+        featuredImageUrl={article.featured_image_url}
+        publishedAt={article.published_at}
+        createdAt={article.created_at}
+        byline={byline}
+        bylineInitial={bylineInitial}
+        publishedDate={publishedDate}
+        accent={accent}
+        sportMeta={sportMeta}
+      />
 
-        {/* Gradient + radial tint overlay */}
-        <div
-          className="absolute inset-0"
-          aria-hidden
-          style={{
-            background: `
-              linear-gradient(180deg, rgba(10,22,40,0.15) 0%, rgba(10,22,40,0.5) 48%, rgba(10,22,40,0.95) 100%),
-              radial-gradient(ellipse 60% 50% at 85% 40%, ${accent.tint}, transparent 65%)
-            `,
-          }}
-        />
-
-        {/* Hero text */}
-        <div className="relative h-full flex flex-col justify-end" style={{ minHeight: 'inherit' }}>
-          <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10 sm:pb-14 pt-24">
-            {/* Sport chip — staggered fade */}
-            {sportMeta && (
-              <div
-                className="psp-fade-in-up inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6"
-                style={{
-                  background: accent.chip,
-                  border: `1px solid ${accent.bar}`,
-                  backdropFilter: 'blur(8px)',
-                  WebkitBackdropFilter: 'blur(8px)',
-                  animationDelay: '0.1s',
-                }}
-              >
-                <span className="text-base leading-none">{sportMeta.emoji}</span>
-                <span
-                  className="text-[11px] font-bold uppercase tracking-[0.14em] text-white"
-                  style={{ fontFamily: "var(--font-body), 'Inter Tight', sans-serif" }}
-                >
-                  {sportMeta.name}
-                </span>
-                <span
-                  style={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: '50%',
-                    background: accent.bar,
-                    display: 'inline-block',
-                  }}
-                />
-                <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/75">
-                  Commitments
-                </span>
-              </div>
-            )}
-
-            {/* Title */}
-            <h1
-              className="psp-h1 psp-fade-in-up max-w-3xl"
-              style={{
-                color: '#ffffff',
-                textShadow:
-                  '0 4px 32px rgba(0,0,0,0.6), 0 2px 12px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.4)',
-                animationDelay: '0.2s',
-              }}
-            >
-              {article.title}
-            </h1>
-
-            {/* Excerpt (if present) */}
-            {article.excerpt && (
-              <p
-                className="psp-fade-in-up mt-5 max-w-2xl text-base sm:text-lg leading-relaxed"
-                style={{
-                  color: 'rgba(245, 235, 214, 0.85)',
-                  textShadow: '0 2px 14px rgba(0,0,0,0.6)',
-                  animationDelay: '0.3s',
-                  fontFamily: "var(--font-body), 'Inter Tight', sans-serif",
-                }}
-              >
-                {article.excerpt}
-              </p>
-            )}
-
-            {/* Byline */}
-            <div
-              className="psp-fade-in-up flex items-center gap-3 mt-7"
-              style={{ animationDelay: '0.4s' }}
-            >
-              <div
-                className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
-                style={{
-                  background: accent.bar,
-                  color: '#fff',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.35)',
-                }}
-                aria-hidden
-              >
-                {bylineInitial}
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="font-semibold text-white">{byline}</span>
-                <span style={{ color: 'rgba(245,235,214,0.4)' }}>·</span>
-                <time
-                  dateTime={article.published_at || article.created_at}
-                  style={{ color: 'rgba(245,235,214,0.75)' }}
-                >
-                  {publishedDate}
-                </time>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll chevron indicator */}
-        <div
-          className="psp-pulse-down absolute left-1/2 bottom-5 pointer-events-none hidden sm:block"
-          style={{ transform: 'translateX(-50%)' }}
-          aria-hidden
-        >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="rgba(245,235,214,0.65)"
-            strokeWidth="2.25"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </div>
-      </header>
-
-      {/* ================================================================= */}
-      {/* STAT RIBBON (conditional)                                           */}
-      {/* ================================================================= */}
       {hasStats && player && (
-        <section
-          aria-label={`${player.name} career stats`}
-          className="relative border-b"
-          style={{
-            background: 'linear-gradient(180deg, #0a1628 0%, #0f2040 100%)',
-            borderColor: 'rgba(245,235,214,0.08)',
-          }}
-        >
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
-            <div className="flex items-stretch gap-4">
-              {/* Accent bar + label */}
-              <div className="flex items-center gap-3 shrink-0">
-                <div
-                  className="w-1 self-stretch rounded-full"
-                  style={{ background: accent.bar }}
-                  aria-hidden
-                />
-                <div>
-                  <p
-                    className="psp-caption"
-                    style={{ color: accent.bar, letterSpacing: '0.14em' }}
-                  >
-                    Career
-                  </p>
-                  <p
-                    className="text-[11px] uppercase tracking-wider font-semibold"
-                    style={{ color: 'rgba(245,235,214,0.5)' }}
-                  >
-                    At Roman Catholic
-                  </p>
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className="flex-1 grid grid-cols-4 gap-2 sm:gap-6">
-                {[
-                  { label: 'REC', value: careerStats!.rec },
-                  { label: 'YDS', value: careerStats!.recYds.toLocaleString('en-US') },
-                  { label: 'TDs', value: careerStats!.recTd },
-                  { label: 'GP', value: careerStats!.gp || '—' },
-                ].map((stat) => (
-                  <div key={stat.label} className="text-center sm:text-left">
-                    <div
-                      className="font-extrabold leading-none tabular-nums"
-                      style={{
-                        color: 'var(--psp-gold)',
-                        fontFamily: "var(--font-display), 'Fraunces', serif",
-                        fontSize: 'clamp(1.5rem, 3vw + 0.5rem, 2.25rem)',
-                      }}
-                    >
-                      {stat.value}
-                    </div>
-                    <div
-                      className="mt-1 text-[10px] sm:text-xs font-bold uppercase tracking-widest"
-                      style={{ color: 'rgba(245,235,214,0.6)' }}
-                    >
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        <ArticleStatsRibbon
+          playerName={player.name}
+          accent={accent}
+          careerStats={careerStats!}
+        />
       )}
 
       <LeaderboardAd id="psp-article-banner" />
