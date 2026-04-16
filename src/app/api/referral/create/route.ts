@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     let code = generateReferralCode();
     let retries = 0;
     while (retries < 5) {
-      const { data: existing } = await supabase
+      const { data: existing } = await (supabase as any)
         .from('referral_links')
         .select('id')
         .eq('referral_code', code)
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create referral link
-    const { data: referralLink, error: insertError } = await supabase
+    const { data: referralLink, error: insertError } = await (supabase as any)
       .from('referral_links')
       .insert({
         user_id: user.id,

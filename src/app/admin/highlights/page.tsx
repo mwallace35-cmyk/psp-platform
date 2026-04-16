@@ -24,7 +24,7 @@ export default async function HighlightsAdmin() {
   const supabase = createStaticClient();
 
   const [highlightsRes, playersRes] = await Promise.all([
-    supabase
+    (supabase as any)
       .from("player_highlights")
       .select(`
         *,

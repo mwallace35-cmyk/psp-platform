@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient();
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('ranking_votes')
       .select('ranking_id, vote_type')
       .in('ranking_id', rankingIds);

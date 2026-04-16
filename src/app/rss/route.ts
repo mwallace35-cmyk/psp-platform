@@ -5,12 +5,11 @@ interface Article {
   slug: string;
   title: string;
   excerpt: string | null;
-  content: string | null;
+  body: string | null;
   sport_id: string | null;
   published_at: string;
   created_at: string;
   featured_image_url: string | null;
-  author: string | null;
   author_name: string | null;
 }
 
@@ -97,15 +96,15 @@ export async function GET() {
       for (const article of articles) {
         const published = article.published_at
           ? toISO8601(article.published_at)
-          : toISO8601(article.created_at);
+          : toISO8601(article.created_at ?? new Date().toISOString());
         const articleUrl = `${baseUrl}/articles/${article.slug}`;
         const summary = escapeXml(
           article.excerpt ||
-            stripHtml(article.content) ||
+            stripHtml(article.body) ||
             'Click to read article...'
         );
         const title = escapeXml(article.title);
-        const author = article.author_name || article.author || 'PhillySportsPack';
+        const author = article.author_name || 'PhillySportsPack';
 
         atomXml += `  <entry>
     <title>${title}</title>
@@ -127,8 +126,8 @@ export async function GET() {
         atomXml += `    <summary>${summary}</summary>\n`;
 
         // Add content
-        if (article.content) {
-          atomXml += `    <content type="html"><![CDATA[${article.content}]]></content>\n`;
+        if (article.body) {
+          atomXml += `    <content type="html"><![CDATA[${article.body}]]></content>\n`;
         }
 
         // Add media content if featured image exists

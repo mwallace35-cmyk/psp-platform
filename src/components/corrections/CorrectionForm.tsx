@@ -54,7 +54,7 @@ export default function CorrectionForm({ entityType, entityId, entityName }: Cor
 
     setSubmitting(true);
     try {
-      const { error } = await supabase.from('corrections').insert({
+      const { error } = await (supabase as any).from('corrections').insert({
         entity_type: entityType,
         entity_id: entityId,
         entity_name: entityName,

@@ -143,7 +143,7 @@ export async function GET(
     }
 
     // Build query
-    let query = supabase
+    let query = (supabase as any)
       .from(table)
       .select(
         `
@@ -193,7 +193,7 @@ export async function GET(
             }
           : { label: "Unknown" },
       }))
-      .filter((entry) => entry.value !== null && entry.value !== undefined);
+      .filter((entry: any) => entry.value !== null && entry.value !== undefined);
 
     const response = NextResponse.json<ApiResponse<LeaderboardEntry[]>>(
       {

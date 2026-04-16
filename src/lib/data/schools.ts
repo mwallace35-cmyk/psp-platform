@@ -48,8 +48,9 @@ export const getSportOverview = cache(async (sportId: string) => {
           const statTable = PLAYER_STAT_TABLES[sportId];
 
           // For sports with typed tables, count from that table; minor sports have no player season data yet
+          // typed client can't infer dynamic table name
           let playerQuery = statTable
-            ? supabase.from(statTable).select("player_id", { count: "exact", head: true })
+            ? (supabase as any).from(statTable).select("player_id", { count: "exact", head: true })
             : null;
           if (playerQuery && statTable && isBasketballSport(sportId)) {
             playerQuery = playerQuery.eq("gender", getBasketballGender(sportId));
@@ -291,7 +292,8 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
           }
 
           // For typed sports, fetch from player_seasons with next_level priority
-          let notableQuery = supabase
+          // typed client can't infer dynamic table name with complex join
+          let notableQuery = (supabase as any)
             .from(statTable)
             .select(
               `
@@ -365,7 +367,8 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
 
             if (recordRows) {
               const recordCounts = new Map<number, number>();
-              recordRows.forEach((r: { player_id: number }) => {
+              recordRows.forEach((r: { player_id: number | null }) => {
+                if (r.player_id == null) return;
                 recordCounts.set(r.player_id, (recordCounts.get(r.player_id) ?? 0) + 1);
               });
               recordCounts.forEach((count, pid) => {
@@ -382,7 +385,8 @@ export const getSchoolNotablePlayers = cache(async (schoolId: number, sportId: s
 
             if (awardRows) {
               const awardCounts = new Map<number, number>();
-              awardRows.forEach((r: { player_id: number }) => {
+              awardRows.forEach((r: { player_id: number | null }) => {
+                if (r.player_id == null) return;
                 awardCounts.set(r.player_id, (awardCounts.get(r.player_id) ?? 0) + 1);
               });
               awardCounts.forEach((count, pid) => {

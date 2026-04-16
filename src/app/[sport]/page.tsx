@@ -197,7 +197,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
     if (featuredResult.status === "fulfilled") featured = featuredResult.value as unknown as FeaturedArticle[];
     if (freshnessResult.status === "fulfilled") freshness = freshnessResult.value as unknown as DataFreshness | null;
     if (gamesResult.status === "fulfilled") recentGames = gamesResult.value as unknown as HubGame[];
-    if (standingsResult.status === "fulfilled") standings = (standingsResult.value as unknown as Awaited<ReturnType<typeof getTeamsWithRecords>>).data || [];
+    if (standingsResult.status === "fulfilled") standings = ((standingsResult.value as any).data || []) as TeamWithRecords[];
 
     // Process compound leaderboard results
     if (compoundResult.status === "fulfilled") {
@@ -483,7 +483,7 @@ export default async function SportHubPage({ params }: { params: Promise<PagePar
         meta={meta}
         overview={overview}
         champions={champions as unknown as import("@/lib/data/types").Championship[]}
-        schools={schools}
+        schools={schools as any}
         featured={featured}
         freshness={freshness}
         recentGames={recentGames}

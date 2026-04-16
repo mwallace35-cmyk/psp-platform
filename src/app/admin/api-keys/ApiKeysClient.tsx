@@ -45,7 +45,7 @@ export default function ApiKeysClient({ initialKeys }: ApiKeysClientProps) {
   const loadApiKeys = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('api_keys')
         .select('*')
         .order('created_at', { ascending: false });
@@ -74,7 +74,7 @@ export default function ApiKeysClient({ initialKeys }: ApiKeysClientProps) {
     try {
       const newKey = generateApiKey();
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('api_keys')
         .insert([
           {
@@ -106,7 +106,7 @@ export default function ApiKeysClient({ initialKeys }: ApiKeysClientProps) {
 
   const handleToggleActive = async (id: number, isActive: boolean) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('api_keys')
         .update({ is_active: !isActive })
         .eq('id', id);
@@ -127,7 +127,7 @@ export default function ApiKeysClient({ initialKeys }: ApiKeysClientProps) {
 
   const handleResetCounter = async (id: number) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('api_keys')
         .update({ requests_today: 0 })
         .eq('id', id);

@@ -5,12 +5,11 @@ interface Article {
   slug: string;
   title: string;
   excerpt: string | null;
-  content: string | null;
+  body: string | null;
   sport_id: string | null;
   published_at: string;
   created_at: string;
   featured_image_url: string | null;
-  author: string | null;
   author_name: string | null;
 }
 
@@ -93,15 +92,15 @@ export async function GET() {
       for (const article of articles) {
         const pubDate = article.published_at
           ? toRFC2822(article.published_at)
-          : toRFC2822(article.created_at);
+          : toRFC2822(article.created_at ?? new Date().toISOString());
         const articleUrl = `${baseUrl}/articles/${article.slug}`;
         const description = escapeXml(
           article.excerpt ||
-            stripHtmlAndTruncate(article.content) ||
+            stripHtmlAndTruncate(article.body) ||
             'Click to read article...'
         );
         const title = escapeXml(article.title);
-        const author = escapeXml(article.author_name || article.author || 'PhillySportsPack');
+        const author = escapeXml(article.author_name || 'PhillySportsPack');
         const sportCategory = article.sport_id ? escapeXml(article.sport_id) : 'sports';
         const guid = `${baseUrl}/articles/${article.id}-${article.slug}`;
 
@@ -116,9 +115,8 @@ export async function GET() {
 `;
 
         // Add content:encoded for full article content
-        if (article.content) {
-          const content = escapeXml(article.content);
-          rssXml += `      <content:encoded><![CDATA[${article.content}]]></content:encoded>\n`;
+        if (article.body) {
+          rssXml += `      <content:encoded><![CDATA[${article.body}]]></content:encoded>\n`;
         }
 
         // Add featured image if available

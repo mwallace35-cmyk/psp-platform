@@ -134,7 +134,7 @@ export async function getLegacyProfile(slug: string): Promise<LegacyProfile | nu
       .eq("is_published", true)
       .maybeSingle();
     if (error || !data) return null;
-    return data as LegacyProfile;
+    return data as unknown as LegacyProfile;
   } catch {
     return null;
   }
@@ -162,7 +162,7 @@ export async function getLegacyProfileForPlayer(playerId: number): Promise<Legac
       .eq("player_id", playerId)
       .eq("is_published", true)
       .maybeSingle();
-    return (data as LegacyProfile) ?? null;
+    return (data as unknown as LegacyProfile) ?? null;
   } catch {
     return null;
   }
@@ -177,7 +177,7 @@ export async function getLegacyProfileForCoach(coachId: number): Promise<LegacyP
       .eq("coach_id", coachId)
       .eq("is_published", true)
       .maybeSingle();
-    return (data as LegacyProfile) ?? null;
+    return (data as unknown as LegacyProfile) ?? null;
   } catch {
     return null;
   }
@@ -192,7 +192,7 @@ export async function getLegacyProfileForLegend(legendSlug: string): Promise<Leg
       .eq("legend_slug", legendSlug)
       .eq("is_published", true)
       .maybeSingle();
-    return (data as LegacyProfile) ?? null;
+    return (data as unknown as LegacyProfile) ?? null;
   } catch {
     return null;
   }
@@ -476,7 +476,7 @@ export async function getCoachingTreeData(profile: LegacyProfile): Promise<Coach
         .select("id, slug, display_name, hero_photo_url, era_summary")
         .in("id", toIds);
 
-      for (const p of related ?? []) {
+      for (const p of (related ?? []) as any[]) {
         profileMap[p.id] = p;
       }
     }

@@ -323,7 +323,8 @@ export const getSocialPosts = cache(async (limit = 20) => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data } = await supabase
+          // typed client can't infer complex join select
+          const { data } = await (supabase as any)
             .from("social_posts")
             .select("id, alumni_id, platform, post_url, text, curated_at, next_level_tracking(person_name, current_org, current_role)")
             .order("curated_at", { ascending: false })
@@ -715,7 +716,8 @@ export async function getLeaderboard(stat: StatCategory, limit = 25): Promise<Le
         async () => {
           const supabase = await createClient();
           const ascending = stat === "era";
-          const { data } = await supabase
+          // typed client can't infer dynamic table name
+          const { data } = await (supabase as any)
             .from(mapping.table)
             .select("*, players(id, name, slug), schools(name, slug), seasons(label)")
             .not(mapping.column, "is", null)
@@ -775,7 +777,7 @@ export async function getFootballCareerLeaders(stat: string = "rushing", limit =
         console.warn("[PSP] football_career_leaders view query failed:", error.message);
         return [];
       }
-      return (data ?? []) as CareerLeaderRow[];
+      return (data ?? []) as unknown as CareerLeaderRow[];
     },
     [],
     "DATA_FOOTBALL_CAREER_LEADERS",
@@ -813,7 +815,7 @@ export async function getBasketballCareerLeaders(stat: string = "scoring", limit
         console.warn("[PSP] basketball_career_leaders view query failed:", error.message);
         return [];
       }
-      return (data ?? []) as CareerLeaderRow[];
+      return (data ?? []) as unknown as CareerLeaderRow[];
     },
     [],
     "DATA_BASKETBALL_CAREER_LEADERS",
@@ -949,7 +951,7 @@ export const getFootballLeaders = cache(async (stat: string, limit = 50, seasonI
             .limit(cappedLimit);
 
           // Flatten school from players.schools to top-level for template
-          return (data as FootballLeaderRowData[] ?? []).map((row) => ({
+          return ((data ?? []) as unknown as FootballLeaderRowData[]).map((row) => ({
             ...row,
             schools: row.players?.schools || row.schools || null,
           })) as FootballLeaderRowData[];
@@ -1059,7 +1061,7 @@ export const getBasketballLeaders = cache(async (stat: string, limit = 50, seaso
             .limit(cappedLimit);
 
           // Flatten school from players.schools to top-level for template
-          return (data as BasketballLeaderRowData[] ?? []).map((row) => ({
+          return ((data ?? []) as unknown as BasketballLeaderRowData[]).map((row) => ({
             ...row,
             schools: row.players?.schools || row.schools || null,
           })) as BasketballLeaderRowData[];
@@ -1217,7 +1219,7 @@ export async function getSchoolWinsLeaderboard(sportId: string, orderBy: string 
         console.warn("[PSP] team_alltime_records query failed:", error.message);
         return [];
       }
-      return (data ?? []) as SchoolWinsRow[];
+      return (data ?? []) as unknown as SchoolWinsRow[];
     },
     [],
     "DATA_SCHOOL_WINS_LEADERBOARD",

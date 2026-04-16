@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already following
-    const { data: existing } = await supabase
+    const { data: existing } = await (supabase as any)
       .from("user_follows")
       .select("id")
       .eq("user_id", user.id)
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       // Update existing follow record
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("user_follows")
         .update({
           notify_scores: notify_scores ?? true,
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // Create new follow record
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("user_follows")
         .insert({
           user_id: user.id,
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("user_follows")
       .select("*")
       .eq("user_id", user.id)

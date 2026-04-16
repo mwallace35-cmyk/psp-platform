@@ -31,7 +31,7 @@ export default function CommentsModeration() {
   async function fetchComments() {
     setLoading(true);
     try {
-      let query = supabase
+      let query = (supabase as any)
         .from('comments')
         .select(`
           id, body, status, created_at, article_id, user_id, parent_comment_id,
@@ -49,7 +49,7 @@ export default function CommentsModeration() {
       if (error) throw error;
 
       setComments(
-        (data || []).map((c) => ({
+        (data || []).map((c: any) => ({
           ...c,
           articles: Array.isArray(c.articles) ? c.articles[0] : c.articles,
           user_profiles: Array.isArray(c.user_profiles) ? c.user_profiles[0] : c.user_profiles,

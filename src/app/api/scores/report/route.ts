@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     // Check rate limit: max 1 score report per game per user per 2 minutes
     const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
-    const { data: recentReports } = await supabase
+    const { data: recentReports } = await (supabase as any)
       .from("live_scores")
       .select("id")
       .eq("game_id", game_id)
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert live score record
-    const { data: liveScore, error: insertError } = await supabase
+    const { data: liveScore, error: insertError } = await (supabase as any)
       .from("live_scores")
       .insert({
         game_id,

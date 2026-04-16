@@ -972,7 +972,8 @@ export async function getSchoolRecordBook(
       else return {};
 
       // Fetch all seasons for this school — select * to avoid PostgREST template parsing issues
-      let schoolQuery = client
+      // typed client can't infer dynamic table name
+      let schoolQuery = (client as any)
         .from(tableName)
         .select("*, players(name, slug), schools(name, slug), seasons(label, year_start)")
         .eq("school_id", schoolId);
@@ -1593,7 +1594,8 @@ export const getStatTotalCount = cache(async (
             .eq("is_current", true)
             .single();
 
-          let query = supabase
+          // typed client can't infer dynamic table name
+          let query = (supabase as any)
             .from(mapping.table)
             .select("id", { count: "exact", head: true })
             .not(column, "is", null)

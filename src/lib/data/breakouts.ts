@@ -59,7 +59,8 @@ export const getBreakoutPlayers = cache(
             }
 
             // Fetch all seasons for the sport with relations
-            let breakoutQuery = supabase
+            // typed client can't infer dynamic table name
+            let breakoutQuery = (supabase as any)
               .from(tableName)
               .select(
                 `id, player_id, school_id, season_id,

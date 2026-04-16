@@ -32,7 +32,7 @@ async function getOtherSportStats(
 
   // Check football
   if (currentSport !== "football") {
-    const { data: fb } = await supabase
+    const { data: fb } = await (supabase as any)
       .from("football_player_seasons")
       .select("player_id, games_played, rush_yards, pass_yards, rec_yards, total_td")
       .in("player_id", playerIds)
@@ -56,7 +56,7 @@ async function getOtherSportStats(
 
   // Check basketball
   if (currentSport !== "basketball") {
-    const { data: bb } = await supabase
+    const { data: bb } = await (supabase as any)
       .from("basketball_player_seasons")
       .select("player_id, games_played, ppg, rpg, apg, points")
       .in("player_id", playerIds)
@@ -80,7 +80,7 @@ async function getOtherSportStats(
 
   // Check baseball
   if (currentSport !== "baseball") {
-    const { data: bsb } = await supabase
+    const { data: bsb } = await (supabase as any)
       .from("baseball_player_seasons")
       .select("player_id, games_played, batting_avg, hits, rbi, home_runs")
       .in("player_id", playerIds)

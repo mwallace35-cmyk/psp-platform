@@ -40,7 +40,7 @@ export default function CorrectionsAdmin() {
   async function fetchCorrections() {
     setLoading(true);
     try {
-      let query = supabase
+      let query = (supabase as any)
         .from('corrections')
         .select('*')
         .order('created_at', { ascending: false });

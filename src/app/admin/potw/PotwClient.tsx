@@ -132,7 +132,7 @@ export default function PotwClient({ initialNominees, initialWinners }: PotwClie
       const { error: deleteError } = await supabase
         .from('potw_nominees')
         .delete()
-        .neq('id', 'null');
+        .neq('id', 0);
 
       if (deleteError) throw deleteError;
 
@@ -144,11 +144,11 @@ export default function PotwClient({ initialNominees, initialWinners }: PotwClie
     }
   }
 
-  async function handleDeleteNominee(id: string) {
+  async function handleDeleteNominee(id: string | number) {
     if (!window.confirm('Delete this nominee?')) return;
 
     try {
-      const { error } = await supabase.from('potw_nominees').delete().eq('id', id);
+      const { error } = await supabase.from('potw_nominees').delete().eq('id', Number(id));
       if (error) throw error;
       fetchData();
     } catch (error) {

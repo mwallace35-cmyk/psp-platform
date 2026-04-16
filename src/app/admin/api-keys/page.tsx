@@ -3,7 +3,7 @@ import ApiKeysClient, { type ApiKey } from './ApiKeysClient';
 
 export default async function ApiKeysPage() {
   const supabase = createStaticClient();
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('api_keys')
     .select('*')
     .order('created_at', { ascending: false });

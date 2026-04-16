@@ -39,7 +39,7 @@ async function getRecruitFinderData(): Promise<RecruitRow[]> {
       .select("id", { count: "exact", head: true })
       .eq("season_id", seasonId);
     if (!count || count === 0) {
-      seasonId = null; // force fallback
+      seasonId = undefined; // force fallback
     }
   }
 

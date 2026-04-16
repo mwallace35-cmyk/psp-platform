@@ -84,7 +84,7 @@ export default async function PotwPage() {
               <div className="space-y-4">
                 {nominees.map((nominee, idx) => {
                   const sportMeta = SPORT_META[nominee.sport_id as keyof typeof SPORT_META];
-                  const isLeading = idx === 0 && nominee.vote_count > 0;
+                  const isLeading = idx === 0 && (nominee.vote_count ?? 0) > 0;
 
                   return (
                     <div
@@ -130,7 +130,7 @@ export default async function PotwPage() {
                             <div className="text-3xl font-bold text-navy">{nominee.vote_count || 0}</div>
                             <div className="text-xs text-gray-400">votes</div>
                           </div>
-                          <PotwVoteButton nomineeId={nominee.id} />
+                          <PotwVoteButton nomineeId={String(nominee.id)} />
                         </div>
                       </div>
 
@@ -184,7 +184,7 @@ export default async function PotwPage() {
                       </div>
                       <div className="flex justify-between items-center text-xs text-gray-400 mt-2">
                         <span>Week {winner.week}, {winner.year}</span>
-                        <span>{winner.votes} votes</span>
+                        <span>{winner.vote_count ?? 0} votes</span>
                       </div>
                     </div>
                   );

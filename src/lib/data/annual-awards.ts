@@ -59,8 +59,9 @@ export interface AwardResult {
  */
 export async function getActiveAwards(seasonId?: number): Promise<AnnualAward[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  let query = supabase
+  let query = db
     .from("annual_awards")
     .select("*")
     .eq("voting_open", true)
@@ -87,8 +88,9 @@ export async function getActiveAwards(seasonId?: number): Promise<AnnualAward[]>
  */
 export async function getAwardById(awardId: number): Promise<AnnualAward | null> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("annual_awards")
     .select("*")
     .eq("id", awardId)
@@ -103,7 +105,7 @@ export async function getAwardById(awardId: number): Promise<AnnualAward | null>
 
   // If voting is open, fetch vote counts
   if ((data as any).voting_open) {
-    const { data: votes } = await supabase
+    const { data: votes } = await db
       .from("annual_award_votes")
       .select("nominee_index")
       .eq("award_id", awardId);
@@ -133,8 +135,9 @@ export async function getAwardById(awardId: number): Promise<AnnualAward | null>
  */
 export async function getAwardResults(seasonId: number): Promise<AwardResult[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  const { data: awards, error } = await supabase
+  const { data: awards, error } = await db
     .from("annual_awards")
     .select("*")
     .eq("season_id", seasonId);
@@ -147,7 +150,7 @@ export async function getAwardResults(seasonId: number): Promise<AwardResult[]> 
   const results: AwardResult[] = [];
 
   for (const award of awards || []) {
-    const { data: votes } = await supabase
+    const { data: votes } = await db
       .from("annual_award_votes")
       .select("nominee_index")
       .eq("award_id", award.id);
@@ -180,8 +183,9 @@ export async function getAwardResults(seasonId: number): Promise<AwardResult[]> 
  */
 export async function getPastWinners(awardName: string): Promise<AwardResult[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  const { data: awards, error } = await supabase
+  const { data: awards, error } = await db
     .from("annual_awards")
     .select("*")
     .eq("name", awardName)
@@ -209,8 +213,9 @@ export async function createAnnualAward(
   award: Omit<AnnualAward, "id" | "created_at" | "updated_at">
 ): Promise<AnnualAward> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("annual_awards")
     .insert(award)
     .select("*")
@@ -231,8 +236,9 @@ export async function updateAnnualAward(
   updates: Partial<AnnualAward>
 ): Promise<AnnualAward> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("annual_awards")
     .update({
       ...updates,
@@ -258,8 +264,9 @@ export async function castAwardVote(
   voterId: string
 ): Promise<void> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  const { error } = await supabase.from("annual_award_votes").insert({
+  const { error } = await db.from("annual_award_votes").insert({
     award_id: awardId,
     nominee_index: nomineeIndex,
     voter_id: voterId,
@@ -283,8 +290,9 @@ export async function hasUserVoted(
   voterId: string
 ): Promise<boolean> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("annual_award_votes")
     .select("id")
     .eq("award_id", awardId)
@@ -306,8 +314,9 @@ export async function getAwardVoteCounts(
   awardId: number
 ): Promise<Record<number, number>> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer annual_awards tables
 
-  const { data: votes, error } = await supabase
+  const { data: votes, error } = await db
     .from("annual_award_votes")
     .select("nominee_index")
     .eq("award_id", awardId);

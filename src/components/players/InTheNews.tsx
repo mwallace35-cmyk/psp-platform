@@ -13,14 +13,14 @@ export default async function InTheNews({ entityType, entityId, limit = 3 }: Pro
 
   const column = entityType === 'player' ? 'player_id' : 'school_id';
 
-  const { data: articles } = await supabase
+  const { data: articles } = await (supabase as any)
     .from('articles')
     .select('id, slug, title, sport_id, published_at, author_name')
     .eq(column, entityId)
     .eq('status', 'published')
     .is('deleted_at', null)
     .order('published_at', { ascending: false })
-    .limit(limit);
+    .limit(limit) as { data: any[] | null };
 
   if (!articles || articles.length === 0) return null;
 
@@ -37,13 +37,13 @@ export default async function InTheNews({ entityType, entityId, limit = 3 }: Pro
             className="block bg-[var(--psp-navy-mid)] rounded-lg border border-gray-700/50 px-4 py-3 hover:border-[var(--psp-gold)]/30 transition group"
           >
             <div className="flex items-start gap-2">
-              <span className="text-sm shrink-0">{SPORT_EMOJI[article.sport_id] || '📰'}</span>
+              <span className="text-sm shrink-0">{(article.sport_id ? SPORT_EMOJI[article.sport_id] : null) || '📰'}</span>
               <div className="min-w-0">
                 <p className="text-sm text-gray-200 font-medium group-hover:text-[var(--psp-gold)] transition line-clamp-2">
                   {article.title}
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
-                  {article.author_name || 'PSP Staff'} · {new Date(article.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {article.author_name || 'PSP Staff'} · {article.published_at ? new Date(article.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
                 </p>
               </div>
             </div>

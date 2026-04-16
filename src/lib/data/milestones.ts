@@ -32,7 +32,7 @@ export async function getUpcomingMilestones(
 ) {
   const supabase = await createClient();
 
-  let query = supabase
+  let query = (supabase as any)
     .from("stat_milestones")
     .select(
       `
@@ -66,10 +66,10 @@ export async function getUpcomingMilestones(
 
   if (error) {
     console.error("Error fetching upcoming milestones:", error);
-    return [];
+    return [] as StatMilestone[];
   }
 
-  return data || [];
+  return (data || []) as StatMilestone[];
 }
 
 /**
@@ -81,7 +81,7 @@ export async function getRecentMilestones(
 ) {
   const supabase = await createClient();
 
-  let query = supabase
+  let query = (supabase as any)
     .from("stat_milestones")
     .select(
       `
@@ -114,10 +114,10 @@ export async function getRecentMilestones(
 
   if (error) {
     console.error("Error fetching recent milestones:", error);
-    return [];
+    return [] as StatMilestone[];
   }
 
-  return data || [];
+  return (data || []) as StatMilestone[];
 }
 
 /**
@@ -126,7 +126,7 @@ export async function getRecentMilestones(
 export async function getPlayerMilestones(playerId: number) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("stat_milestones")
     .select(
       `
@@ -151,10 +151,10 @@ export async function getPlayerMilestones(playerId: number) {
 
   if (error) {
     console.error("Error fetching player milestones:", error);
-    return [];
+    return [] as StatMilestone[];
   }
 
-  return data || [];
+  return (data || []) as StatMilestone[];
 }
 
 /**
@@ -163,7 +163,7 @@ export async function getPlayerMilestones(playerId: number) {
 export async function getMilestoneAlerts(sportId?: string, limit: number = 5) {
   const supabase = await createClient();
 
-  let query = supabase
+  let query = (supabase as any)
     .from("stat_milestones")
     .select(
       `
@@ -197,8 +197,8 @@ export async function getMilestoneAlerts(sportId?: string, limit: number = 5) {
 
   if (error) {
     console.error("Error fetching milestone alerts:", error);
-    return [];
+    return [] as StatMilestone[];
   }
 
-  return data || [];
+  return (data || []) as StatMilestone[];
 }

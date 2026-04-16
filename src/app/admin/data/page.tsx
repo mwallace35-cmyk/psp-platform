@@ -159,7 +159,7 @@ export default function DataBrowser() {
 
   async function exportCSV() {
     const supabase = createClient();
-    let query = supabase.from(entity).select("*").order("id");
+    let query = (supabase as any).from(entity).select("*").order("id");
     if (sportFilter && entity !== "schools" && entity !== "players") {
       query = query.eq("sport_id", sportFilter);
     }
@@ -172,7 +172,7 @@ export default function DataBrowser() {
     const cols = Object.keys(rows[0]);
     const csv = [
       cols.join(","),
-      ...rows.map((r) => cols.map((c) => `"${(r[c] ?? "").toString().replace(/"/g, '""')}"`).join(",")),
+      ...rows.map((r: any) => cols.map((c: string) => `"${(r[c] ?? "").toString().replace(/"/g, '""')}"`).join(",")),
     ].join("\n");
 
     const blob = new Blob([csv], { type: "text/csv" });

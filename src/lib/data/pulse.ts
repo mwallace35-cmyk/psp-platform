@@ -30,7 +30,8 @@ export const getGotwNominees = cache(async (weekLabel?: string) => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          let query = supabase
+          const db = supabase as any; // typed client can't infer gotw_nominees table
+          let query = db
             .from("gotw_nominees")
             .select("*")
             .order("vote_count", { ascending: false });
@@ -38,14 +39,14 @@ export const getGotwNominees = cache(async (weekLabel?: string) => {
             query = query.eq("week_label", weekLabel);
           } else {
             // Get current week (most recent)
-            const { data: latest } = await supabase
+            const { data: latest } = await db
               .from("gotw_nominees")
               .select("week_label")
               .order("created_at", { ascending: false })
               .limit(1)
               .single();
             if (latest) {
-              query = query.eq("week_label", latest.week_label);
+              query = query.eq("week_label", (latest as any).week_label);
             }
           }
           const { data } = await query;
@@ -64,7 +65,8 @@ export const getGotwWinners = cache(async (limit = 10) => {
   return withErrorHandling(
     async () => {
       const supabase = await createClient();
-      const { data } = await supabase
+      const db = supabase as any; // typed client can't infer gotw_nominees table
+      const { data } = await db
         .from("gotw_nominees")
         .select("*")
         .eq("is_winner", true)
@@ -274,7 +276,8 @@ export const getRecentTransfers = cache(async (limit = 20) => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data } = await supabase
+          // typed client can't infer complex join select
+          const { data } = await (supabase as any)
             .from("transfers")
             .select("*, players(name, slug, graduation_year, positions), from_school:schools!transfers_from_school_id_fkey(name, slug), to_school:schools!transfers_to_school_id_fkey(name, slug)")
             .order("transfer_year", { ascending: false })
@@ -296,12 +299,13 @@ export const getPulseStats = cache(async () => {
   return withErrorHandling(
     async () => {
       const supabase = await createClient();
+      const db = supabase as any; // typed client can't infer some tables
       const [alumni, events, articles, transfers, forumPosts] = await Promise.all([
         supabase.from("next_level_tracking").select("id", { count: "exact", head: true }),
-        supabase.from("events").select("id", { count: "exact", head: true }).gte("date", new Date().toISOString()),
+        db.from("events").select("id", { count: "exact", head: true }).gte("date", new Date().toISOString()),
         supabase.from("articles").select("id", { count: "exact", head: true }).eq("status", "published"),
-        supabase.from("transfers").select("id", { count: "exact", head: true }),
-        supabase.from("forum_posts").select("id", { count: "exact", head: true }).is("deleted_at", null),
+        db.from("transfers").select("id", { count: "exact", head: true }),
+        db.from("forum_posts").select("id", { count: "exact", head: true }).is("deleted_at", null),
       ]);
       return {
         alumniTracked: alumni.count ?? 0,

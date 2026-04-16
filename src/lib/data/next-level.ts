@@ -198,7 +198,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
           // If player_id exists, fetch linked player data
           if (proDatum.player_id) {
             const playerId = proDatum.player_id;
-            const sport = proDatum.sport_id;
+            const sport = proDatum.sport_id ?? "";
 
             // Fetch player basic info
             const { data: playerData } = await supabase
@@ -216,8 +216,10 @@ export async function getProAthleteBySlug(idOrSlug: string) {
             if (playerData) athlete.player = playerData;
 
             // Fetch sport-specific player stats
+            // typed client can't infer complex selects with columns that may not exist in types
+            const db = supabase as any;
             if (sport === "football") {
-              const { data: fbStats } = await supabase
+              const { data: fbStats } = await db
                 .from("football_player_seasons")
                 .select(
                   `
@@ -234,7 +236,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
                 .order("seasons(year_start)", { ascending: true });
               if (fbStats) athlete.football_stats = fbStats;
             } else if (isBasketballSport(sport)) {
-              const { data: bbStats } = await supabase
+              const { data: bbStats } = await db
                 .from("basketball_player_seasons")
                 .select(
                   `
@@ -249,7 +251,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
                 .order("seasons(year_start)", { ascending: true });
               if (bbStats) athlete.basketball_stats = bbStats;
             } else if (sport === "baseball") {
-              const { data: baseStats } = await supabase
+              const { data: baseStats } = await db
                 .from("baseball_player_seasons")
                 .select(
                   `
@@ -265,7 +267,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
             }
 
             // Fetch awards
-            const { data: awardData } = await supabase
+            const { data: awardData } = await db
               .from("awards")
               .select("id, award_type, award_tier, award_year, description")
               .eq("player_id", playerId)
@@ -273,7 +275,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
             if (awardData) athlete.awards = awardData;
 
             // Fetch game player stats (top performances)
-            const { data: gameStats } = await supabase
+            const { data: gameStats } = await db
               .from("game_player_stats")
               .select(
                 `
@@ -290,7 +292,7 @@ export async function getProAthleteBySlug(idOrSlug: string) {
             if (gameStats) athlete.game_stats = gameStats;
 
             // Fetch related articles
-            const { data: mentions } = await supabase
+            const { data: mentions } = await db
               .from("article_mentions")
               .select(
                 `

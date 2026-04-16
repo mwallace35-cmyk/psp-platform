@@ -53,6 +53,8 @@ export async function GET(request: NextRequest) {
 
     const supabase = createStaticClient();
     const now = new Date().toISOString();
+    const schoolIdNum = Number(schoolId);
+    const seasonIdNum = Number(seasonId);
 
     // Run all queries in parallel
     const [statsResult, keyResultsResult, keyPlayersResult, upcomingResult] = await Promise.allSettled([
@@ -60,14 +62,14 @@ export async function GET(request: NextRequest) {
       supabase
         .from('games')
         .select('home_school_id, away_school_id, home_score, away_score')
-        .eq('season_id', seasonId)
+        .eq('season_id', seasonIdNum)
         .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`),
 
       // b. Key results: all games for this school/season (we'll sort client-side)
-      supabase
+      (supabase as any)
         .from('games')
         .select('home_school_id, away_school_id, home_score, away_score, game_date, home_school:schools!games_home_school_id_fkey(name, slug), away_school:schools!games_away_school_id_fkey(name, slug)')
-        .eq('season_id', seasonId)
+        .eq('season_id', seasonIdNum)
         .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
         .not('home_score', 'is', null)
         .not('away_score', 'is', null)
@@ -75,23 +77,23 @@ export async function GET(request: NextRequest) {
 
       // c. Key players: top 3 from sport-specific season table
       sport === 'football'
-        ? supabase
+        ? (supabase as any)
             .from('football_player_seasons')
             .select('player_id, rush_yards, pass_yards, rec_yards, rush_td, pass_td, rec_td, players(name, slug, positions)')
-            .eq('season_id', seasonId)
-            .eq('school_id', schoolId)
+            .eq('season_id', seasonIdNum)
+            .eq('school_id', schoolIdNum)
             .order('rush_yards', { ascending: false })
             .limit(3)
-        : supabase
+        : (supabase as any)
             .from('basketball_player_seasons')
             .select('player_id, points, ppg, rebounds, assists, games_played, players(name, slug, positions)')
-            .eq('season_id', seasonId)
-            .eq('school_id', schoolId)
+            .eq('season_id', seasonIdNum)
+            .eq('school_id', schoolIdNum)
             .order('ppg', { ascending: false })
             .limit(3),
 
       // d. Upcoming games
-      supabase
+      (supabase as any)
         .from('games')
         .select('game_date, home_school_id, away_school_id, home_school:schools!games_home_school_id_fkey(name, slug), away_school:schools!games_away_school_id_fkey(name, slug)')
         .or(`home_school_id.eq.${schoolId},away_school_id.eq.${schoolId}`)
@@ -144,7 +146,7 @@ export async function GET(request: NextRequest) {
     if (keyResultsResult.status === 'fulfilled' && keyResultsResult.value.data) {
       const games = keyResultsResult.value.data;
 
-      const processed = games.map((g) => {
+      const processed = games.map((g: any) => {
         const isHome = String(g.home_school_id) === schoolId;
         const pf = isHome ? g.home_score! : g.away_score!;
         const pa = isHome ? g.away_score! : g.home_score!;
@@ -164,7 +166,7 @@ export async function GET(request: NextRequest) {
       });
 
       // Best wins: top 3 by margin (positive = win)
-      const wins = processed.filter((g) => g.result === 'W').sort((a, b) => b.margin - a.margin);
+      const wins = processed.filter((g: any) => g.result === 'W').sort((a: any, b: any) => b.margin - a.margin);
       for (const w of wins.slice(0, 3)) {
         keyResults.push({
           type: 'best_win',
@@ -176,7 +178,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Worst loss: smallest (most negative) margin
-      const losses = processed.filter((g) => g.result === 'L').sort((a, b) => a.margin - b.margin);
+      const losses = processed.filter((g: any) => g.result === 'L').sort((a: any, b: any) => a.margin - b.margin);
       if (losses.length > 0) {
         const worst = losses[0];
         keyResults.push({
@@ -237,7 +239,7 @@ export async function GET(request: NextRequest) {
         const { data: rankData } = await supabase
           .from('power_rankings')
           .select('rank_position')
-          .eq('school_id', oppId)
+          .eq('school_id', oppId ?? 0)
           .order('created_at', { ascending: false })
           .limit(1)
           .single();
@@ -247,7 +249,7 @@ export async function GET(request: NextRequest) {
         }
 
         upcoming.push({
-          date: g.game_date,
+          date: g.game_date ?? '',
           opponent: oppSchool?.name ?? 'Unknown',
           opponent_slug: oppSchool?.slug ?? '',
           opponent_rank: oppRank,

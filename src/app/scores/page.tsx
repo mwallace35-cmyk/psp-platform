@@ -201,7 +201,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       // Use RPC function to bypass RLS and include soft-deleted schools
       const { data: schoolData } = await supabase
         .rpc("get_school_names", { school_ids: Array.from(schoolIds) });
-      for (const s of schoolData ?? []) {
+      for (const s of (schoolData ?? []) as any[]) {
         schoolMap.set(s.id, { name: s.name, slug: s.slug, league_id: s.league_id, city: s.city ?? null });
       }
     }

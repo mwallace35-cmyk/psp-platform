@@ -48,7 +48,8 @@ export function extractTweetId(url: string): string | null {
 export async function getSocialFeedPosts(limit = 10): Promise<SocialPost[]> {
   const supabase = createStaticClient();
 
-  const { data, error } = await supabase
+  // typed client can't infer social_posts table
+  const { data, error } = await (supabase as any)
     .from('social_posts')
     .select('*')
     .eq('active', true)
@@ -71,7 +72,8 @@ export async function getSocialFeedPosts(limit = 10): Promise<SocialPost[]> {
 export async function getAllSocialPosts(): Promise<SocialPost[]> {
   const supabase = createStaticClient();
 
-  const { data, error } = await supabase
+  // typed client can't infer social_posts table
+  const { data, error } = await (supabase as any)
     .from('social_posts')
     .select('*')
     .order('pinned', { ascending: false })

@@ -30,7 +30,7 @@ export async function PATCH(
       );
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("notifications")
       .update({ read })
       .eq("id", parseInt(id, 10))

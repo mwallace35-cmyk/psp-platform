@@ -64,7 +64,7 @@ export default async function CoachesPage() {
   ]);
 
   const rawCoaches = (coachesRes.data ?? []) as unknown as CoachRow[];
-  const leagues = (leaguesRes.data ?? []) as LeagueRow[];
+  const leagues = (leaguesRes.data ?? []) as unknown as LeagueRow[];
 
   // Build league ID → display name map
   const leagueMap: Record<string, string> = {};

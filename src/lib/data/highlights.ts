@@ -25,14 +25,14 @@ export const getPlayerHighlights = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
-            const { data } = await supabase
+            const { data } = await (supabase as any)
               .from('player_highlights')
               .select(
                 'id, player_id, hudl_url, title, sport_id, season_id, game_id, is_featured, created_at, updated_at'
               )
               .eq('player_id', playerId)
               .order('created_at', { ascending: false });
-            return data ?? [];
+            return (data ?? []) as PlayerHighlight[];
           },
           { maxRetries: 2, baseDelay: 500 }
         );
@@ -55,7 +55,7 @@ export const getFeaturedHighlight = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
-            const { data } = await supabase
+            const { data } = await (supabase as any)
               .from('player_highlights')
               .select(
                 'id, player_id, hudl_url, title, sport_id, season_id, game_id, is_featured, created_at, updated_at'
@@ -65,7 +65,7 @@ export const getFeaturedHighlight = cache(
               .order('created_at', { ascending: false })
               .limit(1)
               .single();
-            return data ?? null;
+            return (data ?? null) as PlayerHighlight | null;
           },
           { maxRetries: 2, baseDelay: 500 }
         );
@@ -88,14 +88,14 @@ export const getGameHighlights = cache(
         return withRetry(
           async () => {
             const supabase = await createClient();
-            const { data } = await supabase
+            const { data } = await (supabase as any)
               .from('player_highlights')
               .select(
                 'id, player_id, hudl_url, title, sport_id, season_id, game_id, is_featured, created_at, updated_at'
               )
               .eq('game_id', gameId)
               .order('created_at', { ascending: false });
-            return data ?? [];
+            return (data ?? []) as PlayerHighlight[];
           },
           { maxRetries: 2, baseDelay: 500 }
         );

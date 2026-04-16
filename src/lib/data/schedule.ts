@@ -138,7 +138,7 @@ export const getScheduleGames = cache(
           .in("game_id", gameIds);
 
         const boxScoreSet = new Set(
-          (boxScoreGames ?? []).map((r: { game_id: number }) => r.game_id)
+          (boxScoreGames ?? []).map((r: { game_id: number | null }) => r.game_id as number)
         );
 
         // Normalize school joins (Supabase returns arrays for joins)
@@ -307,7 +307,7 @@ export const getGameDayGames = cache(
           .in("game_id", gameIds);
 
         const boxScoreSet = new Set(
-          (boxScoreGames ?? []).map((r: { game_id: number }) => r.game_id)
+          (boxScoreGames ?? []).map((r: { game_id: number | null }) => r.game_id as number)
         );
 
         return rawGames.map((g: Record<string, unknown>) => ({
@@ -379,7 +379,7 @@ export const getMasterScheduleGames = cache(
           : { data: [] };
 
         const boxScoreSet = new Set(
-          (boxScoreGames ?? []).map((r: { game_id: number }) => r.game_id)
+          (boxScoreGames ?? []).map((r: { game_id: number | null }) => r.game_id as number)
         );
 
         return rawGames.map((g: Record<string, unknown>) => ({

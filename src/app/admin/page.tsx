@@ -20,7 +20,7 @@ async function getStats() {
       supabase.from("championships").select("id", { count: "exact", head: true }),
       supabase.from("awards").select("id", { count: "exact", head: true }),
       supabase.from("football_player_seasons").select("id", { count: "exact", head: true }),
-      supabase.from("data_conflicts").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      (supabase as any).from("data_conflicts").select("id", { count: "exact", head: true }).eq("status", "pending"),
     ]);
 
   return {
@@ -51,7 +51,7 @@ async function getSportBreakdown() {
 
     const [players, teams, champs] = await Promise.all([
       statTable
-        ? supabase.from(statTable).select("id", { count: "exact", head: true })
+        ? (supabase as any).from(statTable).select("id", { count: "exact", head: true })
         : Promise.resolve({ count: 0 } as { count: number }),
       supabase.from("team_seasons").select("id", { count: "exact", head: true }).eq("sport_id", sport),
       supabase.from("championships").select("id", { count: "exact", head: true }).eq("sport_id", sport),

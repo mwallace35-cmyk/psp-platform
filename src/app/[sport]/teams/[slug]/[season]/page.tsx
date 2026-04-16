@@ -137,7 +137,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
     // Only get roster if we have a team_season record (not for preview with schedule only)
     if (teamSeasonData) {
       try {
-        const rosterData = await getTeamRosterBySeason(school.id, sport, teamSeasonData.season_id);
+        const rosterData = await getTeamRosterBySeason(school.id, sport, teamSeasonData.season_id!);
         roster = rosterData as unknown as RosterPlayer[];
       } catch (e) {
         captureError(e, { sport, slug, season, fetch: "getTeamRosterBySeason" });

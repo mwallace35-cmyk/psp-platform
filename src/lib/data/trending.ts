@@ -116,10 +116,10 @@ export async function getTrendingStats(): Promise<TrendingStat[]> {
 
       // Stat 5: Oldest record
       if (oldestRecordResult.data && oldestRecordResult.data.length > 0) {
-        const oldestRecord = oldestRecordResult.data[0];
+        const oldestRecord = oldestRecordResult.data[0] as any;
         const year = oldestRecord.year_set || 1937;
         const value = oldestRecord.record_value || "Unknown";
-        const school = (oldestRecord.schools as any)?.name || "Unknown";
+        const school = oldestRecord.schools?.name || "Unknown";
 
         stats.push({
           title: "Oldest Record",

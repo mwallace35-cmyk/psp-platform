@@ -180,7 +180,8 @@ export async function getPlayerStats(playerId: number, sportId: string) {
         return [];
       }
 
-      let query = supabase
+      // typed client can't infer dynamic table name
+      let query = (supabase as any)
         .from(statTable)
         .select("*")
         .eq("player_id", playerId);
@@ -274,7 +275,7 @@ export async function getPlayerSchoolHistory(
       for (const row of statsData) {
         const schoolId = row.school_id;
         if (!schoolId) continue;
-        const season = gameSeasonMap.get(row.game_id);
+        const season = gameSeasonMap.get(row.game_id as number);
         if (!season) continue;
 
         if (!schoolMap.has(schoolId)) {
@@ -287,13 +288,14 @@ export async function getPlayerSchoolHistory(
       }
 
       // Also check transfers table for any explicit records
-      const { data: transfers } = await supabase
+      // typed client can't infer transfers table columns
+      const { data: transfers } = await (supabase as any)
         .from("transfers")
         .select("from_school_id, to_school_id, transfer_year")
         .eq("player_id", playerId);
 
       if (transfers) {
-        for (const t of transfers) {
+        for (const t of transfers as any[]) {
           for (const sid of [t.from_school_id, t.to_school_id]) {
             if (sid && !schoolMap.has(sid)) {
               schoolMap.set(sid, { seasons: new Set(), minYear: t.transfer_year, maxYear: t.transfer_year });

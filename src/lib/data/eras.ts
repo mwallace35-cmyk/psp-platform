@@ -110,7 +110,8 @@ export const getStatByEra = cache(
             }
 
             // Fetch all player seasons with season info
-            let eraQuery = supabase
+            // typed client can't infer dynamic table name
+            let eraQuery = (supabase as any)
               .from(tableName)
               .select(
                 `${statType}, season_id, seasons(id, year_start, year_end, label)`

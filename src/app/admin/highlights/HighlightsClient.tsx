@@ -58,7 +58,7 @@ export default function HighlightsClient({ initialHighlights, initialPlayers }: 
     setLoading(true);
     try {
       const [highlightsRes, playersRes] = await Promise.all([
-        supabase
+        (supabase as any)
           .from("player_highlights")
           .select(`
             *,
@@ -114,7 +114,7 @@ export default function HighlightsClient({ initialHighlights, initialPlayers }: 
         is_featured: formData.is_featured,
       };
 
-      const { error } = await supabase.from("player_highlights").insert([payload]);
+      const { error } = await (supabase as any).from("player_highlights").insert([payload]);
       if (error) throw error;
 
       toastSuccess("Highlight added!");
@@ -128,7 +128,7 @@ export default function HighlightsClient({ initialHighlights, initialPlayers }: 
 
   async function handleToggleFeatured(id: number, current: boolean) {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("player_highlights")
         .update({ is_featured: !current })
         .eq("id", id);
@@ -146,7 +146,7 @@ export default function HighlightsClient({ initialHighlights, initialPlayers }: 
     if (!confirm("Delete this highlight?")) return;
 
     try {
-      const { error } = await supabase.from("player_highlights").delete().eq("id", id);
+      const { error } = await (supabase as any).from("player_highlights").delete().eq("id", id);
       if (error) throw error;
       toastSuccess("Deleted!");
       fetchAll();

@@ -87,7 +87,8 @@ export async function getArticlesForEntity(entityType: string, entityId: number,
           const supabase = await createClient();
           // Use a single query with JOIN to avoid N+1 problem
           // PostgreSQL JSON selection returns the full related records
-          const { data } = await supabase
+          // typed client can't infer complex join select
+          const { data } = await (supabase as any)
             .from("article_mentions")
             .select("articles(id, slug, title, excerpt, sport_id, published_at, featured_image_url)", { count: "exact" })
             .eq("entity_type", entityType)

@@ -586,7 +586,8 @@ export const getSchoolArticles = cache(async (schoolId: number, limit = 10) => {
       return withRetry(
         async () => {
           const supabase = await createClient();
-          const { data } = await supabase
+          // typed client can't infer complex join select
+          const { data } = await (supabase as any)
             .from("article_mentions")
             .select("articles(id, slug, title, excerpt, sport_id, published_at, featured_image_url)", { count: "exact" })
             .eq("entity_type", "school")
@@ -736,7 +737,7 @@ export const getSchoolAwards = cache(async (schoolId: number, limit = 30) => {
 
           if (!data) return [];
 
-          return (data as AwardRow[])
+          return (data as unknown as AwardRow[])
             .sort((a, b) => (b.seasons?.year_start ?? 0) - (a.seasons?.year_start ?? 0))
             .map((a) => ({
               id: a.id,

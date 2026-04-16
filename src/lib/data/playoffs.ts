@@ -12,7 +12,7 @@ export interface PlayoffBracket {
   name: string;
   bracket_type: string;
   classification: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export interface PlayoffBracketGame {

@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
           sent++;
 
           // Log send
-          await supabase.from('email_logs').insert({
+          await (supabase as any).from('email_logs').insert({
             email: userEmail,
             template: 'weekly_digest',
             sent_at: new Date().toISOString(),

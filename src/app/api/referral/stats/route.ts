@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all referral links for user
-    const { data: referralLinks, error: fetchError } = await supabase
+    const { data: referralLinks, error: fetchError } = await (supabase as any)
       .from('referral_links')
       .select('id, referral_code, created_at, click_count, target_url')
       .eq('user_id', user.id)
@@ -57,11 +57,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Get referral event counts
-    const linkIds = referralLinks?.map(l => l.id) || [];
+    const linkIds = referralLinks?.map((l: any) => l.id) || [];
     let eventCounts: Record<string, Record<string, number>> = {};
 
     if (linkIds.length > 0) {
-      const { data: events, error: eventsError } = await supabase
+      const { data: events, error: eventsError } = await (supabase as any)
         .from('referral_events')
         .select('referral_link_id, event_type')
         .in('referral_link_id', linkIds);
@@ -84,9 +84,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate badge eligibility
-    const totalClicks = referralLinks?.reduce((sum, link) => sum + (link.click_count || 0), 0) || 0;
+    const totalClicks = referralLinks?.reduce((sum: any, link: any) => sum + (link.click_count || 0), 0) || 0;
     const signupCount = Object.values(eventCounts).reduce(
-      (sum, counts) => sum + (counts['signup'] || 0),
+      (sum: any, counts: any) => sum + (counts['signup'] || 0),
       0
     );
 
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
       totalSignups: signupCount,
       referralCount: referralLinks?.length || 0,
       badges,
-      referralLinks: referralLinks?.map(link => ({
+      referralLinks: referralLinks?.map((link: any) => ({
         code: link.referral_code,
         targetUrl: link.target_url,
         clicks: link.click_count || 0,

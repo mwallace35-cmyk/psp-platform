@@ -118,7 +118,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         .select("id")
         .eq("slug", schoolSlug)
         .single();
-      finalSchoolId = school?.id.toString();
+      finalSchoolId = school?.id?.toString() ?? null;
     }
 
     // Build query

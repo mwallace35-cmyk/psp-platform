@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     const { gameIds } = parsed.data;
 
     // Fetch games with team info
-    const { data: games, error } = await supabase
+    const { data: games, error } = await (supabase as any)
       .from('games')
       .select(`
         id, home_score, away_score, game_date,

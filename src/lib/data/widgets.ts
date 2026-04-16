@@ -43,8 +43,9 @@ function generateEmbedKey(): string {
  */
 export async function getWidgetConfig(embedKey: string): Promise<WidgetConfig | null> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer widget_configs table
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("widget_configs")
     .select("*")
     .eq("embed_key", embedKey)
@@ -63,8 +64,9 @@ export async function getWidgetConfig(embedKey: string): Promise<WidgetConfig | 
  */
 export async function getWidgetsBySchool(schoolId: number): Promise<WidgetConfig[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer widget_configs table
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("widget_configs")
     .select("*")
     .eq("school_id", schoolId)
@@ -82,8 +84,9 @@ export async function getWidgetsBySchool(schoolId: number): Promise<WidgetConfig
  */
 export async function getAllWidgets(): Promise<WidgetConfig[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer widget_configs table
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("widget_configs")
     .select("*")
     .order("created_at", { ascending: false });
@@ -108,8 +111,9 @@ export async function createWidget(
   } = {}
 ): Promise<WidgetConfig> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer widget_configs table
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("widget_configs")
     .insert({
       school_id: schoolId,
@@ -137,8 +141,9 @@ export async function updateWidget(
   updates: Partial<WidgetConfig>
 ): Promise<WidgetConfig> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer widget_configs table
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("widget_configs")
     .update({
       ...updates,
@@ -160,8 +165,9 @@ export async function updateWidget(
  */
 export async function deleteWidget(widgetId: number): Promise<void> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer widget_configs table
 
-  const { error } = await supabase
+  const { error } = await db
     .from("widget_configs")
     .delete()
     .eq("id", widgetId);
@@ -176,21 +182,22 @@ export async function deleteWidget(widgetId: number): Promise<void> {
  */
 export async function incrementWidgetViews(widgetId: number): Promise<void> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer widget_configs table
 
-  const { error } = await supabase.rpc("increment_widget_views", {
+  const { error } = await db.rpc("increment_widget_views", {
     widget_id: widgetId,
   });
 
   if (error) {
     // If RPC doesn't exist, fall back to manual update
-    const { data: widget } = await supabase
+    const { data: widget } = await db
       .from("widget_configs")
       .select("views")
       .eq("id", widgetId)
       .single();
 
     if (widget) {
-      await supabase
+      await db
         .from("widget_configs")
         .update({ views: (widget.views || 0) + 1 })
         .eq("id", widgetId);

@@ -37,7 +37,7 @@ export default function EntityLinker({ articleId }: EntityLinkerProps) {
   }, [searchQuery, searchType]);
 
   async function fetchLinkedEntities() {
-    const { data: mentions } = await supabase
+    const { data: mentions } = await (supabase as any)
       .from('article_mentions')
       .select('*')
       .eq('article_id', articleId);
@@ -92,7 +92,7 @@ export default function EntityLinker({ articleId }: EntityLinkerProps) {
     }
 
     try {
-      const { error } = await supabase.from('article_mentions').insert({
+      const { error } = await (supabase as any).from('article_mentions').insert({
         article_id: articleId,
         entity_type: searchType,
         entity_id: entityId,
@@ -113,7 +113,7 @@ export default function EntityLinker({ articleId }: EntityLinkerProps) {
 
   async function handleUnlink(entityType: string, entityId: number) {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('article_mentions')
         .delete()
         .eq('article_id', articleId)

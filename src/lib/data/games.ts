@@ -454,7 +454,7 @@ export const getGamesWithBoxScores = cache(
               .in("game_id", gameIds)
               .limit(500);
 
-            const ids = new Set((data ?? []).map((r: { game_id: number }) => r.game_id));
+            const ids = new Set((data ?? []).map((r: { game_id: number | null }) => r.game_id as number));
             return ids;
           },
           { maxRetries: 2, baseDelay: 500 }

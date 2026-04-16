@@ -73,7 +73,7 @@ export default function AwardsHonors({ playerId }: AwardsHonorsProps) {
     const fetchAwards = async () => {
       try {
         setLoading(true);
-        const { data, error: supabaseError } = await supabase
+        const { data, error: supabaseError } = await (supabase as any)
           .from('awards')
           .select('id, player_id, award_name, year, sport_id, school_id, category, position, award_type, award_tier, created_at')
           .eq('player_id', playerId)

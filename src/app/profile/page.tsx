@@ -33,7 +33,7 @@ export default function ProfilePage() {
 
       setEmail(user.email || '');
 
-      const { data: profile } = await supabase
+      const { data: profile } = await (supabase as any)
         .from('user_profiles')
         .select('*')
         .eq('id', user.id)
@@ -58,7 +58,7 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('user_profiles')
         .upsert({
           id: user.id,

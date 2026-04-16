@@ -150,7 +150,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     supabase
       .from('articles')
       .select('id, slug, title, created_at, featured_image_url')
-      .eq('sport_id', article.sport_id)
+      .eq('sport_id', article.sport_id ?? '')
       .eq('status', 'published')
       .neq('id', article.id)
       .order('created_at', { ascending: false })
@@ -203,7 +203,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   const hasStats =
     careerStats && (careerStats.rec > 0 || careerStats.recYds > 0 || careerStats.recTd > 0);
 
-  const byline = article.author_name || article.author || 'PSP Staff';
+  const byline = article.author_name || 'PSP Staff';
   const bylineInitial = byline.slice(0, 1).toUpperCase();
   const publishedDate = formatDate(article.published_at || article.created_at);
   const updatedDate = formatDate(article.updated_at || article.created_at);
@@ -223,10 +223,10 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         title={article.title}
         description={article.excerpt || article.title}
         author={byline}
-        datePublished={article.created_at}
-        dateModified={article.updated_at || article.created_at}
+        datePublished={article.created_at ?? ''}
+        dateModified={article.updated_at || article.created_at || ''}
         url={`https://phillysportspack.com/articles/${article.slug}`}
-        imageUrl={article.featured_image_url}
+        imageUrl={article.featured_image_url ?? undefined}
       />
 
       {/* Sport accent bar — full-width strip in sport color */}
@@ -236,8 +236,8 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         title={article.title}
         excerpt={article.excerpt}
         featuredImageUrl={article.featured_image_url}
-        publishedAt={article.published_at}
-        createdAt={article.created_at}
+        publishedAt={article.published_at ?? ''}
+        createdAt={article.created_at ?? ''}
         byline={byline}
         bylineInitial={bylineInitial}
         publishedDate={publishedDate}
@@ -265,7 +265,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             <div
               className="psp-article-prose"
               dangerouslySetInnerHTML={{
-                __html: renderMarkdown(article.body || article.content || ''),
+                __html: renderMarkdown(article.body || ''),
               }}
             />
 
@@ -336,35 +336,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Tags */}
-            {article.tags && article.tags.length > 0 && (
-              <div
-                className="mt-10 pt-6 border-t"
-                style={{ borderColor: 'rgba(10,22,40,0.12)' }}
-              >
-                <p
-                  className="psp-caption mb-3"
-                  style={{ color: 'var(--psp-navy)' }}
-                >
-                  Tags
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {article.tags.map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 text-xs font-medium rounded-full"
-                      style={{
-                        background: 'rgba(10,22,40,0.06)',
-                        color: 'var(--psp-navy)',
-                        border: '1px solid rgba(10,22,40,0.12)',
-                      }}
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Tags removed — column does not exist in articles table */}
 
             {/* Social sharing */}
             <div

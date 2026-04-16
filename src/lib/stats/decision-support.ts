@@ -129,7 +129,7 @@ export async function getCollegePlacementRate(
     // Get next level tracking for these players
     const { data: tracking, error: trackingError } = await supabase
       .from("next_level_tracking")
-      .select("college_committed,college_division,college_committed_division")
+      .select("college,current_level")
       .in("player_id", playerIds);
 
     if (trackingError || !tracking) {
@@ -137,7 +137,7 @@ export async function getCollegePlacementRate(
       return null;
     }
 
-    const trackedCount = tracking.filter((t) => t.college_committed).length;
+    const trackedCount = tracking.filter((t) => t.college).length;
 
     // Division breakdown
     const divisions = {
@@ -150,10 +150,10 @@ export async function getCollegePlacementRate(
     };
 
     tracking.forEach((t) => {
-      if (!t.college_committed) {
+      if (!t.college) {
         divisions.untracked++;
       } else {
-        const division = (t.college_committed_division || "").toLowerCase();
+        const division = (t.current_level || "").toLowerCase();
         if (division.includes("fbs") || division.includes("d1")) {
           divisions.p1++;
         } else if (division.includes("fcs") || division.includes("d2")) {

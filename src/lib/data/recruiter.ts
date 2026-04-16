@@ -140,7 +140,8 @@ export async function getRecruiterProfile(
         async () => {
           const supabase = await createClient();
 
-          const { data } = await supabase
+          // typed client can't infer recruiter_profiles table
+          const { data } = await (supabase as any)
             .from("recruiter_profiles")
             .select("*")
             .eq("user_id", userId)
@@ -265,7 +266,8 @@ export async function createRecruiterProfile(
         async () => {
           const supabase = await createClient();
 
-          const { data, error } = await supabase
+          // typed client can't infer recruiter_profiles table
+          const { data, error } = await (supabase as any)
             .from("recruiter_profiles")
             .insert({
               user_id: userId,

@@ -66,7 +66,7 @@ export const getDynastyRankings = cache(
 
             for (const champ of championships ?? []) {
               if (!champ.schools) continue;
-              const schoolId = champ.school_id;
+              const schoolId = champ.school_id as number;
               if (!dynastyMap[schoolId]) {
                 dynastyMap[schoolId] = {
                   school: champ.schools as unknown as School,

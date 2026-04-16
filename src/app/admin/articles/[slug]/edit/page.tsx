@@ -36,7 +36,7 @@ export default function EditArticle() {
   useEffect(() => {
     async function fetchArticle() {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('articles')
           .select('*')
           .eq('slug', slug)
@@ -48,7 +48,7 @@ export default function EditArticle() {
           return;
         }
 
-        setArticleId(data.id);
+        setArticleId(String(data.id));
         setTitle(data.title || '');
         setContent(data.content || '');
         setSportId((data.sport_id || 'football') as SportId);
@@ -122,7 +122,7 @@ export default function EditArticle() {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('articles')
         .update({
           title,

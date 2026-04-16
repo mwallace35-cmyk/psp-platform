@@ -173,7 +173,8 @@ export async function getPowerIndexHistory(
 export async function getTopMovers(sportId: string, limit: number = 10) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // typed client can't infer columns not in generated types
+  const { data, error } = await (supabase as any)
     .from("power_rankings")
     .select(
       `
@@ -206,6 +207,6 @@ export async function getTopMovers(sportId: string, limit: number = 10) {
 
   // Filter for actual movers
   return (data || []).filter(
-    (entry) => entry.previous_rank !== entry.rank && entry.rank !== null
+    (entry: any) => entry.previous_rank !== entry.rank && entry.rank !== null
   );
 }

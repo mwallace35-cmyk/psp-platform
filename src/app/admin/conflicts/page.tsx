@@ -37,7 +37,7 @@ export default function ConflictManager() {
     setLoading(true);
     try {
       const supabase = createClient();
-      let query = supabase
+      let query = (supabase as any)
         .from("data_conflicts")
         .select("*")
         .order("created_at", { ascending: false });
@@ -83,7 +83,7 @@ export default function ConflictManager() {
     }
 
     const supabase = createClient();
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("data_conflicts")
       .update({
         status: "resolved",
@@ -110,7 +110,7 @@ export default function ConflictManager() {
     const supabase = createClient();
     for (const conflict of pending) {
       const resolvedVal = action === "accept_ours" ? conflict.our_value : conflict.external_value;
-      await supabase
+      await (supabase as any)
         .from("data_conflicts")
         .update({
           status: "resolved",

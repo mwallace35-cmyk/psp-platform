@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get referral link
-    const { data: referralLink, error: fetchError } = await supabase
+    const { data: referralLink, error: fetchError } = await (supabase as any)
       .from('referral_links')
       .select('id')
       .eq('referral_code', referralCode)
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       .digest('hex');
 
     // Create referral event
-    const { error: insertError } = await supabase
+    const { error: insertError } = await (supabase as any)
       .from('referral_events')
       .insert({
         referral_link_id: referralLink.id,
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Increment click count
-    const { error: updateError } = await supabase
+    const { error: updateError } = await (supabase as any)
       .from('referral_links')
       .update({ click_count: referralLink.id + 1 })
       .eq('id', referralLink.id);

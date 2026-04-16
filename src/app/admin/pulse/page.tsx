@@ -48,7 +48,7 @@ export default function EventsManagement() {
   async function fetchEvents() {
     try {
       setLoading(true);
-      let query = supabase.from('events').select('*').order('start_date', { ascending: true });
+      let query = (supabase as any).from('events').select('*').order('start_date', { ascending: true });
 
       if (selectedSport !== 'all') {
         query = query.eq('sport_id', selectedSport);
@@ -77,7 +77,7 @@ export default function EventsManagement() {
 
     setSaving(true);
     try {
-      const { error } = await supabase.from('events').insert({
+      const { error } = await (supabase as any).from('events').insert({
         title: formTitle,
         date: formDate,
         time: formTime || null,
@@ -113,7 +113,7 @@ export default function EventsManagement() {
     if (!window.confirm('Delete this event?')) return;
 
     try {
-      const { error } = await supabase.from('events').delete().eq('id', id);
+      const { error } = await (supabase as any).from('events').delete().eq('id', id);
       if (error) throw error;
       fetchEvents();
     } catch (error) {

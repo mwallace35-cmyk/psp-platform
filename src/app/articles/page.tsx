@@ -251,7 +251,7 @@ export default async function ArticlesPage({
 
                       <div className="flex justify-between items-center pt-4 border-t border-gray-100 text-xs text-gray-600">
                         <span>{article.author_name || 'PSP Staff'}</span>
-                        <span>{new Date(article.created_at).toLocaleDateString()}</span>
+                        <span>{new Date(article.created_at ?? '').toLocaleDateString()}</span>
                       </div>
                     </div>
                   </article>

@@ -51,7 +51,7 @@ export default function NewArticle() {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
-      const { error } = await supabase.from('articles').insert({
+      const { error } = await (supabase as any).from('articles').insert({
         title,
         slug,
         content,

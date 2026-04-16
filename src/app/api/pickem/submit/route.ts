@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     const validated = PickemSchema.parse(body);
 
     // Verify week exists and is open
-    const { data: week, error: weekError } = await supabase
+    const { data: week, error: weekError } = await (supabase as any)
       .from("pickem_weeks")
       .select("id, is_open")
       .eq("id", validated.week_id)

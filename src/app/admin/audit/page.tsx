@@ -30,7 +30,7 @@ export default function AuditLog() {
     setLoading(true);
     try {
       const supabase = createClient();
-      let query = supabase
+      let query = (supabase as any)
         .from("audit_log")
         .select("*", { count: "exact" })
         .order("created_at", { ascending: false })

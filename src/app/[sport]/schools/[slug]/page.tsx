@@ -95,10 +95,10 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
   const schoolData = await getSchoolBySlug(slug);
   if (!schoolData) notFound();
 
-  const school: School = {
+  const school = {
     ...schoolData,
     leagues: Array.isArray(schoolData.leagues) ? schoolData.leagues[0] : schoolData.leagues,
-  };
+  } as unknown as School;
 
   const meta = SPORT_META[sport];
 

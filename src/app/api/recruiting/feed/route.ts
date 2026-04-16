@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
 
           // Create recruiting_update record
           try {
-            await supabase.from("recruiting_updates").insert({
+            await (supabase as any).from("recruiting_updates").insert({
               player_id: player.id,
               source,
               headline: entry.title,

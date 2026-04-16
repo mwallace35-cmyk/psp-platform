@@ -1,5 +1,7 @@
 /**
  * Sponsor management data layer
+ * NOTE: sponsors/sponsor_placements tables are not in generated DB types.
+ * All .from() calls cast to (supabase as any) to bypass typed client inference.
  */
 
 import { createClient } from "./common";
@@ -68,8 +70,9 @@ export async function getActiveSponsor(
   entityId?: number
 ): Promise<SponsorPlacement | null> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  let query = supabase
+  let query = db
     .from("sponsor_placements")
     .select(
       `
@@ -114,8 +117,9 @@ export async function getActiveSponsor(
  */
 export async function getAllSponsors(): Promise<Sponsor[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("sponsors")
     .select("*")
     .order("created_at", { ascending: false });
@@ -132,8 +136,9 @@ export async function getAllSponsors(): Promise<Sponsor[]> {
  */
 export async function getSponsorById(sponsorId: number): Promise<Sponsor | null> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("sponsors")
     .select("*")
     .eq("id", sponsorId)
@@ -151,8 +156,9 @@ export async function getSponsorById(sponsorId: number): Promise<Sponsor | null>
  */
 export async function getSponsorPlacements(sponsorId: number): Promise<SponsorPlacement[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("sponsor_placements")
     .select("*")
     .eq("sponsor_id", sponsorId)
@@ -170,10 +176,11 @@ export async function getSponsorPlacements(sponsorId: number): Promise<SponsorPl
  */
 export async function getSponsorStats(sponsorId: number): Promise<SponsorStats> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
   const [sponsorData, placementsData] = await Promise.all([
-    supabase.from("sponsors").select("*").eq("id", sponsorId).single(),
-    supabase
+    db.from("sponsors").select("*").eq("id", sponsorId).single(),
+    db
       .from("sponsor_placements")
       .select("*")
       .eq("sponsor_id", sponsorId),
@@ -222,8 +229,9 @@ export async function createSponsor(
   sponsor: Omit<Sponsor, "id" | "created_at" | "updated_at">
 ): Promise<Sponsor> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("sponsors")
     .insert(sponsor)
     .select("*")
@@ -244,8 +252,9 @@ export async function updateSponsor(
   updates: Partial<Sponsor>
 ): Promise<Sponsor> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("sponsors")
     .update({
       ...updates,
@@ -269,8 +278,9 @@ export async function createPlacement(
   placement: Omit<SponsorPlacement, "id" | "created_at" | "updated_at">
 ): Promise<SponsorPlacement> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("sponsor_placements")
     .insert(placement)
     .select("*")
@@ -291,8 +301,9 @@ export async function updatePlacement(
   updates: Partial<SponsorPlacement>
 ): Promise<SponsorPlacement> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("sponsor_placements")
     .update({
       ...updates,
@@ -314,21 +325,22 @@ export async function updatePlacement(
  */
 export async function recordImpression(placementId: number): Promise<void> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { error } = await supabase.rpc("increment_placement_impressions", {
+  const { error } = await db.rpc("increment_placement_impressions", {
     placement_id: placementId,
   });
 
   if (error) {
     // If RPC doesn't exist, fall back to manual update
-    const { data: placement } = await supabase
+    const { data: placement } = await db
       .from("sponsor_placements")
       .select("impression_count")
       .eq("id", placementId)
       .single();
 
     if (placement) {
-      await supabase
+      await db
         .from("sponsor_placements")
         .update({
           impression_count: (placement.impression_count || 0) + 1,
@@ -343,21 +355,22 @@ export async function recordImpression(placementId: number): Promise<void> {
  */
 export async function recordClick(placementId: number): Promise<void> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer sponsor tables
 
-  const { error } = await supabase.rpc("increment_placement_clicks", {
+  const { error } = await db.rpc("increment_placement_clicks", {
     placement_id: placementId,
   });
 
   if (error) {
     // If RPC doesn't exist, fall back to manual update
-    const { data: placement } = await supabase
+    const { data: placement } = await db
       .from("sponsor_placements")
       .select("click_count")
       .eq("id", placementId)
       .single();
 
     if (placement) {
-      await supabase
+      await db
         .from("sponsor_placements")
         .update({
           click_count: (placement.click_count || 0) + 1,

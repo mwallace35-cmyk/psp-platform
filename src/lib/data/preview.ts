@@ -387,13 +387,13 @@ export const getMatchupHistory = cache(
             const opponent = opponentData as { id: number; name: string; slug: string };
             if (!opponent) continue;
 
-            const schoolScore = isHome ? game.home_score : game.away_score;
-            const opponentScore = isHome ? game.away_score : game.home_score;
+            const schoolScore = isHome ? (game.home_score ?? 0) : (game.away_score ?? 0);
+            const opponentScore = isHome ? (game.away_score ?? 0) : (game.home_score ?? 0);
 
-            let matchup = matchups.get(opponentId);
+            let matchup = matchups.get(opponentId as number);
             if (!matchup) {
               matchup = {
-                opponent_id: opponentId,
+                opponent_id: opponentId as number,
                 opponent_name: opponent.name,
                 opponent_slug: opponent.slug,
                 total_games: 0,
@@ -403,24 +403,24 @@ export const getMatchupHistory = cache(
                 last_game_date: null,
                 last_game_score: null,
               };
-              matchups.set(opponentId, matchup);
+              matchups.set(opponentId as number, matchup);
             }
 
-            matchup.total_games += 1;
+            matchup!.total_games += 1;
 
             if (schoolScore > opponentScore) {
-              matchup.wins += 1;
+              matchup!.wins += 1;
             } else if (schoolScore < opponentScore) {
-              matchup.losses += 1;
+              matchup!.losses += 1;
             } else {
-              matchup.ties += 1;
+              matchup!.ties += 1;
             }
 
             // Track most recent game
-            if (!matchup.last_game_date || new Date(game.game_date) > new Date(matchup.last_game_date)) {
-              matchup.last_game_date = game.game_date;
+            if (!matchup!.last_game_date || new Date(game.game_date ?? "") > new Date(matchup!.last_game_date)) {
+              matchup!.last_game_date = game.game_date ?? null;
               const result = schoolScore > opponentScore ? "W" : schoolScore < opponentScore ? "L" : "T";
-              matchup.last_game_score = `${result} ${schoolScore}-${opponentScore}`;
+              matchup!.last_game_score = `${result} ${schoolScore}-${opponentScore}`;
             }
           }
 
@@ -466,7 +466,7 @@ export const getLastSeasonRecap = cache(
           if (!teamSeasons || teamSeasons.length === 0) return null;
 
           const teamSeason = teamSeasons[0];
-          const seasonId = teamSeason.season_id;
+          const seasonId = teamSeason.season_id as number;
           const seasonLabel = (teamSeason.seasons as any)?.label ?? "Unknown";
           const coachName = (teamSeason.coaches as any)?.name ?? null;
 
@@ -492,8 +492,8 @@ export const getLastSeasonRecap = cache(
             const teamRecords: Map<number, { wins: number; losses: number }> = new Map();
 
             for (const game of games) {
-              const homeId = game.home_school_id;
-              const awayId = game.away_school_id;
+              const homeId = game.home_school_id as number;
+              const awayId = game.away_school_id as number;
 
               if (!teamRecords.has(homeId)) {
                 teamRecords.set(homeId, { wins: 0, losses: 0 });
@@ -520,7 +520,7 @@ export const getLastSeasonRecap = cache(
             // Find wins against winning teams
             for (const game of games) {
               const isHome = game.home_school_id === schoolId;
-              const opponentId = isHome ? game.away_school_id : game.home_school_id;
+              const opponentId = isHome ? (game.away_school_id ?? 0) : (game.home_school_id ?? 0);
               let opponentData: any = isHome ? game.away_school : game.home_school;
 
               // Handle case where opponent is an array (Supabase quirk)

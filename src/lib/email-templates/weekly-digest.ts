@@ -52,7 +52,7 @@ export async function generateWeeklyDigestData(userId: string): Promise<DigestDa
   const supabase = await createClient();
 
   // Get user's bookmarked schools
-  const { data: profile } = await supabase
+  const { data: profile } = await (supabase as any)
     .from('user_profiles')
     .select('bookmarked_schools')
     .eq('id', userId)
@@ -107,7 +107,7 @@ export async function generateWeeklyDigestData(userId: string): Promise<DigestDa
   const recentArticles = articles || [];
 
   // Fetch POTW winner
-  const { data: potwData } = await supabase
+  const { data: potwData } = await (supabase as any)
     .from('gotw_nominees')
     .select(`
       nominee_name,

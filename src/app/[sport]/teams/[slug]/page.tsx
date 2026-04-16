@@ -51,7 +51,7 @@ export default async function TeamDetailPage({ params }: PageProps) {
   const school = {
     ...schoolData,
     leagues: Array.isArray(schoolData.leagues) ? schoolData.leagues[0] : schoolData.leagues,
-  };
+  } as any;
 
   // Map sport name to sport_id for database queries
   const sportIdMap: Record<string, string> = {

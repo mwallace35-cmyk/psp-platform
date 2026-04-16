@@ -53,8 +53,9 @@ export async function getSchoolAdminAccess(
   userId: string
 ): Promise<SchoolAdminAccess[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer school_admins table
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("school_admins")
     .select(
       `
@@ -71,24 +72,13 @@ export async function getSchoolAdminAccess(
       )
     `
     )
-    .eq("user_id", userId)
-    .returns<
-      Array<{
-        id: number;
-        user_id: string;
-        school_id: number;
-        role: string;
-        approved: boolean;
-        created_at: string;
-        schools: { id: number; name: string; slug: string } | null;
-      }>
-    >();
+    .eq("user_id", userId);
 
   if (error) {
     throw new Error(`Failed to fetch school admin access: ${error.message}`);
   }
 
-  return (data || []).map((row) => ({
+  return (data || []).map((row: any) => ({
     id: row.id,
     user_id: row.user_id,
     school_id: row.school_id,
@@ -108,8 +98,9 @@ export async function isSchoolAdmin(
   schoolId: number
 ): Promise<boolean> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer school_admins table
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("school_admins")
     .select("id")
     .eq("user_id", userId)
@@ -184,9 +175,10 @@ export async function requestSchoolAccess(
   role: "editor" | "admin" = "editor"
 ): Promise<AccessRequest> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer school_admins table
 
   // Check if request already exists
-  const { data: existing } = await supabase
+  const { data: existing } = await db
     .from("school_admins")
     .select("id")
     .eq("user_id", userId)
@@ -199,7 +191,7 @@ export async function requestSchoolAccess(
     );
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("school_admins")
     .insert({
       user_id: userId,
@@ -221,29 +213,21 @@ export async function requestSchoolAccess(
       )
     `
     )
-    .single()
-    .returns<{
-      id: number;
-      user_id: string;
-      school_id: number;
-      role: string;
-      approved: boolean;
-      created_at: string;
-      schools: { id: number; name: string } | null;
-    }>();
+    .single();
 
   if (error) {
     throw new Error(`Failed to request school access: ${error.message}`);
   }
 
+  const row = data as any;
   return {
-    id: data!.id,
-    user_id: data!.user_id,
-    school_id: data!.school_id,
-    school_name: data!.schools?.name || "Unknown",
-    role: data!.role as "editor" | "admin",
-    approved: data!.approved,
-    created_at: data!.created_at,
+    id: row.id,
+    user_id: row.user_id,
+    school_id: row.school_id,
+    school_name: row.schools?.name || "Unknown",
+    role: row.role as "editor" | "admin",
+    approved: row.approved,
+    created_at: row.created_at,
   };
 }
 
@@ -252,8 +236,9 @@ export async function requestSchoolAccess(
  */
 export async function getPendingAccessRequests(): Promise<AccessRequest[]> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer school_admins table
 
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("school_admins")
     .select(
       `
@@ -269,24 +254,13 @@ export async function getPendingAccessRequests(): Promise<AccessRequest[]> {
       )
     `
     )
-    .eq("approved", false)
-    .returns<
-      Array<{
-        id: number;
-        user_id: string;
-        school_id: number;
-        role: string;
-        approved: boolean;
-        created_at: string;
-        schools: { id: number; name: string } | null;
-      }>
-    >();
+    .eq("approved", false);
 
   if (error) {
     throw new Error(`Failed to fetch access requests: ${error.message}`);
   }
 
-  return (data || []).map((row) => ({
+  return (data || []).map((row: any) => ({
     id: row.id,
     user_id: row.user_id,
     school_id: row.school_id,
@@ -306,8 +280,9 @@ export async function respondToAccessRequest(
   approvedBy: string
 ): Promise<void> {
   const supabase = await createClient();
+  const db = supabase as any; // typed client can't infer school_admins table
 
-  const { error } = await supabase
+  const { error } = await db
     .from("school_admins")
     .update({
       approved,

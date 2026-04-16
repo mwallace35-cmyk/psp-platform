@@ -14,76 +14,79 @@ export type Database = {
   }
   public: {
     Tables: {
-      _epa_football_staging: {
+      ai_recaps: {
         Row: {
-          game_id: number | null
-          id: number
-          jersey: string | null
-          opp_abbr: string | null
-          opp_index: number | null
-          player_name: string | null
-          raw_value: string | null
-          school_id: number | null
-          season_id: number | null
-          source_file: string | null
-          stat_type: string | null
-        }
-        Insert: {
-          game_id?: number | null
-          id?: number
-          jersey?: string | null
-          opp_abbr?: string | null
-          opp_index?: number | null
-          player_name?: string | null
-          raw_value?: string | null
-          school_id?: number | null
-          season_id?: number | null
-          source_file?: string | null
-          stat_type?: string | null
-        }
-        Update: {
-          game_id?: number | null
-          id?: number
-          jersey?: string | null
-          opp_abbr?: string | null
-          opp_index?: number | null
-          player_name?: string | null
-          raw_value?: string | null
-          school_id?: number | null
-          season_id?: number | null
-          source_file?: string | null
-          stat_type?: string | null
-        }
-        Relationships: []
-      }
-      article_mentions: {
-        Row: {
-          article_id: number
+          completion_tokens: number | null
+          cost_cents: number | null
           created_at: string | null
-          entity_id: number
-          entity_type: string
+          game_date: string
+          game_result: string | null
+          high_school: string | null
           id: number
+          is_fallback: boolean | null
+          league: string
+          model_used: string | null
+          narrative: string
+          opponent: string | null
+          performance_id: number | null
+          player_name: string | null
+          prompt_tokens: number | null
+          recap_type: string
+          sport: string | null
+          stat_line: string | null
+          team_name: string | null
+          tier: number | null
         }
         Insert: {
-          article_id: number
+          completion_tokens?: number | null
+          cost_cents?: number | null
           created_at?: string | null
-          entity_id: number
-          entity_type: string
+          game_date: string
+          game_result?: string | null
+          high_school?: string | null
           id?: number
+          is_fallback?: boolean | null
+          league: string
+          model_used?: string | null
+          narrative: string
+          opponent?: string | null
+          performance_id?: number | null
+          player_name?: string | null
+          prompt_tokens?: number | null
+          recap_type: string
+          sport?: string | null
+          stat_line?: string | null
+          team_name?: string | null
+          tier?: number | null
         }
         Update: {
-          article_id?: number
+          completion_tokens?: number | null
+          cost_cents?: number | null
           created_at?: string | null
-          entity_id?: number
-          entity_type?: string
+          game_date?: string
+          game_result?: string | null
+          high_school?: string | null
           id?: number
+          is_fallback?: boolean | null
+          league?: string
+          model_used?: string | null
+          narrative?: string
+          opponent?: string | null
+          performance_id?: number | null
+          player_name?: string | null
+          prompt_tokens?: number | null
+          recap_type?: string
+          sport?: string | null
+          stat_line?: string | null
+          team_name?: string | null
+          tier?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "article_mentions_article_id_fkey"
-            columns: ["article_id"]
+            foreignKeyName: "ai_recaps_performance_id_fkey"
+            columns: ["performance_id"]
             isOneToOne: false
-            referencedRelation: "articles"
+            referencedRelation: "nlt_game_performances"
             referencedColumns: ["id"]
           },
         ]
@@ -255,6 +258,7 @@ export type Database = {
           coach_id: number | null
           created_at: string | null
           id: number
+          notes: string | null
           player_id: number | null
           player_name: string | null
           position: string | null
@@ -276,6 +280,7 @@ export type Database = {
           coach_id?: number | null
           created_at?: string | null
           id?: number
+          notes?: string | null
           player_id?: number | null
           player_name?: string | null
           position?: string | null
@@ -297,6 +302,7 @@ export type Database = {
           coach_id?: number | null
           created_at?: string | null
           id?: number
+          notes?: string | null
           player_id?: number | null
           player_name?: string | null
           position?: string | null
@@ -652,6 +658,7 @@ export type Database = {
           fta: number | null
           ftm: number | null
           games_played: number | null
+          gender: string | null
           honor_level: string | null
           id: number
           jersey_number: string | null
@@ -684,6 +691,7 @@ export type Database = {
           fta?: number | null
           ftm?: number | null
           games_played?: number | null
+          gender?: string | null
           honor_level?: string | null
           id?: number
           jersey_number?: string | null
@@ -716,6 +724,7 @@ export type Database = {
           fta?: number | null
           ftm?: number | null
           games_played?: number | null
+          gender?: string | null
           honor_level?: string | null
           id?: number
           jersey_number?: string | null
@@ -1171,50 +1180,40 @@ export type Database = {
           },
         ]
       }
-      coach_claims: {
+      coach_stat_focus: {
         Row: {
-          coach_name: string
-          email: string
-          id: string
-          message: string | null
-          phone: string | null
-          player_list: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          school_name: string
-          sport: string
-          status: string
-          submitted_at: string
+          created_at: string | null
+          id: number
+          nlt_id: number
+          notes: string | null
+          position_group: string | null
+          stat_focus: string
         }
         Insert: {
-          coach_name: string
-          email: string
-          id?: string
-          message?: string | null
-          phone?: string | null
-          player_list?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          school_name: string
-          sport: string
-          status?: string
-          submitted_at?: string
+          created_at?: string | null
+          id?: number
+          nlt_id: number
+          notes?: string | null
+          position_group?: string | null
+          stat_focus: string
         }
         Update: {
-          coach_name?: string
-          email?: string
-          id?: string
-          message?: string | null
-          phone?: string | null
-          player_list?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          school_name?: string
-          sport?: string
-          status?: string
-          submitted_at?: string
+          created_at?: string | null
+          id?: number
+          nlt_id?: number
+          notes?: string | null
+          position_group?: string | null
+          stat_focus?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "coach_stat_focus_nlt_id_fkey"
+            columns: ["nlt_id"]
+            isOneToOne: true
+            referencedRelation: "next_level_tracking"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       coaches: {
         Row: {
@@ -1479,6 +1478,156 @@ export type Database = {
           },
         ]
       }
+      community_events: {
+        Row: {
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          cost_info: string | null
+          created_at: string | null
+          deleted_at: string | null
+          description: string | null
+          end_date: string | null
+          end_time: string | null
+          event_type: string
+          id: number
+          image_url: string | null
+          is_featured: boolean | null
+          is_free: boolean | null
+          location_address: string | null
+          location_name: string | null
+          organizer: string | null
+          region_id: string | null
+          registration_url: string | null
+          school_id: number | null
+          slug: string
+          sport_id: string | null
+          start_date: string
+          start_time: string | null
+          status: string | null
+          tags: Json | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          cost_info?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          end_time?: string | null
+          event_type: string
+          id?: number
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_free?: boolean | null
+          location_address?: string | null
+          location_name?: string | null
+          organizer?: string | null
+          region_id?: string | null
+          registration_url?: string | null
+          school_id?: number | null
+          slug: string
+          sport_id?: string | null
+          start_date: string
+          start_time?: string | null
+          status?: string | null
+          tags?: Json | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          cost_info?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          end_time?: string | null
+          event_type?: string
+          id?: number
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_free?: boolean | null
+          location_address?: string | null
+          location_name?: string | null
+          organizer?: string | null
+          region_id?: string | null
+          registration_url?: string | null
+          school_id?: number | null
+          slug?: string
+          sport_id?: string | null
+          start_date?: string
+          start_time?: string | null
+          status?: string | null
+          tags?: Json | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_events_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_events_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "community_events_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_directory_mv"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_events_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_names"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_events_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_events_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_events_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "team_alltime_records"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "community_events_sport_id_fkey"
+            columns: ["sport_id"]
+            isOneToOne: false
+            referencedRelation: "sports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_leagues: {
         Row: {
           age_group: string | null
@@ -1578,6 +1727,66 @@ export type Database = {
         }
         Relationships: []
       }
+      cron_logs: {
+        Row: {
+          cost_cents: number | null
+          created_at: string | null
+          cron_name: string
+          duration_ms: number | null
+          dyk_generated: number | null
+          errors: Json | null
+          games_fetched: number | null
+          id: number
+          input_tokens: number | null
+          league: string | null
+          metadata: Json | null
+          narratives_generated: number | null
+          output_tokens: number | null
+          philly_games: number | null
+          players_matched: number | null
+          run_date: string | null
+          status: string
+        }
+        Insert: {
+          cost_cents?: number | null
+          created_at?: string | null
+          cron_name: string
+          duration_ms?: number | null
+          dyk_generated?: number | null
+          errors?: Json | null
+          games_fetched?: number | null
+          id?: number
+          input_tokens?: number | null
+          league?: string | null
+          metadata?: Json | null
+          narratives_generated?: number | null
+          output_tokens?: number | null
+          philly_games?: number | null
+          players_matched?: number | null
+          run_date?: string | null
+          status?: string
+        }
+        Update: {
+          cost_cents?: number | null
+          created_at?: string | null
+          cron_name?: string
+          duration_ms?: number | null
+          dyk_generated?: number | null
+          errors?: Json | null
+          games_fetched?: number | null
+          id?: number
+          input_tokens?: number | null
+          league?: string | null
+          metadata?: Json | null
+          narratives_generated?: number | null
+          output_tokens?: number | null
+          philly_games?: number | null
+          players_matched?: number | null
+          run_date?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       daily_polls: {
         Row: {
           active: boolean | null
@@ -1626,34 +1835,64 @@ export type Database = {
         Row: {
           approved: boolean | null
           category: string | null
+          category_type: string | null
           created_at: string | null
           era: string | null
+          expires_at: string | null
           fact_text: string
+          high_school: string | null
+          high_school_id: number | null
           id: number
+          input_tokens: number | null
+          is_fallback: boolean | null
+          model: string | null
+          output_tokens: number | null
           player_id: number | null
+          player_name: string | null
           school_id: number | null
+          source_date: string | null
           sport: string | null
         }
         Insert: {
           approved?: boolean | null
           category?: string | null
+          category_type?: string | null
           created_at?: string | null
           era?: string | null
+          expires_at?: string | null
           fact_text: string
+          high_school?: string | null
+          high_school_id?: number | null
           id?: number
+          input_tokens?: number | null
+          is_fallback?: boolean | null
+          model?: string | null
+          output_tokens?: number | null
           player_id?: number | null
+          player_name?: string | null
           school_id?: number | null
+          source_date?: string | null
           sport?: string | null
         }
         Update: {
           approved?: boolean | null
           category?: string | null
+          category_type?: string | null
           created_at?: string | null
           era?: string | null
+          expires_at?: string | null
           fact_text?: string
+          high_school?: string | null
+          high_school_id?: number | null
           id?: number
+          input_tokens?: number | null
+          is_fallback?: boolean | null
+          model?: string | null
+          output_tokens?: number | null
           player_id?: number | null
+          player_name?: string | null
           school_id?: number | null
+          source_date?: string | null
           sport?: string | null
         }
         Relationships: [
@@ -1736,44 +1975,6 @@ export type Database = {
           },
         ]
       }
-      email_logs: {
-        Row: {
-          email_type: string
-          id: number
-          resend_id: string | null
-          sent_at: string | null
-          status: string | null
-          subject: string | null
-          subscriber_id: number | null
-        }
-        Insert: {
-          email_type: string
-          id?: number
-          resend_id?: string | null
-          sent_at?: string | null
-          status?: string | null
-          subject?: string | null
-          subscriber_id?: number | null
-        }
-        Update: {
-          email_type?: string
-          id?: number
-          resend_id?: string | null
-          sent_at?: string | null
-          status?: string | null
-          subject?: string | null
-          subscriber_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "email_logs_subscriber_id_fkey"
-            columns: ["subscriber_id"]
-            isOneToOne: false
-            referencedRelation: "email_subscribers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       email_subscribers: {
         Row: {
           confirmation_token: string | null
@@ -1810,67 +2011,16 @@ export type Database = {
         }
         Relationships: []
       }
-      events: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          end_date: string | null
-          event_type: string | null
-          id: number
-          location: string | null
-          registration_url: string | null
-          sport_id: string | null
-          start_date: string
-          status: string | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          end_date?: string | null
-          event_type?: string | null
-          id?: number
-          location?: string | null
-          registration_url?: string | null
-          sport_id?: string | null
-          start_date: string
-          status?: string | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          end_date?: string | null
-          event_type?: string | null
-          id?: number
-          location?: string | null
-          registration_url?: string | null
-          sport_id?: string | null
-          start_date?: string
-          status?: string | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "events_sport_id_fkey"
-            columns: ["sport_id"]
-            isOneToOne: false
-            referencedRelation: "sports"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       football_player_seasons: {
         Row: {
           created_at: string | null
+          fg: number | null
           games_played: number | null
           id: number
           interceptions: number | null
           jersey_number: string | null
           kick_ret_yards: number | null
+          kick_xp: number | null
           pass_att: number | null
           pass_comp: number | null
           pass_comp_pct: number | null
@@ -1902,11 +2052,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          fg?: number | null
           games_played?: number | null
           id?: number
           interceptions?: number | null
           jersey_number?: string | null
           kick_ret_yards?: number | null
+          kick_xp?: number | null
           pass_att?: number | null
           pass_comp?: number | null
           pass_comp_pct?: number | null
@@ -1938,11 +2090,13 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          fg?: number | null
           games_played?: number | null
           id?: number
           interceptions?: number | null
           jersey_number?: string | null
           kick_ret_yards?: number | null
+          kick_xp?: number | null
           pass_att?: number | null
           pass_comp?: number | null
           pass_comp_pct?: number | null
@@ -2261,36 +2415,6 @@ export type Database = {
           },
         ]
       }
-      game_of_the_week: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          game_id: string | null
-          id: string
-          sport: string
-          updated_at: string | null
-          week_start: string
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          game_id?: string | null
-          id?: string
-          sport: string
-          updated_at?: string | null
-          week_start: string
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          game_id?: string | null
-          id?: string
-          sport?: string
-          updated_at?: string | null
-          week_start?: string
-        }
-        Relationships: []
-      }
       game_player_stats: {
         Row: {
           created_at: string | null
@@ -2458,6 +2582,66 @@ export type Database = {
             referencedColumns: ["school_id"]
           },
         ]
+      }
+      game_scores_cache: {
+        Row: {
+          away_score: number | null
+          away_team_id: string
+          away_team_name: string
+          espn_event_id: string
+          fetched_at: string | null
+          game_date: string
+          has_philly_connection: boolean | null
+          home_score: number | null
+          home_team_id: string
+          home_team_name: string
+          id: number
+          league: string
+          philly_coach_ids: number[] | null
+          philly_player_ids: number[] | null
+          raw_json: Json | null
+          status: string | null
+          venue: string | null
+        }
+        Insert: {
+          away_score?: number | null
+          away_team_id: string
+          away_team_name: string
+          espn_event_id: string
+          fetched_at?: string | null
+          game_date: string
+          has_philly_connection?: boolean | null
+          home_score?: number | null
+          home_team_id: string
+          home_team_name: string
+          id?: number
+          league: string
+          philly_coach_ids?: number[] | null
+          philly_player_ids?: number[] | null
+          raw_json?: Json | null
+          status?: string | null
+          venue?: string | null
+        }
+        Update: {
+          away_score?: number | null
+          away_team_id?: string
+          away_team_name?: string
+          espn_event_id?: string
+          fetched_at?: string | null
+          game_date?: string
+          has_philly_connection?: boolean | null
+          home_score?: number | null
+          home_team_id?: string
+          home_team_name?: string
+          id?: number
+          league?: string
+          philly_coach_ids?: number[] | null
+          philly_player_ids?: number[] | null
+          raw_json?: Json | null
+          status?: string | null
+          venue?: string | null
+        }
+        Relationships: []
       }
       games: {
         Row: {
@@ -2647,216 +2831,6 @@ export type Database = {
             columns: ["season_id"]
             isOneToOne: false
             referencedRelation: "seasons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gotw_nominees: {
-        Row: {
-          away_school_id: number | null
-          created_at: string | null
-          description: string | null
-          game_id: number | null
-          home_school_id: number | null
-          id: number
-          is_winner: boolean | null
-          season_id: number | null
-          sport_id: string | null
-          week_label: string | null
-        }
-        Insert: {
-          away_school_id?: number | null
-          created_at?: string | null
-          description?: string | null
-          game_id?: number | null
-          home_school_id?: number | null
-          id?: number
-          is_winner?: boolean | null
-          season_id?: number | null
-          sport_id?: string | null
-          week_label?: string | null
-        }
-        Update: {
-          away_school_id?: number | null
-          created_at?: string | null
-          description?: string | null
-          game_id?: number | null
-          home_school_id?: number | null
-          id?: number
-          is_winner?: boolean | null
-          season_id?: number | null
-          sport_id?: string | null
-          week_label?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gotw_nominees_away_school_id_fkey"
-            columns: ["away_school_id"]
-            isOneToOne: false
-            referencedRelation: "basketball_career_leaders"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_away_school_id_fkey"
-            columns: ["away_school_id"]
-            isOneToOne: false
-            referencedRelation: "school_directory_mv"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_away_school_id_fkey"
-            columns: ["away_school_id"]
-            isOneToOne: false
-            referencedRelation: "school_names"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_away_school_id_fkey"
-            columns: ["away_school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_away_school_id_fkey"
-            columns: ["away_school_id"]
-            isOneToOne: false
-            referencedRelation: "schools_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_away_school_id_fkey"
-            columns: ["away_school_id"]
-            isOneToOne: false
-            referencedRelation: "team_alltime_records"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_home_school_id_fkey"
-            columns: ["home_school_id"]
-            isOneToOne: false
-            referencedRelation: "basketball_career_leaders"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_home_school_id_fkey"
-            columns: ["home_school_id"]
-            isOneToOne: false
-            referencedRelation: "school_directory_mv"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_home_school_id_fkey"
-            columns: ["home_school_id"]
-            isOneToOne: false
-            referencedRelation: "school_names"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_home_school_id_fkey"
-            columns: ["home_school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_home_school_id_fkey"
-            columns: ["home_school_id"]
-            isOneToOne: false
-            referencedRelation: "schools_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_home_school_id_fkey"
-            columns: ["home_school_id"]
-            isOneToOne: false
-            referencedRelation: "team_alltime_records"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "seasons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gotw_nominees_sport_id_fkey"
-            columns: ["sport_id"]
-            isOneToOne: false
-            referencedRelation: "sports"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gotw_votes: {
-        Row: {
-          id: number
-          nominee_id: number
-          voted_at: string | null
-          voter_fingerprint: string
-        }
-        Insert: {
-          id?: number
-          nominee_id: number
-          voted_at?: string | null
-          voter_fingerprint: string
-        }
-        Update: {
-          id?: number
-          nominee_id?: number
-          voted_at?: string | null
-          voter_fingerprint?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gotw_votes_nominee_id_fkey"
-            columns: ["nominee_id"]
-            isOneToOne: false
-            referencedRelation: "gotw_nominees"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gotw_winners: {
-        Row: {
-          announced_at: string | null
-          id: number
-          nominee_id: number | null
-          total_votes: number | null
-        }
-        Insert: {
-          announced_at?: string | null
-          id?: number
-          nominee_id?: number | null
-          total_votes?: number | null
-        }
-        Update: {
-          announced_at?: string | null
-          id?: number
-          nominee_id?: number | null
-          total_votes?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gotw_winners_nominee_id_fkey"
-            columns: ["nominee_id"]
-            isOneToOne: false
-            referencedRelation: "gotw_nominees"
             referencedColumns: ["id"]
           },
         ]
@@ -3060,6 +3034,100 @@ export type Database = {
         }
         Relationships: []
       }
+      league_seasons: {
+        Row: {
+          conference: string | null
+          created_at: string | null
+          division: string | null
+          id: number
+          league_id: number
+          school_id: number
+          season_id: number
+        }
+        Insert: {
+          conference?: string | null
+          created_at?: string | null
+          division?: string | null
+          id?: number
+          league_id: number
+          school_id: number
+          season_id: number
+        }
+        Update: {
+          conference?: string | null
+          created_at?: string | null
+          division?: string | null
+          id?: number
+          league_id?: number
+          school_id?: number
+          season_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_seasons_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_seasons_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "team_alltime_records"
+            referencedColumns: ["league_id"]
+          },
+          {
+            foreignKeyName: "league_seasons_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "league_seasons_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_directory_mv"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_seasons_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_names"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_seasons_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_seasons_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "league_seasons_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "team_alltime_records"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "league_seasons_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leagues: {
         Row: {
           created_at: string | null
@@ -3104,6 +3172,514 @@ export type Database = {
           },
         ]
       }
+      legacy_profiles: {
+        Row: {
+          birth_year: number | null
+          coach_id: number | null
+          created_at: string
+          death_year: number | null
+          display_name: string
+          eligibility_reason: string
+          era_summary: string | null
+          hero_photo_url: string | null
+          id: number
+          is_published: boolean
+          legend_slug: string | null
+          narrative_md: string | null
+          player_id: number | null
+          primary_school_id: number | null
+          primary_sport: string | null
+          published_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          birth_year?: number | null
+          coach_id?: number | null
+          created_at?: string
+          death_year?: number | null
+          display_name: string
+          eligibility_reason: string
+          era_summary?: string | null
+          hero_photo_url?: string | null
+          id?: number
+          is_published?: boolean
+          legend_slug?: string | null
+          narrative_md?: string | null
+          player_id?: number | null
+          primary_school_id?: number | null
+          primary_sport?: string | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          birth_year?: number | null
+          coach_id?: number | null
+          created_at?: string
+          death_year?: number | null
+          display_name?: string
+          eligibility_reason?: string
+          era_summary?: string | null
+          hero_photo_url?: string | null
+          id?: number
+          is_published?: boolean
+          legend_slug?: string | null
+          narrative_md?: string | null
+          player_id?: number | null
+          primary_school_id?: number | null
+          primary_sport?: string | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_profiles_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "coaches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "baseball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "football_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_primary_school_id_fkey"
+            columns: ["primary_school_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_primary_school_id_fkey"
+            columns: ["primary_school_id"]
+            isOneToOne: false
+            referencedRelation: "school_directory_mv"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_primary_school_id_fkey"
+            columns: ["primary_school_id"]
+            isOneToOne: false
+            referencedRelation: "school_names"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_primary_school_id_fkey"
+            columns: ["primary_school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_primary_school_id_fkey"
+            columns: ["primary_school_id"]
+            isOneToOne: false
+            referencedRelation: "schools_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_profiles_primary_school_id_fkey"
+            columns: ["primary_school_id"]
+            isOneToOne: false
+            referencedRelation: "team_alltime_records"
+            referencedColumns: ["school_id"]
+          },
+        ]
+      }
+      legacy_relations: {
+        Row: {
+          created_at: string
+          from_profile_id: number
+          id: number
+          note: string | null
+          relation: string
+          to_profile_id: number
+        }
+        Insert: {
+          created_at?: string
+          from_profile_id: number
+          id?: number
+          note?: string | null
+          relation: string
+          to_profile_id: number
+        }
+        Update: {
+          created_at?: string
+          from_profile_id?: number
+          id?: number
+          note?: string | null
+          relation?: string
+          to_profile_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_relations_from_profile_id_fkey"
+            columns: ["from_profile_id"]
+            isOneToOne: false
+            referencedRelation: "legacy_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legacy_relations_to_profile_id_fkey"
+            columns: ["to_profile_id"]
+            isOneToOne: false
+            referencedRelation: "legacy_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legend_allstar_matches: {
+        Row: {
+          created_at: string
+          id: number
+          legend_slug: string
+          match_method: string | null
+          match_score: number | null
+          player_id: number | null
+          raw_name: string
+          raw_position: string | null
+          raw_year: number | null
+          reviewed: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          legend_slug: string
+          match_method?: string | null
+          match_score?: number | null
+          player_id?: number | null
+          raw_name: string
+          raw_position?: string | null
+          raw_year?: number | null
+          reviewed?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          legend_slug?: string
+          match_method?: string | null
+          match_score?: number | null
+          player_id?: number | null
+          raw_name?: string
+          raw_position?: string | null
+          raw_year?: number | null
+          reviewed?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legend_allstar_matches_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "baseball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "legend_allstar_matches_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "legend_allstar_matches_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "football_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "legend_allstar_matches_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legend_allstar_matches_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players_active"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legend_tributes: {
+        Row: {
+          affiliation: string | null
+          approved_at: string | null
+          approved_by: string | null
+          archived_date: string | null
+          body: string
+          created_at: string
+          email_optional: string | null
+          id: number
+          ip_hash: string | null
+          legend_slug: string
+          name: string
+          source: string
+          status: string
+        }
+        Insert: {
+          affiliation?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          archived_date?: string | null
+          body: string
+          created_at?: string
+          email_optional?: string | null
+          id?: number
+          ip_hash?: string | null
+          legend_slug: string
+          name: string
+          source?: string
+          status?: string
+        }
+        Update: {
+          affiliation?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          archived_date?: string | null
+          body?: string
+          created_at?: string
+          email_optional?: string | null
+          id?: number
+          ip_hash?: string | null
+          legend_slug?: string
+          name?: string
+          source?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      media: {
+        Row: {
+          caption: string | null
+          category: string | null
+          created_at: string | null
+          duration_seconds: number | null
+          file_name: string
+          file_size: number
+          game_id: number | null
+          height: number | null
+          id: string
+          is_featured: boolean | null
+          media_type: string
+          mime_type: string
+          moderated_at: string | null
+          moderated_by: string | null
+          player_id: number | null
+          rejection_reason: string | null
+          school_id: number | null
+          season_id: number | null
+          sort_order: number | null
+          sport: string | null
+          status: string
+          storage_path: string
+          tags: string[] | null
+          thumbnail_path: string | null
+          updated_at: string | null
+          uploaded_by: string
+          width: number | null
+        }
+        Insert: {
+          caption?: string | null
+          category?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          file_name: string
+          file_size: number
+          game_id?: number | null
+          height?: number | null
+          id?: string
+          is_featured?: boolean | null
+          media_type: string
+          mime_type: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          player_id?: number | null
+          rejection_reason?: string | null
+          school_id?: number | null
+          season_id?: number | null
+          sort_order?: number | null
+          sport?: string | null
+          status?: string
+          storage_path: string
+          tags?: string[] | null
+          thumbnail_path?: string | null
+          updated_at?: string | null
+          uploaded_by: string
+          width?: number | null
+        }
+        Update: {
+          caption?: string | null
+          category?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          file_name?: string
+          file_size?: number
+          game_id?: number | null
+          height?: number | null
+          id?: string
+          is_featured?: boolean | null
+          media_type?: string
+          mime_type?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          player_id?: number | null
+          rejection_reason?: string | null
+          school_id?: number | null
+          season_id?: number | null
+          sort_order?: number | null
+          sport?: string | null
+          status?: string
+          storage_path?: string
+          tags?: string[] | null
+          thumbnail_path?: string | null
+          updated_at?: string | null
+          uploaded_by?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "baseball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "media_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "media_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "football_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "media_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "media_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_directory_mv"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_names"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "team_alltime_records"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "media_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       next_level_tracking: {
         Row: {
           bio_note: string | null
@@ -3115,10 +3691,12 @@ export type Database = {
           current_org: string | null
           current_role: string | null
           draft_info: string | null
+          espn_player_id: string | null
           featured: boolean | null
           headshot_url: string | null
           high_school_id: number | null
           id: number
+          marquee_watch: boolean | null
           person_name: string
           player_id: number | null
           pro_league: string | null
@@ -3147,10 +3725,12 @@ export type Database = {
           current_org?: string | null
           current_role?: string | null
           draft_info?: string | null
+          espn_player_id?: string | null
           featured?: boolean | null
           headshot_url?: string | null
           high_school_id?: number | null
           id?: number
+          marquee_watch?: boolean | null
           person_name: string
           player_id?: number | null
           pro_league?: string | null
@@ -3179,10 +3759,12 @@ export type Database = {
           current_org?: string | null
           current_role?: string | null
           draft_info?: string | null
+          espn_player_id?: string | null
           featured?: boolean | null
           headshot_url?: string | null
           high_school_id?: number | null
           id?: number
+          marquee_watch?: boolean | null
           person_name?: string
           player_id?: number | null
           pro_league?: string | null
@@ -3288,6 +3870,69 @@ export type Database = {
           },
         ]
       }
+      nlt_game_performances: {
+        Row: {
+          created_at: string | null
+          game_id: number
+          high_school: string | null
+          high_school_id: number | null
+          id: number
+          nlt_id: number
+          performance_score: number | null
+          player_name: string
+          recap_tier: number | null
+          sport: string
+          stats: Json
+          team_name: string
+          team_stats: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          game_id: number
+          high_school?: string | null
+          high_school_id?: number | null
+          id?: number
+          nlt_id: number
+          performance_score?: number | null
+          player_name: string
+          recap_tier?: number | null
+          sport: string
+          stats: Json
+          team_name: string
+          team_stats?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          game_id?: number
+          high_school?: string | null
+          high_school_id?: number | null
+          id?: number
+          nlt_id?: number
+          performance_score?: number | null
+          player_name?: string
+          recap_tier?: number | null
+          sport?: string
+          stats?: Json
+          team_name?: string
+          team_stats?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nlt_game_performances_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "game_scores_cache"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nlt_game_performances_nlt_id_fkey"
+            columns: ["nlt_id"]
+            isOneToOne: false
+            referencedRelation: "next_level_tracking"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -3320,125 +3965,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      photos: {
-        Row: {
-          approved: boolean | null
-          caption: string | null
-          created_at: string | null
-          featured: boolean | null
-          game_id: number | null
-          id: number
-          photo_url: string
-          player_tags: number[] | null
-          school_id: number | null
-          season_id: number | null
-          sport_id: string | null
-          thumbnail_url: string | null
-          uploaded_by: string | null
-        }
-        Insert: {
-          approved?: boolean | null
-          caption?: string | null
-          created_at?: string | null
-          featured?: boolean | null
-          game_id?: number | null
-          id?: number
-          photo_url: string
-          player_tags?: number[] | null
-          school_id?: number | null
-          season_id?: number | null
-          sport_id?: string | null
-          thumbnail_url?: string | null
-          uploaded_by?: string | null
-        }
-        Update: {
-          approved?: boolean | null
-          caption?: string | null
-          created_at?: string | null
-          featured?: boolean | null
-          game_id?: number | null
-          id?: number
-          photo_url?: string
-          player_tags?: number[] | null
-          school_id?: number | null
-          season_id?: number | null
-          sport_id?: string | null
-          thumbnail_url?: string | null
-          uploaded_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "photos_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "photos_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "photos_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "basketball_career_leaders"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "photos_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "school_directory_mv"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "photos_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "school_names"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "photos_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "photos_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "photos_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "team_alltime_records"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "photos_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "seasons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "photos_sport_id_fkey"
-            columns: ["sport_id"]
-            isOneToOne: false
-            referencedRelation: "sports"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       pickem_games: {
         Row: {
@@ -3876,105 +4402,142 @@ export type Database = {
           },
         ]
       }
-      player_highlights: {
+      player_duplicate_candidates: {
         Row: {
+          approved: boolean | null
+          canonical_id: number | null
+          canonical_name: string | null
+          composite_score: number | null
+          confidence: string | null
           created_at: string | null
-          game_id: number | null
-          hudl_url: string
+          duplicate_id: number | null
+          duplicate_name: string | null
+          grad_year_compatible: boolean | null
           id: number
-          is_featured: boolean | null
-          player_id: number | null
-          season_id: number | null
-          sport_id: string | null
-          title: string | null
-          updated_at: string | null
+          match_reasons: string[] | null
+          merged_at: string | null
+          name_similarity: number | null
+          nickname_match: boolean | null
+          phonetic_match: boolean | null
+          reviewed: boolean | null
+          same_jersey: boolean | null
+          school_id: number | null
+          season_overlap: boolean | null
+          shared_games: number | null
         }
         Insert: {
+          approved?: boolean | null
+          canonical_id?: number | null
+          canonical_name?: string | null
+          composite_score?: number | null
+          confidence?: string | null
           created_at?: string | null
-          game_id?: number | null
-          hudl_url: string
+          duplicate_id?: number | null
+          duplicate_name?: string | null
+          grad_year_compatible?: boolean | null
           id?: number
-          is_featured?: boolean | null
-          player_id?: number | null
-          season_id?: number | null
-          sport_id?: string | null
-          title?: string | null
-          updated_at?: string | null
+          match_reasons?: string[] | null
+          merged_at?: string | null
+          name_similarity?: number | null
+          nickname_match?: boolean | null
+          phonetic_match?: boolean | null
+          reviewed?: boolean | null
+          same_jersey?: boolean | null
+          school_id?: number | null
+          season_overlap?: boolean | null
+          shared_games?: number | null
         }
         Update: {
+          approved?: boolean | null
+          canonical_id?: number | null
+          canonical_name?: string | null
+          composite_score?: number | null
+          confidence?: string | null
           created_at?: string | null
-          game_id?: number | null
-          hudl_url?: string
+          duplicate_id?: number | null
+          duplicate_name?: string | null
+          grad_year_compatible?: boolean | null
           id?: number
-          is_featured?: boolean | null
-          player_id?: number | null
-          season_id?: number | null
-          sport_id?: string | null
-          title?: string | null
-          updated_at?: string | null
+          match_reasons?: string[] | null
+          merged_at?: string | null
+          name_similarity?: number | null
+          nickname_match?: boolean | null
+          phonetic_match?: boolean | null
+          reviewed?: boolean | null
+          same_jersey?: boolean | null
+          school_id?: number | null
+          season_overlap?: boolean | null
+          shared_games?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "player_highlights_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "player_highlights_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "player_highlights_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_duplicate_candidates_canonical_id_fkey"
+            columns: ["canonical_id"]
             isOneToOne: false
             referencedRelation: "baseball_career_leaders"
             referencedColumns: ["player_id"]
           },
           {
-            foreignKeyName: "player_highlights_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_duplicate_candidates_canonical_id_fkey"
+            columns: ["canonical_id"]
             isOneToOne: false
             referencedRelation: "basketball_career_leaders"
             referencedColumns: ["player_id"]
           },
           {
-            foreignKeyName: "player_highlights_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_duplicate_candidates_canonical_id_fkey"
+            columns: ["canonical_id"]
             isOneToOne: false
             referencedRelation: "football_career_leaders"
             referencedColumns: ["player_id"]
           },
           {
-            foreignKeyName: "player_highlights_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_duplicate_candidates_canonical_id_fkey"
+            columns: ["canonical_id"]
             isOneToOne: false
             referencedRelation: "players"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "player_highlights_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_duplicate_candidates_canonical_id_fkey"
+            columns: ["canonical_id"]
             isOneToOne: false
             referencedRelation: "players_active"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "player_highlights_season_id_fkey"
-            columns: ["season_id"]
+            foreignKeyName: "player_duplicate_candidates_duplicate_id_fkey"
+            columns: ["duplicate_id"]
             isOneToOne: false
-            referencedRelation: "seasons"
+            referencedRelation: "baseball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_duplicate_candidates_duplicate_id_fkey"
+            columns: ["duplicate_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_duplicate_candidates_duplicate_id_fkey"
+            columns: ["duplicate_id"]
+            isOneToOne: false
+            referencedRelation: "football_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_duplicate_candidates_duplicate_id_fkey"
+            columns: ["duplicate_id"]
+            isOneToOne: false
+            referencedRelation: "players"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "player_highlights_sport_id_fkey"
-            columns: ["sport_id"]
+            foreignKeyName: "player_duplicate_candidates_duplicate_id_fkey"
+            columns: ["duplicate_id"]
             isOneToOne: false
-            referencedRelation: "sports"
+            referencedRelation: "players_active"
             referencedColumns: ["id"]
           },
         ]
@@ -4056,69 +4619,98 @@ export type Database = {
           },
         ]
       }
-      player_news_cache: {
+      player_merge_log: {
         Row: {
-          fetched_at: string | null
+          canonical_player_id: number
           id: number
-          player_id: number | null
-          player_name: string
-          published_at: string | null
-          source: string | null
-          title: string
-          url: string
+          merged_at: string | null
+          merged_player_id: number
+          reason: string
+          stats_moved: Json | null
         }
         Insert: {
-          fetched_at?: string | null
+          canonical_player_id: number
           id?: number
-          player_id?: number | null
-          player_name: string
-          published_at?: string | null
-          source?: string | null
-          title: string
-          url: string
+          merged_at?: string | null
+          merged_player_id: number
+          reason: string
+          stats_moved?: Json | null
         }
         Update: {
-          fetched_at?: string | null
+          canonical_player_id?: number
           id?: number
-          player_id?: number | null
-          player_name?: string
-          published_at?: string | null
-          source?: string | null
-          title?: string
-          url?: string
+          merged_at?: string | null
+          merged_player_id?: number
+          reason?: string
+          stats_moved?: Json | null
         }
         Relationships: [
           {
-            foreignKeyName: "player_news_cache_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_merge_log_canonical_player_id_fkey"
+            columns: ["canonical_player_id"]
             isOneToOne: false
             referencedRelation: "baseball_career_leaders"
             referencedColumns: ["player_id"]
           },
           {
-            foreignKeyName: "player_news_cache_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_merge_log_canonical_player_id_fkey"
+            columns: ["canonical_player_id"]
             isOneToOne: false
             referencedRelation: "basketball_career_leaders"
             referencedColumns: ["player_id"]
           },
           {
-            foreignKeyName: "player_news_cache_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_merge_log_canonical_player_id_fkey"
+            columns: ["canonical_player_id"]
             isOneToOne: false
             referencedRelation: "football_career_leaders"
             referencedColumns: ["player_id"]
           },
           {
-            foreignKeyName: "player_news_cache_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_merge_log_canonical_player_id_fkey"
+            columns: ["canonical_player_id"]
             isOneToOne: false
             referencedRelation: "players"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "player_news_cache_player_id_fkey"
-            columns: ["player_id"]
+            foreignKeyName: "player_merge_log_canonical_player_id_fkey"
+            columns: ["canonical_player_id"]
+            isOneToOne: false
+            referencedRelation: "players_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_merge_log_merged_player_id_fkey"
+            columns: ["merged_player_id"]
+            isOneToOne: false
+            referencedRelation: "baseball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_merge_log_merged_player_id_fkey"
+            columns: ["merged_player_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_merge_log_merged_player_id_fkey"
+            columns: ["merged_player_id"]
+            isOneToOne: false
+            referencedRelation: "football_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_merge_log_merged_player_id_fkey"
+            columns: ["merged_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_merge_log_merged_player_id_fkey"
+            columns: ["merged_player_id"]
             isOneToOne: false
             referencedRelation: "players_active"
             referencedColumns: ["id"]
@@ -4552,199 +5144,6 @@ export type Database = {
           },
         ]
       }
-      plyw_nominees: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          game_id: number | null
-          id: number
-          is_winner: boolean | null
-          player_id: number | null
-          player_name: string
-          school_name: string | null
-          season_id: number | null
-          sport_id: string | null
-          video_url: string | null
-          votes: number | null
-          week_label: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          game_id?: number | null
-          id?: number
-          is_winner?: boolean | null
-          player_id?: number | null
-          player_name: string
-          school_name?: string | null
-          season_id?: number | null
-          sport_id?: string | null
-          video_url?: string | null
-          votes?: number | null
-          week_label?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          game_id?: number | null
-          id?: number
-          is_winner?: boolean | null
-          player_id?: number | null
-          player_name?: string
-          school_name?: string | null
-          season_id?: number | null
-          sport_id?: string | null
-          video_url?: string | null
-          votes?: number | null
-          week_label?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "plyw_nominees_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plyw_nominees_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plyw_nominees_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "baseball_career_leaders"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "plyw_nominees_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "basketball_career_leaders"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "plyw_nominees_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "football_career_leaders"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "plyw_nominees_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plyw_nominees_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plyw_nominees_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "seasons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plyw_nominees_sport_id_fkey"
-            columns: ["sport_id"]
-            isOneToOne: false
-            referencedRelation: "sports"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      plyw_votes: {
-        Row: {
-          created_at: string | null
-          id: number
-          nominee_id: number
-          voter_fingerprint: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: number
-          nominee_id: number
-          voter_fingerprint?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: number
-          nominee_id?: number
-          voter_fingerprint?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "plyw_votes_nominee_id_fkey"
-            columns: ["nominee_id"]
-            isOneToOne: false
-            referencedRelation: "plyw_nominees"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      plyw_winners: {
-        Row: {
-          announced_at: string | null
-          created_at: string | null
-          id: number
-          nominee_id: number
-          season_id: number | null
-          sport_id: string | null
-          week_label: string | null
-        }
-        Insert: {
-          announced_at?: string | null
-          created_at?: string | null
-          id?: number
-          nominee_id: number
-          season_id?: number | null
-          sport_id?: string | null
-          week_label?: string | null
-        }
-        Update: {
-          announced_at?: string | null
-          created_at?: string | null
-          id?: number
-          nominee_id?: number
-          season_id?: number | null
-          sport_id?: string | null
-          week_label?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "plyw_winners_nominee_id_fkey"
-            columns: ["nominee_id"]
-            isOneToOne: false
-            referencedRelation: "plyw_nominees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plyw_winners_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "seasons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plyw_winners_sport_id_fkey"
-            columns: ["sport_id"]
-            isOneToOne: false
-            referencedRelation: "sports"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       poll_votes: {
         Row: {
           created_at: string | null
@@ -4823,7 +5222,7 @@ export type Database = {
           season_id: number | null
           sport_id: string | null
           stat_line: string | null
-          votes: number | null
+          vote_count: number | null
           week_label: string | null
         }
         Insert: {
@@ -4836,7 +5235,7 @@ export type Database = {
           season_id?: number | null
           sport_id?: string | null
           stat_line?: string | null
-          votes?: number | null
+          vote_count?: number | null
           week_label?: string | null
         }
         Update: {
@@ -4849,7 +5248,7 @@ export type Database = {
           season_id?: number | null
           sport_id?: string | null
           stat_line?: string | null
-          votes?: number | null
+          vote_count?: number | null
           week_label?: string | null
         }
         Relationships: [
@@ -4910,18 +5309,21 @@ export type Database = {
           nominee_id: number
           voted_at: string | null
           voter_fingerprint: string
+          week_label: string | null
         }
         Insert: {
           id?: number
           nominee_id: number
           voted_at?: string | null
           voter_fingerprint: string
+          week_label?: string | null
         }
         Update: {
           id?: number
           nominee_id?: number
           voted_at?: string | null
           voter_fingerprint?: string
+          week_label?: string | null
         }
         Relationships: [
           {
@@ -4976,7 +5378,10 @@ export type Database = {
       }
       power_rankings: {
         Row: {
+          bear_case: string | null
           blurb: string | null
+          bull_case: string | null
+          context_badges: Json | null
           created_at: string
           id: string
           previous_rank: number | null
@@ -4991,7 +5396,10 @@ export type Database = {
           week_label: string
         }
         Insert: {
+          bear_case?: string | null
           blurb?: string | null
+          bull_case?: string | null
+          context_badges?: Json | null
           created_at?: string
           id?: string
           previous_rank?: number | null
@@ -5006,7 +5414,10 @@ export type Database = {
           week_label: string
         }
         Update: {
+          bear_case?: string | null
           blurb?: string | null
+          bull_case?: string | null
+          context_badges?: Json | null
           created_at?: string
           id?: string
           previous_rank?: number | null
@@ -5075,6 +5486,126 @@ export type Database = {
             columns: ["season_id"]
             isOneToOne: false
             referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ranking_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          ranking_id: string | null
+          vote_type: string
+          voter_hash: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ranking_id?: string | null
+          vote_type: string
+          voter_hash: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ranking_id?: string | null
+          vote_type?: string
+          voter_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ranking_votes_ranking_id_fkey"
+            columns: ["ranking_id"]
+            isOneToOne: false
+            referencedRelation: "power_rankings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      record_validations: {
+        Row: {
+          computed_value: number | null
+          created_at: string | null
+          id: number
+          notes: string | null
+          player_id: number | null
+          player_name: string | null
+          record_id: number | null
+          school_name: string | null
+          stat_category: string
+          stat_scope: string
+          status: string | null
+          ted_value: number | null
+        }
+        Insert: {
+          computed_value?: number | null
+          created_at?: string | null
+          id?: number
+          notes?: string | null
+          player_id?: number | null
+          player_name?: string | null
+          record_id?: number | null
+          school_name?: string | null
+          stat_category: string
+          stat_scope: string
+          status?: string | null
+          ted_value?: number | null
+        }
+        Update: {
+          computed_value?: number | null
+          created_at?: string | null
+          id?: number
+          notes?: string | null
+          player_id?: number | null
+          player_name?: string | null
+          record_id?: number | null
+          school_name?: string | null
+          stat_category?: string
+          stat_scope?: string
+          status?: string | null
+          ted_value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "record_validations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "baseball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "record_validations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "record_validations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "football_career_leaders"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "record_validations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "record_validations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "record_validations_record_id_fkey"
+            columns: ["record_id"]
+            isOneToOne: false
+            referencedRelation: "records"
             referencedColumns: ["id"]
           },
         ]
@@ -6267,6 +6798,7 @@ export type Database = {
       }
       seasons: {
         Row: {
+          exclude_from_leaders: boolean | null
           id: number
           is_current: boolean | null
           label: string
@@ -6274,6 +6806,7 @@ export type Database = {
           year_start: number
         }
         Insert: {
+          exclude_from_leaders?: boolean | null
           id?: number
           is_current?: boolean | null
           label: string
@@ -6281,11 +6814,143 @@ export type Database = {
           year_start: number
         }
         Update: {
+          exclude_from_leaders?: boolean | null
           id?: number
           is_current?: boolean | null
           label?: string
           year_end?: number
           year_start?: number
+        }
+        Relationships: []
+      }
+      snub_poll_options: {
+        Row: {
+          created_at: string | null
+          id: string
+          poll_id: string | null
+          school_id: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          poll_id?: string | null
+          school_id?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          poll_id?: string | null
+          school_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "snub_poll_options_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "snub_polls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "snub_poll_options_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "snub_poll_options_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_directory_mv"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "snub_poll_options_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_names"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "snub_poll_options_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "snub_poll_options_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "snub_poll_options_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "team_alltime_records"
+            referencedColumns: ["school_id"]
+          },
+        ]
+      }
+      snub_poll_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          option_id: string | null
+          poll_id: string | null
+          voter_hash: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          option_id?: string | null
+          poll_id?: string | null
+          voter_hash: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          option_id?: string | null
+          poll_id?: string | null
+          voter_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "snub_poll_votes_option_id_fkey"
+            columns: ["option_id"]
+            isOneToOne: false
+            referencedRelation: "snub_poll_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "snub_poll_votes_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "snub_polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      snub_polls: {
+        Row: {
+          created_at: string | null
+          id: string
+          sport_id: string
+          week_label: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          sport_id: string
+          week_label: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          sport_id?: string
+          week_label?: string
         }
         Relationships: []
       }
@@ -6419,6 +7084,294 @@ export type Database = {
           stat_schema?: Json | null
         }
         Relationships: []
+      }
+      team_mapping: {
+        Row: {
+          created_at: string | null
+          espn_display_name: string | null
+          espn_team_id: string
+          id: number
+          league: string
+          logo_url: string | null
+          psp_org_name: string
+          sport: string
+        }
+        Insert: {
+          created_at?: string | null
+          espn_display_name?: string | null
+          espn_team_id: string
+          id?: number
+          league: string
+          logo_url?: string | null
+          psp_org_name: string
+          sport: string
+        }
+        Update: {
+          created_at?: string | null
+          espn_display_name?: string | null
+          espn_team_id?: string
+          id?: number
+          league?: string
+          logo_url?: string | null
+          psp_org_name?: string
+          sport?: string
+        }
+        Relationships: []
+      }
+      team_season_notes: {
+        Row: {
+          created_at: string | null
+          game_id: number | null
+          id: number
+          note_text: string
+          note_type: string | null
+          school_id: number | null
+          season_id: number | null
+          source_url: string | null
+          sport_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          game_id?: number | null
+          id?: number
+          note_text: string
+          note_type?: string | null
+          school_id?: number | null
+          season_id?: number | null
+          source_url?: string | null
+          sport_id?: string
+        }
+        Update: {
+          created_at?: string | null
+          game_id?: number | null
+          id?: number
+          note_text?: string
+          note_type?: string | null
+          school_id?: number | null
+          season_id?: number | null
+          source_url?: string | null
+          sport_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_season_notes_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_notes_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_notes_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "team_season_notes_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_directory_mv"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_notes_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_names"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_notes_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_notes_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_notes_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "team_alltime_records"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "team_season_notes_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_season_stats: {
+        Row: {
+          completion_pct: number | null
+          created_at: string | null
+          games_played: number | null
+          id: number
+          opp_pass_yards: number | null
+          opp_pass_yards_per_game: number | null
+          opp_points: number | null
+          opp_points_per_game: number | null
+          opp_rush_yards: number | null
+          opp_rush_yards_per_game: number | null
+          opp_total_yards: number | null
+          opp_total_yards_per_game: number | null
+          pass_yards_per_game: number | null
+          point_diff_per_game: number | null
+          point_differential: number | null
+          points_per_game: number | null
+          rush_yards_per_game: number | null
+          school_id: number | null
+          season_id: number | null
+          source_types: string[] | null
+          sport_id: string
+          total_interceptions_forced: number | null
+          total_offense: number | null
+          total_offense_per_game: number | null
+          total_pass_attempts: number | null
+          total_pass_completions: number | null
+          total_pass_yards: number | null
+          total_points: number | null
+          total_rec_yards: number | null
+          total_rush_carries: number | null
+          total_rush_yards: number | null
+          yards_per_carry: number | null
+        }
+        Insert: {
+          completion_pct?: number | null
+          created_at?: string | null
+          games_played?: number | null
+          id?: number
+          opp_pass_yards?: number | null
+          opp_pass_yards_per_game?: number | null
+          opp_points?: number | null
+          opp_points_per_game?: number | null
+          opp_rush_yards?: number | null
+          opp_rush_yards_per_game?: number | null
+          opp_total_yards?: number | null
+          opp_total_yards_per_game?: number | null
+          pass_yards_per_game?: number | null
+          point_diff_per_game?: number | null
+          point_differential?: number | null
+          points_per_game?: number | null
+          rush_yards_per_game?: number | null
+          school_id?: number | null
+          season_id?: number | null
+          source_types?: string[] | null
+          sport_id?: string
+          total_interceptions_forced?: number | null
+          total_offense?: number | null
+          total_offense_per_game?: number | null
+          total_pass_attempts?: number | null
+          total_pass_completions?: number | null
+          total_pass_yards?: number | null
+          total_points?: number | null
+          total_rec_yards?: number | null
+          total_rush_carries?: number | null
+          total_rush_yards?: number | null
+          yards_per_carry?: number | null
+        }
+        Update: {
+          completion_pct?: number | null
+          created_at?: string | null
+          games_played?: number | null
+          id?: number
+          opp_pass_yards?: number | null
+          opp_pass_yards_per_game?: number | null
+          opp_points?: number | null
+          opp_points_per_game?: number | null
+          opp_rush_yards?: number | null
+          opp_rush_yards_per_game?: number | null
+          opp_total_yards?: number | null
+          opp_total_yards_per_game?: number | null
+          pass_yards_per_game?: number | null
+          point_diff_per_game?: number | null
+          point_differential?: number | null
+          points_per_game?: number | null
+          rush_yards_per_game?: number | null
+          school_id?: number | null
+          season_id?: number | null
+          source_types?: string[] | null
+          sport_id?: string
+          total_interceptions_forced?: number | null
+          total_offense?: number | null
+          total_offense_per_game?: number | null
+          total_pass_attempts?: number | null
+          total_pass_completions?: number | null
+          total_pass_yards?: number | null
+          total_points?: number | null
+          total_rec_yards?: number | null
+          total_rush_carries?: number | null
+          total_rush_yards?: number | null
+          yards_per_carry?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_season_stats_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "basketball_career_leaders"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "team_season_stats_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_directory_mv"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_stats_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "school_names"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_stats_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_stats_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_season_stats_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "team_alltime_records"
+            referencedColumns: ["school_id"]
+          },
+          {
+            foreignKeyName: "team_season_stats_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       team_seasons: {
         Row: {
@@ -6572,172 +7525,6 @@ export type Database = {
           },
         ]
       }
-      transfers: {
-        Row: {
-          created_at: string | null
-          from_school_id: number | null
-          id: number
-          player_id: number
-          reason: string | null
-          source_url: string | null
-          sport_id: string | null
-          to_school_id: number | null
-          transfer_year: number
-          verified: boolean | null
-        }
-        Insert: {
-          created_at?: string | null
-          from_school_id?: number | null
-          id?: number
-          player_id: number
-          reason?: string | null
-          source_url?: string | null
-          sport_id?: string | null
-          to_school_id?: number | null
-          transfer_year: number
-          verified?: boolean | null
-        }
-        Update: {
-          created_at?: string | null
-          from_school_id?: number | null
-          id?: number
-          player_id?: number
-          reason?: string | null
-          source_url?: string | null
-          sport_id?: string | null
-          to_school_id?: number | null
-          transfer_year?: number
-          verified?: boolean | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "transfers_from_school_id_fkey"
-            columns: ["from_school_id"]
-            isOneToOne: false
-            referencedRelation: "basketball_career_leaders"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "transfers_from_school_id_fkey"
-            columns: ["from_school_id"]
-            isOneToOne: false
-            referencedRelation: "school_directory_mv"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_from_school_id_fkey"
-            columns: ["from_school_id"]
-            isOneToOne: false
-            referencedRelation: "school_names"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_from_school_id_fkey"
-            columns: ["from_school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_from_school_id_fkey"
-            columns: ["from_school_id"]
-            isOneToOne: false
-            referencedRelation: "schools_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_from_school_id_fkey"
-            columns: ["from_school_id"]
-            isOneToOne: false
-            referencedRelation: "team_alltime_records"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "transfers_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "baseball_career_leaders"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "transfers_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "basketball_career_leaders"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "transfers_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "football_career_leaders"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "transfers_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_sport_id_fkey"
-            columns: ["sport_id"]
-            isOneToOne: false
-            referencedRelation: "sports"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_to_school_id_fkey"
-            columns: ["to_school_id"]
-            isOneToOne: false
-            referencedRelation: "basketball_career_leaders"
-            referencedColumns: ["school_id"]
-          },
-          {
-            foreignKeyName: "transfers_to_school_id_fkey"
-            columns: ["to_school_id"]
-            isOneToOne: false
-            referencedRelation: "school_directory_mv"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_to_school_id_fkey"
-            columns: ["to_school_id"]
-            isOneToOne: false
-            referencedRelation: "school_names"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_to_school_id_fkey"
-            columns: ["to_school_id"]
-            isOneToOne: false
-            referencedRelation: "schools"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_to_school_id_fkey"
-            columns: ["to_school_id"]
-            isOneToOne: false
-            referencedRelation: "schools_active"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transfers_to_school_id_fkey"
-            columns: ["to_school_id"]
-            isOneToOne: false
-            referencedRelation: "team_alltime_records"
-            referencedColumns: ["school_id"]
-          },
-        ]
-      }
       user_badges: {
         Row: {
           badge_name: string
@@ -6850,6 +7637,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          granted_by: string | null
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          granted_by?: string | null
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          granted_by?: string | null
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       weekend_recaps: {
         Row: {
@@ -7811,6 +8622,20 @@ export type Database = {
       }
     }
     Functions: {
+      awards_count_by_sport: {
+        Args: never
+        Returns: {
+          cnt: number
+          sport: string
+        }[]
+      }
+      awards_count_by_type: {
+        Args: never
+        Returns: {
+          award_type: string
+          cnt: number
+        }[]
+      }
       cast_gotw_vote: {
         Args: { p_fingerprint: string; p_nominee_id: number }
         Returns: boolean
@@ -7819,9 +8644,54 @@ export type Database = {
         Args: { p_fingerprint: string; p_nominee_id: number }
         Returns: boolean
       }
+      clean_player_name: { Args: { raw_name: string }; Returns: string }
       daitch_mokotoff: { Args: { "": string }; Returns: string[] }
       dmetaphone: { Args: { "": string }; Returns: string }
       dmetaphone_alt: { Args: { "": string }; Returns: string }
+      exec_bb_fix_batch: {
+        Args: { batch_size?: number }
+        Returns: {
+          error_count: number
+          executed_count: number
+        }[]
+      }
+      exec_bb_standings_batch: {
+        Args: { p_batch: string }
+        Returns: {
+          errors: number
+          success: number
+          total: number
+        }[]
+      }
+      exec_raw_sql_batch: {
+        Args: { p_batch_name: string; p_sql: string }
+        Returns: {
+          errors: number
+          success: number
+          total: number
+        }[]
+      }
+      exec_sql_block: {
+        Args: { p_sql: string }
+        Returns: {
+          error_count: number
+          first_error: string
+          success_count: number
+          total_statements: number
+        }[]
+      }
+      exec_staged_batch: {
+        Args: { p_batch: string }
+        Returns: {
+          errors: number
+          success: number
+          total: number
+        }[]
+      }
+      find_duplicates_for_school: {
+        Args: { p_school_id: number }
+        Returns: number
+      }
       get_all_city_awards: {
         Args: { p_sport_id: string }
         Returns: {
@@ -7874,24 +8744,23 @@ export type Database = {
         Args: never
         Returns: {
           award_count: number
-          championship_count: number
+          championships_count: number
           city: string
           closed_year: number
           colors: Json
-          game_count: number
-          has_baseball: boolean
-          has_basketball: boolean
-          has_football: boolean
+          id: number
+          league_id: number
           league_name: string
+          name: string
           player_count: number
           pro_count: number
-          school_id: number
-          school_name: string
-          school_slug: string
-          sport_count: number
+          recent_championships: number
+          slug: string
           state: string
+          team_season_count: number
           total_losses: number
           total_wins: number
+          win_pct: number
         }[]
       }
       get_school_names: {
@@ -7901,6 +8770,22 @@ export type Database = {
           league_id: number
           name: string
           slug: string
+        }[]
+      }
+      get_school_rivalries: {
+        Args: { p_school_id: number; p_sport_id: string }
+        Returns: {
+          last_away_score: number
+          last_home_score: number
+          last_is_home: boolean
+          last_meeting_date: string
+          losses: number
+          opponent_id: number
+          opponent_name: string
+          opponent_slug: string
+          ties: number
+          total_games: number
+          wins: number
         }[]
       }
       get_school_team_stats: {
@@ -7920,26 +8805,49 @@ export type Database = {
           total_wins: number
         }[]
       }
-      get_season_leaders: {
-        Args: {
-          p_limit?: number
-          p_min_games?: number
-          p_order_dir?: string
-          p_stat_column: string
-          p_table_name: string
-        }
-        Returns: {
-          player_id: number
-          player_name: string
-          player_slug: string
-          school_id: number
-          school_name: string
-          school_slug: string
-          season_label: string
-          stat_value: number
-          year_start: number
-        }[]
-      }
+      get_season_leaders:
+        | {
+            Args: {
+              p_limit?: number
+              p_min_games?: number
+              p_order_dir?: string
+              p_stat_column: string
+              p_table_name: string
+            }
+            Returns: {
+              player_id: number
+              player_name: string
+              player_slug: string
+              school_id: number
+              school_name: string
+              school_slug: string
+              season_label: string
+              stat_value: number
+              year_start: number
+            }[]
+          }
+        | {
+            Args: {
+              p_limit?: number
+              p_min_games?: number
+              p_min_value?: number
+              p_min_value_column?: string
+              p_order_dir?: string
+              p_stat_column: string
+              p_table_name: string
+            }
+            Returns: {
+              player_id: number
+              player_name: string
+              player_slug: string
+              school_id: number
+              school_name: string
+              school_slug: string
+              season_label: string
+              stat_value: number
+              year_start: number
+            }[]
+          }
       get_similar_baseball_players: {
         Args: {
           result_limit?: number
@@ -8030,6 +8938,14 @@ export type Database = {
         }[]
       }
       increment_gotw_votes: { Args: { nominee: string }; Returns: undefined }
+      increment_player_reaction: {
+        Args: { p_reaction: string; p_slug: string }
+        Returns: undefined
+      }
+      increment_potw_votes: {
+        Args: { p_nominee_id: number }
+        Returns: undefined
+      }
       increment_reply_count: {
         Args: { target_post: string }
         Returns: undefined
@@ -8045,8 +8961,12 @@ export type Database = {
         Returns: Json
       }
       merge_player: {
-        Args: { keep_id: number; remove_id: number }
-        Returns: string
+        Args: {
+          p_canonical_id: number
+          p_duplicate_id: number
+          p_reason?: string
+        }
+        Returns: Json
       }
       process_epa_file: {
         Args: { p_json: Json }
@@ -8127,6 +9047,15 @@ export type Database = {
       }
       soundex: { Args: { "": string }; Returns: string }
       text_soundex: { Args: { "": string }; Returns: string }
+      top_awarded_schools: {
+        Args: { lim?: number }
+        Returns: {
+          cnt: number
+          school_id: number
+          school_name: string
+          school_slug: string
+        }[]
+      }
       update_social_handle_fetch: {
         Args: {
           p_handle_id: number

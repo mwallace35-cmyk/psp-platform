@@ -35,7 +35,7 @@ function timeAgo(dateStr: string): string {
 export default async function AroundTheWeb() {
   const supabase = createStaticClient();
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('player_news_cache')
     .select('id, player_id, player_name, title, url, source, published_at, fetched_at')
     .order('published_at', { ascending: false, nullsFirst: false })

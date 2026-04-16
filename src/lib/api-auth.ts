@@ -20,7 +20,7 @@ export async function validateApiKey(request: NextRequest): Promise<ApiKeyInfo |
 
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from('api_keys')
       .select('id, partner_name, tier, daily_limit, requests_today, is_active')
       .eq('api_key', apiKey)
@@ -33,7 +33,7 @@ export async function validateApiKey(request: NextRequest): Promise<ApiKeyInfo |
     if (data.requests_today >= data.daily_limit) return null;
 
     // Increment usage counter
-    await supabase
+    await (supabase as any)
       .from('api_keys')
       .update({
         requests_today: data.requests_today + 1,
@@ -65,7 +65,7 @@ export async function logApiUsage(
 ) {
   try {
     const supabase = await createClient();
-    await supabase.from('api_usage_log').insert({
+    await (supabase as any).from('api_usage_log').insert({
       api_key_id: apiKeyId,
       endpoint,
       response_code: responseCode,

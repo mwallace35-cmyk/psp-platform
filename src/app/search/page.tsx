@@ -137,9 +137,9 @@ export default async function SearchPage({
       sports: 7,
     };
 
-    trendingSearches = (trendingRes.data ?? []).filter(
-      (t) => t.display_name && t.url_path
-    );
+    trendingSearches = (trendingRes.data ?? [])
+      .filter((t) => t.display_name && t.url_path)
+      .map((t) => ({ display_name: t.display_name, entity_type: t.entity_type, url_path: t.url_path! }));
 
     leagueSchools = leagueSchoolsRes.data ?? [];
 

@@ -80,7 +80,7 @@ export async function getTeamHistory(
     )
     .eq("school_id", schoolId)
     .eq("sport_id", sportId)
-    .eq("deleted_at", null)
+    .is("deleted_at", null)
     .order("season_id", { ascending: false })
     .limit(limit);
 
@@ -134,7 +134,7 @@ export async function getNextGame(
     )
     .eq("sport_id", sportId)
     .eq("home_school_id", schoolId)
-    .eq("deleted_at", null)
+    .is("deleted_at", null)
     .gte("game_date", now)
     .order("game_date", { ascending: true })
     .limit(1);
@@ -175,7 +175,7 @@ export async function getNextGame(
     )
     .eq("sport_id", sportId)
     .eq("away_school_id", schoolId)
-    .eq("deleted_at", null)
+    .is("deleted_at", null)
     .gte("game_date", now)
     .order("game_date", { ascending: true })
     .limit(1);
@@ -225,7 +225,7 @@ export async function getLeagueStandings(
     )
     .eq("sport_id", sportId)
     .eq("season_id", seasonId)
-    .eq("deleted_at", null)
+    .is("deleted_at", null)
     .not("schools", "is", null)
     .order("wins", { ascending: false })
     .limit(limit);
@@ -257,7 +257,8 @@ export async function getTeamArticles(
 ): Promise<TeamArticle[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // typed client can't infer complex join select
+  const { data, error } = await (supabase as any)
     .from("article_mentions")
     .select(
       `
@@ -266,7 +267,7 @@ export async function getTeamArticles(
     )
     .eq("entity_id", schoolId)
     .eq("entity_type", "school")
-    .eq("deleted_at", null)
+    .is("deleted_at", null)
     .not("articles", "is", null)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -394,7 +395,7 @@ export async function getRelatedTeams(
     )
     .eq("sport_id", sportId)
     .eq("season_id", seasonId)
-    .eq("deleted_at", null)
+    .is("deleted_at", null)
     .neq("school_id", schoolId)
     .not("schools", "is", null)
     .limit(limit);

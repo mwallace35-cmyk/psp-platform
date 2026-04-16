@@ -46,7 +46,7 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
     try {
       // Query comments without joining user_profiles (no FK exists).
       // Column is parent_id in the DB schema, not parent_comment_id.
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('comments')
         .select('id, body, parent_id, user_id, status, created_at')
         .eq('article_id', articleId)

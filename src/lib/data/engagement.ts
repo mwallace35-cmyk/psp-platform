@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 export async function getReferralStats(userId: string) {
   const supabase = await createClient();
 
-  const { data: links, error: linksError } = await supabase
+  const { data: links, error: linksError } = await (supabase as any)
     .from('referral_links')
     .select('id, referral_code, created_at, click_count, target_url')
     .eq('user_id', userId)
@@ -23,8 +23,8 @@ export async function getReferralStats(userId: string) {
 
   return {
     totalLinks: links.length,
-    totalClicks: links.reduce((sum, l) => sum + (l.click_count || 0), 0),
-    links: links.map(l => ({
+    totalClicks: links.reduce((sum: number, l: any) => sum + (l.click_count || 0), 0),
+    links: links.map((l: any) => ({
       code: l.referral_code,
       url: l.target_url,
       clicks: l.click_count || 0,
@@ -36,7 +36,7 @@ export async function getReferralStats(userId: string) {
 export async function getUserBadges(userId: string) {
   const supabase = await createClient();
 
-  const { data: badges, error } = await supabase
+  const { data: badges, error } = await (supabase as any)
     .from('user_badges')
     .select('badge_type, badge_name, earned_at')
     .eq('user_id', userId)
@@ -74,7 +74,7 @@ export async function getNotificationPreferences(userId: string) {
 export async function getTopReferrers(limit = 10) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .rpc('get_top_referrers', { limit_count: limit });
 
   if (error) {

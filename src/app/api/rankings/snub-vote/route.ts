@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
 
     // Fetch poll options with school info
-    const { data: options, error: optionsError } = await supabase
+    const { data: options, error: optionsError } = await (supabase as any)
       .from('snub_poll_options')
       .select('id, school_id, schools(name, slug)')
       .eq('poll_id', pollId);
@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch vote counts for all options in this poll
-    const optionIds = options.map((o) => o.id);
-    const { data: votes, error: votesError } = await supabase
+    const optionIds = options.map((o: any) => o.id);
+    const { data: votes, error: votesError } = await (supabase as any)
       .from('snub_poll_votes')
       .select('option_id')
       .in('option_id', optionIds);
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     }
 
     let totalVotes = 0;
-    const formattedOptions = options.map((opt) => {
+    const formattedOptions = options.map((opt: any) => {
       const school = Array.isArray(opt.schools) ? opt.schools[0] : opt.schools;
       const voteCount = voteCounts[opt.id] || 0;
       totalVotes += voteCount;
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await (supabase as any)
       .from('snub_poll_votes')
       .insert({
         poll_id,
@@ -149,13 +149,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Return updated counts for this poll
-    const { data: options } = await supabase
+    const { data: options } = await (supabase as any)
       .from('snub_poll_options')
       .select('id, school_id, schools(name, slug)')
       .eq('poll_id', poll_id);
 
-    const optionIds = (options ?? []).map((o) => o.id);
-    const { data: votes } = await supabase
+    const optionIds = (options ?? []).map((o: any) => o.id);
+    const { data: votes } = await (supabase as any)
       .from('snub_poll_votes')
       .select('option_id')
       .in('option_id', optionIds);
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
     }
 
     let totalVotes = 0;
-    const formattedOptions = (options ?? []).map((opt) => {
+    const formattedOptions = (options ?? []).map((opt: any) => {
       const school = Array.isArray(opt.schools) ? opt.schools[0] : opt.schools;
       const voteCount = voteCounts[opt.id] || 0;
       totalVotes += voteCount;

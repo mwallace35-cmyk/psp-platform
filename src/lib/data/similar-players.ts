@@ -78,7 +78,7 @@ export const getSimilarFootballPlayers = cache(
               target_player_id: playerId,
               target_positions: positions,
               target_primary_stat: targetPrimaryStat,
-              target_graduation_year: player.graduation_year,
+              target_graduation_year: player.graduation_year ?? 0,
               result_limit: limit,
             });
 
@@ -137,7 +137,7 @@ export const getSimilarBasketballPlayers = cache(
                 target_player_id: playerId,
                 target_positions: positions,
                 target_primary_stat: targetPoints,
-                target_graduation_year: player.graduation_year,
+                target_graduation_year: player.graduation_year ?? 0,
                 result_limit: limit,
               }
             );
@@ -197,7 +197,7 @@ export const getSimilarBaseballPlayers = cache(
                 target_player_id: playerId,
                 target_positions: positions,
                 target_primary_stat: targetHomeRuns,
-                target_graduation_year: player.graduation_year,
+                target_graduation_year: player.graduation_year ?? 0,
                 result_limit: limit,
               }
             );

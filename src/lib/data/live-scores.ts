@@ -91,7 +91,8 @@ export async function getLiveScores(sportId?: string) {
 export async function getGameLiveScore(gameId: number) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // typed client can't infer live_scores table
+  const { data, error } = await (supabase as any)
     .from("live_scores")
     .select("*")
     .eq("game_id", gameId)

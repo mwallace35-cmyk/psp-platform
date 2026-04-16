@@ -40,7 +40,7 @@ export default function ArticlesManagement() {
   async function fetchArticles() {
     try {
       setLoading(true);
-      let query = supabase.from('articles').select('*').order('created_at', { ascending: false });
+      let query = (supabase as any).from('articles').select('*').order('created_at', { ascending: false });
 
       if (selectedSport !== 'all') {
         query = query.eq('sport_id', selectedSport);
@@ -70,7 +70,7 @@ export default function ArticlesManagement() {
 
     try {
       const ids = Array.from(selectedArticles);
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('articles')
         .update({ status: 'published', updated_at: new Date().toISOString() })
         .in('id', ids);
@@ -88,7 +88,7 @@ export default function ArticlesManagement() {
 
     try {
       const ids = Array.from(selectedArticles);
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('articles')
         .update({ status: 'draft', updated_at: new Date().toISOString() })
         .in('id', ids);
@@ -106,7 +106,7 @@ export default function ArticlesManagement() {
 
     try {
       const ids = Array.from(selectedArticles);
-      const { error } = await supabase.from('articles').delete().in('id', ids);
+      const { error } = await (supabase as any).from('articles').delete().in('id', ids);
 
       if (error) throw error;
       setSelectedArticles(new Set());
