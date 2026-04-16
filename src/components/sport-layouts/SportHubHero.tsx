@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface FeaturedArticle {
   id: number;
@@ -65,7 +66,7 @@ export default function SportHubHero({
                 className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded"
                 style={{ background: sportColorHex, color: "#fff" }}
               >
-                {sportEmoji} {sportName}
+                <SportIcon sport={sport} size="sm" /> {sportName}
               </span>
               <span
                 className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${seasonPhaseBadge.color} ${seasonPhaseBadge.bg}`}
@@ -132,9 +133,7 @@ export default function SportHubHero({
 
       <div className="max-w-7xl mx-auto relative z-10 w-full">
         <div className="flex items-center gap-4">
-          <span className="text-4xl" aria-hidden="true">
-            {sportEmoji}
-          </span>
+          <SportIcon sport={sport} size="lg" />
           <div className="flex items-center gap-3">
             <h1 className="psp-h1-lg text-white">{sportName}</h1>
             <span

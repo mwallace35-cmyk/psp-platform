@@ -12,6 +12,8 @@ import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import GreatestSeasonsView from "./GreatestSeasonsView";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
+import { BarChart3 } from "lucide-react";
 
 export const revalidate = 3600; // 1 hour ISR
 type PageParams = { sport: string };
@@ -100,7 +102,7 @@ export default async function GreatestSeasonsPage({
             ]}
           />
           <h1 className="psp-h1 text-white mb-2">
-            {meta.emoji} Greatest Seasons
+            <SportIcon sport={sport} size="sm" /> Greatest Seasons
           </h1>
           <p className="text-gray-300">
             Ranked by dominance score across {categories.length - 1} statistical categories
@@ -111,7 +113,7 @@ export default async function GreatestSeasonsPage({
       <main id="main-content" className="max-w-7xl mx-auto px-4 py-8">
         {seasons.length === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-xl">
-            <div className="text-4xl mb-4">📊</div>
+            <BarChart3 className="w-8 h-8" />
             <p className="text-gray-400">
               No greatest seasons data found for {meta.name} yet.
             </p>

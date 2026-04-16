@@ -8,6 +8,8 @@ import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import DynastyTimeline from "./DynastyTimeline";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 export const revalidate = 3600;
 type PageParams = { sport: string };
@@ -83,7 +85,7 @@ export default async function DynastiesPage({
             ]}
           />
           <h1 className="psp-h1 text-white mb-2">
-            {meta.emoji} 120 Years of Dominance
+            <SportIcon sport={sport} size="sm" /> 120 Years of Dominance
           </h1>
           <p className="text-gray-300">
             Championship history and dynasty rankings across decades
@@ -94,7 +96,7 @@ export default async function DynastiesPage({
       <main id="main-content" className="max-w-7xl mx-auto px-4 py-8">
         {decadeData.length === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-xl">
-            <div className="text-4xl mb-4">🏆</div>
+            <Trophy className="w-8 h-8" />
             <p className="text-gray-400">
               No championship data found for {meta.name} yet.
             </p>

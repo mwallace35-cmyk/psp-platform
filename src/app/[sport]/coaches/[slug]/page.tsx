@@ -8,6 +8,8 @@ import { createStaticClient } from "@/lib/supabase/static";
 import { LeaderboardAd, InContentAd } from "@/components/ads/AdPlaceholder";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
+import { School, Trophy } from "lucide-react";
 
 export const revalidate = 86400;
 type PageParams = { sport: string; slug: string };
@@ -138,7 +140,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
                     className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0"
                     style={{ background: `${meta.color}15` }}
                   >
-                    {meta.emoji}
+                    <SportIcon sport={sport} size="sm" />
                   </div>
                   <div className="flex-1">
                     <Link href={`/${sport}/schools/${stint.schools?.slug}`} className="font-bold text-sm hover:underline" style={{ color: "var(--psp-navy)" }}>
@@ -151,7 +153,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
                       Record: {stint.record_wins}-{stint.record_losses}{(stint.record_ties ?? 0) > 0 ? `-${stint.record_ties}` : ""}
                       {(stint.championships ?? 0) > 0 && (
                         <span className="ml-3" style={{ color: "var(--psp-gold)" }}>
-                          🏆 {stint.championships} title{stint.championships !== 1 ? "s" : ""}
+                          <Trophy className="w-4 h-4 inline" /> {stint.championships} title{stint.championships !== 1 ? "s" : ""}
                         </span>
                       )}
                     </div>
@@ -165,7 +167,7 @@ export default async function CoachProfilePage({ params }: { params: Promise<Pag
           </div>
         ) : (
           <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
-            <div className="text-4xl mb-4">🧑‍🏫</div>
+            <div className="text-4xl mb-4">🧑‍<School className="w-4 h-4 inline" /></div>
             <h3 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>No coaching records yet</h3>
           </div>
         )}

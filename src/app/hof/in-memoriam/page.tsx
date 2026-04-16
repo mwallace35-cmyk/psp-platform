@@ -11,6 +11,7 @@ import {
 } from "@/lib/data/legends";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
+import { Trophy } from "lucide-react";
 
 function MemorialCard({ legend }: { legend: Legend }) {
   const initials = legend.name
@@ -181,7 +182,7 @@ export default function InMemoriamPage() {
                   href="/hof/legends"
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
                 >
-                  <span className="text-lg">🏆</span>
+                  <Trophy className="w-5 h-5 inline" />
                   <div>
                     <p className="text-sm font-semibold text-[var(--psp-navy)]">
                       Legends

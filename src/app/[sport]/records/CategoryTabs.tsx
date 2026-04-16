@@ -1,4 +1,5 @@
 "use client";
+import { School } from "lucide-react";
 
 export default function CategoryTabs({
   categories,
@@ -69,7 +70,7 @@ export default function CategoryTabs({
           fontFamily: "var(--font-body, 'DM Sans', sans-serif)",
         }}
       >
-        🏫 School Records ({schoolRecordBooksCount})
+        <School className="w-4 h-4 inline" /> School Records ({schoolRecordBooksCount})
       </button>
     </div>
   );

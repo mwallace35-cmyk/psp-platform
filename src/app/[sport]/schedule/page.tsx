@@ -26,6 +26,7 @@ import BaseballScheduleView from "./views/BaseballScheduleView";
 import SeasonScheduleView from "./views/SeasonScheduleView";
 import WrestlingScheduleView from "./views/WrestlingScheduleView";
 import TrackFieldScheduleView from "./views/TrackFieldScheduleView";
+import SportIcon from "@/components/ui/SportIcon";
 
 export const revalidate = 3600;
 
@@ -176,7 +177,7 @@ export default async function SchedulePage({
           {/* Title + Season selector */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl">{meta.emoji}</span>
+              <SportIcon sport={sport} size="md" />
               <h1 className="psp-h1 text-white">
                 {season.label} {meta.name} Schedule & Results
               </h1>

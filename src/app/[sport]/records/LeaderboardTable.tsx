@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BarChart3 } from "lucide-react";
 
 // Computed records from stats tables
 interface ComputedRecord {
@@ -129,7 +130,7 @@ export default function LeaderboardTable({
         </div>
       ) : (
         <div style={{ padding: "24px", textAlign: "center", color: "#9ca3af" }}>
-          <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
+          <BarChart3 className="w-12 h-12" />
           <p>No records available for this stat</p>
         </div>
       )}

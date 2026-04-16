@@ -1,6 +1,7 @@
 export const revalidate = 3600;
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { BarChart3, School, Search, Target } from "lucide-react";
 
 export const metadata: Metadata = {
   title: 'Premium PSP | Advanced Stats & Features',
@@ -29,13 +30,13 @@ const FEATURES: Feature[] = [
   {
     name: 'School Records',
     description: 'Championship history, records, and program statistics',
-    icon: '🏫',
+    icon: 'school',
     tier: 'both',
   },
   {
     name: 'Basic Search',
     description: 'Search players, schools, and coaches',
-    icon: '🔍',
+    icon: 'search',
     tier: 'both',
   },
   {
@@ -47,7 +48,7 @@ const FEATURES: Feature[] = [
   {
     name: 'CSV Export',
     description: 'Export player stats and records to spreadsheets',
-    icon: '📊',
+    icon: 'barchart3',
     tier: 'premium',
   },
   {
@@ -179,7 +180,7 @@ export default function PremiumPage() {
             </div>
 
             <div className="p-6 bg-navy-mid rounded-lg border border-gold/30">
-              <div className="text-4xl mb-3">🎯</div>
+              <Target className="w-8 h-8" />
               <h3 className="text-white font-bold mb-2 text-lg">Recruiters & Scouts</h3>
               <p className="text-white/80 text-sm">
                 Advanced filtering by graduation year, position, and performance metrics.
@@ -187,7 +188,7 @@ export default function PremiumPage() {
             </div>
 
             <div className="p-6 bg-navy-mid rounded-lg border border-gold/30">
-              <div className="text-4xl mb-3">📊</div>
+              <BarChart3 className="w-8 h-8" />
               <h3 className="text-white font-bold mb-2 text-lg">Coaches & Athletic Directors</h3>
               <p className="text-white/80 text-sm">
                 Track your program's history, compare schedules, and access opponent data.

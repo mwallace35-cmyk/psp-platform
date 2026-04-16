@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button, Badge, ToastContainer } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
+import { Trophy } from "lucide-react";
 
 interface Event {
   id: string;
@@ -124,7 +125,7 @@ export default function EventsManagement() {
   const eventTypes = [
     { value: 'camp', label: '🏕️ Camp' },
     { value: 'showcase', label: '🎬 Showcase' },
-    { value: 'game', label: '🏆 Game' },
+    { value: 'game', label: 'trophy Game' },
     { value: 'tournament', label: '🥇 Tournament' },
   ];
 

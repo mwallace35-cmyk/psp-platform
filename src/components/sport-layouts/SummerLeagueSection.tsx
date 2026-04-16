@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
+import SportIcon from "@/components/ui/SportIcon";
 
 const summerPrograms = [
   {
@@ -147,7 +148,7 @@ export default function SummerLeagueSection() {
                   alignItems: "center",
                   gap: 6
                 }}>
-                  <span style={{ fontSize: 14 }} aria-hidden="true">⚾</span>
+                  <span style={{ fontSize: 14 }} aria-hidden="true"><SportIcon sport="baseball" size="sm" /></span>
                   {program.ageGroup}
                 </div>
               </div>

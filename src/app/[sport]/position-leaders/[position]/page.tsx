@@ -12,6 +12,7 @@ import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PositionLeadersView from "./PositionLeadersView";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
 
 export const revalidate = 3600;
 type PageParams = { sport: string; position: string };
@@ -142,7 +143,7 @@ export default async function PositionLeadersPage({
             ]}
           />
           <h1 className="psp-h1 text-white mb-2">
-            {meta.emoji} {positionName} Leaders
+            <SportIcon sport={sport} size="sm" /> {positionName} Leaders
           </h1>
           <p className="text-gray-300">
             Top career performers at {positionName.toLowerCase()} across all eras
@@ -153,7 +154,7 @@ export default async function PositionLeadersPage({
       <main id="main-content" className="max-w-7xl mx-auto px-4 py-8">
         {leaders.length === 0 ? (
           <div className="text-center py-16 bg-gray-50 rounded-xl">
-            <div className="text-4xl mb-4">🏈</div>
+            <div className="text-4xl mb-4"><SportIcon sport="football" size="md" /></div>
             <p className="text-gray-400">
               No {positionName.toLowerCase()} data found for {meta.name} yet.
             </p>

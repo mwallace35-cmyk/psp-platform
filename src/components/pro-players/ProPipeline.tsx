@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { getProPipeline, type ProPipelineSchool } from "@/lib/data/pro-players";
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 interface ProPipelineProps {
   limit?: number;
@@ -25,7 +27,7 @@ export default async function ProPipeline({ limit = 10 }: ProPipelineProps) {
   return (
     <div className="bg-navy-light rounded-lg border border-gold p-6">
       <h3 className="text-sm font-bold text-white uppercase tracking-wide mb-4">
-        🏆 Pro Pipeline
+        <Trophy className="w-4 h-4 inline" /> Pro Pipeline
       </h3>
       <div className="space-y-3">
         {schools.map((school, idx) => (
@@ -44,13 +46,13 @@ export default async function ProPipeline({ limit = 10 }: ProPipelineProps) {
             </div>
             <div className="flex gap-2 text-xs text-gray-300">
               {school.football_count > 0 && (
-                <span>🏈 {school.football_count}</span>
+                <span><SportIcon sport="football" size="sm" /> {school.football_count}</span>
               )}
               {school.basketball_count > 0 && (
-                <span>🏀 {school.basketball_count}</span>
+                <span><SportIcon sport="basketball" size="sm" /> {school.basketball_count}</span>
               )}
               {school.baseball_count > 0 && (
-                <span>⚾ {school.baseball_count}</span>
+                <span><SportIcon sport="baseball" size="sm" /> {school.baseball_count}</span>
               )}
             </div>
           </Link>

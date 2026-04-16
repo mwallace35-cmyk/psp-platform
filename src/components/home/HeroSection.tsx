@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { BarChart3, School, Trophy } from "lucide-react";
 
 export interface HeroSectionProps {
   stats: {
@@ -134,13 +135,13 @@ export default function HeroSection({ stats }: HeroSectionProps) {
           {[
             {
               href: '/search',
-              icon: '🏫',
+              icon: 'school',
               label: 'Browse Schools',
               description: 'Explore profiles',
             },
             {
               href: '/search?q=recent',
-              icon: '📊',
+              icon: 'barchart3',
               label: 'Leaderboards',
               description: 'Top stats',
             },
@@ -152,7 +153,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
             },
             {
               href: '/search?q=championships',
-              icon: '🏆',
+              icon: 'trophy',
               label: 'Championships',
               description: 'Titles & records',
             },

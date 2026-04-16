@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createClient, withErrorHandling, withRetry } from '@/lib/data/common';
 import { SPORT_EMOJI } from '@/lib/sports';
+import { Trophy } from "lucide-react";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
@@ -108,7 +109,7 @@ export default async function HistoryPage() {
 
         {Object.keys(bySport).length > 0 && (
           <section>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2"><span aria-hidden="true">🏆</span> Recent Champions</h2>
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2"><Trophy className="w-5 h-5 inline" /> Recent Champions</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {Object.keys(bySport).slice(0, 6).map(sport => (
                 <div key={sport} className="bg-[#0f1e30] border border-[#1a2f4d] rounded-lg p-5">

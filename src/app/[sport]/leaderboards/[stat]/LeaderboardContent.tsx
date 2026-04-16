@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import SortableTable, { SortableColumn } from '@/components/ui/SortableTable';
+import { BarChart3 } from "lucide-react";
 
 const ClientStatHeatmap = dynamic(() => import('@/components/viz/ClientStatHeatmap'), {
   ssr: false,
@@ -31,7 +32,7 @@ export default function LeaderboardContent({
   if (tableData.length === 0) {
     return (
       <div className="text-center py-16" style={{ color: 'var(--psp-gray-400)' }}>
-        <div className="text-4xl mb-4">📊</div>
+        <BarChart3 className="w-8 h-8" />
         <h3 className="text-lg font-medium mb-4" style={{ color: 'var(--psp-navy)' }}>
           {statLabel} data is being collected
         </h3>
@@ -55,7 +56,7 @@ export default function LeaderboardContent({
               : { background: 'var(--psp-gray-200, #e5e7eb)', color: 'var(--psp-gray-dark, #374151)' }
           }
         >
-          📊 Table View
+          <BarChart3 className="w-4 h-4 inline" /> Table View
         </button>
         <button
           onClick={() => setViewMode('heatmap')}

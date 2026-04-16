@@ -5,10 +5,12 @@ import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { SPORT_META, getAwardsPageData } from "@/lib/data";
+import SportIcon from "@/components/ui/SportIcon";
 import AwardsArchive from "./AwardsArchive";
 import AwardTierRoster from "@/components/awards/AwardTierRoster";
 import { buildAwardTiers } from "@/lib/awards/categorize";
 import type { Metadata } from "next";
+import { BarChart3, Target, Trophy } from "lucide-react";
 
 export const revalidate = 86400; // 24 hours
 type PageParams = { sport: string };
@@ -55,7 +57,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             ]}
           />
           <h1 className="psp-h1 text-white mb-2 mt-4">
-            {meta.emoji} {meta.name} Awards & Honors
+            <SportIcon sport={sport} size="sm" /> {meta.name} Awards & Honors
           </h1>
           <p className="text-gray-300">
             Complete archive of Philadelphia {meta.name.toLowerCase()} awards and honors
@@ -78,7 +80,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
             href={`/${sport}/championships`}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-[#f0a500]/30 bg-[#f0a500]/[0.08] text-[#f0a500]"
           >
-            🏆 Championships
+            <Trophy className="w-4 h-4 inline" /> Championships
           </Link>
           {/* Sport-specific deep links */}
           {sport === "football" && (
@@ -93,7 +95,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
                 href="/football/city-all-star-game"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-purple-500/30 bg-purple-500/[0.08] text-purple-500"
               >
-                🎯 City All-Star Game
+                <Target className="w-4 h-4 inline" /> City All-Star Game
               </Link>
             </>
           )}
@@ -102,7 +104,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
               href={`/${sport}/leaderboards`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-orange-600/30 bg-orange-600/[0.08] text-orange-600"
             >
-              📊 Scoring Leaders
+              <BarChart3 className="w-4 h-4 inline" /> Scoring Leaders
             </Link>
           )}
           {sport === "baseball" && (
@@ -110,7 +112,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
               href="/pros"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-80 border border-red-600/30 bg-red-600/[0.08] text-red-600"
             >
-              ⚾ MLB Pipeline
+              <SportIcon sport="baseball" size="sm" /> MLB Pipeline
             </Link>
           )}
         </div>
@@ -198,7 +200,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
                   href={`/${sport}/championships`}
                   className="flex items-center gap-2 py-2 text-sm text-gray-300 hover:text-blue-400 transition-colors"
                 >
-                  <span>🏆</span> {meta.name} Championships
+                  <Trophy className="w-5 h-5 inline" /> {meta.name} Championships
                 </Link>
                 <Link
                   href={`/${sport}/records`}
@@ -210,7 +212,7 @@ export default async function AwardsPage({ params }: { params: Promise<PageParam
                   href={`/${sport}/leaderboards/${meta.statCategories[0] || "scoring"}`}
                   className="flex items-center gap-2 py-2 text-sm text-gray-300 hover:text-blue-400 transition-colors"
                 >
-                  <span>📊</span> {meta.name} Leaderboards
+                  <BarChart3 className="w-5 h-5 inline" /> {meta.name} Leaderboards
                 </Link>
                 <Link
                   href="/awards"

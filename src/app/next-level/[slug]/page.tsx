@@ -9,6 +9,8 @@ import ShareButtons from "@/components/social/ShareButtons";
 import { PersonJsonLd } from "@/components/seo/JsonLd";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -91,13 +93,13 @@ export default async function ProAthleteProfilePage({
 
   // Get sports emoji
   const sportEmojis: Record<string, string> = {
-    football: "🏈",
-    basketball: "🏀",
-    baseball: "⚾",
-    soccer: "⚽",
-    lacrosse: "🥍",
+    football: "football",
+    basketball: "basketball",
+    baseball: "baseball",
+    soccer: "soccer",
+    lacrosse: "lacrosse",
   };
-  const sportEmoji = sportEmojis[athlete.sport_id?.toLowerCase() || ""] || "🏆";
+  const sportEmoji = sportEmojis[athlete.sport_id?.toLowerCase() || ""] || "trophy";
 
   // Get league badge color
   const leagueColors: Record<string, string> = {
@@ -621,7 +623,7 @@ export default async function ProAthleteProfilePage({
                         rel="noopener noreferrer"
                         className="w-link"
                       >
-                        🏈 NFL.com
+                        <SportIcon sport="football" size="sm" /> NFL.com
                       </a>
                     )}
                     {athlete.pro_league === "NBA" && (
@@ -631,7 +633,7 @@ export default async function ProAthleteProfilePage({
                         rel="noopener noreferrer"
                         className="w-link"
                       >
-                        🏀 NBA.com
+                        <SportIcon sport="basketball" size="sm" /> NBA.com
                       </a>
                     )}
                     {athlete.pro_league === "MLB" && (
@@ -641,7 +643,7 @@ export default async function ProAthleteProfilePage({
                         rel="noopener noreferrer"
                         className="w-link"
                       >
-                        ⚾ MLB.com
+                        <SportIcon sport="baseball" size="sm" /> MLB.com
                       </a>
                     )}
                   </>

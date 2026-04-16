@@ -9,6 +9,7 @@ import {
 } from "@/lib/data/coaching-records";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
+import { Trophy } from "lucide-react";
 
 type Tab = "100-wins" | "best-pct" | "most-years";
 
@@ -275,7 +276,7 @@ export default function CoachingRecordsPage() {
                   href="/hof/legends"
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
                 >
-                  <span className="text-lg">🏆</span>
+                  <Trophy className="w-5 h-5 inline" />
                   <div>
                     <p className="text-sm font-semibold text-[var(--psp-navy)]">
                       Coach Tributes

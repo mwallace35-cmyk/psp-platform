@@ -9,6 +9,7 @@ import { createStaticClient } from "@/lib/supabase/static";
 import TeamsViewToggle from "./TeamsViewToggle";
 import type { TeamCardData, DiscontinuedSchoolData } from "./TeamsViewToggle";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
 
 export const revalidate = 3600; // ISR: hourly
 type PageParams = { sport: string };
@@ -240,7 +241,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
               className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
               style={{ background: `${meta.color}20` }}
             >
-              {meta.emoji}
+              <SportIcon sport={sport} size="sm" />
             </div>
             <div>
               <h1 className="psp-h1 text-white">
@@ -264,7 +265,7 @@ export default async function TeamsPage({ params }: { params: Promise<PageParams
           <div className="lg:col-span-3">
             {teams.length === 0 ? (
               <div className="text-center py-16">
-                <div className="text-4xl mb-4">{meta.emoji}</div>
+                <div className="mb-4"><SportIcon sport={sport} size="lg" /></div>
                 <h2 className="text-lg font-bold mb-2" style={{ color: "var(--psp-navy)" }}>
                   No teams found
                 </h2>

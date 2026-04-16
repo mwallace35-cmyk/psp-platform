@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface School {
   id: number;
@@ -371,7 +372,7 @@ export default function ScheduleView({
       <div className="max-w-6xl mx-auto px-4 py-6">
         {filteredGames.length === 0 ? (
           <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-            <p className="text-3xl mb-3">🏈</p>
+            <p className="text-3xl mb-3"><SportIcon sport="football" size="md" /></p>
             <p className="text-gray-400 text-lg">
               No games match your filters.
             </p>

@@ -3,6 +3,7 @@ import { createStaticClient } from "@/lib/supabase/static";
 import type { Metadata } from "next";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
+import { Target } from "lucide-react";
 
 export const revalidate = 300; // ISR: 5 minutes
 export const metadata: Metadata = {
@@ -85,12 +86,7 @@ export default async function PickemPage() {
           <Breadcrumb items={[{ label: "Pick'em" }]} />
 
           <div className="flex items-start gap-6">
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0"
-              style={{ background: "rgba(59,130,246,0.2)" }}
-            >
-              🎯
-            </div>
+            <Target className="w-8 h-8" />
             <div className="flex-1">
               <h1
                 className="psp-h1 text-white mb-2"
@@ -111,7 +107,7 @@ export default async function PickemPage() {
           <div className="lg:col-span-3 space-y-8">
             {!currentWeek ? (
               <div className="bg-gray-50 rounded-lg p-8 text-center" style={{ color: "var(--psp-gray-500)" }}>
-                <div className="text-3xl mb-3">🎯</div>
+                <Target className="w-8 h-8" />
                 <p className="text-lg font-medium text-gray-700 mb-1">No active pick&apos;em week right now</p>
                 <p className="text-sm mb-4">New pick&apos;em rounds open each week during the season.</p>
                 <Link

@@ -8,6 +8,8 @@ import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
 import { SPORT_META, getChampionshipsBySport, getChampionshipGamesWithBoxScores, type Championship } from "@/lib/data";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 export const revalidate = 86400;
 type PageParams = { sport: string };
@@ -256,7 +258,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{ label: meta.name, href: `/${sport}` }, { label: "Championships" }]} />
           <h1 className="psp-h1 text-white mb-3">
-            <span aria-hidden="true">{meta.emoji}</span> {meta.name} Championships
+            <SportIcon sport={sport} size="sm" /> {meta.name} Championships
           </h1>
           <div className="flex flex-wrap gap-3 text-sm items-center">
             {tierCounts[1] && (
@@ -539,7 +541,7 @@ export default async function ChampionshipsPage({ params }: { params: Promise<Pa
             {championships.length === 0 && (
               <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
                 <div className="text-center">
-                  <div className="text-6xl mb-4">🏆</div>
+                  <div className="mb-4"><Trophy className="w-16 h-16 mx-auto" /></div>
                   <h2 className="psp-h2 text-white mb-3">
                     Coming Soon
                   </h2>

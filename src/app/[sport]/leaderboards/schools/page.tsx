@@ -15,6 +15,7 @@ import PSPPromo from "@/components/ads/PSPPromo";
 import ShareButtons from "@/components/social/ShareButtons";
 import type { Metadata } from "next";
 import type React from "react";
+import { School } from "lucide-react";
 
 export const revalidate = 3600;
 type PageParams = { sport: string };
@@ -254,7 +255,7 @@ export default async function SchoolLeaderboardPage({
 function EmptyState({ sport, tab }: { sport: string; tab: string }) {
   return (
     <div className="text-center py-16" style={{ color: "var(--psp-gray-400)" }}>
-      <div className="text-4xl mb-4">🏫</div>
+      <School className="w-8 h-8" />
       <h2 className="text-lg font-medium mb-2" style={{ color: "var(--psp-navy)" }}>
         No school {tab} data available yet
       </h2>

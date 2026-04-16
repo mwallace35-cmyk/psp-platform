@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Trophy } from "lucide-react";
 
 interface RecordEntry {
   id?: number;
@@ -88,7 +89,7 @@ export default function RecordTimeline({
                         className="text-xs font-semibold px-2 py-1 rounded-full"
                         style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
                       >
-                        🏆 Legendary
+                        <Trophy className="w-4 h-4 inline" /> Legendary
                       </span>
                     )}
                   </div>

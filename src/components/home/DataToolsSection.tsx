@@ -1,16 +1,17 @@
 import Link from 'next/link';
 import styles from '@/app/homepage.module.css';
+import { BarChart3, Search } from "lucide-react";
 
 export default function DataToolsSection() {
   const tools = [
     {
-      icon: '🔍',
+      icon: 'search',
       name: 'Advanced Search',
       desc: 'Find any player, school, or stat across 25+ years',
       href: '/search',
     },
     {
-      icon: '📊',
+      icon: 'barchart3',
       name: 'Record Book',
       desc: 'All-time records and leaderboards by sport',
       href: '/football/records',

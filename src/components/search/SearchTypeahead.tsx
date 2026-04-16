@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
+import { School } from "lucide-react";
 
 interface SearchResult {
   type: "player" | "school" | "coach" | "season";
@@ -15,11 +16,11 @@ interface SearchResult {
 }
 
 const POPULAR_SEARCHES: SearchResult[] = [
-  { type: "school", name: "St. Joseph's Prep", detail: "Catholic League", href: "/football/schools/saint-josephs-prep", icon: "🏫" },
-  { type: "school", name: "Roman Catholic", detail: "Catholic League", href: "/basketball/schools/roman-catholic", icon: "🏫" },
-  { type: "school", name: "Imhotep Charter", detail: "Public League", href: "/football/schools/imhotep-charter", icon: "🏫" },
-  { type: "school", name: "Neumann-Goretti", detail: "Catholic League", href: "/basketball/schools/neumann-goretti", icon: "🏫" },
-  { type: "school", name: "La Salle College HS", detail: "Catholic League", href: "/football/schools/la-salle-college-hs", icon: "🏫" },
+  { type: "school", name: "St. Joseph's Prep", detail: "Catholic League", href: "/football/schools/saint-josephs-prep", icon: "school" },
+  { type: "school", name: "Roman Catholic", detail: "Catholic League", href: "/basketball/schools/roman-catholic", icon: "school" },
+  { type: "school", name: "Imhotep Charter", detail: "Public League", href: "/football/schools/imhotep-charter", icon: "school" },
+  { type: "school", name: "Neumann-Goretti", detail: "Catholic League", href: "/basketball/schools/neumann-goretti", icon: "school" },
+  { type: "school", name: "La Salle College HS", detail: "Catholic League", href: "/football/schools/la-salle-college-hs", icon: "school" },
 ];
 
 export default function SearchTypeahead() {

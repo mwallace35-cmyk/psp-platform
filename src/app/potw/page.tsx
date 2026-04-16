@@ -5,6 +5,7 @@ import PSPPromo from '@/components/ads/PSPPromo';
 import PotwVoteButton from '@/components/potw/PotwVoteButton';
 import JoinCTA from '@/components/ui/JoinCTA';
 import PotwSchoolStandings from '@/components/pulse/PotwSchoolStandings';
+import { BarChart3, Trophy } from "lucide-react";
 
 export const metadata: Metadata = {
   title: 'Player of the Week | PhillySportsPack.com',
@@ -48,7 +49,7 @@ export default async function PotwPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-navy to-navy-mid py-10 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="text-6xl mb-4">🏆</div>
+          <div className="mb-4"><Trophy className="w-16 h-16 mx-auto" /></div>
           <h1 className="psp-h1 text-white mb-4">Player of the Week</h1>
           <p className="text-gold text-lg">
             Vote for the top performer in Philadelphia high school sports
@@ -120,7 +121,7 @@ export default async function PotwPage() {
 
                           {nominee.stat_line && (
                             <div className="mt-2 bg-navy/5 rounded px-3 py-2 text-sm text-navy font-medium inline-block">
-                              📊 {nominee.stat_line}
+                              <BarChart3 className="w-4 h-4 inline" /> {nominee.stat_line}
                             </div>
                           )}
                         </div>

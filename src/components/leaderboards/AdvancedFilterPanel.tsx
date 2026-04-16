@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { Search } from "lucide-react";
 
 export interface FilterState {
   positions: string[];
@@ -152,7 +153,7 @@ export default function AdvancedFilterPanel({
         style={{ color: 'var(--psp-navy)' }}
       >
         <div className="flex items-center gap-2">
-          <span>🔍 Advanced Filters</span>
+          <span><Search className="w-4 h-4 inline" /> Advanced Filters</span>
           {activeFilterCount > 0 && (
             <span
               className="px-2 py-1 text-xs rounded-full font-bold text-white"

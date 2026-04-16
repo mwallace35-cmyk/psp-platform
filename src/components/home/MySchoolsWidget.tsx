@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getMySchools, removeMySchool } from '@/lib/my-schools';
 import styles from '@/app/homepage.module.css';
+import { Search } from "lucide-react";
 
 interface MySchoolsWidgetProps {
   topSchools?: Array<{
@@ -68,7 +69,7 @@ export default function MySchoolsWidget({ topSchools = DEFAULT_TOP_SCHOOLS }: My
           {/* Search CTA */}
           <div className={styles.mySchoolsCTA}>
             <Link href="/search" className={styles.mySchoolsSearchLink}>
-              🔍 Find Your School
+              <Search className="w-4 h-4 inline" /> Find Your School
             </Link>
           </div>
         </div>

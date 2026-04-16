@@ -6,6 +6,8 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import LeaderboardFilters from "@/components/leaderboards/LeaderboardFilters";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
+import { BarChart3, Target, Trophy } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -13,38 +15,38 @@ type PageParams = { sport: string };
 
 const STAT_CATEGORIES: Record<string, { slug: string; label: string; icon: string; statKey: string; valueKey: string; valueLabel: string }[]> = {
   football: [
-    { slug: "rushing", label: "Rushing", icon: "🏃", statKey: "rushing", valueKey: "rush_yards", valueLabel: "Yds" },
-    { slug: "passing", label: "Passing", icon: "🎯", statKey: "passing", valueKey: "pass_yards", valueLabel: "Yds" },
+    { slug: "rushing", label: "Rushing", icon: "track-field", statKey: "rushing", valueKey: "rush_yards", valueLabel: "Yds" },
+    { slug: "passing", label: "Passing", icon: "target", statKey: "passing", valueKey: "pass_yards", valueLabel: "Yds" },
     { slug: "receiving", label: "Receiving", icon: "🙌", statKey: "receiving", valueKey: "rec_yards", valueLabel: "Yds" },
-    { slug: "scoring", label: "Scoring", icon: "🏆", statKey: "scoring", valueKey: "total_td", valueLabel: "TDs" },
+    { slug: "scoring", label: "Scoring", icon: "trophy", statKey: "scoring", valueKey: "total_td", valueLabel: "TDs" },
     { slug: "defense", label: "Defense", icon: "🛡", statKey: "defense", valueKey: "tackles", valueLabel: "Tkl" },
     { slug: "interceptions", label: "Interceptions", icon: "🤚", statKey: "interceptions", valueKey: "interceptions", valueLabel: "INT" },
     { slug: "returns", label: "Return Yards", icon: "⚡", statKey: "returns", valueKey: "kick_ret_yards", valueLabel: "Yds" },
   ],
   basketball: [
-    { slug: "scoring", label: "Scoring", icon: "🏀", statKey: "scoring", valueKey: "points", valueLabel: "Pts" },
-    { slug: "ppg", label: "Points Per Game", icon: "📊", statKey: "ppg", valueKey: "ppg", valueLabel: "PPG" },
+    { slug: "scoring", label: "Scoring", icon: "basketball", statKey: "scoring", valueKey: "points", valueLabel: "Pts" },
+    { slug: "ppg", label: "Points Per Game", icon: "barchart3", statKey: "ppg", valueKey: "ppg", valueLabel: "PPG" },
     { slug: "rebounds", label: "Rebounds", icon: "💪", statKey: "rebounds", valueKey: "rebounds", valueLabel: "Reb" },
     { slug: "assists", label: "Assists", icon: "🤝", statKey: "assists", valueKey: "assists", valueLabel: "Ast" },
     { slug: "steals", label: "Steals", icon: "👋", statKey: "steals", valueKey: "steals", valueLabel: "Stl" },
     { slug: "blocks", label: "Blocks", icon: "✋", statKey: "blocks", valueKey: "blocks", valueLabel: "Blk" },
-    { slug: "shooting", label: "Field Goal %", icon: "🎯", statKey: "shooting", valueKey: "fg_pct", valueLabel: "FG%" },
+    { slug: "shooting", label: "Field Goal %", icon: "target", statKey: "shooting", valueKey: "fg_pct", valueLabel: "FG%" },
     { slug: "three-point", label: "3-Point %", icon: "🏹", statKey: "three-point", valueKey: "three_pct", valueLabel: "3PT%" },
     { slug: "free-throws", label: "Free Throw %", icon: "🎪", statKey: "free-throws", valueKey: "ft_pct", valueLabel: "FT%" },
   ],
   "girls-basketball": [
-    { slug: "scoring", label: "Scoring", icon: "🏀", statKey: "scoring", valueKey: "points", valueLabel: "Pts" },
-    { slug: "ppg", label: "Points Per Game", icon: "📊", statKey: "ppg", valueKey: "ppg", valueLabel: "PPG" },
+    { slug: "scoring", label: "Scoring", icon: "basketball", statKey: "scoring", valueKey: "points", valueLabel: "Pts" },
+    { slug: "ppg", label: "Points Per Game", icon: "barchart3", statKey: "ppg", valueKey: "ppg", valueLabel: "PPG" },
     { slug: "rebounds", label: "Rebounds", icon: "💪", statKey: "rebounds", valueKey: "rebounds", valueLabel: "Reb" },
     { slug: "assists", label: "Assists", icon: "🤝", statKey: "assists", valueKey: "assists", valueLabel: "Ast" },
     { slug: "steals", label: "Steals", icon: "👋", statKey: "steals", valueKey: "steals", valueLabel: "Stl" },
     { slug: "blocks", label: "Blocks", icon: "✋", statKey: "blocks", valueKey: "blocks", valueLabel: "Blk" },
-    { slug: "shooting", label: "Field Goal %", icon: "🎯", statKey: "shooting", valueKey: "fg_pct", valueLabel: "FG%" },
+    { slug: "shooting", label: "Field Goal %", icon: "target", statKey: "shooting", valueKey: "fg_pct", valueLabel: "FG%" },
     { slug: "three-point", label: "3-Point %", icon: "🏹", statKey: "three-point", valueKey: "three_pct", valueLabel: "3PT%" },
     { slug: "free-throws", label: "Free Throw %", icon: "🎪", statKey: "free-throws", valueKey: "ft_pct", valueLabel: "FT%" },
   ],
   baseball: [
-    { slug: "batting", label: "Batting", icon: "⚾", statKey: "batting", valueKey: "hits", valueLabel: "H" },
+    { slug: "batting", label: "Batting", icon: "baseball", statKey: "batting", valueKey: "hits", valueLabel: "H" },
     { slug: "home-runs", label: "Home Runs", icon: "💣", statKey: "home-runs", valueKey: "home_runs", valueLabel: "HR" },
   ],
 };
@@ -122,7 +124,7 @@ export default async function LeaderboardsIndex({ params, searchParams }: { para
               { label: "Leaderboards" },
             ]} />
             <div className="flex items-center gap-3 mt-4">
-              <span className="text-4xl">{meta.emoji}</span>
+              <SportIcon sport={sport} size="lg" />
               <h1 className="psp-h1 text-white">
                 {meta.name} Leaderboards
               </h1>

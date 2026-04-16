@@ -8,6 +8,8 @@ import TeamGameLog from "./TeamGameLog";
 import RivalryRecord from "./RivalryRecord";
 import type { SchoolHubData, CurrentSeasonInfo, SchoolChampionshipData, RecentSeasonData, SchoolAward, SchoolCoach } from "@/lib/data/school-hub";
 import { SPORT_EMOJI } from "@/lib/sports";
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic API response shape
 type SportData = Record<string, any>; // from /api/schools/[slug]/sport-data
@@ -79,7 +81,7 @@ export default function SportTab({
           className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-5"
         >
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl">{SPORT_EMOJI[sportId] || "⚽"}</span>
+            <span className="text-2xl">{SPORT_EMOJI[sportId] || "soccer"}</span>
             <div className="flex-1">
               <h3 className="psp-h3" style={{ color: "var(--psp-navy)" }}>
                 {currentSeason.season_label} Season
@@ -203,7 +205,7 @@ export default function SportTab({
                     return (
                       <tr key={season.id} className={isChamp ? "bg-amber-50" : ""}>
                         <td>
-                          {isChamp && <span className="mr-1">🏆</span>}
+                          {isChamp && <Trophy className="w-5 h-5 inline" />}
                           <Link
                             href={`/${sportId}/teams/${school.slug}/${season.season_label}`}
                             className="hover:underline"
@@ -292,7 +294,7 @@ export default function SportTab({
                 className="inline-flex items-center gap-1.5 bg-white border border-[var(--psp-gray-200)] rounded-full px-3 py-1.5 text-sm hover:border-[var(--psp-gold)]/50 hover:shadow-sm transition animate-fade-in-up"
                 style={{ animationDelay: `${idx * 30}ms` }}
               >
-                <span className="text-xs">🏆</span>
+                <Trophy className="w-5 h-5 inline" />
                 <span className="font-bold tabular-nums" style={{ color: "var(--psp-navy)" }}>
                   {c.year}
                 </span>

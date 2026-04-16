@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { getSimilarPlayers, type SimilarPlayer } from "@/lib/data/similar-players";
+import { Trophy } from "lucide-react";
 
 interface SimilarPlayersProps {
   playerId: number;
@@ -148,7 +149,7 @@ export default function SimilarPlayers({
         })}
       </div>
       <p className="text-xs text-gray-400 mt-4 pt-4 border-t border-gray-200">
-        <span aria-hidden="true">🏆</span> Similarity based on position, stats, and graduation era
+        <Trophy className="w-5 h-5 inline" /> Similarity based on position, stats, and graduation era
       </p>
     </div>
   );

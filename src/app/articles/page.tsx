@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { SPORT_META, VALID_SPORTS } from '@/lib/sports';
 import PSPPromo from '@/components/ads/PSPPromo';
+import SportIcon from "@/components/ui/SportIcon";
 
 export const revalidate = 1800;
 
@@ -165,7 +166,7 @@ export default async function ArticlesPage({
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {meta.emoji} {meta.name}
+                <SportIcon sport={sport} size="sm" /> {meta.name}
               </Link>
             );
           })}

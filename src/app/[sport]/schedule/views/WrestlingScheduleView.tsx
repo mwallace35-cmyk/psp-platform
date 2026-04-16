@@ -44,7 +44,7 @@ export default function WrestlingScheduleView({
       <EmptyState
         sport={sport}
         sportName="Wrestling"
-        sportEmoji="\u{1F93C}"
+        sportEmoji="wrestling"
         seasonLabel={seasonLabel}
         lastSeasonLabel={lastSeasonWithData ?? undefined}
       />

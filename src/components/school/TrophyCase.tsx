@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Trophy } from "lucide-react";
 
 interface Championship {
   id: number;
@@ -54,7 +55,7 @@ export default function TrophyCase({ championships, sportColor }: TrophyCaseProp
                 border: `1px solid ${level.toLowerCase().includes("state") ? `${sportColor}40` : "rgba(240, 165, 0, 0.25)"}`,
               }}
             >
-              🏆 {count} {level}
+              <Trophy className="w-4 h-4 inline" /> {count} {level}
             </span>
           ))}
       </div>
@@ -66,7 +67,7 @@ export default function TrophyCase({ championships, sportColor }: TrophyCaseProp
             key={c.id}
             className="bg-white rounded-lg border border-[var(--psp-gray-200)] px-4 py-3 flex items-center gap-3"
           >
-            <span className="text-lg flex-shrink-0">🏆</span>
+            <Trophy className="w-5 h-5 inline" />
             <div className="min-w-0">
               <span className="font-medium text-sm" style={{ color: "var(--psp-navy)" }}>
                 {c.seasons?.label}

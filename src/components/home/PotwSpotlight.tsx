@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import styles from '@/app/homepage.module.css';
+import { Trophy } from "lucide-react";
 
 interface PotwNominee {
   id: string;
@@ -45,7 +46,7 @@ export default function PotwSpotlight({ nominees }: PotwSpotlightProps) {
         <div className={styles.potwNomineeCard}>
           {displayNominees[0] && (
             <>
-              <div className={styles.nomineeImage}>🏆</div>
+              <div className={styles.nomineeImage}><Trophy className="w-4 h-4 inline" /></div>
               <div className={styles.nomineeName}>{displayNominees[0].playerName}</div>
               <div className={styles.nomineeSchool}>{displayNominees[0].schoolName}</div>
               <div className={styles.nomineeStatLine}>{displayNominees[0].statLine}</div>

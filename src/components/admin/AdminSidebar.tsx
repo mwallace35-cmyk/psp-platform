@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { BarChart3, School, Search, Target, Trophy } from "lucide-react";
 
 const navItems = [
   { section: "Core", items: [
-    { href: "/admin", label: "Dashboard", icon: "📊" },
+    { href: "/admin", label: "Dashboard", icon: "barchart3" },
   ]},
   { section: "Content", items: [
     { href: "/admin/articles", label: "Articles", icon: "📰" },
@@ -19,7 +20,7 @@ const navItems = [
   ]},
   { section: "Data & Tools", items: [
     { href: "/admin/import", label: "Import", icon: "📥" },
-    { href: "/admin/data", label: "Data Browser", icon: "🔍" },
+    { href: "/admin/data", label: "Data Browser", icon: "search" },
     { href: "/admin/comments", label: "Comments", icon: "💬" },
     { href: "/admin/corrections", label: "Corrections", icon: "✏️" },
     { href: "/admin/conflicts", label: "Conflicts", icon: "⚠️" },
@@ -28,13 +29,13 @@ const navItems = [
   ]},
   { section: "Community", items: [
     { href: "/admin/claims", label: "Player Claims", icon: "✅" },
-    { href: "/admin/pickem", label: "Pick'em Manager", icon: "🎯" },
+    { href: "/admin/pickem", label: "Pick'em Manager", icon: "target" },
   ]},
   { section: "Business", items: [
-    { href: "/admin/school-admins", label: "School Admins", icon: "🏫" },
+    { href: "/admin/school-admins", label: "School Admins", icon: "school" },
     { href: "/admin/widgets", label: "Widgets", icon: "📦" },
     { href: "/admin/sponsors", label: "Sponsors", icon: "💼" },
-    { href: "/admin/awards-ceremony", label: "Annual Awards", icon: "🏆" },
+    { href: "/admin/awards-ceremony", label: "Annual Awards", icon: "trophy" },
   ]},
 ];
 

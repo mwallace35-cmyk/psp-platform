@@ -1,3 +1,5 @@
+import { Target } from "lucide-react";
+
 interface Commitment {
   id: number;
   player_name?: string;
@@ -16,7 +18,7 @@ interface CommitmentTrackerProps {
 export default function CommitmentTracker({ commitments }: CommitmentTrackerProps) {
   return (
     <div className="widget">
-      <div className="w-head">🎯 Recent Commitments</div>
+      <div className="w-head"><Target className="w-4 h-4 inline" /> Recent Commitments</div>
       <div className="w-body">
         {commitments.length === 0 ? (
           <div style={{ padding: 16, textAlign: "center", color: "var(--g400)", fontSize: 12 }}>

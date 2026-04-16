@@ -1,5 +1,6 @@
 import { SPORT_META, type SportId } from "@/lib/sports";
 import type { CurrentSeasonInfo } from "@/lib/data/school-hub";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface ThisSeasonBannerProps {
   seasons: CurrentSeasonInfo[];
@@ -26,7 +27,7 @@ export default function ThisSeasonBanner({ seasons, schoolSlug }: ThisSeasonBann
       <div className="divide-y divide-gray-100">
         {seasons.map((season) => {
           const meta = SPORT_META[season.sport_id as SportId];
-          const emoji = meta?.emoji || "⚽";
+          const emoji = meta?.emoji || "soccer";
           const sportName = season.sport_name || meta?.name || season.sport_id;
 
           return (

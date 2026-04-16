@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Search } from "lucide-react";
 
 // Computed records from stats tables
 interface ComputedRecord {
@@ -124,7 +125,7 @@ export default function SchoolRecordsTab({
 
       {schoolBooks.length === 0 && (
         <div style={{ textAlign: "center", padding: "48px 0", color: "#9ca3af" }}>
-          <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+          <Search className="w-12 h-12" />
           <p>No schools match "{searchValue}"</p>
         </div>
       )}

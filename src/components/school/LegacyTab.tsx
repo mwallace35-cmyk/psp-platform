@@ -3,6 +3,7 @@ import { AchievementBadge } from "@/components/ui";
 import { SPORT_EMOJI, SPORT_META, type SportId } from "@/lib/sports";
 import SchoolRecordsSection from "./SchoolRecordsSection";
 import type { SchoolHubData, SchoolChampionshipData, NextLevelAthlete, SchoolCoach, SchoolAward, RecentSeasonData, SchoolRecord } from "@/lib/data/school-hub";
+import { Trophy } from "lucide-react";
 
 interface LegacyTabProps {
   school: SchoolHubData;
@@ -56,7 +57,7 @@ export default function LegacyTab({
             .map(([sportId, sportChamps]) => (
               <div key={sportId} className="mb-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">{SPORT_EMOJI[sportId] || "🏆"}</span>
+                  <span className="text-lg">{SPORT_EMOJI[sportId] || "trophy"}</span>
                   <h3
                     className="text-sm font-bold uppercase tracking-wider"
                     style={{ color: "var(--psp-navy)" }}
@@ -79,7 +80,7 @@ export default function LegacyTab({
                       className="inline-flex items-center gap-1.5 bg-white border border-[var(--psp-gray-200)] rounded-full px-3 py-1.5 text-sm hover:border-[var(--psp-gold)]/50 hover:shadow-sm transition animate-fade-in-up"
                       style={{ animationDelay: `${idx * 30}ms` }}
                     >
-                      <span className="text-xs">🏆</span>
+                      <Trophy className="w-5 h-5 inline" />
                       <span
                         className="font-bold tabular-nums"
                         style={{ color: "var(--psp-navy)" }}
@@ -210,7 +211,7 @@ export default function LegacyTab({
                       >
                         <td>
                           <span className="font-medium">
-                            {isChampSeason && <span className="mr-1">🏆</span>}
+                            {isChampSeason && <Trophy className="w-5 h-5 inline" />}
                             {season.sport_name}
                           </span>
                         </td>

@@ -11,6 +11,7 @@ import {
 import LegendCard from "@/components/legends/LegendCard";
 import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
+import { BarChart3 } from "lucide-react";
 
 const SPORT_FILTERS: { id: LegendSport | "all"; label: string }[] = [
   { id: "all", label: "All Sports" },
@@ -76,7 +77,7 @@ export default function LegendsHubPage() {
               className="flex items-center justify-between bg-[var(--psp-navy)] rounded-xl p-4 mb-6 group hover:bg-[var(--psp-navy-mid)] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <span className="text-2xl">📊</span>
+                <BarChart3 className="w-5 h-5 inline" />
                 <div>
                   <p className="text-sm font-bold text-white group-hover:text-[var(--psp-gold)] transition-colors">
                     Football Coaching Records

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { Target } from "lucide-react";
 
 interface Award {
   id: number;
@@ -33,7 +34,7 @@ const TIER_STYLES: Record<string, { bg: string; border: string; text: string; gl
 const CATEGORY_ICONS: Record<string, string> = {
   offense: '\u26A1',    // ⚡
   defense: '\u{1F6E1}', // 🛡
-  specialist: '\u{1F3AF}', // 🎯
+  specialist: '\u{1F3AF}', // <Target className="w-4 h-4 inline" />
 };
 
 function formatSeasonYear(year: number): string {

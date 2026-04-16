@@ -1,4 +1,5 @@
 import React from 'react';
+import { Trophy } from "lucide-react";
 
 type BadgeType = 'pro' | 'champion' | 'college' | 'hall-of-fame' | 'multi-sport';
 
@@ -16,7 +17,7 @@ const badgeConfig: Record<BadgeType, { icon: string; bgColor: string; textColor:
     label: 'Pro Athlete',
   },
   champion: {
-    icon: '🏆',
+    icon: 'trophy',
     bgColor: 'bg-blue-900',
     textColor: 'text-yellow-300',
     label: 'Champion',

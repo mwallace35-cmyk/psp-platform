@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { BarChart3 } from "lucide-react";
 
 interface StatLeader {
   rank: number;
@@ -446,7 +447,7 @@ export default function StatLeadersSidebar({
           gap: 6,
         }}
       >
-        <span style={{ fontSize: 16 }} aria-hidden="true">📊</span>
+        <BarChart3 className="w-5 h-5 inline" />
         Stat Leaders
       </div>
 

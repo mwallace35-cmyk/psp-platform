@@ -9,6 +9,8 @@ import ShareButtons from "@/components/social/ShareButtons";
 import { buildOgImageUrl } from "@/lib/og-utils";
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
+import { BarChart3, School } from "lucide-react";
 
 export const revalidate = 86400; // ISR: daily
 type PageParams = { sport: string; slug: string };
@@ -145,7 +147,7 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
               className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0"
               style={{ background: `${meta.color}20` }}
             >
-              {meta.emoji}
+              <SportIcon sport={sport} size="sm" />
             </div>
             <div className="flex-1">
               <h1
@@ -188,7 +190,7 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      "👨‍🏫"
+                      "👨‍school"
                     )}
                   </div>
                   <div className="p-6">
@@ -266,7 +268,7 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
                   {coordinators.map((coach) => (
                     <div key={coach.id} className="bg-white rounded-lg border border-[var(--psp-gray-200)] p-4">
                       <div className="flex items-start gap-3">
-                        <div className="text-3xl">👨‍🏫</div>
+                        <div className="text-3xl">👨‍<School className="w-4 h-4 inline" /></div>
                         <div className="flex-1">
                           <h3 className="font-bold" style={{ color: "var(--psp-navy)" }}>
                             {coach.coaches?.name || "Unknown Coach"}
@@ -365,7 +367,7 @@ export default async function SchoolCoachingStaffPage({ params }: { params: Prom
                   className="block text-sm py-1 hover:underline"
                   style={{ color: "var(--psp-navy)" }}
                 >
-                  📊 Stat Leaders at {school.name}
+                  <BarChart3 className="w-4 h-4 inline" /> Stat Leaders at {school.name}
                 </Link>
               </div>
             </div>

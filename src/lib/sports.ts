@@ -33,14 +33,14 @@ export const SPORT_EMOJI: Record<string, string> = {
   soccer: "⚽",
 };
 
-// Sport metadata
+// Sport metadata — emoji field kept as sport key for backward compat (render via <SportIcon>)
 export const SPORT_META: Record<SportId, { name: string; emoji: string; color: string; statCategories: string[] }> = {
-  football: { name: "Football", emoji: "🏈", color: "#16a34a", statCategories: ["rushing", "passing", "receiving", "scoring"] },
-  basketball: { name: "Boys Basketball", emoji: "🏀", color: "#3b82f6", statCategories: ["scoring", "ppg", "rebounds", "assists"] },
-  "girls-basketball": { name: "Girls Basketball", emoji: "🏀", color: "#ec4899", statCategories: ["scoring", "ppg", "rebounds", "assists"] },
-  baseball: { name: "Baseball", emoji: "⚾", color: "#dc2626", statCategories: ["batting", "pitching", "home-runs"] },
-  "track-field": { name: "Track & Field", emoji: "🏃", color: "#7c3aed", statCategories: ["sprints", "distance", "field"] },
-  lacrosse: { name: "Lacrosse", emoji: "🥍", color: "#0891b2", statCategories: ["goals", "assists"] },
-  wrestling: { name: "Wrestling", emoji: "🤼", color: "#ca8a04", statCategories: ["wins", "pins"] },
-  soccer: { name: "Soccer", emoji: "⚽", color: "#059669", statCategories: ["goals", "assists"] },
+  football: { name: "Football", emoji: "football", color: "#16a34a", statCategories: ["rushing", "passing", "receiving", "scoring"] },
+  basketball: { name: "Boys Basketball", emoji: "basketball", color: "#3b82f6", statCategories: ["scoring", "ppg", "rebounds", "assists"] },
+  "girls-basketball": { name: "Girls Basketball", emoji: "girls-basketball", color: "#ec4899", statCategories: ["scoring", "ppg", "rebounds", "assists"] },
+  baseball: { name: "Baseball", emoji: "baseball", color: "#dc2626", statCategories: ["batting", "pitching", "home-runs"] },
+  "track-field": { name: "Track & Field", emoji: "track-field", color: "#7c3aed", statCategories: ["sprints", "distance", "field"] },
+  lacrosse: { name: "Lacrosse", emoji: "lacrosse", color: "#0891b2", statCategories: ["goals", "assists"] },
+  wrestling: { name: "Wrestling", emoji: "wrestling", color: "#ca8a04", statCategories: ["wins", "pins"] },
+  soccer: { name: "Soccer", emoji: "soccer", color: "#059669", statCategories: ["goals", "assists"] },
 };

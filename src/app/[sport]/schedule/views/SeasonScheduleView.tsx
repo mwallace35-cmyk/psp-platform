@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
+import SportIcon from "@/components/ui/SportIcon";
 import type {
   ScheduleGame,
   ScheduleSeason,
@@ -304,7 +305,7 @@ function WeeklyView({
       <div className="flex items-center justify-between px-1">
         <p className="text-sm text-gray-500">
           <span className="font-bebas text-base tracking-wider text-[var(--psp-navy)]">
-            {sportEmoji} {sportName} {seasonLabel}
+            <SportIcon sport={sport} size="sm" /> {sportName} {seasonLabel}
           </span>
         </p>
         <p className="text-xs text-gray-400">

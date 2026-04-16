@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { getMilestoneAlerts } from "@/lib/data/milestones";
+import { Target } from "lucide-react";
 
 export default async function MilestoneTracker() {
   const milestones = await getMilestoneAlerts(undefined, 3);
@@ -32,7 +33,7 @@ export default async function MilestoneTracker() {
           gap: "0.5rem",
         }}
       >
-        <span aria-hidden="true">🎯</span> Watch These Milestones
+        <Target className="w-5 h-5 inline" /> Watch These Milestones
       </h3>
 
       <div style={{ display: "grid", gap: "0.75rem" }}>

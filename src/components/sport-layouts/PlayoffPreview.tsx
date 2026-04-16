@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface MatchupData {
   classification: string;
@@ -156,7 +157,7 @@ export default function PlayoffPreview() {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{ fontSize: "1.5rem" }}>🏀</span>
+            <span style={{ fontSize: "1.5rem" }}><SportIcon sport="basketball" size="sm" /></span>
             <div>
               <h2
                 className="psp-h3"

@@ -23,6 +23,7 @@ import { buildLeaderboardCaption } from "@/lib/ig-caption";
 import DataSourceBadge from "@/components/ui/DataSourceBadge";
 import MethodologyNote from "@/components/ui/MethodologyNote";
 import type { Metadata } from "next";
+import { BarChart3, School, Search } from "lucide-react";
 
 export const revalidate = 3600;
 type PageParams = { sport: string; stat: string };
@@ -504,7 +505,7 @@ export default async function LeaderboardPage({
               className="px-4 py-2 rounded-lg text-sm font-medium border transition-colors hover:border-[var(--psp-gold)]"
               style={{ borderColor: "var(--psp-gold)", color: "var(--psp-gold)" }}
             >
-              🏫 School Rankings
+              <School className="w-4 h-4 inline" /> School Rankings
             </Link>
           </div>
         )}
@@ -551,7 +552,7 @@ export default async function LeaderboardPage({
         ) : (filterClass || filterPosition) ? (
           <div className="rounded-xl border p-8 my-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
             <div className="text-center">
-              <div className="text-5xl mb-4">🔍</div>
+              <div className="mb-4"><Search className="w-16 h-16 mx-auto" /></div>
               <h2 className="psp-h3 text-white mb-3">
                 No Results
               </h2>
@@ -566,7 +567,7 @@ export default async function LeaderboardPage({
         ) : (
           <div className="rounded-xl border p-8" style={{ borderColor: "var(--psp-gray-700, #374151)", background: "linear-gradient(135deg, rgba(10, 22, 40, 0.5) 0%, rgba(15, 32, 64, 0.3) 100%)" }}>
             <div className="text-center">
-              <div className="text-6xl mb-4">📊</div>
+              <div className="mb-4"><BarChart3 className="w-16 h-16 mx-auto" /></div>
               <h2 className="psp-h3 text-white mb-3">
                 Coming Soon
               </h2>

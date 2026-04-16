@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Trophy } from "lucide-react";
 
 interface TeamSeason {
   id: number;
@@ -75,7 +76,7 @@ export default function SeasonHistoryTable({
                       <>
                         {hasChampionship && (
                           <span className="mr-1.5" aria-label="Championship">
-                            🏆
+                            <Trophy className="w-4 h-4 inline" />
                           </span>
                         )}
                         <Link

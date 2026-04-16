@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { BarChart3, School, Trophy } from "lucide-react";
 
 export interface DataSourceBadgeProps {
   source: string;
@@ -12,9 +13,9 @@ export interface DataSourceBadgeProps {
 const sourceIcons: Record<string, string> = {
   'Ted Silary Archives': '📋',
   'MaxPreps': '🌐',
-  'PIAA': '🏆',
+  'PIAA': 'trophy',
   'Hudl': '📹',
-  'School Archives': '🏫',
+  'School Archives': 'school',
   'Newspaper Archives': '📰',
   'Local Records': '📚',
 };
@@ -32,7 +33,7 @@ export default function DataSourceBadge({
   detail,
 }: DataSourceBadgeProps) {
   const [showDetail, setShowDetail] = useState(false);
-  const icon = sourceIcons[source] || '📊';
+  const icon = sourceIcons[source] || 'barchart3';
   const confConfig = confidenceConfig[confidence];
 
   const lastUpdatedText = lastUpdated

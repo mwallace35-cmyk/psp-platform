@@ -23,6 +23,7 @@ interface LeagueGroup {
 }
 
 import React from "react";
+import { Trophy } from "lucide-react";
 
 const StandingsSection = React.memo(function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueName, seasonLabel }: {
   data: Standing[];
@@ -76,7 +77,7 @@ const StandingsSection = React.memo(function StandingsSection({ data, sport, has
                 }`}
               >
                 <td className="px-3 py-3 font-bold text-[var(--psp-gold)] w-10">
-                  {row.is_champion ? "🏆" : row.rank}
+                  {row.is_champion ? "trophy" : row.rank}
                 </td>
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2">

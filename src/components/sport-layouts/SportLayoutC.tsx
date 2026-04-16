@@ -1,6 +1,8 @@
 import Link from "next/link";
 import PSPPromo from "@/components/ads/PSPPromo";
 import type { Championship } from "@/lib/data/types";
+import SportIcon from "@/components/ui/SportIcon";
+import { BarChart3, Trophy } from "lucide-react";
 
 interface FeaturedArticle {
   id: number;
@@ -200,7 +202,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
                     </Link>
                     <div className="rsub">{champ.seasons?.label} &mdash; {champ.level}{champ.score ? ` (${champ.score})` : ""}</div>
                   </div>
-                  <div className="rt-rec" role="img" aria-label="Champion">🏆</div>
+                  <div className="rt-rec" role="img" aria-label="Champion"><Trophy className="w-4 h-4 inline" /></div>
                 </div>
               ))}
             </div>
@@ -213,7 +215,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Leaderboards</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">📊</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true"><BarChart3 className="w-4 h-4 inline" /></div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Top performers</div>
               <div style={{ fontSize: 11, color: "var(--g400)" }}>{meta.statCategories.join(", ")}</div>
             </div>
@@ -228,7 +230,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/championships`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: sportColor }}>Championships</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }} role="img" aria-label="Trophy">🏆</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} role="img" aria-label="Trophy"><Trophy className="w-4 h-4 inline" /></div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Title history</div>
             </div>
           </Link>
@@ -242,7 +244,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
           <Link href={`/${sport}/eras`} className="ldr-card" style={{ textDecoration: "none", color: "inherit" }}>
             <div className="ldr-head" style={{ background: "var(--psp-blue)" }}>Statistical Eras</div>
             <div style={{ padding: "12px" }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true">📊</div>
+              <div style={{ fontSize: 24, marginBottom: 4 }} aria-hidden="true"><BarChart3 className="w-4 h-4 inline" /></div>
               <div style={{ fontWeight: 700, fontSize: 13 }}>Stat trends</div>
             </div>
           </Link>
@@ -297,7 +299,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
         )}
 
         <div className="widget">
-          <div className="w-head">{meta.emoji} Leagues</div>
+          <div className="w-head"><SportIcon sport={sport} size="sm" /> Leagues</div>
           <div className="w-body">
             {leagueNames.map((league) => (
               <div key={league} className="w-row">
@@ -310,7 +312,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
         </div>
 
         <div className="widget">
-          <div className="w-head">📊 Quick Stats</div>
+          <div className="w-head"><BarChart3 className="w-4 h-4 inline" /> Quick Stats</div>
           <div className="w-body">
             {overview.players > 0 && <div className="w-row"><span className="name">Players</span><span className="val">{overview.players.toLocaleString()}</span></div>}
             {overview.schools > 0 && <div className="w-row"><span className="name">Schools</span><span className="val">{overview.schools.toLocaleString()}</span></div>}
@@ -320,7 +322,7 @@ export default function SportLayoutC({ sport, sportColor, meta, overview, champi
         </div>
 
         <div className="widget">
-          <div className="w-head">{meta.emoji} Tools</div>
+          <div className="w-head"><SportIcon sport={sport} size="sm" /> Tools</div>
           <div className="w-body">
             <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="w-link">&#8594; Leaderboards</Link>
             <Link href={`/${sport}/championships`} className="w-link">&#8594; Championship History</Link>

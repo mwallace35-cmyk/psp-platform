@@ -324,7 +324,7 @@ export default function BaseballScheduleView({
       <EmptyState
         sport={sport}
         sportName="Baseball"
-        sportEmoji="&#9918;"
+        sportEmoji="baseball"
         seasonLabel={seasonLabel}
         lastSeasonLabel={lastSeasonWithData ?? undefined}
       />
@@ -461,7 +461,7 @@ export default function BaseballScheduleView({
           <EmptyState
             sport={sport}
             sportName="Baseball"
-            sportEmoji="&#9918;"
+            sportEmoji="baseball"
             seasonLabel={seasonLabel}
             showClearFilters
             onClearFilters={clearFilters}

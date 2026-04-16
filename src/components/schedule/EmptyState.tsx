@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface Props {
   sport: string;
@@ -30,7 +31,7 @@ export default function EmptyState({
 }: Props) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-12 text-center max-w-lg mx-auto mt-8">
-      <span className="text-4xl block mb-4">{sportEmoji}</span>
+      <div className="flex justify-center mb-4"><SportIcon sport={sport} size="lg" /></div>
 
       {lastSeasonLabel && lastSeasonLabel !== seasonLabel ? (
         // Off-season: current season has no games

@@ -1,11 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Trophy } from "lucide-react";
 
 const REACTIONS = [
   { emoji: '🔥', label: 'Fire', key: 'fire' },
   { emoji: '⭐', label: 'Star',  key: 'star' },
   { emoji: '💪', label: 'Beast', key: 'beast' },
-  { emoji: '🏆', label: 'Champ', key: 'champ' },
+  { emoji: 'trophy', label: 'Champ', key: 'champ' },
 ];
 
 interface ReactionCounts { fire: number; star: number; beast: number; champ: number; }

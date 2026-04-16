@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { SPORT_META, type SportId } from '@/lib/sports';
+import { Search, Target } from "lucide-react";
 
 export interface ProAlumnus {
   name: string;
@@ -85,7 +86,7 @@ export default function ProAlumniSection({ alumni }: ProAlumniSectionProps) {
             href="/search?type=alumni"
             className="group p-6 sm:p-8 bg-white [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-lg transition-shadow"
           >
-            <div className="text-3xl sm:text-4xl mb-3" aria-hidden="true">🔍</div>
+            <Search className="w-8 h-8" />
             <h3 className="text-lg sm:text-xl font-bold text-[var(--psp-navy)] [data-theme=dark]:text-white mb-2 group-hover:text-[var(--psp-blue)] [data-theme=dark]:group-hover:text-[var(--psp-gold)] transition-colors">
               View All Alumni
             </h3>
@@ -99,7 +100,7 @@ export default function ProAlumniSection({ alumni }: ProAlumniSectionProps) {
             href="/alumni"
             className="group p-6 sm:p-8 bg-white [data-theme=dark]:bg-[var(--psp-navy-light)] rounded-lg border border-[var(--psp-gray-200)] [data-theme=dark]:border-[var(--psp-navy)] hover:shadow-lg transition-shadow"
           >
-            <div className="text-3xl sm:text-4xl mb-3" aria-hidden="true">🎯</div>
+            <Target className="w-8 h-8" />
             <h3 className="text-lg sm:text-xl font-bold text-[var(--psp-navy)] [data-theme=dark]:text-white mb-2 group-hover:text-[var(--psp-blue)] [data-theme=dark]:group-hover:text-[var(--psp-gold)] transition-colors">
               By Sport
             </h3>

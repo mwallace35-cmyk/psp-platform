@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import styles from './challenge.module.css';
 import { Button } from '@/components/ui';
 import { CHALLENGE_BANK, type ChallengeQuestion } from './challengeData';
+import SportIcon from "@/components/ui/SportIcon";
+import { Target } from "lucide-react";
 
 export default function DailyChallenge() {
   const [dailyQuestion, setDailyQuestion] = useState<ChallengeQuestion | null>(null);
@@ -64,7 +66,7 @@ export default function DailyChallenge() {
     if (!dailyQuestion) return;
 
     const result = isCorrect ? '✅ Correct!' : '❌ Missed it!';
-    const text = `I ${isCorrect ? 'correctly guessed' : 'tried'} PhillySportsPack's Daily Challenge!\n\n${result}\n\nCan you get it right? Play now! 🏀🏈`;
+    const text = `I ${isCorrect ? 'correctly guessed' : 'tried'} PhillySportsPack's Daily Challenge!\n\n${result}\n\nCan you get it right? Play now! <SportIcon sport="basketball" size="sm" /><SportIcon sport="football" size="sm" />`;
 
     if (navigator.share) {
       navigator.share({
@@ -222,7 +224,7 @@ export default function DailyChallenge() {
         <div className={`${styles.resultsSection} ${isCorrect ? styles.resultCorrect : styles.resultIncorrect}`}>
           <div className="text-center mb-6">
             <h3 className="text-3xl font-[var(--font-bebas)] mb-2">
-              {isCorrect ? '🎯 CORRECT!' : '❌ INCORRECT'}
+              {isCorrect ? 'target CORRECT!' : '❌ INCORRECT'}
             </h3>
             <p className="text-gray-300">
               Only {dailyQuestion.successRate}% of players got this one right!

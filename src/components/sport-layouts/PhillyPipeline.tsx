@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Target, Trophy } from "lucide-react";
 
 interface Recruit {
   id: string;
@@ -244,7 +245,7 @@ export default function PhillyPipeline({ sport, sportColor }: PhillyPipelineProp
   return (
     <div className="widget">
       {/* Top Section: Top Recruits */}
-      <div className="w-head">🎯 Top {sport.charAt(0).toUpperCase() + sport.slice(1)} Recruits</div>
+      <div className="w-head"><Target className="w-4 h-4 inline" /> Top {sport.charAt(0).toUpperCase() + sport.slice(1)} Recruits</div>
       <div className="w-body" style={{ paddingBottom: 0 }}>
         {recruits.map((recruit, index) => (
           <div
@@ -290,7 +291,7 @@ export default function PhillyPipeline({ sport, sportColor }: PhillyPipelineProp
         className="w-head"
         style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--g200)' }}
       >
-        <span aria-hidden="true">🏆</span> Our Guys — {getProLeagueName(sport)}
+        <Trophy className="w-5 h-5 inline" /> Our Guys — {getProLeagueName(sport)}
       </div>
       <div className="w-body" style={{ paddingTop: 0 }}>
         {proAlumni.map((player, index) => (

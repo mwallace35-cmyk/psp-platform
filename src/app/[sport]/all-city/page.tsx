@@ -7,6 +7,7 @@ import PSPPromo from "@/components/ads/PSPPromo";
 import { SPORT_META, getAllCityByYear, getAllCitySummary, type AwardRecord } from "@/lib/data";
 import AllCityArchive from "./AllCityArchive";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
 
 export const revalidate = 86400; // 24 hours
 type PageParams = { sport: string };
@@ -83,7 +84,7 @@ export default async function AllCityPage({ params }: { params: Promise<PagePara
               </p>
             </div>
             <div className="text-[#f0a500] text-3xl mt-2">
-              {meta.emoji}
+              <SportIcon sport={sport} size="sm" />
             </div>
           </div>
         </div>

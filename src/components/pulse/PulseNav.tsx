@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { BarChart3, Target } from "lucide-react";
 
 const PULSE_TABS = [
   { href: '/pulse', label: 'Hub', icon: '🔥' },
-  { href: '/pulse/recruiting', label: 'Recruiting', icon: '🎯' },
+  { href: '/pulse/recruiting', label: 'Recruiting', icon: 'target' },
   { href: '/our-guys', label: 'Our Guys', icon: '🌟' },
-  { href: '/rankings', label: 'Rankings', icon: '📊' },
+  { href: '/rankings', label: 'Rankings', icon: 'barchart3' },
   { href: '/pulse/outside-the-215', label: 'Outside the 215', icon: '🔄' },
 ];
 

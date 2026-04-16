@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import SchoolCard, { type SchoolData, getLeagueColor, formatNumber, EmptyState } from './SchoolCard';
+import { School, Search, Trophy } from "lucide-react";
 
 interface RisingProgram {
   id: number;
@@ -45,7 +46,7 @@ type ViewMode = 'cards' | 'league' | 'table';
 
 const MAIN_LEAGUES = [
   { key: 'catholic', name: 'Catholic League', fullName: 'Philadelphia Catholic League', color: '#f0a500', icon: '⛪' },
-  { key: 'public', name: 'Public League', fullName: 'Philadelphia Public League', color: '#1e40af', icon: '🏫' },
+  { key: 'public', name: 'Public League', fullName: 'Philadelphia Public League', color: '#1e40af', icon: 'school' },
   { key: 'interac', name: 'Inter-Ac', fullName: 'Inter-Academic League', color: '#16a34a', icon: '🎓' },
 ];
 
@@ -199,7 +200,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
       }}>
         {/* Search */}
         <div style={{ flex: 1, minWidth: 180, position: 'relative' }}>
-          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: 'var(--g400)', pointerEvents: 'none' }} aria-hidden="true">🔍</span>
+          <Search className="w-5 h-5 inline" />
           <input
             type="text"
             placeholder="Search schools..."
@@ -422,7 +423,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
                       justifyContent: 'center',
                       fontSize: 16,
                     }}>
-                      {leagueConfig?.icon || '🏫'}
+                      {leagueConfig?.icon || 'school'}
                     </div>
                     <h2 className="psp-h3" style={{ color: 'var(--psp-navy)', margin: 0 }}>
                       {leagueName}
@@ -467,7 +468,7 @@ export default function SchoolsDirectory({ schools, leagues, risingPrograms, agg
                     <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'left' }}>League</th>
                     <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Record</th>
                     <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Win %</th>
-                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>🏆</th>
+                    <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}><Trophy className="w-4 h-4 inline" /></th>
                     <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Players</th>
                     <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Pros</th>
                     <th className="psp-caption" style={{ padding: '10px 14px', textAlign: 'center' }}>Games</th>

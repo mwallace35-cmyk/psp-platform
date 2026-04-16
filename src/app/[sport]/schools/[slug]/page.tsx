@@ -26,6 +26,7 @@ import RivalryRecord from "@/components/school/RivalryRecord";
 import type { Metadata } from "next";
 import type { SeasonRecord } from "@/components/viz/types";
 import ClientDynastyTimeline from "@/components/viz/ClientDynastyTimeline";
+import { BarChart3, Search, Trophy } from "lucide-react";
 
 // Dynamic import for heavy client component
 const CorrectionForm = nextDynamic(() => import("@/components/corrections/CorrectionForm"), {
@@ -471,13 +472,13 @@ export default async function SchoolProfilePage({ params }: { params: Promise<Pa
               </h2>
               <div className="space-y-2">
                 <Link href={`/${sport}/leaderboards/rushing?school=${slug}`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  📊 Stat Leaders at {school.name}
+                  <BarChart3 className="w-4 h-4 inline" /> Stat Leaders at {school.name}
                 </Link>
                 <a href={`#championships`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  🏆 {championships.length} Championship{championships.length !== 1 ? 's' : ''} Won
+                  <Trophy className="w-4 h-4 inline" /> {championships.length} Championship{championships.length !== 1 ? 's' : ''} Won
                 </a>
                 <Link href={`/search?q=${encodeURIComponent(school.name)}&type=players`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>
-                  🔍 Search Players at {school.name}
+                  <Search className="w-4 h-4 inline" /> Search Players at {school.name}
                 </Link>
                 {rivalries.length > 0 && (
                   <a href={`#rivalries`} className="block text-sm py-1 hover:underline" style={{ color: "var(--psp-navy)" }}>

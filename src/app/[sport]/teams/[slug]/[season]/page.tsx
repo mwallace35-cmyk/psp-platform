@@ -33,6 +33,8 @@ import {
   type NextLevelAlumnus,
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
+import SportIcon from "@/components/ui/SportIcon";
+import { BarChart3, Target } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import PSPPromo from "@/components/ads/PSPPromo";
 import SeasonSelector from "@/components/scores/SeasonSelector";
@@ -293,7 +295,7 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
               className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0"
               style={{ background: `${meta.color}20` }}
             >
-              {meta.emoji}
+              <SportIcon sport={sport} size="sm" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
@@ -464,16 +466,16 @@ export default async function TeamSeasonPage({ params }: { params: Promise<PageP
                     </div>
                     {sport === "football" && (
                       <div className="text-sm space-y-1" style={{ color: "#e5e7eb" }}>
-                        {player.rush_yards ? <div>📊 {player.rush_yards} rush yds</div> : null}
-                        {player.rec_yards ? <div>📊 {player.rec_yards} rec yds</div> : null}
-                        {player.pass_yards ? <div>📊 {player.pass_yards} pass yds</div> : null}
-                        {player.points && player.points > 0 ? <div>🎯 {player.points} pts</div> : null}
+                        {player.rush_yards ? <div><BarChart3 className="w-4 h-4 inline" /> {player.rush_yards} rush yds</div> : null}
+                        {player.rec_yards ? <div><BarChart3 className="w-4 h-4 inline" /> {player.rec_yards} rec yds</div> : null}
+                        {player.pass_yards ? <div><BarChart3 className="w-4 h-4 inline" /> {player.pass_yards} pass yds</div> : null}
+                        {player.points && player.points > 0 ? <div><Target className="w-4 h-4 inline" /> {player.points} pts</div> : null}
                       </div>
                     )}
                     {(sport === "basketball" || sport === "girls-basketball") && (
                       <div className="text-sm space-y-1" style={{ color: "#e5e7eb" }}>
-                        {player.ppg ? <div>🏀 {player.ppg.toFixed(1)} PPG</div> : null}
-                        {player.total_points ? <div>📊 {player.total_points} total pts</div> : null}
+                        {player.ppg ? <div><SportIcon sport="basketball" size="sm" /> {player.ppg.toFixed(1)} PPG</div> : null}
+                        {player.total_points ? <div><BarChart3 className="w-4 h-4 inline" /> {player.total_points} total pts</div> : null}
                       </div>
                     )}
                   </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { ForwardedRef, forwardRef } from "react";
+import { Search } from "lucide-react";
 
 interface SearchInputProps {
   value: string;
@@ -44,7 +45,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function Sear
         className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:bg-white/15 focus:border-[var(--psp-gold)] focus:outline-none transition-colors"
       />
       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" aria-hidden="true">
-        🔍
+        <Search className="w-4 h-4 inline" />
       </span>
     </div>
   );

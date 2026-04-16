@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Legend } from "@/lib/data/legends";
 import { SPORT_EMOJIS, SPORT_LABELS, CATEGORY_LABELS } from "@/lib/data/legends";
 import Badge from "@/components/ui/Badge";
+import { Trophy } from "lucide-react";
 
 interface LegendCardProps {
   legend: Legend;
@@ -100,7 +101,7 @@ export default function LegendCard({ legend }: LegendCardProps) {
             ) : null}
             {totalChampionships ? (
               <span className="text-xs font-semibold text-[var(--psp-gold)]">
-                🏆 {totalChampionships} Title
+                <Trophy className="w-4 h-4 inline" /> {totalChampionships} Title
                 {totalChampionships > 1 ? "s" : ""}
               </span>
             ) : null}

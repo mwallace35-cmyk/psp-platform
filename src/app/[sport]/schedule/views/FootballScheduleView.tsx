@@ -230,7 +230,7 @@ export default function FootballScheduleView({
       <EmptyState
         sport={sport}
         sportName="Football"
-        sportEmoji="🏈"
+        sportEmoji="football"
         seasonLabel={seasonLabel}
         lastSeasonLabel={lastSeasonWithData ?? undefined}
       />
@@ -311,7 +311,7 @@ export default function FootballScheduleView({
           <EmptyState
             sport={sport}
             sportName="Football"
-            sportEmoji="🏈"
+            sportEmoji="football"
             seasonLabel={seasonLabel}
             showClearFilters
             onClearFilters={clearFilters}

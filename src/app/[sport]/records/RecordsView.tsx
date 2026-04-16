@@ -7,6 +7,7 @@ import CuratedRecordCard from "./CuratedRecordCard";
 import SchoolRecordsTab from "./SchoolRecordsTab";
 import LeaderboardTable from "./LeaderboardTable";
 import CategoryTabs from "./CategoryTabs";
+import { Trophy } from "lucide-react";
 
 // Curated records from database
 interface CuratedRecord {
@@ -300,7 +301,7 @@ export default function RecordsView({
         border: "2px solid rgba(240, 165, 0, 0.2)",
         background: "#0a1628",
       }}>
-        <div style={{ fontSize: 64, marginBottom: 16 }}>🏆</div>
+        <Trophy className="w-12 h-12" />
         <h3 className="psp-h3 text-white" style={{ marginBottom: 12 }}>
           Coming Soon
         </h3>

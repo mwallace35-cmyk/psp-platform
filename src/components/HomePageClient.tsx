@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import SportIcon from "@/components/ui/SportIcon";
 
 // Helper function to format time ago
 function formatTimeAgo(dateStr: string): string {
@@ -244,9 +245,9 @@ export default function HomePageClient({ stats, articles, alumni, recentScores, 
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { name: "Football", color: "#16a34a", icon: "🏈", href: "/football", desc: "120+ schools, 5,000+ players tracked" },
-                { name: "Basketball", color: "#3b82f6", icon: "🏀", href: "/basketball", desc: "120+ schools, 5,000+ players tracked" },
-                { name: "Baseball", color: "#dc2626", icon: "⚾", href: "/baseball", desc: "120+ schools, 5,000+ players tracked" },
+                { name: "Football", color: "#16a34a", icon: "football", href: "/football", desc: "120+ schools, 5,000+ players tracked" },
+                { name: "Basketball", color: "#3b82f6", icon: "basketball", href: "/basketball", desc: "120+ schools, 5,000+ players tracked" },
+                { name: "Baseball", color: "#dc2626", icon: "baseball", href: "/baseball", desc: "120+ schools, 5,000+ players tracked" },
               ].map((sport, idx) => (
                 <Link
                   key={idx}

@@ -1,5 +1,7 @@
 export const dynamic = "force-dynamic";
 import { createClient } from "@/lib/supabase/server";
+import SportIcon from "@/components/ui/SportIcon";
+import { BarChart3, School, Search, Trophy } from "lucide-react";
 
 interface StatCard {
   label: string;
@@ -85,22 +87,22 @@ export default async function AdminDashboard() {
   }
 
   const statCards: StatCard[] = [
-    { label: "Schools", value: stats.schools, icon: "🏫", color: "#3b82f6" },
-    { label: "Players", value: stats.players, icon: "🏈", color: "#22c55e" },
+    { label: "Schools", value: stats.schools, icon: "school", color: "#3b82f6" },
+    { label: "Players", value: stats.players, icon: "football", color: "#22c55e" },
     { label: "Team Seasons", value: stats.teamSeasons, icon: "📅", color: "#8b5cf6" },
-    { label: "Championships", value: stats.championships, icon: "🏆", color: "#f0a500" },
+    { label: "Championships", value: stats.championships, icon: "trophy", color: "#f0a500" },
     { label: "Awards", value: stats.awards, icon: "🌟", color: "#ec4899" },
-    { label: "Player Stat Records", value: stats.playerSeasons, icon: "📊", color: "#06b6d4" },
+    { label: "Player Stat Records", value: stats.playerSeasons, icon: "barchart3", color: "#06b6d4" },
   ];
 
   const sportEmoji: Record<string, string> = {
-    football: "🏈",
-    basketball: "🏀",
-    baseball: "⚾",
-    "track-field": "🏃",
-    lacrosse: "🥍",
-    wrestling: "🤼",
-    soccer: "⚽",
+    football: "football",
+    basketball: "basketball",
+    baseball: "baseball",
+    "track-field": "track-field",
+    lacrosse: "lacrosse",
+    wrestling: "wrestling",
+    soccer: "soccer",
   };
 
   return (
@@ -209,7 +211,7 @@ export default async function AdminDashboard() {
         </a>
         <a href="/admin/data" className="admin-card hover:shadow-md transition-shadow">
           <h2 className="font-bold mb-1" style={{ color: "var(--psp-navy)" }}>
-            🔍 Browse Data
+            <Search className="w-4 h-4 inline" /> Browse Data
           </h2>
           <p className="text-sm" style={{ color: "var(--psp-gray-500)" }}>
             Search, filter, and edit records

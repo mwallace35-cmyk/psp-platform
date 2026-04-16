@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useMemo, useRef, useEffect } from "react";
 import type { AwardRecord } from "@/lib/data";
+import { BarChart3, School } from "lucide-react";
 
 interface TabData {
   id: string;
@@ -22,12 +23,12 @@ interface AwardsArchiveProps {
 const CATEGORY_LABELS: Record<string, { label: string; shortLabel: string; emoji: string }> = {
   "all-city":      { label: "All-City",           shortLabel: "All-City",  emoji: "🏅" },
   "all-catholic":  { label: "All-Catholic League", shortLabel: "Catholic",  emoji: "✝️" },
-  "all-public":    { label: "All-Public League",   shortLabel: "Public",    emoji: "🏫" },
+  "all-public":    { label: "All-Public League",   shortLabel: "Public",    emoji: "school" },
   "all-inter-ac":  { label: "All-Inter-Ac League", shortLabel: "Inter-Ac",  emoji: "🎓" },
   "all-state":     { label: "All-State (PA)",      shortLabel: "All-State", emoji: "⭐" },
   "poty":          { label: "Player of the Year",  shortLabel: "POTY",      emoji: "👑" },
   "all-era":       { label: "All-Decade Teams",    shortLabel: "Decades",   emoji: "📜" },
-  "stat-leaders":  { label: "Leaders & All-League", shortLabel: "Leaders",  emoji: "📊" },
+  "stat-leaders":  { label: "Leaders & All-League", shortLabel: "Leaders",  emoji: "barchart3" },
 };
 
 // ─── Tier badges ────────────────────────────────────────────────────────────

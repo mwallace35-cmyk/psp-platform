@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BarChart3, School, Search, Target, Trophy } from "lucide-react";
 
 interface QuickNavItem {
   icon: string;
@@ -35,13 +36,13 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
       href: `/${sport}/teams`,
     },
     {
-      icon: "📊",
+      icon: "barchart3",
       label: "Leaderboards",
       description: "Top performers & stat leaders",
       href: `/${sport}/leaderboards/${defaultStat}`,
     },
     {
-      icon: "🏆",
+      icon: "trophy",
       label: "Records",
       description: "All-time records & achievements",
       href: `/${sport}/records`,
@@ -67,7 +68,7 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
     ...(sport === "football"
       ? [
           {
-            icon: "🎯",
+            icon: "target",
             label: "City All-Star Game",
             description: "Public vs Non-Public rivalry (1975-2019)",
             href: `/${sport}/city-all-star-game`,
@@ -75,13 +76,13 @@ export default function QuickNavigation({ sport, sportColor }: QuickNavigationPr
         ]
       : []),
     {
-      icon: "🏫",
+      icon: "school",
       label: "Schools",
       description: "Browse all participating schools",
       href: `/${sport}/schools`,
     },
     {
-      icon: "🔍",
+      icon: "search",
       label: "Search",
       description: "Find players, schools & stats",
       href: `/search?q=&sport=${sport}`,

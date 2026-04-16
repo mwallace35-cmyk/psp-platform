@@ -1,6 +1,7 @@
 export const revalidate = 86400;
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { BarChart3, Search, Target } from "lucide-react";
 
 export const metadata: Metadata = {
   title: 'Advertise with PSP | Sponsorship Opportunities',
@@ -109,12 +110,12 @@ const AUDIENCE: AudienceSegment[] = [
   {
     title: 'Coaches & Schools',
     description: 'Athletic directors and coaches managing teams and seasons',
-    icon: '🎯',
+    icon: 'target',
   },
   {
     title: 'Recruiters',
     description: 'College coaches and scouts evaluating Philadelphia talent',
-    icon: '🔍',
+    icon: 'search',
   },
   {
     title: 'Media & Journalists',
@@ -274,7 +275,7 @@ export default function AdvertisePage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
-              <div className="text-4xl mb-3">🎯</div>
+              <Target className="w-8 h-8" />
               <h3 className="text-white font-bold mb-2 text-lg">Targeted Audience</h3>
               <p className="text-white/80">
                 Reach coaches, athletes, parents, and recruiters actively engaged with Philadelphia high school sports.
@@ -282,7 +283,7 @@ export default function AdvertisePage() {
             </div>
 
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
-              <div className="text-4xl mb-3">📊</div>
+              <BarChart3 className="w-8 h-8" />
               <h3 className="text-white font-bold mb-2 text-lg">Performance Tracking</h3>
               <p className="text-white/80">
                 Get detailed analytics on impressions, clicks, and engagement for your sponsorship.

@@ -1,6 +1,7 @@
 export const revalidate = 86400;
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { BarChart3, Search, Target } from "lucide-react";
 
 export const metadata: Metadata = {
   title: 'Support PSP | Help Preserve Philly Sports History',
@@ -74,7 +75,7 @@ export default function SupportPage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             <div className="p-6 bg-navy rounded-lg border border-gold/30">
-              <div className="text-5xl mb-4">📊</div>
+              <div className="mb-4"><BarChart3 className="w-16 h-16 mx-auto" /></div>
               <h3 className="text-white font-bold mb-3 text-lg">Preserve Data</h3>
               <p className="text-white/80 text-sm">
                 Digitize 25 years of Philadelphia high school sports history before it's lost to time. From newspaper clippings to historical records, we're building the ultimate archive.
@@ -116,7 +117,7 @@ export default function SupportPage() {
             </div>
 
             <div className="p-6 bg-navy-mid rounded-lg border-l-4 border-gold">
-              <h3 className="text-gold font-bold mb-2 text-lg">🔍 Data Collection & Curation</h3>
+              <h3 className="text-gold font-bold mb-2 text-lg"><Search className="w-4 h-4 inline" /> Data Collection & Curation</h3>
               <p className="text-white/80">
                 Digitizing archives, fact-checking records, and enriching data with player bios, college/pro placements, and verified stats.
               </p>
@@ -130,7 +131,7 @@ export default function SupportPage() {
             </div>
 
             <div className="p-6 bg-navy-mid rounded-lg border-l-4 border-gold">
-              <h3 className="text-gold font-bold mb-2 text-lg">🎯 Community Programs</h3>
+              <h3 className="text-gold font-bold mb-2 text-lg"><Target className="w-4 h-4 inline" /> Community Programs</h3>
               <p className="text-white/80">
                 Supporting Player of the Week voting, forums, live game coverage integration, and recruiting tools for schools.
               </p>

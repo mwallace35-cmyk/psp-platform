@@ -7,6 +7,7 @@ import { getBoxScoreSeasons, getBoxScoreGamesBySeason } from "@/lib/data/games";
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import BoxScoresView from "./BoxScoresView";
+import SportIcon from "@/components/ui/SportIcon";
 
 export const revalidate = 3600; // 1 hour
 type PageParams = { sport: string };
@@ -76,7 +77,7 @@ export default async function BoxScoresPage({
               ]}
             />
             <h1 className="psp-h1 text-white mb-2">
-              {meta.emoji} {meta.name} Box Scores
+              <SportIcon sport={sport} size="sm" /> {meta.name} Box Scores
             </h1>
           </div>
         </section>
@@ -112,7 +113,7 @@ export default async function BoxScoresPage({
           />
           <div className="mt-6 flex items-baseline gap-4">
             <h1 className="psp-h1 text-white">
-              {meta.emoji} {meta.name} Box Scores
+              <SportIcon sport={sport} size="sm" /> {meta.name} Box Scores
             </h1>
             <span
               className="px-4 py-2 rounded-full text-white font-semibold"

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { SPORT_EMOJI } from './SportIcon';
+import { Trophy } from "lucide-react";
 
 interface ShareableStatCardProps {
   sport: string;
@@ -34,7 +35,7 @@ export default function ShareableStatCard({
 }: ShareableStatCardProps) {
   const [copied, setCopied] = useState(false);
 
-  const emoji = SPORT_EMOJI[sport as keyof typeof SPORT_EMOJI] || '🏆';
+  const emoji = SPORT_EMOJI[sport as keyof typeof SPORT_EMOJI] || 'trophy';
   const fullUrl = shareUrl
     ? `https://phillysportspack.com${shareUrl}`
     : `https://phillysportspack.com`;

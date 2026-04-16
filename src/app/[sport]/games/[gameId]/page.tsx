@@ -20,6 +20,7 @@ import { buildGameCaption } from "@/lib/ig-caption";
 import FootballBoxScore from "./FootballBoxScore";
 import BasketballBoxScore from "./BasketballBoxScore";
 import type { Metadata } from "next";
+import { BarChart3 } from "lucide-react";
 
 export const revalidate = 3600; // ISR: hourly (games get new box scores frequently)
 type PageParams = { sport: string; gameId: string };
@@ -384,7 +385,7 @@ export default async function GameDetailPage({
           <section className="mt-6">
             <h2 className="text-2xl font-bold text-[var(--psp-gold)] mb-3 font-heading uppercase tracking-wide">BOX SCORE</h2>
             <div className="bg-[var(--psp-navy)] rounded-xl border border-gray-700 p-8 text-center">
-              <p className="text-3xl mb-3" aria-hidden="true">📊</p>
+              <p className="text-3xl mb-3" aria-hidden="true"><BarChart3 className="w-4 h-4 inline" /></p>
               <p className="text-gray-300 text-base font-medium mb-1">No box score available for this game</p>
               <p className="text-gray-400 text-sm mb-4">Were you at this game? Help us build the most complete Philly HS sports database.</p>
               <Link

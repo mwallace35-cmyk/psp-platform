@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { SPORT_META, type SportId } from '@/lib/sports';
+import { Trophy } from "lucide-react";
 
 export type ActivityType = 'article' | 'championship' | 'record' | 'player';
 
@@ -22,7 +23,7 @@ function getActivityIcon(type: ActivityType): string {
     case 'article':
       return '📰';
     case 'championship':
-      return '🏆';
+      return 'trophy';
     case 'record':
       return '⚡';
     case 'player':

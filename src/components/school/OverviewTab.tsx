@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ThisSeasonBanner from "./ThisSeasonBanner";
 import { SPORT_EMOJI } from "@/lib/sports";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface OverviewTabProps {
   school: any;
@@ -118,7 +119,7 @@ export default function OverviewTab({ school, sports, currentSeasons, recentGame
                     href={`/${game.sport_id}/games/${game.id}`}
                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition"
                   >
-                    <span className="text-base flex-shrink-0">{SPORT_EMOJI[game.sport_id] || "⚽"}</span>
+                    <span className="text-base flex-shrink-0">{SPORT_EMOJI[game.sport_id] || "soccer"}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className={`text-xs font-bold ${resultColor}`}>{resultLabel}</span>

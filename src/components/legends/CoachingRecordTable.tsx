@@ -1,4 +1,5 @@
 import type { CoachingStint } from "@/lib/data/legends";
+import { Trophy } from "lucide-react";
 
 interface CoachingRecordTableProps {
   stints: CoachingStint[];
@@ -91,7 +92,7 @@ export default function CoachingRecordTable({ stints }: CoachingRecordTableProps
                           </td>
                         )}
                         <td className="py-1 pl-2 text-[var(--psp-gold)] text-[11px]">
-                          {isChampionship && "🏆 "}
+                          {isChampionship && "trophy "}
                           {s.notes ?? ""}
                         </td>
                       </tr>

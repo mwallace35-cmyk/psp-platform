@@ -5,6 +5,7 @@ import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { ALL_STATE_CHAMPIONSHIPS } from "@/lib/data/state-champions";
 import { SPORT_EMOJI } from "@/lib/sports";
+import { Trophy } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -270,7 +271,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
                     href={`/hof/legends/${champ.coachLegendSlug}`}
                     className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
                   >
-                    <span className="text-lg">🏆</span>
+                    <Trophy className="w-5 h-5 inline" />
                     <div>
                       <p className="text-sm font-semibold text-[var(--psp-navy)]">
                         {champ.coach}

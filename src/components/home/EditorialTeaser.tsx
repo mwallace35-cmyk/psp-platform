@@ -1,27 +1,29 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 const EDITORIAL_TEASERS = [
   {
     text: "Did you know? Wilt Chamberlain's Overbrook HS squad is part of the database. See his stats in context.",
-    emoji: '🏀',
+    emoji: '<SportIcon sport="basketball" size="sm" />',
   },
   {
     text: "St. Joseph's Prep has produced 12+ NFL players. Explore the pipeline to professional football.",
-    emoji: '🏈',
+    emoji: '<SportIcon sport="football" size="sm" />',
   },
   {
     text: "Roman Catholic leads all schools with 34 Catholic League football titles spanning decades.",
-    emoji: '🏆',
+    emoji: 'trophy',
   },
   {
     text: "From Neumann-Goretti's historic dynasty to Imhotep's recent run, see the greatest basketball programs.",
-    emoji: '🏀',
+    emoji: '<SportIcon sport="basketball" size="sm" />',
   },
   {
     text: "La Salle has produced elite athletes across football, basketball, and baseball. Check their championship count.",
-    emoji: '⚾',
+    emoji: '<SportIcon sport="baseball" size="sm" />',
   },
   {
     text: "Kobe Bryant played high school ball in the area. See who else from local schools made it to the NBA.",

@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import { ALL_STATE_CHAMPIONSHIPS, type StateChampionship } from "@/lib/data/state-champions";
 import { SPORT_EMOJI } from "@/lib/sports";
+import { BarChart3, Trophy } from "lucide-react";
 
 const SPORT_COLORS: Record<string, string> = {
   football: "var(--psp-gold)",
@@ -222,7 +223,7 @@ export default function StateChampionsPage() {
                   href="/hof/legends"
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
                 >
-                  <span className="text-lg">🏆</span>
+                  <Trophy className="w-5 h-5 inline" />
                   <div>
                     <p className="text-sm font-semibold text-[var(--psp-navy)]">
                       Legends
@@ -236,7 +237,7 @@ export default function StateChampionsPage() {
                   href="/hof/legends/records"
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
                 >
-                  <span className="text-lg">📊</span>
+                  <BarChart3 className="w-5 h-5 inline" />
                   <div>
                     <p className="text-sm font-semibold text-[var(--psp-navy)]">
                       Coaching Records

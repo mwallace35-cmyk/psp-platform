@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { Search, Trophy } from "lucide-react";
 
 interface BadgeDisplayProps {
   userId: string;
@@ -6,8 +7,8 @@ interface BadgeDisplayProps {
 }
 
 const BADGE_STYLES = {
-  'top_scout': { bg: '#fef3c7', border: '#f59e0b', text: '#92400e', icon: '🔍' },
-  'potw_expert': { bg: '#dbeafe', border: '#3b82f6', text: '#1e40af', icon: '🏆' },
+  'top_scout': { bg: '#fef3c7', border: '#f59e0b', text: '#92400e', icon: 'search' },
+  'potw_expert': { bg: '#dbeafe', border: '#3b82f6', text: '#1e40af', icon: 'trophy' },
   'school_historian': { bg: '#e9d5ff', border: '#a78bfa', text: '#5b21b6', icon: '📚' },
   'forum_contributor': { bg: '#dcfce7', border: '#22c55e', text: '#166534', icon: '💬' },
   'connector': { bg: '#fecaca', border: '#ef4444', text: '#7f1d1d', icon: '🤝' },

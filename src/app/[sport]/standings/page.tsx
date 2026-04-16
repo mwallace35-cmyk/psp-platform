@@ -16,6 +16,7 @@ import {
 } from "@/lib/data";
 import type { Metadata } from "next";
 import StandingsTable from "./StandingsTable";
+import { BarChart3, Trophy } from "lucide-react";
 
 export const revalidate = 3600;
 type PageParams = { sport: string };
@@ -149,9 +150,9 @@ export default async function StandingsPage({ params, searchParams }: { params: 
           <div className="space-y-6">
             {/* How It Works */}
             <div className="rounded-lg border border-[var(--psp-gold)] bg-[var(--psp-navy-mid)] p-6 shadow-lg">
-              <div className="text-xs font-bold text-[var(--psp-gold)] uppercase mb-3">📊 How to Read</div>
+              <div className="text-xs font-bold text-[var(--psp-gold)] uppercase mb-3"><BarChart3 className="w-4 h-4 inline" /> How to Read</div>
               <ul className="space-y-2 text-sm text-gray-300">
-                <li>🏆 <span className="font-semibold">Champion</span> — League champion (highest seed)</li>
+                <li><Trophy className="w-4 h-4 inline" /> <span className="font-semibold">Champion</span> — League champion (highest seed)</li>
                 <li><span className="font-semibold">W-L-T</span> — Wins, losses, ties</li>
                 <li><span className="font-semibold">Win %</span> — Winning percentage (ties count as 0.5)</li>
                 <li><span className="font-semibold">PF-PA</span> — Points for / points against</li>

@@ -4,6 +4,8 @@ import PSPPromo from "@/components/ads/PSPPromo";
 import type { Championship } from "@/lib/data/types";
 import type { HubGame } from "./HubScoresStrip";
 import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
+import SportIcon from "@/components/ui/SportIcon";
+import { BarChart3, School, Trophy } from "lucide-react";
 
 const PhillyEverywhereSection = dynamic(() => import("@/components/philly-everywhere/PhillyEverywhereSection"), { ssr: false });
 
@@ -73,9 +75,9 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
         >
           {[
             { label: "Players", value: overview.players, icon: "👤" },
-            { label: "Schools", value: overview.schools, icon: "🏫" },
+            { label: "Schools", value: overview.schools, icon: "school" },
             { label: "Seasons", value: overview.seasons, icon: "📅" },
-            { label: "Championships", value: overview.championships, icon: "🏆" },
+            { label: "Championships", value: overview.championships, icon: "trophy" },
           ].filter((stat) => stat.value > 0).map((stat) => (
             <div
               key={stat.label}
@@ -112,7 +114,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
           <>
             <div className="sec-head">
               <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span aria-hidden="true">🏆</span> Recent Matchups
+                <Trophy className="w-5 h-5 inline" /> Recent Matchups
               </h2>
               <Link href={`/${sport}/teams`} className="more">Full Schedule →</Link>
             </div>
@@ -183,7 +185,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 14, flexShrink: 0,
               }}>
-                {item.type === "hot_take" ? "🔥" : item.type === "insider" ? "👀" : "📊"}
+                {item.type === "hot_take" ? "🔥" : item.type === "insider" ? "👀" : "barchart3"}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
@@ -278,7 +280,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
                     </Link>
                     <div className="rsub">{champ.seasons?.label} &mdash; {champ.level}{champ.score ? ` (${champ.score})` : ""}</div>
                   </div>
-                  <div className="rt-rec" role="img" aria-label="Champion">🏆</div>
+                  <div className="rt-rec" role="img" aria-label="Champion"><Trophy className="w-4 h-4 inline" /></div>
                 </div>
               ))}
             </div>
@@ -328,7 +330,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
         )}
 
         <div className="widget">
-          <div className="w-head">📊 Data Overview</div>
+          <div className="w-head"><BarChart3 className="w-4 h-4 inline" /> Data Overview</div>
           <div className="w-body">
             {overview.players > 0 && <div className="w-row"><span className="name">Total Players</span><span className="val">{overview.players.toLocaleString()}</span></div>}
             {overview.schools > 0 && <div className="w-row"><span className="name">Active Schools</span><span className="val">{overview.schools.toLocaleString()}</span></div>}
@@ -339,7 +341,7 @@ export default function SportLayoutB({ sport, sportColor, meta, overview, champi
         </div>
 
         <div className="widget">
-          <div className="w-head">{meta.emoji} Quick Links</div>
+          <div className="w-head"><SportIcon sport={sport} size="sm" /> Quick Links</div>
           <div className="w-body">
             <Link href={`/${sport}/leaderboards/${meta.statCategories[0]}`} className="w-link">&#8594; Leaderboards</Link>
             <Link href={`/${sport}/championships`} className="w-link">&#8594; Championship History</Link>

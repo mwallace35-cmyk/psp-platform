@@ -31,6 +31,7 @@ import {
   type SchoolGame,
 } from "@/lib/data/school-hub";
 import { createStaticClient } from "@/lib/supabase/static";
+import { BarChart3, School, Search, Trophy } from "lucide-react";
 
 export const revalidate = 3600; // ISR: 1 hour
 type PageParams = { slug: string };
@@ -212,15 +213,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
               {school.logo_url ? (
                 <SchoolLogo logoUrl={school.logo_url} name={school.name} size="lg" />
               ) : (
-                <div
-                  className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-3xl md:text-4xl border-4"
-                  style={{
-                    background: primaryColor || "rgba(240, 165, 0, 0.1)",
-                    borderColor: secondaryColor || primaryColor || "var(--psp-gold)",
-                  }}
-                >
-                  🏫
-                </div>
+                <School className="w-8 h-8" />
               )}
             </div>
 
@@ -444,7 +437,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                       {sport.sport_emoji} {sport.sport_name}
                     </span>
                     <span className="text-xs text-gray-300">
-                      {sport.championship_count > 0 ? `${sport.championship_count} 🏆` : `${sport.season_count} seasons`}
+                      {sport.championship_count > 0 ? `${sport.championship_count} trophy` : `${sport.season_count} seasons`}
                     </span>
                   </Link>
                 ))}
@@ -463,7 +456,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                     className="block text-sm py-1 hover:underline"
                     style={{ color: "var(--psp-blue)" }}
                   >
-                    🔍 Search Players & Articles
+                    <Search className="w-4 h-4 inline" /> Search Players & Articles
                   </Link>
                   {sportsStats.length > 0 && (
                     <Link
@@ -471,7 +464,7 @@ export default async function SchoolHubPage({ params }: { params: Promise<PagePa
                       className="block text-sm py-1 hover:underline"
                       style={{ color: "var(--psp-blue)" }}
                     >
-                      📊 Stat Leaders
+                      <BarChart3 className="w-4 h-4 inline" /> Stat Leaders
                     </Link>
                   )}
                 </div>

@@ -4,14 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { ToastContainer } from "@/components/ui";
 import { useToast } from "@/hooks/useToast";
+import SportIcon from "@/components/ui/SportIcon";
+import { School, Trophy } from "lucide-react";
 
 type EntityType = "schools" | "players" | "team_seasons" | "championships" | "awards";
 
 const ENTITY_TYPES: { value: EntityType; label: string; icon: string }[] = [
-  { value: "schools", label: "Schools", icon: "🏫" },
-  { value: "players", label: "Players", icon: "🏈" },
+  { value: "schools", label: "Schools", icon: "school" },
+  { value: "players", label: "Players", icon: "football" },
   { value: "team_seasons", label: "Team Seasons", icon: "📅" },
-  { value: "championships", label: "Championships", icon: "🏆" },
+  { value: "championships", label: "Championships", icon: "trophy" },
   { value: "awards", label: "Awards", icon: "🌟" },
 ];
 

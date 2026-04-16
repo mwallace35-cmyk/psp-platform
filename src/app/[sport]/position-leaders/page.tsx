@@ -12,6 +12,7 @@ import {
 import { Breadcrumb } from "@/components/ui";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
 
 export const revalidate = 3600;
 
@@ -76,7 +77,7 @@ export default async function PositionLeadersIndex({
               ]}
             />
             <div className="flex items-center gap-3 mt-4">
-              <span className="text-4xl">{meta.emoji}</span>
+              <SportIcon sport={sport} size="lg" />
               <h1 className="psp-h1 text-white">
                 {meta.name} Position Leaders
               </h1>

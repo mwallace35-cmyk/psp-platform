@@ -5,6 +5,8 @@ import Link from "next/link";
 import type { AwardDetail, ChampionshipHubRecord } from "@/lib/data/awards-hub";
 import { SPORT_META } from "@/lib/sports";
 import { SPORT_COLORS_HEX } from "@/lib/constants/sports";
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 interface AwardsHubClientProps {
   recentAwards: AwardDetail[];
@@ -17,7 +19,7 @@ type TabId = "recent" | "championships" | "poty" | "all-city";
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "recent", label: "Recent Awards", icon: "🏅" },
-  { id: "championships", label: "Championships", icon: "🏆" },
+  { id: "championships", label: "Championships", icon: "trophy" },
   { id: "poty", label: "Player of the Year", icon: "⭐" },
   { id: "all-city", label: "All-City Teams", icon: "📋" },
 ];
@@ -167,7 +169,7 @@ function ChampionshipsTab({ champs }: { champs: ChampionshipHubRecord[] }) {
                 className="w-10 h-10 flex items-center justify-center rounded-lg text-lg"
                 style={{ background: `${sportColor}20` }}
               >
-                {sportMeta?.emoji || "🏆"}
+                {sportMeta?.emoji || "trophy"}
               </span>
               {/* Info */}
               <div className="flex-1 min-w-0">
@@ -316,7 +318,7 @@ function AllCityTab({ awards }: { awards: AwardDetail[] }) {
             background: "rgba(240,165,0,0.1)",
           }}
         >
-          🏈 Full Football All-City Archive (1932–2018) →
+          <SportIcon sport="football" size="sm" /> Full Football All-City Archive (1932–2018) →
         </Link>
       </div>
     </div>

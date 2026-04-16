@@ -14,6 +14,7 @@ import {
 } from "@/lib/data";
 import type { Metadata } from "next";
 import EraChart from "./EraChart";
+import { BarChart3 } from "lucide-react";
 
 export const revalidate = 86400; // 1 day
 type PageParams = { sport: string };
@@ -222,7 +223,7 @@ export default async function ErasPage({ params }: { params: Promise<PageParams>
             {/* Info Card */}
             <div className="rounded-lg border border-[var(--psp-gold)] bg-[var(--psp-navy-mid)] p-6 shadow-lg">
               <div className="text-xs font-bold text-[var(--psp-gold)] uppercase mb-3">
-                📊 Quick Insights
+                <BarChart3 className="w-4 h-4 inline" /> Quick Insights
               </div>
               <div className="space-y-3 text-sm text-gray-300">
                 <div>

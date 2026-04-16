@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Breadcrumb } from '@/components/ui';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 export const metadata: Metadata = {
   title: 'Data Sources — PhillySportsPack',
@@ -128,7 +130,7 @@ export default function DataSourcesPage() {
           {/* PIAA */}
           <div className="mb-8 p-6 rounded-lg border" style={{ borderColor: 'var(--psp-navy)', background: 'rgba(10, 22, 40, 0.02)' }}>
             <div className="flex items-start gap-3 mb-3">
-              <span className="text-3xl">🏆</span>
+              <Trophy className="w-8 h-8" />
               <div>
                 <h3 className="text-xl font-bold" style={{ color: 'var(--psp-navy)' }}>
                   PIAA (Pennsylvania Interscholastic Athletic Association)
@@ -165,7 +167,7 @@ export default function DataSourcesPage() {
             {/* Football */}
             <div className="p-4 rounded-lg border" style={{ borderColor: 'var(--psp-gray-200)' }}>
               <h4 className="font-bold mb-2" style={{ color: 'var(--psp-navy)' }}>
-                🏈 Football
+                <SportIcon sport="football" size="sm" /> Football
               </h4>
               <div className="text-sm space-y-1" style={{ color: 'var(--psp-gray-700)' }}>
                 <div>
@@ -186,7 +188,7 @@ export default function DataSourcesPage() {
             {/* Basketball */}
             <div className="p-4 rounded-lg border" style={{ borderColor: 'var(--psp-gray-200)' }}>
               <h4 className="font-bold mb-2" style={{ color: 'var(--psp-navy)' }}>
-                🏀 Basketball
+                <SportIcon sport="basketball" size="sm" /> Basketball
               </h4>
               <div className="text-sm space-y-1" style={{ color: 'var(--psp-gray-700)' }}>
                 <div>
@@ -207,7 +209,7 @@ export default function DataSourcesPage() {
             {/* Baseball */}
             <div className="p-4 rounded-lg border" style={{ borderColor: 'var(--psp-gray-200)' }}>
               <h4 className="font-bold mb-2" style={{ color: 'var(--psp-navy)' }}>
-                ⚾ Baseball
+                <SportIcon sport="baseball" size="sm" /> Baseball
               </h4>
               <div className="text-sm space-y-1" style={{ color: 'var(--psp-gray-700)' }}>
                 <div>
@@ -228,7 +230,7 @@ export default function DataSourcesPage() {
             {/* Minor Sports */}
             <div className="p-4 rounded-lg border" style={{ borderColor: 'var(--psp-gray-200)' }}>
               <h4 className="font-bold mb-2" style={{ color: 'var(--psp-navy)' }}>
-                ⚽ Track, Lacrosse, Soccer, Wrestling
+                <SportIcon sport="soccer" size="sm" /> Track, Lacrosse, Soccer, Wrestling
               </h4>
               <div className="text-sm space-y-1" style={{ color: 'var(--psp-gray-700)' }}>
                 <div>

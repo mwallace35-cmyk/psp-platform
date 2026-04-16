@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
+import SportIcon from "@/components/ui/SportIcon";
 
 export interface GameData {
   id: string;
@@ -184,7 +185,7 @@ export default function RecentGamesSection({ games }: RecentGamesSectionProps) {
                       : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  <span>{meta.emoji}</span>
+                  <span><SportIcon sport={sport} size="sm" /></span>
                   {meta.name}
                 </button>
               );

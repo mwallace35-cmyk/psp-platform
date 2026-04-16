@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SearchX, TrendingUp } from "lucide-react";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface EmptyStateProps {
   query?: string;
@@ -7,9 +8,9 @@ interface EmptyStateProps {
 }
 
 const BROWSE_SPORTS = [
-  { label: "Football", href: "/football", color: "#16a34a", emoji: "🏈" },
-  { label: "Basketball", href: "/basketball", color: "#3b82f6", emoji: "🏀" },
-  { label: "Baseball", href: "/baseball", color: "#dc2626", emoji: "⚾" },
+  { label: "Football", href: "/football", color: "#16a34a", emoji: "football" },
+  { label: "Basketball", href: "/basketball", color: "#3b82f6", emoji: "basketball" },
+  { label: "Baseball", href: "/baseball", color: "#dc2626", emoji: "baseball" },
 ];
 
 const SUGGESTED_SEARCHES = [

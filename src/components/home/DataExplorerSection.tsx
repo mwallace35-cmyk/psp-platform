@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BarChart3, Search, Trophy } from "lucide-react";
 
 interface DataExplorerTile {
   icon: string;
@@ -9,7 +10,7 @@ interface DataExplorerTile {
 
 const explorerTiles: DataExplorerTile[] = [
   {
-    icon: '🔍',
+    icon: 'search',
     title: 'Search Database',
     description: 'Find schools, players, and coaches across all sports',
     href: '/search',
@@ -21,13 +22,13 @@ const explorerTiles: DataExplorerTile[] = [
     href: '/compare',
   },
   {
-    icon: '📊',
+    icon: 'barchart3',
     title: 'Leaderboards',
     description: 'All-time and seasonal stat leaders by category',
     href: '/football/leaderboards/rushing',
   },
   {
-    icon: '🏆',
+    icon: 'trophy',
     title: 'Championships',
     description: 'Historical titles and dynasty tracking since 1887',
     href: '/football/championships',

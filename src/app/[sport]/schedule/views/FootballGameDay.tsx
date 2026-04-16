@@ -11,6 +11,7 @@ import {
   LEAGUE_DISPLAY_ORDER,
 } from "@/lib/data/schedule";
 import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
+import SportIcon from "@/components/ui/SportIcon";
 
 interface Props {
   games: ScheduleGame[];
@@ -154,7 +155,7 @@ export default function FootballGameDay({
       <div className="max-w-7xl mx-auto px-4 py-8">
         {totalGames === 0 ? (
           <div className="text-center py-16">
-            <span className="text-4xl block mb-4">🏈</span>
+            <span className="text-4xl block mb-4"><SportIcon sport="football" size="md" /></span>
             <p className="text-gray-500 text-lg">No games scheduled today.</p>
             <button
               onClick={onExit}

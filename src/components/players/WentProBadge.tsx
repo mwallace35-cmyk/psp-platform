@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { createProAthleteSlug } from "@/lib/slug-utils";
+import { Trophy } from "lucide-react";
 
 interface WentProBadgeProps {
   playerId: number;
@@ -60,7 +61,7 @@ export async function WentProBadge({ playerId }: WentProBadgeProps) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-        <span style={{ fontSize: 18 }} aria-hidden="true">🏆</span>
+        <Trophy className="w-5 h-5 inline" />
         <div className="psp-caption">
           Went Pro
         </div>

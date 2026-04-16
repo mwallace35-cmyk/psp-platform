@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { Trophy } from "lucide-react";
 
 interface SeasonData {
   year: string;
@@ -260,7 +261,7 @@ function CareerTrajectoryChart({
                   fontSize="14"
                   aria-label="Championship season"
                 >
-                  🏆
+                  <Trophy className="w-4 h-4 inline" />
                 </text>
               )}
 

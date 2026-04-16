@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { getProAthletesBySchool } from "@/lib/data";
 import { createProAthleteSlug } from "@/lib/slug-utils";
+import SportIcon from "@/components/ui/SportIcon";
+import { Trophy } from "lucide-react";
 
 interface ProAlumniSectionProps {
   schoolId: number;
@@ -17,11 +19,11 @@ const leagueColors: Record<string, string> = {
 };
 
 const sportEmojis: Record<string, string> = {
-  football: "🏈",
-  basketball: "🏀",
-  baseball: "⚾",
-  soccer: "⚽",
-  lacrosse: "🥍",
+  football: "football",
+  basketball: "basketball",
+  baseball: "baseball",
+  soccer: "soccer",
+  lacrosse: "lacrosse",
 };
 
 export async function ProAlumniSection({
@@ -51,16 +53,16 @@ export async function ProAlumniSection({
   return (
     <div className="card" style={{ marginBottom: 24 }}>
       <div className="card-head">
-        🏆 Pro Alumni ({proAthletes.length})
+        <Trophy className="w-4 h-4 inline" /> Pro Alumni ({proAthletes.length})
       </div>
       <div className="card-body">
         {sortedLeagues.map((league) => {
           const athletes = byLeague[league];
           const leagueColor = leagueColors[league] || "#0a1628";
-          const leagueEmoji = league === "NFL" ? "🏈" :
-                             league === "NBA" ? "🏀" :
-                             league === "MLB" ? "⚾" :
-                             league === "WNBA" ? "🏀" : "🏆";
+          const leagueEmoji = league === "NFL" ? "football" :
+                             league === "NBA" ? "basketball" :
+                             league === "MLB" ? "baseball" :
+                             league === "WNBA" ? "basketball" : "trophy";
 
           return (
             <div key={league} style={{ marginBottom: 16 }}>
@@ -92,7 +94,7 @@ export async function ProAlumniSection({
                     athlete.id
                   );
                   const sportEmoji =
-                    sportEmojis[athlete.sport_id?.toLowerCase() || ""] || "🏆";
+                    sportEmojis[athlete.sport_id?.toLowerCase() || ""] || "trophy";
 
                   return (
                     <Link

@@ -7,6 +7,8 @@ import SportTab from "./SportTab";
 import LegacyTab from "./LegacyTab";
 import type { SchoolHubData, SchoolSportStats, CurrentSeasonInfo, SchoolGame, SchoolChampionshipData, NextLevelAthlete, SchoolCoach, SchoolAward, RecentSeasonData, SchoolRecord } from "@/lib/data/school-hub";
 import { SPORT_EMOJI } from "@/lib/sports";
+import SportIcon from "@/components/ui/SportIcon";
+import { BarChart3, Trophy } from "lucide-react";
 
 interface SchoolTabHubProps {
   school: SchoolHubData;
@@ -41,13 +43,13 @@ export default function SchoolTabHub({
     .map((s) => ({
       key: s.sport_id,
       label: s.sport_name,
-      icon: SPORT_EMOJI[s.sport_id] || "⚽",
+      icon: SPORT_EMOJI[s.sport_id] || "soccer",
     }));
 
   const tabs = [
-    { key: "overview", label: "Overview", icon: "📊" },
+    { key: "overview", label: "Overview", icon: "barchart3" },
     ...sportTabs,
-    { key: "legacy", label: "Legacy", icon: "🏆" },
+    { key: "legacy", label: "Legacy", icon: "trophy" },
   ];
 
   return (

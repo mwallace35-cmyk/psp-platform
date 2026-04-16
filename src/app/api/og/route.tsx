@@ -13,6 +13,7 @@ import { ImageResponse } from "next/og";
 import { getSportColors, truncateTitle, truncateSubtitle } from "@/lib/og-utils";
 import type { SportId } from "@/lib/sports";
 import { isValidSport } from "@/lib/sports";
+import SportIcon from "@/components/ui/SportIcon";
 
 export const runtime = "nodejs";
 
@@ -279,13 +280,13 @@ export async function GET(request: Request) {
  */
 function getSportEmoji(sport: string): string {
   const emojiMap: Record<string, string> = {
-    football: "🏈",
-    basketball: "🏀",
-    baseball: "⚾",
-    "track-field": "🏃",
-    lacrosse: "🥍",
-    wrestling: "🤼",
-    soccer: "⚽",
+    football: "football",
+    basketball: "basketball",
+    baseball: "baseball",
+    "track-field": "track-field",
+    lacrosse: "lacrosse",
+    wrestling: "wrestling",
+    soccer: "soccer",
   };
   return emojiMap[sport] || "🏅";
 }

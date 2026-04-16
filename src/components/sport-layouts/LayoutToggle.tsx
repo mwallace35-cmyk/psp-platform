@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { BarChart3 } from "lucide-react";
 
 type LayoutType = "editorial" | "dashboard";
 
 const LAYOUT_LABELS: Record<LayoutType, { label: string; icon: string }> = {
   editorial: { label: "Editorial", icon: "📰" },
-  dashboard: { label: "Dashboard", icon: "📊" },
+  dashboard: { label: "Dashboard", icon: "barchart3" },
 };
 
 interface LayoutToggleProps {

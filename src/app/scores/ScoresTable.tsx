@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SPORT_META } from "@/lib/sports";
 import SportIcon from "@/components/ui/SportIcon";
 import { getSchoolDisplayName } from "@/lib/utils/schoolDisplayName";
+import { Trophy } from "lucide-react";
 
 export interface ScoreGame {
   id: number;
@@ -258,13 +259,13 @@ export function GameCard({
         <span
           className={`text-xs font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-sm whitespace-nowrap border ${gameTypeBadgeClass}`}
         >
-          {game.game_type === 'playoff' ? <><span role="img" aria-label="trophy">🏆</span> Playoff</> :
+          {game.game_type === 'playoff' ? <><Trophy className="w-5 h-5 inline" /> Playoff</> :
            game.game_type === 'championship' ? <><span role="img" aria-label="medal">🥇</span> Championship</> :
-           game.game_type === 'semifinal' ? <><span role="img" aria-label="trophy">🏆</span> Semifinal</> :
-           game.game_type === 'quarterfinal' ? <><span role="img" aria-label="trophy">🏆</span> Quarterfinal</> :
+           game.game_type === 'semifinal' ? <><Trophy className="w-5 h-5 inline" /> Semifinal</> :
+           game.game_type === 'quarterfinal' ? <><Trophy className="w-5 h-5 inline" /> Quarterfinal</> :
            game.game_type === 'final' || game.game_type?.includes('final') ? <><span role="img" aria-label="medal">🥇</span> Final</> :
            game.game_type?.includes('championship') ? <><span role="img" aria-label="medal">🥇</span> Championship</> :
-           game.game_type?.includes('playoff') ? <><span role="img" aria-label="trophy">🏆</span> Playoff</> :
+           game.game_type?.includes('playoff') ? <><Trophy className="w-5 h-5 inline" /> Playoff</> :
            game.game_type?.includes('district') ? <><span role="img" aria-label="location">📍</span> District</> :
            game.game_type}
         </span>

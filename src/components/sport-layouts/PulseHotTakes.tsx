@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { BarChart3 } from "lucide-react";
 
 interface HotTake {
   id: string;
@@ -209,7 +210,7 @@ export default function PulseHotTakes({ sport, limit = 3 }: Omit<PulseHotTakesPr
                   flexShrink: 0,
                 }}
               >
-                {item.type === 'hot_take' ? '🔥' : item.type === 'insider' ? '👀' : '📊'}
+                {item.type === 'hot_take' ? '🔥' : item.type === 'insider' ? '👀' : 'barchart3'}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>

@@ -7,6 +7,7 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import RecordTimeline from "@/components/records/RecordTimeline";
 import RecordsView from "./RecordsView";
 import type { Metadata } from "next";
+import SportIcon from "@/components/ui/SportIcon";
 
 export const revalidate = 86400;
 type PageParams = { sport: string };
@@ -95,7 +96,7 @@ export default async function RecordsPage({ params }: { params: Promise<PagePara
         <div className="max-w-7xl mx-auto px-4">
           <Breadcrumb items={[{ label: meta.name, href: `/${sport}` }, { label: "Records" }]} />
           <h1 className="psp-h1 text-white mb-2">
-            {meta.emoji} {meta.name} Records
+            <SportIcon sport={sport} size="sm" /> {meta.name} Records
           </h1>
           <p className="text-gray-300">
             {totalCuratedRecords} archive records + {computedStatCount} stat leaderboards across {categoryCount} categories

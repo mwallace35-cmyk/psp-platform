@@ -17,6 +17,7 @@ import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import SportIcon from "@/components/ui/SportIcon";
 import PSPPromo from "@/components/ads/PSPPromo";
 import AwardsHubClient from "./AwardsHubClient";
+import { BarChart3, Trophy } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Awards & Honors Hub | PhillySportsPack",
@@ -295,12 +296,12 @@ export default async function AwardsHubPage() {
               </div>
               <div className="p-4 space-y-2">
                 {[
-                  { href: "/football/awards", label: "Football All-City Archive", emoji: "🏈" },
-                  { href: "/football/championships", label: "Football Championships", emoji: "🏆" },
-                  { href: "/basketball/championships", label: "Basketball Championships", emoji: "🏀" },
-                  { href: "/baseball/awards", label: "Baseball Awards", emoji: "⚾" },
+                  { href: "/football/awards", label: "Football All-City Archive", emoji: "football" },
+                  { href: "/football/championships", label: "Football Championships", emoji: "trophy" },
+                  { href: "/basketball/championships", label: "Basketball Championships", emoji: "basketball" },
+                  { href: "/baseball/awards", label: "Baseball Awards", emoji: "baseball" },
                   { href: "/potw", label: "Player of the Week", emoji: "⭐" },
-                  { href: "/compare", label: "Compare Players", emoji: "📊" },
+                  { href: "/compare", label: "Compare Players", emoji: "barchart3" },
                 ].map((link) => (
                   <Link
                     key={link.href}

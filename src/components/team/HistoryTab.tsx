@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TeamHistory, Championship } from "@/lib/data";
+import { Trophy } from "lucide-react";
 
 interface HistoryTabProps {
   history: TeamHistory[];
@@ -28,7 +29,7 @@ export function HistoryTab({
       {championships && championships.length > 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-[var(--psp-navy)] mb-4 flex items-center gap-2">
-            <span aria-hidden="true">🏆</span> Championships ({championships.length})
+            <Trophy className="w-5 h-5 inline" /> Championships ({championships.length})
           </h3>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -126,7 +127,7 @@ export function HistoryTab({
                   >
                     <td className="px-6 py-3 font-semibold text-gray-900">
                       {season.label}
-                      {hasChamp && <span className="ml-2" role="img" aria-label="Champion">🏆</span>}
+                      {hasChamp && <Trophy className="w-5 h-5 inline" />}
                     </td>
                     <td className="px-6 py-3 text-center text-gray-900">
                       {season.wins}-{season.losses}
@@ -194,7 +195,7 @@ export function HistoryTab({
                 <div className="flex justify-between items-start mb-2">
                   <div className="font-semibold text-gray-900">
                     {season.label}
-                    {hasChamp && <span className="ml-2" role="img" aria-label="Champion">🏆</span>}
+                    {hasChamp && <Trophy className="w-5 h-5 inline" />}
                   </div>
                   <div className="text-sm font-bold text-gray-900">
                     {season.wins}-{season.losses}
