@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ToastContainer } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 
 export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
@@ -162,7 +163,7 @@ export default function ProfilePage() {
                 }`}
                 style={favoriteSports.includes(sport) ? { background: 'var(--psp-navy)' } : {}}
               >
-                {SPORT_META[sport].emoji} {SPORT_META[sport].name}
+                <SportIcon sport={sport} size="sm" /> {SPORT_META[sport].name}
               </button>
             ))}
           </div>

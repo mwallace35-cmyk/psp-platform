@@ -207,10 +207,10 @@ export default function PlayerHero({
                   />
                 );
               })()}
+              <span className="hidden sm:block w-px h-5 bg-[var(--psp-rule-strong)]" />
               <Link
                 href={`/compare?players=${slug}&sport=${sport}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
-                style={{ background: "var(--psp-blue, #3b82f6)", color: "white" }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[var(--psp-blue)] text-[var(--psp-blue)] hover:bg-[var(--psp-blue)] hover:text-white transition-colors"
                 title="Compare with another player"
               >
                 Compare

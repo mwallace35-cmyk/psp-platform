@@ -233,9 +233,7 @@ export default async function ArticlesPage({
                     <div className="p-4">
                       <div className="flex items-center space-x-2 mb-3">
                         {article.sport_id && SPORT_META[article.sport_id as keyof typeof SPORT_META] && (
-                          <span className="text-lg">
-                            {SPORT_META[article.sport_id as keyof typeof SPORT_META].emoji}
-                          </span>
+                          <SportIcon sport={article.sport_id} size="sm" />
                         )}
                         <span className="text-xs font-medium text-gold uppercase">
                           {article.sport_id}

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui';
 import { VALID_SPORTS, SPORT_META } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 
 export const metadata: Metadata = {
   title: '404 - Page Not Found — PhillySportsPack',
@@ -52,7 +53,7 @@ export default function NotFound() {
                 href={`/${sport}`}
                 className="px-4 py-2 bg-white/10 hover:bg-gold hover:text-navy text-white rounded-md transition font-medium text-sm"
               >
-                {SPORT_META[sport].emoji} {SPORT_META[sport].name}
+                <SportIcon sport={sport} size="sm" /> {SPORT_META[sport].name}
               </Link>
             ))}
           </div>

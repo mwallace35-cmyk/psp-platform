@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button, Badge, ToastContainer } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 
 export interface PotwNominee {
   id: string;
@@ -209,7 +210,7 @@ export default function PotwClient({ initialNominees, initialWinners }: PotwClie
             >
               {VALID_SPORTS.map((sport) => (
                 <option key={sport} value={sport}>
-                  {SPORT_META[sport].emoji} {SPORT_META[sport].name}
+                  {SPORT_META[sport].name}
                 </option>
               ))}
             </select>
@@ -244,7 +245,7 @@ export default function PotwClient({ initialNominees, initialWinners }: PotwClie
                     <div>
                       <p className="font-semibold text-gray-900">{nominee.player_name}</p>
                       <p className="text-sm text-gray-600">
-                        {nominee.school_name} • {SPORT_META[nominee.sport_id].emoji}{' '}
+                        {nominee.school_name} • <SportIcon sport={nominee.sport_id} size="sm" />{' '}
                         {SPORT_META[nominee.sport_id].name}
                       </p>
                       <p className="text-sm text-gray-700 mt-1">{nominee.stat_line}</p>
@@ -295,7 +296,7 @@ export default function PotwClient({ initialNominees, initialWinners }: PotwClie
                     <p className="font-semibold text-gray-900">{winner.player_name}</p>
                     <p className="text-sm text-gray-600">{winner.school_name}</p>
                   </div>
-                  <Badge variant="sport">{SPORT_META[winner.sport_id].emoji}</Badge>
+                  <Badge variant="sport"><SportIcon sport={winner.sport_id} size="sm" /></Badge>
                 </div>
                 <div className="flex justify-between items-center text-xs text-gray-600">
                   <span>

@@ -19,7 +19,7 @@ const FEATURED_HOF_CARDS = [
     ),
     accent: "#f0a500",
     description:
-      "165 Public League legends. Curated by PSP from the Ted Silary archive.",
+      "165 athletes inducted. Public League legends curated from the Ted Silary archive.",
     href: "/hof/public-league",
     external: false,
     cta: "View Inductees",
@@ -38,7 +38,7 @@ const FEATURED_HOF_CARDS = [
     ),
     accent: "#7c3aed",
     description:
-      "Multi-sport excellence across Philadelphia. PA Sports Hall of Fame, City All Star Chapter.",
+      "Multi-sport excellence across Philadelphia. PA Sports Hall of Fame City All Star Chapter.",
     href: "/hof/city-all-star",
     external: false,
     cta: "View Inductees",
@@ -57,7 +57,7 @@ const FEATURED_HOF_CARDS = [
     ),
     accent: "#f0a500",
     description:
-      "53 coaches who built Philly high school sports — profiles by Ted Silary.",
+      "53 coaches profiled. The builders of Philly high school sports, told by Ted Silary.",
     href: "/hof/legends",
     external: false,
     cta: "View Legends",
@@ -79,7 +79,7 @@ const FEATURED_HOF_CARDS = [
     ),
     accent: "#f0a500",
     description:
-      "The 30-Year Team (1976–2005) and four All-Decade football teams — 246 picks across 30 years of Philly football.",
+      "246 players selected. The 30-Year Team (1976-2005) and four All-Decade football teams.",
     href: "/hof/decades",
     external: false,
     cta: "View Decade Teams",
@@ -104,7 +104,7 @@ const STATE_CHAMPS_CARD = {
   ),
   accent: "#f0a500",
   description:
-    "Every title game, every roster, every stat. Ted Silary documented each state championship run.",
+    "49 title games documented. Every roster, every stat from Philadelphia's state championship runs.",
   href: "/hof/state-champions",
   external: false,
   cta: "View Champions",
@@ -125,7 +125,7 @@ const SECONDARY_HOF_CARDS = [
     ),
     accent: "#94a3b8",
     description:
-      "Honoring the players and figures taken too soon -- their stories live on through Ted Silary's words.",
+      "15 tributes. Honoring the players and figures taken too soon, remembered through Ted Silary's words.",
     href: "/hof/in-memoriam",
     external: false,
     cta: "View Tributes",
@@ -151,7 +151,7 @@ const SECONDARY_HOF_CARDS = [
     ),
     accent: "#3b82f6",
     description:
-      "Record-breaking performances and remarkable stories -- Wilt Chamberlain, George Baker, and more.",
+      "5 spotlights. Record-breaking performances and remarkable stories from Wilt Chamberlain to George Baker.",
     href: "/hof/spotlights",
     external: false,
     cta: "View Spotlights",
@@ -386,6 +386,26 @@ export default function HallOfFamePage() {
             background: "var(--psp-gold)",
           }}
         />
+
+        {/* Ted Silary portrait circle */}
+        <div
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: "50%",
+            background: "linear-gradient(135deg, var(--psp-gold) 0%, #c88400 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 1.5rem",
+            border: "3px solid rgba(240,165,0,0.3)",
+            boxShadow: "0 0 30px rgba(240,165,0,0.15)",
+          }}
+        >
+          <span style={{ color: "var(--psp-navy)", fontSize: "1.75rem", fontWeight: 900, fontFamily: "'DM Sans', sans-serif" }}>
+            TS
+          </span>
+        </div>
 
         <h1
           className="psp-h1-lg"

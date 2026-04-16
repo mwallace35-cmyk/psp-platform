@@ -229,7 +229,7 @@ function ChampionshipsTab({ champs }: { champs: ChampionshipHubRecord[] }) {
               background: `${SPORT_COLORS_HEX[sport]}10`,
             }}
           >
-            {SPORT_META[sport].emoji} {SPORT_META[sport].name} Championships →
+            <SportIcon sport={sport} size="sm" /> {SPORT_META[sport].name} Championships →
           </Link>
         ))}
       </div>
@@ -256,7 +256,7 @@ function POTYTab({ awards }: { awards: AwardDetail[] }) {
                 background: `${SPORT_COLORS_HEX[sport]}10`,
               }}
             >
-              {SPORT_META[sport].emoji} {SPORT_META[sport].name} Awards
+              <SportIcon sport={sport} size="sm" /> {SPORT_META[sport].name} Awards
             </Link>
           ))}
         </div>

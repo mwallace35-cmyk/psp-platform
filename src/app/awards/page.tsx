@@ -142,7 +142,7 @@ export default async function AwardsHubPage() {
               />
               <div className="relative p-5">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-3xl">{sport.emoji}</span>
+                  <SportIcon sport={sport.id} size="md" />
                   <h3
                     className="psp-h4 group-hover:translate-x-1 group-focus-visible:translate-x-1 transition-transform duration-300"
                     style={{
@@ -296,12 +296,12 @@ export default async function AwardsHubPage() {
               </div>
               <div className="p-4 space-y-2">
                 {[
-                  { href: "/football/awards", label: "Football All-City Archive", emoji: "football" },
-                  { href: "/football/championships", label: "Football Championships", emoji: "trophy" },
-                  { href: "/basketball/championships", label: "Basketball Championships", emoji: "basketball" },
-                  { href: "/baseball/awards", label: "Baseball Awards", emoji: "baseball" },
-                  { href: "/potw", label: "Player of the Week", emoji: "⭐" },
-                  { href: "/compare", label: "Compare Players", emoji: "barchart3" },
+                  { href: "/football/awards", label: "Football All-City Archive", sport: "football" },
+                  { href: "/football/championships", label: "Football Championships", sport: "football" },
+                  { href: "/basketball/championships", label: "Basketball Championships", sport: "basketball" },
+                  { href: "/baseball/awards", label: "Baseball Awards", sport: "baseball" },
+                  { href: "/potw", label: "Player of the Week", sport: null },
+                  { href: "/compare", label: "Compare Players", sport: null },
                 ].map((link) => (
                   <Link
                     key={link.href}
@@ -309,7 +309,7 @@ export default async function AwardsHubPage() {
                     className="flex items-center gap-3 py-2 px-2 -mx-2 rounded transition-colors duration-200 hover:bg-white/5 text-sm"
                     style={{ color: "rgba(255,255,255,0.8)" }}
                   >
-                    <span>{link.emoji}</span>
+                    {link.sport ? <SportIcon sport={link.sport} size="sm" /> : <span style={{ color: "var(--psp-gold)" }}>→</span>}
                     <span>{link.label}</span>
                     <span className="ml-auto" style={{ color: "#f0a500" }}>
                       →

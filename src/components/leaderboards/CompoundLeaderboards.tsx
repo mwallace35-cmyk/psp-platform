@@ -54,14 +54,14 @@ export default function CompoundLeaderboards({
                 key={category.key}
                 className="rounded-xl overflow-hidden"
                 style={{
-                  background: "linear-gradient(145deg, #0f1d35 0%, #0a1628 100%)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "linear-gradient(145deg, var(--psp-navy-mid) 0%, var(--psp-navy) 100%)",
+                  border: "1px solid var(--psp-rule)",
                 }}
               >
                 {/* Category Header */}
                 <div
                   className="px-4 py-3 border-b"
-                  style={{ borderColor: "rgba(255,255,255,0.08)" }}
+                  style={{ borderColor: "var(--psp-rule)" }}
                 >
                   <h3
                     className="psp-h4 text-white"
@@ -83,7 +83,7 @@ export default function CompoundLeaderboards({
                       <div
                         key={`${entry.player_name}-${idx}`}
                         className={`px-4 py-3 transition-colors ${
-                          isFirst ? "bg-[#1a2744]" : "hover:bg-white/[0.02]"
+                          isFirst ? "bg-[var(--psp-navy-mid)]" : "hover:bg-white/[0.02]"
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -92,20 +92,20 @@ export default function CompoundLeaderboards({
                             className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
                             style={{
                               backgroundColor: isFirst
-                                ? "#f0a500"
+                                ? "var(--psp-gold)"
                                 : isTopThree
                                 ? `${sportColor}30`
                                 : "rgba(255,255,255,0.06)",
                               color: isFirst
-                                ? "#0a1628"
+                                ? "var(--psp-navy)"
                                 : isTopThree
                                 ? sportColor
-                                : "rgba(255,255,255,0.75)",
+                                : "var(--psp-text-cream-muted)",
                               border: isFirst
                                 ? "none"
                                 : isTopThree
                                 ? `1px solid ${sportColor}50`
-                                : "1px solid rgba(255,255,255,0.08)",
+                                : "1px solid var(--psp-rule)",
                             }}
                           >
                             {idx + 1}
@@ -118,26 +118,24 @@ export default function CompoundLeaderboards({
                                 {entry.player_slug ? (
                                   <Link
                                     href={`/${sport}/players/${entry.player_slug}`}
-                                    className="font-semibold text-sm text-white hover:text-[var(--psp-gold)] transition truncate"
-                                    style={{ display: "block" }}
+                                    className="block font-semibold text-sm psp-cream hover:text-[var(--psp-gold)] transition truncate"
                                   >
                                     {entry.player_name}
                                   </Link>
                                 ) : (
-                                  <span className="font-semibold text-sm text-white truncate" style={{ display: "block" }}>
+                                  <span className="block font-semibold text-sm psp-cream truncate">
                                     {entry.player_name}
                                   </span>
                                 )}
                                 {entry.school_slug ? (
                                   <Link
                                     href={`/${sport}/schools/${entry.school_slug}`}
-                                    className="text-xs text-gray-400 hover:text-gray-300 transition truncate"
-                                    style={{ display: "block", marginTop: "2px" }}
+                                    className="block mt-0.5 text-xs psp-cream-muted hover:text-[var(--psp-text-cream)] transition truncate"
                                   >
                                     {entry.school_name}
                                   </Link>
                                 ) : (
-                                  <span className="text-xs text-gray-400 truncate" style={{ display: "block", marginTop: "2px" }}>
+                                  <span className="block mt-0.5 text-xs psp-cream-muted truncate">
                                     {entry.school_name}
                                   </span>
                                 )}
@@ -147,7 +145,7 @@ export default function CompoundLeaderboards({
                               <div
                                 className="text-right flex-shrink-0"
                                 style={{
-                                  color: isFirst ? "#f0a500" : sportColor,
+                                  color: isFirst ? "var(--psp-gold)" : sportColor,
                                 }}
                               >
                                 <span className="text-lg font-bold tabular-nums">

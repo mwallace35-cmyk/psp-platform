@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button, ToastContainer } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 
 export default function NewArticle() {
   const router = useRouter();
@@ -191,7 +192,7 @@ export default function NewArticle() {
             >
               {VALID_SPORTS.map((sport) => (
                 <option key={sport} value={sport}>
-                  {SPORT_META[sport].emoji} {SPORT_META[sport].name}
+                  {SPORT_META[sport].name}
                 </option>
               ))}
             </select>

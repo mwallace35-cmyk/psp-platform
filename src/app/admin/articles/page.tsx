@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { Button, Badge } from '@/components/ui';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 
 // Dynamic imports for heavy client components
 const SortableTable = dynamic(() => import('@/components/ui/SortableTable'), {
@@ -277,7 +278,7 @@ export default function ArticlesManagement() {
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{article.title}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{article.author}</td>
                   <td className="px-6 py-4 text-sm">
-                    <Badge variant="sport">{SPORT_META[article.sport_id].emoji}</Badge>
+                    <Badge variant="sport"><SportIcon sport={article.sport_id} size="sm" /></Badge>
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <Badge

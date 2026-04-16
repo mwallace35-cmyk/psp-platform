@@ -8,7 +8,7 @@ import PotwHomepageWidget from '@/components/pulse/PotwHomepageWidget';
 import HomeScoresSection from '@/components/home/HomeScoresSection';
 import HomeArticlesSection from '@/components/home/HomeArticlesSection';
 import SkeletonCard from '@/components/ui/SkeletonCard';
-import HeroMonument from '@/components/home/HeroMonument';
+// HeroMonument replaced by Masthead (broadsheet title + search)
 import ThisDayInHistory from '@/components/home/ThisDayInHistory';
 import Masthead from '@/components/home/Masthead';
 import UIIcon from '@/components/ui/UIIcon';
@@ -89,11 +89,8 @@ export default async function HomePage() {
     <div className="min-h-screen bg-[var(--psp-navy)]">
       <OrganizationJsonLd />
 
-      {/* Phase 4d: Broadsheet masthead — editorial title block */}
+      {/* Broadsheet masthead — editorial title + search + quick actions */}
       <Masthead />
-
-      {/* Hero — Search-First */}
-      <HeroMonument />
 
       {/* Sport Navigation */}
       <div className="max-w-7xl mx-auto px-4 -mt-2 mb-6">

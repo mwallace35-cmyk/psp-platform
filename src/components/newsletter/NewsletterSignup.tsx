@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { SPORT_META, VALID_SPORTS } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 import { captureError } from '@/lib/error-tracking';
 
 interface NewsletterSignupProps {
@@ -174,7 +175,7 @@ export default function NewsletterSignup({ variant = 'card' }: NewsletterSignupP
                 }`}
                 style={selectedSports.includes(sport) ? { background: 'var(--psp-gold)', color: 'var(--psp-navy)' } : {}}
               >
-                {SPORT_META[sport].emoji} {SPORT_META[sport].name}
+                <SportIcon sport={sport} size="sm" /> {SPORT_META[sport].name}
               </button>
             ))}
           </div>

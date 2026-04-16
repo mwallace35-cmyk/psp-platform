@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button, ToastContainer } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 import EntityLinker from '@/components/articles/EntityLinker';
 
 export default function EditArticle() {
@@ -334,7 +335,7 @@ export default function EditArticle() {
             >
               {VALID_SPORTS.map((sport) => (
                 <option key={sport} value={sport}>
-                  {SPORT_META[sport].emoji} {SPORT_META[sport].name}
+                  {SPORT_META[sport].name}
                 </option>
               ))}
             </select>

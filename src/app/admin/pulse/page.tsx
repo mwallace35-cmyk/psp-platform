@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button, Badge, ToastContainer } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { SPORT_META, VALID_SPORTS, type SportId } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 import { Trophy } from "lucide-react";
 
 interface Event {
@@ -201,7 +202,7 @@ export default function EventsManagement() {
               >
                 {VALID_SPORTS.map((sport) => (
                   <option key={sport} value={sport}>
-                    {SPORT_META[sport].emoji} {SPORT_META[sport].name}
+                    {SPORT_META[sport].name}
                   </option>
                 ))}
               </select>
@@ -277,7 +278,7 @@ export default function EventsManagement() {
               <option value="all">All Sports</option>
               {VALID_SPORTS.map((sport) => (
                 <option key={sport} value={sport}>
-                  {SPORT_META[sport].emoji} {SPORT_META[sport].name}
+                  {SPORT_META[sport].name}
                 </option>
               ))}
             </select>
@@ -318,7 +319,7 @@ export default function EventsManagement() {
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
                     <h3 className="text-lg font-semibold text-gray-900">{event.title}</h3>
-                    <Badge variant="sport">{SPORT_META[event.sport_id].emoji}</Badge>
+                    <Badge variant="sport"><SportIcon sport={event.sport_id} size="sm" /></Badge>
                     <Badge variant="info">
                       {eventTypes.find((t) => t.value === event.type)?.label}
                     </Badge>

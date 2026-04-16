@@ -1,10 +1,12 @@
 /**
- * Masthead — broadsheet-style title block for the homepage hero.
+ * Masthead — broadsheet-style title block + search for the homepage hero.
  *
- * Phase 4d. Replaces the old generic eyebrow + h1 with an editorial
- * dateline / title / volume layout that gives the brand a newspaper
- * heritage rooted in the Ted Silary archive.
+ * Combines the editorial dateline / title / volume layout with the search
+ * bar and quick action buttons. Replaces the old HeroMonument.
  */
+
+import Link from "next/link";
+import HeroSearch from "./HeroSearch";
 
 const VOLUME = "Vol. XXX";
 const ISSUE = "No. 098";
@@ -20,7 +22,7 @@ export default function Masthead() {
   const { weekday, monthDay } = formatDateline();
 
   return (
-    <section className="border-b border-[var(--psp-rule)] py-10 md:py-12 bg-[var(--psp-navy)]">
+    <section className="border-b border-[var(--psp-rule)] py-10 md:py-14 bg-[var(--psp-navy)]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 grid md:grid-cols-[auto_1fr_auto] gap-4 md:gap-8 items-end">
         {/* Dateline (left) */}
         <div
@@ -75,6 +77,38 @@ export default function Masthead() {
         >
           <div>{VOLUME}</div>
           <div>{ISSUE}</div>
+        </div>
+      </div>
+
+      {/* Search + Quick Actions */}
+      <div className="max-w-xl mx-auto px-4 sm:px-6 mt-8">
+        <HeroSearch />
+        <div className="flex flex-wrap items-center justify-center gap-2.5 mt-5">
+          <Link
+            href="/schools"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all hover:scale-[1.02] hover:shadow-lg"
+            style={{ background: "var(--psp-gold)", color: "var(--psp-navy)" }}
+          >
+            Find Your School
+          </Link>
+          <Link
+            href="/football/leaderboards"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[var(--psp-rule-strong)] psp-cream hover:border-[var(--psp-text-cream-muted)] transition"
+          >
+            Leaderboards
+          </Link>
+          <Link
+            href="/hof"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[var(--psp-rule-strong)] psp-cream hover:border-[var(--psp-text-cream-muted)] transition"
+          >
+            Hall of Fame
+          </Link>
+          <Link
+            href="/scores"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[var(--psp-rule-strong)] psp-cream hover:border-[var(--psp-text-cream-muted)] transition"
+          >
+            Scores
+          </Link>
         </div>
       </div>
     </section>

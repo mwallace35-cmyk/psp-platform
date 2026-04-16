@@ -82,9 +82,9 @@ export default function LeaderboardFilters({ sport, sportColor, seasons = [] }: 
     WebkitAppearance: "none",
     padding: "8px 32px 8px 14px",
     borderRadius: 999,
-    border: isActive ? `2px solid ${sportColor}` : "2px solid #334155",
-    background: isActive ? `${sportColor}18` : "var(--psp-navy-mid, #0f2040)",
-    color: isActive ? sportColor : "#94a3b8",
+    border: isActive ? `2px solid ${sportColor}` : "2px solid var(--psp-rule-strong)",
+    background: isActive ? `${sportColor}18` : "var(--psp-navy-mid)",
+    color: isActive ? sportColor : "var(--psp-text-cream-muted)",
     fontSize: "0.85rem",
     fontWeight: 600,
     cursor: "pointer",
@@ -102,7 +102,7 @@ export default function LeaderboardFilters({ sport, sportColor, seasons = [] }: 
         <>
           <span
             className="font-bebas text-xs tracking-wider uppercase"
-            style={{ color: "#64748b" }}
+            style={{ color: "var(--psp-text-cream-dim)" }}
           >
             Season
           </span>
@@ -119,7 +119,7 @@ export default function LeaderboardFilters({ sport, sportColor, seasons = [] }: 
               </option>
             ))}
           </select>
-          <span style={{ width: 1, height: 20, background: "#334155", flexShrink: 0 }} />
+          <span style={{ width: 1, height: 20, background: "var(--psp-rule-strong)", flexShrink: 0 }} />
         </>
       )}
 
@@ -178,9 +178,9 @@ export default function LeaderboardFilters({ sport, sportColor, seasons = [] }: 
           style={{
             padding: "7px 14px",
             borderRadius: 999,
-            border: "1px solid #475569",
+            border: "1px solid var(--psp-rule-strong)",
             background: "transparent",
-            color: "#94a3b8",
+            color: "var(--psp-text-cream-muted)",
             fontSize: "0.8rem",
             fontWeight: 600,
             cursor: "pointer",

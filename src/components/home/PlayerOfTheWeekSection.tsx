@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { SPORT_META, type SportId } from '@/lib/sports';
+import SportIcon from '@/components/ui/SportIcon';
 
 export interface POTWNominee {
   id: string;
@@ -112,9 +113,7 @@ export default function PlayerOfTheWeekSection({
                     {topNominee.schoolName}
                   </p>
                   <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 rounded-full text-sm sm:text-base font-semibold text-white w-fit">
-                    <span className="text-lg sm:text-xl">
-                      {SPORT_META[topNominee.sportId].emoji}
-                    </span>
+                    <SportIcon sport={topNominee.sportId} size="sm" />
                     {SPORT_META[topNominee.sportId].name}
                   </span>
                 </div>
