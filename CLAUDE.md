@@ -21,7 +21,7 @@ Mike Wallace (mwallace35@gmail.com). Solo developer building phillysportspack.co
 ## Local Dev Environment
 | Item | Detail |
 |------|--------|
-| Repo location | ~/Desktop/psp-platform |
+| Repo location | ~/tedsilary.com/phillysportspack/psp-platform (the ONLY working dir — all other psp-* folders are stale) |
 | Dev server | npm run dev → http://localhost:3000 |
 | Env file | .env.local (Supabase URL + anon key + preview key) |
 | Deploy | git push origin main → Vercel auto-deploys |
