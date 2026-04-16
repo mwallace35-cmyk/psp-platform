@@ -3,6 +3,7 @@ import { createClient } from '@/lib/data/common';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import PhillyMadeBadge from '@/components/ui/PhillyMadeBadge';
 import { ScoreTicker } from '@/components/our-guys/ScoreTicker';
 import { RecapBoard } from '@/components/our-guys/RecapBoard';
 import { CoachCorner } from '@/components/our-guys/CoachCorner';
@@ -234,11 +235,14 @@ export default async function OurGuysPage() {
                           </div>
                         </div>
                       </div>
-                      {player.school && (
-                        <span className="bar-school-badge" style={{ marginBottom: '6px' }}>
-                          {player.school}
-                        </span>
-                      )}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center', marginBottom: '6px' }}>
+                        {player.school && (
+                          <span className="bar-school-badge">
+                            {player.school}
+                          </span>
+                        )}
+                        <PhillyMadeBadge size="sm" />
+                      </div>
                       {player.statLine && (
                         <div style={{
                           fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)",

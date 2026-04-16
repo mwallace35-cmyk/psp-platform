@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { parseProLeague, type ProPlayer } from "@/lib/data/pro-players";
+import PhillyMadeBadge from "@/components/ui/PhillyMadeBadge";
 
 interface ProPlayerCardProps {
   player: ProPlayer;
@@ -42,9 +43,9 @@ export default function ProPlayerCard({
   return (
     <Link href={`/${sport}/players/${player.slug}`}>
       <div className="h-full bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:border-gold transition-all cursor-pointer">
-        {/* Pro Badge */}
-        {proLeague && (
-          <div className="inline-block mb-3">
+        {/* Pro Badge + Philly Made */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          {proLeague && (
             <span
               className={`text-xs font-bold px-2 py-1 rounded-full ${
                 proLeague === "NFL"
@@ -58,8 +59,9 @@ export default function ProPlayerCard({
             >
               {proLeague}
             </span>
-          </div>
-        )}
+          )}
+          <PhillyMadeBadge size="sm" />
+        </div>
 
         {/* Name */}
         <h3 className="text-lg font-bold text-navy mb-1 line-clamp-2">

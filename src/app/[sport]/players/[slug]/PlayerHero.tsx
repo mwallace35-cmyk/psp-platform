@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Breadcrumb, SocialProfileBar } from "@/components/ui";
 import ShareButtons from "@/components/social/ShareButtons";
 import LegacyBadge from "@/components/legacy/LegacyBadge";
+import PhillyMadeBadge from "@/components/ui/PhillyMadeBadge";
 import PlayerSchoolHistory from "@/components/players/PlayerSchoolHistory";
 import { buildPlayerCaption } from "@/lib/ig-caption";
 import type { Player, Award } from "@/lib/data";
@@ -147,6 +148,7 @@ export default function PlayerHero({
               {legacyProfile && (
                 <LegacyBadge href={`/legacy/${legacyProfile.slug}`} />
               )}
+              {player.primary_school_id && <PhillyMadeBadge size="md" />}
               {awards.length > 0 && (
                 <a
                   href="#awards"

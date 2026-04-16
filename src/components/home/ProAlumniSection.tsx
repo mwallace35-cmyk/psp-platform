@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { SPORT_META, type SportId } from '@/lib/sports';
 import { Search, Target } from "lucide-react";
+import PhillyMadeBadge from "@/components/ui/PhillyMadeBadge";
 
 export interface ProAlumnus {
   name: string;
@@ -48,6 +49,9 @@ function AlumniCard({ alumnus }: { alumnus: ProAlumnus }) {
       <div className="text-xs text-[var(--psp-gray-600)] [data-theme=dark]:text-[var(--psp-gray-400)] text-center line-clamp-1">
         {alumnus.school}
       </div>
+
+      {/* Philly Made badge */}
+      <PhillyMadeBadge size="sm" />
     </div>
   );
 }

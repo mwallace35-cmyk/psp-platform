@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SportIcon from "@/components/ui/SportIcon";
 import UIIcon, { type UIIconName } from "@/components/ui/UIIcon";
+import PhillyMadeBadge from "@/components/ui/PhillyMadeBadge";
 
 const LEVEL_BADGES: Record<string, { label: string; color: string; icon: UIIconName }> = {
   pro: { label: "PRO", color: "#f0a500", icon: "trophy" },
@@ -75,17 +76,20 @@ export default function AlumniCard({ person }: AlumniCardProps) {
             {person.person_name}
           </h3>
         </div>
-        <div style={{
-          display: "inline-block",
-          padding: "2px 8px",
-          borderRadius: 10,
-          fontSize: 9,
-          fontWeight: 700,
-          background: badge.color,
-          color: "#fff",
-          letterSpacing: 0.5,
-        }}>
-          {badge.label}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
+          <div style={{
+            display: "inline-block",
+            padding: "2px 8px",
+            borderRadius: 10,
+            fontSize: 9,
+            fontWeight: 700,
+            background: badge.color,
+            color: "#fff",
+            letterSpacing: 0.5,
+          }}>
+            {badge.label}
+          </div>
+          <PhillyMadeBadge size="sm" />
         </div>
       </div>
 
