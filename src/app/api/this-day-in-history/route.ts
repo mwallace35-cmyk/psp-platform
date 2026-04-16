@@ -26,13 +26,17 @@ export async function GET(request: NextRequest) {
     const mm = String(month).padStart(2, "0");
     const dd = String(day).padStart(2, "0");
 
-    // PostgREST doesn't support `column::text` casting in filters reliably,
-    // so build an explicit list of dates (this-day-in-history across 30 years)
-    // game_date is stored as DATE, format YYYY-MM-DD
+    // PostgREST doesn't support LIKE on date columns or inline casts.
+    // Build a list of exact dates for this month/day across a range of years.
     const currentYear = new Date().getFullYear();
-    const targetDates: string[] = [];
-    for (let y = currentYear; y >= currentYear - 30; y--) {
-      targetDates.push(`${y}-${mm}-${dd}`);
+    const startYear = 1990;
+    const dates: string[] = [];
+    for (let y = startYear; y <= currentYear; y++) {
+      // Only add valid dates (e.g., skip Feb 30)
+      const d = new Date(y, month - 1, day);
+      if (d.getMonth() === month - 1 && d.getDate() === day) {
+        dates.push(`${y}-${mm}-${dd}`);
+      }
     }
 
     const { data: games, error } = await (supabase as any)
@@ -42,7 +46,7 @@ export async function GET(request: NextRequest) {
          home_school:schools!games_home_school_id_fkey(name, slug),
          away_school:schools!games_away_school_id_fkey(name, slug)`
       )
-      .in("game_date", targetDates)
+      .in("game_date", dates)
       .not("home_score", "is", null)
       .not("away_score", "is", null)
       .order("game_date", { ascending: false })

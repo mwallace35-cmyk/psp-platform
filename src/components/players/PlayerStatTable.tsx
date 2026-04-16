@@ -160,18 +160,18 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                   className="border-t border-[var(--psp-rule)] transition-colors hover:bg-white/5"
                   style={{
                     background: isBest
-                      ? "linear-gradient(90deg, rgba(240,165,0,0.22) 0%, var(--psp-navy-mid) 60%)"
+                      ? "linear-gradient(90deg, rgba(22,163,74,0.18) 0%, var(--psp-navy-mid) 60%)"
                       : i % 2 === 0
                       ? "var(--psp-navy-mid)"
                       : "var(--psp-navy)",
-                    boxShadow: isBest ? "inset 4px 0 0 var(--psp-gold)" : undefined,
+                    borderLeft: isBest ? "4px solid #16a34a" : "4px solid transparent",
                   }}
                 >
-                  <td className="px-4 py-2.5 font-semibold whitespace-nowrap" style={{ color: "var(--psp-text-cream)" }}>
+                  <td className="px-4 py-2.5 font-semibold whitespace-nowrap" style={{ color: isBest ? "#ffffff" : "var(--psp-text-cream)" }}>
                     {isBest && (
                       <span
                         className="inline-block w-1.5 h-1.5 rounded-full mr-1.5"
-                        style={{ background: "var(--psp-gold)", verticalAlign: "middle" }}
+                        style={{ background: "#16a34a", verticalAlign: "middle" }}
                         title="Best season"
                       />
                     )}
@@ -198,8 +198,8 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                         className="text-right px-3 py-2.5 tabular-nums"
                         style={{
                           fontWeight: isHighlighted || col.key === "total_td" || col.key === "pts" ? 700 : 400,
-                          color: isHighlighted
-                            ? "var(--psp-gold)"
+                          color: isBest
+                            ? "#ffffff"
                             : "var(--psp-text-cream)",
                         }}
                       >
@@ -260,16 +260,16 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
               className="rounded-lg border p-4"
               style={{
                 background: isBest
-                  ? "linear-gradient(135deg, rgba(240,165,0,0.22) 0%, var(--psp-navy-mid) 70%)"
+                  ? "linear-gradient(135deg, rgba(22,163,74,0.18) 0%, var(--psp-navy-mid) 70%)"
                   : "var(--psp-navy-mid)",
-                borderColor: isBest ? "var(--psp-gold)" : "var(--psp-rule-strong)",
+                borderColor: isBest ? "#16a34a" : "var(--psp-rule-strong)",
                 borderWidth: isBest ? "2px" : "1px",
               }}
             >
               <div className="flex justify-between items-baseline mb-3">
                 <span className="font-bold text-sm font-bebas tracking-wider" style={{ color: "var(--psp-text-cream)" }}>
                   {isBest && (
-                    <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: "var(--psp-gold)", verticalAlign: "middle" }} />
+                    <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5" style={{ background: "#16a34a", verticalAlign: "middle" }} />
                   )}
                   {season?.label || "\u2014"}
                 </span>
@@ -286,7 +286,7 @@ export default function PlayerStatTable({ sport, stats, sportColor, playerName }
                     <div
                       className="font-bold text-sm tabular-nums"
                       style={{
-                        color: isBest && col.key === primaryStatKey(sport) ? "var(--psp-gold)" : "var(--psp-text-cream)",
+                        color: isBest ? "#ffffff" : "var(--psp-text-cream)",
                       }}
                     >
                       {col.getValue(s as never)}

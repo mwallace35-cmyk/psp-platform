@@ -49,10 +49,10 @@ export default function LeaderRow({
         {rank}
       </div>
       <div className="min-w-0">
-        <div className="psp-cream font-semibold text-base leading-tight truncate">
+        <div className="psp-cream font-semibold text-sm sm:text-base leading-snug break-words">
           {playerName}
         </div>
-        <div className="psp-cream-muted text-[11px] uppercase tracking-wider mt-0.5 truncate">
+        <div className="psp-cream-muted text-[11px] uppercase tracking-wider mt-0.5">
           {position && (
             <span className="text-[var(--psp-gold)] font-bold mr-1.5">{position}</span>
           )}
