@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import PhillyMadeBadge from '@/components/ui/PhillyMadeBadge';
+import LeagueTeamBreakdown from '@/components/our-guys/LeagueTeamBreakdown';
 import { ScoreTicker } from '@/components/our-guys/ScoreTicker';
 import { RecapBoard } from '@/components/our-guys/RecapBoard';
 import { CoachCorner } from '@/components/our-guys/CoachCorner';
@@ -45,10 +46,10 @@ export default async function OurGuysPage() {
       .order('person_name')
       .limit(2500),
 
-    // Active pros for counts + league breakdown
+    // Active pros for counts + league breakdown + team breakdown
     supabase
       .from('next_level_tracking')
-      .select('high_school_id, schools:high_school_id(name, slug), current_level, sport_id, pro_league')
+      .select('high_school_id, schools:high_school_id(name, slug), current_level, sport_id, pro_league, pro_team')
       .eq('current_level', 'pro')
       .eq('status', 'active'),
 
@@ -74,11 +75,22 @@ export default async function OurGuysPage() {
     if (a.current_level === 'college') college++;
   }
 
-  /* ─── League breakdown ─── */
+  /* ─── League breakdown + per-team breakdown ─── */
   const leagueCounts = new Map<string, number>();
+  const teamCountsByLeague = new Map<string, Map<string, number>>();
   for (const entry of (pipelineRes.data ?? []) as Record<string, unknown>[]) {
     const league = entry.pro_league as string | null;
-    if (league) leagueCounts.set(league, (leagueCounts.get(league) || 0) + 1);
+    const team = entry.pro_team as string | null;
+    if (!league) continue;
+    leagueCounts.set(league, (leagueCounts.get(league) || 0) + 1);
+    if (team && team.trim()) {
+      const teamKey = team.trim();
+      if (!teamCountsByLeague.has(league)) {
+        teamCountsByLeague.set(league, new Map());
+      }
+      const teams = teamCountsByLeague.get(league)!;
+      teams.set(teamKey, (teams.get(teamKey) || 0) + 1);
+    }
   }
   const leagueOrder = ['NFL', 'NBA', 'MLB', 'WNBA', 'MLS', 'NBA G League', 'UFL'];
   const leagueBreakdown = leagueOrder
@@ -88,6 +100,12 @@ export default async function OurGuysPage() {
     if (!leagueOrder.includes(league) && count > 0) {
       leagueBreakdown.push({ league, count });
     }
+  }
+  const teamsByLeague: Record<string, { team: string; count: number }[]> = {};
+  for (const [league, teams] of teamCountsByLeague) {
+    teamsByLeague[league] = Array.from(teams.entries())
+      .map(([team, count]) => ({ team, count }))
+      .sort((a, b) => b.count - a.count || a.team.localeCompare(b.team));
   }
 
   /* ─── Directory preview: trending players from recent recaps ─── */
@@ -285,20 +303,12 @@ export default async function OurGuysPage() {
             {/* Pro League Breakdown */}
             {leagueBreakdown.length > 0 && (
               <div className="bar-card" style={{ padding: '16px' }}>
-                <h3 className="bar-section-header" style={{ fontSize: '16px', marginBottom: '12px' }}>
-                  PRO BREAKDOWN
-                </h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {leagueBreakdown.map(({ league, count }) => {
-                    const cls = LEAGUE_STYLE[league] || 'border-gray-500/30 text-gray-300';
-                    return (
-                      <span key={league} className={`bar-league-pill ${cls}`}>
-                        {league}
-                        <span className="bar-league-count">{count}</span>
-                      </span>
-                    );
-                  })}
-                </div>
+                <LeagueTeamBreakdown
+                  leagueBreakdown={leagueBreakdown}
+                  teamsByLeague={teamsByLeague}
+                  leagueStyle={LEAGUE_STYLE}
+                  headerSize="sm"
+                />
               </div>
             )}
           </aside>
@@ -325,20 +335,12 @@ export default async function OurGuysPage() {
           {/* League breakdown on mobile */}
           {leagueBreakdown.length > 0 && (
             <section style={{ padding: '0 16px 24px' }}>
-              <h3 className="bar-section-header" style={{ fontSize: '18px', marginBottom: '12px' }}>
-                PRO BREAKDOWN
-              </h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {leagueBreakdown.map(({ league, count }) => {
-                  const cls = LEAGUE_STYLE[league] || 'border-gray-500/30 text-gray-300';
-                  return (
-                    <span key={league} className={`bar-league-pill ${cls}`}>
-                      {league}
-                      <span className="bar-league-count">{count}</span>
-                    </span>
-                  );
-                })}
-              </div>
+              <LeagueTeamBreakdown
+                leagueBreakdown={leagueBreakdown}
+                teamsByLeague={teamsByLeague}
+                leagueStyle={LEAGUE_STYLE}
+                headerSize="lg"
+              />
             </section>
           )}
         </div>
