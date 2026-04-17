@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import PhillyMadeBadge from '@/components/ui/PhillyMadeBadge';
 import LeagueTeamBreakdown from '@/components/our-guys/LeagueTeamBreakdown';
+import WeeklyPoll from '@/components/our-guys/WeeklyPoll';
 import { ScoreTicker } from '@/components/our-guys/ScoreTicker';
 import { RecapBoard } from '@/components/our-guys/RecapBoard';
 import { CoachCorner } from '@/components/our-guys/CoachCorner';
@@ -311,6 +312,11 @@ export default async function OurGuysPage() {
                 />
               </div>
             )}
+
+            <div style={{ height: '20px' }} />
+
+            {/* Weekly Poll */}
+            <WeeklyPoll />
           </aside>
         </div>
       </div>
@@ -343,6 +349,11 @@ export default async function OurGuysPage() {
               />
             </section>
           )}
+
+          {/* Weekly Poll on mobile */}
+          <section style={{ padding: '0 16px 24px' }}>
+            <WeeklyPoll />
+          </section>
         </div>
       </div>
     </div>
