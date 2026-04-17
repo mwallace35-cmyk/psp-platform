@@ -7,6 +7,8 @@ import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlaye
 import { ClaimProfileButton } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
 import CommentSectionLazy from "@/components/comments/CommentSectionLazy";
+import PlayerTimeline from "@/components/players/PlayerTimeline";
+import { getPlayerTimeline } from "@/lib/data/player-timeline";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import PlayerHofBadges from "@/components/hof/PlayerHofBadges";
@@ -140,6 +142,7 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
   ]) as [Award[], PlayerGameLog[], TeamGame[], any[], any, string | null, Awaited<ReturnType<typeof getPlayerSchoolHistory>>];
 
   const legacyProfile = await getLegacyProfileForPlayer(player.id);
+  const timelineNodes = await getPlayerTimeline(player.id);
 
   // Football career totals
   const footballTotals = sport === "football" && stats.length > 0 ? (() => {
@@ -450,6 +453,9 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
         )}
 
       </section>
+
+      {/* ============ CAREER PATH TIMELINE ============ */}
+      {timelineNodes.length > 0 && <PlayerTimeline nodes={timelineNodes} />}
 
       {/* ============ GAME LOG SECTION ============ */}
       {mergedGames.length > 0 && (sport === "football" || isBasketballSport(sport)) && (
