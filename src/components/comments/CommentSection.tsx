@@ -19,11 +19,24 @@ interface Comment {
   replies?: Comment[];
 }
 
+type EntityType = 'article' | 'player';
+
 interface CommentSectionProps {
-  articleId: number;
+  /** Preferred: entity discriminator. */
+  entityType?: EntityType;
+  entityId?: number;
+  /** Back-compat: existing article callers use this. */
+  articleId?: number;
 }
 
-export default function CommentSection({ articleId }: CommentSectionProps) {
+export default function CommentSection(props: CommentSectionProps) {
+  // Resolve to { entityType, entityId } regardless of which prop form was used.
+  const entityType: EntityType = props.entityType ?? 'article';
+  const entityId: number | undefined =
+    props.entityType === 'player'
+      ? props.entityId
+      : props.entityId ?? props.articleId;
+
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
@@ -34,7 +47,8 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
   useEffect(() => {
     fetchComments();
     checkUser();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entityType, entityId]);
 
   async function checkUser() {
     const { data: { user } } = await supabase.auth.getUser();
@@ -43,13 +57,15 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
 
   async function fetchComments() {
     setLoading(true);
+    if (entityId === undefined) { setLoading(false); return; }
     try {
       // Query comments without joining user_profiles (no FK exists).
       // Column is parent_id in the DB schema, not parent_comment_id.
+      const filterCol = entityType === 'player' ? 'player_id' : 'article_id';
       const { data, error } = await (supabase as any)
         .from('comments')
         .select('id, body, parent_id, user_id, status, created_at')
-        .eq('article_id', articleId)
+        .eq(filterCol, entityId)
         .eq('status', 'approved')
         .order('created_at', { ascending: true });
 
@@ -133,10 +149,11 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
           </div>
 
           {/* Reply form */}
-          {replyingTo === comment.id && (
+          {replyingTo === comment.id && entityId !== undefined && (
             <div className="ml-11 mt-2">
               <CommentForm
-                articleId={articleId}
+                entityType={entityType}
+                entityId={entityId}
                 parentCommentId={comment.id}
                 onCommentAdded={handleCommentAdded}
                 compact
@@ -165,9 +182,13 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
       </h2>
 
       {/* New comment form */}
-      {user ? (
-        <CommentForm articleId={articleId} onCommentAdded={handleCommentAdded} />
-      ) : (
+      {user && entityId !== undefined ? (
+        <CommentForm
+          entityType={entityType}
+          entityId={entityId}
+          onCommentAdded={handleCommentAdded}
+        />
+      ) : !user ? (
         <div className="bg-gray-50 rounded-lg p-4 text-center mb-6">
           <p className="text-sm text-gray-600">
             <a href="/login" className="font-medium hover:underline" style={{ color: 'var(--psp-gold)' }}>Sign in</a>
@@ -176,7 +197,7 @@ export default function CommentSection({ articleId }: CommentSectionProps) {
             {' '}to join the conversation.
           </p>
         </div>
-      )}
+      ) : null}
 
       {/* Comments list */}
       {loading ? (

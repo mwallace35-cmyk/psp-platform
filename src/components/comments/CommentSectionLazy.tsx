@@ -14,8 +14,17 @@ const CommentSection = dynamic(() => import('./CommentSection'), {
   ssr: false, // Don't SSR comments for better performance
 });
 
-export function CommentSectionLazy({ articleId }: { articleId: number }) {
-  return <CommentSection articleId={articleId} />;
+type EntityType = 'article' | 'player';
+
+interface LazyProps {
+  entityType?: EntityType;
+  entityId?: number;
+  /** Back-compat alias. */
+  articleId?: number;
+}
+
+export function CommentSectionLazy(props: LazyProps) {
+  return <CommentSection {...props} />;
 }
 
 export default CommentSectionLazy;

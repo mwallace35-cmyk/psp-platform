@@ -6,6 +6,7 @@ import { validateSportParam, validateSportParamForMetadata } from "@/lib/validat
 import { SPORT_META, getPlayerBySlug, getFootballPlayerStats, getBasketballPlayerStats, getBaseballPlayerStats, getPlayerAwards, getPlayerGameLog, getPlayerTeamGames, getCrossSportPlayers, getPlayerJerseyNumber, getPlayerSchoolHistory, isBasketballSport, type Player, type FootballPlayerSeason, type BasketballPlayerSeason, type BaseballPlayerSeason, type Award, type PlayerGameLog, type TeamGame } from "@/lib/data";
 import { ClaimProfileButton } from "@/components/ui";
 import PSPPromo from "@/components/ads/PSPPromo";
+import CommentSectionLazy from "@/components/comments/CommentSectionLazy";
 import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/seo/JsonLd";
 import RelatedArticles from "@/components/articles/RelatedArticles";
 import PlayerHofBadges from "@/components/hof/PlayerHofBadges";
@@ -628,6 +629,11 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
           </Link>
         </section>
       )}
+
+      {/* ============ COMMENTS ============ */}
+      <section id="comments" className="scroll-mt-16 max-w-7xl mx-auto px-4 py-8 border-t border-gray-200">
+        <CommentSectionLazy entityType="player" entityId={player.id} />
+      </section>
 
       {/* ============ BOTTOM CTAs ============ */}
       <div className="max-w-7xl mx-auto px-4 py-4">

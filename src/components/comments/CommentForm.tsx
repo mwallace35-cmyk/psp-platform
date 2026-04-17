@@ -4,14 +4,26 @@ import { useState, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { captureError } from '@/lib/error-tracking';
 
+type EntityType = 'article' | 'player';
+
 interface CommentFormProps {
-  articleId: number;
+  /** Preferred API. */
+  entityType?: EntityType;
+  entityId?: number;
+  /** Back-compat alias for articleId callers. */
+  articleId?: number;
   parentCommentId?: number;
   onCommentAdded: () => void;
   compact?: boolean;
 }
 
-export default function CommentForm({ articleId, parentCommentId, onCommentAdded, compact }: CommentFormProps) {
+export default function CommentForm(props: CommentFormProps) {
+  const { parentCommentId, onCommentAdded, compact } = props;
+  const entityType: EntityType = props.entityType ?? 'article';
+  const entityId: number | undefined =
+    props.entityType === 'player'
+      ? props.entityId
+      : props.entityId ?? props.articleId;
   const [body, setBody] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -38,13 +50,25 @@ export default function CommentForm({ articleId, parentCommentId, onCommentAdded
         return;
       }
 
-      const { error: submitError } = await supabase.from('comments').insert({
-        article_id: articleId,
+      if (entityId === undefined) {
+        setError('Missing entity id');
+        return;
+      }
+
+      const payload: Record<string, unknown> = {
         user_id: user.id,
         parent_id: parentCommentId || null,
         body: body.trim(),
         status: 'pending', // Requires moderation
-      });
+      };
+      if (entityType === 'player') {
+        payload.player_id = entityId;
+      } else {
+        payload.article_id = entityId;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: submitError } = await (supabase as any).from('comments').insert(payload);
 
       if (submitError) throw submitError;
 
@@ -53,7 +77,7 @@ export default function CommentForm({ articleId, parentCommentId, onCommentAdded
       setTimeout(() => setSubmitted(false), 3000);
       onCommentAdded();
     } catch (err) {
-      captureError(err, { component: 'CommentForm', articleId: String(articleId) });
+      captureError(err, { component: 'CommentForm', entityType, entityId: String(entityId) });
       setError('Could not post comment. Please try again.');
       // Focus the textarea when there's an error
       bodyInputRef.current?.focus();
