@@ -38,28 +38,44 @@ export default function FootballBoxScore({
     return typeof val === "number" ? val : null;
   }
 
-  // Get TDs from stats_json (game-level) or season-avg fallback
+  // Get TDs: prefer v2 dedicated columns (populated Apr 20), fall back to
+  // stats_json (pre-v2), then to season-average fallback.
   function getTD(s: GamePlayerStat, type: "rush" | "pass" | "rec"): number | null {
+    // v2 dedicated column (only pass_tds exists today; rush_tds/rec_tds come in v3 scoring-breakdown extraction)
+    if (type === "pass" && s.pass_tds != null) return s.pass_tds;
+
     const json = s.stats_json as Record<string, unknown> | null;
-    // Game-level TDs from stats_json
     if (type === "rush") {
-      const td = json?.rush_tds as number | null ?? json?.rushing_tds as number | null;
+      const td = (json?.rush_tds ?? json?.rushing_tds) as number | null;
       if (td != null) return td;
     }
     if (type === "pass") {
-      const td = json?.pass_tds as number | null ?? json?.passing_tds as number | null;
+      const td = (json?.pass_tds ?? json?.passing_tds) as number | null;
       if (td != null) return td;
     }
     if (type === "rec") {
-      const td = json?.rec_tds as number | null ?? json?.receiving_tds as number | null;
+      const td = (json?.rec_tds ?? json?.receiving_tds) as number | null;
       if (td != null) return td;
     }
-    // Season average fallback
+    // Season-average fallback
     const seasonKey = type === "rush" ? "season_rush_td" : type === "pass" ? "season_pass_td" : "season_rec_td";
     const seasonTd = json?.[seasonKey] as number | null;
     const gp = json?.games_played as number | null;
     if (seasonTd != null && gp && gp > 0) return Math.round((seasonTd / gp) * 10) / 10;
     return null;
+  }
+
+  // Get pass_attempts: prefer dedicated column, fall back to stats_json.
+  function getPassAttempts(s: GamePlayerStat): number | null {
+    if (s.pass_attempts != null) return s.pass_attempts;
+    return getJson(s, "pass_attempts");
+  }
+
+  // Get defensive INTs: prefer dedicated column, fall back to stats_json.
+  function getDefInt(s: GamePlayerStat): number {
+    if (s.interceptions_def != null) return s.interceptions_def;
+    const sj = s.stats_json as Record<string, unknown> | null;
+    return Number(sj?.def_interceptions ?? sj?.interceptions ?? 0) || 0;
   }
 
   // Filter helpers
@@ -168,7 +184,7 @@ export default function FootballBoxScore({
   const allScorers = teams.flatMap((t) => getScorers(t.stats));
   const hasRushTd = allRushers.some((s) => getTD(s, "rush") != null);
   const hasPassTd = allPassers.some((s) => getTD(s, "pass") != null);
-  const hasPassAttempts = allPassers.some((s) => getJson(s, "pass_attempts") != null);
+  const hasPassAttempts = allPassers.some((s) => getPassAttempts(s) != null);
   const hasINT = allPassers.some((s) => getJson(s, "pass_int") != null || getJson(s, "pass_interceptions") != null);
   const hasRecTd = allReceivers.some((s) => getTD(s, "rec") != null);
 
@@ -249,7 +265,7 @@ export default function FootballBoxScore({
           </>
         }
         renderRow={(s) => {
-          const att = getJson(s, "pass_attempts");
+          const att = getPassAttempts(s);
           const td = getTD(s, "pass");
           const int = getJson(s, "pass_int") ?? getJson(s, "pass_interceptions");
           return (
@@ -324,26 +340,18 @@ export default function FootballBoxScore({
         />
       )}
 
-      {/* DEFENSIVE INTERCEPTIONS */}
+      {/* DEFENSIVE INTERCEPTIONS — prefers dedicated interceptions_def column, falls back to stats_json */}
       {(() => {
-        const allDefInt = stats.filter((s) => {
-          const sj = s.stats_json as Record<string, unknown> | null;
-          return sj && (Number(sj.def_interceptions) > 0 || Number(sj.interceptions) > 0);
-        });
+        const allDefInt = stats.filter((s) => getDefInt(s) > 0);
         if (allDefInt.length === 0) return null;
-        const getDefInt = (playerStats: GamePlayerStat[]) =>
-          playerStats.filter((s) => {
-            const sj = s.stats_json as Record<string, unknown> | null;
-            return sj && (Number(sj.def_interceptions) > 0 || Number(sj.interceptions) > 0);
-          }).sort((a, b) => {
-              const aInt = Number((a.stats_json as Record<string, unknown>)?.def_interceptions ?? (a.stats_json as Record<string, unknown>)?.interceptions ?? 0);
-              const bInt = Number((b.stats_json as Record<string, unknown>)?.def_interceptions ?? (b.stats_json as Record<string, unknown>)?.interceptions ?? 0);
-              return bInt - aInt;
-            });
+        const getDefIntPlayers = (playerStats: GamePlayerStat[]) =>
+          playerStats
+            .filter((s) => getDefInt(s) > 0)
+            .sort((a, b) => getDefInt(b) - getDefInt(a));
         return (
           <StatSection
             title="Interceptions"
-            getPlayers={getDefInt}
+            getPlayers={getDefIntPlayers}
             headers={
               <>
                 <th className="text-left px-4 py-2 w-[60%]">Player</th>
@@ -351,8 +359,7 @@ export default function FootballBoxScore({
               </>
             }
             renderRow={(s) => {
-              const sj = s.stats_json as Record<string, unknown> | null;
-              const ints = Number(sj?.def_interceptions ?? sj?.interceptions ?? 0);
+              const ints = getDefInt(s);
               return (
                 <>
                   <td className="px-4 py-2"><PlayerName s={s} /></td>

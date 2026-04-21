@@ -114,10 +114,17 @@ export interface GamePlayerStat {
   rush_carries: number | null;
   rush_yards: number | null;
   pass_completions: number | null;
+  /** Pass attempts (added 2026-04-20 via v2 parser — v1 stored this in pass_yards). */
+  pass_attempts: number | null;
+  /** Real pass yards (added 2026-04-20 via v2 parser — v1 stored attempts here). */
   pass_yards: number | null;
+  /** Passing TDs per game (added 2026-04-20 from PASSING table row 2 parens). */
+  pass_tds: number | null;
   rec_catches: number | null;
   rec_yards: number | null;
   points: number | null;
+  /** Defensive interceptions caught (added 2026-04-20 from INTERCEPTIONS table). */
+  interceptions_def: number | null;
   stats_json: Record<string, unknown> | null;
   source_type: string | null;
   players?: { id: number; name: string; slug: string } | null;
@@ -191,8 +198,11 @@ export const getGameBoxScore = cache(
               .from("game_player_stats")
               .select(
                 `id, game_id, player_id, school_id, sport_id, player_name, jersey_number,
-                 rush_carries, rush_yards, pass_completions, pass_yards, rec_catches, rec_yards,
-                 points, stats_json, source_type, source_file,
+                 rush_carries, rush_yards,
+                 pass_completions, pass_attempts, pass_yards, pass_tds,
+                 rec_catches, rec_yards,
+                 points, interceptions_def,
+                 stats_json, source_type, source_file,
                  players:player_id(id, name, slug),
                  schools:school_id(id, name, slug)`
               )
@@ -1528,6 +1538,116 @@ export const getAdjacentGames = cache(
       { prev: null, next: null },
       "DATA_ADJACENT_GAMES",
       { gameId, sportId, seasonId, homeSchoolId }
+    );
+  }
+);
+
+
+// ============================================================================
+// CITY-LEAGUE HEAD-TO-HEAD GAMES
+// ============================================================================
+// Games where BOTH home and away teams have tedsilary per-game stats — the
+// 2,330-game "rich box score" set. Drives the /football/games listing page.
+// Backed by the public.two_sided_football_games view (migration 2026-04-20).
+
+export interface CityLeagueSeasonCount {
+  label: string;
+  year_start: number;
+  game_count: number;
+}
+
+interface SeasonJoinRow {
+  seasons: { label?: string | null; year_start?: number | null }
+         | { label?: string | null; year_start?: number | null }[]
+         | null;
+}
+
+/**
+ * Seasons that contain at least one two-sided football game, with counts.
+ * Returned newest first.
+ */
+export const getCityLeagueSeasons = cache(
+  async (sportId: string): Promise<CityLeagueSeasonCount[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            if (sportId !== "football") return [];
+            const supabase = await createClient();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data } = await (supabase as any)
+              .from("two_sided_football_games")
+              .select("seasons(label, year_start)");
+            const rows = (data as unknown as SeasonJoinRow[] | null) ?? [];
+            const counts = new Map<string, CityLeagueSeasonCount>();
+            for (const r of rows) {
+              const s = Array.isArray(r.seasons) ? r.seasons[0] : r.seasons;
+              if (!s?.label) continue;
+              const existing = counts.get(s.label);
+              if (existing) {
+                existing.game_count += 1;
+              } else {
+                counts.set(s.label, {
+                  label: s.label,
+                  year_start: s.year_start ?? 0,
+                  game_count: 1,
+                });
+              }
+            }
+            return Array.from(counts.values()).sort((a, b) => b.year_start - a.year_start);
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_CITY_LEAGUE_SEASONS",
+      { sportId }
+    );
+  }
+);
+
+/**
+ * All two-sided football games in a given season, sorted by date (chronological),
+ * falling back to id order when date is NULL.
+ */
+export const getCityLeagueGamesBySeason = cache(
+  async (sportId: string, seasonLabel: string): Promise<ScoresGame[]> => {
+    return withErrorHandling(
+      async () => {
+        return withRetry(
+          async () => {
+            if (sportId !== "football") return [];
+            const supabase = await createClient();
+
+            // Resolve season id
+            const { data: seasonData } = await supabase
+              .from("seasons")
+              .select("id")
+              .eq("label", seasonLabel)
+              .single();
+            if (!seasonData) return [];
+            const seasonId = (seasonData as IdRow).id;
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data } = await (supabase as any)
+              .from("two_sided_football_games")
+              .select(
+                `id, sport_id, game_date, home_school_id, away_school_id, home_score, away_score,
+                 home_school:schools!games_home_school_id_fkey(id, name, slug, city, league_id),
+                 away_school:schools!games_away_school_id_fkey(id, name, slug, city, league_id),
+                 seasons(label)`
+              )
+              .eq("season_id", seasonId)
+              .order("game_date", { ascending: true, nullsFirst: false })
+              .order("id", { ascending: true });
+            return (data as unknown as ScoresGame[]) ?? [];
+          },
+          { maxRetries: 2, baseDelay: 500 }
+        );
+      },
+      [],
+      "DATA_CITY_LEAGUE_GAMES",
+      { sportId, seasonLabel }
     );
   }
 );

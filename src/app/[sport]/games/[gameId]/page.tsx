@@ -12,6 +12,7 @@ import {
 } from "@/lib/data";
 import { Breadcrumb } from "@/components/ui";
 import GameFilmSection from "@/components/highlights/GameFilmSection";
+import GameInTheArchive from "@/components/game/GameInTheArchive";
 import MediaGallery from "@/components/media/MediaGallery";
 import HeadToHeadBadge from "@/components/game/HeadToHeadBadge";
 import ShareButtons from "@/components/social/ShareButtons";
@@ -519,6 +520,16 @@ export default async function GameDetailPage({
             </div>
           )}
         </div>
+      )}
+
+      {/* Ted Silary archive write-up (if any) */}
+      {game.home_school_id && game.away_school_id && season?.year_start && (
+        <GameInTheArchive
+          homeSchoolId={game.home_school_id}
+          awaySchoolId={game.away_school_id}
+          gameDate={game.game_date}
+          seasonYear={season.year_start}
+        />
       )}
 
       {/* Game Media Gallery */}

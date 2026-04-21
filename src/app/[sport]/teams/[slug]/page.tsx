@@ -14,6 +14,7 @@ import {
   getSchoolHasTedNotes,
 } from "@/lib/data";
 import TeamPageClient from "@/components/teams/TeamPageClient";
+import TeamInTheArchive from "@/components/teams/TeamInTheArchive";
 import type { Metadata } from "next";
 
 export const revalidate = 3600; // ISR: revalidate every hour
@@ -138,20 +139,23 @@ export default async function TeamDetailPage({ params }: PageProps) {
   };
 
   return (
-    <TeamPageClient
-      team={teamData}
-      school={school}
-      teamSeasons={teamSeasons}
-      championships={championships}
-      alumni={alumni as unknown as any[]}
-      sport={sport}
-      sportMeta={sportMeta}
-      games={games as any[]}
-      roster={roster as any[]}
-      articles={articles as any[]}
-      statLeaders={statLeaders as any}
-      tedNotes={tedNotes}
-      tedCoverage={tedCoverage}
-    />
+    <>
+      <TeamPageClient
+        team={teamData}
+        school={school}
+        teamSeasons={teamSeasons}
+        championships={championships}
+        alumni={alumni as unknown as any[]}
+        sport={sport}
+        sportMeta={sportMeta}
+        games={games as any[]}
+        roster={roster as any[]}
+        articles={articles as any[]}
+        statLeaders={statLeaders as any}
+        tedNotes={tedNotes}
+        tedCoverage={tedCoverage}
+      />
+      <TeamInTheArchive schoolId={school.id} schoolName={school.name} />
+    </>
   );
 }

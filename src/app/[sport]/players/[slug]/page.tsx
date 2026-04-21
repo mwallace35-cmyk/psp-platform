@@ -23,6 +23,7 @@ import MediaGallery from "@/components/media/MediaGallery";
 import PlayerStatTable from "@/components/players/PlayerStatTable";
 import PlayerProfileTabs from "@/components/players/PlayerProfileTabs";
 import InTheNews from "@/components/players/InTheNews";
+import InTheArchive from "@/components/players/InTheArchive";
 import type { MergedGameEntry } from "@/components/game-log/GameLogAccordion";
 import type { Metadata } from "next";
 import PlayerHero from "./PlayerHero";
@@ -523,6 +524,9 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
 
             {/* In The News */}
             <InTheNews entityType="player" entityId={player.id} />
+
+            {/* In the Archive (Ted Silary mentions) */}
+            <InTheArchive playerId={player.id} />
 
             {/* Player Highlights Section */}
             <PlayerHighlightsSection

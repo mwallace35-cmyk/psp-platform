@@ -302,6 +302,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     captureError(error, { context: "sitemap_generation" });
   }
 
+  // Ted Silary Archive stories — /stories landing + /stories/[year]/[slug] detail pages
+  entries.push({
+    url: `${baseUrl}/stories`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.9,
+  });
+  try {
+    const supabaseStories = createStaticClient();
+    const { data: stories } = await (supabaseStories as unknown as {
+      from: (t: string) => {
+        select: (c: string) => { order: (c: string, o: { ascending: boolean }) => Promise<{ data: Array<{ year: number; slug: string; updated_at: string | null }> | null }> };
+      };
+    }).from("archive_stories").select("year, slug, updated_at").order("year", { ascending: false });
+    if (stories) {
+      for (const s of stories) {
+        if (!s.slug) continue;
+        entries.push({
+          url: `${baseUrl}/stories/${s.year}/${s.slug}`,
+          lastModified: s.updated_at ? new Date(s.updated_at) : new Date(),
+          changeFrequency: "yearly",
+          priority: 0.6,
+        });
+      }
+    }
+  } catch (error) {
+    captureError(error, { context: "sitemap", fetch: "archive_stories" });
+  }
+
   // Public content pages
   entries.push(
     // Main content pages
