@@ -24,6 +24,8 @@ import PlayerStatTable from "@/components/players/PlayerStatTable";
 import PlayerProfileTabs from "@/components/players/PlayerProfileTabs";
 import InTheNews from "@/components/players/InTheNews";
 import InTheArchive from "@/components/players/InTheArchive";
+import RecruitingCommit from "@/components/players/RecruitingCommit";
+import PlayerDispatches from "@/components/players/PlayerDispatches";
 import type { MergedGameEntry } from "@/components/game-log/GameLogAccordion";
 import type { Metadata } from "next";
 import PlayerHero from "./PlayerHero";
@@ -525,7 +527,13 @@ export default async function PlayerCareerPage({ params }: { params: Promise<Pag
             {/* In The News */}
             <InTheNews entityType="player" entityId={player.id} />
 
-            {/* In the Archive (Ted Silary mentions) */}
+            {/* College commit (from recruiting_commits) */}
+            <RecruitingCommit playerId={player.id} />
+
+            {/* Ted's Dispatches (from homepage alert feed) */}
+            <PlayerDispatches playerId={player.id} />
+
+            {/* In the Archive (Ted Silary long-form mentions) */}
             <InTheArchive playerId={player.id} />
 
             {/* Player Highlights Section */}
