@@ -1,16 +1,42 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { listArchiveStories, getArchiveBylines } from "@/lib/data/stories";
+import { listArchiveStories, getArchiveBylines, getArchiveSeries } from "@/lib/data/stories";
 import { Breadcrumb } from "@/components/ui";
 
 export const revalidate = 3600;
 
-type SearchParams = { year?: string; sport?: string; byline?: string; category?: string };
+type SearchParams = { year?: string; sport?: string; byline?: string; category?: string; series?: string };
+
+// Human-readable labels for the series pill filter
+const SERIES_LABELS: Record<string, string> = {
+  "only-in-the-pub": "Only in the Pub",
+  "wyzard-of-wyndmoor": "Wyzard of Wyndmoor",
+  "pat-the-stat": "Pat the Stat",
+  "where-theres-a-will": "Where There's a Will",
+  "no-hurdle-too-high": "No Hurdle Too High",
+  "exploring-fb": "Exploring FB",
+  "note-from-ted": "Note From Ted",
+  "miscellaneous": "Miscellaneous",
+  "todds-tidbits": "Todd's Tidbits",
+  "randys-college": "Randy's College",
+  "shiffert": "Shiffert (19-to-21 / All Phillies)",
+  "sunderland": "Sunderland",
+  "memories-by-malizia": "Memories by Malizia",
+  "bakers-dozen": "Baker's Dozen",
+  "bottom-guys": "Bottom Guys",
+  "memorable-moments": "Memorable Moments",
+  "streak-breakers": "Streak-Breakers",
+  "whats-up-on-the-hill": "What's Up on the Hill",
+  "erictric": "Erictric / Nicknames",
+  "guest-opinion": "Guest Opinions",
+  "season-preview": "Season Previews",
+  "season-recap": "Season Recaps",
+};
 
 export const metadata: Metadata = {
   title: "The Archive — Ted Silary Stories | PhillySportsPack",
   description:
-    "Browse 2,600+ stories from Ted Silary's Philadelphia high school sports archive (2001–2021). Columns, previews, and game reports from Ted, Huck, Amauro, Duck, and other local voices.",
+    "Browse 2,000+ stories from Ted Silary's Philadelphia high school sports archive (1949–2021). Columns, previews, game reports, and feature series from Ted, Huck, Amauro, Duck, Sparky, Frog, Shiffert, Sunderland, Malizia, and the full cast of Philly voices he built around him.",
   alternates: { canonical: "https://phillysportspack.com/stories" },
 };
 
@@ -34,10 +60,12 @@ export default async function StoriesIndexPage({
   const sport = sp.sport;
   const byline = sp.byline;
   const category = sp.category;
+  const series = sp.series;
 
-  const [stories, bylines] = await Promise.all([
-    listArchiveStories({ year, sport, byline, category, limit: 120 }),
+  const [stories, bylines, seriesCounts] = await Promise.all([
+    listArchiveStories({ year, sport, byline, category, series, limit: 120 }),
     getArchiveBylines(sport),
+    getArchiveSeries(),
   ]);
 
   // Year list — derived from current result set, keeps sidebar lightweight
@@ -88,6 +116,17 @@ export default async function StoriesIndexPage({
               { value: "special",     label: "Special / features" },
               { value: "weekly",      label: "Weekly files" },
             ]} active={category} param="category" sp={sp} />
+
+            <FilterSection
+              label="Series"
+              options={seriesCounts.map((s) => ({
+                value: s.series,
+                label: `${SERIES_LABELS[s.series] ?? s.series} (${s.count})`,
+              }))}
+              active={series}
+              param="series"
+              sp={sp}
+            />
           </aside>
 
           {/* Main column */}
@@ -158,7 +197,7 @@ function FilterSection({
   label: string;
   options: { value: string; label: string }[];
   active: string | undefined;
-  param: "year" | "sport" | "byline" | "category";
+  param: "year" | "sport" | "byline" | "category" | "series";
   sp: SearchParams;
 }) {
   // Build href that toggles the filter while preserving the other params.

@@ -167,7 +167,7 @@ export const getStoryMentions = cache(
 export interface StoryCardSummary {
   id: number;
   year: number;
-  sport_id: string;
+  sport_id: string | null;
   slug: string;
   title: string;
   column_name: string | null;
@@ -175,6 +175,7 @@ export interface StoryCardSummary {
   published_at: string | null;
   word_count: number | null;
   category: string;
+  series_name?: string | null;
 }
 
 /**
@@ -188,6 +189,7 @@ export const listArchiveStories = cache(
       sport?: string;
       byline?: string;
       category?: string;
+      series?: string;
       limit?: number;
       offset?: number;
     } = {}
@@ -201,7 +203,7 @@ export const listArchiveStories = cache(
             let q = (supabase as any)
               .from("archive_stories")
               .select(
-                "id, year, sport_id, slug, title, column_name, byline, published_at, word_count, category"
+                "id, year, sport_id, slug, title, column_name, byline, published_at, word_count, category, series_name"
               )
               .order("year", { ascending: false })
               .order("published_at", { ascending: false, nullsFirst: false })
@@ -212,6 +214,7 @@ export const listArchiveStories = cache(
             if (opts.sport) q = q.eq("sport_id", opts.sport);
             if (opts.byline) q = q.eq("byline", opts.byline);
             if (opts.category) q = q.eq("category", opts.category);
+            if (opts.series) q = q.eq("series_name", opts.series);
             const { data } = await q;
             return (data as unknown as StoryCardSummary[]) ?? [];
           },
@@ -220,7 +223,35 @@ export const listArchiveStories = cache(
       },
       [],
       "DATA_LIST_ARCHIVE_STORIES",
-      opts
+      { ...opts } as Record<string, unknown>
+    );
+  }
+);
+
+/**
+ * Distinct series names with counts — powers the /stories Series filter pill.
+ */
+export interface SeriesCount { series: string; count: number; }
+export const getArchiveSeries = cache(
+  async (): Promise<SeriesCount[]> => {
+    return withErrorHandling(
+      async () => {
+        const supabase = await createClient();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data } = await (supabase as any)
+          .from("archive_stories")
+          .select("series_name")
+          .not("series_name", "is", null);
+        const counts = new Map<string, number>();
+        for (const row of (data as unknown as { series_name: string }[] ?? [])) {
+          if (row.series_name) counts.set(row.series_name, (counts.get(row.series_name) ?? 0) + 1);
+        }
+        return Array.from(counts.entries())
+          .map(([series, count]) => ({ series, count }))
+          .sort((a, b) => b.count - a.count);
+      },
+      [],
+      "DATA_ARCHIVE_SERIES"
     );
   }
 );
