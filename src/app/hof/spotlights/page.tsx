@@ -5,6 +5,7 @@ import {
   getLegendsByCategory,
   SPORT_LABELS,
   SPORT_EMOJIS,
+  SPORT_ACCENT_COLORS,
   type Legend,
 } from "@/lib/data/legends";
 import { Breadcrumb } from "@/components/ui";
@@ -19,28 +20,36 @@ function SpotlightCard({ legend }: { legend: Legend }) {
     .slice(0, 2)
     .toUpperCase();
 
+  const accent = SPORT_ACCENT_COLORS[legend.sport] ?? "#f0a500";
+
   return (
     <Link href={`/hof/spotlights/${legend.slug}`} className="block group">
-      <div className="rounded-xl border border-[var(--psp-gray-200)] bg-white p-6 transition-all duration-200 group-hover:shadow-lg group-hover:border-[var(--psp-blue)]/40 group-hover:-translate-y-0.5">
+      <div className="rounded-xl border border-white/10 bg-[var(--psp-navy-mid)] p-6 transition-all duration-200 group-hover:shadow-lg group-hover:border-[var(--psp-gold)]/40 group-hover:-translate-y-0.5">
         <div className="flex items-start gap-4">
           {/* Sport-colored initials circle */}
-          <div className="w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold bg-gradient-to-br from-[var(--psp-blue)] to-[var(--psp-blue)]/60 text-white">
+          <div
+            className="w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold text-white"
+            style={{ background: accent }}
+          >
             {initials}
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-[var(--psp-blue)]/10 text-[var(--psp-blue)]">
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
+                style={{ background: `${accent}1f`, color: accent }}
+              >
                 {SPORT_EMOJIS[legend.sport]} {SPORT_LABELS[legend.sport]}
               </span>
             </div>
-            <h3 className="font-heading text-xl text-[var(--psp-navy)] leading-tight group-hover:text-[var(--psp-blue)] transition-colors">
+            <h3 className="font-heading text-xl text-white leading-tight group-hover:text-[var(--psp-gold)] transition-colors">
               {legend.name}
             </h3>
-            <p className="text-sm text-[var(--psp-gray-500)] mt-0.5">
+            <p className="text-sm text-white/60 mt-0.5">
               {legend.schools.join(" · ")}
               {legend.careerSpan && (
-                <span className="text-[var(--psp-gray-400)]">
+                <span className="text-white/40">
                   {" "}
                   ({legend.careerSpan})
                 </span>
@@ -49,20 +58,20 @@ function SpotlightCard({ legend }: { legend: Legend }) {
           </div>
         </div>
 
-        <p className="text-sm text-[var(--psp-gray-600)] mt-4 leading-relaxed">
+        <p className="text-sm text-white/70 mt-4 leading-relaxed">
           {legend.excerpt}
         </p>
 
         {/* Highlights preview */}
         {legend.highlights && legend.highlights.length > 0 && (
-          <div className="mt-4 pt-3 border-t border-[var(--psp-gray-100)]">
+          <div className="mt-4 pt-3 border-t border-white/5">
             <ul className="space-y-1">
               {legend.highlights.slice(0, 2).map((h, i) => (
                 <li
                   key={i}
-                  className="text-xs text-[var(--psp-gray-500)] flex items-start gap-1.5"
+                  className="text-xs text-white/60 flex items-start gap-1.5"
                 >
-                  <span className="text-[var(--psp-blue)] mt-0.5 flex-shrink-0">
+                  <span className="mt-0.5 flex-shrink-0" style={{ color: accent }}>
                     &#9670;
                   </span>
                   {h}
@@ -81,9 +90,9 @@ export default function SpotlightsPage() {
   const sorted = [...spotlights].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="min-h-screen bg-[var(--psp-cream)]">
+    <div className="min-h-screen bg-[var(--psp-navy)]">
       {/* Hero */}
-      <section className="bg-gradient-to-r from-[var(--psp-navy)] to-[var(--psp-navy-mid)] py-10 px-4">
+      <section className="bg-[var(--psp-navy)] border-b border-white/10 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <Breadcrumb
             items={[
@@ -123,14 +132,14 @@ export default function SpotlightsPage() {
 
           {/* Sidebar */}
           <aside className="space-y-6">
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   About These Stories
                 </h3>
               </div>
               <div className="p-5">
-                <p className="text-sm text-[var(--psp-gray-600)] leading-relaxed">
+                <p className="text-sm text-white/70 leading-relaxed">
                   These spotlight pages capture remarkable individual
                   performances and stories from Ted Silary's coverage of
                   Philadelphia high school sports. From Wilt Chamberlain's
@@ -140,37 +149,37 @@ export default function SpotlightsPage() {
             </div>
 
             {/* More HOF sections */}
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   More from the Hall of Fame
                 </h3>
               </div>
               <div className="p-4 space-y-2">
                 <Link
                   href="/hof/legends"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
-                  <Trophy className="w-5 h-5 inline" />
+                  <Trophy className="w-5 h-5 inline text-[var(--psp-gold)]" />
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       Legends
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Coach tributes by Ted Silary
                     </p>
                   </div>
                 </Link>
                 <Link
                   href="/hof/in-memoriam"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span className="text-lg">🕊</span>
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       In Memoriam
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Remembering those taken too soon
                     </p>
                   </div>

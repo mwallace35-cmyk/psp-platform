@@ -31,10 +31,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 function renderMarkdown(content: string): string {
   return content
-    .replace(/^#### (.*?)$/gm, '<h4 class="font-heading text-lg text-[var(--psp-navy)] mt-6 mb-2">$1</h4>')
-    .replace(/^### (.*?)$/gm, '<h3 class="font-heading text-xl text-[var(--psp-navy)] mt-8 mb-3">$1</h3>')
-    .replace(/^## (.*?)$/gm, '<h2 class="font-heading text-2xl text-[var(--psp-navy)] mt-10 mb-4 pb-2 border-b border-[var(--psp-gray-200)]">$1</h2>')
-    .replace(/^# (.*?)$/gm, '<h1 class="font-heading text-3xl text-[var(--psp-navy)] mt-8 mb-4">$1</h1>')
+    .replace(/^#### (.*?)$/gm, '<h4 class="font-heading text-lg text-white mt-6 mb-2">$1</h4>')
+    .replace(/^### (.*?)$/gm, '<h3 class="font-heading text-xl text-white mt-8 mb-3">$1</h3>')
+    .replace(/^## (.*?)$/gm, '<h2 class="font-heading text-2xl text-white mt-10 mb-4 pb-2 border-b border-white/10">$1</h2>')
+    .replace(/^# (.*?)$/gm, '<h1 class="font-heading text-3xl text-white mt-8 mb-4">$1</h1>')
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
     .replace(/\n\n/g, "</p><p>");
@@ -53,9 +53,9 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
   const sportEmoji = SPORT_EMOJI[champ.sport] ?? "";
 
   return (
-    <div className="min-h-screen bg-[var(--psp-cream)]">
+    <div className="min-h-screen bg-[var(--psp-navy)]">
       {/* Hero */}
-      <section className="bg-gradient-to-r from-[var(--psp-navy)] to-[var(--psp-navy-mid)] py-10 px-4">
+      <section className="bg-[var(--psp-navy)] border-b border-white/10 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <Breadcrumb
             items={[
@@ -121,7 +121,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
                   {champ.highlights.map((h, i) => (
                     <li
                       key={i}
-                      className="text-sm text-[var(--psp-gray-700)] flex items-start gap-2"
+                      className="text-sm text-white/80 flex items-start gap-2"
                     >
                       <span className="text-[var(--psp-gold)] mt-0.5 flex-shrink-0">&#9670;</span>
                       {h}
@@ -133,7 +133,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
 
             {/* Game-by-game results */}
             {champ.gameByGame && champ.gameByGame.length > 0 && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden mb-8">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden mb-8">
                 <div className="bg-[var(--psp-navy)] px-5 py-3">
                   <h3 className="font-heading text-sm text-white uppercase tracking-wider">
                     Season Results
@@ -142,7 +142,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-[var(--psp-gray-50)] text-xs uppercase tracking-wider text-[var(--psp-gray-500)]">
+                      <tr className="bg-white/5 text-xs uppercase tracking-wider text-white/60">
                         <th className="px-4 py-2 text-left">Opponent</th>
                         <th className="px-4 py-2 text-center">Result</th>
                         <th className="px-4 py-2 text-center">Score</th>
@@ -150,22 +150,22 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
                     </thead>
                     <tbody>
                       {champ.gameByGame.map((g, i) => (
-                        <tr key={i} className="border-b border-[var(--psp-gray-100)]">
-                          <td className="px-4 py-2 text-[var(--psp-gray-700)]">
+                        <tr key={i} className="border-b border-white/5">
+                          <td className="px-4 py-2 text-white/80">
                             {g.opponent}
                           </td>
                           <td className="px-4 py-2 text-center">
                             <span
                               className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                                 g.result === "W"
-                                  ? "bg-green-100 text-green-700"
-                                  : "bg-red-100 text-red-700"
+                                  ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                                  : "bg-red-500/20 text-red-300 border border-red-500/30"
                               }`}
                             >
                               {g.result}
                             </span>
                           </td>
-                          <td className="px-4 py-2 text-center font-mono text-[var(--psp-gray-700)]">
+                          <td className="px-4 py-2 text-center font-mono text-white/80">
                             {g.score}
                           </td>
                         </tr>
@@ -179,7 +179,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
             {/* Narrative */}
             <article>
               <div
-                className="text-[var(--psp-gray-700)] leading-relaxed space-y-4 text-[15px]"
+                className="text-white/80 leading-relaxed space-y-4 text-[15px]"
                 dangerouslySetInnerHTML={{
                   __html: renderMarkdown(champ.narrative),
                 }}
@@ -187,12 +187,12 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
             </article>
 
             {/* Attribution */}
-            <div className="mt-10 pt-6 border-t border-[var(--psp-gray-200)]">
-              <p className="text-sm text-[var(--psp-gray-500)] italic">
+            <div className="mt-10 pt-6 border-t border-white/10">
+              <p className="text-sm text-white/60 italic">
                 Written by <strong>Ted Silary</strong>. Originally published on
                 TedSilary.com. Preserved and republished by PhillySportsPack.
               </p>
-              <p className="text-xs text-[var(--psp-gray-400)] mt-1">
+              <p className="text-xs text-white/40 mt-1">
                 Source: {champ.sourceFile}
               </p>
             </div>
@@ -201,23 +201,23 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
           {/* Sidebar */}
           <aside className="space-y-6">
             {/* School link */}
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   School Profile
                 </h3>
               </div>
               <div className="p-4">
                 <Link
                   href={`/schools/${champ.schoolSlug}`}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span className="text-lg">{sportEmoji}</span>
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       {champ.school}
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       View full school profile
                     </p>
                   </div>
@@ -227,7 +227,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
 
             {/* Other titles by this school */}
             {related.length > 0 && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
                 <div className="bg-[var(--psp-navy)] px-5 py-3">
                   <h3 className="font-heading text-sm text-white uppercase tracking-wider">
                     More Titles: {champ.school}
@@ -238,18 +238,18 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
                     <Link
                       key={r.slug}
                       href={`/hof/state-champions/${r.slug}`}
-                      className="flex items-center justify-between p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                      className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-sm">{SPORT_EMOJI[r.sport]}</span>
-                        <span className="text-sm font-semibold text-[var(--psp-navy)]">
+                        <span className="text-sm font-semibold text-white">
                           {r.year}
                         </span>
-                        <span className="text-xs text-[var(--psp-gray-400)]">
+                        <span className="text-xs text-white/40">
                           {r.classification}
                         </span>
                       </div>
-                      <span className="text-xs text-[var(--psp-gray-500)]">
+                      <span className="text-xs text-white/60">
                         {r.score}
                       </span>
                     </Link>
@@ -260,7 +260,7 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
 
             {/* Coach legend link */}
             {champ.coachLegendSlug && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
                 <div className="bg-[var(--psp-navy)] px-5 py-3">
                   <h3 className="font-heading text-sm text-white uppercase tracking-wider">
                     Coach Profile
@@ -269,14 +269,14 @@ export default async function ChampionshipDetailPage({ params }: PageProps) {
                 <div className="p-4">
                   <Link
                     href={`/hof/legends/${champ.coachLegendSlug}`}
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                   >
                     <Trophy className="w-5 h-5 inline" />
                     <div>
-                      <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                      <p className="text-sm font-semibold text-white">
                         {champ.coach}
                       </p>
-                      <p className="text-xs text-[var(--psp-gray-500)]">
+                      <p className="text-xs text-white/60">
                         Full tribute by Ted Silary
                       </p>
                     </div>

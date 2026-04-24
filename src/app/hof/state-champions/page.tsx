@@ -21,7 +21,7 @@ function ChampCard({ champ }: { champ: StateChampionship }) {
 
   return (
     <Link href={`/hof/state-champions/${champ.slug}`} className="block group">
-      <div className="rounded-xl border border-[var(--psp-gray-200)] bg-white overflow-hidden transition-all duration-200 group-hover:shadow-lg group-hover:-translate-y-0.5 group-hover:border-[var(--psp-gold)]">
+      <div className="rounded-xl border border-white/10 bg-[var(--psp-navy-mid)] overflow-hidden transition-all duration-200 group-hover:shadow-lg group-hover:-translate-y-0.5 group-hover:border-[var(--psp-gold)]">
         {/* Sport color bar */}
         <div style={{ height: "4px", background: sportColor }} />
 
@@ -38,17 +38,17 @@ function ChampCard({ champ }: { champ: StateChampionship }) {
                 </span>
               </div>
 
-              <h3 className="font-heading text-xl text-[var(--psp-navy)] leading-tight group-hover:text-[var(--psp-gold)] transition-colors">
+              <h3 className="font-heading text-xl text-white leading-tight group-hover:text-[var(--psp-gold)] transition-colors">
                 {champ.school}
               </h3>
 
-              <p className="text-sm text-[var(--psp-gray-500)] mt-1">
+              <p className="text-sm text-white/60 mt-1">
                 vs. {champ.opponent}
               </p>
             </div>
 
             <div className="text-right flex-shrink-0">
-              <div className="font-heading text-3xl text-[var(--psp-navy)]">
+              <div className="font-heading text-3xl text-white">
                 {champ.year}
               </div>
               <div className="text-sm font-bold text-[var(--psp-gold)]">
@@ -58,12 +58,12 @@ function ChampCard({ champ }: { champ: StateChampionship }) {
           </div>
 
           {/* Coach */}
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[var(--psp-gray-100)]">
-            <span className="text-xs text-[var(--psp-gray-500)]">
-              Coach: <strong className="text-[var(--psp-gray-700)]">{champ.coach}</strong>
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/10">
+            <span className="text-xs text-white/60">
+              Coach: <strong className="text-white/80">{champ.coach}</strong>
             </span>
             {champ.seasonRecord && (
-              <span className="text-xs text-[var(--psp-gray-400)]">
+              <span className="text-xs text-white/40">
                 &middot; {champ.seasonRecord}
               </span>
             )}
@@ -105,9 +105,9 @@ export default function StateChampionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--psp-cream)]">
+    <div className="min-h-screen bg-[var(--psp-navy)]">
       {/* Hero */}
-      <section className="bg-gradient-to-r from-[var(--psp-navy)] to-[var(--psp-navy-mid)] py-10 px-4">
+      <section className="bg-[var(--psp-navy)] border-b border-white/10 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <Breadcrumb
             items={[
@@ -159,8 +159,8 @@ export default function StateChampionsPage() {
                     onClick={() => setSportFilter(sport)}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                       sportFilter === sport
-                        ? "bg-[var(--psp-navy)] text-white"
-                        : "bg-[var(--psp-gray-100)] text-[var(--psp-gray-600)] hover:bg-[var(--psp-gray-200)]"
+                        ? "bg-[var(--psp-gold)] text-[var(--psp-navy)]"
+                        : "bg-white/5 text-white/70 hover:bg-white/10 border border-white/10"
                     }`}
                   >
                     {sport !== "all" && SPORT_EMOJI[sport]}{" "}
@@ -170,7 +170,7 @@ export default function StateChampionsPage() {
               )}
             </div>
 
-            <p className="text-sm text-[var(--psp-gray-500)] mb-4">
+            <p className="text-sm text-white/60 mb-4">
               {sorted.length} championship{sorted.length !== 1 ? "s" : ""}
             </p>
 
@@ -185,9 +185,9 @@ export default function StateChampionsPage() {
           {/* Sidebar */}
           <aside className="space-y-6">
             {/* Dynasty leaders */}
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   Most State Titles
                 </h3>
               </div>
@@ -195,10 +195,10 @@ export default function StateChampionsPage() {
                 {dynasties.map(([school, count], i) => (
                   <div
                     key={school}
-                    className="flex items-center justify-between py-2 border-b border-[var(--psp-gray-100)] last:border-0"
+                    className="flex items-center justify-between py-2 border-b border-white/5 last:border-0"
                   >
-                    <span className="text-sm text-[var(--psp-gray-700)]">
-                      <span className="text-[var(--psp-gray-400)] font-mono text-xs mr-2">
+                    <span className="text-sm text-white/80">
+                      <span className="text-white/40 font-mono text-xs mr-2">
                         {i + 1}.
                       </span>
                       {school}
@@ -212,37 +212,37 @@ export default function StateChampionsPage() {
             </div>
 
             {/* More HOF */}
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   More from the Hall of Fame
                 </h3>
               </div>
               <div className="p-4 space-y-2">
                 <Link
                   href="/hof/legends"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
-                  <Trophy className="w-5 h-5 inline" />
+                  <Trophy className="w-5 h-5 inline text-[var(--psp-gold)]" />
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       Legends
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Coach tributes by Ted Silary
                     </p>
                   </div>
                 </Link>
                 <Link
                   href="/hof/legends/records"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
-                  <BarChart3 className="w-5 h-5 inline" />
+                  <BarChart3 className="w-5 h-5 inline text-[var(--psp-gold)]" />
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       Coaching Records
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       100-win club, best pct, most years
                     </p>
                   </div>

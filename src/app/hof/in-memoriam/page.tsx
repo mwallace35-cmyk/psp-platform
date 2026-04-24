@@ -6,6 +6,7 @@ import {
   getLegendsByCategory,
   SPORT_LABELS,
   SPORT_EMOJIS,
+  SPORT_ACCENT_COLORS,
   type LegendSport,
   type Legend,
 } from "@/lib/data/legends";
@@ -21,35 +22,40 @@ function MemorialCard({ legend }: { legend: Legend }) {
     .slice(0, 2)
     .toUpperCase();
 
+  const accent = SPORT_ACCENT_COLORS[legend.sport] ?? "#f0a500";
+
   return (
     <Link href={`/hof/in-memoriam/${legend.slug}`} className="block group">
-      <div className="rounded-xl border border-[var(--psp-gray-300)] bg-white p-5 transition-all duration-200 group-hover:shadow-md group-hover:border-[var(--psp-gold)]/40">
+      <div className="rounded-xl border border-white/10 bg-[var(--psp-navy-mid)] p-5 transition-all duration-200 group-hover:shadow-md group-hover:border-[var(--psp-gold)]/40">
         <div className="flex items-start gap-4">
-          {/* Initials circle */}
-          <div className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center text-lg font-bold bg-[var(--psp-navy)] text-white/70">
+          {/* Initials circle (sport-colored) */}
+          <div
+            className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center text-lg font-bold text-white"
+            style={{ background: accent }}
+          >
             {initials}
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-heading text-lg text-[var(--psp-navy)] leading-tight group-hover:text-[var(--psp-gold)] transition-colors">
+            <h3 className="font-heading text-lg text-white leading-tight group-hover:text-[var(--psp-gold)] transition-colors">
               {legend.name}
             </h3>
-            <p className="text-sm text-[var(--psp-gray-600)] mt-0.5">
+            <p className="text-sm text-white/70 mt-0.5">
               {legend.role}
             </p>
-            <p className="text-sm text-[var(--psp-gray-500)] mt-0.5">
+            <p className="text-sm text-white/60 mt-0.5">
               {legend.schools.join(" · ")}
             </p>
           </div>
         </div>
 
-        <p className="text-sm text-[var(--psp-gray-600)] mt-3 line-clamp-2">
+        <p className="text-sm text-white/70 mt-3 line-clamp-2">
           {legend.excerpt}
         </p>
 
         {legend.died && (
-          <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-[var(--psp-gray-200)]">
-            <span className="text-xs text-[var(--psp-gray-500)] italic">
+          <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-white/10">
+            <span className="text-xs text-white/60 italic">
               In Memoriam &middot; {legend.died}
             </span>
           </div>
@@ -76,9 +82,9 @@ export default function InMemoriamPage() {
   ] as LegendSport[];
 
   return (
-    <div className="min-h-screen bg-[var(--psp-gray-50)]">
-      {/* Hero — darker, more somber tone */}
-      <section className="bg-gradient-to-r from-[#1a1a2e] to-[#16213e] py-10 px-4">
+    <div className="min-h-screen bg-[var(--psp-navy)]">
+      {/* Hero — somber tone */}
+      <section className="bg-[var(--psp-navy)] border-b border-white/10 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <Breadcrumb
             items={[
@@ -118,8 +124,8 @@ export default function InMemoriamPage() {
                   onClick={() => setActiveSport("all")}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                     activeSport === "all"
-                      ? "bg-[var(--psp-navy)] text-white"
-                      : "bg-[var(--psp-gray-100)] text-[var(--psp-gray-600)] hover:bg-[var(--psp-gray-200)]"
+                      ? "bg-[var(--psp-gold)] text-[var(--psp-navy)]"
+                      : "bg-white/5 text-white/70 hover:bg-white/10 border border-white/10"
                   }`}
                 >
                   All
@@ -130,8 +136,8 @@ export default function InMemoriamPage() {
                     onClick={() => setActiveSport(sport)}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                       activeSport === sport
-                        ? "bg-[var(--psp-navy)] text-white"
-                        : "bg-[var(--psp-gray-100)] text-[var(--psp-gray-600)] hover:bg-[var(--psp-gray-200)]"
+                        ? "bg-[var(--psp-gold)] text-[var(--psp-navy)]"
+                        : "bg-white/5 text-white/70 hover:bg-white/10 border border-white/10"
                     }`}
                   >
                     {SPORT_EMOJIS[sport]} {SPORT_LABELS[sport]}
@@ -140,7 +146,7 @@ export default function InMemoriamPage() {
               </div>
             )}
 
-            <p className="text-sm text-[var(--psp-gray-500)] mb-4">
+            <p className="text-sm text-white/60 mb-4">
               {sorted.length} tribute{sorted.length !== 1 ? "s" : ""}
             </p>
 
@@ -154,15 +160,15 @@ export default function InMemoriamPage() {
 
           {/* Sidebar */}
           <aside className="space-y-6">
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[#1a1a2e] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   About These Tributes
                 </h3>
               </div>
               <div className="p-5">
-                <p className="text-sm text-[var(--psp-gray-600)] leading-relaxed">
-                  These memorial pages were created by <strong>Ted Silary</strong>{" "}
+                <p className="text-sm text-white/70 leading-relaxed">
+                  These memorial pages were created by <strong className="text-white">Ted Silary</strong>{" "}
                   to honor the young athletes and sports figures whose lives were
                   cut short. Originally published on TedSilary.com, they are
                   preserved here so their stories are never forgotten.
@@ -171,37 +177,37 @@ export default function InMemoriamPage() {
             </div>
 
             {/* More HOF sections */}
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   More from the Hall of Fame
                 </h3>
               </div>
               <div className="p-4 space-y-2">
                 <Link
                   href="/hof/legends"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
-                  <Trophy className="w-5 h-5 inline" />
+                  <Trophy className="w-5 h-5 inline text-[var(--psp-gold)]" />
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       Legends
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Coach tributes by Ted Silary
                     </p>
                   </div>
                 </Link>
                 <Link
                   href="/hof/spotlights"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span className="text-lg">🔦</span>
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       Player Spotlights
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Record-breaking performances
                     </p>
                   </div>

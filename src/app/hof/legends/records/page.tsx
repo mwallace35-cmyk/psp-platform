@@ -37,9 +37,9 @@ export default function CoachingRecordsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("100-wins");
 
   return (
-    <div className="min-h-screen bg-[var(--psp-cream)]">
+    <div className="min-h-screen bg-[var(--psp-navy)]">
       {/* Hero */}
-      <section className="bg-gradient-to-r from-[var(--psp-navy)] to-[var(--psp-navy-mid)] py-10 px-4">
+      <section className="bg-[var(--psp-navy)] border-b border-white/10 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <Breadcrumb
             items={[
@@ -75,7 +75,7 @@ export default function CoachingRecordsPage() {
       </section>
 
       {/* Tabs */}
-      <div className="border-b border-[var(--psp-gray-200)] bg-white sticky top-0 z-10">
+      <div className="border-b border-white/10 bg-[var(--psp-navy)] sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto py-1 -mb-px">
             {TABS.map((tab) => (
@@ -84,8 +84,8 @@ export default function CoachingRecordsPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-4 py-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? "border-[var(--psp-gold)] text-[var(--psp-navy)]"
-                    : "border-transparent text-[var(--psp-gray-500)] hover:text-[var(--psp-navy)]"
+                    ? "border-[var(--psp-gold)] text-[var(--psp-gold)]"
+                    : "border-transparent text-white/60 hover:text-white"
                 }`}
               >
                 {tab.label}
@@ -99,13 +99,13 @@ export default function CoachingRecordsPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div>
-            <p className="text-sm text-[var(--psp-gray-500)] mb-4">
+            <p className="text-sm text-white/60 mb-4">
               {TABS.find((t) => t.id === activeTab)?.description}
             </p>
 
             {/* 100-Win Coaches Table */}
             {activeTab === "100-wins" && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -121,23 +121,23 @@ export default function CoachingRecordsPage() {
                       {COACHES_100_WINS.map((c, i) => (
                         <tr
                           key={i}
-                          className={`border-b border-[var(--psp-gray-100)] ${
+                          className={`border-b border-white/5 ${
                             i < 3 ? "bg-[var(--psp-gold)]/5 font-semibold" : ""
                           }`}
                         >
-                          <td className="px-4 py-2.5 text-[var(--psp-gray-400)] font-mono text-xs">
+                          <td className="px-4 py-2.5 text-white/40 font-mono text-xs">
                             {i + 1}
                           </td>
                           <td className="px-4 py-2.5">
                             <CoachName name={c.name} legendSlug={c.legendSlug} />
                           </td>
-                          <td className="px-4 py-2.5 text-[var(--psp-gray-600)]">
+                          <td className="px-4 py-2.5 text-white/70">
                             {c.schools.join(", ")}
                           </td>
-                          <td className="px-4 py-2.5 text-center text-[var(--psp-gray-600)]">
+                          <td className="px-4 py-2.5 text-center text-white/70">
                             {c.years}
                           </td>
-                          <td className="px-4 py-2.5 text-center font-bold text-[var(--psp-navy)]">
+                          <td className="px-4 py-2.5 text-center font-bold text-white">
                             {c.wins}
                           </td>
                         </tr>
@@ -150,7 +150,7 @@ export default function CoachingRecordsPage() {
 
             {/* Best Winning Percentage Table */}
             {activeTab === "best-pct" && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -166,23 +166,23 @@ export default function CoachingRecordsPage() {
                       {COACHES_BEST_PCT.map((c, i) => (
                         <tr
                           key={i}
-                          className={`border-b border-[var(--psp-gray-100)] ${
+                          className={`border-b border-white/5 ${
                             i < 3 ? "bg-[var(--psp-gold)]/5 font-semibold" : ""
                           }`}
                         >
-                          <td className="px-4 py-2.5 text-[var(--psp-gray-400)] font-mono text-xs">
+                          <td className="px-4 py-2.5 text-white/40 font-mono text-xs">
                             {i + 1}
                           </td>
                           <td className="px-4 py-2.5">
                             <CoachName name={c.name} legendSlug={c.legendSlug} />
                           </td>
-                          <td className="px-4 py-2.5 text-[var(--psp-gray-600)]">
+                          <td className="px-4 py-2.5 text-white/70">
                             {c.schools.join(", ")}
                           </td>
-                          <td className="px-4 py-2.5 text-center text-[var(--psp-gray-600)] font-mono text-xs">
+                          <td className="px-4 py-2.5 text-center text-white/70 font-mono text-xs">
                             {c.record}
                           </td>
-                          <td className="px-4 py-2.5 text-center font-bold text-[var(--psp-navy)]">
+                          <td className="px-4 py-2.5 text-center font-bold text-white">
                             .{Math.round(c.pct * 1000)}
                           </td>
                         </tr>
@@ -195,7 +195,7 @@ export default function CoachingRecordsPage() {
 
             {/* Most Years Coached Table */}
             {activeTab === "most-years" && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -210,24 +210,24 @@ export default function CoachingRecordsPage() {
                       {COACHES_MOST_YEARS.map((c, i) => (
                         <tr
                           key={i}
-                          className={`border-b border-[var(--psp-gray-100)] ${
+                          className={`border-b border-white/5 ${
                             i < 3 ? "bg-[var(--psp-gold)]/5 font-semibold" : ""
                           }`}
                         >
-                          <td className="px-4 py-2.5 text-[var(--psp-gray-400)] font-mono text-xs">
+                          <td className="px-4 py-2.5 text-white/40 font-mono text-xs">
                             {i + 1}
                           </td>
-                          <td className="px-4 py-2.5 text-center font-bold text-[var(--psp-navy)]">
+                          <td className="px-4 py-2.5 text-center font-bold text-white">
                             {c.totalYears}
                           </td>
                           <td className="px-4 py-2.5">
                             <CoachName name={c.name} legendSlug={c.legendSlug} />
                           </td>
-                          <td className="px-4 py-2.5 text-[var(--psp-gray-600)]">
+                          <td className="px-4 py-2.5 text-white/70">
                             {c.stints.map((s, j) => (
                               <span key={j}>
                                 {s.school}{" "}
-                                <span className="text-[var(--psp-gray-400)] text-xs">
+                                <span className="text-white/40 text-xs">
                                   ({s.seasons})
                                 </span>
                                 {j < c.stints.length - 1 && " · "}
@@ -245,57 +245,57 @@ export default function CoachingRecordsPage() {
 
           {/* Sidebar */}
           <aside className="space-y-6">
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   About These Records
                 </h3>
               </div>
               <div className="p-5">
-                <p className="text-sm text-[var(--psp-gray-600)] leading-relaxed">
+                <p className="text-sm text-white/70 leading-relaxed">
                   Data compiled by <strong>Ted Silary</strong> through the 2021
                   season. Covers all Philadelphia-area high school football
                   programs across Catholic League, Public League, Inter-Ac, and
                   independent schools.
                 </p>
-                <p className="text-xs text-[var(--psp-gray-400)] mt-3 italic">
+                <p className="text-xs text-white/40 mt-3 italic">
                   Coaches highlighted in gold have tribute pages in our Legends
                   section.
                 </p>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   More from Legends
                 </h3>
               </div>
               <div className="p-4 space-y-2">
                 <Link
                   href="/hof/legends"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <Trophy className="w-5 h-5 inline" />
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       Coach Tributes
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Full profiles by Ted Silary
                     </p>
                   </div>
                 </Link>
                 <Link
                   href="/hof/state-champions"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span className="text-lg">🏟</span>
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       State Champions
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Championship celebration pages
                     </p>
                   </div>

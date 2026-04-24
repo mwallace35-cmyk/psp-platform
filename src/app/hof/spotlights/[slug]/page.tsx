@@ -46,10 +46,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 function renderMarkdown(content: string): string {
   return content
-    .replace(/^#### (.*?)$/gm, '<h4 class="font-heading text-lg text-[var(--psp-navy)] mt-6 mb-2">$1</h4>')
-    .replace(/^### (.*?)$/gm, '<h3 class="font-heading text-xl text-[var(--psp-navy)] mt-8 mb-3">$1</h3>')
-    .replace(/^## (.*?)$/gm, '<h2 class="font-heading text-2xl text-[var(--psp-navy)] mt-10 mb-4 pb-2 border-b border-[var(--psp-gray-200)]">$1</h2>')
-    .replace(/^# (.*?)$/gm, '<h1 class="font-heading text-3xl text-[var(--psp-navy)] mt-8 mb-4">$1</h1>')
+    .replace(/^#### (.*?)$/gm, '<h4 class="font-heading text-lg text-white mt-6 mb-2">$1</h4>')
+    .replace(/^### (.*?)$/gm, '<h3 class="font-heading text-xl text-white mt-8 mb-3">$1</h3>')
+    .replace(/^## (.*?)$/gm, '<h2 class="font-heading text-2xl text-white mt-10 mb-4 pb-2 border-b border-white/10">$1</h2>')
+    .replace(/^# (.*?)$/gm, '<h1 class="font-heading text-3xl text-white mt-8 mb-4">$1</h1>')
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
     .replace(/\n\n/g, "</p><p>")
@@ -82,15 +82,9 @@ export default async function LegendDetailPage({ params }: PageProps) {
   );
 
   return (
-    <div className={`min-h-screen ${isMemoriam ? "bg-[var(--psp-gray-50)]" : "bg-[var(--psp-cream)]"}`}>
+    <div className="min-h-screen bg-[var(--psp-navy)]">
       {/* Hero */}
-      <section
-        className={`py-10 px-4 ${
-          isMemoriam
-            ? "bg-gradient-to-r from-[#1a1a2e] to-[#16213e]"
-            : "bg-gradient-to-r from-[var(--psp-navy)] to-[var(--psp-navy-mid)]"
-        }`}
-      >
+      <section className="py-10 px-4 bg-[var(--psp-navy)] border-b border-white/10">
         <div className="max-w-7xl mx-auto">
           <Breadcrumb
             items={[
@@ -188,7 +182,7 @@ export default async function LegendDetailPage({ params }: PageProps) {
                   {legend.highlights.map((h, i) => (
                     <li
                       key={i}
-                      className="text-sm text-[var(--psp-gray-700)] flex items-start gap-2"
+                      className="text-sm text-white/80 flex items-start gap-2"
                     >
                       <span className="text-[var(--psp-gold)] mt-0.5 flex-shrink-0">
                         &#9670;
@@ -203,7 +197,7 @@ export default async function LegendDetailPage({ params }: PageProps) {
             {/* Narrative */}
             <article className="prose-psp">
               <div
-                className="text-[var(--psp-gray-700)] leading-relaxed space-y-4 text-[15px]"
+                className="text-white/80 leading-relaxed space-y-4 text-[15px]"
                 dangerouslySetInnerHTML={{
                   __html: renderMarkdown(legend.narrative),
                 }}
@@ -212,12 +206,12 @@ export default async function LegendDetailPage({ params }: PageProps) {
 
             {/* Attribution */}
             <div className="mt-10 pt-6 border-t border-[var(--psp-gray-200)]">
-              <p className="text-sm text-[var(--psp-gray-500)] italic">
+              <p className="text-sm text-white/60 italic">
                 Written by <strong>Ted Silary</strong>. Originally published on
                 TedSilary.com. Preserved and republished by PhillySportsPack.
               </p>
               {legend.sourceFiles.length > 0 && (
-                <p className="text-xs text-[var(--psp-gray-400)] mt-1">
+                <p className="text-xs text-white/40 mt-1">
                   Source: {legend.sourceFiles.join(", ")}
                 </p>
               )}
@@ -228,9 +222,9 @@ export default async function LegendDetailPage({ params }: PageProps) {
           <aside className="space-y-6">
             {/* Coaching records */}
             {isCoach && legend.stints && legend.stints.length > 0 && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-                <div className="bg-[var(--psp-navy)] px-5 py-3">
-                  <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+                <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                  <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                     Coaching Record
                   </h3>
                 </div>
@@ -242,9 +236,9 @@ export default async function LegendDetailPage({ params }: PageProps) {
 
             {/* All-Stars */}
             {isCoach && legend.stints && legend.stints.some((s) => s.allStars?.length) && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-                <div className="bg-[var(--psp-navy)] px-5 py-3">
-                  <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+                <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                  <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                     All-Star Selections
                   </h3>
                 </div>
@@ -256,9 +250,9 @@ export default async function LegendDetailPage({ params }: PageProps) {
 
             {/* Championships */}
             {isCoach && legend.stints && legend.stints.some((s) => s.championships?.length) && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-                <div className="bg-[var(--psp-navy)] px-5 py-3">
-                  <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+                <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                  <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                     Championships
                   </h3>
                 </div>
@@ -270,9 +264,9 @@ export default async function LegendDetailPage({ params }: PageProps) {
 
             {/* Related legends */}
             {related.length > 0 && (
-              <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-                <div className="bg-[var(--psp-navy)] px-5 py-3">
-                  <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+              <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+                <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                  <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                     More {CATEGORY_LABELS[legend.category]}
                   </h3>
                 </div>
@@ -281,7 +275,7 @@ export default async function LegendDetailPage({ params }: PageProps) {
                     <Link
                       key={r.slug}
                       href={`/hof/spotlights/${r.slug}`}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                     >
                       <div className="w-8 h-8 rounded-full bg-[var(--psp-gold)]/10 flex items-center justify-center text-xs font-bold text-[var(--psp-gold)]">
                         {r.name
@@ -291,10 +285,10 @@ export default async function LegendDetailPage({ params }: PageProps) {
                           .slice(0, 2)}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                        <p className="text-sm font-semibold text-white">
                           {r.name}
                         </p>
-                        <p className="text-xs text-[var(--psp-gray-500)]">
+                        <p className="text-xs text-white/60">
                           {r.schools[0]}
                         </p>
                       </div>

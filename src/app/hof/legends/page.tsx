@@ -35,9 +35,9 @@ export default function LegendsHubPage() {
   const sorted = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="min-h-screen bg-[var(--psp-cream)]">
+    <div className="min-h-screen bg-[var(--psp-navy)]">
       {/* Hero */}
-      <section className="bg-gradient-to-r from-[var(--psp-navy)] to-[var(--psp-navy-mid)] py-10 px-4">
+      <section className="bg-[var(--psp-navy)] border-b border-white/10 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <Breadcrumb
             items={[
@@ -100,8 +100,8 @@ export default function LegendsHubPage() {
                   onClick={() => setActiveSport(sf.id)}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                     activeSport === sf.id
-                      ? "bg-[var(--psp-navy)] text-white"
-                      : "bg-[var(--psp-gray-100)] text-[var(--psp-gray-600)] hover:bg-[var(--psp-gray-200)]"
+                      ? "bg-[var(--psp-gold)] text-[var(--psp-navy)]"
+                      : "bg-white/5 text-white/70 hover:bg-white/10 border border-white/10"
                   }`}
                 >
                   {sf.id !== "all" && SPORT_EMOJIS[sf.id as LegendSport]}{" "}
@@ -111,7 +111,7 @@ export default function LegendsHubPage() {
             </div>
 
             {/* Results count */}
-            <p className="text-sm text-[var(--psp-gray-500)] mb-4">
+            <p className="text-sm text-white/60 mb-4">
               Showing {sorted.length} legend{sorted.length !== 1 ? "s" : ""}
             </p>
 
@@ -124,7 +124,7 @@ export default function LegendsHubPage() {
 
             {sorted.length === 0 && (
               <div className="text-center py-16">
-                <p className="text-[var(--psp-gray-400)] text-lg">
+                <p className="text-white/40 text-lg">
                   No legends found for this sport.
                 </p>
               </div>
@@ -134,14 +134,14 @@ export default function LegendsHubPage() {
           {/* Sidebar */}
           <aside className="space-y-6">
             {/* Ted Silary credit */}
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   About These Tributes
                 </h3>
               </div>
               <div className="p-5">
-                <p className="text-sm text-[var(--psp-gray-600)] leading-relaxed">
+                <p className="text-sm text-white/70 leading-relaxed">
                   These coach tribute pages were originally written and compiled
                   by <strong>Ted Silary</strong>, legendary Philadelphia high
                   school sports journalist, on TedSilary.com. They have been
@@ -152,51 +152,51 @@ export default function LegendsHubPage() {
             </div>
 
             {/* More HOF sections */}
-            <div className="bg-white rounded-xl border border-[var(--psp-gray-200)] overflow-hidden">
-              <div className="bg-[var(--psp-navy)] px-5 py-3">
-                <h3 className="font-heading text-sm text-white uppercase tracking-wider">
+            <div className="bg-[var(--psp-navy-mid)] rounded-xl border border-white/10 overflow-hidden">
+              <div className="bg-[var(--psp-navy)] border-b border-[var(--psp-gold)]/40 px-5 py-3">
+                <h3 className="font-heading text-sm text-[var(--psp-gold)] uppercase tracking-wider">
                   More from the Hall of Fame
                 </h3>
               </div>
               <div className="p-4 space-y-2">
                 <Link
                   href="/hof/in-memoriam"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span className="text-lg">🕊</span>
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       In Memoriam
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Remembering those taken too soon
                     </p>
                   </div>
                 </Link>
                 <Link
                   href="/hof/spotlights"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span className="text-lg">🔦</span>
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       Player Spotlights
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       Record-breaking performances
                     </p>
                   </div>
                 </Link>
                 <Link
                   href="/hof/public-league"
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--psp-gray-50)] transition-colors"
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span className="text-lg">⭐</span>
                   <div>
-                    <p className="text-sm font-semibold text-[var(--psp-navy)]">
+                    <p className="text-sm font-semibold text-white">
                       Public League HOF
                     </p>
-                    <p className="text-xs text-[var(--psp-gray-500)]">
+                    <p className="text-xs text-white/60">
                       165 inductees and counting
                     </p>
                   </div>
