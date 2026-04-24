@@ -310,7 +310,7 @@ export async function getPlayerSchoolHistory(
       // Step 3: Fetch school details — schools_all so player career history
       // resolves school names for transfers to/from closed schools.
       const allSchoolIds = Array.from(schoolMap.keys());
-      const { data: schools } = await supabase
+      const { data: schools } = await (supabase as any)
         .from("schools_all")
         .select("id, name, slug")
         .in("id", allSchoolIds);
@@ -318,7 +318,8 @@ export async function getPlayerSchoolHistory(
       if (!schools) return [];
 
       // Build result sorted by earliest season
-      const result: SchoolHistoryEntry[] = schools
+      type SchoolRow = { id: number; name: string; slug: string };
+      const result: SchoolHistoryEntry[] = (schools as SchoolRow[])
         .map((s) => {
           const entry = schoolMap.get(s.id)!;
           const sortedSeasons = Array.from(entry.seasons).sort();
@@ -331,8 +332,8 @@ export async function getPlayerSchoolHistory(
             _minYear: entry.minYear,
           };
         })
-        .sort((a, b) => (a as any)._minYear - (b as any)._minYear)
-        .map(({ _minYear, ...rest }) => rest);
+        .sort((a, b) => a._minYear - b._minYear)
+        .map(({ _minYear: _, ...rest }) => rest);
 
       return result;
     },

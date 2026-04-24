@@ -145,12 +145,12 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     }
     if (selectedSchool) {
       // schools_all so filtering scores by closed school works.
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("schools_all")
         .select("id")
         .eq("slug", selectedSchool)
         .single();
-      schoolId = data?.id ?? null;
+      schoolId = (data as { id: number } | null)?.id ?? null;
     }
 
     // Step 1: Fetch game IDs and scores only (no FK joins — fast)

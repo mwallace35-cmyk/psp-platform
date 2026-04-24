@@ -268,7 +268,7 @@ export const getSchoolHubData = cache(async (slug: string) => {
         async () => {
           const supabase = await createClient();
           // schools_all so closed schools render their profile hub.
-          const { data } = await supabase
+          const { data } = await (supabase as any)
             .from("schools_all")
             .select(
               `

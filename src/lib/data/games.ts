@@ -967,7 +967,7 @@ export const getTeamSeasonStats = cache(
             // Fetch school names — schools_all so playoff games involving
             // closed schools (Phila. Electrical, St. Thomas More, etc.) render.
             const schoolIds = [homeSchoolId, awaySchoolId].filter((id): id is number => id !== null);
-            const { data: schools } = await supabase
+            const { data: schools } = await (supabase as any)
               .from("schools_all")
               .select("id, name, slug")
               .in("id", schoolIds);
@@ -1197,7 +1197,7 @@ export const getHeadToHead = cache(
             const supabase = await createClient();
 
             // Get school names — schools_all so head-to-head includes closed schools.
-            const { data: schools } = await supabase
+            const { data: schools } = await (supabase as any)
               .from("schools_all")
               .select("id, name, slug")
               .in("id", [schoolA, schoolB]);
