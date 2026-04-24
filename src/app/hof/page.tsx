@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getFeaturedLegends, getLegendHref, SPORT_LABELS as LEGEND_SPORT_LABELS } from "@/lib/data/legends";
 
 export const revalidate = 3600;
 
@@ -215,13 +216,16 @@ const SECONDARY_HOF_CARDS = [
 ];
 
 /* ─── Featured Athletes ─── */
-const FEATURED_ATHLETES = [
-  { name: "Wilt Chamberlain", school: "Overbrook HS", sport: "Basketball", slug: "/hof/legends/wilt-chamberlain" },
-  { name: "Leroy Kelly", school: "Simon Gratz HS", sport: "Football", slug: null },
-  { name: "Dawn Staley", school: "Dobbins Tech", sport: "Basketball", slug: null },
-  { name: "Jahri Evans", school: "Frankford HS", sport: "Football", slug: null },
-  { name: "Herb Adderley", school: "Northeast HS", sport: "Football", slug: null },
-];
+// Pulled at render time from legends flagged `featured: true` in src/lib/data/legends-*.ts.
+// To add/remove a featured card, toggle the `featured` flag on the legend entry — no edit here.
+function getFeaturedAthletesForStrip() {
+  return getFeaturedLegends(5).map((legend) => ({
+    name: legend.name,
+    school: legend.schools[0] ?? "",
+    sport: LEGEND_SPORT_LABELS[legend.sport] ?? legend.role,
+    slug: getLegendHref(legend),
+  }));
+}
 
 /* ─── Shared card renderer ─── */
 function HofCard({
@@ -558,9 +562,10 @@ export default function HallOfFamePage() {
           }}
           className="hof-scroll-strip"
         >
-          {FEATURED_ATHLETES.map((athlete) => (
-            <div
+          {getFeaturedAthletesForStrip().map((athlete) => (
+            <Link
               key={athlete.name}
+              href={athlete.slug}
               style={{
                 flex: "1 1 220px",
                 minWidth: "200px",
@@ -571,7 +576,10 @@ export default function HallOfFamePage() {
                 borderRadius: "var(--radius-md)",
                 padding: "1.25rem 1rem",
                 textAlign: "center",
-                transition: "border-color 0.2s ease",
+                transition: "border-color 0.2s ease, transform 0.2s ease",
+                textDecoration: "none",
+                color: "inherit",
+                display: "block",
               }}
               className="hof-athlete-card"
             >
@@ -634,7 +642,7 @@ export default function HallOfFamePage() {
               >
                 {athlete.sport}
               </p>
-            </div>
+            </Link>
           ))}
         </div>
         </div>

@@ -140,6 +140,7 @@ The greatest thing of all was, He was my very best friend for over 50 years.`,
     ],
     careerSpan: "1952-56",
     sourceFiles: ["wilttribute.html"],
+    featured: true,
   },
   {
     slug: "george-baker",
@@ -222,6 +223,7 @@ Kinda.
     ],
     careerSpan: "2005-08",
     sourceFiles: ["Georgebaker.html"],
+    featured: true,
   },
   {
     slug: "mike-perretta",
@@ -263,6 +265,7 @@ Mike Perretta's 10 three-pointers tied him for the city's all-time list alongsid
     ],
     careerSpan: "2016-19",
     sourceFiles: ["mikeperretta.html"],
+    featured: true,
   },
   {
     slug: "mike-costanzo",
@@ -332,6 +335,7 @@ While Murphy declined to compare and contrast his three title teams, he was obvi
     ],
     careerSpan: "1999-2002",
     sourceFiles: ["mikecostanzo.html"],
+    featured: true,
   },
   {
     slug: "mike-tosegan",
@@ -382,5 +386,6 @@ A Mass of Christian Burial was held for Mike on Dec. 10 at St. Michael the Archa
       "Known for dry wit, Charles Nelson Riley glasses, and clipboard",
     ],
     sourceFiles: ["miketosegantribute.html"],
+    featured: true,
   },
 ];

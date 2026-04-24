@@ -60,6 +60,7 @@ export interface Legend {
   died?: string;
   photoUrl?: string;
   sourceFiles: string[]; // Original HTML filenames
+  featured?: boolean; // Surface on /hof "Featured Legends" strip
 }
 
 // Import entries from sub-files
@@ -97,6 +98,21 @@ export function getLegendsBySport(sport: LegendSport): Legend[] {
   return ALL_LEGENDS.filter((l) => l.sport === sport);
 }
 
+const CATEGORY_ROUTE: Record<LegendCategory, string> = {
+  coach: "/hof/legends",
+  "in-memoriam": "/hof/in-memoriam",
+  "player-spotlight": "/hof/spotlights",
+};
+
+export function getLegendHref(legend: Pick<Legend, "slug" | "category">): string {
+  return `${CATEGORY_ROUTE[legend.category]}/${legend.slug}`;
+}
+
+export function getFeaturedLegends(limit?: number): Legend[] {
+  const featured = ALL_LEGENDS.filter((l) => l.featured === true);
+  return typeof limit === "number" ? featured.slice(0, limit) : featured;
+}
+
 export function getLegendCount(): {
   total: number;
   coaches: number;
@@ -127,6 +143,16 @@ export const SPORT_EMOJIS: Record<LegendSport, string> = {
   "track-field": "\u{1F3C3}",
   soccer: "\u26BD",
   multi: "\u{1F3C5}",
+};
+
+// Brand-aligned sport accent colors (match global sport palette)
+export const SPORT_ACCENT_COLORS: Record<LegendSport, string> = {
+  football: "#16a34a",
+  basketball: "#3b82f6",
+  baseball: "#dc2626",
+  "track-field": "#7c3aed",
+  soccer: "#059669",
+  multi: "#f0a500",
 };
 
 export const CATEGORY_LABELS: Record<LegendCategory, string> = {
