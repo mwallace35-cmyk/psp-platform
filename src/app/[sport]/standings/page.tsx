@@ -95,7 +95,7 @@ async function StandingsLoader({ sport, season }: { sport: string; season?: stri
       )}
 
       {/* Standings Table */}
-      <StandingsTable standings={standings} sport={sport} />
+      <StandingsTable standings={standings} sport={sport} season={defaultSeason} />
     </>
   );
 }

@@ -25,9 +25,10 @@ interface LeagueGroup {
 import React from "react";
 import { Trophy } from "lucide-react";
 
-const StandingsSection = React.memo(function StandingsSection({ data, sport, hasLeagueRecord, hasPointsData, leagueName, seasonLabel }: {
+const StandingsSection = React.memo(function StandingsSection({ data, sport, season, hasLeagueRecord, hasPointsData, leagueName, seasonLabel }: {
   data: Standing[];
   sport: string;
+  season: string;
   hasLeagueRecord: boolean;
   hasPointsData: boolean;
   leagueName?: string;
@@ -87,7 +88,7 @@ const StandingsSection = React.memo(function StandingsSection({ data, sport, has
                       size="sm"
                     />
                     <Link
-                      href={`/${sport}/schools/${row.school.slug}`}
+                      href={`/${sport}/teams/${row.school.slug}/${season}`}
                       className="font-semibold text-white hover:text-[var(--psp-gold)] transition-colors"
                     >
                       {row.school.name}
@@ -121,7 +122,7 @@ const StandingsSection = React.memo(function StandingsSection({ data, sport, has
   );
 });
 
-export default function StandingsTable({ standings, sport }: { standings: LeagueStandings[]; sport: string }) {
+export default function StandingsTable({ standings, sport, season }: { standings: LeagueStandings[]; sport: string; season: string }) {
   // Group standings by base league, with divisions nested inside
   const leagueGroups = useMemo(() => {
     const groupMap = new Map<string, LeagueGroup>();
@@ -199,6 +200,7 @@ export default function StandingsTable({ standings, sport }: { standings: League
               <StandingsSection
                 data={div.standings.standings}
                 sport={sport}
+                season={season}
                 hasLeagueRecord={hasLeagueRecord}
                 hasPointsData={hasPointsData}
                 leagueName={div.name ? `${currentGroup.baseLeague} — ${div.name}` : currentGroup.baseLeague}
@@ -212,6 +214,7 @@ export default function StandingsTable({ standings, sport }: { standings: League
         <StandingsSection
           data={currentGroup.divisions[0]?.standings.standings || []}
           sport={sport}
+          season={season}
           hasLeagueRecord={hasLeagueRecord}
           hasPointsData={hasPointsData}
           leagueName={currentGroup.baseLeague}

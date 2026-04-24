@@ -156,7 +156,11 @@ export const getLeagueStandings = cache(
               const season = (ts.seasons as any) || {};
               const seasonLabel = season.label || "Unknown";
 
-              const division = rawDivision;
+              // Uppercase PA class letters (A/AA/AAA/AAAA/AAAAA/AAAAAA) while preserving
+              // sub-division words like "Gold" / "Silver" / "National" that follow.
+              const division: string | null = rawDivision
+                ? String(rawDivision).replace(/^(a+)(\b|(?=\s))/i, (_m, letters) => letters.toUpperCase())
+                : null;
 
               // Group by division within league if division exists
               const divisionSuffix = division ? `:${division}` : '';
