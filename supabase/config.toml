@@ -1,6 +1,4 @@
-[project]
-id = "psp-platform"
-name = "PhillySportsPack"
+project_id = "psp-platform"
 
 [db]
 port = 54322
