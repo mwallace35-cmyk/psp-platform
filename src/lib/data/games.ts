@@ -964,10 +964,11 @@ export const getTeamSeasonStats = cache(
               return [];
             }
 
-            // Fetch school names
+            // Fetch school names — schools_all so playoff games involving
+            // closed schools (Phila. Electrical, St. Thomas More, etc.) render.
             const schoolIds = [homeSchoolId, awaySchoolId].filter((id): id is number => id !== null);
             const { data: schools } = await supabase
-              .from("schools")
+              .from("schools_all")
               .select("id, name, slug")
               .in("id", schoolIds);
             const schoolMap = new Map(((schools ?? []) as SchoolLite[]).map((s) => [s.id, s]));
@@ -1195,9 +1196,9 @@ export const getHeadToHead = cache(
           async () => {
             const supabase = await createClient();
 
-            // Get school names
+            // Get school names — schools_all so head-to-head includes closed schools.
             const { data: schools } = await supabase
-              .from("schools")
+              .from("schools_all")
               .select("id, name, slug")
               .in("id", [schoolA, schoolB]);
 

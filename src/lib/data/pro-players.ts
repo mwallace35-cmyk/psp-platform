@@ -94,12 +94,11 @@ export const getProPlayersBySchool = cache(
           async () => {
             const supabase = await createClient();
 
-            // First get school ID
+            // schools_all so pro alumni lookups work for closed schools.
             const { data: school } = await supabase
-              .from("schools")
+              .from("schools_all")
               .select("id")
               .eq("slug", schoolSlug)
-              .is("deleted_at", null)
               .single();
 
             if (!school) return [];

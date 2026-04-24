@@ -49,7 +49,8 @@ export default function EntityLinker({ articleId }: EntityLinkerProps) {
     for (const m of mentions) {
       let name = `${m.entity_type} #${m.entity_id}`;
       if (m.entity_type === 'school') {
-        const { data } = await supabase.from('schools').select('name').eq('id', m.entity_id).single();
+        // schools_all so closed-school mentions in archival articles resolve names.
+        const { data } = await supabase.from('schools_all').select('name').eq('id', m.entity_id).single();
         if (data) name = data.name;
       } else if (m.entity_type === 'player') {
         const { data } = await supabase.from('players').select('name').eq('id', m.entity_id).single();

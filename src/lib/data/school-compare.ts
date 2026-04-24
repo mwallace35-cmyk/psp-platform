@@ -49,12 +49,11 @@ export async function getSchoolComparisonData(
         async () => {
           const supabase = await createClient();
 
-          // Get school IDs from slugs
+          // Get school IDs from slugs — schools_all so closed schools can be compared historically.
           const { data: schools, error: schoolError } = await supabase
-            .from("schools")
+            .from("schools_all")
             .select("id, name, slug, colors")
-            .in("slug", slugs)
-            .is("deleted_at", null);
+            .in("slug", slugs);
 
           if (schoolError || !schools || schools.length === 0) {
             return [];

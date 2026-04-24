@@ -307,10 +307,11 @@ export async function getPlayerSchoolHistory(
       // Still only one school after transfers check
       if (schoolMap.size <= 1) return [];
 
-      // Step 3: Fetch school details
+      // Step 3: Fetch school details — schools_all so player career history
+      // resolves school names for transfers to/from closed schools.
       const allSchoolIds = Array.from(schoolMap.keys());
       const { data: schools } = await supabase
-        .from("schools")
+        .from("schools_all")
         .select("id, name, slug")
         .in("id", allSchoolIds);
 

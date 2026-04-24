@@ -267,19 +267,19 @@ export const getSchoolHubData = cache(async (slug: string) => {
       return withRetry(
         async () => {
           const supabase = await createClient();
+          // schools_all so closed schools render their profile hub.
           const { data } = await supabase
-            .from("schools")
+            .from("schools_all")
             .select(
               `
               id, slug, name, short_name, city, state, league_id, mascot,
               closed_year, founded_year, website_url, address, phone,
               principal, athletic_director, enrollment, piaa_class,
-              school_type, colors, logo_url,
+              school_type, colors, logo_url, deleted_at,
               leagues(name, short_name)
             `
             )
             .eq("slug", slug)
-            .is("deleted_at", null)
             .single();
           // Handle leagues array which might be single object or array
           const schoolData = data as (SchoolHubData & { leagues?: unknown }) | null;

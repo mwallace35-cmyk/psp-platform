@@ -142,7 +142,8 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       : Promise.resolve({ data: null }),
     article.school_id
       ? supabase
-          .from('schools')
+          // schools_all so articles linked to closed schools resolve names.
+          .from('schools_all')
           .select('id, slug, name')
           .eq('id', article.school_id)
           .single()

@@ -146,11 +146,13 @@ export const getSchoolBySlug = cache(async (slug: string) => {
       return withRetry(
         async () => {
           const supabase = await createClient();
+          // schools_all view (migration 20260423) includes closed/deleted
+          // rows so profile pages render for schools like St. Thomas More,
+          // Hope Charter, Phila. Electrical, etc.
           const { data } = await supabase
-            .from("schools")
-            .select("id, slug, name, short_name, city, state, league_id, mascot, closed_year, founded_year, website_url, colors, address, phone, principal, athletic_director, enrollment, piaa_class, school_type, logo_url, primary_color, secondary_color, leagues(name, short_name)")
+            .from("schools_all")
+            .select("id, slug, name, short_name, city, state, league_id, mascot, closed_year, founded_year, website_url, colors, address, phone, principal, athletic_director, enrollment, piaa_class, school_type, logo_url, primary_color, secondary_color, deleted_at, leagues(name, short_name)")
             .eq("slug", slug)
-            .is("deleted_at", null)
             .single();
           return data;
         },

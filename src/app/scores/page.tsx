@@ -144,8 +144,9 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
       seasonId = data?.id ?? null;
     }
     if (selectedSchool) {
+      // schools_all so filtering scores by closed school works.
       const { data } = await supabase
-        .from("schools")
+        .from("schools_all")
         .select("id")
         .eq("slug", selectedSchool)
         .single();
