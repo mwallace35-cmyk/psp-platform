@@ -31,7 +31,7 @@
     "marked": "^18.0.0",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
+    "react-dom": "19.2.5",
     "react-tweet": "^3.3.0",
     "resend": "^6.9.3",
     "sonner": "^2.0.7",
